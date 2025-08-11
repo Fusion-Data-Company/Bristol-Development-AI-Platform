@@ -219,8 +219,12 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
-              <div className="w-14 h-14 bg-gradient-to-br from-bristol-maroon to-bristol-gold rounded-xl flex items-center justify-center shadow-lg hover:shadow-2xl hover:shadow-bristol-gold/40 transition-all duration-300 hover:scale-105">
-                <span className="text-white font-serif font-black text-2xl drop-shadow-lg">B</span>
+              <div className="flex items-center justify-center hover:scale-105 transition-all duration-300">
+                <img 
+                  src={bristolLogoPath} 
+                  alt="Bristol Development Group" 
+                  className="h-16 w-auto drop-shadow-2xl"
+                />
               </div>
               <div>
                 <h1 className="font-serif text-3xl font-black bg-gradient-to-r from-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">Bristol Development</h1>
@@ -287,14 +291,6 @@ export default function Dashboard() {
             </nav>
             
             <div className="flex items-center space-x-6">
-              {/* Bristol Logo */}
-              <div className="hidden md:block">
-                <img 
-                  src={bristolLogoPath} 
-                  alt="Bristol Development Group" 
-                  className="h-12 w-auto hover:scale-105 transition-transform duration-300 drop-shadow-lg"
-                />
-              </div>
               
               {/* WebSocket Status Indicator */}
               <div className="flex items-center gap-2">
