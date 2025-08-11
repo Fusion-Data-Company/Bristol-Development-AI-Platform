@@ -12,6 +12,9 @@ import Sites from "@/pages/Sites";
 import Analytics from "@/pages/Analytics";
 import Chat from "@/pages/Chat";
 import Integrations from "@/pages/Integrations";
+import MainApp from "@/pages/App";
+import ToolsConsole from "@/pages/ToolsConsole";
+import IntegrationsNew from "@/pages/IntegrationsNew";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -22,11 +25,13 @@ function Router() {
         <Route path="/" component={Landing} />
       ) : (
         <>
-          <Route path="/" component={Dashboard} />
+          <Route path="/" component={MainApp} />
+          <Route path="/dashboard" component={Dashboard} />
           <Route path="/sites" component={Sites} />
           <Route path="/analytics" component={Analytics} />
           <Route path="/chat" component={Chat} />
-          <Route path="/integrations" component={Integrations} />
+          <Route path="/integrations" component={IntegrationsNew} />
+          <Route path="/tools" component={ToolsConsole} />
         </>
       )}
       <Route component={NotFound} />

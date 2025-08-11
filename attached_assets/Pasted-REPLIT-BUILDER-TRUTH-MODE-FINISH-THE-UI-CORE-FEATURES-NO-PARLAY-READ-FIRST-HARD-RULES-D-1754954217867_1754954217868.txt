@@ -1,0 +1,145 @@
+REPLIT BUILDER — TRUTH MODE: FINISH THE UI & CORE FEATURES (NO PARLAY)
+
+READ FIRST — HARD RULES
+	•	Do NOT modify or add anything related to PARLAY/ReportAll. Ignore those files completely.
+	•	Do NOT claim a feature unless it is visible in the running UI. If it’s not rendered, don’t say it’s done.
+	•	Build the exact pages and widgets below. If any file is missing, create it. If present but empty, fill it. Keep code minimal but functional.
+
+0) SAFETY + DIAG
+	•	git rev-parse --is-inside-work-tree || git init
+	•	git add -A && git commit -m "snapshot before truth-mode UI build"
+	•	Print:
+	•	tree -L 3 || true
+	•	grep -Rni "TanStack|react-table|Map.jsx|ToolsConsole|Integrations|ChatDock|CompsTable|MetricsTable|SitesTable" apps || true
+
+1) FRONTEND — REQUIRED PAGES (React + Vite + Tailwind + TanStack Table)
+
+Routing (must exist): apps/web/src/main.jsx
+	•	Routes: / → pages/App.jsx; /integrations → pages/Integrations.jsx; /tools → pages/ToolsConsole.jsx
+	•	Import ./index.css (Tailwind) and MapLibre CSS once: @import "maplibre-gl/dist/maplibre-gl.css";
+
+Header & Chrome (visible on all pages)
+	•	apps/web/src/brand/Chrome.jsx with Bristol header (Cinzel, logo /public/bristol-logo.gif) and nav: Map · Tables · 3D Sandbox · Integrations · Tools.
+
+Page: App (tabs) — apps/web/src/pages/App.jsx
+	•	Render 3 tabs:
+	1.	Map → imports ../widgets/Map.jsx
+	2.	Tables → renders the three tables stacked:
+	•	SitesTable (selectable)
+	•	MetricsTable (inline edit)
+	•	CompsTable (uses @tanstack/react-table, includes Score column and Explain modal)
+	3.	3D Sandbox → a placeholder div that says “Cesium loads here when enabled” (no PARLAY).
+	•	The page must show all three tables when the Tables tab is active. If no data, show empty state with “Add Site” button.
+
+Map widget (working) — apps/web/src/widgets/Map.jsx
+	•	MapLibre with demo style; Nashville default.
+	•	Button “Show ArcGIS Base” → add/remove ESRI Light Gray raster tiles.
+	•	File input .kml,.kmz → local parse using @tmcw/togeojson (+ JSZip for KMZ), add a GeoJSON source and fill+line layers, fitBounds.
+	•	No PARLAY code here.
+
+Tables implemented with TanStack Table (must be visible):
+	•	apps/web/src/widgets/tables/SitesTable.jsx
+	•	Columns: Name, City/State (if available), Actions (Select/Delete)
+	•	“Add Site” opens AddSiteForm.jsx (inline modal simple OK)
+	•	apps/web/src/widgets/forms/AddSiteForm.jsx
+	•	Name (required), City, State (optional). POST to /api/sites.
+	•	apps/web/src/widgets/tables/MetricsTable.jsx
+	•	For selected site_id, list key metrics; inline edit saves to /api/metrics.
+	•	apps/web/src/widgets/tables/CompsTable.jsx
+	•	For selected site_id, list comps: Property, Address, Rents (JSON min), Concessions, Score (1–100), Explain button → modal showing breakdown amenities 40% / rent 30% / concessions 20% / distance 10%.
+	•	Uses @tanstack/react-table for sorting and pagination.
+
+Chat dock (must render on every page) — apps/web/src/widgets/ChatDock.jsx
+	•	Floating bottom-right panel with:
+	•	Model dropdown (OpenRouter; if no key, disable + show helper text)
+	•	“Bristol Mode” toggle (adds an extra system line)
+	•	Message list + input; call /api/agent/chat (return “not configured” if no key).
+	•	Minimal, but visible and working.
+
+Integrations page — apps/web/src/pages/Integrations.jsx
+	•	Section: Microsoft 365
+	•	If keys missing, show disabled Connect button with note “MS keys not set”.
+	•	If connected, show List OneDrive Root and List 10 Emails test buttons that hit the API endpoints and render JSON.
+	•	Section: Tools Registry
+	•	Simple form (name, base_url, api_key (masked), notes) to POST to /api/tools.
+	•	List tools below.
+
+Tools Console — apps/web/src/pages/ToolsConsole.jsx
+	•	Fetch /api/mcp/tools and list.
+	•	JSON textarea payload, Run Tool button → POST /api/mcp/run.
+	•	WebSocket stream from /api/mcp/ws — show live events list.
+	•	Fix WS base: if on Vite (5173), point to ws://localhost:3000/api/mcp/ws. Else same origin.
+
+2) BACKEND — ENDPOINTS THAT UI CALLS (KEEP SIMPLE & WORKING)
+	•	Make sure CORS allows ALLOWED_ORIGIN=http://localhost:5173.
+	•	Ensure /api mounts the following routes and they respond:
+
+/api/public
+	•	GET /sites, POST /sites, DELETE /sites/:id
+	•	GET /metrics?site_id=..., POST /metrics (upsert), DELETE /metrics/:id
+	•	Add sample endpoints GET /public/acs & GET /public/hud that return static demo JSON if no keys.
+
+/api/comps
+	•	GET /comps?site_id=...
+	•	POST /comps accepts { site_id, property_name, address, rents, concessions, amenities, lat, lon }
+→ compute score and score_breakdown, store, return full row.
+	•	POST /comps/:id/rescore recomputes with latest weights.
+
+/api/agent
+	•	POST /agent/chat → if OPENROUTER_API_KEY missing, return { ok:false, message:"OpenRouter not configured" } (no crash).
+	•	POST /agent/write-metric stores a metric row for current site.
+	•	POST /agent/mcp/n8n forwards payload to MCP n8n tool.
+
+/api/microsoft
+	•	GET /graph/list-drive and GET /graph/list-mail return either real results (if tokens) or { ok:false, message:"Microsoft keys not configured" }.
+
+/api/tools
+	•	Minimal CRUD for tool registry (mask api_key in GET).
+
+/api/mcp
+	•	GET /mcp/tools, POST /mcp/run, POST /mcp/webhook, GET /mcp/ping
+	•	mcp/core.js must register tools: n8n.trigger, http.fetch, db.query (safe), metrics.write, apify.scrape
+	•	mcp/ws.js attach WS on /api/mcp/ws.
+
+3) INSTALL & BOOT (must run)
+	•	npm install
+	•	If apps/api/.env missing → copy from .env.example.
+	•	Set minimum env:
+DATABASE_URL=<your Replit Postgres URL>
+ALLOWED_ORIGIN=http://localhost:5173
+	•	npm run dev
+
+4) ACCEPTANCE TESTS (don’t stop until ALL pass; print each result)
+	1.	Map tab renders; upload a small local KML/KMZ (no external links) → polygons display, map fits bounds.
+	•	Print: “Map OK: KML/KMZ imported and visible.”
+	2.	Tables tab shows:
+	•	SitesTable with “Add Site” working (creates and lists).
+	•	MetricsTable loads metrics for selected site and inline edit saves.
+	•	CompsTable lists comps; POST /comps works; Score is 1–100; Explain modal opens.
+	•	Print: “Tables OK: Sites/Metrics/Comps visible and functional.”
+	3.	Chat Dock visible on all pages; if OpenRouter key missing, shows graceful message.
+	•	Print: “ChatDock OK: visible; OpenRouter configured=<true|false>.”
+	4.	Integrations page shows Microsoft section and Tools Registry; buttons disabled when keys missing; Tools add/list works.
+	•	Print: “Integrations OK.”
+	5.	Tools Console lists tools; Run Tool http.fetch with payload { "url":"https://httpbin.org/get" } returns result; live WS events appear.
+	•	Print: “Tools Console OK: tool run + WS streaming ✅.”
+	6.	GET /api/mcp/ping returns { ok:true }.
+
+5) STATUS REPORT (MANDATORY; PRINT CLEARLY)
+
+Print a final block with:
+	•	Files created/modified (paths)
+	•	Confirmed visible UI: Map, Tables (3), Chat Dock, Integrations, Tools Console
+	•	Versions of key deps (@tanstack/react-table, maplibre-gl)
+	•	Any remaining TODOs (brief)
+
+If any acceptance item fails, print the exact file + line + error, fix it, and rerun tests until it passes.
+
+⸻
+
+What this does
+	•	Stops the agent from wandering back to PARLAY.
+	•	Forces it to actually render the Map, three TanStack tables, Chat dock, Integrations, and Tools Console.
+	•	Prints a truth‑check report so we can see exactly what exists.
+
+If it still ignores you, send me the last 50 lines it prints and I’ll give you file‑level patches to drop in.
