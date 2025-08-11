@@ -41,6 +41,8 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
+  Database,
+  ExternalLink,
   Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -1035,27 +1037,41 @@ export default function Dashboard() {
                   </div>
 
                   <div>
-                    <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2">PARLAY Data</h3>
-                    <Card>
-                      <CardContent className="p-3">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle className="w-4 h-4 text-green-600" />
-                            <span className="text-sm">PARLAY Parcels Loaded</span>
+                    <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-3 flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-md bg-cyan-100/80 flex items-center justify-center">
+                        <Database className="w-3.5 h-3.5 text-cyan-600" />
+                      </div>
+                      PARLAY Data
+                    </h3>
+                    <Card className="bg-gradient-to-br from-cyan-50/70 via-white to-cyan-100/50 border-cyan-200/60 hover:border-cyan-300/80 hover:shadow-xl hover:shadow-cyan-400/30 transition-all duration-600 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-100/30 via-transparent to-cyan-200/20 opacity-0 group-hover:opacity-100 transition-all duration-600"></div>
+                      <div className="absolute -top-1 -right-1 w-8 h-8 bg-cyan-400/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                      <CardContent className="p-4 relative z-10">
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-green-100/80 flex items-center justify-center group-hover:bg-green-200/90 transition-all duration-300">
+                              <CheckCircle className="w-4 h-4 text-green-600 group-hover:drop-shadow-[0_0_6px_rgba(34,197,94,0.6)] group-hover:scale-110 transition-all duration-300" />
+                            </div>
+                            <div>
+                              <span className="text-sm font-semibold text-bristol-ink group-hover:text-cyan-800 transition-colors duration-300">PARLAY Parcels Loaded</span>
+                              <div className="text-xs text-bristol-stone/80">Active Data Connection</div>
+                            </div>
                           </div>
-                          <div className="text-xs text-bristol-stone">
-                            Real-time parcel data from reportallusa.com
+                          <div className="bg-cyan-50/50 rounded-lg p-3 group-hover:bg-cyan-100/60 transition-all duration-300">
+                            <div className="text-xs text-cyan-700/90 font-medium mb-1">Data Source</div>
+                            <div className="text-xs text-cyan-600/80">Real-time parcel data from reportallusa.com</div>
                           </div>
-                          <div className="flex items-center gap-1 text-xs">
-                            <div className="w-3 h-3 bg-cyan-400 border border-cyan-600 rounded-sm"></div>
-                            <span className="text-bristol-stone">PARLAY Parcels (Cyan)</span>
+                          <div className="flex items-center gap-2 text-xs bg-white/60 rounded-lg p-2 group-hover:bg-cyan-50/80 transition-all duration-300">
+                            <div className="w-4 h-4 bg-cyan-400 border-2 border-cyan-600 rounded-sm group-hover:shadow-[0_0_4px_rgba(0,255,255,0.5)] transition-all duration-300"></div>
+                            <span className="text-bristol-stone font-medium">PARLAY Parcels (Cyan)</span>
                           </div>
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full text-xs"
+                            className="w-full text-xs border-cyan-200 text-cyan-700 hover:bg-cyan-50 hover:border-cyan-300 hover:text-cyan-800 group-hover:shadow-md transition-all duration-300"
                             onClick={() => window.open('https://reportallusa.com/', '_blank')}
                           >
+                            <ExternalLink className="w-3 h-3 mr-1" />
                             View Data Source
                           </Button>
                         </div>
