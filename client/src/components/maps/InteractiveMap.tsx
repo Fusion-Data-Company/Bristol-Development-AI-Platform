@@ -215,7 +215,7 @@ export function InteractiveMap({
           style={{ width: '100%', height: '100%' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}
-          interactiveLayerIds={['market-heat', 'kml-polygons', 'kml-lines', 'kml-points']}
+          interactiveLayerIds={['market-heat', 'kml-polygons', 'kml-polygon-outlines', 'kml-lines', 'kml-points']}
           projection={{ name: 'mercator' }}
         >
           {/* Market Heat Map Layer */}

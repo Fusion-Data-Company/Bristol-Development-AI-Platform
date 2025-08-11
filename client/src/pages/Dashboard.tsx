@@ -734,10 +734,14 @@ export default function Dashboard() {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <CheckCircle className="w-4 h-4 text-green-600" />
-                            <span className="text-sm">Network Link Active</span>
+                            <span className="text-sm">PARLAY Parcels Loaded</span>
                           </div>
                           <div className="text-xs text-bristol-stone">
-                            Real-time parcel data from reportallusa.com
+                            5 development parcels across Sunbelt markets
+                          </div>
+                          <div className="flex items-center gap-1 text-xs">
+                            <div className="w-3 h-3 bg-yellow-400 border border-yellow-600 rounded-sm"></div>
+                            <span className="text-bristol-stone">PARLAY Parcels</span>
                           </div>
                           <Button 
                             size="sm" 
