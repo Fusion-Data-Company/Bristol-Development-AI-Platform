@@ -125,10 +125,7 @@ export default function Dashboard() {
   // Create site mutation
   const createSiteMutation = useMutation({
     mutationFn: async (siteData: Partial<Site>) => {
-      return apiRequest("/api/sites", {
-        method: "POST",
-        body: JSON.stringify(siteData),
-      });
+      return apiRequest("/api/sites", "POST", siteData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/sites"] });
@@ -284,7 +281,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-bristol-maroon to-bristol-gold rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-white text-sm font-bold">
-                    {user?.firstName?.[0] || user?.email?.[0] || "U"}
+                    {(user as any)?.firstName?.[0] || (user as any)?.email?.[0] || "U"}
                   </span>
                 </div>
                 <Button 
@@ -313,7 +310,7 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h2 className="text-2xl font-serif font-bold text-bristol-ink mb-2">
-                        Welcome back, {user?.firstName || "Developer"}
+                        Welcome back, {(user as any)?.firstName || "Developer"}
                       </h2>
                       <p className="text-bristol-stone">
                         Your Bristol Intelligence dashboard • Last updated: {dashboardData?.summary.lastUpdated ? new Date(dashboardData.summary.lastUpdated).toLocaleString() : "Loading..."}
@@ -629,35 +626,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Sites Tab */}
-        {activeTab === "sites" && (
-          <div className="py-8">
-            <div className="max-w-7xl mx-auto px-4">
-              <Card className="bg-white/90 backdrop-blur-sm shadow-lg border-bristol-sky">
-                <CardHeader>
-                  <CardTitle className="font-serif text-xl font-semibold text-bristol-ink">
-                    Site Management
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-12">
-                    <Building className="w-16 h-16 text-bristol-maroon mx-auto mb-4" />
-                    <h3 className="text-lg font-serif font-semibold text-bristol-ink mb-2">
-                      Site Management Coming Soon
-                    </h3>
-                    <p className="text-bristol-stone mb-4">
-                      Advanced site management and comparison tools are in development.
-                    </p>
-                    <Button className="bg-bristol-maroon hover:bg-bristol-maroon/90 text-white">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add New Site
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        )}
+
 
         {/* Interactive Mapping Tab - Full Screen */}
         {activeTab === "mapping" && (
