@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>PARLAY Parcels</name>
+	<description>Zoom in to view. https://reportallusa.com/</description>
+	<styleUrl>#parlay_parcels</styleUrl>
+	<gx:balloonVisibility>1</gx:balloonVisibility>
+	<Style id="parlay_parcels">
+		<ListStyle>
+			<ItemIcon>
+				<href>https://reportallusa.com/favicon.ico</href>
+			</ItemIcon>
+		</ListStyle>
+	</Style>
+	<NetworkLink>
+		<name>Layers</name>
+		<Link>
+			<href>https://reportallusa.com/parlay/gearth_layers2.kmz?user_key=837bac90efffc90</href>
+		</Link>
+	</NetworkLink>
+</Document>
+</kml>

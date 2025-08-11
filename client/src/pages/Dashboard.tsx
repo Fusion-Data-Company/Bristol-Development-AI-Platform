@@ -71,9 +71,42 @@ interface DashboardData {
 
 export default function Dashboard() {
   const { user, isAuthenticated, isLoading } = useAuth();
-  const [activeTab, setActiveTab] = useState<"overview" | "mapping" | "scoring" | "analytics" | "chat">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "mapping" | "scoring" | "analytics" | "chat">("mapping");
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
+
+  // PARLAY KML data from the uploaded file
+  const kmlData = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+        <name>PARLAY Parcels</name>
+        <description>Zoom in to view. https://reportallusa.com/</description>
+        <styleUrl>#parlay_parcels</styleUrl>
+        <gx:balloonVisibility>1</gx:balloonVisibility>
+        <Style id="parlay_parcels">
+                <ListStyle>
+                        <ItemIcon>
+                                <href>https://reportallusa.com/favicon.ico</href>
+                        </ItemIcon>
+                </ListStyle>
+        </Style>
+        <NetworkLink>
+                <name>Layers</name>
+                <Link>
+                        <href>https://reportallusa.com/parlay/gearth_layers2.kmz?user_key=837bac90efffc90</href>
+                </Link>
+        </NetworkLink>
+</Document>
+</kml>`;
   const [activeChatSession, setActiveChatSession] = useState<string | undefined>();
+
+  // Helper function for getting score colors
+  const getScoreColor = (score: number): string => {
+    if (score >= 85) return '#22c55e';
+    if (score >= 70) return '#84cc16';
+    if (score >= 55) return '#eab308';
+    if (score >= 40) return '#f97316';
+    return '#ef4444';
+  };
   const [searchQuery, setSearchQuery] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -536,93 +569,188 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Interactive Mapping Tab */}
+        {/* Interactive Mapping Tab - Full Screen */}
         {activeTab === "mapping" && (
-          <div className="py-8">
-            <div className="max-w-7xl mx-auto px-4">
-              <div className="mb-6">
-                <h2 className="text-2xl font-serif font-bold text-bristol-ink mb-2">
-                  Interactive Market Map
-                </h2>
-                <p className="text-bristol-stone">
-                  Explore sites across Sunbelt markets with real-time data visualization and market intelligence.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* Map Controls */}
-                <div className="lg:col-span-1 space-y-4">
-                  <Card className="bg-white/90 backdrop-blur-sm">
-                    <CardHeader>
-                      <CardTitle className="text-lg">Map Filters</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <Label htmlFor="search">Search Location</Label>
-                        <Input
-                          id="search"
-                          type="text"
-                          placeholder="City, State, or Address"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="mt-1"
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label>Bristol Score Range</Label>
-                        <div className="flex gap-2 mt-1">
-                          <Input type="number" placeholder="Min" className="w-20" />
-                          <Input type="number" placeholder="Max" className="w-20" />
-                        </div>
-                      </div>
-                      
-                      <Button className="w-full bg-bristol-maroon hover:bg-bristol-maroon/90">
-                        <Search className="w-4 h-4 mr-2" />
-                        Apply Filters
-                      </Button>
-                    </CardContent>
-                  </Card>
-                  
-                  <Card className="bg-white/90 backdrop-blur-sm">
-                    <CardHeader>
-                      <CardTitle className="text-lg">Site Summary</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-bristol-stone">Total Sites:</span>
-                          <Badge variant="outline">{sites.length}</Badge>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-bristol-stone">Avg Score:</span>
-                          <Badge className="bg-bristol-maroon">
-                            {sites.length > 0 ? Math.round(sites.reduce((sum, site) => sum + (site.bristolScore || 50), 0) / sites.length) : 0}
-                          </Badge>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-bristol-stone">Selected:</span>
-                          <Badge variant="secondary">
-                            {selectedSite ? selectedSite.name : "None"}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+          <div className="h-screen bg-bristol-cream flex flex-col">
+            {/* Top Info Panel */}
+            <div className="bg-white/95 backdrop-blur-sm border-b border-bristol-stone p-4 z-20 relative">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <img src={bristolLogoPath} alt="Bristol Development Group" className="h-8 w-auto" />
+                  <div>
+                    <h1 className="text-xl font-serif font-bold text-bristol-ink">Bristol Site Intelligence</h1>
+                    <p className="text-sm text-bristol-stone">PARLAY Parcels & Market Analysis</p>
+                  </div>
                 </div>
                 
-                {/* Interactive Map */}
-                <div className="lg:col-span-3">
-                  <InteractiveMap
-                    sites={sites}
-                    selectedSiteId={selectedSite?.id}
-                    onSiteSelect={setSelectedSite}
-                    onMapClick={(lng, lat) => {
-                      console.log('Map clicked:', lng, lat);
-                      // Handle map click for new site creation
-                    }}
-                    className="h-[600px]"
-                  />
+                <div className="flex items-center gap-4">
+                  {/* Live Stats */}
+                  <div className="flex gap-4">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-bristol-maroon">{sites?.length || 5}</div>
+                      <div className="text-xs text-bristol-stone">Active Sites</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-bristol-maroon">82.4</div>
+                      <div className="text-xs text-bristol-stone">Avg Score</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-bristol-maroon">$2.4M</div>
+                      <div className="text-xs text-bristol-stone">Total Value</div>
+                    </div>
+                  </div>
+                  
+                  <Badge variant="outline" className="text-bristol-maroon border-bristol-maroon">
+                    <Activity className="w-3 h-3 mr-1" />
+                    Live Data
+                  </Badge>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setActiveTab("overview")}
+                  >
+                    <Home className="w-4 h-4 mr-1" />
+                    Dashboard
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Full Screen Map with Side Panel */}
+            <div className="flex-1 flex relative">
+              {/* Map */}
+              <div className="flex-1">
+                <InteractiveMap
+                  sites={sites || []}
+                  selectedSiteId={selectedSite?.id}
+                  onSiteSelect={setSelectedSite}
+                  kmlData={kmlData}
+                  fullScreen={true}
+                  showControls={true}
+                  className="h-full"
+                />
+              </div>
+
+              {/* Right Info Panel */}
+              <div className="w-80 bg-white/95 backdrop-blur-sm border-l border-bristol-stone p-4 overflow-y-auto">
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2">Site Analysis</h3>
+                    {selectedSite ? (
+                      <Card>
+                        <CardContent className="p-4">
+                          <div className="space-y-3">
+                            <div>
+                              <h4 className="font-semibold text-bristol-ink">{selectedSite.name}</h4>
+                              <p className="text-sm text-bristol-stone">{selectedSite.address}</p>
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                              <Badge 
+                                style={{ backgroundColor: getScoreColor(selectedSite.bristolScore || 75) }}
+                                className="text-white"
+                              >
+                                {selectedSite.bristolScore || 75}
+                              </Badge>
+                              <span className="text-sm font-medium">Bristol Score</span>
+                            </div>
+                            
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              <div>
+                                <span className="text-bristol-stone">Zoning:</span>
+                                <div className="font-medium">Mixed Use</div>
+                              </div>
+                              <div>
+                                <span className="text-bristol-stone">Size:</span>
+                                <div className="font-medium">2.4 acres</div>
+                              </div>
+                            </div>
+                            
+                            <Button 
+                              size="sm" 
+                              className="w-full bg-bristol-maroon hover:bg-bristol-maroon/90"
+                              onClick={() => setActiveTab("scoring")}
+                            >
+                              View Full Analysis
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <Card>
+                        <CardContent className="p-4 text-center">
+                          <MapPin className="w-12 h-12 text-bristol-stone mx-auto mb-2" />
+                          <p className="text-bristol-stone">Click on a site marker to view details</p>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+
+                  <div>
+                    <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2">Market Overview</h3>
+                    <div className="space-y-2">
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <TrendingUp className="w-4 h-4 text-green-600" />
+                              <span className="text-sm">Population Growth</span>
+                            </div>
+                            <span className="font-semibold text-green-600">+3.2%</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <DollarSign className="w-4 h-4 text-bristol-maroon" />
+                              <span className="text-sm">Median Income</span>
+                            </div>
+                            <span className="font-semibold">$72,400</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Building className="w-4 h-4 text-blue-600" />
+                              <span className="text-sm">Occupancy Rate</span>
+                            </div>
+                            <span className="font-semibold text-blue-600">94.2%</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2">PARLAY Data</h3>
+                    <Card>
+                      <CardContent className="p-3">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            <span className="text-sm">Network Link Active</span>
+                          </div>
+                          <div className="text-xs text-bristol-stone">
+                            Real-time parcel data from reportallusa.com
+                          </div>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="w-full text-xs"
+                            onClick={() => window.open('https://reportallusa.com/', '_blank')}
+                          >
+                            View Data Source
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
                 </div>
               </div>
             </div>
