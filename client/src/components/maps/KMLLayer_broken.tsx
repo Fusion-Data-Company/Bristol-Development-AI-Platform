@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Source, Layer } from 'react-map-gl';
-import { parseKML } from '@/utils/kmlParser';
-import type { KMLFeature } from '@/utils/kmlParser';
+import { parseKML, fetchNetworkLink, type KMLData, type KMLFeature } from '@/utils/kmlParser';
 
 interface KMLLayerProps {
   kmlData?: string;
@@ -16,29 +15,23 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!visible && !kmlData && !kmlUrl) {
-      return;
-    }
-
+    if (!visible) return;
+    
     const loadKMLData = async () => {
       setLoading(true);
       setError(null);
       
       try {
-        let parsedData;
-        let kmlText: string;
-
+        let parsedData: KMLData;
+        
         if (kmlData) {
-          kmlText = kmlData;
+          // Parse provided KML string
           parsedData = parseKML(kmlData);
         } else if (kmlUrl) {
+          // Fetch and parse KML from URL
           const response = await fetch(kmlUrl);
-          if (response.ok) {
-            kmlText = await response.text();
-            parsedData = parseKML(kmlText);
-          } else {
-            throw new Error(`Failed to fetch KML from ${kmlUrl}`);
-          }
+          const kmlText = await response.text();
+          parsedData = parseKML(kmlText);
         } else {
           return;
         }
@@ -67,67 +60,66 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
         // ALWAYS call server resolver for PARLAY data
         console.log('Checking for network links or calling resolver for PARLAY data...');
         
-        try {
-          // Call server resolver to get PARLAY parcels
-          const resolverResponse = await fetch('/api/kml/resolve', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ kmlText })
-          });
+        // Call server resolver to get PARLAY parcels
+        const resolverResponse = await fetch('/api/kml/resolve', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ kmlText })
+        });
 
-          console.log('KML resolver response status:', resolverResponse.status);
-          
-          if (resolverResponse.ok) {
-            const resolveData = await resolverResponse.json();
-            console.log('KML resolver response data:', resolveData);
-            if (resolveData.ok && resolveData.layers) {
-              console.log(`KML resolver returned ${resolveData.layers.length} layers`);
-              
-              // Merge all resolved layers with existing data
-              const allFeatures = [...geoJson.features];
-              const networkFeatures: any[] = [];
-              
-              for (const layer of resolveData.layers) {
-                if (layer.geojson && layer.geojson.features) {
-                  console.log(`Adding ${layer.geojson.features.length} features from ${layer.href}`);
-                  
-                  const layerFeatures = layer.geojson.features.map((feature: any) => ({
-                    ...feature,
-                    properties: {
-                      ...feature.properties,
-                      source: layer.href.includes('parlay') ? 'PARLAY' : 'NetworkLink',
-                      networkHref: layer.href
-                    }
-                  }));
-                  
-                  allFeatures.push(...layerFeatures);
-                  networkFeatures.push(...layerFeatures);
-                }
-              }
-              
-              const mergedGeoJson = {
-                type: 'FeatureCollection' as const,
-                features: allFeatures
-              };
-              
-              setGeoJsonData(mergedGeoJson);
-              onFeaturesLoad?.(networkFeatures);
-              console.log(`Total features loaded: ${allFeatures.length}`);
-            } else {
-              console.warn('No layers returned from KML resolver');
-            }
-          } else {
-            console.error('KML resolver response not ok:', resolveData);
-          }
-        } catch (resolverError) {
-          console.error('Error calling KML resolver:', resolverError);
-          const errorText = await resolverResponse.text().catch(() => 'Could not read response');
-          console.error('Error response body:', errorText);
-        }
+        console.log('KML resolver response status:', resolverResponse.status);
         
-      } catch (err) {
+        if (resolverResponse.ok) {
+          const resolveData = await resolverResponse.json();
+          console.log('KML resolver response data:', resolveData);
+          if (resolveData.ok && resolveData.layers) {
+            console.log(`KML resolver returned ${resolveData.layers.length} layers`);
+            
+            // Merge all resolved layers with existing data
+            const allFeatures = [...geoJson.features];
+            const networkFeatures: any[] = [];
+            
+            for (const layer of resolveData.layers) {
+              if (layer.geojson && layer.geojson.features) {
+                console.log(`Adding ${layer.geojson.features.length} features from ${layer.href}`);
+                
+                const layerFeatures = layer.geojson.features.map((feature: any) => ({
+                  ...feature,
+                  properties: {
+                    ...feature.properties,
+                    source: layer.href.includes('parlay') ? 'PARLAY' : 'NetworkLink',
+                    networkHref: layer.href
+                  }
+                }));
+                
+                allFeatures.push(...layerFeatures);
+                networkFeatures.push(...layerFeatures);
+              }
+            }
+            
+            const mergedGeoJson = {
+              type: 'FeatureCollection' as const,
+              features: allFeatures
+            };
+            
+            setGeoJsonData(mergedGeoJson);
+            onFeaturesLoad?.(networkFeatures);
+            console.log(`Total features loaded: ${allFeatures.length}`);
+          } else {
+            console.warn('No layers returned from KML resolver');
+          }
+        } else {
+          console.error('KML resolver response not ok:', resolveData);
+        }
+      } else {
+        console.error('KML resolver HTTP error:', resolverResponse.status, resolverResponse.statusText);
+        const errorText = await resolverResponse.text();
+        console.error('Error response body:', errorText);
+      }
+        
+    } catch (err) {
         console.error('Error loading KML:', err);
         setError(err instanceof Error ? err.message : 'Failed to load KML');
       } finally {
@@ -165,47 +157,50 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
         }}
       />
       
-      {/* PARLAY Polygon borders */}
+      {/* PARLAY Polygon outlines - cyan */}
       <Layer
-        id="kml-polygons-border"
+        id="kml-polygon-outlines"
         type="line"
         filter={['==', ['geometry-type'], 'Polygon']}
         paint={{
           'line-color': [
             'case',
             ['==', ['get', 'source'], 'PARLAY'],
-            '#00FFFF', // Cyan border for PARLAY
-            '#8B1538'  // Bristol maroon border for others
+            '#00CED1', // Dark turquoise for PARLAY outlines
+            '#8B1538'
           ],
           'line-width': [
             'case',
             ['==', ['get', 'source'], 'PARLAY'],
-            2, // Thicker border for PARLAY
-            1
-          ]
+            3, // Thicker lines for PARLAY
+            2
+          ],
+          'line-opacity': 1.0
         }}
       />
       
-      {/* Lines */}
+      {/* Line layers */}
       <Layer
         id="kml-lines"
         type="line"
         filter={['==', ['geometry-type'], 'LineString']}
         paint={{
           'line-color': '#8B1538',
-          'line-width': 2
+          'line-width': 3,
+          'line-opacity': 0.8
         }}
       />
       
-      {/* Points */}
+      {/* Point layers */}
       <Layer
         id="kml-points"
         type="circle"
         filter={['==', ['geometry-type'], 'Point']}
         paint={{
           'circle-color': '#8B1538',
-          'circle-radius': 6,
-          'circle-stroke-color': '#fff',
+          'circle-radius': 8,
+          'circle-opacity': 0.8,
+          'circle-stroke-color': '#ffffff',
           'circle-stroke-width': 2
         }}
       />
