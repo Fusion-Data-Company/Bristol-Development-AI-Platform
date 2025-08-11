@@ -47,7 +47,7 @@ export class WebSocketService {
       });
 
       socket.on('message', (data) => {
-        this.handleMessage(clientId, data);
+        this.handleMessage(clientId, data.toString());
       });
 
       socket.on('close', () => {
@@ -61,9 +61,9 @@ export class WebSocketService {
     });
   }
 
-  private handleMessage(clientId: string, data: Buffer | string) {
+  private handleMessage(clientId: string, data: string) {
     try {
-      const message: WebSocketMessage = JSON.parse(data.toString());
+      const message: WebSocketMessage = JSON.parse(data);
       const client = this.clients.get(clientId);
 
       if (!client) return;

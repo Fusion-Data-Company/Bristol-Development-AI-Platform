@@ -107,6 +107,7 @@ export const mcpTools = pgTable("mcp_tools", {
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
+  id: true,
   email: true,
   firstName: true,
   lastName: true,

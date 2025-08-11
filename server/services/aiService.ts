@@ -1,37 +1,70 @@
-import OpenAI from "openai";
 import { storage } from "../storage";
 import type { ChatMessage, InsertChatMessage } from "@shared/schema";
 
+interface OpenRouterMessage {
+  role: "system" | "user" | "assistant";
+  content: string;
+}
+
+interface OpenRouterResponse {
+  choices: Array<{
+    message: {
+      content: string;
+      role: string;
+    };
+  }>;
+  usage?: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+}
+
 export class AIService {
-  private openai: OpenAI;
+  private apiKey: string;
+  private baseUrl = "https://openrouter.ai/api/v1";
 
   constructor() {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error("OPENAI_API_KEY environment variable is required");
+    this.apiKey = process.env.OPENROUTER_API_KEY || "";
+    if (!this.apiKey) {
+      throw new Error("OPENROUTER_API_KEY environment variable is required");
     }
-    
-    this.openai = new OpenAI({ apiKey });
   }
 
   async createChatCompletion(
-    messages: Array<{ role: "system" | "user" | "assistant"; content: string }>,
-    model = "gpt-4o"
+    messages: OpenRouterMessage[],
+    model = "openai/gpt-5"
   ): Promise<string> {
     try {
-      // The newest OpenAI model is "gpt-4o" which was released May 13, 2024. Do not change this unless explicitly requested by the user
-      const response = await this.openai.chat.completions.create({
-        model,
-        messages,
-        max_tokens: 4000,
-        temperature: 0.7,
+      const response = await fetch(`${this.baseUrl}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${this.apiKey}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": process.env.REPLIT_DOMAINS?.split(",")[0] || "http://localhost:5000",
+          "X-Title": "Bristol Site Intelligence Platform"
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          max_tokens: 4000,
+          temperature: 0.7,
+          stream: false
+        })
       });
 
-      if (!response.choices || response.choices.length === 0) {
-        throw new Error("No response from OpenAI API");
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`OpenRouter API error: ${response.status} - ${errorText}`);
       }
 
-      return response.choices[0].message.content || "";
+      const data: OpenRouterResponse = await response.json();
+      
+      if (!data.choices || data.choices.length === 0) {
+        throw new Error("No response from OpenRouter API");
+      }
+
+      return data.choices[0].message.content;
     } catch (error) {
       console.error("AI Service Error:", error);
       throw new Error(`Failed to generate AI response: ${error instanceof Error ? error.message : "Unknown error"}`);
@@ -55,8 +88,8 @@ export class AIService {
       // Get conversation history
       const messages = await storage.getSessionMessages(sessionId);
       
-      // Convert to OpenAI format
-      const openAIMessages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+      // Convert to OpenRouter format
+      const openRouterMessages: OpenRouterMessage[] = [
         {
           role: "system",
           content: this.getSystemPrompt()
@@ -67,8 +100,8 @@ export class AIService {
         }))
       ];
 
-      // Get AI response
-      const aiResponse = await this.createChatCompletion(openAIMessages);
+      // Get AI response using GPT-5
+      const aiResponse = await this.createChatCompletion(openRouterMessages);
 
       // Store AI response
       const aiChatMessage: InsertChatMessage = {
