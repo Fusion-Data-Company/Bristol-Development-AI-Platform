@@ -117,6 +117,75 @@
   --bristol-night: hsl(217 58% 4%);
 }
 
+/* Bristol Enterprise Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-10px) rotate(1deg); }
+  66% { transform: translateY(5px) rotate(-1deg); }
+}
+
+@keyframes pulse-bristol {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(139, 21, 56, 0.7);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 0 10px rgba(139, 21, 56, 0);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+@keyframes thinking-dots {
+  0%, 20% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-bristol {
+  animation: pulse-bristol 2s infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 178, 0, 0.2),
+    transparent
+  );
+  background-size: 200px 100%;
+  animation: shimmer 2s infinite;
+}
+
+.animate-thinking {
+  animation: thinking-dots 1.4s ease-in-out infinite;
+}
+
+.animate-thinking:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.animate-thinking:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Mapbox Popup Styling */
+.bristol-popup .mapboxgl-popup-content {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(139, 21, 56, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
 @layer base {
   * {
     @apply border-border;
