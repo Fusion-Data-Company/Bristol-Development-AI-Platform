@@ -95,35 +95,6 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
           }
         }
         
-        // Always load PARLAY data to ensure parcels are visible (mirrors Google Earth Pro behavior)
-        console.log('Loading comprehensive PARLAY parcel dataset');
-        const sampleData = await import('@/utils/kmlParser').then(module => module.createSampleParlayData());
-        if (sampleData) {
-          const parlayGeoJson = {
-            type: 'FeatureCollection',
-            features: [
-              ...geoJson.features, // Existing features from KML
-              ...sampleData.features.map(feature => ({
-                type: 'Feature',
-                id: feature.id,
-                properties: {
-                  name: feature.name,
-                  description: feature.description,
-                  source: 'PARLAY',
-                  ...feature.properties
-                },
-                geometry: {
-                  type: feature.geometry.type,
-                  coordinates: feature.geometry.coordinates
-                }
-              }))
-            ]
-          };
-          console.log(`Loaded ${sampleData.features.length} PARLAY parcels total`);
-          setGeoJsonData(parlayGeoJson);
-          onFeaturesLoad?.(sampleData.features);
-        }
-        
       } catch (err) {
         console.error('Error loading KML:', err);
         setError(err instanceof Error ? err.message : 'Failed to load KML');

@@ -153,213 +153,51 @@ function parseCoordinates(coordinatesElement: Element | undefined): number[][] |
 
 export async function fetchNetworkLink(href: string): Promise<KMLData | null> {
   try {
-    // For PARLAY data, we'll use a proxy approach since direct CORS requests may fail
     console.log('Attempting to fetch NetworkLink:', href);
     
-    // Try direct fetch first
-    try {
-      const response = await fetch(href, {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-          'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
-        }
-      });
+    // For PARLAY URLs, use our server proxy to handle KMZ extraction
+    if (href.includes('reportallusa.com/parlay/gearth_layers2.kmz')) {
+      console.log('Using server proxy for PARLAY KMZ...');
+      const response = await fetch('/api/proxy/parlay');
       
-      if (response.ok) {
-        const contentType = response.headers.get('content-type') || '';
-        
-        if (contentType.includes('application/vnd.google-earth.kmz') || href.endsWith('.kmz')) {
-          // For KMZ files, we'll create sample parcel data since we can't extract zip on client
-          console.log('KMZ detected, creating sample PARLAY parcels');
-          return createSampleParlayData();
-        } else {
-          const kmlContent = await response.text();
-          return parseKML(kmlContent);
-        }
+      if (!response.ok) {
+        throw new Error(`Server proxy failed: ${response.status}`);
       }
-    } catch (corsError) {
-      console.log('CORS request failed, creating sample PARLAY data');
+      
+      const kmlContent = await response.text();
+      console.log('Received KML from server proxy, length:', kmlContent.length);
+      return parseKML(kmlContent);
     }
     
-    // If direct fetch fails, create sample PARLAY parcel data
-    return createSampleParlayData();
+    // For other URLs, try direct fetch
+    const response = await fetch(href, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*',
+        'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    const contentType = response.headers.get('content-type') || '';
+    console.log('Response content type:', contentType);
+    
+    if (contentType.includes('application/xml') || href.endsWith('.kml')) {
+      const kmlContent = await response.text();
+      console.log('Processing KML content, length:', kmlContent.length);
+      return parseKML(kmlContent);
+    }
+    
+    return null;
     
   } catch (error) {
     console.error('Error fetching network link:', error);
-    // Return sample data as fallback
-    return createSampleParlayData();
+    return null;
   }
 }
 
-// Create extensive PARLAY parcel data that mirrors Google Earth Pro functionality
-export function createSampleParlayData(): KMLData {
-  const parlayParcels = [];
-  
-  // Atlanta Metro Area - Dense coverage
-  const atlantaBounds = { minLat: 33.7, maxLat: 33.8, minLng: -84.4, maxLng: -84.3 };
-  for (let i = 0; i < 20; i++) {
-    const lat = atlantaBounds.minLat + Math.random() * (atlantaBounds.maxLat - atlantaBounds.minLat);
-    const lng = atlantaBounds.minLng + Math.random() * (atlantaBounds.maxLng - atlantaBounds.minLng);
-    const size = 0.002 + Math.random() * 0.008; // Variable parcel sizes
-    
-    parlayParcels.push({
-      id: `parlay-atlanta-${i + 1}`,
-      name: `Atlanta Parcel #A${String(i + 1).padStart(3, '0')}`,
-      description: `Development parcel in Atlanta metro - ${Math.floor(Math.random() * 5) + 1}.${Math.floor(Math.random() * 9)} acres`,
-      geometry: {
-        type: 'Polygon' as const,
-        coordinates: [[
-          [lng, lat],
-          [lng + size, lat],
-          [lng + size, lat + size],
-          [lng, lat + size],
-          [lng, lat]
-        ]]
-      },
-      properties: {
-        parcelId: `A${String(i + 1).padStart(3, '0')}`,
-        city: 'Atlanta',
-        state: 'GA',
-        zoning: ['R-3', 'C-2', 'MF', 'MX-1'][Math.floor(Math.random() * 4)],
-        acreage: (size * 24710).toFixed(1), // Convert to acres approximately
-        source: 'PARLAY'
-      }
-    });
-  }
-
-  // Charlotte Area
-  const charlotteBounds = { minLat: 35.2, maxLat: 35.3, minLng: -80.9, maxLng: -80.8 };
-  for (let i = 0; i < 15; i++) {
-    const lat = charlotteBounds.minLat + Math.random() * (charlotteBounds.maxLat - charlotteBounds.minLat);
-    const lng = charlotteBounds.minLng + Math.random() * (charlotteBounds.maxLng - charlotteBounds.minLng);
-    const size = 0.002 + Math.random() * 0.006;
-    
-    parlayParcels.push({
-      id: `parlay-charlotte-${i + 1}`,
-      name: `Charlotte Parcel #C${String(i + 1).padStart(3, '0')}`,
-      description: `Development opportunity in Charlotte - ${Math.floor(Math.random() * 4) + 1}.${Math.floor(Math.random() * 9)} acres`,
-      geometry: {
-        type: 'Polygon' as const,
-        coordinates: [[
-          [lng, lat],
-          [lng + size, lat],
-          [lng + size, lat + size],
-          [lng, lat + size],
-          [lng, lat]
-        ]]
-      },
-      properties: {
-        parcelId: `C${String(i + 1).padStart(3, '0')}`,
-        city: 'Charlotte',
-        state: 'NC',
-        zoning: ['R-2', 'C-1', 'MF', 'PUD'][Math.floor(Math.random() * 4)],
-        acreage: (size * 24710).toFixed(1),
-        source: 'PARLAY'
-      }
-    });
-  }
-
-  // Orlando Area
-  const orlandoBounds = { minLat: 28.5, maxLat: 28.6, minLng: -81.4, maxLng: -81.3 };
-  for (let i = 0; i < 18; i++) {
-    const lat = orlandoBounds.minLat + Math.random() * (orlandoBounds.maxLat - orlandoBounds.minLat);
-    const lng = orlandoBounds.minLng + Math.random() * (orlandoBounds.maxLng - orlandoBounds.minLng);
-    const size = 0.001 + Math.random() * 0.005;
-    
-    parlayParcels.push({
-      id: `parlay-orlando-${i + 1}`,
-      name: `Orlando Parcel #O${String(i + 1).padStart(3, '0')}`,
-      description: `Resort development site in Orlando - ${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 9)} acres`,
-      geometry: {
-        type: 'Polygon' as const,
-        coordinates: [[
-          [lng, lat],
-          [lng + size, lat],
-          [lng + size, lat + size],
-          [lng, lat + size],
-          [lng, lat]
-        ]]
-      },
-      properties: {
-        parcelId: `O${String(i + 1).padStart(3, '0')}`,
-        city: 'Orlando',
-        state: 'FL',
-        zoning: ['R-3', 'C-2', 'RT', 'PUD'][Math.floor(Math.random() * 4)],
-        acreage: (size * 24710).toFixed(1),
-        source: 'PARLAY'
-      }
-    });
-  }
-
-  // Nashville Area
-  const nashvilleBounds = { minLat: 36.1, maxLat: 36.2, minLng: -86.8, maxLng: -86.7 };
-  for (let i = 0; i < 12; i++) {
-    const lat = nashvilleBounds.minLat + Math.random() * (nashvilleBounds.maxLat - nashvilleBounds.minLat);
-    const lng = nashvilleBounds.minLng + Math.random() * (nashvilleBounds.maxLng - nashvilleBounds.minLng);
-    const size = 0.002 + Math.random() * 0.007;
-    
-    parlayParcels.push({
-      id: `parlay-nashville-${i + 1}`,
-      name: `Nashville Parcel #N${String(i + 1).padStart(3, '0')}`,
-      description: `Music City development parcel - ${Math.floor(Math.random() * 6) + 1}.${Math.floor(Math.random() * 9)} acres`,
-      geometry: {
-        type: 'Polygon' as const,
-        coordinates: [[
-          [lng, lat],
-          [lng + size, lat],
-          [lng + size, lat + size],
-          [lng, lat + size],
-          [lng, lat]
-        ]]
-      },
-      properties: {
-        parcelId: `N${String(i + 1).padStart(3, '0')}`,
-        city: 'Nashville',
-        state: 'TN',
-        zoning: ['R-4', 'C-3', 'MF', 'MX-2'][Math.floor(Math.random() * 4)],
-        acreage: (size * 24710).toFixed(1),
-        source: 'PARLAY'
-      }
-    });
-  }
-
-  // Tampa Area
-  const tampaBounds = { minLat: 27.9, maxLat: 28.0, minLng: -82.5, maxLng: -82.4 };
-  for (let i = 0; i < 14; i++) {
-    const lat = tampaBounds.minLat + Math.random() * (tampaBounds.maxLat - tampaBounds.minLat);
-    const lng = tampaBounds.minLng + Math.random() * (tampaBounds.maxLng - tampaBounds.minLng);
-    const size = 0.001 + Math.random() * 0.004;
-    
-    parlayParcels.push({
-      id: `parlay-tampa-${i + 1}`,
-      name: `Tampa Parcel #T${String(i + 1).padStart(3, '0')}`,
-      description: `Coastal development opportunity - ${Math.floor(Math.random() * 4) + 1}.${Math.floor(Math.random() * 9)} acres`,
-      geometry: {
-        type: 'Polygon' as const,
-        coordinates: [[
-          [lng, lat],
-          [lng + size, lat],
-          [lng + size, lat + size],
-          [lng, lat + size],
-          [lng, lat]
-        ]]
-      },
-      properties: {
-        parcelId: `T${String(i + 1).padStart(3, '0')}`,
-        city: 'Tampa',
-        state: 'FL',
-        zoning: ['R-2', 'C-1', 'MF', 'WF'][Math.floor(Math.random() * 4)],
-        acreage: (size * 24710).toFixed(1),
-        source: 'PARLAY'
-      }
-    });
-  }
-
-  console.log(`Generated ${parlayParcels.length} PARLAY parcels across Sunbelt markets`);
-
-  return {
-    type: 'FeatureCollection',
-    features: parlayParcels
-  };
-}
+// Server handles KMZ extraction - no client-side KMZ processing needed

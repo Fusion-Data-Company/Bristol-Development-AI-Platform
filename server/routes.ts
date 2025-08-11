@@ -318,5 +318,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // PARLAY KMZ proxy endpoint
+  app.get("/api/proxy/parlay", async (req, res) => {
+    try {
+      console.log('Proxying PARLAY KMZ request...');
+      const response = await fetch('https://reportallusa.com/parlay/gearth_layers2.kmz?user_key=837bac90efffc90', {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)',
+          'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      
+      // Use JSZip to extract KML from KMZ
+      const JSZip = require('jszip');
+      const zip = new JSZip();
+      const zipContent = await zip.loadAsync(arrayBuffer);
+      
+      // Find KML files
+      const kmlFiles = Object.keys(zipContent.files).filter(filename => 
+        filename.toLowerCase().endsWith('.kml')
+      );
+      
+      if (kmlFiles.length === 0) {
+        throw new Error('No KML files found in KMZ archive');
+      }
+      
+      // Extract the main KML file
+      const mainKmlFile = kmlFiles[0];
+      const kmlContent = await zipContent.files[mainKmlFile].async('text');
+      
+      console.log(`Extracted KML content from ${mainKmlFile}, length:`, kmlContent.length);
+      
+      res.set('Content-Type', 'application/xml');
+      res.send(kmlContent);
+      
+    } catch (error) {
+      console.error('Error proxying PARLAY data:', error);
+      res.status(500).json({ error: 'Failed to fetch PARLAY data', details: error.message });
+    }
+  });
+
   return httpServer;
 }
