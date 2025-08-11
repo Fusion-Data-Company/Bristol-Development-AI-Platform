@@ -214,25 +214,48 @@ export default function Dashboard() {
       <ParallaxBackground />
 
       {/* Navigation Header */}
-      <header className="relative z-10 bg-bristol-ink text-white shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <header className="relative z-10 shadow-xl" style={{
+        background: `linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #0f0f0f 50%, #1a1a1a 75%, #0f0f0f 100%)`,
+        backgroundSize: '12px 12px',
+        position: 'relative'
+      }}>
+        {/* Stucco texture overlay */}
+        <div 
+          className="absolute inset-0 opacity-40"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 50%),
+              radial-gradient(circle at 40% 40%, rgba(0,0,0,0.4) 0%, transparent 30%),
+              radial-gradient(circle at 60% 70%, rgba(0,0,0,0.3) 0%, transparent 40%),
+              radial-gradient(circle at 15% 15%, rgba(255,255,255,0.05) 0%, transparent 60%),
+              radial-gradient(circle at 85% 85%, rgba(0,0,0,0.2) 0%, transparent 50%)
+            `,
+            backgroundSize: '140px 140px, 90px 90px, 50px 50px, 70px 70px, 30px 30px, 110px 110px'
+          }}
+        />
+        
+        <div className="max-w-7xl mx-auto px-4 py-4 relative">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-bristol-maroon rounded-lg flex items-center justify-center">
-                <span className="text-white font-serif font-bold text-xl">B</span>
+              <div className="w-12 h-12 bg-gradient-to-br from-bristol-maroon via-red-800 to-red-900 rounded-lg flex items-center justify-center shadow-xl border border-red-800/30">
+                <span className="text-white font-serif font-bold text-xl drop-shadow-lg">B</span>
               </div>
               <div>
-                <h1 className="font-serif text-2xl font-bold">Bristol Development</h1>
-                <p className="text-bristol-stone text-sm">Site Intelligence Platform</p>
+                <h1 className="font-serif text-2xl font-bold text-white drop-shadow-lg">Bristol Development</h1>
+                <p className="text-gray-300 text-sm">Site Intelligence Platform</p>
               </div>
             </div>
             
-            <nav className="hidden md:flex items-center space-x-6">
+            <nav className="hidden md:flex items-center space-x-2">
               <button 
                 onClick={() => setActiveTab("overview")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "overview" && "text-bristol-gold"
+                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
+                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
+                  activeTab === "overview" 
+                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
+                    : "hover:bg-white/5"
                 )}
               >
                 Overview
@@ -240,8 +263,11 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("mapping")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "mapping" && "text-bristol-gold"
+                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
+                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
+                  activeTab === "mapping" 
+                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
+                    : "hover:bg-white/5"
                 )}
               >
                 Interactive Map
@@ -249,8 +275,11 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("scoring")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "scoring" && "text-bristol-gold"
+                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
+                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
+                  activeTab === "scoring" 
+                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
+                    : "hover:bg-white/5"
                 )}
               >
                 Site Scoring
@@ -258,8 +287,11 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("analytics")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "analytics" && "text-bristol-gold"
+                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
+                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
+                  activeTab === "analytics" 
+                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
+                    : "hover:bg-white/5"
                 )}
               >
                 Market Analytics
@@ -267,8 +299,11 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("chat")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "chat" && "text-bristol-gold"
+                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
+                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
+                  activeTab === "chat" 
+                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
+                    : "hover:bg-white/5"
                 )}
               >
                 AI Assistant
@@ -277,18 +312,18 @@ export default function Dashboard() {
             
             <div className="flex items-center space-x-4">
               {/* WebSocket Status Indicator */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-3 py-1 bg-black/20 rounded-lg border border-white/10">
                 <div className={cn(
-                  "w-3 h-3 rounded-full",
-                  isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"
+                  "w-3 h-3 rounded-full shadow-lg",
+                  isConnected ? "bg-green-400 animate-pulse shadow-green-400/50" : "bg-red-400 shadow-red-400/50"
                 )} />
-                <span className="text-sm">{isConnected ? "Live" : "Offline"}</span>
+                <span className="text-sm font-medium text-white">{isConnected ? "Live" : "Offline"}</span>
               </div>
               
               {/* User Profile */}
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-bristol-stone rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-semibold">
+              <div className="flex items-center gap-3 pl-4 border-l border-white/20">
+                <div className="w-9 h-9 bg-gradient-to-br from-bristol-stone to-gray-700 rounded-full flex items-center justify-center shadow-lg border-2 border-white/20">
+                  <span className="text-white text-sm font-bold drop-shadow">
                     {user?.firstName?.[0] || user?.email?.[0] || "U"}
                   </span>
                 </div>
@@ -296,7 +331,7 @@ export default function Dashboard() {
                   onClick={handleLogout}
                   variant="ghost"
                   size="sm"
-                  className="text-white hover:text-bristol-gold"
+                  className="text-white font-medium hover:text-bristol-gold hover:bg-white/10 transition-all duration-200 px-3 py-1 rounded-lg"
                 >
                   Logout
                 </Button>
