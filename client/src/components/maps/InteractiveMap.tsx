@@ -76,50 +76,85 @@ export function InteractiveMap({
     {
       id: '1',
       name: 'Atlanta Metro Site',
-      address: '1234 Peachtree St, Atlanta, GA',
+      address: '1234 Peachtree St',
+      city: 'Atlanta',
+      state: 'GA',
+      zipCode: '30309',
       latitude: 33.7490,
       longitude: -84.3880,
+      acreage: 2.5,
+      zoning: 'Mixed-Use',
+      status: 'active',
       bristolScore: 87,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       id: '2', 
       name: 'Charlotte Uptown',
-      address: '567 Trade St, Charlotte, NC',
+      address: '567 Trade St',
+      city: 'Charlotte',
+      state: 'NC',
+      zipCode: '28202',
       latitude: 35.2271,
       longitude: -80.8431,
+      acreage: 1.8,
+      zoning: 'Commercial',
+      status: 'active',
       bristolScore: 75,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       id: '3',
       name: 'Orlando Downtown',
-      address: '890 Orange Ave, Orlando, FL',
+      address: '890 Orange Ave',
+      city: 'Orlando',
+      state: 'FL',
+      zipCode: '32801',
       latitude: 28.5383,
       longitude: -81.3792,
+      acreage: 3.2,
+      zoning: 'Residential',
+      status: 'active',
       bristolScore: 68,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       id: '4',
       name: 'Nashville Music Row',
-      address: '1010 Music Row, Nashville, TN',
+      address: '1010 Music Row',
+      city: 'Nashville',
+      state: 'TN',
+      zipCode: '37203',
       latitude: 36.1627,
       longitude: -86.7816,
+      acreage: 2.1,
+      zoning: 'Mixed-Use',
+      status: 'active',
       bristolScore: 82,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     },
     {
       id: '5',
       name: 'Tampa Bay Area',
-      address: '2020 Bay St, Tampa, FL',
+      address: '2020 Bay St',
+      city: 'Tampa',
+      state: 'FL',
+      zipCode: '33606',
       latitude: 27.9506,
       longitude: -82.4572,
+      acreage: 4.5,
+      zoning: 'Commercial',
+      status: 'active',
       bristolScore: 71,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -145,14 +180,20 @@ export function InteractiveMap({
     id: 'market-heat',
     type: 'heatmap' as const,
     paint: {
-      'heatmap-weight': {
-        property: 'score',
-        type: 'exponential',
-        stops: [[0, 0], [100, 1]]
-      },
-      'heatmap-intensity': {
-        stops: [[0, 1], [15, 3]]
-      },
+      'heatmap-weight': [
+        'interpolate',
+        ['linear'],
+        ['get', 'score'],
+        0, 0,
+        100, 1
+      ],
+      'heatmap-intensity': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        0, 1,
+        15, 3
+      ],
       'heatmap-color': [
         'interpolate',
         ['linear'],
@@ -164,12 +205,20 @@ export function InteractiveMap({
         0.8, 'rgba(255, 69, 0, 0.8)',
         1, 'rgba(139, 21, 56, 1)'
       ],
-      'heatmap-radius': {
-        stops: [[0, 2], [15, 40]]
-      },
-      'heatmap-opacity': {
-        stops: [[7, 1], [15, 0.6]]
-      }
+      'heatmap-radius': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        0, 2,
+        15, 40
+      ],
+      'heatmap-opacity': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        7, 1,
+        15, 0.6
+      ]
     }
   } as const;
 

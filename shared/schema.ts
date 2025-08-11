@@ -105,6 +105,118 @@ export const mcpTools = pgTable("mcp_tools", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Comps table for comparable property analysis
+export const comps = pgTable("comps", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  siteId: varchar("site_id").references(() => sites.id),
+  name: varchar("name").notNull(),
+  address: text("address").notNull(),
+  distance: real("distance"), // miles from site
+  units: integer("units"),
+  yearBuilt: integer("year_built"),
+  rentMin: real("rent_min"),
+  rentMax: real("rent_max"),
+  rentAvg: real("rent_avg"),
+  occupancyRate: real("occupancy_rate"), // percentage
+  amenities: jsonb("amenities"), // array of amenity features
+  concessions: jsonb("concessions"), // current concession offers
+  score: integer("score"), // 1-100 Bristol methodology score
+  scoreBreakdown: jsonb("score_breakdown"), // detailed scoring by category
+  source: varchar("source"), // apartments.com, apify, manual
+  dataDate: timestamp("data_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Concessions table for tracking incentives
+export const concessions = pgTable("concessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  compId: varchar("comp_id").references(() => comps.id),
+  type: varchar("type").notNull(), // free_rent, reduced_deposit, waived_fees
+  description: text("description"),
+  value: real("value"), // dollar value or months
+  validUntil: timestamp("valid_until"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Properties table for detailed property information
+export const properties = pgTable("properties", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  siteId: varchar("site_id").references(() => sites.id),
+  parcelNumber: varchar("parcel_number"),
+  ownerName: varchar("owner_name"),
+  assessedValue: real("assessed_value"),
+  taxAmount: real("tax_amount"),
+  landUse: varchar("land_use"),
+  buildingArea: real("building_area"), // square feet
+  yearBuilt: integer("year_built"),
+  source: varchar("source"), // county_assessor, arcgis, manual
+  dataDate: timestamp("data_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Runs table for tracking data collection runs
+export const runs = pgTable("runs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  type: varchar("type").notNull(), // apify, census, hud, arcgis, n8n
+  status: varchar("status").notNull(), // pending, running, completed, failed
+  input: jsonb("input"),
+  output: jsonb("output"),
+  error: text("error"),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Files table for uploaded documents
+export const files = pgTable("files", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id),
+  siteId: varchar("site_id").references(() => sites.id),
+  fileName: varchar("file_name").notNull(),
+  fileType: varchar("file_type").notNull(), // kml, kmz, pdf, xlsx, csv
+  fileSize: integer("file_size"), // bytes
+  url: text("url"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Short-term memory for AI context
+export const memoryShort = pgTable("memory_short", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id),
+  sessionId: varchar("session_id").references(() => chatSessions.id),
+  key: varchar("key").notNull(),
+  value: jsonb("value").notNull(),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Long-term memory for AI learning
+export const memoryLong = pgTable("memory_long", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id),
+  category: varchar("category").notNull(), // preferences, patterns, insights
+  key: varchar("key").notNull(),
+  value: jsonb("value").notNull(),
+  confidence: real("confidence"), // 0-1 confidence score
+  lastUsed: timestamp("last_used"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Tools registry for external integrations
+export const tools = pgTable("tools", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name").notNull(),
+  baseUrl: text("base_url").notNull(),
+  apiKey: text("api_key"), // encrypted
+  notes: text("notes"),
+  enabled: boolean("enabled").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   id: true,
@@ -147,6 +259,49 @@ export const insertMcpToolSchema = createInsertSchema(mcpTools).omit({
   updatedAt: true,
 });
 
+export const insertCompSchema = createInsertSchema(comps).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertConcessionSchema = createInsertSchema(concessions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertPropertySchema = createInsertSchema(properties).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertRunSchema = createInsertSchema(runs).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertFileSchema = createInsertSchema(files).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMemoryShortSchema = createInsertSchema(memoryShort).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertMemoryLongSchema = createInsertSchema(memoryLong).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertToolSchema = createInsertSchema(tools).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -162,3 +317,19 @@ export type IntegrationLog = typeof integrationLogs.$inferSelect;
 export type InsertIntegrationLog = z.infer<typeof insertIntegrationLogSchema>;
 export type McpTool = typeof mcpTools.$inferSelect;
 export type InsertMcpTool = z.infer<typeof insertMcpToolSchema>;
+export type Comp = typeof comps.$inferSelect;
+export type InsertComp = z.infer<typeof insertCompSchema>;
+export type Concession = typeof concessions.$inferSelect;
+export type InsertConcession = z.infer<typeof insertConcessionSchema>;
+export type Property = typeof properties.$inferSelect;
+export type InsertProperty = z.infer<typeof insertPropertySchema>;
+export type Run = typeof runs.$inferSelect;
+export type InsertRun = z.infer<typeof insertRunSchema>;
+export type File = typeof files.$inferSelect;
+export type InsertFile = z.infer<typeof insertFileSchema>;
+export type MemoryShort = typeof memoryShort.$inferSelect;
+export type InsertMemoryShort = z.infer<typeof insertMemoryShortSchema>;
+export type MemoryLong = typeof memoryLong.$inferSelect;
+export type InsertMemoryLong = z.infer<typeof insertMemoryLongSchema>;
+export type Tool = typeof tools.$inferSelect;
+export type InsertTool = z.infer<typeof insertToolSchema>;
