@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChatInterface } from "@/components/chat/ChatInterface";
-import { InteractiveMap } from "@/components/maps/InteractiveMap";
+import MapLibreMap from "@/components/maps/MapLibreMap";
 import { SiteScoring } from "@/components/analytics/SiteScoring";
 import { MarketAnalytics } from "@/components/analytics/MarketAnalytics";
 import { ParallaxBackground, ParallaxHero } from "@/components/ParallaxBackground";
@@ -656,7 +656,7 @@ export default function Dashboard() {
             <div className="flex-1 flex relative">
               {/* Map */}
               <div className="flex-1">
-                <InteractiveMap
+                <MapLibreMap
                   sites={sites || []}
                   selectedSiteId={selectedSite?.id}
                   onSiteSelect={setSelectedSite}
