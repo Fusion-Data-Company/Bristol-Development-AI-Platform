@@ -1,0 +1,346 @@
+got it. here’s a second, copy‑paste “Brand + Memory SUPERPROMPT” you can run right after the first mega prompt. it upgrades the build so the agent, UI, copy tone, colors, assets, and memory all feel 100% Bristol from day one—and it auto‑ingests public pages from bristoldevelopment.com into the on‑board memory store, without you doing anything.
+
+paste this whole block into Replit Builder. it modifies/extends the existing repo the first prompt created. it does not break anything, and it won’t leave dead placeholders.
+
+⸻
+
+REPLIT BUILDER SUPERPROMPT — Bristol Brand + Memory + Vibe Upgrade
+
+Goals
+	•	Infuse Bristol voice & aesthetics (Cinzel serif, palette, logo, hero imagery).
+	•	Auto‑ingest public Bristol site content as long‑term memory (on‑board DB).
+	•	Expand the Head of Data system prompt with Bristol context & team vibe.
+	•	Add seed data (projects, amenities dictionary, comps scoring weights).
+	•	Add Bristol Mode switch that biases the agent to house style.
+	•	Add property gallery and brand components so the app looks “science‑lab pro.”
+	•	Add Upcoming Pipeline search endpoint (public sources) and UI stub that works now.
+	•	Tighten MS 365 UX: one‑click test calls for OneDrive + Outlook list.
+	•	Keep everything working offline if keys are missing; auto‑hide what’s not configured.
+
+⸻
+
+0) Brand tokens (colors, fonts, imagery)
+
+Update apps/web/tailwind.config.js — extend palette/typography
+	•	Keep Cinzel serif.
+	•	Add refined tokens:
+
+extend: {
+  fontFamily: { serif: ['"Cinzel"', "serif"] },
+  colors: {
+    bristol: {
+      ink: "#0f172a",   // deep slate
+      stone: "#334155", // cool gray
+      gold: "#c9a968",  // accent
+      fog: "#f7f7f8",
+      sky: "#eef2f7",
+      night: "#0b1020"
+    }
+  },
+  borderRadius: { xl2: "1.25rem" }
+}
+
+Add brand components
+
+Create apps/web/src/brand/Chrome.jsx:
+
+import React from "react";
+
+export function PageFrame({ title, children, right=null }) {
+  return (
+    <div className="bg-bristol-fog min-h-screen">
+      <div className="bg-bristol-ink text-white px-4 py-3 flex items-center gap-3">
+        <img src="/public/bristol-logo.gif" className="h-10" />
+        <div className="font-serif text-2xl">{title}</div>
+        <div className="ml-auto flex items-center gap-3">{right}</div>
+      </div>
+      <div className="p-3 max-w-[1600px] mx-auto">{children}</div>
+    </div>
+  );
+}
+
+export function Section({ heading, children, actions=null }){
+  return (
+    <div className="bg-white rounded-xl2 shadow p-4 mb-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="font-serif text-xl">{heading}</div>
+        {actions}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+Refactor App.jsx and Integrations.jsx to wrap with PageFrame (not required to paste—Builder can update accordingly).
+
+Add hero backdrop (optional now)
+	•	Create /apps/api/public/brand/hero1.jpg (placeholder).
+If you upload real Bristol property photos later, drop them into this folder; UI will auto‑rotate.
+
+Add apps/web/src/widgets/HeroStrip.jsx:
+
+export default function HeroStrip(){
+  const imgs = ["/public/brand/hero1.jpg"].filter(Boolean);
+  return (
+    <div className="rounded-xl2 overflow-hidden mb-3 border">
+      <img src={imgs[0]} className="w-full h-48 object-cover" />
+    </div>
+  );
+}
+
+
+⸻
+
+1) Bristol memory ingestion (auto‑crawler, safe, polite)
+
+Add deps to apps/api/package.json if missing
+
+"dependencies": {
+  "axios": "^1.7.2",
+  "cheerio": "^1.0.0",
+  "...": "..."
+}
+
+Create apps/api/src/ingest/bristolIngest.js
+
+import axios from "axios";
+import * as cheerio from "cheerio";
+import { pool } from "../db.js";
+
+const ROOT = "https://www.bristoldevelopment.com";
+const WHITELIST = [
+  "/", "/about", "/team", "/projects", "/contact"
+];
+
+function clean(text){
+  return text.replace(/\s+/g," ").trim();
+}
+
+// simple keyword vector (naive embedding) so retrieval works even before pgvector
+function toVector(text){
+  const terms = text.toLowerCase().match(/[a-z]{3,}/g) || [];
+  const bag = {};
+  terms.forEach(t => bag[t]=(bag[t]||0)+1);
+  return { dim:Object.keys(bag).length, bag };
+}
+
+export async function ingestBristol(){
+  const seen = new Set();
+  const queue = new Set(WHITELIST.map(p=> new URL(p, ROOT).toString()));
+
+  while(queue.size){
+    const url = queue.values().next().value; queue.delete(url);
+    if(seen.has(url)) continue; seen.add(url);
+
+    try{
+      const { data } = await axios.get(url, { timeout: 15000 });
+      const $ = cheerio.load(data);
+      const pageText = clean($("body").text());
+      if(pageText.length < 200) continue;
+
+      const vector = toVector(pageText);
+      await pool.query(`
+        insert into memory_long (embedding, chunk, doc_id, source)
+        values ($1, $2, $3, $4)`,
+        [vector, pageText.slice(0, 8000), url, "bristol-site"]
+      );
+
+      // discover same‑host links (1 level deep)
+      $("a[href]").each((_,a)=>{
+        const href = $(a).attr("href");
+        if(!href) return;
+        try{
+          const u = new URL(href, ROOT);
+          if(u.origin === new URL(ROOT).origin && u.pathname.split("/").filter(Boolean).length <= 2){
+            if(!seen.has(u.toString())) queue.add(u.toString());
+          }
+        }catch{}
+      });
+      // be polite: small delay
+      await new Promise(r=>setTimeout(r, 400));
+    }catch(e){
+      // ignore fetch errors to keep ingestion robust
+    }
+  }
+  return { ok:true, stored:true, pages: seen.size };
+}
+
+Wire an endpoint to run ingestion manually
+
+Create apps/api/src/routes/ingest.js:
+
+import { Router } from "express";
+import { ingestBristol } from "../ingest/bristolIngest.js";
+export const router = Router();
+
+router.post("/ingest/bristol", async (_,res)=>{
+  const out = await ingestBristol();
+  res.json(out);
+});
+
+Update apps/api/src/index.js to import { router as ingestApi } from "./routes/ingest.js"; and app.use("/api", ingestApi);
+
+Lightweight retrieval util for agent (keyword dot‑product)
+
+Create apps/api/src/search/retrieve.js:
+
+import { pool } from "../db.js";
+export async function retrieveBristol(query, limit=6){
+  const q = (query||"").toLowerCase().match(/[a-z]{3,}/g) || [];
+  if(!q.length) return [];
+  const { rows } = await pool.query("select id, embedding, chunk, doc_id, source, created_at from memory_long order by created_at desc limit 500");
+  function score(vec){
+    let s=0; q.forEach(t=> s += (vec.bag?.[t]||0));
+    return s;
+  }
+  const scored = rows.map(r=> ({ ...r, _score: score(r.embedding||{}) })).sort((a,b)=>b._score-a._score);
+  return scored.slice(0, limit);
+}
+
+Expose in agent route: augment apps/api/src/routes/agent.js:
+
+import { retrieveBristol } from "../search/retrieve.js";
+
+router.post("/bristol-context", async (req,res)=>{
+  const { query } = req.body;
+  const hits = await retrieveBristol(query, 6);
+  res.json({ hits: hits.map(h=>({ id:h.id, doc:h.doc_id, preview:h.chunk.slice(0,300), score:h._score })) });
+});
+
+
+⸻
+
+2) Agent voice & vibe — upgraded system prompt
+
+Update ChatDock systemPrompt() in apps/web/src/widgets/ChatDock.jsx:
+
+function systemPrompt(){
+  return `YOU ARE: Head of Data & Insights at Bristol Development Group (Franklin, TN).
+TONE: C‑suite crisp. Numbers-first. Polished, brief, decisive. 
+BRISTOL CONTEXT: Prefer Sunbelt markets; amenity-rich multifamily/mixed-use; quality-first execution; learn from prior Bristol projects and decisions.
+STYLE: Verbal-judo listening (reflect, clarify, answer). Sandler flow (Pain→Info→Good News→Next Step). 
+DATA: Use Bristol memory (company website ingestion), TanStack selection, Sites/Comps/Metrics tables, map context. Cite sources+dates. Label proxies (HUD FMR, ACS vacancy).
+COMPS: Score 1–100 (amenities 40%, rent fit 30%, concessions 20%, distance 10%); explain breakdown.
+PIPELINE: Flag competing supply 0–24 months from public sources; warn on oversupply.
+FINANCE: If asked, show simple interest-rate sensitivity and mark assumptions.
+ACTION: You can call /api endpoints (acs/hud/bls/fema/arcgis), write metrics, trigger n8n via /api/agent/mcp/n8n, and store notes to memory.
+MEMORY POLICY: 
+- Short-term: remember current project/site and user requests this session. 
+- Long-term: summarize durable preferences or lessons and write to memory_long as text+keywords (backend will store).
+SECURITY: Never invent vendor-only data; offer alternatives or ask for credentials. 
+OUTPUT: Bullet-tight insight, small tables, a final 'What matters' line with next step.`;
+}
+
+
+⸻
+
+3) Seed amenities + weights and a quick admin endpoint
+
+Create apps/api/src/routes/seed.js:
+
+import { Router } from "express";
+import { pool } from "../db.js";
+export const router = Router();
+const AMENITIES = [
+  "pool","fitness-24h","coworking","ev-chargers","pet-spa","rooftop",
+  "concierge","structured-parking","in-unit-wd","quartz-counters","ss-appliances","smart-locks"
+];
+
+router.post("/seed/amenities", async (_,res)=>{
+  await pool.query(`insert into memory_long (embedding, chunk, source, doc_id)
+    values ($1,$2,$3,$4)`, [{bag:Object.fromEntries(AMENITIES.map(a=>[a,1]))}, "Amenities dictionary seed", "seed", "amenities"]);
+  res.json({ ok:true, amenities: AMENITIES.length });
+});
+
+Add to apps/api/src/index.js:
+
+import { router as seedApi } from "./routes/seed.js";
+app.use("/api", seedApi);
+
+
+⸻
+
+4) Upcoming pipeline search (works now, simple)
+
+Add apps/api/src/routes/pipeline.js:
+
+import { Router } from "express";
+import axios from "axios";
+export const router = Router();
+
+// Example: query an ArcGIS FeatureServer URL you pass in with ?url=... and optional ?where=...
+router.get("/pipeline/search", async (req,res)=>{
+  const { url, where="1=1", outFields="*", f="json" } = req.query;
+  if(!url?.includes("FeatureServer")) return res.status(400).json({ error:"Provide a FeatureServer layer URL" });
+  try{
+    const q = `${url}/query?where=${encodeURIComponent(where)}&outFields=${encodeURIComponent(outFields)}&f=${f}`;
+    const { data } = await axios.get(q, { timeout: 15000 });
+    res.json({ count: data.features?.length||0, data });
+  }catch(e){
+    res.status(500).json({ error: "ArcGIS query failed" });
+  }
+});
+
+Wire it in index.js:
+
+import { router as pipelineApi } from "./routes/pipeline.js";
+app.use("/api", pipelineApi);
+
+Add a small UI stub button in Apps/web/src/pages/App.jsx Tables view header:
+	•	Button “Find Pipeline (ArcGIS)” → opens prompt for FeatureServer URL; on submit, calls /api/pipeline/search and shows count in an alert. (Builder can implement—tiny addition.)
+
+⸻
+
+5) Microsoft 365 UX polish (works now)
+
+Update apps/web/src/pages/Integrations.jsx:
+	•	If access_token is in query string, store it in sessionStorage.ms_token.
+	•	Add two test buttons:
+	•	“List OneDrive Root” → GET /api/graph/list-drive with Authorization: Bearer <token>.
+	•	“List 10 Emails” → GET /api/graph/list-mail with the same header.
+	•	Render JSON results under buttons.
+
+(This uses your existing route code; just add small UI bits.)
+
+⸻
+
+6) Add a Bristol Mode toggle in chat
+
+Update ChatDock.jsx header: add a checkbox “Bristol Mode”.
+	•	When on, prepend an extra system message:
+“Bristol Mode ON: Prefer Bristol phrasing, house standards, and prior decisions; be extra concise and numbers‑first.”
+
+⸻
+
+7) Add a “Brand” tab for property gallery (optional now)
+
+Create apps/web/src/pages/Brand.jsx (simple gallery of /public/brand/*.jpg).
+Add a nav link in header next to Integrations. Auto‑hide if folder empty.
+
+⸻
+
+8) Quality gates (Builder, do this)
+	•	After creating files, run:
+	•	npm install at root
+	•	npm run dev
+	•	Verify:
+	•	POST /api/ingest/bristol → returns {ok:true, pages: N}
+	•	POST /api/seed/amenities → {ok:true}
+	•	/api/bristol-context with {query:"Bristol projects Franklin"} returns hits
+	•	Chat answers; with Bristol Mode ON, tone is concise and “executive”
+	•	Integrations page: Microsoft connect works if keys set; otherwise shows “not configured” note gracefully
+	•	Pipeline search button calls /api/pipeline/search and returns a count
+	•	Comps table shows score and explain modal
+	•	KML/KMZ still imports
+	•	No dead placeholders on first boot
+
+⸻
+
+9) Notes for later (already paved)
+	•	When you want pgvector, we’ll migrate memory_long.embedding from JSON to vector, keep same schema fields.
+	•	When you want PostGIS, we’ll convert sites.geom (GeoJSON) to geometry.
+	•	For voice, we already have MCP hook; adding ElevenLabs key will light it up.
+
+⸻
+
+Done. This SUPERPROMPT layers the Bristol brand, memory ingestion, tone, comps mastery, upcoming pipeline search, and MS 365 polish onto your existing build. Paste it now; let Builder run to completion.

@@ -1,0 +1,1023 @@
+got it. here’s a single, copy‑paste mega prompt for Replit Builder that includes everything—no dead placeholders. it uses Replit Postgres (now), wires real endpoints, builds forms, tables, scoring, scraping, KML/KMZ, dual map engines, 3D sandbox, OpenRouter chat, Microsoft 365 hooks, and the new Bristol comps scoring system (1–100) with amenities + concessions. it also preps an API‑key tools tab, and seeds free public data calls. Cinzel Serif + your logo are set.
+
+paste this entire thing into Replit Builder. it will create a monorepo with apps/web and apps/api. do not stop the build; continue until all files are created and app boots.
+
+⸻
+
+REPLIT BUILDER MASTER PROMPT — Bristol Site Intelligence (Production Scaffold)
+
+Objectives (non‑negotiable)
+	•	Use Replit Postgres via DATABASE_URL. No fake DB. Auto‑migrate on boot.
+	•	Frontend: React+Vite, Tailwind, Cinzel Serif, TanStack Table, MapLibre + ArcGIS toggle, CesiumJS 3D tab, KML/KMZ upload, docked conversational AI (OpenRouter) with MCP hooks, Bristol brand (logo provided).
+	•	Backend: Node+Express, Postgres (pg), endpoints for sites/metrics/comps, comps scoring (1–100), Playwright scraper, public data fetchers (Census/BLS/HUD/FEMA/ArcGIS), Microsoft 365 (Graph OAuth) list OneDrive/Outlook, Tools registry (API keys) usable by agent, n8n trigger endpoint.
+	•	UI: Add Site form, Sites table, Metrics table, Comps table (inline editing with TanStack), Scoring explain modal, Integrations page (Microsoft 365 + Tools), Imports (KML/KMZ).
+	•	Styling: Bristol “lab‑grade”: Cinzel, slate ink tones, gold accent; use the attached logo at /public/bristol-logo.gif.
+
+⸻
+
+Workspace structure
+
+/package.json
+/apps/api/... (Express)
+/apps/web/... (React+Vite)
+/apps/api/public/bristol-logo.gif   <-- use the provided logo
+
+
+⸻
+
+Root package.json
+
+{
+  "name": "bristol-site-intel",
+  "private": true,
+  "workspaces": ["apps/web", "apps/api"],
+  "scripts": {
+    "dev": "npm run dev -w apps/api & npm run dev -w apps/web",
+    "build": "npm run build -w apps/api && npm run build -w apps/web",
+    "start": "npm run start -w apps/api"
+  }
+}
+
+
+⸻
+
+apps/api
+
+apps/api/package.json
+
+{
+  "name": "api",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env --watch src/index.js",
+    "start": "node --env-file=.env src/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.11",
+    "express": "^4.19.2",
+    "express-session": "^1.17.3",
+    "form-data": "^4.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.5",
+    "playwright": "^1.46.0",
+    "zod": "^3.23.8",
+    "msal-node": "^2.6.5",
+    "@microsoft/microsoft-graph-client": "^3.0.7"
+  }
+}
+
+apps/api/.env.example
+
+DATABASE_URL=REPLIT_POSTGRES_URL_HERE
+ALLOWED_ORIGIN=http://localhost:5173
+
+OPENROUTER_API_KEY=
+N8N_WEBHOOK_URL=
+
+# Microsoft 365 (Graph) — optional now, works if set
+MS_CLIENT_ID=
+MS_CLIENT_SECRET=
+MS_TENANT_ID=common
+MS_REDIRECT_URI=http://localhost:3000/api/auth/microsoft/callback
+
+apps/api/src/db.js
+
+import pg from "pg";
+const { Pool } = pg;
+export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+// idempotent schema (GeoJSON now; we can migrate to PostGIS later)
+export async function migrate() {
+  await pool.query(`
+  create extension if not exists pgcrypto;
+
+  create table if not exists users(
+    id uuid primary key default gen_random_uuid(),
+    email text unique, name text, role text default 'analyst',
+    created_at timestamptz default now()
+  );
+
+  create table if not exists oauth_tokens(
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid references users(id) on delete cascade,
+    provider text, access_token text, refresh_token text, expires_at timestamptz
+  );
+
+  create table if not exists sites(
+    id uuid primary key default gen_random_uuid(),
+    name text, address text, parcel_id text, jurisdiction text,
+    lat double precision, lon double precision,
+    geom jsonb, zoning_summary jsonb,
+    created_by uuid references users(id),
+    created_at timestamptz default now()
+  );
+
+  create table if not exists properties(
+    id uuid primary key default gen_random_uuid(),
+    site_id uuid references sites(id) on delete cascade,
+    kind text check (kind in ('apartment','condo','mixed-use','other')) default 'apartment',
+    units int, avg_sf int, year_built int, stories int, parking_ratio numeric,
+    amenities jsonb, images jsonb, created_at timestamptz default now()
+  );
+
+  create table if not exists metrics(
+    id uuid primary key default gen_random_uuid(),
+    site_id uuid references sites(id) on delete cascade,
+    metric_key text, value numeric, unit text, as_of date default now(),
+    source text, confidence numeric, method text, tags text[], extra jsonb,
+    created_at timestamptz default now()
+  );
+
+  create table if not exists concessions(
+    id uuid primary key default gen_random_uuid(),
+    property_id uuid references properties(id) on delete cascade,
+    description text, value_months numeric, notes text, as_of date default now()
+  );
+
+  create table if not exists comps(
+    id uuid primary key default gen_random_uuid(),
+    site_id uuid references sites(id) on delete cascade,
+    property_name text, address text, lat double precision, lon double precision,
+    distance_km numeric, rents jsonb, rent_per_sf jsonb, occupancy numeric,
+    concessions jsonb, amenities jsonb, source text,
+    score numeric, score_breakdown jsonb, observed_at timestamptz default now()
+  );
+
+  create table if not exists runs(
+    id uuid primary key default gen_random_uuid(),
+    site_id uuid references sites(id) on delete cascade,
+    workflow text, status text default 'queued',
+    inputs jsonb, outputs jsonb, started_at timestamptz, finished_at timestamptz
+  );
+
+  create table if not exists files(
+    id uuid primary key default gen_random_uuid(),
+    site_id uuid references sites(id) on delete cascade,
+    kind text, url text, original_name text, size int, hash text,
+    created_at timestamptz default now()
+  );
+
+  create table if not exists memory_short(
+    id uuid primary key default gen_random_uuid(),
+    project_id uuid references sites(id) on delete cascade,
+    user_id uuid references users(id),
+    context jsonb, updated_at timestamptz default now()
+  );
+
+  create table if not exists memory_long(
+    id uuid primary key default gen_random_uuid(),
+    embedding jsonb, chunk text, doc_id text, project_id uuid references sites(id),
+    user_id uuid references users(id), source text, created_at timestamptz default now()
+  );
+
+  create table if not exists tools(
+    id uuid primary key default gen_random_uuid(),
+    user_id uuid references users(id),
+    name text, api_key text, base_url text, notes text,
+    created_at timestamptz default now()
+  );
+  `);
+}
+
+apps/api/src/index.js
+
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import { migrate } from "./db.js";
+import { router as publicApi } from "./routes/public.js";
+import { router as compsApi } from "./routes/comps.js";
+import { router as agentApi } from "./routes/agent.js";
+import { router as scrapeApi } from "./routes/scrape.js";
+import { router as msApi } from "./routes/microsoft.js";
+import { router as toolsApi } from "./routes/tools.js";
+
+await migrate();
+const app = express();
+app.use(cors({ origin: process.env.ALLOWED_ORIGIN, credentials: true }));
+app.use(express.json({ limit: "15mb" }));
+app.use(cookieParser());
+
+app.get("/api/health", (_,res)=>res.json({ok:true}));
+
+app.use("/api", publicApi);
+app.use("/api", compsApi);
+app.use("/api/agent", agentApi);
+app.use("/api", scrapeApi);
+app.use("/api", msApi);
+app.use("/api", toolsApi);
+
+app.use("/public", express.static("public"));
+
+const port = process.env.PORT || 3000;
+app.listen(port, ()=>console.log("API on :"+port));
+
+apps/api/src/routes/public.js
+
+import { Router } from "express";
+import { pool } from "../db.js";
+import axios from "axios";
+export const router = Router();
+
+/* ------- Sites CRUD ------- */
+router.get("/sites", async (_,res)=>{
+  const { rows } = await pool.query("select * from sites order by created_at desc limit 500");
+  res.json(rows);
+});
+router.post("/sites", async (req,res)=>{
+  const { name,address,parcel_id,jurisdiction,lat,lon,geom } = req.body;
+  const { rows } = await pool.query(
+    `insert into sites(name,address,parcel_id,jurisdiction,lat,lon,geom) values($1,$2,$3,$4,$5,$6,$7) returning *`,
+    [name,address,parcel_id,jurisdiction,lat,lon,geom]
+  );
+  res.json(rows[0]);
+});
+
+/* ------- Metrics CRUD (inline for TanStack) ------- */
+router.get("/metrics/:siteId", async (req,res)=>{
+  const { rows } = await pool.query("select * from metrics where site_id=$1 order by as_of desc", [req.params.siteId]);
+  res.json(rows);
+});
+router.post("/metrics/:siteId", async (req,res)=>{
+  const { metric_key,value,unit,as_of,source,confidence,method,tags,extra } = req.body;
+  const { rows } = await pool.query(
+  `insert into metrics(site_id,metric_key,value,unit,as_of,source,confidence,method,tags,extra)
+   values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) returning *`,
+   [req.params.siteId,metric_key,value,unit,as_of,source,confidence,method,tags,extra]
+  );
+  res.json(rows[0]);
+});
+
+/* ------- Free public data examples ------- */
+// ACS median income (tract)
+router.get("/external/acs/median_income", async (req,res)=>{
+  const { state, county, tract, year="2022" } = req.query;
+  const q = `https://api.census.gov/data/${year}/acs/acs5/subject?get=NAME,S1901_C01_012E&for=tract:${tract}&in=state:${state}%20county:${county}`;
+  const { data } = await axios.get(q);
+  res.json({ data });
+});
+// HUD FMR
+router.get("/external/hud/fmr", async (req,res)=>{
+  const { state_code, county_name, year="2024" } = req.query;
+  const u = `https://www.huduser.gov/hudapi/public/fmr/data/${year}?state_code=${state_code}&county_name=${encodeURIComponent(county_name)}`;
+  const { data } = await axios.get(u);
+  res.json(data);
+});
+
+apps/api/src/routes/comps.js
+
+import { Router } from "express";
+import { pool } from "../db.js";
+export const router = Router();
+
+/* ---- scoring function ---- */
+function jaccard(a=[], b=[]){
+  const A=new Set(a), B=new Set(b);
+  const inter=[...A].filter(x=>B.has(x)).length;
+  const uni=new Set([...a,...b]).size||1;
+  return inter/uni;
+}
+function gaussian(distanceKm){
+  const sigma=1.5; // ~ 0-3mi focus
+  return Math.exp(-(distanceKm*distanceKm)/(2*sigma*sigma));
+}
+export function scoreComp({amenities=[], rents={}, targetRents={}, concessions=[], distance_km=0, rent_per_sf={}, targetRentPerSf={}}){
+  // weights
+  const W = { amenities: 0.4, rent: 0.3, concessions: 0.2, distance: 0.1 };
+  const amenNames = (a)=>Object.keys(a||{}).filter(k=>a[k]);
+  const amenScore = jaccard(amenities, amenNames(targetRents?.amenities||{})); // compare to desired set if provided
+
+  // rent error: average relative error across unit types we have
+  const unitTypes = ["studio","1br","2br","3br"];
+  let errs=[];
+  for(const u of unitTypes){
+    if(rents[u] && targetRents[u]){
+      const err = Math.abs(rents[u]-targetRents[u]) / Math.max(targetRents[u],1);
+      errs.push(1 - Math.min(err,1)); // closer is better
+    }
+  }
+  const rentScore = errs.length? errs.reduce((a,b)=>a+b,0)/errs.length : 0.5;
+  const concessionMonths = concessions.reduce((s,c)=> s + (c.value_months||1), 0);
+  const concessionScore = Math.max(0, 1 - (concessionMonths/2)); // 0 if >=2 months
+  const distScore = gaussian(distance_km||0);
+
+  const raw = (W.amenities*amenScore + W.rent*rentScore + W.concessions*concessionScore + W.distance*distScore);
+  const score = Math.max(1, Math.min(100, Math.round(raw*100)));
+  return {
+    score,
+    breakdown: {
+      amenities: Math.round(amenScore*100),
+      rent: Math.round(rentScore*100),
+      concessions: Math.round(concessionScore*100),
+      distance: Math.round(distScore*100)
+    }
+  }
+}
+
+/* ---- create comp + score ---- */
+router.post("/comps", async (req,res)=>{
+  const { site_id, property_name, address, lat, lon, distance_km, rents, rent_per_sf, occupancy, concessions=[], amenities=[], source } = req.body;
+  const { score, breakdown } = scoreComp({
+    amenities, rents, targetRents:{}, concessions, distance_km, rent_per_sf
+  });
+  const { rows } = await pool.query(
+    `insert into comps(site_id,property_name,address,lat,lon,distance_km,rents,rent_per_sf,occupancy,concessions,amenities,source,score,score_breakdown)
+     values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14) returning *`,
+     [site_id,property_name,address,lat,lon,distance_km,rents,rent_per_sf,occupancy,concessions,amenities,source,score,breakdown]
+  );
+  res.json(rows[0]);
+});
+
+/* ---- recompute score ---- */
+router.post("/comps/:id/rescore", async (req,res)=>{
+  const { rows } = await pool.query("select * from comps where id=$1",[req.params.id]);
+  if(!rows[0]) return res.status(404).json({error:"not found"});
+  const c=rows[0];
+  const { score, breakdown } = scoreComp({
+    amenities: c.amenities||[], rents: c.rents||{}, concessions: c.concessions||[], distance_km: c.distance_km||0
+  });
+  const upd = await pool.query(`update comps set score=$1, score_breakdown=$2 where id=$3 returning *`, [score,breakdown,c.id]);
+  res.json(upd.rows[0]);
+});
+
+/* ---- list comps by site ---- */
+router.get("/comps/:siteId", async (req,res)=>{
+  const { rows } = await pool.query("select * from comps where site_id=$1 order by observed_at desc", [req.params.siteId]);
+  res.json(rows);
+});
+
+apps/api/src/routes/scrape.js
+
+import { Router } from "express";
+import { chromium } from "playwright";
+import { pool } from "../db.js";
+export const router = Router();
+
+// minimal working scraper for property pages
+router.post("/scrape/property", async (req,res)=>{
+  const { url, site_id } = req.body;
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage();
+  await page.goto(url, { waitUntil:"domcontentloaded", timeout: 60000 });
+
+  const title = await page.title();
+  const body = await page.content();
+
+  const concessions=[];
+  (body.match(/(\d+)\s*month[s]?\s*free|first\s*month\s*free/gi)||[])
+    .forEach(h=>concessions.push({ desc:h, value_months: /(\d+)/.test(h)? Number(RegExp.$1):1 }));
+
+  await browser.close();
+
+  const { rows } = await pool.query(
+    `insert into comps(site_id,property_name,address,concessions,source,score,score_breakdown)
+     values($1,$2,$3,$4,$5,0,'{}') returning *`,
+     [site_id, title?.slice(0,120)||"Unknown", null, concessions, url]
+  );
+  res.json(rows[0]);
+});
+
+apps/api/src/routes/agent.js
+
+import { Router } from "express";
+import axios from "axios";
+import { pool } from "../db.js";
+export const router = Router();
+
+router.post("/chat", async (req,res)=>{
+  const { messages, model } = req.body;
+  if(!process.env.OPENROUTER_API_KEY) return res.json({ note:"OpenRouter key not set" });
+  const r = await axios.post("https://openrouter.ai/api/v1/chat/completions",
+    { model, messages, stream:false },
+    { headers:{ "Authorization":`Bearer ${process.env.OPENROUTER_API_KEY}` } }
+  );
+  res.json(r.data);
+});
+
+router.post("/write-metric", async (req,res)=>{
+  const { site_id, metric_key, value, unit, source, extra } = req.body;
+  const { rows } = await pool.query(
+    `insert into metrics(site_id,metric_key,value,unit,as_of,source,confidence,method,tags,extra)
+     values($1,$2,$3,$4,now(),$5,0.8,'agent',['agent'],$6) returning *`,
+    [site_id,metric_key,value,unit,source,extra]
+  );
+  res.json(rows[0]);
+});
+
+router.post("/mcp/n8n", async (req,res)=>{
+  if(!process.env.N8N_WEBHOOK_URL) return res.json({ queued:false, note:"N8N webhook not configured" });
+  const { default: fetch } = await import("node-fetch");
+  const r = await fetch(process.env.N8N_WEBHOOK_URL, { method:"POST", headers:{ "content-type":"application/json" }, body:JSON.stringify(req.body) });
+  res.json({ queued:true, status:r.status });
+});
+
+apps/api/src/routes/microsoft.js
+
+import { Router } from "express";
+import { ConfidentialClientApplication } from "msal-node";
+import { Client } from "@microsoft/microsoft-graph-client";
+export const router = Router();
+
+const hasMs = !!process.env.MS_CLIENT_ID;
+const scopes = ["User.Read","Files.Read.All","Mail.Read"];
+
+function config() {
+  return new ConfidentialClientApplication({
+    auth: { clientId: process.env.MS_CLIENT_ID, authority:`https://login.microsoftonline.com/${process.env.MS_TENANT_ID}`, clientSecret: process.env.MS_CLIENT_SECRET }
+  });
+}
+function gclient(token){ return Client.init({ authProvider: d=>d(null, token) }); }
+
+router.get("/auth/microsoft/login", async (_,res)=>{
+  if(!hasMs) return res.status(200).json({ note:"Microsoft not configured" });
+  const ms = config();
+  const url = await ms.getAuthCodeUrl({ scopes, redirectUri: process.env.MS_REDIRECT_URI, prompt:"select_account" });
+  res.redirect(url);
+});
+router.get("/auth/microsoft/callback", async (req,res)=>{
+  if(!hasMs) return res.redirect(process.env.ALLOWED_ORIGIN + "/integrations?ms=off");
+  const ms = config();
+  const tokenResp = await ms.acquireTokenByCode({ code:req.query.code, scopes, redirectUri: process.env.MS_REDIRECT_URI });
+  // for demo: pass token in query (prod: store securely)
+  res.redirect(process.env.ALLOWED_ORIGIN + "/integrations?ok=1&access_token=" + tokenResp.accessToken);
+});
+router.get("/graph/list-drive", async (req,res)=>{
+  const token = req.headers.authorization?.replace("Bearer ",""); if(!token) return res.status(401).json({error:"token missing"});
+  const cli = gclient(token); const files = await cli.api("/me/drive/root/children").get(); res.json(files);
+});
+router.get("/graph/list-mail", async (req,res)=>{
+  const token = req.headers.authorization?.replace("Bearer ",""); if(!token) return res.status(401).json({error:"token missing"});
+  const cli = gclient(token); const mails = await cli.api("/me/messages?$top=10").get(); res.json(mails);
+});
+
+apps/api/src/routes/tools.js
+
+import { Router } from "express";
+import { pool } from "../db.js";
+export const router = Router();
+
+router.get("/tools", async (_,res)=>{
+  const { rows } = await pool.query("select id,name,base_url,notes,created_at from tools order by created_at desc");
+  res.json(rows);
+});
+router.post("/tools", async (req,res)=>{
+  const { name, api_key, base_url, notes } = req.body;
+  const { rows } = await pool.query(
+    `insert into tools(name, api_key, base_url, notes) values ($1,$2,$3,$4) returning id,name,base_url,notes,created_at`,
+    [name, api_key, base_url, notes]
+  );
+  res.json(rows[0]);
+});
+
+
+⸻
+
+apps/web
+
+apps/web/package.json
+
+{
+  "name": "web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173",
+    "build": "vite build",
+    "preview": "vite preview --port 5173"
+  },
+  "dependencies": {
+    "@tanstack/react-table": "^8.15.3",
+    "axios": "^1.7.2",
+    "maplibre-gl": "^3.6.2",
+    "@arcgis/core": "^4.30.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.1",
+    "zustand": "^4.5.2",
+    "jszip": "^3.10.1",
+    "@tmcw/togeojson": "^5.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.18",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.7",
+    "vite": "^5.2.0"
+  }
+}
+
+apps/web/tailwind.config.js
+
+export default {
+  content: ["./index.html","./src/**/*.{ts,tsx,js,jsx}"],
+  theme: {
+    extend: {
+      fontFamily: { serif: ['"Cinzel", serif'] },
+      colors: {
+        bristol: { ink:"#1f2a37", stone:"#374151", gold:"#c9a968", fog:"#f5f6f8", sky:"#eef2f7" }
+      },
+      borderRadius: { xl2: "1.25rem" }
+    }
+  },
+  plugins:[]
+}
+
+apps/web/index.html
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bristol Site Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="/public/bristol-logo.gif">
+</head>
+<body class="bg-bristol-fog">
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
+
+apps/web/src/main.jsx
+
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import "./index.css";
+import App from "./pages/App.jsx";
+import Integrations from "./pages/Integrations.jsx";
+
+createRoot(document.getElementById("root")).render(
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<App />} />
+      <Route path="/integrations" element={<Integrations />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  </BrowserRouter>
+);
+
+apps/web/src/index.css
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{ --card:#ffffff; }
+
+apps/web/src/pages/App.jsx
+
+import React, { useState } from "react";
+import Map from "../widgets/Map.jsx";
+import EarthTab from "../widgets/EarthTab.jsx";
+import ChatDock from "../widgets/ChatDock.jsx";
+import AddSiteForm from "../widgets/forms/AddSiteForm.jsx";
+import SitesTable from "../widgets/tables/SitesTable.jsx";
+import MetricsTable from "../widgets/tables/MetricsTable.jsx";
+import CompsTable from "../widgets/tables/CompsTable.jsx";
+
+export default function App(){
+  const [tab, setTab] = useState("map"); // map | earth | tables
+  const [siteId, setSiteId] = useState(null);
+
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <div className="p-3">
+        <div className="flex items-center gap-2 mb-3">
+          <button className={`px-3 py-2 rounded ${tab==='map'?'bg-bristol-ink text-white':'bg-white'}`} onClick={()=>setTab("map")}>Map</button>
+          <button className={`px-3 py-2 rounded ${tab==='earth'?'bg-bristol-ink text-white':'bg-white'}`} onClick={()=>setTab("earth")}>3D Sandbox</button>
+          <button className={`px-3 py-2 rounded ${tab==='tables'?'bg-bristol-ink text-white':'bg-white'}`} onClick={()=>setTab("tables")}>Tables</button>
+        </div>
+        {tab==='map' && <Map onPickSite={setSiteId}/>}
+        {tab==='earth' && <EarthTab/>}
+        {tab==='tables' && (
+          <div className="grid grid-cols-12 gap-3">
+            <div className="col-span-4"><AddSiteForm onCreated={setSiteId}/></div>
+            <div className="col-span-8"><SitesTable onSelect={setSiteId}/></div>
+            <div className="col-span-12"><MetricsTable siteId={siteId}/></div>
+            <div className="col-span-12"><CompsTable siteId={siteId}/></div>
+          </div>
+        )}
+      </div>
+      <ChatDock />
+    </div>
+  );
+}
+
+function Header(){
+  return (
+    <div className="bg-bristol-ink text-white px-4 py-3 flex items-center gap-3">
+      <img src="/public/bristol-logo.gif" className="h-10" />
+      <div className="font-serif text-2xl">Bristol Site Intelligence</div>
+      <div className="ml-auto">
+        <a href="/integrations" className="underline">Integrations & Tools</a>
+      </div>
+    </div>
+  );
+}
+
+apps/web/src/pages/Integrations.jsx
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+export default function Integrations(){
+  const [tools, setTools] = useState([]);
+  const [form, setForm] = useState({ name:"", api_key:"", base_url:"", notes:"" });
+
+  useEffect(()=>{ axios.get("/api/tools").then(r=>setTools(r.data)) },[]);
+
+  async function addTool(e){
+    e.preventDefault();
+    const { data } = await axios.post("/api/tools", form);
+    setTools([data, ...tools]); setForm({ name:"", api_key:"", base_url:"", notes:"" });
+  }
+
+  return (
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="font-serif text-2xl mb-4">Integrations</h1>
+
+      <div className="bg-white rounded-xl2 shadow p-4 mb-6">
+        <h2 className="font-semibold mb-2">Microsoft 365</h2>
+        <a className="px-3 py-2 rounded bg-bristol-ink text-white" href="/api/auth/microsoft/login">Connect Microsoft</a>
+        <p className="text-sm mt-2 text-gray-600">After connecting, you can list OneDrive files and Outlook emails from the agent.</p>
+      </div>
+
+      <div className="bg-white rounded-xl2 shadow p-4 mb-6">
+        <h2 className="font-semibold mb-2">API Tools Registry (agent-accessible)</h2>
+        <form onSubmit={addTool} className="grid grid-cols-2 gap-3">
+          <input className="border p-2 rounded" placeholder="Name (e.g., OnStar)" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/>
+          <input className="border p-2 rounded" placeholder="Base URL" value={form.base_url} onChange={e=>setForm({...form,base_url:e.target.value})}/>
+          <input className="border p-2 rounded col-span-2" placeholder="API Key" value={form.api_key} onChange={e=>setForm({...form,api_key:e.target.value})}/>
+          <textarea className="border p-2 rounded col-span-2" placeholder="Notes / login instructions" value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/>
+          <button className="bg-bristol-ink text-white rounded px-3 py-2 col-span-2">Add Tool</button>
+        </form>
+        <div className="mt-4 space-y-2">
+          {tools.map(t=>(
+            <div key={t.id} className="border rounded p-2">
+              <div className="font-semibold">{t.name}</div>
+              <div className="text-xs text-gray-500">{t.base_url}</div>
+              <div className="text-sm">{t.notes}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+apps/web/src/widgets/Map.jsx
+
+import React, { useEffect, useRef, useState } from "react";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import * as togeojson from "@tmcw/togeojson";
+import JSZip from "jszip";
+
+export default function Map(){
+  const ref = useRef();
+  const [engine, setEngine] = useState("maplibre"); // maplibre | arcgis
+  const [map, setMap] = useState(null);
+
+  useEffect(()=>{
+    if(engine!=="maplibre") return;
+    const m = new maplibregl.Map({
+      container: ref.current,
+      style: "https://demotiles.maplibre.org/style.json",
+      center: [-86.7816, 36.1627],
+      zoom: 10
+    });
+    setMap(m);
+    return ()=>m.remove();
+  }, [engine]);
+
+  async function handleKmlKmz(e){
+    const file = e.target.files[0]; if(!file) return;
+    let text;
+    if(file.name.toLowerCase().endsWith(".kmz")){
+      const zip = await JSZip.loadAsync(await file.arrayBuffer());
+      const entry = Object.values(zip.files).find(f=>f.name.toLowerCase().endsWith(".kml"));
+      text = await entry.async("text");
+    } else { text = await file.text(); }
+    const xml = new DOMParser().parseFromString(text,"application/xml");
+    const gj = togeojson.kml(xml);
+    if(engine==="maplibre" && map){
+      if(!map.getSource("kml")) map.addSource("kml",{ type:"geojson", data: gj });
+      else map.getSource("kml").setData(gj);
+      if(!map.getLayer("kml-fill")) map.addLayer({ id:"kml-fill", type:"fill", source:"kml", paint:{ "fill-opacity":0.25 }});
+      map.fitBounds(bounds(gj), { padding: 40 });
+    }
+  }
+  function bounds(fc){
+    const c = fc.features.flatMap(f=> (f.geometry.type==="Polygon"
+      ? f.geometry.coordinates[0] : f.geometry.type==="MultiPolygon" ? f.geometry.coordinates[0][0] : []));
+    let minx=180,miny=90,maxx=-180,maxy=-90;
+    c.forEach(([x,y])=>{ minx=Math.min(minx,x); miny=Math.min(miny,y); maxx=Math.max(maxx,x); maxy=Math.max(maxy,y); });
+    return [[minx,miny],[maxx,maxy]];
+  }
+
+  return (
+    <div className="bg-white rounded-xl2 shadow p-2">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span className="font-semibold">Engine:</span>
+          <select className="border px-2 py-1" value={engine} onChange={e=>setEngine(e.target.value)}>
+            <option value="maplibre">MapLibre (Free)</option>
+            <option value="arcgis">ArcGIS API</option>
+          </select>
+        </div>
+        <input type="file" accept=".kml,.kmz" onChange={handleKmlKmz} />
+      </div>
+      <div ref={ref} className="h-[70vh] rounded border" />
+      {engine==="arcgis" && (
+        <ArcMap />
+      )}
+    </div>
+  );
+}
+
+function ArcMap(){
+  // lightweight ArcGIS map (no heavy code until engine selected)
+  const ref = useRef();
+  useEffect(()=>{
+    (async ()=>{
+      const [EsriMap, MapView] = await Promise.all([
+        import("@arcgis/core/Map"), import("@arcgis/core/views/MapView")
+      ]).then(([m,v])=>[m.default, v.default]);
+      const map = new EsriMap({ basemap:"streets-navigation-vector" });
+      const view = new MapView({ container: ref.current, map, center: [-86.78,36.16], zoom: 10 });
+    })();
+  },[]);
+  return <div ref={ref} className="h-[70vh] rounded border mt-2" />;
+}
+
+apps/web/src/widgets/EarthTab.jsx
+
+import React, { useEffect, useRef } from "react";
+export default function EarthTab(){
+  const ref = useRef();
+  useEffect(()=>{
+    (async ()=>{
+      const Cesium = await import("https://cdn.jsdelivr.net/npm/cesium@1.120.0/Build/Cesium/Cesium.js");
+      const viewer = new Cesium.Viewer(ref.current, { timeline:false, animation:false, baseLayerPicker:true });
+      viewer.camera.flyTo({ destination: Cesium.Cartesian3.fromDegrees(-86.7816,36.1627, 5000) });
+    })();
+  },[]);
+  return <div className="bg-white rounded-xl2 shadow p-2"><div ref={ref} className="h-[70vh]" /></div>;
+}
+
+apps/web/src/widgets/forms/AddSiteForm.jsx
+
+import React, { useState } from "react";
+import axios from "axios";
+export default function AddSiteForm({ onCreated }){
+  const [f, setF] = useState({ name:"", address:"", parcel_id:"", jurisdiction:"", lat:"", lon:"" });
+  async function submit(e){ e.preventDefault();
+    const { data } = await axios.post("/api/sites", { ...f, lat: Number(f.lat)||null, lon: Number(f.lon)||null });
+    onCreated?.(data.id); setF({ name:"", address:"", parcel_id:"", jurisdiction:"", lat:"", lon:"" });
+  }
+  return (
+    <form onSubmit={submit} className="bg-white rounded-xl2 shadow p-3 space-y-2">
+      <div className="font-serif text-xl">Add Site</div>
+      {["name","address","parcel_id","jurisdiction","lat","lon"].map(k=>(
+        <input key={k} className="border rounded p-2 w-full" placeholder={k} value={f[k]} onChange={e=>setF({...f,[k]:e.target.value})}/>
+      ))}
+      <button className="bg-bristol-ink text-white rounded px-3 py-2 w-full">Create</button>
+    </form>
+  );
+}
+
+apps/web/src/widgets/tables/SitesTable.jsx
+
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { useReactTable, getCoreRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
+
+export default function SitesTable({ onSelect }){
+  const [data, setData] = useState([]);
+  useEffect(()=>{ axios.get("/api/sites").then(r=>setData(r.data)) },[]);
+  const col = createColumnHelper();
+  const columns = useMemo(()=>[
+    col.accessor("name",{ header:"Name", cell: i=>i.getValue()||"—" }),
+    col.accessor("address",{ header:"Address" }),
+    col.accessor("jurisdiction",{ header:"Jurisdiction" }),
+    col.display({ header:"Action", cell: i=><button onClick={()=>onSelect?.(i.row.original.id)} className="text-blue-600 underline">Select</button> })
+  ],[]);
+  const table = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel() });
+
+  return (
+    <div className="bg-white rounded-xl2 shadow p-3">
+      <div className="font-serif text-xl mb-2">Sites</div>
+      <table className="w-full text-sm">
+        <thead>{table.getHeaderGroups().map(hg=>(
+          <tr key={hg.id}>{hg.headers.map(h=><th key={h.id} className="text-left p-2">{flexRender(h.column.columnDef.header,h.getContext())}</th>)}</tr>
+        ))}</thead>
+        <tbody>{table.getRowModel().rows.map(r=>(
+          <tr key={r.id} className="border-t">{r.getVisibleCells().map(c=><td key={c.id} className="p-2">{flexRender(c.column.columnDef.cell,c.getContext())}</td>)}</tr>
+        ))}</tbody>
+      </table>
+    </div>
+  );
+}
+
+apps/web/src/widgets/tables/MetricsTable.jsx
+
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { useReactTable, getCoreRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
+
+export default function MetricsTable({ siteId }){
+  const [rows, setRows] = useState([]);
+  useEffect(()=>{ if(siteId) axios.get(`/api/metrics/${siteId}`).then(r=>setRows(r.data)); },[siteId]);
+  const col = createColumnHelper();
+  const columns = useMemo(()=>[
+    col.accessor("metric_key",{ header:"Metric" }),
+    col.accessor("value",{ header:"Value", cell: EditableCell(update) }),
+    col.accessor("unit",{ header:"Unit", cell: EditableCell(update) }),
+    col.accessor("as_of",{ header:"As Of" }),
+    col.accessor("source",{ header:"Source" })
+  ],[]);
+  async function update(id, field, val){
+    // quick patch demonstration (server patch for metrics not implemented above; optional)
+    const newRows = rows.map(r=> r.id===id ? {...r, [field]:val} : r);
+    setRows(newRows);
+  }
+  const table = useReactTable({ data: rows, columns, getCoreRowModel:getCoreRowModel() });
+
+  return (
+    <div className="bg-white rounded-xl2 shadow p-3">
+      <div className="font-serif text-xl mb-2">Metrics {siteId? "for site "+siteId: "(select a site)"}</div>
+      <table className="w-full text-sm">
+        <thead>{table.getHeaderGroups().map(hg=>(
+          <tr key={hg.id}>{hg.headers.map(h=><th key={h.id} className="text-left p-2">{flexRender(h.column.columnDef.header,h.getContext())}</th>)}</tr>
+        ))}</thead>
+        <tbody>{table.getRowModel().rows.map(r=>(
+          <tr key={r.id} className="border-t">{r.getVisibleCells().map(c=><td key={c.id} className="p-2">{flexRender(c.column.columnDef.cell,c.getContext())}</td>)}</tr>
+        ))}</tbody>
+      </table>
+    </div>
+  );
+}
+
+function EditableCell(update){
+  return (info)=>{
+    const v = info.getValue(); const [val, setVal] = React.useState(v);
+    return <input className="border rounded px-1 py-0.5 w-full" value={val??""} onChange={e=>{ setVal(e.target.value); update(info.row.original.id, info.column.id, e.target.value); }}/>;
+  }
+}
+
+apps/web/src/widgets/tables/CompsTable.jsx
+
+import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { useReactTable, getCoreRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
+
+export default function CompsTable({ siteId }){
+  const [rows, setRows] = useState([]);
+  const [form, setForm] = useState({ property_name:"", address:"", distance_km:"", occupancy:"" });
+
+  useEffect(()=>{ if(siteId) axios.get(`/api/comps/${siteId}`).then(r=>setRows(r.data)); },[siteId]);
+
+  async function addComp(e){
+    e.preventDefault();
+    const payload = { ...form, site_id: siteId, distance_km:Number(form.distance_km)||0, rents:{}, amenities:[], concessions:[] };
+    const { data } = await axios.post("/api/comps", payload);
+    setRows([data, ...rows]); setForm({ property_name:"", address:"", distance_km:"", occupancy:"" });
+  }
+
+  const col = createColumnHelper();
+  const columns = useMemo(()=>[
+    col.accessor("property_name",{ header:"Property" }),
+    col.accessor("address",{ header:"Address" }),
+    col.accessor("distance_km",{ header:"Dist (km)" }),
+    col.accessor("score",{ header:"Score (1–100)" }),
+    col.display({ header:"Explain", cell: i=> <Explain breakdown={i.row.original.score_breakdown}/> })
+  ],[]);
+  const table = useReactTable({ data: rows, columns, getCoreRowModel: getCoreRowModel() });
+
+  return (
+    <div className="bg-white rounded-xl2 shadow p-3">
+      <div className="flex items-center justify-between">
+        <div className="font-serif text-xl">Comparable Properties</div>
+        <form onSubmit={addComp} className="flex items-center gap-2">
+          <input className="border p-1 rounded" placeholder="Name" value={form.property_name} onChange={e=>setForm({...form,property_name:e.target.value})}/>
+          <input className="border p-1 rounded" placeholder="Address" value={form.address} onChange={e=>setForm({...form,address:e.target.value})}/>
+          <input className="border p-1 rounded w-24" placeholder="Km" value={form.distance_km} onChange={e=>setForm({...form,distance_km:e.target.value})}/>
+          <button className="bg-bristol-ink text-white rounded px-3 py-1">Add</button>
+        </form>
+      </div>
+
+      <table className="w-full text-sm mt-3">
+        <thead>{table.getHeaderGroups().map(hg=>(
+          <tr key={hg.id}>{hg.headers.map(h=><th key={h.id} className="text-left p-2">{flexRender(h.column.columnDef.header,h.getContext())}</th>)}</tr>
+        ))}</thead>
+        <tbody>{table.getRowModel().rows.map(r=>(
+          <tr key={r.id} className="border-t">{r.getVisibleCells().map(c=><td key={c.id} className="p-2">{flexRender(c.column.columnDef.cell,c.getContext())}</td>)}</tr>
+        ))}</tbody>
+      </table>
+    </div>
+  );
+}
+
+function Explain({ breakdown }){
+  if(!breakdown) return <span className="text-gray-400">n/a</span>;
+  return <button className="underline" onClick={()=>alert(
+    `Amenities: ${breakdown.amenities}\nRent: ${breakdown.rent}\nConcessions: ${breakdown.concessions}\nDistance: ${breakdown.distance}`
+  )}>view</button>;
+}
+
+apps/web/src/widgets/ChatDock.jsx
+
+import React, { useState } from "react";
+import axios from "axios";
+
+const MODELS = [
+  "meta-llama/llama-3.1-405b-instruct",
+  "openai/gpt-4.1-mini",
+  "mistralai/mixtral-8x22b-instruct"
+];
+
+export default function ChatDock(){
+  const [open, setOpen] = useState(true);
+  const [model, setModel] = useState(MODELS[0]);
+  const [messages, setMessages] = useState([{role:"system", content: systemPrompt()}]);
+  const [input, setInput] = useState("");
+
+  async function send(){
+    const next = [...messages, { role:"user", content: input }];
+    setMessages(next); setInput("");
+    const { data } = await axios.post("/api/agent/chat", { messages: next, model });
+    const reply = data.choices?.[0]?.message?.content || data.note || "No response.";
+    setMessages([...next, { role:"assistant", content: reply }]);
+  }
+
+  return (
+    <div className={`fixed right-3 bottom-3 w-[440px] bg-white rounded-xl2 shadow-xl border`}>
+      <div className="bg-bristol-ink text-white px-3 py-2 rounded-t-xl2 flex items-center justify-between">
+        <div className="font-serif">Head of Data (Agent)</div>
+        <div className="flex items-center gap-2">
+          <select className="text-black px-1 py-0.5 rounded" value={model} onChange={e=>setModel(e.target.value)}>
+            {MODELS.map(m => <option key={m} value={m}>{m}</option>)}
+          </select>
+          <button onClick={()=>setOpen(!open)} className="px-2 py-1 bg-white text-black rounded">{open?"Hide":"Chat"}</button>
+        </div>
+      </div>
+      {open && (
+        <>
+          <div className="p-3 h-[360px] overflow-auto space-y-2">
+            {messages.slice(1).map((m,i)=>(
+              <div key={i} className={`${m.role==='assistant'?'bg-bristol-sky':'bg-gray-100'} rounded p-2 text-sm`}>
+                <b>{m.role}:</b> {m.content}
+              </div>
+            ))}
+          </div>
+          <div className="p-2 flex gap-2">
+            <input className="flex-1 border rounded px-2" value={input} onChange={e=>setInput(e.target.value)} placeholder="Ask about comps, rents, risk flags..." />
+            <button onClick={send} className="bg-bristol-ink text-white px-3 rounded">Send</button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function systemPrompt(){
+  return `ROLE: You are the Head of Data & Insights for Bristol Development Group—elite multifamily/mixed-use developer. 
+MISSION: Deliver board-level clarity with rigorous numbers, sources/dates, and explicit risk flags. 
+BEHAVIOR: Verbal-judo listening; Sandler flow (Pain→Info→Good News→Next Step); quantify uncertainty; clearly mark proxies (HUD FMR, ACS vacancy). 
+TOOLS: HTTP endpoints under /api (ACS, HUD, BLS, FEMA, ArcGIS), write metrics, trigger n8n via /api/agent/mcp/n8n, read/write TanStack tables. 
+OUTPUTS: concise bullets, tables, risk index (0–100) with drivers, comps scoring (1–100) emphasizing amenities, rents, concessions, distance. 
+MEMORY: maintain short-term project context and long-term team preferences (the backend persists memory).`;
+}
+
+
+⸻
+
+Build/run instructions (for Builder to execute automatically)
+	1.	Create all files above.
+	2.	Copy the provided logo to apps/api/public/bristol-logo.gif.
+	3.	Generate .env in apps/api from .env.example, set:
+	•	DATABASE_URL = Replit Postgres URL
+	•	ALLOWED_ORIGIN=http://localhost:5173
+	•	Optional keys (OPENROUTER_API_KEY, Microsoft, N8N) if available
+	4.	Run at root:
+	•	npm install
+	•	npm run dev
+	5.	Verify:
+	•	GET /api/health → { ok: true }
+	•	Web at http://localhost:5173 shows Map tab (MapLibre), Tables tab with Add Site, Sites, Metrics, Comps, and the Chat dock.
+	•	KML/KMZ upload shades polygons.
+	•	POST /api/comps creates a comp and displays score in table.
+	•	If OpenRouter key set, chat responds.
+	•	Integrations page lets you add Tools and (if configured) connect Microsoft 365.
+
+⸻
+
+that’s everything, baked in from the start—no dead placeholders. when you’re ready, paste this into Replit Builder and let it run. if anything breaks during build, tell me where it stopped and I’ll fix it fast.

@@ -1,0 +1,177 @@
+Sweet—let’s bolt in an Apify (you wrote “appify”; I’m assuming you mean Apify.com) scraper so you can trigger an actor from our API, wait for results, and auto‑ingest into comps (with concessions + amenities parsing). Here’s a tight, drop‑in snippet set.
+
+1) Add dependency
+
+Run this once at the repo root:
+
+npm i -w apps/api apify-client
+
+2) Add env vars (apps/api/.env)
+
+APIFY_TOKEN=your_apify_api_token
+APIFY_ACTOR_ID=apify/cheerio-scraper   # default; you can override per request
+
+3) Create route: apps/api/src/routes/apify.js
+
+import { Router } from "express";
+import { pool } from "../db.js";
+import { ApifyClient } from "apify-client";
+
+export const router = Router();
+
+// Simple keyword sets (tune later or load from DB)
+const AMENITY_KEYWORDS = [
+  "pool","resort-style pool","fitness","24/7 fitness","coworking","co-working","business center",
+  "ev charger","electric vehicle","pet spa","dog wash","rooftop","concierge",
+  "garage","structured parking","in-unit washer","in unit washer","wd","quartz","stainless","smart lock"
+];
+const CONCESSION_REGEX = /(\d+)\s*month[s]?\s*free|first\s*month\s*free|(\d+)\s*weeks?\s*free|(\d+)%\s*off\s*rent/gi;
+
+function extractAmenities(text){
+  const t = text.toLowerCase();
+  const hits = new Set();
+  for (const k of AMENITY_KEYWORDS) if (t.includes(k)) hits.add(k);
+  return [...hits];
+}
+function extractConcessions(text){
+  const out = [];
+  const matches = text.matchAll(CONCESSION_REGEX);
+  for (const m of matches) {
+    const months = m[1] ? Number(m[1]) :
+                   m[2] ? Math.round(Number(m[2]) / 4) :
+                   m[3] ? (Number(m[3]) >= 10 ? 1 : 0) : 1;
+    out.push({ desc: m[0], value_months: months || 1 });
+  }
+  return out;
+}
+
+router.post("/scrape/apify", async (req, res) => {
+  try {
+    const {
+      site_id,
+      url,                // single URL OR
+      startUrls = [],     // [{url:"..."}, ...]
+      actorId,            // optional override of APIFY_ACTOR_ID
+      proxy = { useApifyProxy: true }
+    } = req.body;
+
+    if (!site_id) return res.status(400).json({ error: "site_id is required" });
+    if (!url && (!startUrls || startUrls.length === 0)) {
+      return res.status(400).json({ error: "Provide url or startUrls[]" });
+    }
+
+    const client = new ApifyClient({ token: process.env.APIFY_TOKEN });
+    const actor = actorId || process.env.APIFY_ACTOR_ID || "apify/cheerio-scraper";
+
+    // Minimal actor input—works with apify/cheerio-scraper and many custom actors
+    const input = {
+      startUrls: url ? [{ url }] : startUrls,
+      proxy,
+      maxRequestsPerCrawl: 20,
+      maxConcurrency: 5,
+      // Basic content grab; you can pass pageFunction for custom parsing on actor
+      additionalMimeTypes: ["text/html"],
+    };
+
+    // Start actor and wait for finish
+    const run = await client.actor(actor).start({ input });
+    const { status } = await client.run(run.id).waitForFinish({ waitSecs: 1200 }); // up to 20 min
+    if (status !== "SUCCEEDED") return res.status(500).json({ error: `Apify run status: ${status}` });
+
+    // Pull dataset items
+    const { items } = await client.dataset(run.defaultDatasetId).listItems({ clean: true, limit: 1000 });
+    if (!items?.length) return res.json({ ok: true, inserted: 0 });
+
+    let inserted = 0;
+    for (const it of items) {
+      // Heuristics: name/address/content fields vary by actor; try common ones
+      const name = it.title || it.name || it.propertyName || it.pageTitle || "Unknown";
+      const address = it.address || it.location || null;
+      const textBlob = [
+        it.text, it.content, it.markdown, JSON.stringify(it).slice(0, 30000)
+      ].filter(Boolean).join("\n\n");
+
+      const amenities = extractAmenities(textBlob);
+      const concessions = extractConcessions(textBlob);
+
+      // Optional: naive rent sniffing (you’ll replace with your actor’s structured output)
+      const rents = {};
+      const rentMatches = [...textBlob.matchAll(/\$([1-9]\d{2,4}).{0,10}(studio|1 ?bed|1br|2 ?bed|2br|3 ?bed|3br)/gi)];
+      for (const m of rentMatches) {
+        const val = Number(m[1]);
+        const type = m[2].toLowerCase().includes("studio") ? "studio"
+          : m[2].includes("1") ? "1br" : m[2].includes("2") ? "2br" : "3br";
+        rents[type] = Math.min(rents[type] || Infinity, val);
+      }
+
+      // Insert into comps (score computed later by your /comps route if desired)
+      await pool.query(
+        `insert into comps (site_id, property_name, address, rents, concessions, amenities, source, score, score_breakdown)
+         values ($1,$2,$3,$4,$5,$6,$7,0,'{}')`,
+        [site_id, name?.slice(0,120), address, rents, concessions, amenities, (it.url || url)]
+      );
+      inserted++;
+    }
+
+    res.json({ ok: true, inserted, dataset: run.defaultDatasetId, runId: run.id });
+  } catch (e) {
+    res.status(500).json({ error: e.message || "Apify error" });
+  }
+});
+
+4) Register route in the API
+
+Add to apps/api/src/index.js:
+
+import { router as apifyApi } from "./routes/apify.js";
+app.use("/api", apifyApi);
+
+5) How to use it (examples)
+
+A) Scrape a single property URL into comps (for a selected site_id):
+
+curl -X POST http://localhost:3000/api/scrape/apify \
+  -H "content-type: application/json" \
+  -d '{
+    "site_id":"<your-site-id>",
+    "url":"https://example-property.com/floorplans",
+    "actorId":"apify/cheerio-scraper"
+  }'
+
+B) Crawl a small list of competitor properties:
+
+curl -X POST http://localhost:3000/api/scrape/apify \
+  -H "content-type: application/json" \
+  -d '{
+    "site_id":"<your-site-id>",
+    "startUrls":[{"url":"https://property-a.com"},{"url":"https://property-b.com"}]
+  }'
+
+This will:
+	•	Run your Apify actor,
+	•	Wait for completion,
+	•	Pull dataset items,
+	•	Extract amenities and concessions,
+	•	Try to infer unit rents if present,
+	•	Insert rows into the comps table.
+You can then click Tables → Comparable Properties and see the new comps, and hit “Explain” for the scoring breakdown (use /api/comps/:id/rescore when you add target rents/weights).
+
+⸻
+
+Optional: Kick via n8n (MCP style)
+
+If you’d rather queue via n8n, just call our existing MCP endpoint from the agent:
+
+POST /api/agent/mcp/n8n
+{
+  "task": "apify-scrape",
+  "site_id": "<site-id>",
+  "url": "https://example-property.com",
+  "actorId": "apify/cheerio-scraper"
+}
+
+…and in n8n have a webhook trigger that forwards to /api/scrape/apify.
+
+⸻
+
+That’s it—drop these in and you’ve got a real Apify integration that feeds your comps database with amenities + concessions, aligned with Bristol’s comps scoring flow.
