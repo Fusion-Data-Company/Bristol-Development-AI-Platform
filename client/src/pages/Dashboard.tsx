@@ -238,8 +238,8 @@ export default function Dashboard() {
                 className={cn(
                   "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
                   activeTab === "overview" 
-                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
-                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
+                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
+                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
                 )}
               >
                 Overview
@@ -249,8 +249,8 @@ export default function Dashboard() {
                 className={cn(
                   "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
                   activeTab === "mapping" 
-                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
-                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
+                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
+                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
                 )}
               >
                 Interactive Map
@@ -260,8 +260,8 @@ export default function Dashboard() {
                 className={cn(
                   "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
                   activeTab === "scoring" 
-                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
-                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
+                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
+                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
                 )}
               >
                 Site Scoring
@@ -271,8 +271,8 @@ export default function Dashboard() {
                 className={cn(
                   "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
                   activeTab === "analytics" 
-                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
-                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
+                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
+                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
                 )}
               >
                 Market Analytics
@@ -282,8 +282,8 @@ export default function Dashboard() {
                 className={cn(
                   "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
                   activeTab === "chat" 
-                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
-                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
+                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
+                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
                 )}
               >
                 AI Assistant
