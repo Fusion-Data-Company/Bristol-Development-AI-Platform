@@ -215,25 +215,27 @@ export default function Dashboard() {
       <ParallaxBackground />
 
       {/* Navigation Header */}
-      <header className="relative z-10 bg-bristol-ink text-white shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <header className="relative z-50 bg-gradient-to-r from-bristol-ink via-bristol-maroon/90 to-bristol-ink text-white shadow-2xl border-b-2 border-bristol-gold/30">
+        <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-bristol-maroon rounded-lg flex items-center justify-center">
-                <span className="text-white font-serif font-bold text-xl">B</span>
+            <div className="flex items-center space-x-6">
+              <div className="w-14 h-14 bg-gradient-to-br from-bristol-maroon to-bristol-gold rounded-xl flex items-center justify-center shadow-lg hover:shadow-2xl hover:shadow-bristol-gold/40 transition-all duration-300 hover:scale-105">
+                <span className="text-white font-serif font-black text-2xl drop-shadow-lg">B</span>
               </div>
               <div>
-                <h1 className="font-serif text-2xl font-bold">Bristol Development</h1>
-                <p className="text-bristol-stone text-sm">Site Intelligence Platform</p>
+                <h1 className="font-serif text-3xl font-black bg-gradient-to-r from-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">Bristol Development</h1>
+                <p className="text-bristol-gold/90 text-sm font-bold tracking-wide">Site Intelligence Platform</p>
               </div>
             </div>
             
-            <nav className="hidden md:flex items-center space-x-6">
+            <nav className="hidden lg:flex items-center space-x-8">
               <button 
                 onClick={() => setActiveTab("overview")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "overview" && "text-bristol-gold"
+                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
+                  activeTab === "overview" 
+                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
+                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
                 )}
               >
                 Overview
@@ -241,8 +243,10 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("mapping")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "mapping" && "text-bristol-gold"
+                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
+                  activeTab === "mapping" 
+                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
+                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
                 )}
               >
                 Interactive Map
@@ -250,8 +254,10 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("scoring")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "scoring" && "text-bristol-gold"
+                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
+                  activeTab === "scoring" 
+                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
+                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
                 )}
               >
                 Site Scoring
@@ -259,8 +265,10 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("analytics")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "analytics" && "text-bristol-gold"
+                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
+                  activeTab === "analytics" 
+                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
+                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
                 )}
               >
                 Market Analytics
@@ -268,36 +276,47 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("chat")}
                 className={cn(
-                  "hover:text-bristol-gold transition-colors",
-                  activeTab === "chat" && "text-bristol-gold"
+                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
+                  activeTab === "chat" 
+                    ? "bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/50" 
+                    : "text-white/90 hover:text-bristol-gold hover:bg-bristol-gold/10"
                 )}
               >
                 AI Assistant
               </button>
             </nav>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-6">
+              {/* Bristol Logo */}
+              <div className="hidden md:block">
+                <img 
+                  src={bristolLogoPath} 
+                  alt="Bristol Development Group" 
+                  className="h-12 w-auto hover:scale-105 transition-transform duration-300 drop-shadow-lg"
+                />
+              </div>
+              
               {/* WebSocket Status Indicator */}
               <div className="flex items-center gap-2">
                 <div className={cn(
                   "w-3 h-3 rounded-full",
-                  isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"
+                  isConnected ? "bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"
                 )} />
-                <span className="text-sm">{isConnected ? "Live" : "Offline"}</span>
+                <span className="text-sm font-bold text-bristol-gold">{isConnected ? "Live" : "Offline"}</span>
               </div>
               
               {/* User Profile */}
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-bristol-stone rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-semibold">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-bristol-maroon to-bristol-gold rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-white text-sm font-bold">
                     {user?.firstName?.[0] || user?.email?.[0] || "U"}
                   </span>
                 </div>
                 <Button 
                   onClick={handleLogout}
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
-                  className="text-white hover:text-bristol-gold"
+                  className="border-2 border-bristol-gold/60 text-bristol-gold font-bold hover:bg-bristol-gold hover:text-bristol-ink transition-all duration-300 hover:shadow-lg hover:shadow-bristol-gold/40"
                 >
                   Logout
                 </Button>
