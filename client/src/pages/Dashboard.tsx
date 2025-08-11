@@ -789,8 +789,9 @@ export default function Dashboard() {
                     </h3>
                     <div className="space-y-2">
                       {/* Bristol Development Score */}
-                      <Card className="bg-gradient-to-br from-bristol-maroon/8 via-bristol-maroon/5 to-bristol-gold/8 border-bristol-maroon/30 hover:border-bristol-maroon/60 hover:shadow-xl hover:shadow-bristol-maroon/30 transition-all duration-600 hover:scale-[1.03] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-bristol-maroon/8 via-bristol-maroon/5 to-bristol-gold/8 border-bristol-maroon/30 hover:border-bristol-maroon/60 hover:shadow-xl hover:shadow-bristol-maroon/30 transition-all duration-600 hover:scale-[1.03] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_30px_rgba(139,69,19,0.4)] hover:ring-1 hover:ring-bristol-maroon/50">
                         <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/15 via-transparent to-bristol-gold/15 opacity-0 group-hover:opacity-100 transition-all duration-600"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-maroon/20 via-bristol-gold/20 to-bristol-maroon/20 rounded-lg blur-sm opacity-0 group-hover:opacity-70 transition-all duration-600 -z-10"></div>
                         <div className="absolute -top-1 -right-1 w-8 h-8 bg-bristol-gold/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                         <CardContent className="p-4 relative z-10">
                           <div className="flex items-center justify-between">
@@ -814,37 +815,11 @@ export default function Dashboard() {
                         </CardContent>
                       </Card>
                       
-                      {/* PARLAY Status */}
-                      <Card className="bg-gradient-to-br from-cyan-100/70 via-cyan-50 to-cyan-200/60 border-cyan-300/60 hover:border-cyan-400/80 hover:shadow-xl hover:shadow-cyan-400/40 transition-all duration-600 hover:scale-[1.03] group backdrop-blur-sm relative overflow-hidden">
-                        <div className="absolute inset-0 bg-gradient-to-br from-cyan-200/30 via-transparent to-cyan-300/20 opacity-0 group-hover:opacity-100 transition-all duration-600"></div>
-                        <div className="absolute -top-1 -left-1 w-6 h-6 bg-cyan-400/30 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                        <CardContent className="p-4 relative z-10">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-lg bg-cyan-200/50 flex items-center justify-center group-hover:bg-cyan-300/60 transition-all duration-300">
-                                <MapPin className="w-4 h-4 text-cyan-600 group-hover:drop-shadow-[0_0_8px_rgba(0,255,255,0.8)] group-hover:scale-110 transition-all duration-300" />
-                              </div>
-                              <div>
-                                <span className="text-xs text-cyan-700/80 uppercase tracking-wider font-medium">PARLAY System</span>
-                                <div className="text-sm font-semibold text-cyan-800 group-hover:text-cyan-900 transition-colors duration-300">Active Parcels</div>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-2xl font-bold text-cyan-600 group-hover:drop-shadow-[0_0_12px_rgba(0,255,255,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">2</span>
-                              <div className="text-xs text-cyan-600/70 font-medium">Active</div>
-                            </div>
-                          </div>
-                          <div className="mt-2 flex gap-1">
-                            <div className="h-1 bg-cyan-400 rounded-full flex-1 group-hover:shadow-[0_0_4px_rgba(0,255,255,0.6)] transition-all duration-300"></div>
-                            <div className="h-1 bg-cyan-400 rounded-full flex-1 group-hover:shadow-[0_0_4px_rgba(0,255,255,0.6)] transition-all duration-300"></div>
-                            <div className="h-1 bg-cyan-200 rounded-full flex-1"></div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      
+
                       {/* Demographics Section */}
-                      <Card className="bg-gradient-to-br from-green-50/60 via-white to-green-100/40 border-green-200/50 hover:border-green-300/80 hover:shadow-lg hover:shadow-green-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-green-50/60 via-white to-green-100/40 border-green-200/50 hover:border-green-300/80 hover:shadow-lg hover:shadow-green-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(34,197,94,0.3)] hover:ring-1 hover:ring-green-300/50">
                         <div className="absolute inset-0 bg-gradient-to-br from-green-100/40 via-transparent to-green-200/30 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-green-300/20 via-green-400/20 to-green-300/20 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
                         <div className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-green-400/30 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
@@ -864,8 +839,9 @@ export default function Dashboard() {
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-bristol-maroon/8 via-white to-bristol-gold/12 border-bristol-maroon/30 hover:border-bristol-maroon/50 hover:shadow-lg hover:shadow-bristol-maroon/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-bristol-maroon/8 via-white to-bristol-gold/12 border-bristol-maroon/30 hover:border-bristol-maroon/50 hover:shadow-lg hover:shadow-bristol-maroon/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(139,69,19,0.3)] hover:ring-1 hover:ring-bristol-maroon/40">
                         <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/12 via-transparent to-bristol-gold/15 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-maroon/15 via-bristol-gold/15 to-bristol-maroon/15 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
                         <div className="absolute -bottom-0.5 -left-0.5 w-4 h-4 bg-bristol-gold/40 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
@@ -885,8 +861,9 @@ export default function Dashboard() {
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-blue-50/60 via-white to-blue-100/40 border-blue-200/50 hover:border-blue-300/80 hover:shadow-lg hover:shadow-blue-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-blue-50/60 via-white to-blue-100/40 border-blue-200/50 hover:border-blue-300/80 hover:shadow-lg hover:shadow-blue-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(37,99,235,0.3)] hover:ring-1 hover:ring-blue-300/50">
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-100/40 via-transparent to-blue-200/30 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-300/20 via-blue-400/20 to-blue-300/20 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
                         <div className="absolute -top-0.5 -left-0.5 w-4 h-4 bg-blue-400/30 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
@@ -906,8 +883,9 @@ export default function Dashboard() {
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-bristol-gold/12 via-white to-bristol-gold/8 border-bristol-gold/40 hover:border-bristol-gold/60 hover:shadow-lg hover:shadow-bristol-gold/30 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-bristol-gold/12 via-white to-bristol-gold/8 border-bristol-gold/40 hover:border-bristol-gold/60 hover:shadow-lg hover:shadow-bristol-gold/30 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(218,165,32,0.4)] hover:ring-1 hover:ring-bristol-gold/50">
                         <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-transparent to-bristol-gold/15 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/25 to-bristol-gold/20 rounded-lg blur-sm opacity-0 group-hover:opacity-70 transition-all duration-500 -z-10"></div>
                         <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-bristol-gold/50 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
@@ -928,8 +906,9 @@ export default function Dashboard() {
                       </Card>
                       
                       {/* Market Conditions */}
-                      <Card className="bg-gradient-to-br from-green-50/60 via-white to-green-100/40 border-green-200/50 hover:border-green-300/80 hover:shadow-lg hover:shadow-green-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-green-50/60 via-white to-green-100/40 border-green-200/50 hover:border-green-300/80 hover:shadow-lg hover:shadow-green-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(34,197,94,0.3)] hover:ring-1 hover:ring-green-300/50">
                         <div className="absolute inset-0 bg-gradient-to-br from-green-100/40 via-transparent to-green-200/30 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-green-300/20 via-green-400/20 to-green-300/20 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
                         <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400/40 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
@@ -949,8 +928,9 @@ export default function Dashboard() {
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-blue-50/60 via-white to-blue-100/40 border-blue-200/50 hover:border-blue-300/80 hover:shadow-lg hover:shadow-blue-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-blue-50/60 via-white to-blue-100/40 border-blue-200/50 hover:border-blue-300/80 hover:shadow-lg hover:shadow-blue-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(37,99,235,0.3)] hover:ring-1 hover:ring-blue-300/50">
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-100/40 via-transparent to-blue-200/30 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-300/20 via-blue-400/20 to-blue-300/20 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
                         <div className="absolute -bottom-0.5 -left-0.5 w-3 h-3 bg-blue-400/40 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
@@ -970,8 +950,9 @@ export default function Dashboard() {
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-bristol-maroon/8 via-white to-bristol-gold/12 border-bristol-maroon/30 hover:border-bristol-maroon/50 hover:shadow-lg hover:shadow-bristol-maroon/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-bristol-maroon/8 via-white to-bristol-gold/12 border-bristol-maroon/30 hover:border-bristol-maroon/50 hover:shadow-lg hover:shadow-bristol-maroon/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(139,69,19,0.3)] hover:ring-1 hover:ring-bristol-maroon/40">
                         <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/12 via-transparent to-bristol-gold/15 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-maroon/15 via-bristol-gold/15 to-bristol-maroon/15 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
                         <div className="absolute -top-0.5 -left-0.5 w-3 h-3 bg-bristol-gold/50 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
@@ -992,8 +973,9 @@ export default function Dashboard() {
                       </Card>
                       
                       {/* Financial Projections */}
-                      <Card className="bg-gradient-to-br from-green-50/60 via-white to-green-100/40 border-green-200/50 hover:border-green-300/80 hover:shadow-lg hover:shadow-green-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-green-50/60 via-white to-green-100/40 border-green-200/50 hover:border-green-300/80 hover:shadow-lg hover:shadow-green-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(34,197,94,0.3)] hover:ring-1 hover:ring-green-300/50">
                         <div className="absolute inset-0 bg-gradient-to-br from-green-100/40 via-transparent to-green-200/30 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-green-300/20 via-green-400/20 to-green-300/20 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
                         <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400/40 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
@@ -1013,8 +995,9 @@ export default function Dashboard() {
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-bristol-gold/12 via-white to-bristol-gold/8 border-bristol-gold/40 hover:border-bristol-gold/60 hover:shadow-lg hover:shadow-bristol-gold/30 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                      <Card className="bg-gradient-to-br from-bristol-gold/12 via-white to-bristol-gold/8 border-bristol-gold/40 hover:border-bristol-gold/60 hover:shadow-lg hover:shadow-bristol-gold/30 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(218,165,32,0.4)] hover:ring-1 hover:ring-bristol-gold/50">
                         <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-transparent to-bristol-gold/15 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
+                        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/25 to-bristol-gold/20 rounded-lg blur-sm opacity-0 group-hover:opacity-70 transition-all duration-500 -z-10"></div>
                         <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-bristol-gold/60 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
@@ -1043,8 +1026,9 @@ export default function Dashboard() {
                       </div>
                       PARLAY Data
                     </h3>
-                    <Card className="bg-gradient-to-br from-cyan-50/70 via-white to-cyan-100/50 border-cyan-200/60 hover:border-cyan-300/80 hover:shadow-xl hover:shadow-cyan-400/30 transition-all duration-600 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden">
+                    <Card className="bg-gradient-to-br from-cyan-50/70 via-white to-cyan-100/50 border-cyan-200/60 hover:border-cyan-300/80 hover:shadow-xl hover:shadow-cyan-400/30 transition-all duration-600 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_30px_rgba(0,255,255,0.4)] hover:ring-1 hover:ring-cyan-300/60">
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-100/30 via-transparent to-cyan-200/20 opacity-0 group-hover:opacity-100 transition-all duration-600"></div>
+                      <div className="absolute -inset-1 bg-gradient-to-r from-cyan-300/25 via-cyan-400/25 to-cyan-300/25 rounded-lg blur-sm opacity-0 group-hover:opacity-75 transition-all duration-600 -z-10"></div>
                       <div className="absolute -top-1 -right-1 w-8 h-8 bg-cyan-400/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
                       <CardContent className="p-4 relative z-10">
                         <div className="space-y-3">
