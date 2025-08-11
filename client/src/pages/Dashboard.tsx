@@ -861,23 +861,23 @@ export default function Dashboard() {
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-blue-50/60 via-white to-blue-100/40 border-blue-200/50 hover:border-blue-300/80 hover:shadow-lg hover:shadow-blue-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(37,99,235,0.3)] hover:ring-1 hover:ring-blue-300/50">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/40 via-transparent to-blue-200/30 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-300/20 via-blue-400/20 to-blue-300/20 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
-                        <div className="absolute -top-0.5 -left-0.5 w-4 h-4 bg-blue-400/30 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
+                      <Card className="bg-gradient-to-br from-blue-200/90 via-blue-50 to-white border-blue-400 border-2 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-blue-300/40">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-300/30 via-transparent to-blue-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                        <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/50 via-blue-500/50 to-blue-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                        <div className="absolute -top-1 -left-1 w-8 h-8 bg-blue-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-md bg-blue-100/80 flex items-center justify-center group-hover:bg-blue-200/90 transition-all duration-300">
-                                <Users className="w-3.5 h-3.5 text-blue-600 group-hover:drop-shadow-[0_0_6px_rgba(37,99,235,0.7)] group-hover:scale-110 transition-all duration-300" />
+                              <div className="w-6 h-6 rounded-md bg-blue-400/60 flex items-center justify-center group-hover:bg-blue-500/80 transition-all duration-300 shadow-md">
+                                <Users className="w-3.5 h-3.5 text-blue-700 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(37,99,235,0.7)] group-hover:scale-110 transition-all duration-300" />
                               </div>
                               <div>
-                                <span className="text-xs text-blue-700/80 font-medium">Employment Rate</span>
-                                <div className="text-xs text-blue-600/70">Active Workforce</div>
+                                <span className="text-xs text-blue-800 font-bold">Employment Rate</span>
+                                <div className="text-xs text-blue-700 font-medium">Active Workforce</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <span className="text-lg font-bold text-blue-600 group-hover:drop-shadow-[0_0_8px_rgba(37,99,235,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">94.2%</span>
+                              <span className="text-lg font-black text-blue-600 group-hover:text-blue-700 group-hover:drop-shadow-[0_0_8px_rgba(37,99,235,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">94.2%</span>
                             </div>
                           </div>
                         </CardContent>
