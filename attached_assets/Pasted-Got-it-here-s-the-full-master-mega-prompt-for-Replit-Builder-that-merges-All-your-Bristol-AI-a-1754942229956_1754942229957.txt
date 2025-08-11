@@ -1,0 +1,201 @@
+Got it — here’s the full master mega-prompt for Replit Builder that merges:
+	•	All your Bristol AI app features
+	•	PARLAY/ReportAll integration with Google Earth Pro spoof + view-based tile loading
+	•	Built-in Replit Postgres schema for short/long-term AI memory
+	•	Microsoft 365 / OneDrive / Outlook integration hooks
+	•	Tool Console + API key manager
+	•	MCP server + webhooks
+	•	Elite C-suite Head Data Analyst persona for the AI dock
+	•	All Bristol styling, colors, fonts, and property images
+	•	Ability to handle .kml / .kmz, Census + FEMA + ArcGIS live data, and advanced property comparison scoring
+
+⸻
+
+📋 REPLIT BUILDER — BRISTOL AI PLATFORM MASTER PROMPT
+
+Instructions to Builder:
+Do not replace working files — extend and upgrade existing code.
+Add any missing dependencies automatically.
+Write working components, not placeholders, unless the data source is truly unavailable without a key.
+All placeholders must be functional stubs that won’t crash and are clearly labeled for future API integration.
+
+⸻
+
+1. General App Requirements
+	•	Framework: Monorepo with apps/web (React + Vite + Tailwind) and apps/api (Node + Express).
+	•	Database: Use Replit’s onboard PostgreSQL (via pg npm package) for persistent memory + property/project data.
+	•	Memory System:
+	•	memory_short table for per-project active session context.
+	•	memory_long table for Bristol team/user identity, preferences, long-term learning.
+	•	AI Agent:
+	•	Runs via OpenRouter.io API key from .env
+	•	System prompt: “You are the Head Data Analyst for Bristol Development Group, Franklin TN — a $200M+ project elite real estate developer. You provide deep market insights, competitive analysis, rent & concession comparisons, development forecasts, and regulatory intelligence. Always act as a trusted C-suite team member.”
+	•	Short-term project memory persists until cleared by user; long-term memory stored in DB and recalled automatically for returning users.
+	•	Integrations:
+	•	Microsoft 365 / OneDrive / Outlook via msal-node + Microsoft Graph API (hook up file browsing & email search).
+	•	Tool Console to add/manage API keys (Census Bureau, ArcGIS, OnStar, Apify, etc.).
+	•	MCP Server + Webhooks to allow connecting any external tool.
+	•	Styling:
+	•	Font: Cinzel Serif
+	•	Colors + images from bristoldevelopment.com
+	•	Use property images as hero banners, header backgrounds, and tab separators.
+
+⸻
+
+2. API (apps/api)
+
+Dependencies
+
+{
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "cookie-parser": "^1.4.6",
+    "pg": "^8.11.3",
+    "axios": "^1.6.7",
+    "jszip": "^3.10.1",
+    "@xmldom/xmldom": "^0.8.10",
+    "@tmcw/togeojson": "^5.0.0",
+    "lru-cache": "^10.2.2",
+    "msal-node": "^2.5.0",
+    "@microsoft/microsoft-graph-client": "^3.0.0",
+    "uuid": "^9.0.1",
+    "ws": "^8.15.1",
+    "apify-client": "^2.8.0",
+    "dayjs": "^1.11.10"
+  }
+}
+
+Routes
+	1.	/api/agent — Handles AI chat, loads/saves short & long-term memory, injects Bristol persona.
+	2.	/api/tools — CRUD for stored API keys in DB; returns active tool list to frontend.
+	3.	/api/microsoft — MS Graph file picker & Outlook mail fetch.
+	4.	/api/scrape — Apify integration for scraping property listings.
+	5.	/api/kml/resolve — PARLAY/ReportAllUSA resolver:
+	•	Spoofs GoogleEarth/7.3.4 UA
+	•	Appends user_key from .env (PARLAY_KEY)
+	•	Parses .kml / .kmz
+	•	Follows nested <NetworkLink> elements up to PARLAY_MAX_DEPTH
+	•	Handles viewFormat replacements (bbox, lookAt)
+	•	Extracts vector features (GeoJSON) & raster overlays
+	•	Caches results in memory
+	6.	/api/publicdata — Proxies public APIs (Census, FEMA, ArcGIS).
+	7.	/api/comps — Property comparison scoring:
+	•	Inputs: rent, concessions, amenities
+	•	Output: 1–100 competitive score vs. Bristol projects
+	8.	/api/mcp — MCP server + webhook forwarding.
+
+Database Schema (PostgreSQL)
+
+CREATE TABLE users (
+  id UUID PRIMARY KEY,
+  name TEXT,
+  email TEXT,
+  role TEXT
+);
+CREATE TABLE oauth_tokens (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  provider TEXT,
+  access_token TEXT,
+  refresh_token TEXT,
+  expires_at TIMESTAMP
+);
+CREATE TABLE sites (
+  id UUID PRIMARY KEY,
+  name TEXT,
+  location GEOGRAPHY(Point,4326),
+  description TEXT
+);
+CREATE TABLE properties (
+  id UUID PRIMARY KEY,
+  site_id UUID REFERENCES sites(id),
+  name TEXT,
+  address TEXT,
+  rent NUMERIC,
+  concessions TEXT,
+  amenities JSONB
+);
+CREATE TABLE metrics (
+  id UUID PRIMARY KEY,
+  property_id UUID REFERENCES properties(id),
+  metric_key TEXT,
+  metric_value NUMERIC
+);
+CREATE TABLE comps (
+  id UUID PRIMARY KEY,
+  property_id UUID REFERENCES properties(id),
+  score NUMERIC
+);
+CREATE TABLE memory_short (
+  id UUID PRIMARY KEY,
+  project_id UUID,
+  context JSONB
+);
+CREATE TABLE memory_long (
+  id UUID PRIMARY KEY,
+  user_id UUID,
+  facts JSONB
+);
+CREATE TABLE tools (
+  id UUID PRIMARY KEY,
+  name TEXT,
+  api_key TEXT
+);
+
+
+⸻
+
+3. Frontend (apps/web)
+
+Pages
+	1.	Map Tab:
+	•	MapLibre map with ArcGIS toggle
+	•	KML/KMZ upload
+	•	PARLAY layer with Google Earth Pro spoof
+	•	FEMA flood maps & Census demographics layers
+	•	KML/KMZ parsing in-browser for local files
+	2.	3D Sandbox Tab:
+	•	CesiumJS or Google Earth Web Embed
+	•	Separate load from main map for performance
+	3.	Tables Tab:
+	•	Sites table (sortable)
+	•	Properties table with rent, concessions, amenities
+	•	Competitive scoring table
+	4.	Integrations Tab:
+	•	Microsoft 365 file/email picker
+	•	Tool Console for API keys
+	5.	ChatDock (persistent across tabs):
+	•	Bristol Head Data Analyst persona
+	•	Pulls relevant memory (short & long-term) into context
+	•	Can run N8N workflows
+
+Dependencies
+
+{
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "axios": "^1.6.7",
+    "maplibre-gl": "^3.3.0",
+    "@arcgis/core": "^4.28.0",
+    "zustand": "^4.4.0",
+    "jszip": "^3.10.1",
+    "@tmcw/togeojson": "^5.0.0",
+    "@tanstack/react-table": "^8.9.7"
+  }
+}
+
+
+⸻
+
+4. Additional Notes
+	•	PARLAY integration should work exactly like Google Earth Pro (UA spoof + viewFormat).
+	•	All public APIs (Census, FEMA, ArcGIS) should work without a key if possible.
+	•	Make AI dock always visible, floating bottom-right, with project & user memory integration.
+	•	Use .env for all keys; hide features if key missing.
+	•	Style with Cinzel Serif + Bristol images/colors.
+
+⸻
+
+Do you want me to now merge in the PARLAY resolver code from the earlier message directly into this mega-prompt so the builder will write it in one shot? That way, Replit produces a complete working build first run.
