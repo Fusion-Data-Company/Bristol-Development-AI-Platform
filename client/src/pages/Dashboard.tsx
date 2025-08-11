@@ -11,7 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChatInterface } from "@/components/chat/ChatInterface";
-import MapLibreMap from "@/components/maps/MapLibreMap";
+import { InteractiveMap } from "@/components/maps/InteractiveMap";
 import { SiteScoring } from "@/components/analytics/SiteScoring";
 import { MarketAnalytics } from "@/components/analytics/MarketAnalytics";
 import { ParallaxBackground, ParallaxHero } from "@/components/ParallaxBackground";
@@ -41,8 +41,7 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Zap,
-  Shield
+  Zap
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -214,48 +213,25 @@ export default function Dashboard() {
       <ParallaxBackground />
 
       {/* Navigation Header */}
-      <header className="relative z-10 shadow-xl" style={{
-        background: `linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 25%, #0f0f0f 50%, #1a1a1a 75%, #0f0f0f 100%)`,
-        backgroundSize: '12px 12px',
-        position: 'relative'
-      }}>
-        {/* Stucco texture overlay */}
-        <div 
-          className="absolute inset-0 opacity-40"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 0%, transparent 50%),
-              radial-gradient(circle at 80% 20%, rgba(255,255,255,0.06) 0%, transparent 50%),
-              radial-gradient(circle at 40% 40%, rgba(0,0,0,0.4) 0%, transparent 30%),
-              radial-gradient(circle at 60% 70%, rgba(0,0,0,0.3) 0%, transparent 40%),
-              radial-gradient(circle at 15% 15%, rgba(255,255,255,0.05) 0%, transparent 60%),
-              radial-gradient(circle at 85% 85%, rgba(0,0,0,0.2) 0%, transparent 50%)
-            `,
-            backgroundSize: '140px 140px, 90px 90px, 50px 50px, 70px 70px, 30px 30px, 110px 110px'
-          }}
-        />
-        
-        <div className="max-w-7xl mx-auto px-4 py-4 relative">
+      <header className="relative z-10 bg-bristol-ink text-white shadow-xl">
+        <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-bristol-maroon via-red-800 to-red-900 rounded-lg flex items-center justify-center shadow-xl border border-red-800/30">
-                <span className="text-white font-serif font-bold text-xl drop-shadow-lg">B</span>
+              <div className="w-12 h-12 bg-bristol-maroon rounded-lg flex items-center justify-center">
+                <span className="text-white font-serif font-bold text-xl">B</span>
               </div>
               <div>
-                <h1 className="font-serif text-2xl font-bold text-white drop-shadow-lg">Bristol Development</h1>
-                <p className="text-gray-300 text-sm">Site Intelligence Platform</p>
+                <h1 className="font-serif text-2xl font-bold">Bristol Development</h1>
+                <p className="text-bristol-stone text-sm">Site Intelligence Platform</p>
               </div>
             </div>
             
-            <nav className="hidden md:flex items-center space-x-2">
+            <nav className="hidden md:flex items-center space-x-6">
               <button 
                 onClick={() => setActiveTab("overview")}
                 className={cn(
-                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
-                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
-                  activeTab === "overview" 
-                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
-                    : "hover:bg-white/5"
+                  "hover:text-bristol-gold transition-colors",
+                  activeTab === "overview" && "text-bristol-gold"
                 )}
               >
                 Overview
@@ -263,11 +239,8 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("mapping")}
                 className={cn(
-                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
-                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
-                  activeTab === "mapping" 
-                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
-                    : "hover:bg-white/5"
+                  "hover:text-bristol-gold transition-colors",
+                  activeTab === "mapping" && "text-bristol-gold"
                 )}
               >
                 Interactive Map
@@ -275,11 +248,8 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("scoring")}
                 className={cn(
-                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
-                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
-                  activeTab === "scoring" 
-                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
-                    : "hover:bg-white/5"
+                  "hover:text-bristol-gold transition-colors",
+                  activeTab === "scoring" && "text-bristol-gold"
                 )}
               >
                 Site Scoring
@@ -287,11 +257,8 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("analytics")}
                 className={cn(
-                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
-                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
-                  activeTab === "analytics" 
-                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
-                    : "hover:bg-white/5"
+                  "hover:text-bristol-gold transition-colors",
+                  activeTab === "analytics" && "text-bristol-gold"
                 )}
               >
                 Market Analytics
@@ -299,11 +266,8 @@ export default function Dashboard() {
               <button 
                 onClick={() => setActiveTab("chat")}
                 className={cn(
-                  "relative px-4 py-2 rounded-lg font-medium transition-all duration-200 text-white text-sm",
-                  "hover:bg-white/10 hover:text-bristol-gold hover:shadow-lg hover:scale-105",
-                  activeTab === "chat" 
-                    ? "bg-gradient-to-r from-bristol-gold/20 to-yellow-600/20 text-bristol-gold border border-bristol-gold/30 shadow-lg scale-105" 
-                    : "hover:bg-white/5"
+                  "hover:text-bristol-gold transition-colors",
+                  activeTab === "chat" && "text-bristol-gold"
                 )}
               >
                 AI Assistant
@@ -312,18 +276,18 @@ export default function Dashboard() {
             
             <div className="flex items-center space-x-4">
               {/* WebSocket Status Indicator */}
-              <div className="flex items-center gap-2 px-3 py-1 bg-black/20 rounded-lg border border-white/10">
+              <div className="flex items-center gap-2">
                 <div className={cn(
-                  "w-3 h-3 rounded-full shadow-lg",
-                  isConnected ? "bg-green-400 animate-pulse shadow-green-400/50" : "bg-red-400 shadow-red-400/50"
+                  "w-3 h-3 rounded-full",
+                  isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"
                 )} />
-                <span className="text-sm font-medium text-white">{isConnected ? "Live" : "Offline"}</span>
+                <span className="text-sm">{isConnected ? "Live" : "Offline"}</span>
               </div>
               
               {/* User Profile */}
-              <div className="flex items-center gap-3 pl-4 border-l border-white/20">
-                <div className="w-9 h-9 bg-gradient-to-br from-bristol-stone to-gray-700 rounded-full flex items-center justify-center shadow-lg border-2 border-white/20">
-                  <span className="text-white text-sm font-bold drop-shadow">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-bristol-stone rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-semibold">
                     {user?.firstName?.[0] || user?.email?.[0] || "U"}
                   </span>
                 </div>
@@ -331,7 +295,7 @@ export default function Dashboard() {
                   onClick={handleLogout}
                   variant="ghost"
                   size="sm"
-                  className="text-white font-medium hover:text-bristol-gold hover:bg-white/10 transition-all duration-200 px-3 py-1 rounded-lg"
+                  className="text-white hover:text-bristol-gold"
                 >
                   Logout
                 </Button>
@@ -656,7 +620,7 @@ export default function Dashboard() {
             <div className="flex-1 flex relative">
               {/* Map */}
               <div className="flex-1">
-                <MapLibreMap
+                <InteractiveMap
                   sites={sites || []}
                   selectedSiteId={selectedSite?.id}
                   onSiteSelect={setSelectedSite}
@@ -723,24 +687,8 @@ export default function Dashboard() {
                   </div>
 
                   <div>
+                    <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2">Market Overview</h3>
                     <div className="space-y-2">
-                      {/* Avg Bristol Score */}
-                      <Card>
-                        <CardContent className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <Target className="w-4 h-4 text-bristol-maroon" />
-                              <span className="text-sm">Avg Bristol Score</span>
-                            </div>
-                            <div className="text-right">
-                              <span className="font-semibold text-bristol-maroon">73.2</span>
-                              <div className="text-xs text-green-600">+2.4% YoY</div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      
-                      {/* Population Growth */}
                       <Card>
                         <CardContent className="p-3">
                           <div className="flex items-center justify-between">
@@ -748,15 +696,11 @@ export default function Dashboard() {
                               <TrendingUp className="w-4 h-4 text-green-600" />
                               <span className="text-sm">Population Growth</span>
                             </div>
-                            <div className="text-right">
-                              <span className="font-semibold text-green-600">4.8%</span>
-                              <div className="text-xs text-bristol-stone">Last 5 Years</div>
-                            </div>
+                            <span className="font-semibold text-green-600">+3.2%</span>
                           </div>
                         </CardContent>
                       </Card>
                       
-                      {/* Median Income */}
                       <Card>
                         <CardContent className="p-3">
                           <div className="flex items-center justify-between">
@@ -764,81 +708,11 @@ export default function Dashboard() {
                               <DollarSign className="w-4 h-4 text-bristol-maroon" />
                               <span className="text-sm">Median Income</span>
                             </div>
-                            <div className="text-right">
-                              <span className="font-semibold">$67.5K</span>
-                              <div className="text-xs text-green-600">+6.2% YoY</div>
-                            </div>
+                            <span className="font-semibold">$72,400</span>
                           </div>
                         </CardContent>
                       </Card>
                       
-                      {/* Job Growth */}
-                      <Card>
-                        <CardContent className="p-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <Briefcase className="w-4 h-4 text-blue-600" />
-                              <span className="text-sm">Job Growth</span>
-                            </div>
-                            <div className="text-right">
-                              <span className="font-semibold text-blue-600">3.4%</span>
-                              <div className="text-xs text-bristol-stone">Projected</div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Market Indicators */}
-                      <Card>
-                        <CardContent className="p-3">
-                          <div className="space-y-2">
-                            <div className="text-sm font-semibold text-bristol-ink">Market Indicators</div>
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                              <div className="flex justify-between">
-                                <span className="text-bristol-stone">Housing Demand</span>
-                                <span className="font-semibold text-red-600">High</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-bristol-stone">Construction Permits</span>
-                                <span className="font-semibold text-yellow-600">Med</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-bristol-stone">Land Availability</span>
-                                <span className="font-semibold text-red-600">Low</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-bristol-stone">Infrastructure</span>
-                                <span className="font-semibold text-green-600">High</span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Development Pipeline */}
-                      <Card>
-                        <CardContent className="p-3">
-                          <div className="space-y-2">
-                            <div className="text-sm font-semibold text-bristol-ink">Development Pipeline</div>
-                            <div className="space-y-1 text-xs">
-                              <div className="flex justify-between">
-                                <span className="text-bristol-stone">Active Projects</span>
-                                <span className="font-semibold">127</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-bristol-stone">Units Under Construction</span>
-                                <span className="font-semibold">3,248</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span className="text-bristol-stone">Est. Completion</span>
-                                <span className="font-semibold">Q3 2025</span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                      
-                      {/* Occupancy Rate */}
                       <Card>
                         <CardContent className="p-3">
                           <div className="flex items-center justify-between">
@@ -847,24 +721,6 @@ export default function Dashboard() {
                               <span className="text-sm">Occupancy Rate</span>
                             </div>
                             <span className="font-semibold text-blue-600">94.2%</span>
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      {/* Risk Assessment */}
-                      <Card>
-                        <CardContent className="p-3">
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <Shield className="w-4 h-4 text-green-600" />
-                                <span className="text-sm font-semibold">Risk Assessment</span>
-                              </div>
-                              <span className="font-semibold text-green-600">Low Risk Market</span>
-                            </div>
-                            <div className="text-xs text-bristol-stone">
-                              Strong fundamentals, stable growth trajectory
-                            </div>
                           </div>
                         </CardContent>
                       </Card>

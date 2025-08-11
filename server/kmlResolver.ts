@@ -1,150 +1,171 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { DOMParser } from '@xmldom/xmldom';
-import { kml } from '@tmcw/togeojson';
+// Use dynamic imports to avoid ES module issues in Node.js environment
 
-interface KMLParseResult {
-  type: 'FeatureCollection';
-  features: Array<{
-    type: 'Feature';
-    properties: any;
-    geometry: any;
-  }>;
+interface KMLResolverOptions {
+  kmlText?: string;
+  kmlUrl?: string;
+}
+
+interface ResolvedLayer {
+  href: string;
+  geojson: any;
 }
 
 export class KMLResolver {
-  
-  /**
-   * Process the actual PARLAY KML file from attached assets
-   * This file contains a NetworkLink to the actual data source
-   */
-  async processParlayKML(): Promise<KMLParseResult> {
+  private parser: any;
+
+  constructor() {
+    // Initialize in resolve method to avoid module loading issues
+  }
+
+  async resolve(options: KMLResolverOptions): Promise<ResolvedLayer[]> {
+    // Initialize DOMParser with proper Node.js imports
+    const { DOMParser } = require('@xmldom/xmldom');
+    this.parser = new DOMParser();
+    const JSZip = require('jszip');
+    const { kml } = require('@tmcw/togeojson');
+
+    const { kmlText, kmlUrl } = options;
+    let xmlText = kmlText;
+
+    if (!xmlText && kmlUrl) {
+      console.log('Fetching KML from URL:', kmlUrl);
+      const response = await fetch(kmlUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)',
+          'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      xmlText = Buffer.from(arrayBuffer).toString('utf-8');
+    }
+
+    if (!xmlText) {
+      throw new Error('Provide kmlText or kmlUrl');
+    }
+
+    const doc = this.parser.parseFromString(xmlText, 'text/xml');
+    const layers: ResolvedLayer[] = [];
+
+    // Collect NetworkLink targets
+    const hrefs = Array.from(doc.getElementsByTagName('href'))
+      .map((n: any) => (n.textContent || '').trim())
+      .filter(Boolean);
+
+    console.log('Found NetworkLink hrefs:', hrefs);
+
+    // Include any top-level features too
     try {
-      const kmlPath = path.join(process.cwd(), 'attached_assets', 'PARLAY Official(1)_1754937815836.kml');
-      console.log('Processing PARLAY KML file:', kmlPath);
-      
-      // Read the KML file
-      const kmlContent = await fs.readFile(kmlPath, 'utf-8');
-      
-      // Parse the KML content to extract NetworkLink
-      const parser = new DOMParser();
-      const kmlDoc = parser.parseFromString(kmlContent, 'text/xml');
-      
-      // Check for NetworkLink elements
-      const networkLinks = kmlDoc.getElementsByTagName('NetworkLink');
-      if (networkLinks.length > 0) {
-        const linkElement = networkLinks[0].getElementsByTagName('Link')[0];
-        const href = linkElement?.getElementsByTagName('href')[0]?.textContent;
+      const topGJ = kml(doc);
+      if (topGJ?.features?.length) {
+        layers.push({ href: 'top-level', geojson: topGJ });
+      }
+    } catch (err) {
+      console.log('No top-level features found');
+    }
+
+    // Resolve each linked layer
+    for (const href of hrefs) {
+      try {
+        console.log('Resolving NetworkLink:', href);
         
-        if (href) {
-          console.log('Found PARLAY NetworkLink:', href);
-          console.log('PARLAY data requires external network access to:', href);
+        // Try multiple approaches for authentication
+        let response = await this.fetchWithFallbacks(href);
+        
+        if (!response.ok) {
+          console.error(`Failed to fetch ${href}: ${response.status} ${response.statusText}`);
+          console.error('Response headers:', Object.fromEntries(response.headers.entries()));
           
-          // For now, return an indicator that PARLAY data would be loaded from NetworkLink
-          // The actual data would require network access to the PARLAY service
-          return this.createParlayPlaceholderData(href);
-        }
-      }
-      
-      // If no NetworkLink, try to parse as regular KML
-      const geoJson = kml(kmlDoc) as KMLParseResult;
-      console.log(`Parsed PARLAY KML: ${geoJson.features.length} features found`);
-      
-      if (geoJson.features.length === 0) {
-        console.log('No direct features found - PARLAY uses NetworkLink for data loading');
-        return this.createParlayPlaceholderData();
-      }
-      
-      // Process any direct features
-      const processedFeatures = geoJson.features.map((feature, index) => ({
-        ...feature,
-        properties: {
-          ...feature.properties,
-          source: 'PARLAY',
-          bristolId: `PARLAY_${index + 1}`,
-          displayName: feature.properties?.name || `PARLAY Parcel ${index + 1}`,
-          description: feature.properties?.description || 'PARLAY Real Estate Parcel',
-          style: {
-            fillColor: '#00FFFF',  // Cyan as requested
-            fillOpacity: 0.3,
-            strokeColor: '#00FFFF',
-            strokeWidth: 2,
-            strokeOpacity: 0.8
+          try {
+            const errorBody = await response.text();
+            console.error('Error response body:', errorBody);
+          } catch (e) {
+            console.error('Could not read error response body');
           }
+          continue;
         }
-      }));
 
-      return {
-        type: 'FeatureCollection',
-        features: processedFeatures
-      };
-      
-    } catch (error) {
-      console.error('Error processing PARLAY KML:', error);
-      throw new Error(`Failed to process PARLAY KML: ${error.message}`);
+        const arrayBuffer = await response.arrayBuffer();
+        const contentType = response.headers.get('content-type') || '';
+        let innerKml = null;
+
+        if (href.toLowerCase().endsWith('.kmz') || contentType.includes('zip')) {
+          console.log('Processing KMZ file...');
+          const zip = await JSZip.loadAsync(arrayBuffer);
+          
+          // Pick the first .kml file found
+          const kmlFiles = Object.keys(zip.files).filter(filename => 
+            filename.toLowerCase().endsWith('.kml')
+          );
+          
+          if (kmlFiles.length === 0) {
+            console.log('No KML files found in KMZ');
+            continue;
+          }
+          
+          const entry = zip.files[kmlFiles[0]];
+          innerKml = await entry.async('text');
+          console.log(`Extracted KML from ${kmlFiles[0]}, length:`, innerKml.length);
+        } else {
+          innerKml = Buffer.from(arrayBuffer).toString('utf-8');
+          console.log('Processing KML file, length:', innerKml.length);
+        }
+
+        const innerXml = this.parser.parseFromString(innerKml, 'text/xml');
+        const gj = kml(innerXml);
+        
+        if (gj?.features?.length) {
+          console.log(`Converted to GeoJSON: ${gj.features.length} features`);
+          layers.push({ href, geojson: gj });
+        }
+      } catch (linkError: any) {
+        console.error(`Error processing NetworkLink ${href}:`, linkError.message);
+        continue;
+      }
     }
+
+    console.log(`KML resolve complete: ${layers.length} layers found`);
+    return layers;
   }
 
-  /**
-   * Create placeholder data indicating PARLAY NetworkLink was found
-   */
-  private createParlayPlaceholderData(networkLink?: string): KMLParseResult {
-    console.log('Creating PARLAY NetworkLink indicator');
+  private async fetchWithFallbacks(href: string): Promise<Response> {
+    // First try: Original URL as-is
+    let response = await fetch(href, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)',
+        'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
+      }
+    });
     
-    return {
-      type: 'FeatureCollection',
-      features: [{
-        type: 'Feature',
-        properties: {
-          source: 'PARLAY',
-          name: 'PARLAY Data Source',
-          description: `PARLAY parcels available via NetworkLink: ${networkLink || 'Network access required'}`,
-          networkLink: networkLink,
-          bristolNote: 'Actual PARLAY parcel data requires network access to ReportAllUSA service',
-          style: {
-            fillColor: '#00FFFF',
-            fillOpacity: 0.2,
-            strokeColor: '#00FFFF', 
-            strokeWidth: 1,
-            strokeOpacity: 0.6
-          }
-        },
-        geometry: {
-          type: 'Point',
-          coordinates: [-80.8431, 35.2271] // Charlotte, NC center point
+    // If 403 or 405, try different user agents and approaches
+    if (response.status === 403 || response.status === 405) {
+      console.log(`${response.status} error, trying Google Earth user agent...`);
+      response = await fetch(href, {
+        headers: {
+          'User-Agent': 'GoogleEarth/7.3.6.9345(Windows;Microsoft Windows (6.2.9200.0);en;kml:2.2;client:Pro;type:default)',
+          'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
         }
-      }]
-    };
-  }
-
-  /**
-   * Check if coordinates are in Charlotte, NC area for validation
-   */
-  private isInCharlotteArea(coordinates: number[]): boolean {
-    const [lng, lat] = coordinates;
-    // Charlotte approximate bounds: 35.0°-35.5°N, 81.0°-80.5°W
-    return lat >= 35.0 && lat <= 35.5 && lng >= -81.0 && lng <= -80.5;
-  }
-
-  /**
-   * Validate that parsed features contain valid geographic data
-   */
-  private validateFeatures(features: any[]): boolean {
-    if (!features || features.length === 0) {
-      console.warn('No features found in KML file');
-      return false;
-    }
-
-    let validFeatures = 0;
-    for (const feature of features) {
-      if (feature.geometry && feature.geometry.coordinates) {
-        validFeatures++;
+      });
+      console.log('Google Earth user agent response status:', response.status);
+      
+      // If still not working, try without query parameters
+      if (!response.ok && href.includes('?')) {
+        console.log('Trying URL without query parameters...');
+        const baseUrl = href.split('?')[0];
+        response = await fetch(baseUrl, {
+          headers: {
+            'User-Agent': 'GoogleEarth/7.3.6.9345(Windows;Microsoft Windows (6.2.9200.0);en;kml:2.2;client:Pro;type:default)',
+            'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
+          }
+        });
+        console.log('Base URL response status:', response.status);
       }
     }
 
-    console.log(`Validation: ${validFeatures}/${features.length} features have valid geometry`);
-    return validFeatures > 0;
+    return response;
   }
 }
-
-export const kmlResolver = new KMLResolver();
