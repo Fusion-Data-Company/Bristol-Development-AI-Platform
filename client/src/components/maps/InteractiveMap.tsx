@@ -232,7 +232,7 @@ export function InteractiveMap({
       
               visible={showKML}
               onFeaturesLoad={(features) => {
-                console.log(`Loaded ${features.length} PARLAY features`);
+                console.log(`Loaded ${features.length} KML features`);
               }}
             />
           )}
@@ -384,7 +384,7 @@ export function InteractiveMap({
                     onChange={(e) => setShowKML(e.target.checked)}
                     className="w-4 h-4 text-bristol-maroon"
                   />
-                  <label htmlFor="kml" className="text-sm text-bristol-ink">PARLAY Parcels</label>
+                  <label htmlFor="kml" className="text-sm text-bristol-ink">KML Layer</label>
                 </div>
               )}
               <div className="flex items-center gap-2">

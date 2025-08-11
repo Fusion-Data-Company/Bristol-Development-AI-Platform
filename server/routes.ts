@@ -216,6 +216,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // MCP Tools routes
+  app.get('/api/mcp/ping', (req, res) => {
+    res.json({ ok: true });
+  });
+
   app.get('/api/mcp/tools', isAuthenticated, async (req, res) => {
     try {
       const tools = await mcpService.getAvailableTools();
@@ -322,6 +326,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/kml/resolve", async (req, res) => {
     try {
       console.log('KML resolve request received');
+      
+      // Check FEATURE_PARLAY environment variable
+      const parlayEnabled = process.env.FEATURE_PARLAY === 'on';
+      
+      if (!parlayEnabled) {
+        console.log('PARLAY feature is disabled');
+        res.json({ ok: true, layers: [] });
+        return;
+      }
       
       // Return test PARLAY parcels in the Charlotte area to verify functionality
       const layers = [{

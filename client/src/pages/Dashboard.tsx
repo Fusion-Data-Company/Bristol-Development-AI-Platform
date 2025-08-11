@@ -76,29 +76,8 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<"overview" | "mapping" | "scoring" | "analytics" | "chat">("mapping");
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
 
-  // PARLAY KML data from the uploaded file
-  const kmlData = `<?xml version="1.0" encoding="UTF-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
-<Document>
-        <name>PARLAY Parcels</name>
-        <description>Zoom in to view. https://reportallusa.com/</description>
-        <styleUrl>#parlay_parcels</styleUrl>
-        <gx:balloonVisibility>1</gx:balloonVisibility>
-        <Style id="parlay_parcels">
-                <ListStyle>
-                        <ItemIcon>
-                                <href>https://reportallusa.com/favicon.ico</href>
-                        </ItemIcon>
-                </ListStyle>
-        </Style>
-        <NetworkLink>
-                <name>Layers</name>
-                <Link>
-                        <href>https://reportallusa.com/parlay/gearth_layers2.kmz?user_key=837bac90efffc90</href>
-                </Link>
-        </NetworkLink>
-</Document>
-</kml>`;
+  // KML data will be loaded from files or user uploads
+  const kmlData = undefined;
   const [activeChatSession, setActiveChatSession] = useState<string | undefined>();
 
   // Helper function for getting score colors
@@ -690,7 +669,7 @@ export default function Dashboard() {
                   <img src={bristolLogoPath} alt="Bristol Development Group" className="h-8 w-auto" />
                   <div>
                     <h1 className="text-xl font-serif font-bold text-bristol-ink">Bristol Site Intelligence</h1>
-                    <p className="text-sm text-bristol-stone">PARLAY Parcels & Market Analysis</p>
+                    <p className="text-sm text-bristol-stone">Geographic Data & Market Analysis</p>
                   </div>
                 </div>
                 
