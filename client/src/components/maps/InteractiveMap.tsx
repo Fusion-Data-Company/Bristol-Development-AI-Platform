@@ -66,9 +66,9 @@ export function InteractiveMap({
   const [showHeatmap, setShowHeatmap] = useState(true);
   const [showKML, setShowKML] = useState(!!kmlData);
   const [viewport, setViewport] = useState({
-    longitude: -82.4572, // Atlanta/Sunbelt center
-    latitude: 33.7490,
-    zoom: 6
+    longitude: -80.8431, // Charlotte, NC where PARLAY parcels are located
+    latitude: 35.2271,
+    zoom: 16 // Zoom in to see the PARLAY parcels clearly
   });
 
   // Sample sites for Sunbelt markets

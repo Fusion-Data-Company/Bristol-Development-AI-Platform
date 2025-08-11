@@ -159,7 +159,7 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
           'fill-opacity': [
             'case',
             ['==', ['get', 'source'], 'PARLAY'],
-            0.5, // More visible for PARLAY
+            0.8, // Much more visible for PARLAY
             0.3
           ]
         }}
@@ -180,7 +180,7 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
           'line-width': [
             'case',
             ['==', ['get', 'source'], 'PARLAY'],
-            2, // Thicker border for PARLAY
+            4, // Much thicker border for PARLAY visibility
             1
           ]
         }}
