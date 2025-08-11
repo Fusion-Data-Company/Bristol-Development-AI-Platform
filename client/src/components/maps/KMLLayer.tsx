@@ -6,17 +6,18 @@ import type { KMLFeature } from '@/utils/kmlParser';
 interface KMLLayerProps {
   kmlData?: string;
   kmlUrl?: string;
-  visible: boolean;
+  visible?: boolean;
   onFeaturesLoad?: (features: KMLFeature[]) => void;
+  onFeatureClick?: (feature: any) => void;
 }
 
-export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerProps) {
+export function KMLLayer({ kmlData, kmlUrl, visible = true, onFeaturesLoad, onFeatureClick }: KMLLayerProps) {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!visible && !kmlData && !kmlUrl) {
+    if (!kmlData && !kmlUrl) {
       return;
     }
 
