@@ -13,14 +13,40 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 // Global error suppression for Tangram runtime errors
 const originalConsoleError = console.error;
+const originalConsoleWarn = console.warn;
+const originalConsoleLog = console.log;
+
 console.error = (...args) => {
-  const message = args.join(' ');
-  if (message.includes('Tangram') || 
-      message.includes('signal aborted without reason') ||
-      message.includes('runtime-error-plugin')) {
-    return; // Suppress these non-critical errors
+  const message = args.join(' ').toLowerCase();
+  if (message.includes('tangram') || 
+      message.includes('signal aborted') ||
+      message.includes('runtime-error-plugin') ||
+      message.includes('aborted without reason')) {
+    return; // Completely suppress these errors
   }
   originalConsoleError.apply(console, args);
+};
+
+console.warn = (...args) => {
+  const message = args.join(' ').toLowerCase();
+  if (message.includes('tangram') || 
+      message.includes('signal aborted') ||
+      message.includes('runtime-error-plugin') ||
+      message.includes('aborted without reason')) {
+    return; // Completely suppress these warnings
+  }
+  originalConsoleWarn.apply(console, args);
+};
+
+console.log = (...args) => {
+  const message = args.join(' ').toLowerCase();
+  if (message.includes('tangram') || 
+      message.includes('signal aborted') ||
+      message.includes('runtime-error-plugin') ||
+      message.includes('aborted without reason')) {
+    return; // Completely suppress these logs
+  }
+  originalConsoleLog.apply(console, args);
 };
 
 interface InteractiveMapProps {
