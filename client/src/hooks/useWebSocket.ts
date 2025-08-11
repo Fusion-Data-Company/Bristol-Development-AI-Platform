@@ -42,8 +42,11 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
     setConnectionStatus('connecting');
 
     try {
+      // Fix WebSocket URL to point to API server instead of Vite dev server
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      const apiHost = window.location.hostname;
+      const apiPort = window.location.port === "5173" ? "5000" : window.location.port || "5000";
+      const wsUrl = `${protocol}//${apiHost}:${apiPort}/ws`;
       
       ws.current = new WebSocket(wsUrl);
 
