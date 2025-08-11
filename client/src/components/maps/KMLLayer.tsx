@@ -144,11 +144,20 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
 
   return (
     <Source id="kml-data" type="geojson" data={geoJsonData}>
-      {/* PARLAY Polygon layers - filled with cyan */}
+      {/* PARLAY Polygon layers - filled with cyan - ZOOM LEVEL FILTERED */}
       <Layer
         id="kml-polygons"
         type="fill"
-        filter={['==', ['geometry-type'], 'Polygon']}
+        filter={[
+          'all',
+          ['==', ['geometry-type'], 'Polygon'],
+          [
+            'case',
+            ['==', ['get', 'source'], 'PARLAY'],
+            ['>=', ['zoom'], 12], // PARLAY parcels only show at zoom 12+
+            true // Non-PARLAY always show
+          ]
+        ]}
         paint={{
           'fill-color': [
             'case',
@@ -165,11 +174,20 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
         }}
       />
       
-      {/* PARLAY Polygon borders */}
+      {/* PARLAY Polygon borders - ZOOM LEVEL FILTERED */}
       <Layer
         id="kml-polygons-border"
         type="line"
-        filter={['==', ['geometry-type'], 'Polygon']}
+        filter={[
+          'all',
+          ['==', ['geometry-type'], 'Polygon'],
+          [
+            'case',
+            ['==', ['get', 'source'], 'PARLAY'],
+            ['>=', ['zoom'], 12], // PARLAY borders only show at zoom 12+
+            true // Non-PARLAY always show
+          ]
+        ]}
         paint={{
           'line-color': [
             'case',
