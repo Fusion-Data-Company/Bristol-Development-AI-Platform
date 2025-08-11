@@ -1,0 +1,67 @@
+You are the Builder. We rolled back. PAUSE the PARLAY/ReportAll work and COMPLETE the core Bristol AI build exactly as specified. Do not delete working code. Do not add marketing pages. 
+
+## 0) Guardrails
+- Add a feature flag: read FEATURE_PARLAY from env. If not "on", hide all PARLAY UI and do not call any PARLAY routes. Do not remove any PARLAY files—just disable.
+- Keep the app bootable with only DATABASE_URL and ALLOWED_ORIGIN set.
+
+## 1) Verify/restore project structure
+ROOT
+- package.json with workspaces ["apps/web","apps/api"]
+
+apps/api (Node/Express, ESM "type":"module")
+- package.json deps: express, cors, cookie-parser, pg, axios, playwright, msal-node, @microsoft/microsoft-graph-client, zod, ws, uuid, apify-client, dayjs
+- .env.example with: DATABASE_URL, ALLOWED_ORIGIN, OPENROUTER_API_KEY, N8N_WEBHOOK_URL, APIFY_TOKEN, APIFY_ACTOR_ID, MS_CLIENT_ID, MS_CLIENT_SECRET, MS_TENANT_ID=common, MS_REDIRECT_URI, MCP_API_KEY, MCP_WEBHOOK_SECRET, FEATURE_PARLAY
+- public/bristol-logo.gif (placeholder ok)
+- src/db.js → create tables: users, oauth_tokens, sites, properties, metrics, concessions, comps, runs, files, memory_short, memory_long(JSON), tools
+- src/index.js → express app + http server + attachWs(server); CORS uses ALLOWED_ORIGIN; serve /public
+- routes:
+  - /api/public.js → Sites & Metrics CRUD + sample ACS/HUD endpoints (working)
+  - /api/comps.js → create/list/rescore with scoring 1–100 (amenities 40%, rent 30%, concessions 20%, distance 10%) and explain breakdown
+  - /api/agent.js → /agent/chat (OpenRouter), /agent/write-metric, /agent/mcp/n8n
+  - /api/microsoft.js → Graph OAuth: login, list drive root, list 10 mails (hide if no keys)
+  - /api/tools.js → API Tools registry (name, base_url, api_key masked, notes)
+  - /api/pipeline.js → ArcGIS FeatureServer proxy (/pipeline/search?url=...&where=...)
+  - /api/apify.js → trigger Apify actor and ingest results into comps (amenities+concessions+rents)
+  - /api/mcp.js → tool registry list/run, universal webhook, ping
+- mcp/core.js → tools: n8n.trigger, http.fetch, db.query(safe), metrics.write, apify.scrape
+- mcp/ws.js → WebSocket server attached via server.on("upgrade") at /api/mcp/ws
+
+apps/web (React+Vite+Tailwind+Cinzel)
+- package.json deps: react, react-dom, axios, @tanstack/react-table, maplibre-gl, @arcgis/core, jszip, @tmcw/togeojson, zustand
+- tailwind.config.js → Bristol palette + font
+- index.html → Cinzel + favicon /public/bristol-logo.gif
+- src/index.css → include `@import "maplibre-gl/dist/maplibre-gl.css";`
+- src/main.jsx → routes "/", "/integrations", "/tools"
+- pages/App.jsx → Tabs: Map, Tables, 3D Sandbox (Cesium lazy load stub ok)
+- pages/Integrations.jsx → Microsoft connect buttons; Tools registry (list/add key); hide actions if no keys
+- pages/ToolsConsole.jsx → list MCP tools, JSON payload editor, Run Tool, live WebSocket events
+- widgets/Map.jsx → MapLibre + ArcGIS base toggle; KML/KMZ upload (local parse) + fitBounds; NO PARLAY references when FEATURE_PARLAY != "on"
+- widgets/ChatDock.jsx → docked Chat with model dropdown (OpenRouter), “Bristol Mode” toggle; the Head‑of‑Data system prompt
+- widgets/forms/AddSiteForm.jsx; tables/{SitesTable,MetricsTable (inline edit),CompsTable (score+Explain)}.jsx
+- brand/Chrome.jsx; widgets/HeroStrip.jsx
+- lib/mcpClient.js → API_BASE points to :3000 in dev; WS uses ws(s)://<API_HOST>/api/mcp/ws
+
+## 2) Bristol Brand + Memory
+- Ingest public bristoldevelopment.com pages into memory_long via /api/ingest/bristol endpoint.
+- System prompt in ChatDock includes Bristol tone and policies (numbers-first, concise; verbal-judo; Sandler; comps scoring; flags proxies; finance sensitivity).
+- Seed amenities list and default comps weights.
+
+## 3) Hide and defer PARLAY
+- Read FEATURE_PARLAY; if not "on", do not render PARLAY toggles/controls on Map and do not call any resolver.
+- Leave kml/kmz local upload working.
+
+## 4) MCP + Tools Console
+- Ensure /api/mcp/tools and /api/mcp/run work; Tools Console streams WS events.
+
+## 5) Install & Boot
+- Run npm install.
+- Ensure apps/api/.env exists (copy from .env.example if missing). Set ALLOWED_ORIGIN=http://localhost:5173.
+- Start both servers with `npm run dev`.
+- Print a STATUS REPORT at the end with:
+  - Which tabs/pages are present
+  - Map.jsx path and size; confirm map renders and kml/kmz upload works
+  - Tools Console lists tools and WS connected
+  - Microsoft buttons visible/hidden
+  - Any TODOs left
+
+If anything fails, print exact file + line + error, fix it, and continue until app boots cleanly with Map, Tables, Chat, Tools Console, and Integrations (keys optional).
