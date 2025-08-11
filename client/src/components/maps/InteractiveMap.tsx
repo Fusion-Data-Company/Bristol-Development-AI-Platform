@@ -71,15 +71,50 @@ export function InteractiveMap({
     zoom: 15 // Start zoomed in to see PARLAY parcels immediately
   });
 
+  // Prevent map errors by ensuring viewport is valid
+  const onViewportChange = useCallback((newViewport: any) => {
+    try {
+      // Ensure viewport values are valid
+      if (newViewport && 
+          typeof newViewport.longitude === 'number' && 
+          typeof newViewport.latitude === 'number' && 
+          typeof newViewport.zoom === 'number' &&
+          isFinite(newViewport.longitude) && 
+          isFinite(newViewport.latitude) && 
+          isFinite(newViewport.zoom) &&
+          newViewport.zoom >= 0 && newViewport.zoom <= 24 &&
+          newViewport.latitude >= -90 && newViewport.latitude <= 90 &&
+          newViewport.longitude >= -180 && newViewport.longitude <= 180) {
+        setViewport(newViewport);
+      }
+    } catch (error) {
+      console.warn('Map viewport change error:', error);
+      // Fallback to previous viewport
+    }
+  }, []);
+
+  // Enhanced error handling for map interactions
+  const handleMapError = useCallback((error: any) => {
+    console.warn('Map error occurred:', error);
+    // Could implement toast notification here if needed
+  }, []);
+
   // Sample sites for Sunbelt markets
   const sampleSites: Site[] = sites.length > 0 ? sites : [
     {
       id: '1',
       name: 'Atlanta Metro Site',
       address: '1234 Peachtree St, Atlanta, GA',
+      city: 'Atlanta',
+      state: 'GA',
+      zipCode: '30309',
       latitude: 33.7490,
       longitude: -84.3880,
+      acreage: 5.2,
+      zoning: 'R-5',
+      status: 'active',
       bristolScore: 87,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -87,9 +122,16 @@ export function InteractiveMap({
       id: '2', 
       name: 'Charlotte Uptown',
       address: '567 Trade St, Charlotte, NC',
+      city: 'Charlotte',
+      state: 'NC',
+      zipCode: '28202',
       latitude: 35.2271,
       longitude: -80.8431,
+      acreage: 3.8,
+      zoning: 'R-4',
+      status: 'active',
       bristolScore: 75,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -97,9 +139,16 @@ export function InteractiveMap({
       id: '3',
       name: 'Orlando Downtown',
       address: '890 Orange Ave, Orlando, FL',
+      city: 'Orlando',
+      state: 'FL',
+      zipCode: '32801',
       latitude: 28.5383,
       longitude: -81.3792,
+      acreage: 4.1,
+      zoning: 'R-3',
+      status: 'active',
       bristolScore: 68,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -107,9 +156,16 @@ export function InteractiveMap({
       id: '4',
       name: 'Nashville Music Row',
       address: '1010 Music Row, Nashville, TN',
+      city: 'Nashville',
+      state: 'TN',
+      zipCode: '37203',
       latitude: 36.1627,
       longitude: -86.7816,
+      acreage: 2.9,
+      zoning: 'R-6',
+      status: 'active',
       bristolScore: 82,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -117,9 +173,16 @@ export function InteractiveMap({
       id: '5',
       name: 'Tampa Bay Area',
       address: '2020 Bay St, Tampa, FL',
+      city: 'Tampa',
+      state: 'FL',
+      zipCode: '33602',
       latitude: 27.9506,
       longitude: -82.4572,
+      acreage: 6.7,
+      zoning: 'R-4',
+      status: 'active',
       bristolScore: 71,
+      ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date()
     }
@@ -141,18 +204,24 @@ export function InteractiveMap({
     }))
   };
 
-  const heatmapLayer = {
+  const heatmapLayer: any = {
     id: 'market-heat',
-    type: 'heatmap' as const,
+    type: 'heatmap',
     paint: {
-      'heatmap-weight': {
-        property: 'score',
-        type: 'exponential',
-        stops: [[0, 0], [100, 1]]
-      },
-      'heatmap-intensity': {
-        stops: [[0, 1], [15, 3]]
-      },
+      'heatmap-weight': [
+        'interpolate',
+        ['linear'],
+        ['get', 'score'],
+        0, 0,
+        100, 1
+      ],
+      'heatmap-intensity': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        0, 1,
+        15, 3
+      ],
       'heatmap-color': [
         'interpolate',
         ['linear'],
@@ -164,14 +233,22 @@ export function InteractiveMap({
         0.8, 'rgba(255, 69, 0, 0.8)',
         1, 'rgba(139, 21, 56, 1)'
       ],
-      'heatmap-radius': {
-        stops: [[0, 2], [15, 40]]
-      },
-      'heatmap-opacity': {
-        stops: [[7, 1], [15, 0.6]]
-      }
+      'heatmap-radius': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        0, 2,
+        15, 40
+      ],
+      'heatmap-opacity': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        7, 1,
+        15, 0.6
+      ]
     }
-  } as const;
+  };
 
   const handleSiteClick = (site: Site) => {
     setSelectedSite(site);
@@ -210,11 +287,19 @@ export function InteractiveMap({
         <Map
           ref={mapRef}
           {...viewport}
-          onMove={evt => setViewport(evt.viewState)}
+          onMove={evt => onViewportChange(evt.viewState)}
           mapboxAccessToken={MAPBOX_TOKEN}
           style={{ width: '100%', height: '100%' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}
+          onError={handleMapError}
+          scrollZoom={true}
+          dragPan={true}
+          dragRotate={false}
+          doubleClickZoom={true}
+          touchZoom={true}
+          touchPitch={false}
+          keyboard={true}
           interactiveLayerIds={['market-heat', 'kml-polygons', 'kml-polygon-outlines', 'kml-lines', 'kml-points']}
           projection={{ name: 'mercator' }}
         >
@@ -486,11 +571,19 @@ export function InteractiveMap({
         <Map
           ref={mapRef}
           {...viewport}
-          onMove={evt => setViewport(evt.viewState)}
+          onMove={evt => onViewportChange(evt.viewState)}
           mapboxAccessToken={MAPBOX_TOKEN}
           style={{ width: '100%', height: '100%' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}
+          onError={handleMapError}
+          scrollZoom={true}
+          dragPan={true}
+          dragRotate={false}
+          doubleClickZoom={true}
+          touchZoom={true}
+          touchPitch={false}
+          keyboard={true}
           interactiveLayerIds={['market-heat']}
           projection={{ name: 'mercator' }}
         >
@@ -678,6 +771,18 @@ export function InteractiveMap({
               />
               <label htmlFor="housing" className="text-sm text-bristol-ink">Housing Density</label>
             </div>
+            {kmlData && (
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="kml"
+                  checked={showKML}
+                  onChange={(e) => setShowKML(e.target.checked)}
+                  className="w-4 h-4 text-bristol-maroon"
+                />
+                <label htmlFor="kml" className="text-sm text-bristol-ink">PARLAY Parcels</label>
+              </div>
+            )}
           </div>
           
           <div className="mt-3 pt-3 border-t border-bristol-stone">
