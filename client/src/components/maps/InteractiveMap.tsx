@@ -68,7 +68,7 @@ export function InteractiveMap({
   const [viewport, setViewport] = useState({
     longitude: -80.8431, // Charlotte, NC where PARLAY parcels are located
     latitude: 35.2271,
-    zoom: 10 // Start zoomed out to demonstrate zoom-level filtering
+    zoom: 15 // Start zoomed in to see PARLAY parcels immediately
   });
 
   // Sample sites for Sunbelt markets
