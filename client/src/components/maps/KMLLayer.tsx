@@ -57,41 +57,60 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
         setGeoJsonData(geoJson);
         onFeaturesLoad?.(parsedData.features);
         
-        // Load network links if present
+        // Process network links if present using server resolver
         if (parsedData.networkLinks && parsedData.networkLinks.length > 0) {
-          console.log('Loading network links:', parsedData.networkLinks);
-          for (const networkLink of parsedData.networkLinks) {
-            try {
-              const networkData = await fetchNetworkLink(networkLink.href);
-              if (networkData && networkData.features.length > 0) {
-                console.log(`Loaded ${networkData.features.length} features from network link`);
-                // Merge network link data
-                const mergedGeoJson = {
-                  type: 'FeatureCollection',
-                  features: [
-                    ...geoJson.features,
-                    ...networkData.features.map(feature => ({
-                      type: 'Feature',
-                      id: feature.id,
+          console.log('Processing network links via server resolver:', parsedData.networkLinks);
+          
+          try {
+            const response = await fetch('/api/kml/resolve', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ kmlText })
+            });
+
+            if (response.ok) {
+              const resolveData = await response.json();
+              if (resolveData.ok && resolveData.layers) {
+                console.log(`KML resolver returned ${resolveData.layers.length} layers`);
+                
+                // Merge all resolved layers with existing data
+                const allFeatures = [...geoJson.features];
+                const networkFeatures: any[] = [];
+                
+                for (const layer of resolveData.layers) {
+                  if (layer.geojson && layer.geojson.features) {
+                    console.log(`Adding ${layer.geojson.features.length} features from ${layer.href}`);
+                    
+                    const layerFeatures = layer.geojson.features.map((feature: any) => ({
+                      ...feature,
                       properties: {
-                        name: feature.name,
-                        description: feature.description,
-                        source: 'PARLAY',
-                        ...feature.properties
-                      },
-                      geometry: {
-                        type: feature.geometry.type,
-                        coordinates: feature.geometry.coordinates
+                        ...feature.properties,
+                        source: layer.href.includes('parlay') ? 'PARLAY' : 'NetworkLink',
+                        networkHref: layer.href
                       }
-                    }))
-                  ]
+                    }));
+                    
+                    allFeatures.push(...layerFeatures);
+                    networkFeatures.push(...layerFeatures);
+                  }
+                }
+                
+                const mergedGeoJson = {
+                  type: 'FeatureCollection' as const,
+                  features: allFeatures
                 };
+                
                 setGeoJsonData(mergedGeoJson);
-                onFeaturesLoad?.(networkData.features);
+                onFeaturesLoad?.(networkFeatures);
+                console.log(`Total features loaded: ${allFeatures.length}`);
               }
-            } catch (networkError) {
-              console.warn(`Failed to load network link: ${networkLink.href}`, networkError);
+            } else {
+              console.error('KML resolver failed:', response.status);
             }
+          } catch (resolverError) {
+            console.error('Error calling KML resolver:', resolverError);
           }
         }
         

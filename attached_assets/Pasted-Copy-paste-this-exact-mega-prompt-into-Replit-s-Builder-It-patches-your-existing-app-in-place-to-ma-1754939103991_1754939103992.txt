@@ -1,0 +1,165 @@
+Copy‑paste this exact mega prompt into Replit’s Builder. It patches your existing app in‑place to make Google‑Earth‑style KML <NetworkLink> files work by resolving the linked KMZ/KML on the server, converting to GeoJSON, and rendering on the map. No placeholders. It keeps everything else intact.
+
+⸻
+
+REPLIT BUILDER PATCH — Enable KML <NetworkLink> (Parlay, etc.)
+
+Goal: Make KML files that only contain <NetworkLink> (e.g., your Parlay file) load in the web app like they do in Google Earth Pro.
+How: Add a server‑side resolver that fetches the linked KMZ/KML (avoids CORS), unzips (if KMZ), converts to GeoJSON, and returns layers to the client. Update the map widget to call it automatically when a dropped KML contains <NetworkLink>.
+
+0) Don’t delete anything. Modify in place.
+
+1) Add deps to API
+
+Edit apps/api/package.json and ensure these are in dependencies (add if missing):
+
+{
+  "jszip": "^3.10.1",
+  "@xmldom/xmldom": "^0.8.10"
+}
+
+After file creation, run npm install at the repo root.
+
+2) New API route: apps/api/src/routes/kmlResolve.js
+
+import { Router } from "express";
+import axios from "axios";
+import JSZip from "jszip";
+import { DOMParser } from "@xmldom/xmldom";
+import * as togeojson from "@tmcw/togeojson";
+
+export const router = Router();
+
+/**
+ * POST /api/kml/resolve
+ * Body: { kmlText?: string, kmlUrl?: string }
+ * Returns: { ok: true, layers: [{ href: string, geojson }]}
+ */
+router.post("/kml/resolve", async (req, res) => {
+  try {
+    const { kmlText, kmlUrl } = req.body || {};
+    let xmlText = kmlText;
+
+    if (!xmlText && kmlUrl) {
+      const { data } = await axios.get(kmlUrl, { timeout: 30000 });
+      xmlText = typeof data === "string" ? data : data.toString();
+    }
+    if (!xmlText) return res.status(400).json({ error: "Provide kmlText or kmlUrl" });
+
+    const doc = new DOMParser().parseFromString(xmlText, "text/xml");
+
+    // Collect NetworkLink targets
+    const hrefs = Array.from(doc.getElementsByTagName("href"))
+      .map(n => (n.textContent || "").trim())
+      .filter(Boolean);
+
+    const layers = [];
+
+    // Include any top‑level features too
+    try {
+      const topGJ = togeojson.kml(doc);
+      if (topGJ?.features?.length) layers.push({ href: "top-level", geojson: topGJ });
+    } catch {}
+
+    // Resolve each linked layer
+    for (const href of hrefs) {
+      const resp = await axios.get(href, { responseType: "arraybuffer", timeout: 60000 });
+      const ctype = (resp.headers["content-type"] || "").toLowerCase();
+      let innerKml = null;
+
+      if (href.toLowerCase().endsWith(".kmz") || ctype.includes("zip")) {
+        const zip = await JSZip.loadAsync(Buffer.from(resp.data));
+        // Pick the first .kml file found
+        const entry = Object.values(zip.files).find(f => f.name.toLowerCase().endsWith(".kml"));
+        if (!entry) continue;
+        innerKml = await entry.async("text");
+      } else {
+        innerKml = Buffer.from(resp.data).toString("utf-8");
+      }
+
+      const innerXml = new DOMParser().parseFromString(innerKml, "text/xml");
+      const gj = togeojson.kml(innerXml);
+      if (gj?.features?.length) layers.push({ href, geojson: gj });
+    }
+
+    res.json({ ok: true, layers });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: e.message || "KML resolve error" });
+  }
+});
+
+3) Wire the route
+
+Edit apps/api/src/index.js and add:
+
+import { router as kmlResolve } from "./routes/kmlResolve.js";
+app.use("/api", kmlResolve);
+
+4) Update the map uploader to auto‑resolve NetworkLinks
+
+Edit apps/web/src/widgets/Map.jsx. Replace the current handleKmlKmz (or your file handler) with this version that detects <NetworkLink> and calls the resolver; otherwise it uses the existing local KML/KMZ parse:
+
+import axios from "axios";
+import JSZip from "jszip";
+import * as togeojson from "@tmcw/togeojson";
+// ...rest of your imports
+
+async function handleKmlKmz(e){
+  const file = e.target.files[0]; if(!file) return;
+
+  // If it's a KMZ, unzip and convert immediately (no NetworkLink here usually)
+  if (file.name.toLowerCase().endsWith(".kmz")) {
+    const zip = await JSZip.loadAsync(await file.arrayBuffer());
+    const entry = Object.values(zip.files).find(f=>f.name.toLowerCase().endsWith(".kml"));
+    const text = await entry.async("text");
+    if (text.includes("<NetworkLink")) {
+      const { data } = await axios.post("/api/kml/resolve", { kmlText: text });
+      data.layers?.forEach(l => addGeoJSON(l.geojson));
+      return;
+    } else {
+      const xml = new DOMParser().parseFromString(text, "application/xml");
+      const gj = togeojson.kml(xml);
+      addGeoJSON(gj);
+      return;
+    }
+  }
+
+  // KML: read text and check for NetworkLink
+  const text = await file.text();
+  if (text.includes("<NetworkLink")) {
+    const { data } = await axios.post("/api/kml/resolve", { kmlText: text });
+    data.layers?.forEach(l => addGeoJSON(l.geojson));
+  } else {
+    const xml = new DOMParser().parseFromString(text, "application/xml");
+    const gj = togeojson.kml(xml);
+    addGeoJSON(gj);
+  }
+}
+
+function addGeoJSON(gj){
+  if (!gj || !gj.features || !map) return;
+  const id = "kml-" + Math.random().toString(36).slice(2,8);
+  if (map.getSource(id)) return; // avoid dup id
+  map.addSource(id, { type:"geojson", data: gj });
+  map.addLayer({ id: id+"-fill", type:"fill", source:id, paint: { "fill-opacity": 0.25 }});
+  try {
+    const b = bounds(gj);
+    if (b) map.fitBounds(b, { padding: 40 });
+  } catch {}
+}
+
+(Keep your existing bounds() helper and MapLibre init; just ensure axios is imported at the top.)
+
+5) Security/operational notes
+	•	This resolver runs server‑side, so it bypasses browser CORS (the reason your KML wasn’t loading).
+	•	If the linked service requires a rotating token (user_key), store it in your Tools Registry and modify the resolver later to append headers/query params from there. For now we just fetch the URL as provided by the KML.
+	•	This is for internal Bristol use; honor the source’s license.
+
+6) Post‑patch commands (Builder: run automatically)
+
+npm install
+npm run dev
+
+Open the app, go to Map, and upload your PARLAY Official(1).kml. It should load, resolve the network link, and draw the parcels.
+
+Done.

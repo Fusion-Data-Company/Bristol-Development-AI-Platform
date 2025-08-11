@@ -318,49 +318,136 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // PARLAY KMZ proxy endpoint
-  app.get("/api/proxy/parlay", async (req, res) => {
+  // KML NetworkLink resolver endpoint
+  app.post("/api/kml/resolve", async (req, res) => {
     try {
-      console.log('Proxying PARLAY KMZ request...');
-      const response = await fetch('https://reportallusa.com/parlay/gearth_layers2.kmz?user_key=837bac90efffc90', {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)',
-          'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
+      const { kmlText, kmlUrl } = req.body || {};
+      let xmlText = kmlText;
+
+      if (!xmlText && kmlUrl) {
+        console.log('Fetching KML from URL:', kmlUrl);
+        const response = await fetch(kmlUrl, { 
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)',
+            'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const arrayBuffer = await response.arrayBuffer();
-      
-      // Use JSZip to extract KML from KMZ
-      const JSZip = require('jszip');
-      const zip = new JSZip();
-      const zipContent = await zip.loadAsync(arrayBuffer);
-      
-      // Find KML files
-      const kmlFiles = Object.keys(zipContent.files).filter(filename => 
-        filename.toLowerCase().endsWith('.kml')
-      );
-      
-      if (kmlFiles.length === 0) {
-        throw new Error('No KML files found in KMZ archive');
+        
+        const arrayBuffer = await response.arrayBuffer();
+        xmlText = Buffer.from(arrayBuffer).toString('utf-8');
       }
       
-      // Extract the main KML file
-      const mainKmlFile = kmlFiles[0];
-      const kmlContent = await zipContent.files[mainKmlFile].async('text');
-      
-      console.log(`Extracted KML content from ${mainKmlFile}, length:`, kmlContent.length);
-      
-      res.set('Content-Type', 'application/xml');
-      res.send(kmlContent);
-      
-    } catch (error) {
-      console.error('Error proxying PARLAY data:', error);
-      res.status(500).json({ error: 'Failed to fetch PARLAY data', details: error.message });
+      if (!xmlText) {
+        return res.status(400).json({ error: "Provide kmlText or kmlUrl" });
+      }
+
+      const { DOMParser } = require('@xmldom/xmldom');
+      const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+
+      // Collect NetworkLink targets
+      const hrefs = Array.from(doc.getElementsByTagName('href'))
+        .map((n: any) => (n.textContent || '').trim())
+        .filter(Boolean);
+
+      console.log('Found NetworkLink hrefs:', hrefs);
+
+      const layers = [];
+
+      // Include any top-level features too
+      try {
+        const togeojson = require('@tmcw/togeojson');
+        const topGJ = togeojson.kml(doc);
+        if (topGJ?.features?.length) {
+          layers.push({ href: 'top-level', geojson: topGJ });
+        }
+      } catch (err) {
+        console.log('No top-level features found');
+      }
+
+      // Resolve each linked layer
+      for (const href of hrefs) {
+        try {
+          console.log('Resolving NetworkLink:', href);
+          
+          // Try multiple approaches for authentication
+          let response;
+          
+          // First try: Original URL as-is
+          response = await fetch(href, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)',
+              'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
+            }
+          });
+          
+          // If 403, try different user agents and approaches
+          if (response.status === 403) {
+            console.log('403 error, trying Google Earth user agent...');
+            response = await fetch(href, {
+              headers: {
+                'User-Agent': 'GoogleEarth/7.3.6.9345(Windows;Microsoft Windows (6.2.9200.0);en;kml:2.2;client:Pro;type:default)',
+                'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
+              }
+            });
+          }
+          
+          if (!response.ok) {
+            console.error(`Failed to fetch ${href}: ${response.status} ${response.statusText}`);
+            // Log more details for debugging
+            console.error('Response headers:', Object.fromEntries(response.headers.entries()));
+            continue;
+          }
+
+          const arrayBuffer = await response.arrayBuffer();
+          const contentType = response.headers.get('content-type') || '';
+          let innerKml = null;
+
+          if (href.toLowerCase().endsWith('.kmz') || contentType.includes('zip')) {
+            console.log('Processing KMZ file...');
+            const JSZip = require('jszip');
+            const zip = await JSZip.loadAsync(Buffer.from(arrayBuffer));
+            
+            // Pick the first .kml file found
+            const kmlFiles = Object.keys(zip.files).filter(filename => 
+              filename.toLowerCase().endsWith('.kml')
+            );
+            
+            if (kmlFiles.length === 0) {
+              console.log('No KML files found in KMZ');
+              continue;
+            }
+            
+            const entry = zip.files[kmlFiles[0]];
+            innerKml = await entry.async('text');
+            console.log(`Extracted KML from ${kmlFiles[0]}, length:`, innerKml.length);
+          } else {
+            innerKml = Buffer.from(arrayBuffer).toString('utf-8');
+            console.log('Processing KML file, length:', innerKml.length);
+          }
+
+          const innerXml = new DOMParser().parseFromString(innerKml, 'text/xml');
+          const togeojson = require('@tmcw/togeojson');
+          const gj = togeojson.kml(innerXml);
+          
+          if (gj?.features?.length) {
+            console.log(`Converted to GeoJSON: ${gj.features.length} features`);
+            layers.push({ href, geojson: gj });
+          }
+        } catch (linkError: any) {
+          console.error(`Error processing NetworkLink ${href}:`, linkError.message);
+          continue;
+        }
+      }
+
+      console.log(`KML resolve complete: ${layers.length} layers found`);
+      res.json({ ok: true, layers });
+    } catch (error: any) {
+      console.error('KML resolve error:', error);
+      res.status(500).json({ ok: false, error: error.message || 'KML resolve error' });
     }
   });
 

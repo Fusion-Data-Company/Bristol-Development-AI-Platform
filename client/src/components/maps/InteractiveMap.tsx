@@ -229,7 +229,11 @@ export function InteractiveMap({
           {kmlData && (
             <KMLLayer
               kmlData={kmlData}
+              kmlString={kmlData}
               visible={showKML}
+              onFeaturesLoad={(features) => {
+                console.log(`Loaded ${features.length} PARLAY features`);
+              }}
             />
           )}
 
