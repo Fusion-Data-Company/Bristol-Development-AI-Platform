@@ -461,27 +461,110 @@ export default function Dashboard() {
                   </CardContent>
                 </Card>
 
-                {/* Market Overview */}
+                {/* Market Overview - Enhanced Bristol Metrics */}
                 <Card className="bg-white/90 backdrop-blur-sm shadow-lg border-bristol-sky">
                   <CardHeader>
-                    <CardTitle className="text-lg font-serif text-bristol-ink">Market Overview</CardTitle>
+                    <CardTitle className="text-lg font-serif text-bristol-ink flex items-center gap-2">
+                      <BarChart3 className="w-5 h-5 text-bristol-maroon" />
+                      Bristol Market Intelligence
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-bristol-stone">Market Trend</span>
-                        <Badge className="bg-green-100 text-green-800">
-                          <TrendingUp className="w-3 h-3 mr-1" />
-                          Strong Growth
-                        </Badge>
+                      {/* Primary Bristol Indicators */}
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-bristol-stone font-medium">Bristol Development Score</span>
+                          <Badge className="bg-bristol-maroon text-white font-bold">
+                            84.2 / 100
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-bristol-stone">Market Trend</span>
+                          <Badge className="bg-green-100 text-green-800">
+                            <TrendingUp className="w-3 h-3 mr-1" />
+                            Strong Growth
+                          </Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-bristol-stone">PARLAY Parcels</span>
+                          <span className="font-semibold text-bristol-maroon">2 Active</span>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-bristol-stone">Population Growth</span>
-                        <span className="font-semibold text-bristol-ink">+3.2% YoY</span>
+                      
+                      <Separator />
+                      
+                      {/* Demographics */}
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-bristol-ink text-sm">Demographics</h4>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-bristol-stone">Population Growth</span>
+                            <div className="font-semibold text-green-600">+3.2% YoY</div>
+                          </div>
+                          <div>
+                            <span className="text-bristol-stone">Median Income</span>
+                            <div className="font-semibold text-bristol-ink">$72,400</div>
+                          </div>
+                          <div>
+                            <span className="text-bristol-stone">Employment Rate</span>
+                            <div className="font-semibold text-blue-600">94.2%</div>
+                          </div>
+                          <div>
+                            <span className="text-bristol-stone">Age 25-44</span>
+                            <div className="font-semibold text-bristol-maroon">28.4%</div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-bristol-stone">Median Income</span>
-                        <span className="font-semibold text-bristol-ink">$72,400</span>
+                      
+                      <Separator />
+                      
+                      {/* Market Conditions */}
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-bristol-ink text-sm">Market Conditions</h4>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-bristol-stone">Avg Rent/Unit</span>
+                            <div className="font-semibold text-green-600">$1,485</div>
+                          </div>
+                          <div>
+                            <span className="text-bristol-stone">Occupancy Rate</span>
+                            <div className="font-semibold text-blue-600">96.8%</div>
+                          </div>
+                          <div>
+                            <span className="text-bristol-stone">Absorption Rate</span>
+                            <div className="font-semibold text-bristol-maroon">2.3 mo</div>
+                          </div>
+                          <div>
+                            <span className="text-bristol-stone">Cap Rate</span>
+                            <div className="font-semibold text-orange-600">5.8%</div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <Separator />
+                      
+                      {/* Financial Projections */}
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-bristol-ink text-sm">Bristol Projections</h4>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <span className="text-bristol-stone">Projected IRR</span>
+                            <div className="font-semibold text-green-600">18.2%</div>
+                          </div>
+                          <div>
+                            <span className="text-bristol-stone">Land Cost/Unit</span>
+                            <div className="font-semibold text-bristol-maroon">$12,400</div>
+                          </div>
+                          <div>
+                            <span className="text-bristol-stone">Construction</span>
+                            <div className="font-semibold text-orange-600">$125/sq ft</div>
+                          </div>
+                          <div>
+                            <span className="text-bristol-stone">Total Investment</span>
+                            <div className="font-semibold text-bristol-ink">$8.2M</div>
+                          </div>
+                        </div>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-bristol-stone">Occupancy Rate</span>
@@ -687,8 +770,38 @@ export default function Dashboard() {
                   </div>
 
                   <div>
-                    <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2">Market Overview</h3>
+                    <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2 flex items-center gap-2">
+                      <PieChart className="w-5 h-5 text-bristol-maroon" />
+                      Bristol Market Intelligence
+                    </h3>
                     <div className="space-y-2">
+                      {/* Bristol Development Score */}
+                      <Card className="bg-bristol-maroon/5 border-bristol-maroon/20">
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Star className="w-4 h-4 text-bristol-maroon" />
+                              <span className="text-sm font-medium">Bristol Score</span>
+                            </div>
+                            <span className="font-bold text-bristol-maroon text-lg">84.2</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      {/* PARLAY Status */}
+                      <Card className="bg-cyan-50 border-cyan-200">
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <MapPin className="w-4 h-4 text-cyan-600" />
+                              <span className="text-sm">PARLAY Parcels</span>
+                            </div>
+                            <span className="font-semibold text-cyan-600">2 Active</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      {/* Demographics Section */}
                       <Card>
                         <CardContent className="p-3">
                           <div className="flex items-center justify-between">
@@ -717,10 +830,84 @@ export default function Dashboard() {
                         <CardContent className="p-3">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
+                              <Users className="w-4 h-4 text-blue-600" />
+                              <span className="text-sm">Employment Rate</span>
+                            </div>
+                            <span className="font-semibold text-blue-600">94.2%</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Target className="w-4 h-4 text-bristol-gold" />
+                              <span className="text-sm">Age 25-44 Demo</span>
+                            </div>
+                            <span className="font-semibold text-bristol-gold">28.4%</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      {/* Market Conditions */}
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Home className="w-4 h-4 text-green-600" />
+                              <span className="text-sm">Avg Rent/Unit</span>
+                            </div>
+                            <span className="font-semibold text-green-600">$1,485</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
                               <Building className="w-4 h-4 text-blue-600" />
                               <span className="text-sm">Occupancy Rate</span>
                             </div>
-                            <span className="font-semibold text-blue-600">94.2%</span>
+                            <span className="font-semibold text-blue-600">96.8%</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="w-4 h-4 text-bristol-maroon" />
+                              <span className="text-sm">Absorption Rate</span>
+                            </div>
+                            <span className="font-semibold text-bristol-maroon">2.3 mo</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      {/* Financial Projections */}
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <BarChart3 className="w-4 h-4 text-green-600" />
+                              <span className="text-sm">Projected IRR</span>
+                            </div>
+                            <span className="font-semibold text-green-600">18.2%</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <DollarSign className="w-4 h-4 text-bristol-gold" />
+                              <span className="text-sm">Land Cost/Unit</span>
+                            </div>
+                            <span className="font-semibold text-bristol-gold">$12,400</span>
                           </div>
                         </CardContent>
                       </Card>
