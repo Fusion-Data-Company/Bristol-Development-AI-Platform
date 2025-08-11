@@ -883,135 +883,135 @@ export default function Dashboard() {
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-bristol-gold/12 via-white to-bristol-gold/8 border-bristol-gold/40 hover:border-bristol-gold/60 hover:shadow-lg hover:shadow-bristol-gold/30 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(218,165,32,0.4)] hover:ring-1 hover:ring-bristol-gold/50">
-                        <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-transparent to-bristol-gold/15 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/25 to-bristol-gold/20 rounded-lg blur-sm opacity-0 group-hover:opacity-70 transition-all duration-500 -z-10"></div>
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-bristol-gold/50 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
+                      <Card className="bg-gradient-to-br from-bristol-gold/30 via-bristol-gold/15 to-white border-bristol-gold border-2 hover:border-bristol-gold/90 hover:shadow-2xl hover:shadow-bristol-gold/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-bristol-gold/40">
+                        <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/25 via-transparent to-bristol-gold/15 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                        <div className="absolute -inset-2 bg-gradient-to-r from-bristol-gold/50 via-bristol-gold/60 to-bristol-gold/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-bristol-gold/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-md bg-bristol-gold/20 flex items-center justify-center group-hover:bg-bristol-gold/30 transition-all duration-300">
-                                <Target className="w-3.5 h-3.5 text-bristol-gold group-hover:drop-shadow-[0_0_6px_rgba(218,165,32,0.8)] group-hover:scale-110 transition-all duration-300" />
+                              <div className="w-6 h-6 rounded-md bg-bristol-gold/50 flex items-center justify-center group-hover:bg-bristol-gold/70 transition-all duration-300 shadow-md">
+                                <Target className="w-3.5 h-3.5 text-bristol-gold group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(218,165,32,0.8)] group-hover:scale-110 transition-all duration-300" />
                               </div>
                               <div>
-                                <span className="text-xs text-bristol-gold/90 font-medium">Age 25-44</span>
-                                <div className="text-xs text-bristol-gold/70">Target Demo</div>
+                                <span className="text-xs text-bristol-gold font-bold">Age 25-44</span>
+                                <div className="text-xs text-bristol-gold/80 font-medium">Target Demo</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <span className="text-lg font-bold text-bristol-gold group-hover:drop-shadow-[0_0_8px_rgba(218,165,32,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">28.4%</span>
+                              <span className="text-lg font-black text-bristol-gold group-hover:text-bristol-gold/90 group-hover:drop-shadow-[0_0_8px_rgba(218,165,32,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">28.4%</span>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
                       
                       {/* Market Conditions */}
-                      <Card className="bg-gradient-to-br from-green-50/60 via-white to-green-100/40 border-green-200/50 hover:border-green-300/80 hover:shadow-lg hover:shadow-green-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(34,197,94,0.3)] hover:ring-1 hover:ring-green-300/50">
-                        <div className="absolute inset-0 bg-gradient-to-br from-green-100/40 via-transparent to-green-200/30 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-green-300/20 via-green-400/20 to-green-300/20 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
-                        <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-green-400/40 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
+                      <Card className="bg-gradient-to-br from-green-200/90 via-green-50 to-white border-green-400 border-2 hover:border-green-500 hover:shadow-2xl hover:shadow-green-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-green-300/40">
+                        <div className="absolute inset-0 bg-gradient-to-br from-green-300/30 via-transparent to-green-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                        <div className="absolute -inset-2 bg-gradient-to-r from-green-400/50 via-green-500/50 to-green-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                        <div className="absolute -top-1 -right-1 w-8 h-8 bg-green-400/40 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-md bg-green-100/80 flex items-center justify-center group-hover:bg-green-200/90 transition-all duration-300">
-                                <Home className="w-3.5 h-3.5 text-green-600 group-hover:drop-shadow-[0_0_6px_rgba(34,197,94,0.7)] group-hover:scale-110 transition-all duration-300" />
+                              <div className="w-6 h-6 rounded-md bg-green-400/60 flex items-center justify-center group-hover:bg-green-500/80 transition-all duration-300 shadow-md">
+                                <Home className="w-3.5 h-3.5 text-green-700 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(34,197,94,0.7)] group-hover:scale-110 transition-all duration-300" />
                               </div>
                               <div>
-                                <span className="text-xs text-green-700/80 font-medium">Avg Rent/Unit</span>
-                                <div className="text-xs text-green-600/70">Market Rate</div>
+                                <span className="text-xs text-green-800 font-bold">Avg Rent/Unit</span>
+                                <div className="text-xs text-green-700 font-medium">Market Rate</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <span className="text-lg font-bold text-green-600 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">$1,485</span>
+                              <span className="text-lg font-black text-green-600 group-hover:text-green-700 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">$1,485</span>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-blue-50/60 via-white to-blue-100/40 border-blue-200/50 hover:border-blue-300/80 hover:shadow-lg hover:shadow-blue-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(37,99,235,0.3)] hover:ring-1 hover:ring-blue-300/50">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/40 via-transparent to-blue-200/30 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-blue-300/20 via-blue-400/20 to-blue-300/20 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
-                        <div className="absolute -bottom-0.5 -left-0.5 w-3 h-3 bg-blue-400/40 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
+                      <Card className="bg-gradient-to-br from-blue-200/90 via-blue-50 to-white border-blue-400 border-2 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-blue-300/40">
+                        <div className="absolute inset-0 bg-gradient-to-br from-blue-300/30 via-transparent to-blue-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                        <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/50 via-blue-500/50 to-blue-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                        <div className="absolute -bottom-1 -left-1 w-8 h-8 bg-blue-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-md bg-blue-100/80 flex items-center justify-center group-hover:bg-blue-200/90 transition-all duration-300">
-                                <Building className="w-3.5 h-3.5 text-blue-600 group-hover:drop-shadow-[0_0_6px_rgba(37,99,235,0.7)] group-hover:scale-110 transition-all duration-300" />
+                              <div className="w-6 h-6 rounded-md bg-blue-400/60 flex items-center justify-center group-hover:bg-blue-500/80 transition-all duration-300 shadow-md">
+                                <Building className="w-3.5 h-3.5 text-blue-700 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(37,99,235,0.7)] group-hover:scale-110 transition-all duration-300" />
                               </div>
                               <div>
-                                <span className="text-xs text-blue-700/80 font-medium">Occupancy Rate</span>
-                                <div className="text-xs text-blue-600/70">Market Demand</div>
+                                <span className="text-xs text-blue-800 font-bold">Occupancy Rate</span>
+                                <div className="text-xs text-blue-700 font-medium">Market Demand</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <span className="text-lg font-bold text-blue-600 group-hover:drop-shadow-[0_0_8px_rgba(37,99,235,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">96.8%</span>
+                              <span className="text-lg font-black text-blue-600 group-hover:text-blue-700 group-hover:drop-shadow-[0_0_8px_rgba(37,99,235,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">96.8%</span>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-bristol-maroon/8 via-white to-bristol-gold/12 border-bristol-maroon/30 hover:border-bristol-maroon/50 hover:shadow-lg hover:shadow-bristol-maroon/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(139,69,19,0.3)] hover:ring-1 hover:ring-bristol-maroon/40">
-                        <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/12 via-transparent to-bristol-gold/15 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-maroon/15 via-bristol-gold/15 to-bristol-maroon/15 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
-                        <div className="absolute -top-0.5 -left-0.5 w-3 h-3 bg-bristol-gold/50 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
+                      <Card className="bg-gradient-to-br from-bristol-maroon/30 via-bristol-gold/20 to-white border-bristol-maroon border-2 hover:border-bristol-gold hover:shadow-2xl hover:shadow-bristol-maroon/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-bristol-gold/30">
+                        <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/20 via-bristol-gold/25 to-transparent opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                        <div className="absolute -inset-2 bg-gradient-to-r from-bristol-maroon/40 via-bristol-gold/50 to-bristol-maroon/40 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                        <div className="absolute -top-1 -left-1 w-8 h-8 bg-bristol-gold/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-md bg-bristol-maroon/15 flex items-center justify-center group-hover:bg-bristol-maroon/25 transition-all duration-300">
-                                <Calendar className="w-3.5 h-3.5 text-bristol-maroon group-hover:drop-shadow-[0_0_6px_rgba(139,69,19,0.7)] group-hover:scale-110 transition-all duration-300" />
+                              <div className="w-6 h-6 rounded-md bg-bristol-maroon/50 flex items-center justify-center group-hover:bg-bristol-maroon/70 transition-all duration-300 shadow-md">
+                                <Calendar className="w-3.5 h-3.5 text-bristol-maroon group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(139,69,19,0.7)] group-hover:scale-110 transition-all duration-300" />
                               </div>
                               <div>
-                                <span className="text-xs text-bristol-maroon/80 font-medium">Absorption Rate</span>
-                                <div className="text-xs text-bristol-stone/70">Lease-up Time</div>
+                                <span className="text-xs text-bristol-maroon font-bold">Absorption Rate</span>
+                                <div className="text-xs text-bristol-maroon/80 font-medium">Lease-up Time</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <span className="text-lg font-bold text-bristol-maroon group-hover:drop-shadow-[0_0_8px_rgba(139,69,19,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">2.3 mo</span>
+                              <span className="text-lg font-black text-bristol-maroon group-hover:text-bristol-gold group-hover:drop-shadow-[0_0_8px_rgba(139,69,19,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">2.3 mo</span>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
                       
                       {/* Financial Projections */}
-                      <Card className="bg-gradient-to-br from-green-50/60 via-white to-green-100/40 border-green-200/50 hover:border-green-300/80 hover:shadow-lg hover:shadow-green-400/25 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(34,197,94,0.3)] hover:ring-1 hover:ring-green-300/50">
-                        <div className="absolute inset-0 bg-gradient-to-br from-green-100/40 via-transparent to-green-200/30 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-green-300/20 via-green-400/20 to-green-300/20 rounded-lg blur-sm opacity-0 group-hover:opacity-60 transition-all duration-500 -z-10"></div>
-                        <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400/40 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
+                      <Card className="bg-gradient-to-br from-green-200/90 via-green-50 to-white border-green-400 border-2 hover:border-green-500 hover:shadow-2xl hover:shadow-green-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-green-300/40">
+                        <div className="absolute inset-0 bg-gradient-to-br from-green-300/30 via-transparent to-green-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                        <div className="absolute -inset-2 bg-gradient-to-r from-green-400/50 via-green-500/50 to-green-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-green-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-md bg-green-100/80 flex items-center justify-center group-hover:bg-green-200/90 transition-all duration-300">
-                                <BarChart3 className="w-3.5 h-3.5 text-green-600 group-hover:drop-shadow-[0_0_6px_rgba(34,197,94,0.7)] group-hover:scale-110 transition-all duration-300" />
+                              <div className="w-6 h-6 rounded-md bg-green-400/60 flex items-center justify-center group-hover:bg-green-500/80 transition-all duration-300 shadow-md">
+                                <BarChart3 className="w-3.5 h-3.5 text-green-700 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(34,197,94,0.7)] group-hover:scale-110 transition-all duration-300" />
                               </div>
                               <div>
-                                <span className="text-xs text-green-700/80 font-medium">Projected IRR</span>
-                                <div className="text-xs text-green-600/70">Expected Return</div>
+                                <span className="text-xs text-green-800 font-bold">Projected IRR</span>
+                                <div className="text-xs text-green-700 font-medium">Expected Return</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <span className="text-lg font-bold text-green-600 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">18.2%</span>
+                              <span className="text-lg font-black text-green-600 group-hover:text-green-700 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">18.2%</span>
                             </div>
                           </div>
                         </CardContent>
                       </Card>
                       
-                      <Card className="bg-gradient-to-br from-bristol-gold/12 via-white to-bristol-gold/8 border-bristol-gold/40 hover:border-bristol-gold/60 hover:shadow-lg hover:shadow-bristol-gold/30 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden hover:shadow-[0_0_25px_rgba(218,165,32,0.4)] hover:ring-1 hover:ring-bristol-gold/50">
-                        <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-transparent to-bristol-gold/15 opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/25 to-bristol-gold/20 rounded-lg blur-sm opacity-0 group-hover:opacity-70 transition-all duration-500 -z-10"></div>
-                        <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-bristol-gold/60 rounded-full blur-sm opacity-0 group-hover:opacity-100 transition-all duration-400"></div>
+                      <Card className="bg-gradient-to-br from-bristol-gold/30 via-bristol-gold/15 to-white border-bristol-gold border-2 hover:border-bristol-gold/90 hover:shadow-2xl hover:shadow-bristol-gold/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-bristol-gold/40">
+                        <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/25 via-transparent to-bristol-gold/15 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                        <div className="absolute -inset-2 bg-gradient-to-r from-bristol-gold/50 via-bristol-gold/60 to-bristol-gold/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                        <div className="absolute -top-1 -right-1 w-8 h-8 bg-bristol-gold/60 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                         <CardContent className="p-3 relative z-10">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 rounded-md bg-bristol-gold/20 flex items-center justify-center group-hover:bg-bristol-gold/30 transition-all duration-300">
-                                <DollarSign className="w-3.5 h-3.5 text-bristol-gold group-hover:drop-shadow-[0_0_6px_rgba(218,165,32,0.8)] group-hover:scale-110 transition-all duration-300" />
+                              <div className="w-6 h-6 rounded-md bg-bristol-gold/50 flex items-center justify-center group-hover:bg-bristol-gold/70 transition-all duration-300 shadow-md">
+                                <DollarSign className="w-3.5 h-3.5 text-bristol-gold group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(218,165,32,0.8)] group-hover:scale-110 transition-all duration-300" />
                               </div>
                               <div>
-                                <span className="text-xs text-bristol-gold/90 font-medium">Land Cost/Unit</span>
-                                <div className="text-xs text-bristol-gold/70">Acquisition Cost</div>
+                                <span className="text-xs text-bristol-gold font-bold">Land Cost/Unit</span>
+                                <div className="text-xs text-bristol-gold/80 font-medium">Acquisition Cost</div>
                               </div>
                             </div>
                             <div className="text-right">
-                              <span className="text-lg font-bold text-bristol-gold group-hover:drop-shadow-[0_0_8px_rgba(218,165,32,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">$12,400</span>
+                              <span className="text-lg font-black text-bristol-gold group-hover:text-bristol-gold/90 group-hover:drop-shadow-[0_0_8px_rgba(218,165,32,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">$12,400</span>
                             </div>
                           </div>
                         </CardContent>
@@ -1033,26 +1033,26 @@ export default function Dashboard() {
                       <CardContent className="p-4 relative z-10">
                         <div className="space-y-3">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-green-100/80 flex items-center justify-center group-hover:bg-green-200/90 transition-all duration-300">
-                              <CheckCircle className="w-4 h-4 text-green-600 group-hover:drop-shadow-[0_0_6px_rgba(34,197,94,0.6)] group-hover:scale-110 transition-all duration-300" />
+                            <div className="w-8 h-8 rounded-lg bg-green-400/60 flex items-center justify-center group-hover:bg-green-500/80 transition-all duration-300 shadow-lg">
+                              <CheckCircle className="w-4 h-4 text-green-700 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(34,197,94,0.6)] group-hover:scale-110 transition-all duration-300" />
                             </div>
                             <div>
-                              <span className="text-sm font-semibold text-bristol-ink group-hover:text-cyan-800 transition-colors duration-300">PARLAY Parcels Loaded</span>
-                              <div className="text-xs text-bristol-stone/80">Active Data Connection</div>
+                              <span className="text-sm font-bold text-cyan-800 group-hover:text-cyan-900 transition-colors duration-300">PARLAY Parcels Loaded</span>
+                              <div className="text-xs text-cyan-700 font-medium">Active Data Connection</div>
                             </div>
                           </div>
-                          <div className="bg-cyan-50/50 rounded-lg p-3 group-hover:bg-cyan-100/60 transition-all duration-300">
-                            <div className="text-xs text-cyan-700/90 font-medium mb-1">Data Source</div>
-                            <div className="text-xs text-cyan-600/80">Real-time parcel data from reportallusa.com</div>
+                          <div className="bg-cyan-100/70 rounded-lg p-3 group-hover:bg-cyan-200/80 transition-all duration-300 shadow-md">
+                            <div className="text-xs text-cyan-800 font-bold mb-1">Data Source</div>
+                            <div className="text-xs text-cyan-700 font-medium">Real-time parcel data from reportallusa.com</div>
                           </div>
-                          <div className="flex items-center gap-2 text-xs bg-white/60 rounded-lg p-2 group-hover:bg-cyan-50/80 transition-all duration-300">
+                          <div className="flex items-center gap-2 text-xs bg-cyan-50/80 rounded-lg p-2 group-hover:bg-cyan-100/90 transition-all duration-300 shadow-md">
                             <div className="w-4 h-4 bg-cyan-400 border-2 border-cyan-600 rounded-sm group-hover:shadow-[0_0_4px_rgba(0,255,255,0.5)] transition-all duration-300"></div>
-                            <span className="text-bristol-stone font-medium">PARLAY Parcels (Cyan)</span>
+                            <span className="text-cyan-800 font-bold">PARLAY Parcels (Cyan)</span>
                           </div>
                           <Button 
                             size="sm" 
                             variant="outline" 
-                            className="w-full text-xs border-cyan-200 text-cyan-700 hover:bg-cyan-50 hover:border-cyan-300 hover:text-cyan-800 group-hover:shadow-md transition-all duration-300"
+                            className="w-full text-xs border-cyan-400 border-2 text-cyan-800 font-bold hover:bg-cyan-100 hover:border-cyan-500 hover:text-cyan-900 group-hover:shadow-lg transition-all duration-300"
                             onClick={() => window.open('https://reportallusa.com/', '_blank')}
                           >
                             <ExternalLink className="w-3 h-3 mr-1" />
