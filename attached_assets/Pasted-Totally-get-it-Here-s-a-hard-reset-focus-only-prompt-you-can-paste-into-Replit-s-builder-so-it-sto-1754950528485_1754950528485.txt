@@ -1,0 +1,161 @@
+Totally get it. Here’s a hard‑reset, focus‑only prompt you can paste into Replit’s builder so it stops touching PARLAY and finishes the original build. It includes guardrails, a precise file checklist, and acceptance tests the agent must pass before stopping.
+
+⸻
+
+REPLIT BUILDER — FOCUS RESET & CORE BUILD COMPLETION (NO PARLAY)
+
+READ CAREFULLY BEFORE DOING ANYTHING
+	•	Do NOT work on, touch, or optimize anything related to “PARLAY”, “ReportAll”, “NetworkLink”, or their resolvers.
+	•	If you detect any file, route, component, or env var with those words, ignore it (leave it as‑is) and continue with the tasks below.
+	•	Your job is to finish the core Bristol AI app per the original instructions.
+	•	If you begin to modify anything with the words PARLAY/ReportAll, stop immediately and resume the tasks below.
+
+⸻
+
+0) Safety + Status (must print)
+	1.	Ensure we’re in a git repo; snapshot current files:
+	•	git rev-parse --is-inside-work-tree || git init
+	•	git add -A && git commit -m "snapshot before core build completion"
+	2.	Print current tree (top 3 levels) and the last 10 commits.
+	3.	Search for core files; do not open/modify any PARLAY file:
+	•	grep -Rni "Map.jsx\|ChatDock\|ToolsConsole\|Integrations.jsx\|mcp/ws.js\|mcp/core.js" apps || true
+	4.	If any of the core files are missing, create them as specified below.
+
+At the end, always print a STATUS REPORT.
+
+⸻
+
+1) Monorepo & Environment (must exist)
+
+Root
+	•	package.json with workspaces: ["apps/web","apps/api"]
+
+apps/api (Node/Express, ESM "type":"module")
+	•	package.json deps (or newer superset):
+express, cors, cookie-parser, pg, axios, playwright, msal-node, @microsoft/microsoft-graph-client, zod, ws, uuid, apify-client, dayjs
+	•	.env.example (include, but don’t require at boot):
+DATABASE_URL, ALLOWED_ORIGIN, OPENROUTER_API_KEY, N8N_WEBHOOK_URL, APIFY_TOKEN, APIFY_ACTOR_ID, MS_CLIENT_ID, MS_CLIENT_SECRET, MS_TENANT_ID=common, MS_REDIRECT_URI, MCP_API_KEY, MCP_WEBHOOK_SECRET
+	•	public/bristol-logo.gif (placeholder ok)
+
+apps/web (React+Vite+Tailwind)
+	•	package.json deps (or newer superset):
+react, react-dom, axios, @tanstack/react-table, maplibre-gl, @arcgis/core, jszip, @tmcw/togeojson, zustand
+	•	index.html loads Cinzel font and uses /public/bristol-logo.gif as favicon
+	•	tailwind.config.js with Bristol palette + fonts
+	•	src/index.css includes: @import "maplibre-gl/dist/maplibre-gl.css";
+
+⸻
+
+2) API — Required endpoints (finish these)
+
+apps/api/src/db.js
+	•	Migrate the following tables (simple JSON/NUMERIC ok):
+	•	users, oauth_tokens, sites, properties, metrics, concessions, comps, runs, files, memory_short, memory_long, tools
+
+apps/api/src/index.js
+	•	Express app + http.createServer(app) + attachWs(server) on /api/mcp/ws
+	•	cors({ origin: ALLOWED_ORIGIN (CSV allowed), credentials: true })
+	•	express.json({ limit: "15mb" }), cookieParser()
+	•	Serve /public
+
+Routes (all under /api)
+	•	public.js → CRUD for sites and metrics + sample ACS/HUD passthroughs (work without keys)
+	•	comps.js → create/list/rescore with 1–100 score and explanation. Weights: amenities 40%, rent fit 30%, concessions 20%, distance 10%
+	•	agent.js → /agent/chat (OpenRouter; if no key, return friendly “not configured”), /agent/write-metric, /agent/mcp/n8n forward
+	•	microsoft.js → OAuth URLs + List OneDrive root and List 10 mails (gracefully hidden if keys missing)
+	•	tools.js → API tools registry (name, base_url, masked api_key, notes)
+	•	pipeline.js → ArcGIS FeatureServer proxy: /pipeline/search?url=<layer>&where=<expr>&outFields=*
+	•	apify.js → trigger an Apify actor to scrape rental sites and ingest to comps (amenities + concessions + rents)
+	•	mcp/core.js → tool registry + EventEmitter bus; tools: n8n.trigger, http.fetch, db.query (safe), metrics.write, apify.scrape
+	•	mcp/ws.js → WebSocket server attached via server.on("upgrade")
+	•	mcp.js → GET /mcp/tools, POST /mcp/run, POST /mcp/webhook, GET /mcp/ping
+
+Do not add any PARLAY/ReportAll resolver code. If such code exists, leave it untouched and unused.
+
+⸻
+
+3) Web — Required pages/components (finish these)
+
+Routing: src/main.jsx
+	•	Routes: / → App.jsx; /integrations → Integrations.jsx; /tools → ToolsConsole.jsx
+
+pages/App.jsx
+	•	Tabs: Map, Tables, 3D Sandbox (Cesium stub loads only when tab active)
+	•	Use Bristol header (logo, serif title), clean layout
+
+widgets/Map.jsx
+	•	MapLibre init with demo style
+	•	ArcGIS base toggle (simple raster tiles from ESRI Light Gray is fine)
+	•	KML/KMZ upload → if KMZ: unzip to KML; run togeojson.kml(); add GeoJSON source/layers; fitBounds
+	•	No references to PARLAY/ReportAll; no resolver calls
+
+pages/Integrations.jsx
+	•	Section 1: Microsoft 365 — “Connect” button; if tokens present, show List OneDrive and List 10 Emails buttons; otherwise disabled with message
+	•	Section 2: Tools registry — list/add tool (name, base_url, api_key (masked), notes)
+
+pages/ToolsConsole.jsx
+	•	List MCP tools from /api/mcp/tools
+	•	JSON payload editor
+	•	“Run Tool” button → calls /api/mcp/run
+	•	Live WebSocket feed from /api/mcp/ws (must connect to API port)
+
+widgets/ChatDock.jsx
+	•	Docked chat visible on all pages
+	•	Model dropdown (OpenRouter); if not configured, show friendly notice
+	•	System prompt: “Head of Data & Insights at Bristol Development Group: concise, numbers‑first; verbal‑judo listening; Sandler flow; cite sources+dates; comps 1–100; flag proxies (HUD/ACS); finance sensitivity; can call /api endpoints for metrics/pipeline; memory short vs long policies.”
+
+Tables
+	•	widgets/forms/AddSiteForm.jsx (add site)
+	•	widgets/tables/SitesTable.jsx (list, select)
+	•	widgets/tables/MetricsTable.jsx (inline edit & save)
+	•	widgets/tables/CompsTable.jsx (list for selected site; score + “Explain” modal)
+
+Brand
+	•	brand/Chrome.jsx + widgets/HeroStrip.jsx (simple, tasteful; Cinzel; Bristol palette)
+
+lib/mcpClient.js
+	•	API_BASE = VITE_API_BASE || (dev: location.origin.replace(":5173",":3000"))
+	•	mcpRun(name,payload) posts to ${API_BASE}/api/mcp/run
+	•	mcpConnect() opens ws(s)://<API_HOST>/api/mcp/ws
+
+⸻
+
+4) Install & Boot (must run automatically)
+	•	npm install
+	•	If apps/api/.env missing → copy from .env.example
+	•	Set minimum env:
+	•	DATABASE_URL=<Replit Postgres URL>
+	•	ALLOWED_ORIGIN=http://localhost:5173
+	•	npm run dev
+
+⸻
+
+5) Acceptance tests (don’t stop until all pass)
+	•	Map tab renders; upload a small local .kml or .kmz → polygons draw and map fits bounds.
+	•	Tables:
+	•	Add Site → appears in list.
+	•	Add Comp → score 1–100 generated; Explain shows weight breakdown.
+	•	Metrics → inline edit saves.
+	•	ChatDock visible on all pages; if no OpenRouter key, shows “not configured” instead of crashing.
+	•	Integrations: Microsoft buttons visible (disabled if no keys) and explain what’s missing; Tools registry CRUD works.
+	•	Tools Console: shows tools (n8n.trigger, http.fetch, db.query, metrics.write, apify.scrape); run http.fetch with { "url":"https://httpbin.org/get" } → result shown; live WS events appear.
+	•	API health: GET /api/mcp/ping → {ok:true}
+
+⸻
+
+6) Final STATUS REPORT (must print)
+
+Print a concise summary:
+	•	Which core files were created/modified (paths)
+	•	Map status (file path, CSS loaded, tested KML/KMZ import ✅/❌)
+	•	Tables status (sites/metrics/comps ✅/❌)
+	•	ChatDock status (visible, model key present or not)
+	•	Tools Console status (tools list, WS connected ✅/❌)
+	•	Integrations status (MS365 buttons shown, disabled if no keys)
+	•	Any TODOs left (list)
+
+If any acceptance item fails, print the exact error (file + line), fix it, and repeat tests until everything passes.
+
+⸻
+
+Reminder: Do not resume PARLAY/ReportAll tasks. We will re‑enable that later on a separate branch when credentials and allow‑listing are ready.
