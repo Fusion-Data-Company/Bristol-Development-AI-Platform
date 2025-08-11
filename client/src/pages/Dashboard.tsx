@@ -41,7 +41,8 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Zap
+  Zap,
+  Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -687,8 +688,24 @@ export default function Dashboard() {
                   </div>
 
                   <div>
-                    <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2">Market Overview</h3>
                     <div className="space-y-2">
+                      {/* Avg Bristol Score */}
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Target className="w-4 h-4 text-bristol-maroon" />
+                              <span className="text-sm">Avg Bristol Score</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="font-semibold text-bristol-maroon">73.2</span>
+                              <div className="text-xs text-green-600">+2.4% YoY</div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      {/* Population Growth */}
                       <Card>
                         <CardContent className="p-3">
                           <div className="flex items-center justify-between">
@@ -696,11 +713,15 @@ export default function Dashboard() {
                               <TrendingUp className="w-4 h-4 text-green-600" />
                               <span className="text-sm">Population Growth</span>
                             </div>
-                            <span className="font-semibold text-green-600">+3.2%</span>
+                            <div className="text-right">
+                              <span className="font-semibold text-green-600">4.8%</span>
+                              <div className="text-xs text-bristol-stone">Last 5 Years</div>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
                       
+                      {/* Median Income */}
                       <Card>
                         <CardContent className="p-3">
                           <div className="flex items-center justify-between">
@@ -708,11 +729,81 @@ export default function Dashboard() {
                               <DollarSign className="w-4 h-4 text-bristol-maroon" />
                               <span className="text-sm">Median Income</span>
                             </div>
-                            <span className="font-semibold">$72,400</span>
+                            <div className="text-right">
+                              <span className="font-semibold">$67.5K</span>
+                              <div className="text-xs text-green-600">+6.2% YoY</div>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
                       
+                      {/* Job Growth */}
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <Briefcase className="w-4 h-4 text-blue-600" />
+                              <span className="text-sm">Job Growth</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="font-semibold text-blue-600">3.4%</span>
+                              <div className="text-xs text-bristol-stone">Projected</div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Market Indicators */}
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="space-y-2">
+                            <div className="text-sm font-semibold text-bristol-ink">Market Indicators</div>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-bristol-stone">Housing Demand</span>
+                                <span className="font-semibold text-red-600">High</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-bristol-stone">Construction Permits</span>
+                                <span className="font-semibold text-yellow-600">Med</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-bristol-stone">Land Availability</span>
+                                <span className="font-semibold text-red-600">Low</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-bristol-stone">Infrastructure</span>
+                                <span className="font-semibold text-green-600">High</span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Development Pipeline */}
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="space-y-2">
+                            <div className="text-sm font-semibold text-bristol-ink">Development Pipeline</div>
+                            <div className="space-y-1 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-bristol-stone">Active Projects</span>
+                                <span className="font-semibold">127</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-bristol-stone">Units Under Construction</span>
+                                <span className="font-semibold">3,248</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-bristol-stone">Est. Completion</span>
+                                <span className="font-semibold">Q3 2025</span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      {/* Occupancy Rate */}
                       <Card>
                         <CardContent className="p-3">
                           <div className="flex items-center justify-between">
@@ -721,6 +812,24 @@ export default function Dashboard() {
                               <span className="text-sm">Occupancy Rate</span>
                             </div>
                             <span className="font-semibold text-blue-600">94.2%</span>
+                          </div>
+                        </CardContent>
+                      </Card>
+
+                      {/* Risk Assessment */}
+                      <Card>
+                        <CardContent className="p-3">
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Shield className="w-4 h-4 text-green-600" />
+                                <span className="text-sm font-semibold">Risk Assessment</span>
+                              </div>
+                              <span className="font-semibold text-green-600">Low Risk Market</span>
+                            </div>
+                            <div className="text-xs text-bristol-stone">
+                              Strong fundamentals, stable growth trajectory
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
