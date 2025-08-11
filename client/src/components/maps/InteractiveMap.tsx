@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import Map, { NavigationControl, GeolocateControl, Marker, Popup, Source, Layer } from 'react-map-gl';
-import type { MapRef, MapboxEvent } from 'react-map-gl';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import Map, { NavigationControl, GeolocateControl, Marker, Popup, Source, Layer, ViewStateChangeEvent } from 'react-map-gl';
+import type { MapRef } from 'react-map-gl';
 import type { Site } from '@shared/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Building, TrendingUp, Users, DollarSign, Info } from 'lucide-react';
+import { MapPin, Building, TrendingUp, Users, DollarSign, Info, Layers, Satellite, Map as MapIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ArcGISLayer, useArcGISDemographics } from '../analytics/ArcGISLayer';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface InteractiveMapProps {
   sites: Site[];
@@ -16,7 +18,14 @@ interface InteractiveMapProps {
   className?: string;
 }
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || 'pk.your_token_here';
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+
+// ArcGIS Service URLs for real estate data
+const ARCGIS_SERVICES = {
+  demographics: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Demographics_Boundaries/FeatureServer',
+  housing: 'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Housing_Density/FeatureServer',
+  employment: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Employment_by_Industry/FeatureServer'
+};
 
 // Bristol Site Scoring Color Scale
 const getScoreColor = (score: number): string => {
@@ -44,20 +53,78 @@ export function InteractiveMap({
 }: InteractiveMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
+  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/satellite-streets-v12');
+  const [showDemographics, setShowDemographics] = useState(false);
+  const [showHousing, setShowHousing] = useState(false);
+  const [showHeatmap, setShowHeatmap] = useState(true);
   const [viewport, setViewport] = useState({
     longitude: -82.4572, // Atlanta/Sunbelt center
     latitude: 33.7490,
     zoom: 6
   });
 
+  // Sample sites for Sunbelt markets
+  const sampleSites: Site[] = sites.length > 0 ? sites : [
+    {
+      id: '1',
+      name: 'Atlanta Metro Site',
+      address: '1234 Peachtree St, Atlanta, GA',
+      latitude: 33.7490,
+      longitude: -84.3880,
+      bristolScore: 87,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: '2', 
+      name: 'Charlotte Uptown',
+      address: '567 Trade St, Charlotte, NC',
+      latitude: 35.2271,
+      longitude: -80.8431,
+      bristolScore: 75,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: '3',
+      name: 'Orlando Downtown',
+      address: '890 Orange Ave, Orlando, FL',
+      latitude: 28.5383,
+      longitude: -81.3792,
+      bristolScore: 68,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: '4',
+      name: 'Nashville Music Row',
+      address: '1010 Music Row, Nashville, TN',
+      latitude: 36.1627,
+      longitude: -86.7816,
+      bristolScore: 82,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    {
+      id: '5',
+      name: 'Tampa Bay Area',
+      address: '2020 Bay St, Tampa, FL',
+      latitude: 27.9506,
+      longitude: -82.4572,
+      bristolScore: 71,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }
+  ];
+
   // Heat map data for market opportunities
   const marketHeatData = {
     type: 'FeatureCollection' as const,
-    features: sites.map(site => ({
+    features: sampleSites.map(site => ({
       type: 'Feature' as const,
       properties: {
         score: site.bristolScore || 50,
-        density: Math.random() * 100 // Would be actual market density data
+        density: Math.random() * 100
       },
       geometry: {
         type: 'Point' as const,
@@ -69,10 +136,15 @@ export function InteractiveMap({
   const heatmapLayer = {
     id: 'market-heat',
     type: 'heatmap' as const,
-    source: 'market-opportunities',
     paint: {
-      'heatmap-weight': ['interpolate', ['linear'], ['get', 'score'], 0, 0, 100, 1],
-      'heatmap-intensity': ['interpolate', ['linear'], ['zoom'], 0, 1, 15, 3],
+      'heatmap-weight': {
+        property: 'score',
+        type: 'exponential',
+        stops: [[0, 0], [100, 1]]
+      },
+      'heatmap-intensity': {
+        stops: [[0, 1], [15, 3]]
+      },
       'heatmap-color': [
         'interpolate',
         ['linear'],
@@ -84,10 +156,14 @@ export function InteractiveMap({
         0.8, 'rgba(255, 69, 0, 0.8)',
         1, 'rgba(139, 21, 56, 1)'
       ],
-      'heatmap-radius': ['interpolate', ['linear'], ['zoom'], 0, 2, 15, 40],
-      'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 7, 1, 15, 0.6]
+      'heatmap-radius': {
+        stops: [[0, 2], [15, 40]]
+      },
+      'heatmap-opacity': {
+        stops: [[7, 1], [15, 0.6]]
+      }
     }
-  };
+  } as const;
 
   const handleSiteClick = (site: Site) => {
     setSelectedSite(site);
@@ -103,10 +179,22 @@ export function InteractiveMap({
     }
   };
 
-  const handleMapClick = (event: MapboxEvent) => {
-    const { lng, lat } = event.lngLat;
-    onMapClick?.(lng, lat);
-  };
+  const handleMapClick = useCallback((event: any) => {
+    if (event.lngLat) {
+      const { lng, lat } = event.lngLat;
+      onMapClick?.(lng, lat);
+    }
+  }, [onMapClick]);
+
+  // Calculate bounding box for ArcGIS queries
+  const bbox: [number, number, number, number] = [
+    viewport.longitude - 1, // west
+    viewport.latitude - 1,  // south  
+    viewport.longitude + 1, // east
+    viewport.latitude + 1   // north
+  ];
+
+  const { data: demographicsData, loading: demographicsLoading } = useArcGISDemographics(bbox);
 
   return (
     <Card className={cn("h-full overflow-hidden", className)}>
@@ -123,18 +211,51 @@ export function InteractiveMap({
           onMove={evt => setViewport(evt.viewState)}
           mapboxAccessToken={MAPBOX_TOKEN}
           style={{ width: '100%', height: '100%' }}
-          mapStyle="mapbox://styles/mapbox/satellite-streets-v12"
+          mapStyle={mapStyle}
           onClick={handleMapClick}
           interactiveLayerIds={['market-heat']}
           projection={{ name: 'mercator' }}
         >
           {/* Market Heat Map Layer */}
-          <Source id="market-opportunities" type="geojson" data={marketHeatData}>
-            <Layer {...heatmapLayer} />
-          </Source>
+          {showHeatmap && (
+            <Source id="market-opportunities" type="geojson" data={marketHeatData}>
+              <Layer {...heatmapLayer} />
+            </Source>
+          )}
+
+          {/* ArcGIS Demographics Layer */}
+          <ArcGISLayer
+            serviceUrl="https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Demographics_Boundaries/FeatureServer"
+            layerId="0"
+            visible={showDemographics}
+            layerType="fill"
+            paint={{
+              'fill-color': [
+                'interpolate',
+                ['linear'],
+                ['get', 'MEDHINC_CY'],
+                0, 'rgba(255, 0, 0, 0.2)',
+                50000, 'rgba(255, 255, 0, 0.3)',
+                100000, 'rgba(0, 255, 0, 0.4)'
+              ],
+              'fill-opacity': 0.3
+            }}
+          />
+
+          {/* ArcGIS Housing Density Layer */}
+          <ArcGISLayer
+            serviceUrl="https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Housing_Density/FeatureServer"
+            layerId="0"
+            visible={showHousing}
+            layerType="fill"
+            paint={{
+              'fill-color': '#FFB000',
+              'fill-opacity': 0.4
+            }}
+          />
 
           {/* Site Markers */}
-          {sites.map((site) => (
+          {sampleSites.map((site) => (
             <Marker
               key={site.id}
               longitude={site.longitude || -82.4572}
@@ -244,6 +365,66 @@ export function InteractiveMap({
             showUserHeading={true}
           />
         </Map>
+
+        {/* Layer Controls */}
+        <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">
+          <h4 className="font-semibold text-sm text-bristol-ink mb-3">Map Layers</h4>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="heatmap"
+                checked={showHeatmap}
+                onChange={(e) => setShowHeatmap(e.target.checked)}
+                className="w-4 h-4 text-bristol-maroon"
+              />
+              <label htmlFor="heatmap" className="text-sm text-bristol-ink">Market Heat Map</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="demographics"
+                checked={showDemographics}
+                onChange={(e) => setShowDemographics(e.target.checked)}
+                className="w-4 h-4 text-bristol-maroon"
+              />
+              <label htmlFor="demographics" className="text-sm text-bristol-ink">Demographics (ArcGIS)</label>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="housing"
+                checked={showHousing}
+                onChange={(e) => setShowHousing(e.target.checked)}
+                className="w-4 h-4 text-bristol-maroon"
+              />
+              <label htmlFor="housing" className="text-sm text-bristol-ink">Housing Density</label>
+            </div>
+          </div>
+          
+          <div className="mt-3 pt-3 border-t border-bristol-stone">
+            <div className="flex gap-1">
+              <Button
+                size="sm"
+                variant={mapStyle.includes('satellite') ? 'default' : 'outline'}
+                onClick={() => setMapStyle('mapbox://styles/mapbox/satellite-streets-v12')}
+                className="text-xs"
+              >
+                <Satellite className="w-3 h-3 mr-1" />
+                Satellite
+              </Button>
+              <Button
+                size="sm"
+                variant={mapStyle.includes('streets') && !mapStyle.includes('satellite') ? 'default' : 'outline'}
+                onClick={() => setMapStyle('mapbox://styles/mapbox/streets-v12')}
+                className="text-xs"
+              >
+                <MapIcon className="w-3 h-3 mr-1" />
+                Streets
+              </Button>
+            </div>
+          </div>
+        </div>
 
         {/* Map Legend */}
         <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">

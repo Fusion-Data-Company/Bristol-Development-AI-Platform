@@ -97,8 +97,7 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
   // Calculate category scores based on available metrics
   const calculateCategoryScore = (categoryKey: string): number => {
     const categoryMetrics = metrics.filter(m => 
-      m.metricType.toLowerCase().includes(categoryKey) || 
-      m.category?.toLowerCase() === categoryKey
+      m.metricType.toLowerCase().includes(categoryKey)
     );
     
     if (categoryMetrics.length === 0) return 50; // Default neutral score
@@ -107,11 +106,11 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
       // Convert metric value to 0-100 score based on metric type
       let score = 50;
       if (m.metricName.toLowerCase().includes('growth')) {
-        score = Math.min(100, Math.max(0, (parseFloat(m.value) + 2) * 25)); // Growth rate to score
+        score = Math.min(100, Math.max(0, (m.value + 2) * 25)); // Growth rate to score
       } else if (m.metricName.toLowerCase().includes('income')) {
-        score = Math.min(100, Math.max(0, (parseFloat(m.value) / 1000))); // Income to score
+        score = Math.min(100, Math.max(0, (m.value / 1000))); // Income to score
       } else if (m.metricName.toLowerCase().includes('rate')) {
-        score = Math.min(100, parseFloat(m.value)); // Already percentage
+        score = Math.min(100, m.value); // Already percentage
       }
       return sum + score;
     }, 0) / categoryMetrics.length;
