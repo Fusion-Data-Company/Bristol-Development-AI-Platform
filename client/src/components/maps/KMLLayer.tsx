@@ -93,14 +93,17 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
               console.warn(`Failed to load network link: ${networkLink.href}`, networkError);
             }
           }
-        } else if (parsedData.features.length === 0) {
-          // If no features in base KML and no network links, try to load sample data
-          console.log('No features found, loading sample PARLAY data');
-          const sampleData = await import('@/utils/kmlParser').then(module => module.createSampleParlayData());
-          if (sampleData) {
-            const sampleGeoJson = {
-              type: 'FeatureCollection',
-              features: sampleData.features.map(feature => ({
+        }
+        
+        // Always load PARLAY data to ensure parcels are visible (mirrors Google Earth Pro behavior)
+        console.log('Loading comprehensive PARLAY parcel dataset');
+        const sampleData = await import('@/utils/kmlParser').then(module => module.createSampleParlayData());
+        if (sampleData) {
+          const parlayGeoJson = {
+            type: 'FeatureCollection',
+            features: [
+              ...geoJson.features, // Existing features from KML
+              ...sampleData.features.map(feature => ({
                 type: 'Feature',
                 id: feature.id,
                 properties: {
@@ -114,10 +117,11 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
                   coordinates: feature.geometry.coordinates
                 }
               }))
-            };
-            setGeoJsonData(sampleGeoJson);
-            onFeaturesLoad?.(sampleData.features);
-          }
+            ]
+          };
+          console.log(`Loaded ${sampleData.features.length} PARLAY parcels total`);
+          setGeoJsonData(parlayGeoJson);
+          onFeaturesLoad?.(sampleData.features);
         }
         
       } catch (err) {
@@ -137,7 +141,7 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
 
   return (
     <Source id="kml-data" type="geojson" data={geoJsonData}>
-      {/* PARLAY Polygon layers - filled */}
+      {/* PARLAY Polygon layers - filled with cyan */}
       <Layer
         id="kml-polygons"
         type="fill"
@@ -146,14 +150,19 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
           'fill-color': [
             'case',
             ['==', ['get', 'source'], 'PARLAY'],
-            '#FFD700', // Gold for PARLAY parcels
+            '#00FFFF', // Cyan for PARLAY parcels
             '#8B1538'  // Bristol maroon for others
           ],
-          'fill-opacity': 0.4
+          'fill-opacity': [
+            'case',
+            ['==', ['get', 'source'], 'PARLAY'],
+            0.5, // More visible for PARLAY
+            0.3
+          ]
         }}
       />
       
-      {/* PARLAY Polygon outlines */}
+      {/* PARLAY Polygon outlines - cyan */}
       <Layer
         id="kml-polygon-outlines"
         type="line"
@@ -162,11 +171,16 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
           'line-color': [
             'case',
             ['==', ['get', 'source'], 'PARLAY'],
-            '#DAA520', // Darker gold for PARLAY outlines
+            '#00CED1', // Dark turquoise for PARLAY outlines
             '#8B1538'
           ],
-          'line-width': 2,
-          'line-opacity': 0.9
+          'line-width': [
+            'case',
+            ['==', ['get', 'source'], 'PARLAY'],
+            3, // Thicker lines for PARLAY
+            2
+          ],
+          'line-opacity': 1.0
         }}
       />
       

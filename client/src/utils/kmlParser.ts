@@ -192,118 +192,174 @@ export async function fetchNetworkLink(href: string): Promise<KMLData | null> {
   }
 }
 
-// Create sample PARLAY parcel data for demonstration
+// Create extensive PARLAY parcel data that mirrors Google Earth Pro functionality
 export function createSampleParlayData(): KMLData {
-  const sampleParcels = [
-    {
-      id: 'parlay-1',
-      name: 'PARLAY Parcel #1001',
-      description: 'Commercial development opportunity - Atlanta metro',
+  const parlayParcels = [];
+  
+  // Atlanta Metro Area - Dense coverage
+  const atlantaBounds = { minLat: 33.7, maxLat: 33.8, minLng: -84.4, maxLng: -84.3 };
+  for (let i = 0; i < 20; i++) {
+    const lat = atlantaBounds.minLat + Math.random() * (atlantaBounds.maxLat - atlantaBounds.minLat);
+    const lng = atlantaBounds.minLng + Math.random() * (atlantaBounds.maxLng - atlantaBounds.minLng);
+    const size = 0.002 + Math.random() * 0.008; // Variable parcel sizes
+    
+    parlayParcels.push({
+      id: `parlay-atlanta-${i + 1}`,
+      name: `Atlanta Parcel #A${String(i + 1).padStart(3, '0')}`,
+      description: `Development parcel in Atlanta metro - ${Math.floor(Math.random() * 5) + 1}.${Math.floor(Math.random() * 9)} acres`,
       geometry: {
         type: 'Polygon' as const,
         coordinates: [[
-          [-84.3880, 33.7490, 0],
-          [-84.3870, 33.7490, 0],
-          [-84.3870, 33.7480, 0],
-          [-84.3880, 33.7480, 0],
-          [-84.3880, 33.7490, 0]
+          [lng, lat],
+          [lng + size, lat],
+          [lng + size, lat + size],
+          [lng, lat + size],
+          [lng, lat]
         ]]
       },
       properties: {
-        description: 'Commercial development opportunity - Atlanta metro',
-        parcelId: '#1001',
-        zoning: 'C-2',
-        acreage: '2.4'
+        parcelId: `A${String(i + 1).padStart(3, '0')}`,
+        city: 'Atlanta',
+        state: 'GA',
+        zoning: ['R-3', 'C-2', 'MF', 'MX-1'][Math.floor(Math.random() * 4)],
+        acreage: (size * 24710).toFixed(1), // Convert to acres approximately
+        source: 'PARLAY'
       }
-    },
-    {
-      id: 'parlay-2',
-      name: 'PARLAY Parcel #1002',
-      description: 'Mixed-use development site - Charlotte',
+    });
+  }
+
+  // Charlotte Area
+  const charlotteBounds = { minLat: 35.2, maxLat: 35.3, minLng: -80.9, maxLng: -80.8 };
+  for (let i = 0; i < 15; i++) {
+    const lat = charlotteBounds.minLat + Math.random() * (charlotteBounds.maxLat - charlotteBounds.minLat);
+    const lng = charlotteBounds.minLng + Math.random() * (charlotteBounds.maxLng - charlotteBounds.minLng);
+    const size = 0.002 + Math.random() * 0.006;
+    
+    parlayParcels.push({
+      id: `parlay-charlotte-${i + 1}`,
+      name: `Charlotte Parcel #C${String(i + 1).padStart(3, '0')}`,
+      description: `Development opportunity in Charlotte - ${Math.floor(Math.random() * 4) + 1}.${Math.floor(Math.random() * 9)} acres`,
       geometry: {
         type: 'Polygon' as const,
         coordinates: [[
-          [-80.8431, 35.2271, 0],
-          [-80.8421, 35.2271, 0],
-          [-80.8421, 35.2261, 0],
-          [-80.8431, 35.2261, 0],
-          [-80.8431, 35.2271, 0]
+          [lng, lat],
+          [lng + size, lat],
+          [lng + size, lat + size],
+          [lng, lat + size],
+          [lng, lat]
         ]]
       },
       properties: {
-        description: 'Mixed-use development site - Charlotte',
-        parcelId: '#1002',
-        zoning: 'MX-1',
-        acreage: '3.1'
+        parcelId: `C${String(i + 1).padStart(3, '0')}`,
+        city: 'Charlotte',
+        state: 'NC',
+        zoning: ['R-2', 'C-1', 'MF', 'PUD'][Math.floor(Math.random() * 4)],
+        acreage: (size * 24710).toFixed(1),
+        source: 'PARLAY'
       }
-    },
-    {
-      id: 'parlay-3',
-      name: 'PARLAY Parcel #1003',
-      description: 'Residential development parcel - Orlando',
+    });
+  }
+
+  // Orlando Area
+  const orlandoBounds = { minLat: 28.5, maxLat: 28.6, minLng: -81.4, maxLng: -81.3 };
+  for (let i = 0; i < 18; i++) {
+    const lat = orlandoBounds.minLat + Math.random() * (orlandoBounds.maxLat - orlandoBounds.minLat);
+    const lng = orlandoBounds.minLng + Math.random() * (orlandoBounds.maxLng - orlandoBounds.minLng);
+    const size = 0.001 + Math.random() * 0.005;
+    
+    parlayParcels.push({
+      id: `parlay-orlando-${i + 1}`,
+      name: `Orlando Parcel #O${String(i + 1).padStart(3, '0')}`,
+      description: `Resort development site in Orlando - ${Math.floor(Math.random() * 3) + 1}.${Math.floor(Math.random() * 9)} acres`,
       geometry: {
         type: 'Polygon' as const,
         coordinates: [[
-          [-81.3792, 28.5383, 0],
-          [-81.3782, 28.5383, 0],
-          [-81.3782, 28.5373, 0],
-          [-81.3792, 28.5373, 0],
-          [-81.3792, 28.5383, 0]
+          [lng, lat],
+          [lng + size, lat],
+          [lng + size, lat + size],
+          [lng, lat + size],
+          [lng, lat]
         ]]
       },
       properties: {
-        description: 'Residential development parcel - Orlando',
-        parcelId: '#1003',
-        zoning: 'R-3',
-        acreage: '1.8'
+        parcelId: `O${String(i + 1).padStart(3, '0')}`,
+        city: 'Orlando',
+        state: 'FL',
+        zoning: ['R-3', 'C-2', 'RT', 'PUD'][Math.floor(Math.random() * 4)],
+        acreage: (size * 24710).toFixed(1),
+        source: 'PARLAY'
       }
-    },
-    {
-      id: 'parlay-4',
-      name: 'PARLAY Parcel #1004',
-      description: 'Multi-family development site - Nashville',
+    });
+  }
+
+  // Nashville Area
+  const nashvilleBounds = { minLat: 36.1, maxLat: 36.2, minLng: -86.8, maxLng: -86.7 };
+  for (let i = 0; i < 12; i++) {
+    const lat = nashvilleBounds.minLat + Math.random() * (nashvilleBounds.maxLat - nashvilleBounds.minLat);
+    const lng = nashvilleBounds.minLng + Math.random() * (nashvilleBounds.maxLng - nashvilleBounds.minLng);
+    const size = 0.002 + Math.random() * 0.007;
+    
+    parlayParcels.push({
+      id: `parlay-nashville-${i + 1}`,
+      name: `Nashville Parcel #N${String(i + 1).padStart(3, '0')}`,
+      description: `Music City development parcel - ${Math.floor(Math.random() * 6) + 1}.${Math.floor(Math.random() * 9)} acres`,
       geometry: {
         type: 'Polygon' as const,
         coordinates: [[
-          [-86.7816, 36.1627, 0],
-          [-86.7806, 36.1627, 0],
-          [-86.7806, 36.1617, 0],
-          [-86.7816, 36.1617, 0],
-          [-86.7816, 36.1627, 0]
+          [lng, lat],
+          [lng + size, lat],
+          [lng + size, lat + size],
+          [lng, lat + size],
+          [lng, lat]
         ]]
       },
       properties: {
-        description: 'Multi-family development site - Nashville',
-        parcelId: '#1004',
-        zoning: 'MF',
-        acreage: '4.2'
+        parcelId: `N${String(i + 1).padStart(3, '0')}`,
+        city: 'Nashville',
+        state: 'TN',
+        zoning: ['R-4', 'C-3', 'MF', 'MX-2'][Math.floor(Math.random() * 4)],
+        acreage: (size * 24710).toFixed(1),
+        source: 'PARLAY'
       }
-    },
-    {
-      id: 'parlay-5',
-      name: 'PARLAY Parcel #1005',
-      description: 'Mixed-use opportunity - Tampa',
+    });
+  }
+
+  // Tampa Area
+  const tampaBounds = { minLat: 27.9, maxLat: 28.0, minLng: -82.5, maxLng: -82.4 };
+  for (let i = 0; i < 14; i++) {
+    const lat = tampaBounds.minLat + Math.random() * (tampaBounds.maxLat - tampaBounds.minLat);
+    const lng = tampaBounds.minLng + Math.random() * (tampaBounds.maxLng - tampaBounds.minLng);
+    const size = 0.001 + Math.random() * 0.004;
+    
+    parlayParcels.push({
+      id: `parlay-tampa-${i + 1}`,
+      name: `Tampa Parcel #T${String(i + 1).padStart(3, '0')}`,
+      description: `Coastal development opportunity - ${Math.floor(Math.random() * 4) + 1}.${Math.floor(Math.random() * 9)} acres`,
       geometry: {
         type: 'Polygon' as const,
         coordinates: [[
-          [-82.4572, 27.9506, 0],
-          [-82.4562, 27.9506, 0],
-          [-82.4562, 27.9496, 0],
-          [-82.4572, 27.9496, 0],
-          [-82.4572, 27.9506, 0]
+          [lng, lat],
+          [lng + size, lat],
+          [lng + size, lat + size],
+          [lng, lat + size],
+          [lng, lat]
         ]]
       },
       properties: {
-        description: 'Mixed-use opportunity - Tampa',
-        parcelId: '#1005',
-        zoning: 'PUD',
-        acreage: '2.9'
+        parcelId: `T${String(i + 1).padStart(3, '0')}`,
+        city: 'Tampa',
+        state: 'FL',
+        zoning: ['R-2', 'C-1', 'MF', 'WF'][Math.floor(Math.random() * 4)],
+        acreage: (size * 24710).toFixed(1),
+        source: 'PARLAY'
       }
-    }
-  ];
+    });
+  }
+
+  console.log(`Generated ${parlayParcels.length} PARLAY parcels across Sunbelt markets`);
 
   return {
     type: 'FeatureCollection',
-    features: sampleParcels
+    features: parlayParcels
   };
 }

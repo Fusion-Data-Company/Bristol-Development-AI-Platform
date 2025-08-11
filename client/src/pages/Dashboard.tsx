@@ -737,11 +737,11 @@ export default function Dashboard() {
                             <span className="text-sm">PARLAY Parcels Loaded</span>
                           </div>
                           <div className="text-xs text-bristol-stone">
-                            5 development parcels across Sunbelt markets
+                            79+ development parcels across Sunbelt markets
                           </div>
                           <div className="flex items-center gap-1 text-xs">
-                            <div className="w-3 h-3 bg-yellow-400 border border-yellow-600 rounded-sm"></div>
-                            <span className="text-bristol-stone">PARLAY Parcels</span>
+                            <div className="w-3 h-3 bg-cyan-400 border border-cyan-600 rounded-sm"></div>
+                            <span className="text-bristol-stone">PARLAY Parcels (Cyan)</span>
                           </div>
                           <Button 
                             size="sm" 
