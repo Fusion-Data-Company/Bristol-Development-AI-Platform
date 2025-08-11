@@ -1,0 +1,263 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0 0% 100%);
+  --foreground: hsl(210 25% 7.8431%);
+  --card: hsl(180 6.6667% 97.0588%);
+  --card-foreground: hsl(210 25% 7.8431%);
+  --popover: hsl(0 0% 100%);
+  --popover-foreground: hsl(210 25% 7.8431%);
+  --primary: hsl(339 100% 31%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(210 25% 7.8431%);
+  --secondary-foreground: hsl(0 0% 100%);
+  --muted: hsl(240 1.9608% 90%);
+  --muted-foreground: hsl(210 25% 7.8431%);
+  --accent: hsl(211.5789 51.3514% 92.7451%);
+  --accent-foreground: hsl(339 100% 31%);
+  --destructive: hsl(356.3033 90.5579% 54.3137%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(201.4286 30.4348% 90.9804%);
+  --input: hsl(200 23.0769% 97.4510%);
+  --ring: hsl(339 100% 31%);
+  --chart-1: hsl(339 100% 31%);
+  --chart-2: hsl(159.7826 100% 36.0784%);
+  --chart-3: hsl(42.0290 92.8251% 56.2745%);
+  --chart-4: hsl(147.1429 78.5047% 41.9608%);
+  --chart-5: hsl(341.4894 75.2000% 50.9804%);
+  --sidebar: hsl(180 6.6667% 97.0588%);
+  --sidebar-foreground: hsl(210 25% 7.8431%);
+  --sidebar-primary: hsl(339 100% 31%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(211.5789 51.3514% 92.7451%);
+  --sidebar-accent-foreground: hsl(339 100% 31%);
+  --sidebar-border: hsl(205.0000 25.0000% 90.5882%);
+  --sidebar-ring: hsl(339 100% 31%);
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Cinzel', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
+  --radius: 1.3rem;
+  --shadow-2xs: 0px 2px 0px 0px hsl(339 100% 31% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(339 100% 31% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 1px 2px -1px hsl(339 100% 31% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 1px 2px -1px hsl(339 100% 31% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 2px 4px -1px hsl(339 100% 31% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 4px 6px -1px hsl(339 100% 31% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 8px 10px -1px hsl(339 100% 31% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(339 100% 31% / 0.00);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+  
+  /* Bristol Brand Colors */
+  --bristol-maroon: hsl(339 100% 31%);
+  --bristol-ink: hsl(217 32% 8%);
+  --bristol-stone: hsl(215 16% 47%);
+  --bristol-gold: hsl(45 58% 60%);
+  --bristol-fog: hsl(210 17% 97%);
+  --bristol-sky: hsl(210 40% 94%);
+  --bristol-night: hsl(217 58% 8%);
+}
+
+.dark {
+  --background: hsl(0 0% 0%);
+  --foreground: hsl(200 6.6667% 91.1765%);
+  --card: hsl(228 9.8039% 10%);
+  --card-foreground: hsl(0 0% 85.0980%);
+  --popover: hsl(0 0% 0%);
+  --popover-foreground: hsl(200 6.6667% 91.1765%);
+  --primary: hsl(339 100% 31%);
+  --primary-foreground: hsl(0 0% 100%);
+  --secondary: hsl(195.0000 15.3846% 94.9020%);
+  --secondary-foreground: hsl(210 25% 7.8431%);
+  --muted: hsl(0 0% 9.4118%);
+  --muted-foreground: hsl(210 3.3898% 46.2745%);
+  --accent: hsl(205.7143 70% 7.8431%);
+  --accent-foreground: hsl(339 100% 31%);
+  --destructive: hsl(356.3033 90.5579% 54.3137%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(210 5.2632% 14.9020%);
+  --input: hsl(207.6923 27.6596% 18.4314%);
+  --ring: hsl(339 100% 31%);
+  --chart-1: hsl(339 100% 31%);
+  --chart-2: hsl(159.7826 100% 36.0784%);
+  --chart-3: hsl(42.0290 92.8251% 56.2745%);
+  --chart-4: hsl(147.1429 78.5047% 41.9608%);
+  --chart-5: hsl(341.4894 75.2000% 50.9804%);
+  --sidebar: hsl(228 9.8039% 10%);
+  --sidebar-foreground: hsl(0 0% 85.0980%);
+  --sidebar-primary: hsl(339 100% 31%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(205.7143 70% 7.8431%);
+  --sidebar-accent-foreground: hsl(339 100% 31%);
+  --sidebar-border: hsl(205.7143 15.7895% 26.0784%);
+  --sidebar-ring: hsl(339 100% 31%);
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-serif: 'Cinzel', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
+  --radius: 1.3rem;
+  --shadow-2xs: 0px 2px 0px 0px hsl(339 100% 31% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(339 100% 31% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 1px 2px -1px hsl(339 100% 31% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 1px 2px -1px hsl(339 100% 31% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 2px 4px -1px hsl(339 100% 31% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 4px 6px -1px hsl(339 100% 31% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(339 100% 31% / 0.00), 0px 8px 10px -1px hsl(339 100% 31% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(339 100% 31% / 0.00);
+  
+  /* Dark mode Bristol colors */
+  --bristol-maroon: hsl(339 90% 45%);
+  --bristol-ink: hsl(217 32% 8%);
+  --bristol-stone: hsl(215 16% 65%);
+  --bristol-gold: hsl(45 58% 70%);
+  --bristol-fog: hsl(217 32% 6%);
+  --bristol-sky: hsl(217 25% 12%);
+  --bristol-night: hsl(217 58% 4%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+/* Bristol specific animations and effects */
+@layer utilities {
+  .thinking-ring {
+    background: conic-gradient(from 0deg, transparent, var(--bristol-maroon), transparent);
+    border-radius: 50%;
+    animation: thinking 2s linear infinite;
+  }
+  
+  .status-indicator {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .status-indicator::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(139, 21, 56, 0.3), transparent);
+    animation: shimmer 2s infinite;
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, var(--bristol-maroon), var(--bristol-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .parallax-bg {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+}
+
+/* Custom keyframe animations */
+@keyframes thinking {
+  0%, 100% { 
+    transform: rotate(0deg) scale(1);
+    opacity: 0.7;
+  }
+  50% { 
+    transform: rotate(180deg) scale(1.1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  100% { left: 100%; }
+}
+
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* Bristol brand utility classes */
+.bristol-maroon { @apply text-bristol-maroon; }
+.bristol-ink { @apply text-bristol-ink; }
+.bristol-stone { @apply text-bristol-stone; }
+.bristol-gold { @apply text-bristol-gold; }
+.bristol-fog { @apply text-bristol-fog; }
+.bristol-sky { @apply text-bristol-sky; }
+
+.bg-bristol-maroon { background-color: hsl(var(--bristol-maroon)); }
+.bg-bristol-ink { background-color: hsl(var(--bristol-ink)); }
+.bg-bristol-stone { background-color: hsl(var(--bristol-stone)); }
+.bg-bristol-gold { background-color: hsl(var(--bristol-gold)); }
+.bg-bristol-fog { background-color: hsl(var(--bristol-fog)); }
+.bg-bristol-sky { background-color: hsl(var(--bristol-sky)); }
+
+.border-bristol-maroon { border-color: hsl(var(--bristol-maroon)); }
+.border-bristol-ink { border-color: hsl(var(--bristol-ink)); }
+.border-bristol-stone { border-color: hsl(var(--bristol-stone)); }
+.border-bristol-gold { border-color: hsl(var(--bristol-gold)); }
+.border-bristol-fog { border-color: hsl(var(--bristol-fog)); }
+.border-bristol-sky { border-color: hsl(var(--bristol-sky)); }
+
+/* Enterprise styling enhancements */
+.shadow-bristol {
+  box-shadow: 0 25px 50px -12px rgba(139, 21, 56, 0.25);
+}
+
+.shadow-bristol-lg {
+  box-shadow: 0 35px 60px -12px rgba(139, 21, 56, 0.35);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus states for accessibility */
+.focus-bristol:focus {
+  outline: 2px solid var(--bristol-maroon);
+  outline-offset: 2px;
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Responsive design helpers */
+@media (max-width: 768px) {
+  .parallax-bg {
+    background-attachment: scroll;
+  }
+}

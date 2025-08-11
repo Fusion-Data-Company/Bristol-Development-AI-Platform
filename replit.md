@@ -1,0 +1,81 @@
+# Bristol Site Intelligence Platform
+
+## Overview
+
+Bristol Site Intelligence Platform is a comprehensive AI-powered real estate development analysis tool designed for multifamily development opportunities across Sunbelt markets. The platform combines advanced AI chat capabilities with sophisticated site analytics, market intelligence, and automation tools. Built as a modern web application, it features a React frontend with a conversational AI interface, robust backend services for data processing and external integrations, and comprehensive real estate analytics including mapping, metrics visualization, and scoring systems.
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript and Vite for fast development and building
+- **Styling**: Tailwind CSS with custom Bristol brand design system using Cinzel serif font and branded color palette
+- **UI Components**: Shadcn/ui component library with Radix UI primitives for accessibility and consistency
+- **State Management**: TanStack Query for server state management and caching
+- **Routing**: Wouter for lightweight client-side routing
+- **Real-time Communication**: WebSocket integration for live updates and chat functionality
+
+### Backend Architecture
+- **Runtime**: Node.js with Express server framework
+- **Database**: PostgreSQL with Neon serverless hosting via Drizzle ORM
+- **Authentication**: Replit Auth with OpenID Connect for secure user authentication
+- **AI Integration**: OpenRouter API for conversational AI capabilities using Claude 3.5 Sonnet
+- **File Storage**: Google Cloud Storage for file uploads and asset management
+- **Real-time Features**: WebSocket server for live chat, tool execution status, and integration updates
+
+### Data Storage Solutions
+- **Primary Database**: PostgreSQL hosted on Neon with connection pooling
+- **ORM**: Drizzle for type-safe database operations and schema management
+- **Session Storage**: PostgreSQL-backed session store for authentication
+- **Schema Structure**: 
+  - User management (users, sessions)
+  - Site intelligence (sites, site_metrics)
+  - Chat system (chat_sessions, chat_messages)
+  - Integration tracking (integration_logs, mcp_tools)
+
+### Authentication and Authorization
+- **Provider**: Replit Auth with OpenID Connect protocol
+- **Session Management**: Express-session with PostgreSQL backing store
+- **Security**: Secure HTTP-only cookies with CSRF protection
+- **User Context**: Full user profile management with profile images and metadata
+
+### External Service Integrations
+- **AI Services**: OpenRouter API for conversational AI with multiple model support
+- **Cloud Storage**: Google Cloud Storage for file handling and asset management
+- **Real Estate Data**: Placeholder architecture for MLS, Census, and market data APIs
+- **Automation Tools**: MCP (Model Context Protocol) framework for tool execution and workflow automation
+- **File Processing**: Support for KML/KMZ geospatial file uploads and processing
+- **Microsoft 365**: Integration foundation for OneDrive and Outlook connectivity
+
+## External Dependencies
+
+### Core Dependencies
+- **@neondatabase/serverless**: PostgreSQL database connectivity for Neon hosting
+- **drizzle-orm**: Type-safe ORM for database operations
+- **@tanstack/react-query**: Server state management and caching
+- **@google-cloud/storage**: Cloud file storage and asset management
+
+### UI and Styling
+- **@radix-ui/***: Comprehensive accessible UI component primitives
+- **tailwindcss**: Utility-first CSS framework
+- **lucide-react**: Icon library for consistent iconography
+- **framer-motion**: Animation library for enhanced user experience
+
+### Development and Build
+- **vite**: Fast development server and build tool
+- **typescript**: Type safety and enhanced developer experience
+- **esbuild**: Fast JavaScript bundler for production builds
+
+### Authentication and Security
+- **openid-client**: OpenID Connect authentication
+- **passport**: Authentication middleware
+- **express-session**: Session management
+- **connect-pg-simple**: PostgreSQL session store
+
+### File Processing and Utilities
+- **@uppy/***: File upload components and utilities
+- **ws**: WebSocket implementation for real-time features
+- **zod**: Runtime type validation and schema parsing

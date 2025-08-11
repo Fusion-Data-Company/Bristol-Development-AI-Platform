@@ -1,0 +1,215 @@
+import { WebSocketServer, WebSocket } from "ws";
+import type { Server } from "http";
+import { storage } from "../storage";
+import type { IntegrationLog } from "@shared/schema";
+
+interface WebSocketClient {
+  id: string;
+  userId?: string;
+  socket: WebSocket;
+  lastPing: number;
+}
+
+interface WebSocketMessage {
+  type: "ping" | "pong" | "subscribe" | "unsubscribe" | "tool_status" | "chat_typing" | "integration_update";
+  data?: any;
+  timestamp: number;
+}
+
+export class WebSocketService {
+  private wss: WebSocketServer;
+  private clients: Map<string, WebSocketClient> = new Map();
+  private subscriptions: Map<string, Set<string>> = new Map(); // topic -> client IDs
+
+  constructor(server: Server) {
+    this.wss = new WebSocketServer({ server, path: '/ws' });
+    this.setupWebSocketServer();
+    this.startHeartbeat();
+  }
+
+  private setupWebSocketServer() {
+    this.wss.on('connection', (socket: WebSocket, request) => {
+      const clientId = this.generateClientId();
+      const client: WebSocketClient = {
+        id: clientId,
+        socket,
+        lastPing: Date.now()
+      };
+
+      this.clients.set(clientId, client);
+      console.log(`WebSocket client connected: ${clientId}`);
+
+      // Send welcome message
+      this.sendToClient(clientId, {
+        type: "tool_status",
+        data: { status: "connected", clientId },
+        timestamp: Date.now()
+      });
+
+      socket.on('message', (data) => {
+        this.handleMessage(clientId, data);
+      });
+
+      socket.on('close', () => {
+        this.handleDisconnect(clientId);
+      });
+
+      socket.on('error', (error) => {
+        console.error(`WebSocket error for client ${clientId}:`, error);
+        this.handleDisconnect(clientId);
+      });
+    });
+  }
+
+  private handleMessage(clientId: string, data: Buffer | string) {
+    try {
+      const message: WebSocketMessage = JSON.parse(data.toString());
+      const client = this.clients.get(clientId);
+
+      if (!client) return;
+
+      switch (message.type) {
+        case "ping":
+          client.lastPing = Date.now();
+          this.sendToClient(clientId, {
+            type: "pong",
+            timestamp: Date.now()
+          });
+          break;
+
+        case "subscribe":
+          this.handleSubscription(clientId, message.data?.topic, true);
+          break;
+
+        case "unsubscribe":
+          this.handleSubscription(clientId, message.data?.topic, false);
+          break;
+
+        case "chat_typing":
+          // Broadcast typing indicator to other clients in the same session
+          if (message.data?.sessionId) {
+            this.broadcastToTopic(`chat:${message.data.sessionId}`, {
+              type: "chat_typing",
+              data: { 
+                userId: client.userId,
+                typing: message.data.typing 
+              },
+              timestamp: Date.now()
+            }, clientId);
+          }
+          break;
+
+        default:
+          console.warn(`Unknown message type: ${message.type}`);
+      }
+    } catch (error) {
+      console.error(`Error handling WebSocket message from ${clientId}:`, error);
+    }
+  }
+
+  private handleSubscription(clientId: string, topic: string, subscribe: boolean) {
+    if (!topic) return;
+
+    if (subscribe) {
+      if (!this.subscriptions.has(topic)) {
+        this.subscriptions.set(topic, new Set());
+      }
+      this.subscriptions.get(topic)!.add(clientId);
+      console.log(`Client ${clientId} subscribed to ${topic}`);
+    } else {
+      this.subscriptions.get(topic)?.delete(clientId);
+      console.log(`Client ${clientId} unsubscribed from ${topic}`);
+    }
+  }
+
+  private handleDisconnect(clientId: string) {
+    // Remove from all subscriptions
+    this.subscriptions.forEach((clients, topic) => {
+      clients.delete(clientId);
+      if (clients.size === 0) {
+        this.subscriptions.delete(topic);
+      }
+    });
+
+    this.clients.delete(clientId);
+    console.log(`WebSocket client disconnected: ${clientId}`);
+  }
+
+  private startHeartbeat() {
+    setInterval(() => {
+      const now = Date.now();
+      this.clients.forEach((client, clientId) => {
+        if (now - client.lastPing > 60000) { // 60 seconds timeout
+          console.log(`Client ${clientId} timed out`);
+          client.socket.terminate();
+          this.handleDisconnect(clientId);
+        }
+      });
+    }, 30000); // Check every 30 seconds
+  }
+
+  private generateClientId(): string {
+    return `ws_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  // Public methods for broadcasting events
+  public broadcastToolExecution(toolName: string, status: string, payload?: any) {
+    this.broadcastToTopic("tools", {
+      type: "tool_status",
+      data: {
+        tool: toolName,
+        status,
+        payload,
+        timestamp: Date.now()
+      },
+      timestamp: Date.now()
+    });
+  }
+
+  public broadcastIntegrationUpdate(log: IntegrationLog) {
+    this.broadcastToTopic("integrations", {
+      type: "integration_update",
+      data: log,
+      timestamp: Date.now()
+    });
+  }
+
+  public broadcastChatUpdate(sessionId: string, message: any) {
+    this.broadcastToTopic(`chat:${sessionId}`, {
+      type: "chat_typing",
+      data: { typing: false, message },
+      timestamp: Date.now()
+    });
+  }
+
+  private sendToClient(clientId: string, message: WebSocketMessage) {
+    const client = this.clients.get(clientId);
+    if (client && client.socket.readyState === WebSocket.OPEN) {
+      client.socket.send(JSON.stringify(message));
+    }
+  }
+
+  private broadcastToTopic(topic: string, message: WebSocketMessage, excludeClientId?: string) {
+    const subscribers = this.subscriptions.get(topic);
+    if (!subscribers) return;
+
+    subscribers.forEach(clientId => {
+      if (clientId !== excludeClientId) {
+        this.sendToClient(clientId, message);
+      }
+    });
+  }
+}
+
+let websocketService: WebSocketService | null = null;
+
+export function initializeWebSocketService(server: Server): WebSocketService {
+  if (!websocketService) {
+    websocketService = new WebSocketService(server);
+  }
+  return websocketService;
+}
+
+export function getWebSocketService(): WebSocketService | null {
+  return websocketService;
+}
