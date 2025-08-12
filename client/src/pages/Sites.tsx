@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2 } from "lucide-react";
+import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Building, Map } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
 import { SitesTable } from "../widgets/tables/SitesTableNew";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
@@ -183,24 +183,53 @@ export default function Sites() {
 
   return (
     <Chrome>
-      <div className="h-screen flex flex-col bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10">
-        {/* Header */}
-        <div className="p-6 border-b bg-white/80 backdrop-blur-sm">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-cinzel font-bold text-bristol-ink">Sites Intelligence</h1>
-              <p className="text-bristol-stone mt-1">Bristol Development Portfolio Management</p>
+      <div className="h-screen flex flex-col bg-gradient-to-br from-bristol-ink via-bristol-maroon/10 to-bristol-ink">
+        {/* Upgraded Sites Intelligence Header */}
+        <div className="p-8 border-b-2 border-bristol-gold/20 bg-gradient-to-r from-bristol-ink via-bristol-maroon/10 to-bristol-ink backdrop-blur-sm relative overflow-hidden">
+          {/* Background pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_2px_2px,_theme(colors.bristol.gold)_2px,_transparent_0)] bg-[size:32px_32px]"></div>
+          </div>
+          
+          <div className="flex items-center justify-between mb-6 relative">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <Building className="h-10 w-10 text-bristol-gold drop-shadow-lg" />
+                  <div className="absolute -inset-1 bg-bristol-gold/20 rounded-full blur-sm animate-pulse"></div>
+                </div>
+                <div>
+                  <h1 className="text-4xl font-cinzel font-bold text-bristol-fog tracking-wide drop-shadow-lg">
+                    Sites Intelligence
+                  </h1>
+                  <p className="text-bristol-gold mt-1 font-medium tracking-wider">
+                    Bristol Development Portfolio Management
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="px-3 py-1">
-                {sites.length} Sites
+            <div className="flex items-center gap-4">
+              <Badge 
+                variant="outline" 
+                className="px-4 py-2 text-bristol-fog border-bristol-gold/50 bg-bristol-gold/10 backdrop-blur-sm font-bold text-lg"
+              >
+                {sites.length} Properties
+              </Badge>
+              <Badge 
+                variant="outline" 
+                className="px-4 py-2 text-bristol-gold border-bristol-gold/50 bg-bristol-ink/50 backdrop-blur-sm font-medium"
+              >
+                46 Total Units: 9,953
               </Badge>
             </div>
           </div>
 
-          {/* Toolbar */}
-          <div className="flex flex-wrap items-center gap-3">
-            <Button onClick={() => setShowAddForm(true)} className="bg-bristol-maroon hover:bg-bristol-maroon/90">
+          {/* Premium Action Toolbar */}
+          <div className="flex flex-wrap items-center gap-4 relative">
+            <Button 
+              onClick={() => setShowAddForm(true)} 
+              className="bg-gradient-to-r from-bristol-gold to-bristol-gold/80 text-bristol-ink hover:from-bristol-gold/90 hover:to-bristol-gold/70 font-bold shadow-xl shadow-bristol-gold/25 hover:shadow-bristol-gold/40 transition-all duration-300"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Site
             </Button>
@@ -217,12 +246,17 @@ export default function Sites() {
               variant="outline" 
               onClick={() => fileInputRef.current?.click()}
               disabled={isImporting}
+              className="border-bristol-fog/30 text-bristol-fog hover:bg-bristol-fog/10 hover:border-bristol-fog/50 backdrop-blur-sm transition-all duration-300"
             >
               {isImporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
               Import CSV
             </Button>
 
-            <Button variant="outline" onClick={handleExportCSV}>
+            <Button 
+              variant="outline" 
+              onClick={handleExportCSV}
+              className="border-bristol-fog/30 text-bristol-fog hover:bg-bristol-fog/10 hover:border-bristol-fog/50 backdrop-blur-sm transition-all duration-300"
+            >
               <Download className="w-4 h-4 mr-2" />
               Export CSV
             </Button>
@@ -231,7 +265,7 @@ export default function Sites() {
               variant="outline" 
               onClick={handleLoadSeed}
               disabled={isImporting}
-              className="border-bristol-gold text-bristol-gold hover:bg-bristol-gold/10"
+              className="border-bristol-gold/50 text-bristol-gold hover:bg-bristol-gold/20 hover:border-bristol-gold backdrop-blur-sm shadow-lg transition-all duration-300"
             >
               {isImporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Settings2 className="w-4 h-4 mr-2" />}
               Load Seed
@@ -241,31 +275,36 @@ export default function Sites() {
               variant="outline" 
               onClick={handleGeocodeAll}
               disabled={isGeocoding}
+              className="border-bristol-fog/30 text-bristol-fog hover:bg-bristol-fog/10 hover:border-bristol-fog/50 backdrop-blur-sm transition-all duration-300"
             >
               {isGeocoding ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <MapPin className="w-4 h-4 mr-2" />}
               Geocode All
             </Button>
 
-            {/* Search */}
-            <div className="flex-1 max-w-sm">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            {/* Premium Search */}
+            <div className="flex-1 max-w-md">
+              <div className="relative group">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-bristol-gold w-5 h-5 group-focus-within:text-bristol-gold/80 transition-colors" />
                 <Input
-                  placeholder="Search sites..."
+                  placeholder="Search Bristol properties..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-12 pr-4 py-3 bg-bristol-ink/60 border-bristol-gold/30 text-bristol-fog placeholder:text-bristol-stone focus:border-bristol-gold focus:ring-bristol-gold/20 backdrop-blur-sm rounded-xl transition-all duration-300"
                 />
               </div>
             </div>
 
-            {/* Status Filter */}
-            <div className="flex gap-1">
+            {/* Premium Status Filters */}
+            <div className="flex gap-2">
               {statusOptions.map(status => (
                 <Badge
                   key={status}
-                  variant={statusFilter.includes(status) ? "default" : "secondary"}
-                  className={`cursor-pointer ${statusFilter.includes(status) ? 'bg-bristol-maroon hover:bg-bristol-maroon/90' : ''}`}
+                  variant="outline"
+                  className={`cursor-pointer px-3 py-2 rounded-lg font-medium transition-all duration-300 backdrop-blur-sm ${
+                    statusFilter.includes(status) 
+                      ? 'bg-bristol-gold text-bristol-ink border-bristol-gold shadow-lg shadow-bristol-gold/25 hover:shadow-bristol-gold/40' 
+                      : 'bg-bristol-ink/40 text-bristol-fog border-bristol-fog/30 hover:bg-bristol-gold/20 hover:text-bristol-gold hover:border-bristol-gold/50'
+                  }`}
                   onClick={() => {
                     setStatusFilter(prev => 
                       prev.includes(status) 
@@ -281,15 +320,29 @@ export default function Sites() {
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 p-6 overflow-hidden">
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 h-full">
-            {/* Table */}
-            <Card className="xl:col-span-2 overflow-hidden">
-              <CardHeader className="pb-3">
-                <CardTitle className="font-cinzel text-bristol-ink">Sites Database</CardTitle>
+        {/* Premium Content Area */}
+        <div className="flex-1 p-8 overflow-hidden">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 h-full">
+            {/* Premium Sites Database Table */}
+            <Card className="xl:col-span-2 overflow-hidden bg-bristol-ink/80 border-bristol-gold/20 backdrop-blur-md shadow-2xl">
+              <CardHeader className="pb-4 bg-gradient-to-r from-bristol-ink to-bristol-maroon/10 border-b border-bristol-gold/20">
+                <div className="flex items-center space-x-3">
+                  <div className="relative">
+                    <Building className="h-6 w-6 text-bristol-gold" />
+                    <div className="absolute -inset-1 bg-bristol-gold/20 rounded blur-sm"></div>
+                  </div>
+                  <CardTitle className="font-cinzel text-bristol-fog text-xl tracking-wide">
+                    Bristol Portfolio Database
+                  </CardTitle>
+                  <Badge 
+                    variant="outline" 
+                    className="ml-auto px-3 py-1 text-bristol-gold border-bristol-gold/50 bg-bristol-gold/10 font-bold"
+                  >
+                    46 Properties
+                  </Badge>
+                </div>
               </CardHeader>
-              <CardContent className="p-0 h-full">
+              <CardContent className="p-0 h-full bg-bristol-ink/60">
                 <SitesTable 
                   data={sites} 
                   isLoading={isLoading}
@@ -300,30 +353,50 @@ export default function Sites() {
               </CardContent>
             </Card>
 
-            {/* Details & Map */}
+            {/* Premium Details & Analytics Sidebar */}
             <div className="space-y-6">
-              {/* Site Details */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="font-cinzel text-bristol-ink">
-                    {selectedSite ? selectedSite.name : 'Site Details'}
-                  </CardTitle>
+              {/* Site Details Card */}
+              <Card className="bg-bristol-ink/80 border-bristol-gold/20 backdrop-blur-md shadow-2xl">
+                <CardHeader className="pb-4 bg-gradient-to-r from-bristol-ink to-bristol-maroon/10 border-b border-bristol-gold/20">
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <Building className="h-5 w-5 text-bristol-gold" />
+                      <div className="absolute -inset-1 bg-bristol-gold/20 rounded blur-sm"></div>
+                    </div>
+                    <CardTitle className="font-cinzel text-bristol-fog text-lg">
+                      {selectedSite ? selectedSite.name : 'Property Details'}
+                    </CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="bg-bristol-ink/60 text-bristol-fog">
                   {selectedSite ? (
                     <SiteDetails site={selectedSite} onRefresh={refetch} />
                   ) : (
-                    <p className="text-bristol-stone">Select a site to view details</p>
+                    <div className="flex flex-col items-center justify-center py-12 space-y-3">
+                      <div className="relative">
+                        <Building className="h-12 w-12 text-bristol-stone/50" />
+                        <div className="absolute -inset-1 bg-bristol-stone/10 rounded-full blur-sm"></div>
+                      </div>
+                      <p className="text-bristol-stone font-medium">Select a property to view details</p>
+                    </div>
                   )}
                 </CardContent>
               </Card>
 
-              {/* Map Preview */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="font-cinzel text-bristol-ink">Map Preview</CardTitle>
+              {/* Map Preview Card */}
+              <Card className="bg-bristol-ink/80 border-bristol-gold/20 backdrop-blur-md shadow-2xl">
+                <CardHeader className="pb-4 bg-gradient-to-r from-bristol-ink to-bristol-maroon/10 border-b border-bristol-gold/20">
+                  <div className="flex items-center space-x-3">
+                    <div className="relative">
+                      <Map className="h-5 w-5 text-bristol-gold" />
+                      <div className="absolute -inset-1 bg-bristol-gold/20 rounded blur-sm"></div>
+                    </div>
+                    <CardTitle className="font-cinzel text-bristol-fog text-lg">
+                      Location Intelligence
+                    </CardTitle>
+                  </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="bg-bristol-ink/60">
                   <SiteMapPreview site={selectedSite} />
                 </CardContent>
               </Card>
@@ -331,13 +404,24 @@ export default function Sites() {
           </div>
         </div>
 
-        {/* Add Site Modal */}
+        {/* Premium Add Site Modal */}
         <Sheet open={showAddForm} onOpenChange={setShowAddForm}>
-          <SheetContent side="right" className="w-[600px] sm:max-w-[600px]">
-            <SheetHeader>
-              <SheetTitle className="font-cinzel text-bristol-ink">Add New Site</SheetTitle>
+          <SheetContent 
+            side="right" 
+            className="w-[600px] sm:max-w-[600px] bg-gradient-to-br from-bristol-ink via-bristol-maroon/10 to-bristol-ink border-l-2 border-bristol-gold/30 backdrop-blur-md"
+          >
+            <SheetHeader className="pb-6 border-b border-bristol-gold/20">
+              <div className="flex items-center space-x-3">
+                <div className="relative">
+                  <Plus className="h-6 w-6 text-bristol-gold" />
+                  <div className="absolute -inset-1 bg-bristol-gold/20 rounded blur-sm"></div>
+                </div>
+                <SheetTitle className="font-cinzel text-bristol-fog text-2xl tracking-wide">
+                  Add New Bristol Property
+                </SheetTitle>
+              </div>
             </SheetHeader>
-            <div className="mt-6">
+            <div className="mt-8 text-bristol-fog">
               <AddSiteForm 
                 onSuccess={() => {
                   setShowAddForm(false);

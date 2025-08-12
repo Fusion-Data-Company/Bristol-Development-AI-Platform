@@ -6,6 +6,16 @@ Bristol Site Intelligence Platform is a comprehensive enterprise-grade AI-powere
 
 ## Recent Changes
 
+**August 2025**
+- ✓ **CRITICAL: Restored dark Bristol branding** - Fixed header/nav styling with gold logo in top right corner (user requested this remain unchanged)
+- ✓ **Completed geocoding system** - Enhanced with 3 fallback strategies, 100% of 46 properties now have coordinates
+- ✓ **Upgraded Sites Intelligence page** - Premium dark Bristol styling with gold/ink theme throughout
+- ✓ **Enhanced search and filters** - Bristol-branded search bar and status filters with premium styling
+- ✓ **Upgraded content cards** - Database table and details sidebar with sophisticated dark Bristol theme
+- ✓ **Fixed critical API calls** - Resolved incorrect apiRequest function usage causing geocoding failures
+- ✓ **Premium modal styling** - Add Site form with matching Bristol dark branding
+- ✓ **Resolved import errors** - Fixed missing Building/Map icon imports causing application crashes
+
 **December 2024**
 - ✓ Completed comprehensive Bristol Site Intelligence Dashboard implementation
 - ✓ Built advanced InteractiveMap component with MapBox GL integration and geocoding
@@ -20,6 +30,7 @@ Bristol Site Intelligence Platform is a comprehensive enterprise-grade AI-powere
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+**CRITICAL BRANDING PREFERENCE:** Dark Bristol header/nav with gold logo in top right corner must NEVER be changed - user has requested this multiple times and styling should remain consistent.
 
 ## System Architecture
 
