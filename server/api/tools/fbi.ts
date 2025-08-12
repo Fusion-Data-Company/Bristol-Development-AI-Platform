@@ -33,8 +33,11 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
     const cached = getCache(key);
     if (cached) return res.json(cached);
 
-    // Use FBI Crime Data API with correct endpoint structure from documentation
-    const apiUrl = `https://api.usa.gov/crime/fbi/cde/summarized/state/${stateUpper}?from=${from}&to=${to}&API_KEY=${process.env.FBI_CRIME_API_KEY}`;
+    // Use FBI Crime Data API with correct endpoint structure and MM-YYYY date format
+    // FBI API expects dates in MM-YYYY format, not just year
+    const fromFormatted = `01-${from}`; // January of start year
+    const toFormatted = `12-${to}`;     // December of end year
+    const apiUrl = `https://api.usa.gov/crime/fbi/cde/summarized/state/${stateUpper}/${offense}?from=${fromFormatted}&to=${toFormatted}&API_KEY=${process.env.FBI_CRIME_API_KEY}`;
     const headers = {
       'Accept': 'application/json',
       'User-Agent': 'Bristol-Site-Intelligence/1.0'
@@ -59,16 +62,34 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
 
     // Transform the FBI API response to match our expected format
     const rows = [];
-    if (data && data.results) {
+    if (data && Array.isArray(data)) {
+      // FBI API returns array directly for summarized data
+      for (const result of data) {
+        if (result && result.data_year) {
+          rows.push({
+            year: result.data_year,
+            actual: result.violent_crime || 0,
+            cleared: result.violent_crime_cleared || 0,
+            rate: result.violent_crime_rate || 0
+          });
+        }
+      }
+    } else if (data && data.results && Array.isArray(data.results)) {
+      // Alternative format if wrapped in results object
       for (const result of data.results) {
-        rows.push({
-          year: result.year || result.data_year,
-          actual: result.violent_crime || result.actual,
-          cleared: result.violent_crime_cleared || Math.floor((result.violent_crime || 0) * 0.3),
-          rate: result.violent_crime_rate || result.rate
-        });
+        if (result && result.data_year) {
+          rows.push({
+            year: result.data_year,
+            actual: result.violent_crime || 0,
+            cleared: result.violent_crime_cleared || 0,
+            rate: result.violent_crime_rate || 0
+          });
+        }
       }
     }
+
+    // Sort by year
+    rows.sort((a, b) => a.year - b.year);
 
     const out = {
       params: { geo, state: stateUpper, offense, from, to },
