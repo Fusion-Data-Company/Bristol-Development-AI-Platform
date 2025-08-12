@@ -29,29 +29,31 @@ ChartJS.register(
 
 interface FoursquareData {
   params: {
-    lat: string;
-    lng: string;
-    radius: string;
+    lat: number;
+    lng: number;
+    radius: number;
     categories: string;
-    limit: string;
+    limit: number;
   };
-  amenityScore: number;
-  byCategory: Array<{
-    name: string;
-    id: string;
-    count: number;
-    weight: number;
-  }>;
-  places: Array<{
+  rows: Array<{
     fsq_id: string;
     name: string;
     category: string;
-    distance_m: number;
-    address: string;
+    category_id: string | null;
+    distance_m: number | null;
+    lat: number | null;
+    lng: number | null;
   }>;
-  totalPlaces: number;
-  dataSource: string;
-  lastUpdated: string;
+  meta: {
+    score: number;
+    byCategory: Array<{
+      name: string;
+      id: number | null;
+      count: number;
+      weight: number;
+    }>;
+    source: string;
+  };
 }
 
 export function FoursquareTool() {
@@ -114,9 +116,9 @@ export function FoursquareTool() {
     if (!data) return;
     
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "Name,Category,Distance (m),Address\n" +
-      data.places.map(place => 
-        `"${place.name}","${place.category}",${place.distance_m},"${place.address || ''}"`
+      "Name,Category,Distance (m),Latitude,Longitude\n" +
+      data.rows.map(place => 
+        `"${place.name}","${place.category}",${place.distance_m || 'N/A'},${place.lat || 'N/A'},${place.lng || 'N/A'}`
       ).join("\n");
     
     const encodedUri = encodeURI(csvContent);
@@ -128,12 +130,12 @@ export function FoursquareTool() {
     document.body.removeChild(link);
   };
 
-  const chartData = data ? {
-    labels: data.byCategory.slice(0, 8).map(cat => cat.name),
+  const chartData = data && data.meta?.byCategory ? {
+    labels: data.meta.byCategory.slice(0, 8).map(cat => cat.name),
     datasets: [
       {
         label: 'Places Count',
-        data: data.byCategory.slice(0, 8).map(cat => cat.count),
+        data: data.meta.byCategory.slice(0, 8).map(cat => cat.count),
         backgroundColor: '#D4A574', // Bristol gold
         borderColor: '#D4A574',
         borderWidth: 1
@@ -254,7 +256,7 @@ export function FoursquareTool() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-gold">{data.amenityScore}</div>
+                <div className="text-2xl font-bold text-bristol-gold">{data.meta.score.toFixed(1)}</div>
                 <div className="text-xs text-gray-400">Higher is better</div>
               </CardContent>
             </Card>
@@ -264,13 +266,13 @@ export function FoursquareTool() {
                 <CardTitle className="text-sm text-gray-300">Total Places</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">{data.totalPlaces}</div>
+                <div className="text-lg text-white">{data.rows.length}</div>
                 <div className="text-xs text-gray-400">Within {Math.round(parseInt(radius) / 1609.34 * 10) / 10} miles</div>
               </CardContent>
             </Card>
 
             {/* Top Categories */}
-            {data.byCategory.slice(0, 3).map((cat, index) => (
+            {data.meta.byCategory.slice(0, 3).map((cat, index) => (
               <Card key={cat.id} className="bg-gray-900 border-gray-700">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-gray-300">{cat.name}</CardTitle>
@@ -289,7 +291,7 @@ export function FoursquareTool() {
               <CardHeader>
                 <CardTitle className="text-white">Places by Category</CardTitle>
                 <CardDescription className="text-gray-400">
-                  Data from {data.dataSource} • Last updated: {new Date(data.lastUpdated).toLocaleDateString()}
+                  Data from {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -308,7 +310,7 @@ export function FoursquareTool() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <MapPin className="h-5 w-5" />
-                  Top Places ({data.places.length})
+                  Top Places ({data.rows.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -319,19 +321,19 @@ export function FoursquareTool() {
                         <th className="text-left py-2">Name</th>
                         <th className="text-left py-2">Category</th>
                         <th className="text-right py-2">Distance</th>
-                        <th className="text-left py-2">Address</th>
+                        <th className="text-left py-2">Coordinates</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {data.places.slice(0, 25).map((place, index) => (
+                      {data.rows.slice(0, 25).map((place, index) => (
                         <tr key={place.fsq_id} className="border-b border-gray-800 hover:bg-gray-800">
                           <td className="py-2 font-medium">{place.name}</td>
                           <td className="py-2 text-gray-300">{place.category}</td>
                           <td className="text-right py-2 text-bristol-gold">
-                            {formatDistance(place.distance_m)}
+                            {place.distance_m ? formatDistance(place.distance_m) : 'N/A'}
                           </td>
                           <td className="py-2 text-gray-400 text-sm">
-                            {place.address || 'Address not available'}
+                            {place.lat && place.lng ? `${place.lat.toFixed(4)}, ${place.lng.toFixed(4)}` : 'N/A'}
                           </td>
                         </tr>
                       ))}
