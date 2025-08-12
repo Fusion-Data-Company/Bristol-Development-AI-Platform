@@ -6,6 +6,7 @@ import {
   getSortedRowModel,
   flexRender,
   ColumnDef,
+  SortingState,
 } from '@tanstack/react-table';
 import { useState, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
@@ -14,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ArrowUpDown, Edit, Trash2, MapPin, ExternalLink, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface Site {
   id: string;
@@ -51,70 +52,69 @@ interface SitesTableProps {
 }
 
 export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefresh }: SitesTableProps) {
-  const [sorting, setSorting] = useState([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [editingCell, setEditingCell] = useState<{ rowId: string; columnId: string } | null>(null);
   const [editValue, setEditValue] = useState('');
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const handleCellEdit = async (site: Site, field: string, value: any) => {
-    try {
-      const updateData: any = {};
-      
-      // Parse value based on field type
-      if (['latitude', 'longitude', 'acreage', 'avgSf'].includes(field)) {
-        updateData[field] = value ? parseFloat(value) : null;
-      } else if (['unitsTotal', 'units1b', 'units2b', 'units3b', 'completionYear', 'parkingSpaces'].includes(field)) {
-        updateData[field] = value ? parseInt(value) : null;
-      } else {
-        updateData[field] = value || null;
-      }
-
-      await apiRequest(`/api/sites/${site.id}`, {
+  const updateMutation = useMutation({
+    mutationFn: async ({ siteId, updateData }: { siteId: string; updateData: any }) => {
+      const response = await fetch(`/api/sites/${siteId}`, {
         method: 'PATCH',
-        body: updateData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData),
       });
-
+      if (!response.ok) throw new Error('Update failed');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/sites'] });
       onRefresh();
       setEditingCell(null);
-      
-      toast({
-        title: "Site Updated",
-        description: `${site.name} has been updated`,
-      });
-    } catch (error) {
-      toast({
-        title: "Update Failed",
-        description: "Failed to update site",
-        variant: "destructive",
-      });
+      toast({ title: "Site Updated", description: "Site has been updated" });
+    },
+    onError: () => {
+      toast({ title: "Update Failed", description: "Failed to update site", variant: "destructive" });
+    },
+  });
+
+  const handleCellEdit = async (site: Site, field: string, value: any) => {
+    const updateData: any = {};
+    
+    // Parse value based on field type
+    if (['latitude', 'longitude', 'acreage', 'avgSf'].includes(field)) {
+      updateData[field] = value ? parseFloat(value) : null;
+    } else if (['unitsTotal', 'units1b', 'units2b', 'units3b', 'completionYear', 'parkingSpaces'].includes(field)) {
+      updateData[field] = value ? parseInt(value) : null;
+    } else {
+      updateData[field] = value || null;
     }
+
+    updateMutation.mutate({ siteId: site.id, updateData });
   };
+
+  const deleteMutation = useMutation({
+    mutationFn: async (siteId: string) => {
+      const response = await fetch(`/api/sites/${siteId}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Delete failed');
+      return response.json();
+    },
+    onSuccess: (_, siteId) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/sites'] });
+      onRefresh();
+      if (selectedSite?.id === siteId) onSelectSite(null);
+      toast({ title: "Site Deleted", description: "Site has been deleted" });
+    },
+    onError: () => {
+      toast({ title: "Delete Failed", description: "Failed to delete site", variant: "destructive" });
+    },
+  });
 
   const handleDelete = async (site: Site) => {
     if (!confirm(`Are you sure you want to delete ${site.name}?`)) return;
-    
-    try {
-      await apiRequest(`/api/sites/${site.id}`, {
-        method: 'DELETE'
-      });
-
-      onRefresh();
-      if (selectedSite?.id === site.id) {
-        onSelectSite(null);
-      }
-      
-      toast({
-        title: "Site Deleted",
-        description: `${site.name} has been deleted`,
-      });
-    } catch (error) {
-      toast({
-        title: "Delete Failed", 
-        description: "Failed to delete site",
-        variant: "destructive",
-      });
-    }
+    deleteMutation.mutate(site.id);
   };
 
   const columns: ColumnDef<Site>[] = useMemo(() => [
@@ -464,7 +464,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
     },
     initialState: {
       pagination: {
-        pageSize: 20,
+        pageSize: 50,
       },
     },
   });
@@ -524,8 +524,19 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       </div>
 
       <div className="flex items-center justify-between space-x-2 py-4">
-        <div className="text-sm text-bristol-stone">
-          {table.getFilteredRowModel().rows.length} site(s) total
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-bristol-stone">
+            {table.getFilteredRowModel().rows.length} site(s) total
+          </div>
+          <select
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => table.setPageSize(Number(e.target.value))}
+            className="text-sm border rounded px-2 py-1"
+          >
+            {[10, 20, 50, 100, 200].map(size => (
+              <option key={size} value={size}>{size} per page</option>
+            ))}
+          </select>
         </div>
         <div className="space-x-2">
           <Button

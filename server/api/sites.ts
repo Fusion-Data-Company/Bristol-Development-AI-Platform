@@ -168,47 +168,39 @@ function parseCSV(csvText: string): any[] {
 // GET /api/sites - List sites with filtering and pagination
 router.get('/', async (req, res) => {
   try {
-    const { status, q, page = '1', limit = '50', sort = 'name' } = req.query;
+    const { status, q, page = '1', limit = '200', sort = 'name' } = req.query;
+    
+    // Execute query with sorting and pagination
+    const pageNum = Math.max(1, parseInt(page as string));
+    const pageSize = Math.min(500, Math.max(1, parseInt(limit as string)));
+    const offset = (pageNum - 1) * pageSize;
     
     let query = db.select().from(sites);
     
     // Apply filters
-    const conditions = [];
     if (status) {
       const statuses = Array.isArray(status) ? status : [status];
-      conditions.push(sql`status IN (${sql.join(statuses.map(s => sql`${s}`), sql`, `)})`);
+      query = query.where(sql`status IN (${sql.join(statuses.map(s => sql`${s}`), sql`, `)})`);
     }
     
     if (q) {
-      conditions.push(
-        sql`(name ILIKE ${`%${q}%`} OR city ILIKE ${`%${q}%`} OR state ILIKE ${`%${q}%`})`
-      );
+      const searchFilter = sql`(name ILIKE ${`%${q}%`} OR city ILIKE ${`%${q}%`} OR state ILIKE ${`%${q}%`})`;
+      query = status ? query.where(searchFilter) : query.where(searchFilter);
     }
     
-    if (conditions.length > 0) {
-      query = query.where(sql`${sql.join(conditions, sql` AND `)}`);
-    }
-    
-    // Execute query with sorting and pagination
-    const pageNum = Math.max(1, parseInt(page as string));
-    const pageSize = Math.min(100, Math.max(1, parseInt(limit as string)));
-    const offset = (pageNum - 1) * pageSize;
-    
-    let finalQuery = db.select().from(sites);
-    
-    if (conditions.length > 0) {
-      finalQuery = finalQuery.where(sql`${sql.join(conditions, sql` AND `)}`);
-    }
-    
+    // Apply sorting
     if (sort === 'name') {
-      finalQuery = finalQuery.orderBy(sites.name);
+      query = query.orderBy(sites.name);
     } else if (sort === 'created_at') {
-      finalQuery = finalQuery.orderBy(desc(sites.createdAt));
+      query = query.orderBy(desc(sites.createdAt));
+    } else {
+      query = query.orderBy(sites.name);
     }
     
-    finalQuery = finalQuery.limit(pageSize).offset(offset);
+    // Apply pagination
+    query = query.limit(pageSize).offset(offset);
     
-    const results = await finalQuery;
+    const results = await query;
     
     res.json(results);
   } catch (error) {

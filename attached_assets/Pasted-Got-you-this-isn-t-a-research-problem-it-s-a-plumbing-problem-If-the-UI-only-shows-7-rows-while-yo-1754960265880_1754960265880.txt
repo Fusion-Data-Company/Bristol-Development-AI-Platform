@@ -1,0 +1,162 @@
+Got you—this isn’t a research problem, it’s a plumbing problem. If the UI only shows 7 rows while you already imported many more, it’s almost always one (or a combo) of these:
+
+Likely culprits
+	1.	API is paginating to 7 by default. Your /api/sites route is probably doing LIMIT 7 (or deriving limit from an undefined query param).
+	2.	TanStack Table page size = 7. If the table’s initial state is set to 7, you’ll only see 7 until you page.  ￼
+	3.	Client filter is active. E.g., status=Newest or a text filter reduces the list.
+	4.	Import validator dropped rows. Zod/validation required a field (like name or addr_line1) and silently skipped failures.
+	5.	Unique upsert logic collapsed rows. If you upsert on (name, city, state), rebranded/aliased names may have overwritten each other.
+
+Here’s how to pinpoint exactly which one it is and fix it in minutes.
+
+⸻
+
+Step 1 — Verify what’s in the database
+
+Run these against your API box (or use Replit shell + psql):
+
+# Quick health and count via API (should be > 7 if import worked)
+curl -s "http://localhost:3000/api/sites/health"
+
+# Dump first 50 via API (bypass any default limit)
+curl -s "http://localhost:3000/api/sites?limit=200&offset=0" | jq '.data | length'
+
+# If you can psql:
+psql "$DATABASE_URL" -c "SELECT count(*) FROM sites;"
+psql "$DATABASE_URL" -c "SELECT status, count(*) FROM sites GROUP BY status ORDER BY 2 DESC;"
+psql "$DATABASE_URL" -c "SELECT id,name,city,state FROM sites ORDER BY created_at DESC LIMIT 25;"
+
+Interpretation
+	•	If counts > 7: the API or table pagination is hiding rows.
+	•	If counts == 7: the import only saved 7 rows → go to Step 4.
+
+⸻
+
+Step 2 — Remove any server‑side hard limit
+
+Open apps/api/src/routes/sites.js (or wherever /api/sites lives). Make sure no hardcoded LIMIT 7 exists. Use a sane default and allow overrides:
+
+// Example: GET /api/sites
+router.get("/sites", async (req, res) => {
+  const q = (req.query.q || "").trim();
+  const status = (req.query.status || "").trim();
+  const limit = Math.min(parseInt(req.query.limit || "200", 10), 1000);
+  const offset = Math.max(parseInt(req.query.offset || "0", 10), 0);
+
+  const where = [];
+  const params = [];
+  if (q) { where.push("(LOWER(name) LIKE LOWER($1) OR LOWER(city) LIKE LOWER($1) OR LOWER(state) LIKE LOWER($1))"); params.push(`%${q}%`); }
+  if (status) { where.push(`status = $${params.length+1}`); params.push(status); }
+
+  const sql = `
+    SELECT * FROM sites
+    ${where.length ? "WHERE " + where.join(" AND ") : ""}
+    ORDER BY name ASC
+    LIMIT $${params.length+1} OFFSET $${params.length+2}
+  `;
+  params.push(limit, offset);
+
+  const { rows } = await pool.query(sql, params);
+  res.json({ ok: true, data: rows, limit, offset });
+});
+
+
+⸻
+
+Step 3 — Fix the table pagination (TanStack)
+
+If the table defaults to 7 rows, bump it and expose a page‑size selector. In your SitesTable.jsx:
+
+import {
+  useReactTable, getCoreRowModel, getSortedRowModel,
+  getPaginationRowModel, flexRender
+} from '@tanstack/react-table';
+
+const table = useReactTable({
+  data, columns,
+  getCoreRowModel: getCoreRowModel(),
+  getSortedRowModel: getSortedRowModel(),
+  getPaginationRowModel: getPaginationRowModel(),
+  initialState: { pagination: { pageSize: 50 } } // not 7 🙂
+});
+
+Also render a simple size selector:
+
+<select
+  value={table.getState().pagination.pageSize}
+  onChange={e => table.setPageSize(Number(e.target.value))}
+>
+  {[10,20,50,100,200].map(s => <option key={s} value={s}>{s} / page</option>)}
+</select>
+
+(TanStack’s pagination APIs are here if you want to double‑check usage.)  ￼
+
+⸻
+
+Step 4 — See why import dropped rows (if DB only has 7)
+
+Ask the import endpoint to return a real report (inserted, updated, failed with reasons). If yours doesn’t, add this now in POST /api/sites/import:
+
+const report = { inserted:0, updated:0, failed:[] };
+// ...for each CSV row after validation:
+try {
+  // upsert by (name, city, state) or by address if present
+  const upsert = `
+    INSERT INTO sites (status,name,addr_line1,city,state,postal_code,country,latitude,longitude,acreage,units_total,source_url,notes)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+    ON CONFLICT (name, city, state) DO UPDATE
+      SET status=EXCLUDED.status,
+          addr_line1=EXCLUDED.addr_line1,
+          postal_code=EXCLUDED.postal_code,
+          latitude=EXCLUDED.latitude,
+          longitude=EXCLUDED.longitude,
+          acreage=EXCLUDED.acreage,
+          units_total=EXCLUDED.units_total,
+          source_url=EXCLUDED.source_url,
+          notes=EXCLUDED.notes,
+          updated_at=now()
+    RETURNING xmax = 0 AS inserted; -- Postgres trick: true if insert, false if update
+  `;
+  const r = await pool.query(upsert, params);
+  r.rows[0].inserted ? report.inserted++ : report.updated++;
+} catch (e) {
+  report.failed.push({ rowNumber, name: row.name, reason: e.message });
+}
+
+Then the response prints inserted, updated, and failed rows so you see exactly why entries didn’t make it.
+
+Common gotchas that collapse/skip rows
+	•	Validation too strict (e.g., requiring addr_line1 for every row). Relax rules to allow missing fields; staff can fill later.
+	•	Duplicate keys: Two different projects with the same (name, city, state) will overwrite. Consider unique key (LOWER(name), LOWER(city), LOWER(state)) plus addr_line1 if available.
+	•	Header mismatch: The CSV column names must match your importer’s mapping (case‑insensitive helps).
+
+⸻
+
+Step 5 — Make sure filters aren’t hiding data
+
+On the Sites page, clear all filters and searches. If you persist filters in localStorage, add a “Reset filters” button that clears state and re‑fetches.
+
+⸻
+
+Step 6 — Prove it end‑to‑end (quick checks)
+
+# Expect a big number
+curl -s "http://localhost:3000/api/sites?limit=500" | jq '.data | length'
+
+# From the browser console:
+fetch("/api/sites?limit=500").then(r=>r.json()).then(j=>console.log(j.data.length))
+
+If these return >7, your UI will show more after Step 2–3.
+
+⸻
+
+Want me to paste file‑level patches?
+
+If you drop me:
+	•	apps/api/src/routes/sites.js
+	•	apps/web/src/widgets/tables/SitesTable.jsx
+	•	(and your import route)
+
+…I’ll give you exact diffs to paste so (a) API defaults to limit=200, (b) TanStack page size defaults to 50 with a selector, and (c) importer returns a failure report so you can see why anything didn’t load.
+
+Once those three are in, you’ll see the full list—not just 7.
