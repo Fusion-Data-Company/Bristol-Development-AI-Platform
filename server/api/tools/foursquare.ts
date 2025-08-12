@@ -56,7 +56,7 @@ router.get('/:lat/:lng/:radius', async (req, res) => {
 
     const r = await fetch(url.toString(), {
       headers: {
-        Authorization: process.env.FOURSQUARE_API_KEY!,
+        Authorization: `Bearer ${process.env.FOURSQUARE_API_KEY!}`,
         Accept: "application/json"
       }
     });

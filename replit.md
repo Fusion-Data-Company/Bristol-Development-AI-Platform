@@ -7,6 +7,9 @@ Bristol Site Intelligence Platform is a comprehensive enterprise-grade AI-powere
 ## Recent Changes
 
 **August 2025**
+- ✓ **CRITICAL: Fixed API Tools Compatibility** - Successfully implemented compatibility layer that returns both new format `{ ok, rows, meta }` and legacy format `{ hasData, data }` for frontend
+- ✓ **Verified Working APIs** - BLS and BEA APIs now fully functional and returning real data through the tools interface
+- ✓ **Authentication Integration** - Fixed API authentication issues with Foursquare (Bearer token) and FBI (API_KEY parameter) formats
 - ✓ **MAJOR: Complete API Tools Overhaul** - Rewrote all 6 API tools (BLS, BEA, HUD, Foursquare, FBI, NOAA) with uniform response format and proper error handling
 - ✓ **New Unified Response Structure** - All tools now return consistent `{ ok: true/false, params: {...}, rows: [...], meta: {...} }` format
 - ✓ **Enhanced API Endpoints** - Fixed endpoint URLs, parameter handling, and data processing for all external APIs

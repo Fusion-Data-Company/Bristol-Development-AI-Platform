@@ -34,7 +34,7 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
     if (cached) return res.json(cached);
 
     const base = "https://api.usa.gov/crime/fbi/sapi/api";
-    const url = `${base}/summarized/${geo}/${stateUpper}/${offense}/${from}/${to}?api_key=${process.env.FBI_CRIME_API_KEY}`;
+    const url = `${base}/summarized/${geo}/${stateUpper}/${offense}/${from}/${to}?API_KEY=${process.env.FBI_CRIME_API_KEY}`;
 
     const r = await fetch(url);
     const text = await r.text();

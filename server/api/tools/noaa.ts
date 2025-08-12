@@ -23,9 +23,9 @@ function respondErr(res: express.Response, status: number, error: string, detail
   });
 }
 
-function bboxAround(lat: number, lng: number, d = 0.2) {
-  // N,W,S,E as required by Search API
-  return `${(lat + d).toFixed(3)},${(lng - d).toFixed(3)},${(lat - d).toFixed(3)},${(lng + d).toFixed(3)}`;
+function bboxAround(lat: number, lng: number, d = 0.1) {
+  // W,S,E,N format for NOAA API
+  return `${(lng - d).toFixed(3)},${(lat - d).toFixed(3)},${(lng + d).toFixed(3)},${(lat + d).toFixed(3)}`;
 }
 
 // NOAA API endpoint for climate data

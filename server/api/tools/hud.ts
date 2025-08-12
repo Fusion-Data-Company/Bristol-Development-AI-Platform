@@ -36,19 +36,19 @@ async function fetchText(url: string, headers: Record<string, string> = {}) {
 // HUD API endpoint for USPS vacancy data
 router.get('/:mode/:zip/:lookbackQ', async (req, res) => {
   try {
-    const { mode = "crosswalk", zip, lookbackQ = "8" } = req.params;
+    const { mode = "usps", zip, lookbackQ = "8" } = req.params;
     if (!zip) {
       return respondErr(res, 400, "zip required");
     }
 
-    if (mode === "crosswalk") {
+    if (mode === "usps" || mode === "crosswalk") {
       const key = `hud:crosswalk:${zip}`;
       const cached = getCache(key);
-      if (cached) return res.json(cached);
+      if (cached) return respondOk(res, cached);
 
-      const token = process.env.HUD_API_TOKEN!;
       const url = `${CROSSWALK}?type=1&query=${encodeURIComponent(zip)}`;
-      const text = await fetchText(url, { Authorization: `Bearer ${token}` });
+      const headers = process.env.HUD_API_TOKEN ? { Authorization: `Bearer ${process.env.HUD_API_TOKEN}` } : {};
+      const text = await fetchText(url, headers);
       const j = JSON.parse(text);
 
       const rows = (j?.data || j?.results || []).map((r: any) => ({
