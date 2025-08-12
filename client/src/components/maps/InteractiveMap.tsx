@@ -14,7 +14,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 interface InteractiveMapProps {
   sites: Site[];
   selectedSiteId?: string;
-  onSiteSelect?: (site: Site) => void;
+  onSiteSelect?: (site: Site | null) => void;
   onMapClick?: (longitude: number, latitude: number) => void;
   className?: string;
   kmlData?: string;
