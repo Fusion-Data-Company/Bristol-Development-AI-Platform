@@ -47,7 +47,7 @@ router.get('/:lat/:lng/:radius', async (req, res) => {
     const cached = getCache(key);
     if (cached) return res.json(cached);
 
-    const url = new URL("https://api.foursquare.com/v3/places/search");
+    const url = new URL("https://places-api.foursquare.com/places/search");
     url.searchParams.set("ll", `${lat},${lng}`);
     url.searchParams.set("radius", String(radius));
     url.searchParams.set("categories", String(categories));
@@ -56,8 +56,9 @@ router.get('/:lat/:lng/:radius', async (req, res) => {
 
     const r = await fetch(url.toString(), {
       headers: {
-        Authorization: process.env.FOURSQUARE_API_KEY!,
-        Accept: "application/json"
+        Authorization: `Bearer ${process.env.FOURSQUARE_API_KEY}`,
+        Accept: "application/json",
+        "X-Places-Api-Version": "2025-06-17"
       }
     });
 
@@ -69,13 +70,13 @@ router.get('/:lat/:lng/:radius', async (req, res) => {
 
     const j = JSON.parse(text);
     const places = (j.results || []).map((p: any) => ({
-      fsq_id: p.fsq_id,
+      fsq_id: p.fsq_place_id,
       name: p.name,
-      category_id: p.categories?.[0]?.id ?? null,
+      category_id: p.categories?.[0]?.fsq_category_id ?? null,
       category: p.categories?.[0]?.name ?? null,
       distance_m: p.distance ?? null,
-      lat: p.geocodes?.main?.latitude ?? null,
-      lng: p.geocodes?.main?.longitude ?? null
+      lat: p.latitude ?? null,
+      lng: p.longitude ?? null
     }));
 
     const byCategory: Record<string, { id: number | null; name: string; count: number; weight: number }> = {};
@@ -91,7 +92,7 @@ router.get('/:lat/:lng/:radius', async (req, res) => {
     const out = {
       params: { lat: latNum, lng: lngNum, radius: Number(radius), categories: String(categories), limit: limitNum },
       rows: places,
-      meta: { score, byCategory: Object.values(byCategory), source: "Foursquare Places v3" }
+      meta: { score, byCategory: Object.values(byCategory), source: "Foursquare Places API 2025" }
     };
     setCache(key, out, 60 * 60 * 1000);
     return respondOk(res, out);
