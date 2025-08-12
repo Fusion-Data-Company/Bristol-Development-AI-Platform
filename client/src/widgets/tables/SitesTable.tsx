@@ -16,32 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ArrowUpDown, Edit, Trash2, MapPin, ExternalLink, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
-interface Site {
-  id: string;
-  status: string;
-  name: string;
-  addrLine1?: string;
-  addrLine2?: string;
-  city?: string;
-  state?: string;
-  postalCode?: string;
-  country?: string;
-  latitude?: number;
-  longitude?: number;
-  acreage?: number;
-  unitsTotal?: number;
-  units1b?: number;
-  units2b?: number;
-  units3b?: number;
-  avgSf?: number;
-  completionYear?: number;
-  parkingSpaces?: number;
-  sourceUrl?: string;
-  notes?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import type { Site } from '@shared/schema';
 
 interface SitesTableProps {
   data: Site[];
@@ -446,7 +421,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => window.open(site.sourceUrl, '_blank')}
+                onClick={() => site.sourceUrl && window.open(site.sourceUrl, '_blank')}
                 className="h-8 w-8 p-0"
               >
                 <ExternalLink className="h-4 w-4" />

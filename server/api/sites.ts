@@ -187,32 +187,36 @@ router.get('/', async (req, res) => {
     const pageSize = Math.min(500, Math.max(1, parseInt(limit as string)));
     const offset = (pageNum - 1) * pageSize;
     
-    let query = db.select().from(sites);
+    // Build query with filters and pagination
+    let filters = [];
     
-    // Apply filters
     if (status) {
       const statuses = Array.isArray(status) ? status : [status];
-      query = query.where(sql`status IN (${sql.join(statuses.map(s => sql`${s}`), sql`, `)})`);
+      filters.push(sql`status IN (${sql.join(statuses.map(s => sql`${s}`), sql`, `)})`);
     }
     
     if (q) {
-      const searchFilter = sql`(name ILIKE ${`%${q}%`} OR city ILIKE ${`%${q}%`} OR state ILIKE ${`%${q}%`})`;
-      query = status ? query.where(searchFilter) : query.where(searchFilter);
+      filters.push(sql`(name ILIKE ${`%${q}%`} OR city ILIKE ${`%${q}%`} OR state ILIKE ${`%${q}%`})`);
+    }
+    
+    let baseQuery = db.select().from(sites);
+    
+    // Apply combined filters
+    if (filters.length > 0) {
+      baseQuery = baseQuery.where(sql.join(filters, sql` AND `));
     }
     
     // Apply sorting
     if (sort === 'name') {
-      query = query.orderBy(sites.name);
+      baseQuery = baseQuery.orderBy(sites.name);
     } else if (sort === 'created_at') {
-      query = query.orderBy(desc(sites.createdAt));
+      baseQuery = baseQuery.orderBy(desc(sites.createdAt));
     } else {
-      query = query.orderBy(sites.name);
+      baseQuery = baseQuery.orderBy(sites.name);
     }
     
     // Apply pagination
-    query = query.limit(pageSize).offset(offset);
-    
-    const results = await query;
+    const results = await baseQuery.limit(pageSize).offset(offset);
     
     res.json(results);
   } catch (error) {
@@ -531,6 +535,39 @@ router.get('/health', async (req, res) => {
   } catch (error) {
     console.error('Error checking sites health:', error);
     res.status(500).json({ error: 'Health check failed' });
+  }
+});
+
+// GET /api/sites/geojson - Sites data as GeoJSON for mapping
+router.get('/geojson', async (req, res) => {
+  try {
+    const results = await db.select().from(sites).where(sql`latitude IS NOT NULL AND longitude IS NOT NULL`);
+    
+    const features = results.map(site => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [site.longitude!, site.latitude!]
+      },
+      properties: {
+        id: site.id,
+        name: site.name,
+        address: site.addrLine1 || '',
+        cityState: [site.city, site.state].filter(Boolean).join(', '),
+        status: site.status || "Operating",
+        units: site.unitsTotal,
+        completionYear: site.completionYear
+      }
+    }));
+
+    res.setHeader("Cache-Control", "public, max-age=300"); // 5 minutes
+    res.json({
+      type: "FeatureCollection",
+      features
+    });
+  } catch (error) {
+    console.error('Error fetching sites GeoJSON:', error);
+    res.status(500).json({ error: 'Failed to fetch sites GeoJSON' });
   }
 });
 

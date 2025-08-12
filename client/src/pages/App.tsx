@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import Chrome from "../components/brand/SimpleChrome";
-import Map from "../widgets/Map";
+import { PortfolioMap } from "../components/maps/PortfolioMap";
 import { SitesTable } from "../widgets/tables/SitesTable";
 import { MetricsTable } from "../widgets/tables/MetricsTable";
 import { CompsTable } from "../widgets/tables/CompsTable";
@@ -21,9 +21,11 @@ export default function App() {
   const [activeTab, setActiveTab] = useState("map");
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
 
-  const handleSiteSelect = (site: Site) => {
+  const handleSiteSelect = (site: Site | null) => {
     setSelectedSite(site);
-    setActiveTab("tables"); // Switch to tables tab when a site is selected
+    if (site) {
+      setActiveTab("tables"); // Switch to tables tab when a site is selected
+    }
   };
 
   return (
@@ -39,7 +41,7 @@ export default function App() {
           <TabsContent value="map" className="mt-6">
             <Card>
               <CardContent className="p-0">
-                <Map />
+                <PortfolioMap onSiteSelect={handleSiteSelect} selectedSiteId={selectedSite?.id} />
               </CardContent>
             </Card>
           </TabsContent>
