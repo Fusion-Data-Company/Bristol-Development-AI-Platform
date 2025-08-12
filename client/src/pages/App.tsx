@@ -19,7 +19,7 @@ export default function App() {
     return <Sites />;
   }
   
-  const [activeTab, setActiveTab] = useState("map");
+  const [activeTab, setActiveTab] = useState("interactive");
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
 
   const handleSiteSelect = (site: Site | null) => {
@@ -34,8 +34,8 @@ export default function App() {
       <div className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="map">Portfolio Map</TabsTrigger>
-            <TabsTrigger value="interactive">Interactive Map</TabsTrigger>
+            <TabsTrigger value="interactive">MapBox Intelligence</TabsTrigger>
+            <TabsTrigger value="map">Basic Map</TabsTrigger>
             <TabsTrigger value="tables">Tables</TabsTrigger>
             <TabsTrigger value="sandbox">3D Sandbox</TabsTrigger>
           </TabsList>
