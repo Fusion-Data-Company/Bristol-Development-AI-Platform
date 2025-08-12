@@ -80,21 +80,6 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
     },
   });
 
-  const handleCellEdit = async (site: Site, field: string, value: any) => {
-    const updateData: any = {};
-    
-    // Parse value based on field type
-    if (['latitude', 'longitude', 'acreage', 'avgSf'].includes(field)) {
-      updateData[field] = value ? parseFloat(value) : null;
-    } else if (['unitsTotal', 'units1b', 'units2b', 'units3b', 'completionYear', 'parkingSpaces'].includes(field)) {
-      updateData[field] = value ? parseInt(value) : null;
-    } else {
-      updateData[field] = value || null;
-    }
-
-    updateMutation.mutate({ siteId: site.id, updateData });
-  };
-
   const deleteMutation = useMutation({
     mutationFn: async (siteId: string) => {
       const response = await fetch(`/api/sites/${siteId}`, { method: 'DELETE' });
@@ -111,6 +96,21 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       toast({ title: "Delete Failed", description: "Failed to delete site", variant: "destructive" });
     },
   });
+
+  const handleCellEdit = async (site: Site, field: string, value: any) => {
+    const updateData: any = {};
+    
+    // Parse value based on field type
+    if (['latitude', 'longitude', 'acreage', 'avgSf'].includes(field)) {
+      updateData[field] = value ? parseFloat(value) : null;
+    } else if (['unitsTotal', 'units1b', 'units2b', 'units3b', 'completionYear', 'parkingSpaces'].includes(field)) {
+      updateData[field] = value ? parseInt(value) : null;
+    } else {
+      updateData[field] = value || null;
+    }
+
+    updateMutation.mutate({ siteId: site.id, updateData });
+  };
 
   const handleDelete = async (site: Site) => {
     if (!confirm(`Are you sure you want to delete ${site.name}?`)) return;
@@ -142,7 +142,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       
       return (
         <div 
-          className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded min-w-[80px]"
+          className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded"
           onClick={() => {
             setEditingCell({ rowId: site.id, columnId: column.id });
             setEditValue(value?.toString() || '');
@@ -194,7 +194,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       size: 200,
       cell: ({ row }) => (
         <div 
-          className="font-medium text-bristol-ink cursor-pointer hover:text-bristol-maroon min-w-[200px]"
+          className="font-medium text-bristol-ink cursor-pointer hover:text-bristol-maroon"
           onClick={() => onSelectSite(row.original)}
         >
           {row.getValue('name')}
@@ -256,178 +256,63 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       cell: createEditableCell('acreage', 'number'),
     },
     {
-      accessorKey: 'state',
-      header: 'State',
-      cell: ({ row, column }) => {
-        const site = row.original;
-        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
-        const value = row.getValue('state') as string;
-        
-        if (isEditing) {
-          return (
-            <Input
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              onBlur={() => handleCellEdit(site, 'state', editValue)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleCellEdit(site, 'state', editValue);
-                if (e.key === 'Escape') setEditingCell(null);
-              }}
-              className="h-8 w-full"
-              autoFocus
-            />
-          );
-        }
-        
-        return (
-          <div 
-            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded"
-            onClick={() => {
-              setEditingCell({ rowId: site.id, columnId: column.id });
-              setEditValue(value || '');
-            }}
-          >
-            {value || '—'}
-          </div>
-        );
-      },
-    },
-    {
       accessorKey: 'unitsTotal',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 p-0 font-semibold hover:bg-transparent"
-        >
-          Units
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row, column }) => {
-        const site = row.original;
-        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
-        const value = row.getValue('unitsTotal') as number;
-        
-        if (isEditing) {
-          return (
-            <Input
-              type="number"
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              onBlur={() => handleCellEdit(site, 'unitsTotal', editValue)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleCellEdit(site, 'unitsTotal', editValue);
-                if (e.key === 'Escape') setEditingCell(null);
-              }}
-              className="h-8 w-full"
-              autoFocus
-            />
-          );
-        }
-        
-        return (
-          <div 
-            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded text-right"
-            onClick={() => {
-              setEditingCell({ rowId: site.id, columnId: column.id });
-              setEditValue(value?.toString() || '');
-            }}
-          >
-            {value || '—'}
-          </div>
-        );
-      },
+      header: 'Total Units',
+      size: 100,
+      cell: createEditableCell('unitsTotal', 'number'),
     },
     {
-      accessorKey: 'acreage',
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 p-0 font-semibold hover:bg-transparent"
-        >
-          Acreage
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row, column }) => {
-        const site = row.original;
-        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
-        const value = row.getValue('acreage') as number;
-        
-        if (isEditing) {
-          return (
-            <Input
-              type="number"
-              step="0.1"
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              onBlur={() => handleCellEdit(site, 'acreage', editValue)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleCellEdit(site, 'acreage', editValue);
-                if (e.key === 'Escape') setEditingCell(null);
-              }}
-              className="h-8 w-full"
-              autoFocus
-            />
-          );
-        }
-        
-        return (
-          <div 
-            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded text-right"
-            onClick={() => {
-              setEditingCell({ rowId: site.id, columnId: column.id });
-              setEditValue(value?.toString() || '');
-            }}
-          >
-            {value ? `${value} ac` : '—'}
-          </div>
-        );
-      },
+      accessorKey: 'units1b',
+      header: '1BR Units',
+      size: 90,
+      cell: createEditableCell('units1b', 'number'),
+    },
+    {
+      accessorKey: 'units2b',
+      header: '2BR Units',
+      size: 90,
+      cell: createEditableCell('units2b', 'number'),
+    },
+    {
+      accessorKey: 'units3b',
+      header: '3BR Units',
+      size: 90,
+      cell: createEditableCell('units3b', 'number'),
+    },
+    {
+      accessorKey: 'avgSf',
+      header: 'Avg SF',
+      size: 80,
+      cell: createEditableCell('avgSf', 'number'),
     },
     {
       accessorKey: 'completionYear',
-      header: 'Year',
-      cell: ({ row, column }) => {
-        const site = row.original;
-        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
-        const value = row.getValue('completionYear') as number;
-        
-        if (isEditing) {
-          return (
-            <Input
-              type="number"
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              onBlur={() => handleCellEdit(site, 'completionYear', editValue)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleCellEdit(site, 'completionYear', editValue);
-                if (e.key === 'Escape') setEditingCell(null);
-              }}
-              className="h-8 w-full"
-              autoFocus
-            />
-          );
-        }
-        
-        return (
-          <div 
-            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded text-right"
-            onClick={() => {
-              setEditingCell({ rowId: site.id, columnId: column.id });
-              setEditValue(value?.toString() || '');
-            }}
-          >
-            {value || '—'}
-          </div>
-        );
-      },
+      header: 'Completion Year',
+      size: 120,
+      cell: createEditableCell('completionYear', 'number'),
+    },
+    {
+      accessorKey: 'parkingSpaces',
+      header: 'Parking Spaces',
+      size: 120,
+      cell: createEditableCell('parkingSpaces', 'number'),
+    },
+    {
+      accessorKey: 'sourceUrl',
+      header: 'Source URL',
+      size: 200,
+      cell: createEditableCell('sourceUrl'),
+    },
+    {
+      accessorKey: 'notes',
+      header: 'Notes',
+      size: 250,
+      cell: createEditableCell('notes'),
     },
     {
       id: 'actions',
       header: 'Actions',
+      size: 120,
       cell: ({ row }) => {
         const site = row.original;
         return (
@@ -438,6 +323,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                 size="sm"
                 onClick={() => onSelectSite(site)}
                 className="h-8 w-8 p-0 text-bristol-maroon hover:text-bristol-maroon hover:bg-bristol-cream/20"
+                title="View on Map"
               >
                 <MapPin className="h-4 w-4" />
               </Button>
@@ -448,6 +334,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                 size="sm"
                 onClick={() => window.open(site.sourceUrl, '_blank')}
                 className="h-8 w-8 p-0"
+                title="Open Source URL"
               >
                 <ExternalLink className="h-4 w-4" />
               </Button>
@@ -457,6 +344,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
               size="sm"
               onClick={() => handleDelete(site)}
               className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+              title="Delete Site"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -464,7 +352,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         );
       },
     },
-  ], [editingCell, editValue, onSelectSite, onRefresh, selectedSite, toast]);
+  ], [editingCell, editValue, onSelectSite, handleDelete, selectedSite]);
 
   const table = useReactTable({
     data,
@@ -508,7 +396,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id} 
-                      className="font-cinzel text-bristol-ink whitespace-nowrap px-4 py-2"
+                      className="font-cinzel text-bristol-ink whitespace-nowrap px-4 py-2 border-r"
                       style={{ width: header.getSize() }}
                     >
                       {header.isPlaceholder
@@ -525,12 +413,12 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className={`hover:bg-bristol-cream/20 ${selectedSite?.id === row.original.id ? 'bg-bristol-cream/30' : ''}`}
+                    className={`hover:bg-bristol-fog/20 ${selectedSite?.id === row.original.id ? 'bg-bristol-gold/10' : ''}`}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell 
                         key={cell.id} 
-                        className="px-4 py-2 whitespace-nowrap"
+                        className="px-4 py-2 whitespace-nowrap border-r"
                         style={{ width: cell.column.getSize() }}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2 } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
-import { SitesTable } from "../widgets/tables/SitesTable";
+import { SitesTable } from "../widgets/tables/SitesTableNew";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
 import { SiteDetails } from "../widgets/details/SiteDetails";
 import { SiteMapPreview } from "../widgets/maps/SiteMapPreview";
