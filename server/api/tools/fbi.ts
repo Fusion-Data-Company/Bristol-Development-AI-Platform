@@ -67,29 +67,83 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
     if (data && data.offenses && data.offenses.actuals) {
       console.log('[FBI] Available keys in actuals:', Object.keys(data.offenses.actuals));
       
-      const stateData = data.offenses.actuals['North Carolina'];
-      const clearanceData = data.offenses.actuals['North Carolina Clearances'];
+      // Map state codes to full state names as used by FBI API
+      const stateNameMap: Record<string, string> = {
+        'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas', 'CA': 'California',
+        'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware', 'FL': 'Florida', 'GA': 'Georgia',
+        'HI': 'Hawaii', 'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa',
+        'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+        'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi', 'MO': 'Missouri',
+        'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey',
+        'NM': 'New Mexico', 'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio',
+        'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+        'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah', 'VT': 'Vermont',
+        'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'
+      };
       
+      const fullStateName = stateNameMap[stateUpper] || stateUpper;
+      const stateData = data.offenses.actuals[fullStateName];
+      const clearanceData = data.offenses.actuals[`${fullStateName} Clearances`];
+      
+      console.log(`[FBI] Looking for state: ${fullStateName}`);
       console.log('[FBI] State data:', stateData);
       console.log('[FBI] Clearance data:', clearanceData);
       
       if (stateData && typeof stateData === 'object') {
-        // Extract years and values from the state data object
-        for (const [year, value] of Object.entries(stateData)) {
-          const yearNum = Number(year);
-          if (!isNaN(yearNum) && yearNum >= 2000) { // Only valid years
+        // Extract years from month-year keys (MM-YYYY format)
+        const yearlyData: Record<string, { actual: number; cleared: number; rate: number }> = {};
+        
+        for (const [monthYear, value] of Object.entries(stateData)) {
+          const match = monthYear.match(/^\d{2}-(\d{4})$/);
+          if (match) {
+            const year = match[1];
             const actualValue = Number(value) || 0;
-            const clearedValue = clearanceData && clearanceData[year] ? Number(clearanceData[year]) : 0;
-            const rateValue = data.offenses.rates && data.offenses.rates['North Carolina'] && data.offenses.rates['North Carolina'][year] ? 
-                             Number(data.offenses.rates['North Carolina'][year]) : 0;
             
-            console.log(`[FBI] Year ${year}: actual=${actualValue}, cleared=${clearedValue}, rate=${rateValue}`);
-            
+            if (!yearlyData[year]) {
+              yearlyData[year] = { actual: 0, cleared: 0, rate: 0 };
+            }
+            yearlyData[year].actual += actualValue;
+          }
+        }
+        
+        // Add clearance data
+        if (clearanceData && typeof clearanceData === 'object') {
+          for (const [monthYear, value] of Object.entries(clearanceData)) {
+            const match = monthYear.match(/^\d{2}-(\d{4})$/);
+            if (match) {
+              const year = match[1];
+              const clearedValue = Number(value) || 0;
+              
+              if (yearlyData[year]) {
+                yearlyData[year].cleared += clearedValue;
+              }
+            }
+          }
+        }
+        
+        // Add rate data
+        if (data.offenses.rates && data.offenses.rates[fullStateName]) {
+          for (const [monthYear, rate] of Object.entries(data.offenses.rates[fullStateName])) {
+            const match = monthYear.match(/^\d{2}-(\d{4})$/);
+            if (match) {
+              const year = match[1];
+              if (yearlyData[year]) {
+                yearlyData[year].rate = Number(rate) || 0;
+              }
+            }
+          }
+        }
+        
+        // Convert to final format
+        for (const [year, data] of Object.entries(yearlyData)) {
+          const yearNum = Number(year);
+          if (yearNum >= 2000) {
+            console.log(`[FBI] Year ${year}: actual=${data.actual}, cleared=${data.cleared}, rate=${data.rate}`);
             rows.push({
               year: yearNum,
-              actual: actualValue,
-              cleared: clearedValue,
-              rate: rateValue
+              actual: data.actual,
+              cleared: data.cleared,
+              rate: data.rate
             });
           }
         }
