@@ -23,7 +23,11 @@ import {
   ChevronRight,
   Info,
   Star,
-  PieChart
+  PieChart,
+  AlertTriangle,
+  GraduationCap,
+  Laptop,
+  Briefcase
 } from "lucide-react";
 import type { Site, SiteMetric } from '@shared/schema';
 
@@ -105,7 +109,9 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
   
   const marketConditionsData = rawDemographicsData ? {
     averageRent: rawDemographicsData.median_rent ? 
-      `$${rawDemographicsData.median_rent.toLocaleString()}` : null,
+      `$${rawDemographicsData.median_rent.toLocaleString()}` : 
+      (rawDemographicsData.median_home_value ? 
+        `$${Math.round(rawDemographicsData.median_home_value * 0.01).toLocaleString()}/mo est` : null),
     occupancyRate: rawDemographicsData.homeownership_rate ? 
       `${(100 - rawDemographicsData.homeownership_rate).toFixed(1)}%` : null,
     absorptionRate: rawDemographicsData.vacancy_rate ? 
@@ -114,6 +120,15 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
       `${rawDemographicsData.percent_income_100k_plus.toFixed(1)}% high income` : null,
     landCostPerUnit: rawDemographicsData.median_home_value ? 
       `$${(rawDemographicsData.median_home_value / 1000).toFixed(0)}k avg home` : null,
+    // Additional Bristol Development metrics
+    povertyRate: rawDemographicsData.poverty_rate ? 
+      `${rawDemographicsData.poverty_rate.toFixed(1)}%` : null,
+    collegeEducated: rawDemographicsData.percent_bachelors_plus ? 
+      `${rawDemographicsData.percent_bachelors_plus.toFixed(1)}%` : null,
+    workFromHome: rawDemographicsData.percent_work_from_home ? 
+      `${rawDemographicsData.percent_work_from_home.toFixed(1)}%` : null,
+    youngProfessionals: rawDemographicsData.percent_25_to_34 ? 
+      `${rawDemographicsData.percent_25_to_34.toFixed(1)}%` : null,
   } : null;
 
   // Handle map clicks to create virtual site selections
@@ -533,6 +548,103 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                       <span className="text-lg font-black text-bristol-gold group-hover:text-bristol-gold/90 group-hover:drop-shadow-[0_0_8px_rgba(218,165,32,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">
                         {demographicsLoading ? '...' : 
                           (marketConditionsData?.landCostPerUnit || 'Data unavailable')}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Additional Bristol Development Metrics */}
+              <Card className="bg-gradient-to-br from-red-200/90 via-red-50 to-white border-red-400 border-2 hover:border-red-500 hover:shadow-2xl hover:shadow-red-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-red-300/40">
+                <div className="absolute inset-0 bg-gradient-to-br from-red-300/30 via-transparent to-red-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-red-400/50 via-red-500/50 to-red-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                <CardContent className="p-3 relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-md bg-red-400/60 flex items-center justify-center group-hover:bg-red-500/80 transition-all duration-300 shadow-md">
+                        <AlertTriangle className="w-3.5 h-3.5 text-red-700 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(239,68,68,0.7)] group-hover:scale-110 transition-all duration-300" />
+                      </div>
+                      <div>
+                        <span className="text-xs text-red-800 font-bold">Poverty Rate</span>
+                        <div className="text-xs text-red-700 font-medium">Economic Risk</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-lg font-black text-red-600 group-hover:text-red-700 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                        {demographicsLoading ? '...' : 
+                          (marketConditionsData?.povertyRate || 'Data unavailable')}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-purple-200/90 via-purple-50 to-white border-purple-400 border-2 hover:border-purple-500 hover:shadow-2xl hover:shadow-purple-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-purple-300/40">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-300/30 via-transparent to-purple-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-purple-400/50 via-purple-500/50 to-purple-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                <CardContent className="p-3 relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-md bg-purple-400/60 flex items-center justify-center group-hover:bg-purple-500/80 transition-all duration-300 shadow-md">
+                        <GraduationCap className="w-3.5 h-3.5 text-purple-700 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(147,51,234,0.7)] group-hover:scale-110 transition-all duration-300" />
+                      </div>
+                      <div>
+                        <span className="text-xs text-purple-800 font-bold">College Educated</span>
+                        <div className="text-xs text-purple-700 font-medium">Bachelor's+</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-lg font-black text-purple-600 group-hover:text-purple-700 group-hover:drop-shadow-[0_0_8px_rgba(147,51,234,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                        {demographicsLoading ? '...' : 
+                          (marketConditionsData?.collegeEducated || 'Data unavailable')}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-indigo-200/90 via-indigo-50 to-white border-indigo-400 border-2 hover:border-indigo-500 hover:shadow-2xl hover:shadow-indigo-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-indigo-300/40">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-300/30 via-transparent to-indigo-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-indigo-400/50 via-indigo-500/50 to-indigo-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                <CardContent className="p-3 relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-md bg-indigo-400/60 flex items-center justify-center group-hover:bg-indigo-500/80 transition-all duration-300 shadow-md">
+                        <Laptop className="w-3.5 h-3.5 text-indigo-700 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(99,102,241,0.7)] group-hover:scale-110 transition-all duration-300" />
+                      </div>
+                      <div>
+                        <span className="text-xs text-indigo-800 font-bold">Work From Home</span>
+                        <div className="text-xs text-indigo-700 font-medium">Remote Workers</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-lg font-black text-indigo-600 group-hover:text-indigo-700 group-hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                        {demographicsLoading ? '...' : 
+                          (marketConditionsData?.workFromHome || 'Data unavailable')}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-orange-200/90 via-orange-50 to-white border-orange-400 border-2 hover:border-orange-500 hover:shadow-2xl hover:shadow-orange-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-orange-300/40">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-300/30 via-transparent to-orange-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-orange-400/50 via-orange-500/50 to-orange-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                <CardContent className="p-3 relative z-10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-md bg-orange-400/60 flex items-center justify-center group-hover:bg-orange-500/80 transition-all duration-300 shadow-md">
+                        <Briefcase className="w-3.5 h-3.5 text-orange-700 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(249,115,22,0.7)] group-hover:scale-110 transition-all duration-300" />
+                      </div>
+                      <div>
+                        <span className="text-xs text-orange-800 font-bold">Young Professionals</span>
+                        <div className="text-xs text-orange-700 font-medium">Age 25-34</div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-lg font-black text-orange-600 group-hover:text-orange-700 group-hover:drop-shadow-[0_0_8px_rgba(249,115,22,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                        {demographicsLoading ? '...' : 
+                          (marketConditionsData?.youngProfessionals || 'Data unavailable')}
                       </span>
                     </div>
                   </div>
