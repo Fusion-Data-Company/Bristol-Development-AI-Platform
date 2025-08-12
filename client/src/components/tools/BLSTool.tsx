@@ -262,7 +262,7 @@ export function BLSTool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bg-gradient-to-r from-bristol-gold to-yellow-400 text-slate-900 hover:from-bristol-gold/90 hover:to-yellow-400/90 border-0 shadow-lg font-semibold px-8 py-3 rounded-xl transition-all duration-200 hover:scale-105"
+          className="relative bg-gradient-to-r from-red-900/90 to-red-700/80 text-white backdrop-blur-md border border-red-500/30 shadow-2xl font-semibold px-8 py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-red-500/25 hover:border-red-400/50 before:absolute before:inset-0 before:bg-gradient-to-r before:from-red-800/20 before:to-red-600/10 before:rounded-xl before:backdrop-blur-sm active:scale-95"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Run Analysis
