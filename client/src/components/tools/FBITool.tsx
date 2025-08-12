@@ -115,7 +115,7 @@ export function FBITool() {
     const csvContent = "data:text/csv;charset=utf-8," + 
       "Year,Offense,Actual,Cleared,Clearance Rate (%)\n" +
       data.rows.map(row => 
-        `${row.year},${row.offense},${row.actual},${row.cleared},${row.clearance_rate}`
+        `${row.year},${data.params.offense},${row.actual},${row.cleared},${((row.cleared / row.actual) * 100).toFixed(1)}%`
       ).join("\n");
     
     const encodedUri = encodeURI(csvContent);
@@ -295,10 +295,10 @@ export function FBITool() {
           <div className="lg:col-span-1 space-y-4">
             <Card className="bg-gray-900 border-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Latest ({data.metrics.latestYear})</CardTitle>
+                <CardTitle className="text-sm text-gray-300">Latest ({data.rows[data.rows.length - 1]?.year || 'N/A'})</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{formatNumber(data.metrics.latest)}</div>
+                <div className="text-2xl font-bold text-white">{formatNumber(data.rows[data.rows.length - 1]?.actual || 0)}</div>
                 <div className="text-xs text-gray-400">Reported incidents</div>
               </CardContent>
             </Card>
@@ -309,19 +309,19 @@ export function FBITool() {
               </CardHeader>
               <CardContent>
                 <div className="text-lg text-white flex items-center gap-2">
-                  {data.metrics.yoy !== null ? (
+                  {data.rows.length >= 2 ? (
                     <>
-                      {data.metrics.yoy > 0 ? (
+                      {data.rows[data.rows.length - 1].actual > data.rows[data.rows.length - 2].actual ? (
                         <TrendingUp className="h-4 w-4 text-red-400" />
                       ) : (
                         <TrendingDown className="h-4 w-4 text-green-400" />
                       )}
-                      {data.metrics.yoyPercent}%
+                      {(((data.rows[data.rows.length - 1].actual - data.rows[data.rows.length - 2].actual) / data.rows[data.rows.length - 2].actual) * 100).toFixed(1)}%
                     </>
                   ) : 'N/A'}
                 </div>
                 <div className="text-xs text-gray-400">
-                  {data.metrics.yoy && `${data.metrics.yoy > 0 ? '+' : ''}${formatNumber(data.metrics.yoy)} cases`}
+                  {data.rows.length >= 2 && `${data.rows[data.rows.length - 1].actual > data.rows[data.rows.length - 2].actual ? '+' : ''}${formatNumber(data.rows[data.rows.length - 1].actual - data.rows[data.rows.length - 2].actual)} cases`}
                 </div>
               </CardContent>
             </Card>
@@ -331,7 +331,11 @@ export function FBITool() {
                 <CardTitle className="text-sm text-gray-300">Clearance Rate</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">{data.metrics.avgClearanceRate}%</div>
+                <div className="text-lg text-white">
+                  {data.rows.length > 0 ? 
+                    `${(data.rows.reduce((sum, row) => sum + (row.cleared / row.actual), 0) / data.rows.length * 100).toFixed(1)}%`
+                    : 'N/A'}
+                </div>
                 <div className="text-xs text-gray-400">Average across years</div>
               </CardContent>
             </Card>
@@ -342,12 +346,18 @@ export function FBITool() {
               </CardHeader>
               <CardContent>
                 <div className="text-lg text-white flex items-center gap-2">
-                  {getTrendIcon(data.metrics.trend)}
-                  {Math.abs(data.metrics.trend).toFixed(1)}/year
+                  {data.rows.length > 1 ? (
+                    <>
+                      {data.rows[data.rows.length - 1].actual > data.rows[0].actual ? (
+                        <TrendingUp className="h-4 w-4 text-red-400" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4 text-green-400" />
+                      )}
+                      {(((data.rows[data.rows.length - 1].actual - data.rows[0].actual) / data.rows[0].actual) * 100).toFixed(1)}%
+                    </>
+                  ) : 'N/A'}
                 </div>
-                <div className="text-xs text-gray-400">
-                  {data.metrics.trend > 0 ? 'Increasing' : data.metrics.trend < 0 ? 'Decreasing' : 'Stable'}
-                </div>
+                <div className="text-xs text-gray-400">Total change</div>
               </CardContent>
             </Card>
           </div>
@@ -358,7 +368,7 @@ export function FBITool() {
               <CardHeader>
                 <CardTitle className="text-white">Crime Trends - {state}</CardTitle>
                 <CardDescription className="text-gray-400">
-                  {offense.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} • {data.dataSource}
+                  {offense.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} • {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -401,7 +411,7 @@ export function FBITool() {
                             <td className="py-2 font-medium">{row.year}</td>
                             <td className="text-right py-2">{formatNumber(row.actual)}</td>
                             <td className="text-right py-2 text-green-400">{formatNumber(row.cleared)}</td>
-                            <td className="text-right py-2">{row.clearance_rate}%</td>
+                            <td className="text-right py-2">{((row.cleared / row.actual) * 100).toFixed(1)}%</td>
                             <td className="text-right py-2">
                               {yoyPercent ? (
                                 <span className={yoyChange && yoyChange > 0 ? 'text-red-400' : 'text-green-400'}>

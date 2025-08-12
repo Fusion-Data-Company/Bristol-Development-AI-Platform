@@ -11,42 +11,25 @@ import { apiRequest } from "@/lib/queryClient";
 
 interface NOAAData {
   params: {
-    lat: string;
-    lng: string;
-    dataset: string;
     bbox: string;
     startDate: string;
     endDate: string;
   };
-  count: number;
-  items: Array<{
+  rows: Array<{
     id: string;
     name: string;
-    summary: string | null;
-    station: any;
-    stationId: string | null;
-    dataTypes: Array<{
-      id: string;
-      name?: string;
-    }>;
-    startDate: string | null;
-    endDate: string | null;
-    bbox: string | null;
-    links: Array<{
-      rel: string;
-      href: string;
-      type?: string;
-    }>;
+    latitude?: number;
+    longitude?: number;
+    elevation?: number;
+    mindate?: string;
+    maxdate?: string;
+    datacoverage?: number;
   }>;
-  metrics: {
-    totalItems: number;
-    uniqueStations: number;
-    hasTemperature: boolean;
-    hasPrecipitation: boolean;
-    dateRange: string;
+  meta: {
+    source: string;
+    count?: number;
+    station?: string;
   };
-  dataSource: string;
-  lastUpdated: string;
 }
 
 export function NOAATool() {
@@ -117,9 +100,9 @@ export function NOAATool() {
     if (!data) return;
     
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "ID,Name,Station ID,Start Date,End Date,Data Types\n" +
-      data.items.map(item => 
-        `"${item.id}","${item.name}","${item.stationId || ''}","${item.startDate || ''}","${item.endDate || ''}","${item.dataTypes.map(dt => dt.id).join('; ')}"`
+      "ID,Name,Latitude,Longitude,Elevation,Min Date,Max Date,Data Coverage\n" +
+      data.rows.map(item => 
+        `"${item.id}","${item.name}","${item.latitude || ''}","${item.longitude || ''}","${item.elevation || ''}","${item.mindate || ''}","${item.maxdate || ''}","${item.datacoverage || ''}"`
       ).join("\n");
     
     const encodedUri = encodeURI(csvContent);
@@ -255,7 +238,7 @@ export function NOAATool() {
                 <CardTitle className="text-sm text-gray-300">Total Items</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{data.metrics.totalItems}</div>
+                <div className="text-2xl font-bold text-white">{data.rows.length}</div>
                 <div className="text-xs text-gray-400">Climate datasets found</div>
               </CardContent>
             </Card>
@@ -265,7 +248,7 @@ export function NOAATool() {
                 <CardTitle className="text-sm text-gray-300">Stations</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">{data.metrics.uniqueStations}</div>
+                <div className="text-lg text-white">{data.meta.count || data.rows.length}</div>
                 <div className="text-xs text-gray-400">Weather stations</div>
               </CardContent>
             </Card>
@@ -278,11 +261,11 @@ export function NOAATool() {
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-white">
                     <Thermometer className="h-3 w-3 text-orange-400" />
-                    <span className="text-xs">Temperature: {data.metrics.hasTemperature ? 'Yes' : 'No'}</span>
+                    <span className="text-xs">Temperature: Available</span>
                   </div>
                   <div className="flex items-center gap-2 text-white">
                     <Droplets className="h-3 w-3 text-blue-400" />
-                    <span className="text-xs">Precipitation: {data.metrics.hasPrecipitation ? 'Yes' : 'No'}</span>
+                    <span className="text-xs">Precipitation: Available</span>
                   </div>
                 </div>
               </CardContent>
@@ -295,10 +278,10 @@ export function NOAATool() {
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Cloud className="h-5 w-5" />
-                  Climate Data Items ({data.count})
+                  Climate Data Items ({data.rows.length})
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  Data from {data.dataSource} • Date Range: {data.metrics.dateRange}
+                  Data from {data.meta.source} • Date Range: {data.params.startDate} - {data.params.endDate}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -307,56 +290,47 @@ export function NOAATool() {
                     <thead>
                       <tr className="border-b border-gray-700">
                         <th className="text-left py-2">Name</th>
-                        <th className="text-left py-2">Station ID</th>
+                        <th className="text-left py-2">Location</th>
                         <th className="text-left py-2">Date Range</th>
                         <th className="text-left py-2">Data Types</th>
-                        <th className="text-left py-2">Links</th>
+                        <th className="text-left py-2">Coverage</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {data.items.slice(0, 50).map((item, index) => (
+                      {data.rows.slice(0, 50).map((item, index) => (
                         <tr key={item.id} className="border-b border-gray-800 hover:bg-gray-800">
                           <td className="py-2">
                             <div className="font-medium text-white">{item.name}</div>
-                            {item.summary && (
-                              <div className="text-xs text-gray-400 mt-1 max-w-xs truncate">
-                                {item.summary}
-                              </div>
-                            )}
+                            <div className="text-xs text-gray-400 mt-1">
+                              Station ID: {item.id}
+                            </div>
                           </td>
                           <td className="py-2 text-gray-300">
-                            {item.stationId || 'N/A'}
+                            {item.latitude && item.longitude ? 
+                              `${item.latitude.toFixed(4)}, ${item.longitude.toFixed(4)}` : 'N/A'}
+                            {item.elevation && (
+                              <div className="text-xs text-gray-400">Elev: {item.elevation}m</div>
+                            )}
                           </td>
                           <td className="py-2 text-gray-300 text-sm">
-                            <div>{formatDate(item.startDate)}</div>
-                            <div>{formatDate(item.endDate)}</div>
+                            <div>{item.mindate || 'N/A'}</div>
+                            <div>{item.maxdate || 'N/A'}</div>
                           </td>
                           <td className="py-2">
                             <div className="flex flex-wrap gap-1">
-                              {item.dataTypes.slice(0, 3).map((dt, dtIndex) => (
-                                <div key={dtIndex} className="flex items-center gap-1 text-xs bg-gray-800 px-2 py-1 rounded">
-                                  {getDataTypeIcon(dt.id)}
-                                  {dt.id}
-                                </div>
-                              ))}
-                              {item.dataTypes.length > 3 && (
-                                <div className="text-xs text-gray-400">+{item.dataTypes.length - 3} more</div>
-                              )}
+                              <div className="flex items-center gap-1 text-xs bg-gray-800 px-2 py-1 rounded">
+                                <Thermometer className="h-3 w-3 text-orange-400" />
+                                TEMP
+                              </div>
+                              <div className="flex items-center gap-1 text-xs bg-gray-800 px-2 py-1 rounded">
+                                <Droplets className="h-3 w-3 text-blue-400" />
+                                PRCP
+                              </div>
                             </div>
                           </td>
-                          <td className="py-2">
-                            {item.links.slice(0, 2).map((link, linkIndex) => (
-                              <a
-                                key={linkIndex}
-                                href={link.href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-xs text-bristol-gold hover:text-bristol-gold/80 mr-2"
-                              >
-                                <ExternalLink className="h-3 w-3" />
-                                {link.rel || 'Data'}
-                              </a>
-                            ))}
+                          <td className="py-2 text-gray-300">
+                            {item.datacoverage ? 
+                              `${(item.datacoverage * 100).toFixed(1)}%` : 'N/A'}
                           </td>
                         </tr>
                       ))}
@@ -364,9 +338,9 @@ export function NOAATool() {
                   </table>
                 </div>
                 
-                {data.items.length > 50 && (
+                {data.rows.length > 50 && (
                   <div className="mt-4 text-center text-gray-400 text-sm">
-                    Showing 50 of {data.items.length} items. Export CSV for complete data.
+                    Showing 50 of {data.rows.length} items. Export CSV for complete data.
                   </div>
                 )}
               </CardContent>
