@@ -1,0 +1,340 @@
+Got it. I’ll make this dead simple and builder‑friendly so you can paste it in and your app will:
+	1.	enrich each of your 46 pins with the correct Census tract GEOID,
+	2.	pull live ACS 5‑year demographics for those tracts,
+	3.	store the results in your DB, and
+	4.	color the map pins by whatever metric you pick (Income / Rent / Population, etc.) — no placeholders.
+
+This avoids Mapbox Studio tileset work for now (we can add tract polygons later). You’ll still get real, live demographics on your map immediately.
+
+⸻
+
+What you’ll get after this
+	•	A Demographics dropdown on the map: Population, Median Income, Median Rent, etc.
+	•	Pins change color based on the chosen metric (quantile ramp).
+	•	Popup shows the tract stats (values are live from ACS and cached in your DB).
+	•	One‑click Enrich job that geocodes FIPS/GEOID for all properties, then fetches ACS and stores it.
+
+⸻
+
+0) Install deps
+
+npm i d3-array
+
+
+⸻
+
+1) DB migration (add fields to hold GEOIDs + ACS)
+
+Run this SQL once:
+
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS fips_state TEXT,
+  ADD COLUMN IF NOT EXISTS fips_county TEXT,
+  ADD COLUMN IF NOT EXISTS geoid_tract TEXT,
+  ADD COLUMN IF NOT EXISTS acs_year TEXT,
+  ADD COLUMN IF NOT EXISTS acs_profile JSONB;
+
+
+⸻
+
+2) One‑shot “enrich” script
+
+This script does two passes:
+	•	Pass A: For each property (lat/lng), call FCC Block API → saves fips_state, fips_county, geoid_tract.
+	•	Pass B: Group by county, pull ACS 5‑yr for all tracts in the county, and keep only the tracts you need → saves a compact acs_profile JSON (the metrics we care about) + acs_year.
+
+Create scripts/enrich-acs.ts:
+
+// scripts/enrich-acs.ts
+import fetch from "node-fetch";
+
+/** EDIT: which ACS metrics to load (you can add more later) */
+const YEAR = "2023";
+const DATASET = "acs/acs5";
+const VARS = [
+  "B01003_001E", // Total population
+  "B19013_001E", // Median household income
+  "B25064_001E"  // Median gross rent
+];
+
+type DbRow = {
+  id: string|number;
+  propertyName: string;
+  latitude: number|null;
+  longitude: number|null;
+  fips_state: string|null;
+  fips_county: string|null;
+  geoid_tract: string|null;
+};
+
+async function sleep(ms:number){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function fccBlockFind(lat:number, lon:number) {
+  const url = `https://geo.fcc.gov/api/census/block/find?latitude=${lat}&longitude=${lon}&format=json`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`FCC ${r.status}`);
+  const j:any = await r.json();
+  // FIPS: state (2), county (3), tract (6), block (4)
+  const state = j?.State?.FIPS;
+  const county = j?.County?.FIPS?.slice(2); // last 3
+  const tract  = j?.Block?.FIPS?.slice(5, 11); // positions per full 15-digit (SSCCCTTTTTTBBBB)
+  if (!state || !county || !tract) return null;
+  return { state, county, tract, geoid: `${state}${county}${tract}` };
+}
+
+async function getAcsCounty(year:string, state:string, county:string, vars:string[]) {
+  const url = `https://api.census.gov/data/${year}/${DATASET}?get=NAME,${vars.join(",")}&for=tract:*&in=state:${state}&in=county:${county}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`ACS ${r.status} for state:${state} county:${county}`);
+  const json:any[] = await r.json();
+  const header = json[0];
+  const rows = json.slice(1);
+  const out = new Map<string, any>();
+  for (const arr of rows) {
+    const obj:any = {};
+    header.forEach((h:string, i:number) => obj[h] = arr[i]);
+    const geoid = `${obj.state}${obj.county}${obj.tract}`;
+    const rec:any = { GEOID: geoid };
+    for (const v of vars) rec[v] = obj[v] == null ? null : Number(obj[v]);
+    out.set(geoid, rec);
+  }
+  return out;
+}
+
+export default async function run(db:any) {
+  // 1) Read all properties that have coords
+  const props: DbRow[] = await db.property.findMany({
+    select: {
+      id:true, propertyName:true, latitude:true, longitude:true,
+      fips_state:true, fips_county:true, geoid_tract:true
+    }
+  });
+
+  // 2) Pass A: ensure each property has GEOID
+  for (const p of props) {
+    if (p.latitude == null || p.longitude == null) continue;
+    if (p.geoid_tract) continue;
+    try {
+      const hit = await fccBlockFind(p.latitude, p.longitude);
+      if (!hit) { console.warn("No FIPS for", p.propertyName); continue; }
+      await db.property.update({
+        where: { id: p.id },
+        data: { fips_state: hit.state, fips_county: hit.county, geoid_tract: hit.geoid }
+      });
+      console.log("GEOID ok:", p.propertyName, hit.geoid);
+    } catch (e:any) {
+      console.error("FCC error:", p.propertyName, e.message);
+    }
+    await sleep(300);
+  }
+
+  // 3) Pass B: pull ACS by county and update acs_profile
+  const withGeo = await db.property.findMany({
+    select: { id:true, propertyName:true, fips_state:true, fips_county:true, geoid_tract:true },
+    where: { geoid_tract: { not: null } }
+  });
+
+  // group by (state,county)
+  const buckets = new Map<string, typeof withGeo>();
+  for (const p of withGeo) {
+    const key = `${p.fips_state}-${p.fips_county}`;
+    const list = buckets.get(key) || [];
+    list.push(p);
+    buckets.set(key, list);
+  }
+
+  for (const [key, list] of buckets) {
+    const [state, county] = key.split("-");
+    const acsMap = await getAcsCounty(YEAR, state, county, VARS);
+    for (const p of list) {
+      const rec = p.geoid_tract ? acsMap.get(p.geoid_tract) : null;
+      if (!rec) continue;
+      const profile = {
+        population: rec["B01003_001E"] ?? null,
+        median_income: rec["B19013_001E"] ?? null,
+        median_rent: rec["B25064_001E"] ?? null
+      };
+      await db.property.update({
+        where: { id: p.id },
+        data: { acs_year: YEAR, acs_profile: profile as any }
+      });
+      console.log("ACS ok:", p.propertyName, profile);
+    }
+    await sleep(500);
+  }
+
+  console.log("✅ Enrichment complete.");
+}
+
+How to run it (replace db with your client):
+
+// scripts/run-enrich.ts
+import run from "./enrich-acs";
+// import { db } from "@/server/db"; // your prisma or db client
+(async () => { await run((global as any).db); })();
+
+
+⸻
+
+3) Map UI: metric picker + real colored pins
+
+Add a small UI (dropdown) and color your existing pins by ACS value.
+In your Mapbox GL code where you add the pins layer (symbol or circle), switch to a circle layer with a data‑driven color.
+
+Step A: metric selector state
+
+// somewhere in your map page/component
+const [metric, setMetric] = useState<'population'|'median_income'|'median_rent'>('median_income');
+
+Step B: serve your properties with ACS attached
+If you already had /api/properties.geojson, extend it to include acs_profile in properties.
+
+// pages/api/properties.geojson.ts (add acs_profile)
+const rows = await db.property.findMany({
+  select: {
+    propertyName:true, address:true, cityState:true,
+    latitude:true, longitude:true, status:true, units:true, completedYear:true,
+    acs_year:true, acs_profile:true
+  }
+});
+
+Step C: load the GeoJSON and compute quantiles
+
+import { quantile } from "d3-array";
+
+// after you fetch the FeatureCollection `fc`
+function quantileStops(fc:any, key:string) {
+  const vals = fc.features
+    .map((f:any)=>f.properties?.acs_profile?.[key])
+    .filter((v:any)=>Number.isFinite(v))
+    .sort((a:number,b:number)=>a-b);
+  if (!vals.length) return [0,0,0,0,0];
+  return [
+    quantile(vals, 0.05)!, quantile(vals, 0.25)!,
+    quantile(vals, 0.50)!, quantile(vals, 0.75)!,
+    quantile(vals, 0.95)!
+  ];
+}
+
+Step D: add/update circle layer with real color scale
+
+function upsertPinsLayer(map:any, sourceId:string, layerId:string, fc:any, metricKey:string) {
+  // update source
+  if (map.getSource(sourceId)) {
+    (map.getSource(sourceId) as any).setData(fc);
+  } else {
+    map.addSource(sourceId, { type:'geojson', data: fc });
+  }
+
+  const [q05,q25,q50,q75,q95] = quantileStops(fc, metricKey);
+
+  const colorExpr:any = [
+    "case",
+    ["!", ["has", "acs_profile"]], "#9ca3af", // gray if no ACS
+    ["!", ["has", metricKey, ["get", "acs_profile"]]], "#9ca3af",
+    ["interpolate", ["linear"], ["get", metricKey, ["get","acs_profile"]],
+      q05, "#f1eef6",
+      q25, "#bdc9e1",
+      q50, "#74a9cf",
+      q75, "#2b8cbe",
+      q95, "#045a8d"
+    ]
+  ];
+
+  const radiusExpr:any = [
+    "interpolate", ["linear"], ["zoom"],
+    4, 4, 8, 8, 12, 12
+  ];
+
+  if (!map.getLayer(layerId)) {
+    map.addLayer({
+      id: layerId,
+      type: "circle",
+      source: sourceId,
+      paint: {
+        "circle-radius": radiusExpr,
+        "circle-color": colorExpr,
+        "circle-stroke-color": "#111827",
+        "circle-stroke-width": 1
+      }
+    });
+  } else {
+    map.setPaintProperty(layerId, "circle-color", colorExpr);
+    map.setPaintProperty(layerId, "circle-radius", radiusExpr);
+  }
+}
+
+Step E: wire it up
+
+// when map loads or metric changes:
+useEffect(() => {
+  (async () => {
+    const r = await fetch("/api/properties.geojson");
+    const fc = await r.json();
+    upsertPinsLayer(mapRef.current, "props-src", "props-circles", fc, metric);
+  })();
+}, [metric]);
+
+Step F: real popups
+
+map.on("click", "props-circles", (e:any) => {
+  const f = e.features[0];
+  const p = f.properties;
+  const acs = p.acs_profile ? JSON.parse(p.acs_profile) : null; // if your API stringifies
+  const html = `
+    <div style="min-width:220px">
+      <b>${p.name || p.propertyName}</b><br/>
+      ${p.address}<br/>${p.cityState}<hr/>
+      <div><b>ACS ${p.acs_year || ""}</b></div>
+      <div>Population: ${acs?.population?.toLocaleString?.() ?? "—"}</div>
+      <div>Median income: ${acs?.median_income ? "$"+acs.median_income.toLocaleString() : "—"}</div>
+      <div>Median rent: ${acs?.median_rent ? "$"+acs.median_rent.toLocaleString() : "—"}</div>
+    </div>`;
+  popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+});
+
+Metric selector UI (example):
+
+<select value={metric} onChange={e=>setMetric(e.target.value as any)} className="border rounded p-2">
+  <option value="median_income">Median income</option>
+  <option value="median_rent">Median rent</option>
+  <option value="population">Population</option>
+</select>
+
+
+⸻
+
+4) Add a button to run the enrichment job from the UI (optional)
+
+Create /api/enrich that calls our script and returns a status.
+
+// pages/api/enrich.ts
+export default async function handler(req:any,res:any){
+  try {
+    // await run(db) // import the enrich function and pass your db
+    res.json({ ok:true });
+  } catch (e:any) {
+    res.status(500).json({ ok:false, error:e.message });
+  }
+}
+
+Add a small button above the map:
+
+<button onClick={()=>fetch('/api/enrich',{method:'POST'})}
+        className="px-3 py-2 rounded border">Rebuild ACS</button>
+
+
+⸻
+
+5) Verify it worked (no guessing)
+	•	Open /api/properties.geojson — each feature should now have acs_profile with numbers.
+	•	On the map, change the Demographics dropdown — pin colors should change instantly.
+	•	Click a pin — popup shows real ACS values (year 2023).
+
+⸻
+
+What about choropleth polygons?
+
+Once you’re happy with this (it proves the live pipeline works), I’ll give you the tract polygon step using Mapbox tiles (or TIGERweb) so you can shade areas, not just pins. But this gets you working, verifiable demographics inside your current app today without Mapbox Studio headaches.
+
+If you want me to drop these files in as a single patch (file paths + contents) for the Replit builder, say “print the patch” and I’ll output everything ready to paste.
