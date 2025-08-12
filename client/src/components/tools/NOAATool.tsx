@@ -49,6 +49,20 @@ export function NOAATool() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
+  // Helper function for date formatting
+  const formatDate = (dateStr: string | undefined) => {
+    if (!dateStr) return 'N/A';
+    try {
+      return new Date(dateStr).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['/api/tools/noaa', lat, lng, dataset, startDate, endDate],
     queryFn: () => {
@@ -116,11 +130,6 @@ export function NOAATool() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  };
-
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return 'N/A';
-    return new Date(dateStr).toLocaleDateString();
   };
 
   const getDataTypeIcon = (dataTypeId: string) => {
@@ -239,39 +248,52 @@ export function NOAATool() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-cyan-50/90 to-blue-100/60 border-2 border-cyan-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Total Items</CardTitle>
+                <CardTitle className="text-sm text-cyan-700 font-semibold flex items-center gap-2">
+                  <Cloud className="h-4 w-4 text-cyan-600" />
+                  Climate Records
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{data.rows.length}</div>
-                <div className="text-xs text-gray-400">Climate datasets found</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-cyan-800 to-blue-600 bg-clip-text text-transparent">
+                  {data.rows.length}
+                </div>
+                <div className="text-xs text-cyan-600 font-medium">Data points discovered</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-emerald-50/90 to-teal-100/60 border-2 border-emerald-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Stations</CardTitle>
+                <CardTitle className="text-sm text-emerald-700 font-semibold flex items-center gap-2">
+                  <Thermometer className="h-4 w-4 text-emerald-600" />
+                  Weather Stations
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">{data.meta.count || data.rows.length}</div>
-                <div className="text-xs text-gray-400">Weather stations</div>
+                <div className="text-2xl font-bold bg-gradient-to-r from-emerald-800 to-teal-600 bg-clip-text text-transparent">
+                  {data.meta.count || data.rows.length}
+                </div>
+                <div className="text-xs text-emerald-600 font-medium">Active monitoring sites</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-purple-50/90 to-indigo-100/60 border-2 border-purple-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Data Types</CardTitle>
+                <CardTitle className="text-sm text-purple-700 font-semibold flex items-center gap-2">
+                  <Droplets className="h-4 w-4 text-purple-600" />
+                  Data Coverage
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-white">
-                    <Thermometer className="h-3 w-3 text-orange-400" />
-                    <span className="text-xs">Temperature: Available</span>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 px-3 py-2 rounded-lg border border-orange-200/50">
+                    <Thermometer className="h-4 w-4 text-orange-600" />
+                    <span className="text-sm font-medium text-orange-800">Temperature Data</span>
                   </div>
-                  <div className="flex items-center gap-2 text-white">
-                    <Droplets className="h-3 w-3 text-blue-400" />
-                    <span className="text-xs">Precipitation: Available</span>
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-blue-100 to-cyan-100 px-3 py-2 rounded-lg border border-blue-200/50">
+                    <Droplets className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-800">Precipitation Data</span>
                   </div>
                 </div>
               </CardContent>
@@ -280,63 +302,74 @@ export function NOAATool() {
 
           {/* Data Items Table */}
           <div className="lg:col-span-3">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-white/95 to-cyan-50/80 border-2 border-cyan-200/60 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Cloud className="h-5 w-5" />
-                  Climate Data Items ({data.rows.length})
+                <CardTitle className="text-slate-800 font-bold text-xl flex items-center gap-3">
+                  <Cloud className="h-6 w-6 text-cyan-600" />
+                  Climate Intelligence Matrix ({data.rows.length})
                 </CardTitle>
-                <CardDescription className="text-gray-400">
-                  Data from {data.meta.source} • Date Range: {data.params.startDate} - {data.params.endDate}
+                <CardDescription className="text-slate-600 font-medium">
+                  Live Data from {data.meta.source} • Temporal Range: {data.params.startDate} → {data.params.endDate}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full text-white">
+                  <table className="min-w-full">
                     <thead>
-                      <tr className="border-b border-gray-700">
-                        <th className="text-left py-2">Name</th>
-                        <th className="text-left py-2">Location</th>
-                        <th className="text-left py-2">Date Range</th>
-                        <th className="text-left py-2">Data Types</th>
-                        <th className="text-left py-2">Coverage</th>
+                      <tr className="border-b-2 border-gradient-to-r from-cyan-200 to-blue-300">
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-cyan-100/80 to-blue-100/60 rounded-l-lg font-bold text-slate-700">Station Identity</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-blue-100/60 to-emerald-100/60 font-bold text-slate-700">Geographic Coordinates</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-emerald-100/60 to-teal-100/60 font-bold text-slate-700">Temporal Coverage</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-teal-100/60 to-purple-100/60 font-bold text-slate-700">Data Streams</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-purple-100/60 to-pink-100/80 rounded-r-lg font-bold text-slate-700">Data Integrity</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data.rows.slice(0, 50).map((item, index) => (
-                        <tr key={item.id} className="border-b border-gray-800 hover:bg-gray-800">
-                          <td className="py-2">
-                            <div className="font-medium text-white">{item.name}</div>
-                            <div className="text-xs text-gray-400 mt-1">
-                              Station ID: {item.id}
+                        <tr key={item.id} className={`border-b border-slate-200/50 hover:bg-gradient-to-r hover:from-cyan-50/50 hover:to-blue-50/30 transition-all duration-200 ${index % 2 === 0 ? 'bg-white/70' : 'bg-slate-50/50'}`}>
+                          <td className="py-4 px-3">
+                            <div className="font-bold text-slate-800 text-base">{item.name}</div>
+                            <div className="text-sm text-cyan-600 font-medium bg-cyan-100/60 px-2 py-1 rounded-md inline-block mt-1">
+                              ID: {item.id}
                             </div>
                           </td>
-                          <td className="py-2 text-gray-300">
-                            {item.latitude && item.longitude ? 
-                              `${item.latitude.toFixed(4)}, ${item.longitude.toFixed(4)}` : 'N/A'}
-                            {item.elevation && (
-                              <div className="text-xs text-gray-400">Elev: {item.elevation}m</div>
-                            )}
-                          </td>
-                          <td className="py-2 text-gray-300 text-sm">
-                            <div>{item.mindate || 'N/A'}</div>
-                            <div>{item.maxdate || 'N/A'}</div>
-                          </td>
-                          <td className="py-2">
-                            <div className="flex flex-wrap gap-1">
-                              <div className="flex items-center gap-1 text-xs bg-gray-800 px-2 py-1 rounded">
-                                <Thermometer className="h-3 w-3 text-orange-400" />
-                                TEMP
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-emerald-100 to-teal-100 px-3 py-2 rounded-lg border border-emerald-200/50">
+                              <div className="font-semibold text-slate-800">
+                                {item.latitude && item.longitude ? 
+                                  `${item.latitude.toFixed(4)}°, ${item.longitude.toFixed(4)}°` : 'Coordinates Unavailable'}
                               </div>
-                              <div className="flex items-center gap-1 text-xs bg-gray-800 px-2 py-1 rounded">
-                                <Droplets className="h-3 w-3 text-blue-400" />
-                                PRCP
+                              {item.elevation && (
+                                <div className="text-sm text-emerald-700 font-medium">Elevation: {item.elevation}m ASL</div>
+                              )}
+                            </div>
+                          </td>
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-blue-100 to-indigo-100 px-3 py-2 rounded-lg border border-blue-200/50">
+                              <div className="text-sm font-semibold text-blue-800">Start: {formatDate(item.mindate)}</div>
+                              <div className="text-sm font-semibold text-blue-800">End: {formatDate(item.maxdate)}</div>
+                            </div>
+                          </td>
+                          <td className="py-4 px-3">
+                            <div className="flex flex-wrap gap-2">
+                              <div className="flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 px-3 py-2 rounded-lg border border-orange-200/50 shadow-sm">
+                                <Thermometer className="h-4 w-4 text-orange-600" />
+                                <span className="text-sm font-bold text-orange-800">TEMP</span>
+                              </div>
+                              <div className="flex items-center gap-2 bg-gradient-to-r from-blue-100 to-cyan-100 px-3 py-2 rounded-lg border border-blue-200/50 shadow-sm">
+                                <Droplets className="h-4 w-4 text-blue-600" />
+                                <span className="text-sm font-bold text-blue-800">PRECIP</span>
                               </div>
                             </div>
                           </td>
-                          <td className="py-2 text-gray-300">
-                            {item.datacoverage ? 
-                              `${(item.datacoverage * 100).toFixed(1)}%` : 'N/A'}
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-purple-100 to-pink-100 px-4 py-2 rounded-lg border border-purple-200/50 text-center">
+                              <div className="text-lg font-bold text-purple-800">
+                                {item.datacoverage ? 
+                                  `${(item.datacoverage * 100).toFixed(1)}%` : 'N/A'}
+                              </div>
+                              <div className="text-xs text-purple-600 font-medium">Coverage Rate</div>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -345,8 +378,13 @@ export function NOAATool() {
                 </div>
                 
                 {data.rows.length > 50 && (
-                  <div className="mt-4 text-center text-gray-400 text-sm">
-                    Showing 50 of {data.rows.length} items. Export CSV for complete data.
+                  <div className="mt-6 text-center">
+                    <div className="bg-gradient-to-r from-slate-100 to-blue-100 px-6 py-3 rounded-xl border border-slate-200/60 inline-block">
+                      <div className="text-slate-700 font-semibold">
+                        Displaying 50 of {data.rows.length} records
+                      </div>
+                      <div className="text-sm text-slate-600">Export CSV for complete intelligence dataset</div>
+                    </div>
                   </div>
                 )}
               </CardContent>

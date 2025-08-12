@@ -295,82 +295,103 @@ export function FBITool() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-amber-50/90 to-orange-100/60 border-2 border-amber-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Latest ({data.rows[data.rows.length - 1]?.year || 'N/A'})</CardTitle>
+                <CardTitle className="text-sm text-amber-700 font-semibold flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-amber-600" />
+                  Latest ({data.rows[data.rows.length - 1]?.year || 'N/A'})
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{formatNumber(data.rows[data.rows.length - 1]?.actual || 0)}</div>
-                <div className="text-xs text-gray-400">Reported incidents</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-amber-800 to-red-600 bg-clip-text text-transparent">
+                  {formatNumber(data.rows[data.rows.length - 1]?.actual || 0)}
+                </div>
+                <div className="text-xs text-amber-600 font-medium">Reported incidents</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-red-50/90 to-pink-100/60 border-2 border-red-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Year-over-Year</CardTitle>
+                <CardTitle className="text-sm text-red-700 font-semibold flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-red-600" />
+                  Year-over-Year
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white flex items-center gap-2">
+                <div className="text-lg text-red-800 flex items-center gap-2">
                   {data.rows.length >= 2 ? (
                     <>
                       {data.rows[data.rows.length - 1].actual > data.rows[data.rows.length - 2].actual ? (
-                        <TrendingUp className="h-4 w-4 text-red-400" />
+                        <TrendingUp className="h-4 w-4 text-red-500" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-green-400" />
+                        <TrendingDown className="h-4 w-4 text-emerald-500" />
                       )}
-                      {(((data.rows[data.rows.length - 1].actual - data.rows[data.rows.length - 2].actual) / data.rows[data.rows.length - 2].actual) * 100).toFixed(1)}%
+                      <span className="font-bold">
+                        {(((data.rows[data.rows.length - 1].actual - data.rows[data.rows.length - 2].actual) / data.rows[data.rows.length - 2].actual) * 100).toFixed(1)}%
+                      </span>
                     </>
                   ) : 'N/A'}
                 </div>
-                <div className="text-xs text-gray-400">
+                <div className="text-xs text-red-600 font-medium">
                   {data.rows.length >= 2 && `${data.rows[data.rows.length - 1].actual > data.rows[data.rows.length - 2].actual ? '+' : ''}${formatNumber(data.rows[data.rows.length - 1].actual - data.rows[data.rows.length - 2].actual)} cases`}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-emerald-50/90 to-green-100/60 border-2 border-emerald-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Clearance Rate</CardTitle>
+                <CardTitle className="text-sm text-emerald-700 font-semibold flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-emerald-600" />
+                  Clearance Rate
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">
+                <div className="text-2xl font-bold bg-gradient-to-r from-emerald-800 to-green-600 bg-clip-text text-transparent">
                   {data.rows.length > 0 ? 
                     `${(data.rows.reduce((sum, row) => sum + (row.cleared / row.actual), 0) / data.rows.length * 100).toFixed(1)}%`
                     : 'N/A'}
                 </div>
-                <div className="text-xs text-gray-400">Average across years</div>
+                <div className="text-xs text-emerald-600 font-medium">Average across years</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-blue-50/90 to-cyan-100/60 border-2 border-blue-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Trend</CardTitle>
+                <CardTitle className="text-sm text-blue-700 font-semibold flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-blue-600" />
+                  Overall Trend
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white flex items-center gap-2">
+                <div className="text-lg text-blue-800 flex items-center gap-2">
                   {data.rows.length > 1 ? (
                     <>
                       {data.rows[data.rows.length - 1].actual > data.rows[0].actual ? (
-                        <TrendingUp className="h-4 w-4 text-red-400" />
+                        <TrendingUp className="h-4 w-4 text-red-500" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-green-400" />
+                        <TrendingDown className="h-4 w-4 text-emerald-500" />
                       )}
-                      {(((data.rows[data.rows.length - 1].actual - data.rows[0].actual) / data.rows[0].actual) * 100).toFixed(1)}%
+                      <span className="font-bold">
+                        {(((data.rows[data.rows.length - 1].actual - data.rows[0].actual) / data.rows[0].actual) * 100).toFixed(1)}%
+                      </span>
                     </>
                   ) : 'N/A'}
                 </div>
-                <div className="text-xs text-gray-400">Total change</div>
+                <div className="text-xs text-blue-600 font-medium">Total change</div>
               </CardContent>
             </Card>
           </div>
 
           {/* Chart */}
           <div className="lg:col-span-2">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-white/95 to-amber-50/80 border-2 border-amber-200/60 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">Crime Trends - {state}</CardTitle>
-                <CardDescription className="text-gray-400">
-                  {offense.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} • {data.meta.source}
+                <CardTitle className="text-slate-800 font-bold text-xl flex items-center gap-3">
+                  <Shield className="h-6 w-6 text-amber-600" />
+                  Crime Intelligence - {state}
+                </CardTitle>
+                <CardDescription className="text-slate-600 font-medium">
+                  {offense.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} Analysis • {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>

@@ -275,48 +275,66 @@ export function HUDTool() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-indigo-50/90 to-purple-100/60 border-2 border-indigo-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">ZIP Code</CardTitle>
+                <CardTitle className="text-sm text-indigo-700 font-semibold flex items-center gap-2">
+                  <Building className="h-4 w-4 text-indigo-600" />
+                  Target ZIP
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{data.params.zip}</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-indigo-800 to-purple-600 bg-clip-text text-transparent">
+                  {data.params.zip}
+                </div>
+                <div className="text-xs text-indigo-600 font-medium">Geographic identifier</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-emerald-50/90 to-green-100/60 border-2 border-emerald-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Census Tracts</CardTitle>
+                <CardTitle className="text-sm text-emerald-700 font-semibold flex items-center gap-2">
+                  <Map className="h-4 w-4 text-emerald-600" />
+                  Census Coverage
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">{formatNumber(data.rows.length)}</div>
-                <div className="text-sm text-gray-400">
-                  Crosswalk mappings found
+                <div className="text-2xl font-bold bg-gradient-to-r from-emerald-800 to-green-600 bg-clip-text text-transparent">
+                  {formatNumber(data.rows.length)}
+                </div>
+                <div className="text-xs text-emerald-600 font-medium">
+                  Tract mappings discovered
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-yellow-50/90 to-amber-100/60 border-2 border-yellow-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Avg Residential Ratio</CardTitle>
+                <CardTitle className="text-sm text-yellow-700 font-semibold flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-yellow-600" />
+                  Residential Index
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">
+                <div className="text-xl font-bold bg-gradient-to-r from-yellow-800 to-amber-600 bg-clip-text text-transparent">
                   {data.rows.length > 0 ? 
                     (data.rows.reduce((sum, row) => sum + (row.res_ratio || 0), 0) / data.rows.length).toFixed(3) 
                     : 'N/A'}
                 </div>
+                <div className="text-xs text-yellow-600 font-medium">Average residential ratio</div>
               </CardContent>
             </Card>
           </div>
 
           {/* Chart */}
           <div className="lg:col-span-2">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-white/95 to-indigo-50/80 border-2 border-indigo-200/60 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">HUD USPS Crosswalk Data</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Data from {data.meta.source}
+                <CardTitle className="text-slate-800 font-bold text-xl flex items-center gap-3">
+                  <Building className="h-6 w-6 text-indigo-600" />
+                  HUD Intelligence Dashboard
+                </CardTitle>
+                <CardDescription className="text-slate-600 font-medium">
+                  Real-time Data from {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -331,32 +349,64 @@ export function HUDTool() {
 
           {/* Data Table */}
           <div className="lg:col-span-3">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-white/95 to-indigo-50/80 border-2 border-indigo-200/60 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">Census Tract Crosswalk Details</CardTitle>
+                <CardTitle className="text-slate-800 font-bold text-xl flex items-center gap-3">
+                  <Map className="h-6 w-6 text-indigo-600" />
+                  Census Intelligence Matrix
+                </CardTitle>
+                <CardDescription className="text-slate-600 font-medium">
+                  Geographic crosswalk data analysis
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full text-white">
+                  <table className="min-w-full">
                     <thead>
-                      <tr className="border-b border-gray-700">
-                        <th className="text-left py-2">ZIP Code</th>
-                        <th className="text-left py-2">State</th>
-                        <th className="text-left py-2">County</th>
-                        <th className="text-left py-2">CBSA</th>
-                        <th className="text-left py-2">Census Tract</th>
-                        <th className="text-right py-2">Res. Ratio</th>
+                      <tr className="border-b-2 border-gradient-to-r from-indigo-200 to-purple-300">
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-indigo-100/80 to-purple-100/60 rounded-l-lg font-bold text-slate-700">ZIP Code</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-purple-100/60 to-emerald-100/60 font-bold text-slate-700">State</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-emerald-100/60 to-blue-100/60 font-bold text-slate-700">County</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-blue-100/60 to-yellow-100/60 font-bold text-slate-700">CBSA</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-yellow-100/60 to-pink-100/60 font-bold text-slate-700">Census Tract</th>
+                        <th className="text-right py-4 px-3 bg-gradient-to-r from-pink-100/60 to-red-100/80 rounded-r-lg font-bold text-slate-700">Residential Ratio</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data.rows.map((row, index) => (
-                        <tr key={index} className="border-b border-gray-800">
-                          <td className="py-2">{row.zip}</td>
-                          <td className="py-2">{row.state || 'N/A'}</td>
-                          <td className="py-2">{row.county || 'N/A'}</td>
-                          <td className="py-2">{row.cbsa || 'N/A'}</td>
-                          <td className="py-2 font-mono text-sm">{row.tract || 'N/A'}</td>
-                          <td className="text-right py-2 text-yellow-400">{row.res_ratio?.toFixed(4) || 'N/A'}</td>
+                        <tr key={index} className={`border-b border-slate-200/50 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/30 transition-all duration-200 ${index % 2 === 0 ? 'bg-white/70' : 'bg-slate-50/50'}`}>
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-indigo-100 to-purple-100 px-3 py-2 rounded-lg border border-indigo-200/50 font-bold text-slate-800">
+                              {row.zip}
+                            </div>
+                          </td>
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-purple-100 to-pink-100 px-3 py-2 rounded-lg border border-purple-200/50 font-semibold text-slate-800">
+                              {row.state || 'N/A'}
+                            </div>
+                          </td>
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-emerald-100 to-teal-100 px-3 py-2 rounded-lg border border-emerald-200/50 font-semibold text-slate-800">
+                              {row.county || 'N/A'}
+                            </div>
+                          </td>
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-blue-100 to-cyan-100 px-3 py-2 rounded-lg border border-blue-200/50 font-semibold text-slate-800">
+                              {row.cbsa || 'N/A'}
+                            </div>
+                          </td>
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-yellow-100 to-orange-100 px-3 py-2 rounded-lg border border-yellow-200/50 font-mono text-sm font-bold text-slate-800">
+                              {row.tract || 'N/A'}
+                            </div>
+                          </td>
+                          <td className="py-4 px-3 text-right">
+                            <div className="bg-gradient-to-r from-pink-100 to-red-100 px-4 py-2 rounded-lg border border-pink-200/50 inline-block">
+                              <div className="text-lg font-bold text-red-800">
+                                {row.res_ratio?.toFixed(4) || 'N/A'}
+                              </div>
+                            </div>
+                          </td>
                         </tr>
                       ))}
                     </tbody>

@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Download, Save, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Loader2, Download, Save, TrendingUp, TrendingDown, Minus, BarChart3 } from "lucide-react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -321,51 +321,65 @@ export function BEATool() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
-            <Card className="bg-white border-gray-300 shadow-md">
+            <Card className="bg-gradient-to-br from-green-50/90 to-emerald-100/60 border-2 border-green-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-600">Latest Value</CardTitle>
+                <CardTitle className="text-sm text-green-700 font-semibold flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                  Current Value
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-3xl font-bold bg-gradient-to-r from-green-800 to-emerald-600 bg-clip-text text-transparent">
                   {data.rows.length > 0 ? formatCurrency(data.rows[data.rows.length - 1].value) : 'N/A'}
                 </div>
-                <div className="text-xs text-gray-500">USD</div>
+                <div className="text-xs text-green-600 font-medium">USD Economic Value</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-gray-300 shadow-md">
+            <Card className="bg-gradient-to-br from-blue-50/90 to-cyan-100/60 border-2 border-blue-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-600">1-Year Change</CardTitle>
+                <CardTitle className="text-sm text-blue-700 font-semibold flex items-center gap-2">
+                  <TrendingUp className="h-4 w-4 text-blue-600" />
+                  Annual Growth
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-gray-900">
+                <div className="text-lg text-blue-800 font-bold">
                   {data.rows.length >= 2 ? 
                     formatChange(((data.rows[data.rows.length - 1].value - data.rows[data.rows.length - 2].value) / data.rows[data.rows.length - 2].value) * 100, true) 
                     : 'N/A'
                   }
                 </div>
+                <div className="text-xs text-blue-600 font-medium">Year-over-year change</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-gray-300 shadow-md">
+            <Card className="bg-gradient-to-br from-purple-50/90 to-indigo-100/60 border-2 border-purple-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-600">Data Points</CardTitle>
+                <CardTitle className="text-sm text-purple-700 font-semibold flex items-center gap-2">
+                  <BarChart3 className="h-4 w-4 text-purple-600" />
+                  Data Coverage
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-gray-900">
+                <div className="text-2xl font-bold bg-gradient-to-r from-purple-800 to-indigo-600 bg-clip-text text-transparent">
                   {data.rows.length} years
                 </div>
+                <div className="text-xs text-purple-600 font-medium">Historical dataset</div>
               </CardContent>
             </Card>
           </div>
 
           {/* Chart */}
           <div className="lg:col-span-2">
-            <Card className="bg-white border-gray-300 shadow-md">
+            <Card className="bg-gradient-to-br from-white/95 to-green-50/80 border-2 border-green-200/60 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-gray-900">{data.meta.label} Over Time</CardTitle>
-                <CardDescription className="text-gray-600">
-                  Data from {data.meta.source}
+                <CardTitle className="text-slate-800 font-bold text-xl flex items-center gap-3">
+                  <TrendingUp className="h-6 w-6 text-green-600" />
+                  Economic Intelligence - {data.meta.label}
+                </CardTitle>
+                <CardDescription className="text-slate-600 font-medium">
+                  Real-time Data Analysis • {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>
