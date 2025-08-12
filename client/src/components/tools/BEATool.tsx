@@ -62,12 +62,29 @@ export function BEATool() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const { data, isLoading, refetch } = useQuery({
+  const { data, isLoading, refetch, error } = useQuery({
     queryKey: ['/api/tools/bea', geo, state, county, msa, startYear, endYear],
+    queryFn: () => {
+      const params = new URLSearchParams({
+        geo,
+        state,
+        county,
+        msa,
+        startYear,
+        endYear
+      });
+      return fetch(`/api/tools/bea?${params}`, {
+        credentials: 'include'
+      }).then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      });
+    },
     enabled: false // Only fetch when user clicks Run
-  }) as { data: BEAData; isLoading: boolean; refetch: any };
+  });
 
   const handleRun = () => {
+    console.log('BEA Tool: Running analysis with params:', { geo, state, county, msa, startYear, endYear });
     refetch();
   };
 
@@ -263,7 +280,7 @@ export function BEATool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bg-bristol-gold text-black hover:bg-bristol-gold/90"
+          className="bg-bristol-gold text-black hover:bg-bristol-gold/90 border-2 border-bristol-gold shadow-lg font-semibold px-6 py-2"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Run Analysis
@@ -294,6 +311,11 @@ export function BEATool() {
         )}
       </div>
 
+      {/* Debug Info */}
+      {isLoading && <div className="text-gray-600">Loading data...</div>}
+      {error && <div className="text-red-600">Error: {error.message}</div>}
+      {!isLoading && !data && !error && <div className="text-gray-600">Click "Run Analysis" to fetch data</div>}
+      
       {/* Results */}
       {data && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

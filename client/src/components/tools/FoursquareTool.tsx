@@ -196,7 +196,7 @@ export function FoursquareTool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bg-bristol-gold text-black hover:bg-bristol-gold/90"
+          className="bg-bristol-gold text-black hover:bg-bristol-gold/90 border-2 border-bristol-gold shadow-lg font-semibold px-6 py-2"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Run Analysis
