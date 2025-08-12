@@ -1,0 +1,335 @@
+Alright—here’s a single, copy‑paste MEGA PROMPT for your Replit Builder (Claude 3.7) that will:
+	•	create three new tabs under Tools: BLS, BEA, HUD
+	•	wire each tab to your live APIs using your keys (stored as env vars)
+	•	query relevant metrics for Bristol (driven by fips_state, fips_county, geoid_tract already in your DB)
+	•	show real results (tables + charts) with caching and error handling
+	•	let you save snapshots to your DB for later comparisons
+
+Paste the whole thing into your Replit Builder.
+
+⸻
+
+MEGA PROMPT — Create 3 Tools Tabs (BLS, BEA, HUD)
+
+Goal: Add three working tools inside the app’s “Tools” section: BLS, BEA, HUD.
+Each tool must:
+	•	read the currently selected property (or a picked county/state) from the DB,
+	•	call the respective public API live using the provided keys,
+	•	render tables and charts (employment, wages, GDP, vacancy/address stability),
+	•	allow date‑range filters,
+	•	support “Save Snapshot” back to the DB, and
+	•	cache responses for performance.
+
+0) Secrets / Environment
+
+Create these env vars and use them in code (do NOT hardcode keys):
+
+BLS_API_KEY=646e97afe23f40e0951f17ad1727ce82
+BEA_API_KEY=37841321-79D3-4DE6-842D-EFE663156868
+HUD_API_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI2IiwianRpIjoiOTEzMGM0YzIzYTAxZWVmM2IyN2FhOTdhZmYwZGUyNzdjZTBkNGVhZjlmNmJjNWFjZGU5NmI4NjRjMWMyN2JlZWYyMDRmZGI1YTM5N2ZjMzMiLCJpYXQiOjE3NTUwMTMyMTMuNjU4ODMsIm5iZiI6MTc1NTAxMzIxMy42NTg4MzQsImV4cCI6MjA3MDU0NjAxMy42NTQ2NjQsInN1YiI6IjEwNTgyMiIsInNjb3BlcyI6W119.kA7vBfNUWuD55gGaGCzMIRZvjYSK4pG05vz0PfpsUep1Jmoz7naF5pq_D3G0FaDwmVXFAlDXpfuSj1_ONMFniQ
+
+1) Tools Navigation
+
+Under Tools, add three new tabs (routes/components):
+	•	Tools → BLS
+	•	Tools → BEA
+	•	Tools → HUD
+
+2) Data assumptions from DB
+
+Properties table already has:
+	•	fips_state (2‑digit), fips_county (3‑digit), geoid_tract (11‑digit), latitude, longitude, cityState, propertyName.
+
+All tools should default to the county of the currently selected property (or let the user pick state/county/metro from dropdowns).
+
+⸻
+
+3) Server routes (create all)
+
+Create three API routes with caching (5–30 min). Use your server framework (Next.js API or Express).
+
+A) /api/tools/bls
+
+Purpose: Employment, unemployment, wages for county/MSA.
+
+Inputs (query/body):
+	•	level: 'county' | 'msa' (default 'county')
+	•	state (2‑digit FIPS), county (3‑digit) OR msa (CBSA code)
+	•	start (YYYY‑MM), end (YYYY‑MM)
+
+What to fetch (minimum):
+	•	LAUS county unemployment rate (series prefix LAUCN + state+county code)
+	•	CES or QCEW summary if available for MSA (optional initial: LAUS only)
+
+Output:
+	•	JSON with time series: { label, date, value }[] per metric
+	•	Derived metrics: 12‑mo change, 24‑mo change
+
+Notes:
+	•	Build BLS series ID for LAUS county unemployment:
+	•	Series: LAUCNSSCCC03 (SS=state, CCC=county, 03=unemployment rate)
+	•	Use BLS API v2 /timeseries/data with registrationkey.
+	•	Cache results.
+
+B) /api/tools/bea
+
+Purpose: GDP & Personal Income for MSA/County (regional growth).
+
+Inputs:
+	•	geo: 'msa' | 'county' (default 'msa')
+	•	state, county or msa (CBSA)
+	•	startYear, endYear
+
+What to fetch:
+	•	Regional dataset: GDP by MSA (TableName=MGDP_MP or equivalent current table)
+	•	Regional Personal Income by county (CAINC1 or current)
+(If the table names differ, look up by BEA parameter Method=GetParameterValues&ParameterName=TableName and choose the appropriate series.)
+
+Output:
+	•	Annual time series with GDP and/or personal income + YoY and CAGR.
+
+Notes:
+	•	Use UserID (your BEA key) param.
+	•	Cache.
+
+C) /api/tools/hud
+
+Purpose: USPS/HUD residential vacancy proxy & address stability by ZIP/tract; optionally LIHTC inventory for context.
+
+Inputs:
+	•	mode: 'usps' | 'lihtc' (default 'usps')
+	•	geoid_tract OR zip (prefer geoid_tract → zip crosswalk if needed)
+	•	startQ, endQ (YYYYQn) or last 8 quarters
+
+What to fetch (minimum viable):
+	•	HUD USPS Vacancy (residential addresses, active vs. vacant) by ZIP or tract crosswalk
+Compute: vacancy_rate = vacant / total trend over last 8 quarters.
+
+Output:
+	•	Quarterly time series with vacancy %, active addresses trend.
+
+Auth:
+	•	Add Authorization: Bearer ${HUD_API_TOKEN} header.
+
+Notes:
+	•	Provide a helper to map geoid_tract → ZIPs (use HUD Crosswalk CSV cached server‑side or OSM/Nominatim fallback). First pass: accept a ZIP input; second pass: add crosswalk.
+
+⸻
+
+4) Frontend components (three tabs)
+
+Common UI elements for all tabs
+	•	Header: Property selector (dropdown), OR state/county/MSA selectors.
+	•	Filters:
+	•	Date range (month range for BLS; year range for BEA; quarter count for HUD)
+	•	Geo level switch (county/MSA)
+	•	Actions:
+	•	Run (fetch)
+	•	Save Snapshot (POST results under a snapshots table: {tool, geo, params, data, createdAt})
+	•	Outputs:
+	•	KPI cards (current value, 12‑mo Δ, 24‑mo Δ, CAGR)
+	•	Time‑series chart (line using your existing chart lib)
+	•	Data table (sortable)
+	•	Export CSV button
+
+A) Tools → BLS (Employment)
+	•	Default to county of selected property (from fips_state, fips_county)
+	•	Queries /api/tools/bls
+	•	Show: Unemployment Rate (%) monthly line; KPI (latest, 12‑mo Δ)
+	•	Add toggle to switch county vs MSA (when MSA is selected, let user enter CBSA code or pick from list if you have one)
+
+B) Tools → BEA (GDP/Income)
+	•	Default to MSA of selected property; fallback to county
+	•	Queries /api/tools/bea
+	•	Show: Real GDP (chained $) and/or Personal Income by year; KPIs include 5‑yr CAGR
+
+C) Tools → HUD (USPS Vacancy / LIHTC)
+	•	Default to ZIP derived from property’s cityState or a stored zip if you have it; otherwise let user type ZIP
+	•	Queries /api/tools/hud
+	•	Show: Vacancy % over last 8 quarters; KPI latest vacancy and Δ from prior year quarter
+
+⸻
+
+5) Implementation Notes (do this automatically)
+
+Server helpers (TypeScript)
+
+Create src/server/tools/cache.ts (memory cache with TTL):
+
+const store = new Map<string, { until:number; data:any }>();
+export function getCache(k:string){ const it=store.get(k); return it && it.until>Date.now()? it.data : null; }
+export function setCache(k:string,data:any,ttlMs=5*60*1000){ store.set(k,{ until: Date.now()+ttlMs, data }); }
+
+Create src/server/tools/util.ts:
+	•	date helpers (parse YYYY‑MM, iterate months/years)
+	•	formatting and safe number parsing
+
+BLS route sketch (builder to fill exact series calls)
+
+// pages/api/tools/bls.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getCache, setCache } from "@/server/tools/cache";
+
+export default async function handler(req:NextApiRequest,res:NextApiResponse){
+  const { level="county", state, county, msa, start="2018-01", end="2025-07" } = req.query;
+  if (level==="county" && (!state || !county)) return res.status(400).json({ error:"state+county required" });
+  const key = `bls:${level}:${state}:${county}:${msa}:${start}:${end}`;
+  const cached = getCache(key); if (cached) return res.json(cached);
+
+  const apiKey = process.env.BLS_API_KEY!;
+  // LAUS unemployment rate series for county: LAUCNSSCCC03
+  const seriesId = level==="county" ? `LAUCN${state}${county}03` : undefined;
+  const payload:any = { seriesid: [seriesId].filter(Boolean), startyear: start.slice(0,4), endyear: end.slice(0,4), registrationkey: apiKey };
+
+  const r = await fetch("https://api.bls.gov/publicAPI/v2/timeseries/data/", { method:"POST", headers:{ "Content-Type":"application/json" }, body: JSON.stringify(payload) });
+  const json = await r.json();
+
+  // Normalize to [{date:'YYYY-MM', value: number}]
+  const series = (json.Results?.series||[])[0]?.data||[];
+  const rows = series.map((d:any)=>({ date:`${d.year}-${String({M01:1,M02:2,M03:3,M04:4,M05:5,M06:6,M07:7,M08:8,M09:9,M10:10,M11:11,M12:12}[d.period])?.toString().padStart(2,"0")}`, value: Number(d.value) })).sort((a:any,b:any)=>a.date.localeCompare(b.date));
+
+  const out = { label: "Unemployment rate (%)", level, state, county, msa, start, end, rows };
+  setCache(key,out,10*60*1000);
+  res.json(out);
+}
+
+BEA route sketch
+
+// pages/api/tools/bea.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getCache, setCache } from "@/server/tools/cache";
+
+export default async function handler(req:NextApiRequest,res:NextApiResponse){
+  const { geo="msa", msa, state, county, startYear="2015", endYear="2024" } = req.query;
+  const key = `bea:${geo}:${msa}:${state}:${county}:${startYear}:${endYear}`;
+  const cached = getCache(key); if (cached) return res.json(cached);
+
+  const beaKey = process.env.BEA_API_KEY!;
+  // Minimal: MSA GDP (current $) using Regional API. Builder: resolve exact TableName for current BEA schema.
+  const params = new URLSearchParams({
+    UserID: beaKey,
+    Method: "GetData",
+    DataSetName: "Regional",
+    TableName: geo==="msa" ? "MGDP_MP" : "CAINC1",
+    LineCode: "1", // Total GDP / Total Personal Income
+    GeoFIPS: geo==="msa" ? String(msa || "") : `${state}${county}`,
+    Year: `${startYear}-${endYear}`,
+    ResultFormat: "JSON"
+  });
+
+  const r = await fetch(`https://apps.bea.gov/api/data?${params.toString()}`);
+  const j = await r.json();
+  const rows = (j?.BEAAPI?.Results?.Data || []).map((d:any)=>({ year: d.Year, value: Number(d.DataValue?.replace(/,/g,"")||0) })).sort((a:any,b:any)=>a.year-b.year);
+
+  const out = { label: geo==="msa" ? "MSA GDP ($)" : "Personal Income ($)", geo, msa, state, county, rows };
+  setCache(key,out,12*60*60*1000);
+  res.json(out);
+}
+
+HUD route sketch (USPS Vacancy)
+
+// pages/api/tools/hud.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getCache, setCache } from "@/server/tools/cache";
+
+export default async function handler(req:NextApiRequest,res:NextApiResponse){
+  const { mode="usps", zip, lookbackQ="8" } = req.query;
+  if (mode==="usps" && !zip) return res.status(400).json({ error:"zip required for USPS vacancy" });
+  const key = `hud:${mode}:${zip}:${lookbackQ}`;
+  const cached = getCache(key); if (cached) return res.json(cached);
+
+  const token = process.env.HUD_API_TOKEN!;
+  // Builder: use the correct HUD USPS endpoint for vacancy by ZIP over recent quarters.
+  // Sketch: GET /usps?zip=XXXXX&quarters=8
+  const r = await fetch(`https://api.huduser.gov/datasets/usps/vacancy?zip=${zip}&quarters=${lookbackQ}`, { headers: { Authorization: `Bearer ${token}` }});
+  const j = await r.json();
+
+  // Normalize as [{quarter:'YYYYQn', vacant, total, vacancy_rate}]
+  const rows = (j?.results||[]).map((x:any)=>({
+    quarter: x.quarter,
+    vacant: Number(x.vacant),
+    total: Number(x.total),
+    vacancy_rate: x.total ? Number(x.vacant)/Number(x.total) : null
+  })).sort((a:any,b:any)=>a.quarter.localeCompare(b.quarter));
+
+  const out = { label: "USPS Vacancy (ZIP)", zip, rows };
+  setCache(key,out,6*60*60*1000);
+  res.json(out);
+}
+
+
+⸻
+
+6) UI Components (three tabs)
+
+Create files:
+	•	src/pages/tools/bls.tsx
+	•	src/pages/tools/bea.tsx
+	•	src/pages/tools/hud.tsx
+
+Each page should:
+	•	Read currently selected property from global store (or provide selectors).
+	•	Call the corresponding API route with sensible defaults based on the property.
+	•	Render:
+	•	KPI cards (latest value + change)
+	•	Line chart (use your existing chart lib)
+	•	Table (date, value, …)
+	•	Save Snapshot button: POST /api/snapshots with { tool, params, data }.
+
+Add a simple snapshots table if missing:
+
+CREATE TABLE IF NOT EXISTS snapshots (
+  id serial primary key,
+  tool text not null,
+  params jsonb not null,
+  data jsonb not null,
+  created_at timestamptz default now()
+);
+
+Create pages/api/snapshots.ts (POST only) to persist the blob.
+
+BLS tab defaults:
+	•	level: county
+	•	state/county from selected property
+	•	start: 2018‑01 to current month
+
+BEA tab defaults:
+	•	geo: msa (if you have CBSA stored; otherwise county fallback)
+	•	startYear: 2015 to current year
+
+HUD tab defaults:
+	•	zip: ask user if not stored; allow recent 8 quarters
+
+⸻
+
+7) Relevance to Bristol (what to show)
+	•	BLS: Unemployment trend & 12/24‑mo deltas → leasing risk & wage health
+	•	BEA: MSA GDP or County Personal Income growth → macro demand signal
+	•	HUD (USPS): Vacancy/active addresses trend → neighborhood occupancy momentum
+
+⸻
+
+8) Polishing & Guardrails
+	•	Input validation with friendly errors.
+	•	Loading and empty states (no data → show guidance).
+	•	Unit formatting (%, currency).
+	•	Caching TTLs: BLS 10 min, BEA 12 hrs, HUD 6 hrs.
+	•	Log API errors to console with request params.
+
+⸻
+
+9) Deliverables Checklist (builder must confirm)
+	•	Three new Tools tabs appear: BLS, BEA, HUD
+	•	Each tab fetches live data using the env keys and defaulting to the selected property’s county/MSA (or ZIP)
+	•	Each tab shows chart + table + KPIs
+	•	Save Snapshot writes to DB
+	•	No placeholder toggles; everything controls real data/views
+	•	Caching is active; repeated requests are fast
+
+⸻
+
+Do it now. When done, print this summary:
+	•	“Created Tools tabs: BLS, BEA, HUD.”
+	•	Which default geography each tab used for the current property.
+	•	of rows fetched for each tab.
+	•	Snapshot save endpoint location.
