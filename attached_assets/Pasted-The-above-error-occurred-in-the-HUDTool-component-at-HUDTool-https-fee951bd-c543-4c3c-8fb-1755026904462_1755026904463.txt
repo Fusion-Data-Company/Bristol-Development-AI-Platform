@@ -1,0 +1,35 @@
+The above error occurred in the <HUDTool> component:
+
+    at HUDTool (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/tools/HUDTool.tsx:50:27)
+    at div
+    at _c9 (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/ui/card.tsx:114:12)
+    at div
+    at _c (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3SOETFFG.js?v=9dc0c5dd:42:13
+    at Presence (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7LBWE4PF.js?v=9dc0c5dd:24:11)
+    at https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=9dc0c5dd:387:13
+    at _c5 (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/ui/tabs.tsx:72:12)
+    at div
+    at div
+    at https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3SOETFFG.js?v=9dc0c5dd:42:13
+    at Provider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2M7HY3UG.js?v=9dc0c5dd:38:15)
+    at https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=9dc0c5dd:265:7
+    at div
+    at div
+    at main
+    at div
+    at Chrome (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/brand/Chrome.tsx:18:34)
+    at Tools (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/pages/Tools.tsx:31:37)
+    at Route (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9dc0c5dd:323:16)
+    at Switch (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9dc0c5dd:379:17)
+    at Router (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/App.tsx?v=gntSpFor4ezp-J1kU5UpU:38:42)
+    at AppContent (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/App.tsx?v=gntSpFor4ezp-J1kU5UpU:112:31)
+    at Provider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2M7HY3UG.js?v=9dc0c5dd:38:15)
+    at TooltipProvider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=9dc0c5dd:62:5)
+    at QueryClientProvider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=9dc0c5dd:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+Cannot read properties of undefined (reading 'latest_vacancy_rate')

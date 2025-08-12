@@ -31,33 +31,21 @@ ChartJS.register(
 );
 
 interface HUDData {
-  label: string;
-  mode: string;
-  zip: string;
-  lookbackQuarters: number;
-  rows: Array<{
-    quarter: string;
-    year: number;
-    quarter_num: number;
+  params: {
+    mode: string;
     zip: string;
-    total: number;
-    vacant: number;
-    occupied: number;
-    no_stat: number;
-    vacancy_rate: number | null;
-    occupancy_rate: number | null;
-  }>;
-  metrics: {
-    latest_vacancy_rate: number;
-    latest_occupancy_rate: number;
-    total_addresses: number;
-    vacant_addresses: number;
-    occupied_addresses: number;
-    change_vacancy_rate_1yr: number | null;
-    zip_code: string;
   };
-  dataSource: string;
-  lastUpdated: string;
+  rows: Array<{
+    zip: string;
+    state: string | null;
+    county: string | null;
+    cbsa: string | null;
+    tract: string | null;
+    res_ratio: number | null;
+  }>;
+  meta: {
+    source: string;
+  };
 }
 
 export function HUDTool() {
@@ -125,37 +113,28 @@ export function HUDTool() {
     if (!data) return;
     
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "Quarter,Total Addresses,Vacant,Occupied,Vacancy Rate (%),Occupancy Rate (%)\n" +
+      "ZIP,State,County,CBSA,Census Tract,Residential Ratio\n" +
       data.rows.map(row => 
-        `${row.quarter},${row.total},${row.vacant},${row.occupied},${row.vacancy_rate?.toFixed(2) || 'N/A'},${row.occupancy_rate?.toFixed(2) || 'N/A'}`
+        `${row.zip},${row.state || 'N/A'},${row.county || 'N/A'},${row.cbsa || 'N/A'},${row.tract || 'N/A'},${row.res_ratio?.toFixed(4) || 'N/A'}`
       ).join("\n");
     
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `hud_vacancy_${zip}_${Date.now()}.csv`);
+    link.setAttribute("download", `hud_crosswalk_${zip}_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const chartData = data ? {
-    labels: data.rows.map(row => row.quarter),
+    labels: data.rows.map((row, index) => `Tract ${index + 1}`),
     datasets: [
       {
-        label: 'Vacancy Rate (%)',
-        data: data.rows.map(row => row.vacancy_rate || 0),
-        borderColor: '#DC2626', // Red for vacancy
-        backgroundColor: '#DC2626',
-        tension: 0.1,
-        fill: false,
-        yAxisID: 'y'
-      },
-      {
-        label: 'Occupancy Rate (%)',
-        data: data.rows.map(row => row.occupancy_rate || 0),
-        borderColor: '#059669', // Green for occupancy
-        backgroundColor: '#059669',
+        label: 'Residential Ratio',
+        data: data.rows.map(row => row.res_ratio || 0),
+        borderColor: '#D97706', // Gold for Bristol branding
+        backgroundColor: '#D97706',
         tension: 0.1,
         fill: false,
         yAxisID: 'y'
@@ -187,7 +166,7 @@ export function HUDTool() {
         position: 'left' as const,
         ticks: { 
           color: '#ffffff',
-          callback: (value: any) => `${value}%`
+          callback: (value: any) => value.toFixed(2)
         },
         grid: { color: '#374151' }
       }
@@ -298,32 +277,34 @@ export function HUDTool() {
           <div className="lg:col-span-1 space-y-4">
             <Card className="bg-gray-900 border-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Current Vacancy Rate</CardTitle>
+                <CardTitle className="text-sm text-gray-300">ZIP Code</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{data.metrics.latest_vacancy_rate.toFixed(1)}%</div>
+                <div className="text-2xl font-bold text-white">{data.params.zip}</div>
               </CardContent>
             </Card>
 
             <Card className="bg-gray-900 border-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Total Addresses</CardTitle>
+                <CardTitle className="text-sm text-gray-300">Census Tracts</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">{formatNumber(data.metrics.total_addresses)}</div>
+                <div className="text-lg text-white">{formatNumber(data.rows.length)}</div>
                 <div className="text-sm text-gray-400">
-                  {formatNumber(data.metrics.vacant_addresses)} vacant • {formatNumber(data.metrics.occupied_addresses)} occupied
+                  Crosswalk mappings found
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-gray-900 border-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">1-Year Change</CardTitle>
+                <CardTitle className="text-sm text-gray-300">Avg Residential Ratio</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-lg text-white">
-                  {formatChange(data.metrics.change_vacancy_rate_1yr)}
+                  {data.rows.length > 0 ? 
+                    (data.rows.reduce((sum, row) => sum + (row.res_ratio || 0), 0) / data.rows.length).toFixed(3) 
+                    : 'N/A'}
                 </div>
               </CardContent>
             </Card>
@@ -333,9 +314,9 @@ export function HUDTool() {
           <div className="lg:col-span-2">
             <Card className="bg-gray-900 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-white">{data.label} Over Time</CardTitle>
+                <CardTitle className="text-white">HUD USPS Crosswalk Data</CardTitle>
                 <CardDescription className="text-gray-400">
-                  Data from {data.dataSource} • Last updated: {new Date(data.lastUpdated).toLocaleDateString()}
+                  Data from {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -352,30 +333,30 @@ export function HUDTool() {
           <div className="lg:col-span-3">
             <Card className="bg-gray-900 border-gray-700">
               <CardHeader>
-                <CardTitle className="text-white">Quarterly Breakdown</CardTitle>
+                <CardTitle className="text-white">Census Tract Crosswalk Details</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-white">
                     <thead>
                       <tr className="border-b border-gray-700">
-                        <th className="text-left py-2">Quarter</th>
-                        <th className="text-right py-2">Total</th>
-                        <th className="text-right py-2">Vacant</th>
-                        <th className="text-right py-2">Occupied</th>
-                        <th className="text-right py-2">Vacancy %</th>
-                        <th className="text-right py-2">Occupancy %</th>
+                        <th className="text-left py-2">ZIP Code</th>
+                        <th className="text-left py-2">State</th>
+                        <th className="text-left py-2">County</th>
+                        <th className="text-left py-2">CBSA</th>
+                        <th className="text-left py-2">Census Tract</th>
+                        <th className="text-right py-2">Res. Ratio</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data.rows.map((row, index) => (
                         <tr key={index} className="border-b border-gray-800">
-                          <td className="py-2">{row.quarter}</td>
-                          <td className="text-right py-2">{formatNumber(row.total)}</td>
-                          <td className="text-right py-2 text-red-400">{formatNumber(row.vacant)}</td>
-                          <td className="text-right py-2 text-green-400">{formatNumber(row.occupied)}</td>
-                          <td className="text-right py-2">{row.vacancy_rate?.toFixed(1) || 'N/A'}%</td>
-                          <td className="text-right py-2">{row.occupancy_rate?.toFixed(1) || 'N/A'}%</td>
+                          <td className="py-2">{row.zip}</td>
+                          <td className="py-2">{row.state || 'N/A'}</td>
+                          <td className="py-2">{row.county || 'N/A'}</td>
+                          <td className="py-2">{row.cbsa || 'N/A'}</td>
+                          <td className="py-2 font-mono text-sm">{row.tract || 'N/A'}</td>
+                          <td className="text-right py-2 text-yellow-400">{row.res_ratio?.toFixed(4) || 'N/A'}</td>
                         </tr>
                       ))}
                     </tbody>
