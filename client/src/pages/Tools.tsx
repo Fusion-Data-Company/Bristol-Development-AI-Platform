@@ -21,17 +21,17 @@ export function Tools() {
           <div className="mb-8 relative">
             <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/5 via-blue-500/5 to-purple-500/5 rounded-3xl blur-3xl"></div>
             <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/50">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 via-bristol-gold to-slate-700 bg-clip-text text-transparent mb-4">
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-bristol-maroon via-bristol-gold via-purple-600 to-bristol-ink bg-clip-text text-transparent mb-4 drop-shadow-2xl">
                 Economic Intelligence Tools
               </h1>
-              <p className="text-xl text-slate-600">
+              <p className="text-xl font-semibold bg-gradient-to-r from-bristol-maroon to-purple-700 bg-clip-text text-transparent">
                 Access live data from BLS, BEA, HUD, Foursquare, FBI, and NOAA for comprehensive property analysis
               </p>
             </div>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 bg-white/90 backdrop-blur-sm border border-white/50 shadow-lg rounded-2xl h-auto p-3">
+            <TabsList className="grid w-full grid-cols-6 bg-gradient-to-r from-bristol-maroon/10 via-purple-500/10 to-bristol-gold/20 backdrop-blur-sm border-2 border-bristol-gold/30 shadow-2xl rounded-2xl h-auto p-3">
               <TabsTrigger 
                 value="bls" 
                 className="flex flex-col items-center gap-2 p-4 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-bristol-gold/90 data-[state=active]:to-yellow-400/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-lg data-[state=active]:scale-105 text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-200"
