@@ -43,10 +43,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { enrichSites } = await import('./api/enrich');
   const { getSitesGeoJSON } = await import('./api/sites-geojson');
   const { getSiteDemographics } = await import('./api/site-demographics');
+  const { getAddressDemographics } = await import('./api/address-demographics');
   
   app.post('/api/enrich', isAuthenticated, enrichSites);
   app.get('/api/sites.geojson', isAuthenticated, getSitesGeoJSON);
   app.get('/api/sites/:siteId/demographics', isAuthenticated, getSiteDemographics);
+  app.post('/api/address/demographics', isAuthenticated, getAddressDemographics);
 
 
 

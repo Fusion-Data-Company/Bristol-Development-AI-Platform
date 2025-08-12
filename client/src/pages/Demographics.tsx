@@ -9,6 +9,7 @@ import { MapPin, TrendingUp, Users, DollarSign, BarChart3, Info, Target } from "
 import Chrome from "../components/brand/SimpleChrome";
 import { DemographicMap } from "../components/maps/DemographicMap";
 import { SiteDemographicAnalysis } from "../components/analysis/SiteDemographicAnalysis";
+import { AddressDemographics } from "../components/analysis/AddressDemographics";
 import { useQuery } from "@tanstack/react-query";
 
 interface DemographicStats {
@@ -188,8 +189,9 @@ export default function Demographics() {
 
           {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsList className="grid w-full grid-cols-3 mb-6">
             <TabsTrigger value="overview">Portfolio Overview</TabsTrigger>
+            <TabsTrigger value="address">Address Lookup</TabsTrigger>
             <TabsTrigger value="analysis">Site Analysis</TabsTrigger>
           </TabsList>
 
@@ -296,6 +298,10 @@ export default function Demographics() {
               </Card>
               </div>
             </div>
+          </TabsContent>
+
+          <TabsContent value="address">
+            <AddressDemographics />
           </TabsContent>
 
           <TabsContent value="analysis">
