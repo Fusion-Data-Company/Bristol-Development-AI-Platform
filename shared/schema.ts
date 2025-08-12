@@ -38,7 +38,7 @@ export const users = pgTable("users", {
 // Site Intelligence Tables - Bristol Development Format
 export const sites = pgTable("sites", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  status: varchar("status").notNull().default("Completed"), // Newest, Completed, Pipeline, Other
+  status: varchar("status").notNull().default("Completed"), // Operating, Pipeline, Completed, Newest, Other
   name: varchar("name").notNull(),
   addrLine1: text("addr_line1"),
   addrLine2: text("addr_line2"),

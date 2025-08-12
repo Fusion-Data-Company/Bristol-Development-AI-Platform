@@ -1,0 +1,111 @@
+/**
+ * Adds/updates the `status` field for all 46 Bristol properties.
+ * - Matching is resilient to apostrophes/dashes/case.
+ * - Replace the upsert/update call with your ORM if needed.
+ */
+
+type Status = "Operating" | "Pipeline";
+
+const statusByName: Record<string, Status> = {
+  // TENNESSEE (21)
+  "1700 Midtown (Olympus Midtown)": "Operating",
+  "5 Points Northshore": "Operating",
+  "Avondale": "Operating",
+  "Bristol Park Oak Ridge": "Operating",
+  "Bristol West End": "Operating",
+  "Church + Henley": "Operating",
+  "Governor’s Square I": "Operating",
+  "Governor's Square I": "Operating",
+  "Governor’s Square II": "Operating",
+  "Governor's Square II": "Operating",
+  "Heritage Lake at Westland": "Operating",
+  "ICON in the Gulch": "Operating",
+  "Preserve at Bartlett": "Operating",
+  "Tapestry Brentwood Town Center": "Pipeline",
+  "The Bristol on Broadway": "Operating",
+  "The Bristol on Union": "Operating",
+  "The Everly": "Operating",
+  "The Hamptons at Woodland Pointe": "Operating",
+  "The Lucile": "Operating",
+  "The Monarch Memphis": "Operating",
+  "Vandalia Cottages": "Operating",
+  "Velocity in the Gulch": "Operating",
+  "Vista Germantown": "Operating",
+
+  // VIRGINIA (8)
+  "2000 West Creek": "Operating",
+  "Artistry at Winterfield": "Operating",
+  "Bristol Village at Charter Colony": "Operating",
+  "Canopy at Ginter Park": "Operating",
+  "Tapestry West": "Operating",
+  "The Alexander at Ghent": "Operating",
+  "The Collective West Creek": "Operating",
+  "Bexley West Creek": "Operating", // alias
+  "The Row at Ghent": "Operating",
+
+  // ALABAMA (6)
+  "Artisan Twickenham Square": "Operating",
+  "Bristol Southside": "Operating",
+  "Meridian at the Port": "Operating",
+  "Park 35 on Clairmont": "Operating",
+  "Two 21 Armstrong": "Operating",
+  "The Gallery": "Operating",
+
+  // FLORIDA (5)
+  "220 Riverside": "Operating",
+  "Hurston": "Operating",
+  "Solara": "Pipeline",
+  "The Station at Fleming Island": "Pipeline",
+  "The Station": "Pipeline", // alias
+  "Vista Brooklyn": "Operating",
+
+  // KENTUCKY (3)
+  "Lyric at Norton Commons": "Operating",
+  "Main & Clay": "Operating",
+  "Veranda Norton Commons": "Operating",
+
+  // TEXAS (2)
+  "Archer Stone Canyon": "Operating",
+  "Bristol Heights": "Operating",
+
+  // ARKANSAS (1)
+  "Reserve at Steele Crossing": "Operating",
+  "Reserve at Steel Crossing": "Operating" // alias spelling
+};
+
+// Optional: normalize incoming DB names to improve matching
+const normalize = (s: string) =>
+  s.toLowerCase()
+   .replace(/[’']/g, "'")
+   .replace(/–|—/g, "-")
+   .replace(/\s+/g, " ")
+   .trim();
+
+// Build a normalized lookup
+const normMap = new Map<string, Status>();
+for (const [k, v] of Object.entries(statusByName)) {
+  normMap.set(normalize(k), v);
+}
+
+async function applyStatuses(db: any) {
+  // Fetch property names from DB to be safe (optional)
+  const all = await db.property.findMany({ select: { propertyName: true } });
+
+  for (const row of all) {
+    const key = normalize(row.propertyName);
+    const status = normMap.get(key);
+    if (!status) {
+      // If the DB has a slight variant not listed above, log it so you can add an alias once.
+      console.warn("No status mapping for:", row.propertyName);
+      continue;
+    }
+    await db.property.update({
+      where: { propertyName: row.propertyName },
+      data: { status }
+    });
+  }
+  console.log("✅ Status update complete.");
+}
+
+// run
+// await applyStatuses(db);
