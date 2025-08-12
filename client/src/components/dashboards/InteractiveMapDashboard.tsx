@@ -60,14 +60,20 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
     retry: false,
   });
 
-  // Fetch demographics data for selected area
-  const { data: demographicsData, isLoading: demographicsLoading } = useQuery<{
-    populationGrowth?: string;
-    medianIncome?: number;
-    employment?: string;
-    targetDemo?: string;
-  }>({
-    queryKey: ['/api/analytics/demographics', selectedSite?.postalCode || selectedSite?.city],
+  // Fetch REAL demographics data from US Census API for selected location
+  const selectedAreaKey = selectedSite?.id?.startsWith('virtual-') 
+    ? `${selectedSite.longitude}-${selectedSite.latitude}` 
+    : selectedSite?.city;
+    
+  const { data: demographicsData, isLoading: demographicsLoading, error: demographicsError } = useQuery({
+    queryKey: ['/api/analytics/demographics', selectedAreaKey],
+    enabled: !!selectedSite,
+    retry: false,
+  });
+
+  // Fetch REAL market conditions from authenticated APIs
+  const { data: marketConditionsData, isLoading: marketConditionsLoading, error: marketConditionsError } = useQuery({
+    queryKey: ['/api/analytics/market-conditions', selectedAreaKey],
     enabled: !!selectedSite,
     retry: false,
   });
@@ -271,7 +277,8 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                     </div>
                     <div className="text-right">
                       <span className="text-lg font-black text-green-600 group-hover:text-green-700 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
-                        {demographicsData?.populationGrowth || '+3.2%'}
+                        {demographicsLoading ? '...' : 
+                          (demographicsData?.populationGrowth || 'Data unavailable')}
                       </span>
                     </div>
                   </div>
@@ -295,8 +302,8 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                     </div>
                     <div className="text-right">
                       <span className="text-lg font-black text-bristol-maroon group-hover:text-bristol-gold group-hover:drop-shadow-[0_0_8px_rgba(139,69,19,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
-                        {demographicsLoading ? '...' : (demographicsData?.medianIncome ? 
-                          `$${Math.round(demographicsData.medianIncome / 1000)}K` : '$72K')}
+                        {demographicsLoading ? '...' : 
+                          (demographicsData?.medianIncome || 'Data unavailable')}
                       </span>
                     </div>
                   </div>
@@ -364,7 +371,10 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-black text-green-600 group-hover:text-green-700 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">$1,485</span>
+                      <span className="text-lg font-black text-green-600 group-hover:text-green-700 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                        {marketConditionsLoading ? '...' : 
+                          (marketConditionsData?.averageRent || 'Data unavailable')}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -386,7 +396,10 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-black text-blue-600 group-hover:text-blue-700 group-hover:drop-shadow-[0_0_8px_rgba(37,99,235,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">96.8%</span>
+                      <span className="text-lg font-black text-blue-600 group-hover:text-blue-700 group-hover:drop-shadow-[0_0_8px_rgba(37,99,235,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                        {marketConditionsLoading ? '...' : 
+                          (marketConditionsData?.occupancyRate || 'Data unavailable')}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -408,7 +421,10 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-black text-bristol-maroon group-hover:text-bristol-gold group-hover:drop-shadow-[0_0_8px_rgba(139,69,19,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">2.3 mo</span>
+                      <span className="text-lg font-black text-bristol-maroon group-hover:text-bristol-gold group-hover:drop-shadow-[0_0_8px_rgba(139,69,19,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                        {marketConditionsLoading ? '...' : 
+                          (marketConditionsData?.absorptionRate || 'Data unavailable')}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -431,7 +447,10 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-black text-green-600 group-hover:text-green-700 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">18.2%</span>
+                      <span className="text-lg font-black text-green-600 group-hover:text-green-700 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                        {marketConditionsLoading ? '...' : 
+                          (marketConditionsData?.projectedIRR || 'Data unavailable')}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -453,7 +472,10 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-black text-bristol-gold group-hover:text-bristol-gold/90 group-hover:drop-shadow-[0_0_8px_rgba(218,165,32,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">$12,400</span>
+                      <span className="text-lg font-black text-bristol-gold group-hover:text-bristol-gold/90 group-hover:drop-shadow-[0_0_8px_rgba(218,165,32,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">
+                        {marketConditionsLoading ? '...' : 
+                          (marketConditionsData?.landCostPerUnit || 'Data unavailable')}
+                      </span>
                     </div>
                   </div>
                 </CardContent>

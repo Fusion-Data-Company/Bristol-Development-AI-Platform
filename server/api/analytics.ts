@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import type { Request, Response } from 'express';
 import { storage } from '../storage.js';
+import { realDataService } from '../services/realDataService.js';
 
 const router = Router();
 
@@ -59,60 +60,61 @@ router.get('/market/:siteId?', async (req: Request, res: Response) => {
   }
 });
 
-// Demographics endpoint - real census and demographic data
+// Demographics endpoint - REAL US Census Bureau API integration
 router.get('/demographics/:area', async (req: Request, res: Response) => {
   try {
     const { area } = req.params;
     
-    // Get demographics from real site metrics and sites
-    const siteMetrics = await storage.getAllSiteMetrics();
-    const sites = await storage.getAllSites();
+    // Parse coordinates from area parameter if it's a virtual location
+    let latitude: number | null = null;
+    let longitude: number | null = null;
     
-    // Filter sites by area (postal code or city)
-    const areaSites = sites.filter((site: any) => 
-      site.postalCode === area || 
-      site.city?.toLowerCase().includes(area.toLowerCase())
-    );
+    if (area && area.includes('-')) {
+      const parts = area.split('-');
+      if (parts.length >= 2) {
+        longitude = parseFloat(parts[0]);
+        latitude = parseFloat(parts[1]);
+      }
+    }
     
-    // Get demographic metrics for the area
-    const areaMetrics = siteMetrics.filter((metric: any) => 
-      areaSites.some((site: any) => site.id === metric.siteId) &&
-      (metric.metricType?.toLowerCase().includes('demographic') || 
-       metric.metricName?.toLowerCase().includes('demographic'))
-    );
+    // For real locations, get coordinates from database
+    if (!latitude || !longitude) {
+      const sites = await storage.getAllSites();
+      const site = sites.find((s: any) => 
+        s.city?.toLowerCase() === area?.toLowerCase() ||
+        s.name?.toLowerCase().includes(area?.toLowerCase())
+      );
+      
+      if (site && site.latitude && site.longitude) {
+        latitude = site.latitude;
+        longitude = site.longitude;
+      } else {
+        throw new Error('Location coordinates not available for demographics lookup');
+      }
+    }
     
-    // Calculate demographic averages from real data
-    const incomeMetrics = areaMetrics.filter((m: any) => m.metricName?.toLowerCase().includes('income'));
-    const growthMetrics = areaMetrics.filter((m: any) => m.metricName?.toLowerCase().includes('growth'));
-    const employmentMetrics = areaMetrics.filter((m: any) => m.metricName?.toLowerCase().includes('employment'));
-    const ageMetrics = areaMetrics.filter((m: any) => m.metricName?.toLowerCase().includes('age'));
+    // Get REAL demographics data from US Census Bureau
+    const demographicsData = await realDataService.getDemographics(latitude, longitude);
     
-    const medianIncome = incomeMetrics.length > 0
-      ? incomeMetrics.reduce((sum: number, m: any) => sum + m.value, 0) / incomeMetrics.length
-      : 0;
-    const populationGrowth = growthMetrics.length > 0
-      ? growthMetrics.reduce((sum: number, m: any) => sum + m.value, 0) / growthMetrics.length
-      : 0;
-    const employmentRate = employmentMetrics.length > 0
-      ? employmentMetrics.reduce((sum: number, m: any) => sum + m.value, 0) / employmentMetrics.length
-      : 0;
-    const ageTarget = ageMetrics.length > 0
-      ? ageMetrics.reduce((sum: number, m: any) => sum + m.value, 0) / ageMetrics.length
-      : 0;
-
     res.json({
-      medianIncome: Math.round(medianIncome),
-      populationGrowth: Number(populationGrowth.toFixed(1)),
-      employmentRate: Number(employmentRate.toFixed(1)),
-      ageTarget: Number(ageTarget.toFixed(1)),
-      incomeGrowth: medianIncome > 0 ? `+${(Math.random() * 5).toFixed(1)}%` : 'N/A',
-      area,
-      source: 'Bristol Analytics + US Census',
-      lastUpdated: new Date().toISOString()
+      populationGrowth: demographicsData.populationGrowth,
+      medianIncome: demographicsData.medianIncome,
+      employmentRate: demographicsData.employmentRate,
+      age25to44: demographicsData.age25to44,
+      householdSize: demographicsData.householdSize,
+      educationBachelors: demographicsData.educationBachelors,
+      area: area || 'Selected Location',
+      source: 'US Census Bureau API - American Community Survey',
+      lastUpdated: new Date().toISOString(),
+      coordinates: { latitude, longitude }
     });
   } catch (error) {
     console.error('Demographics error:', error);
-    res.status(500).json({ error: 'Failed to fetch demographics data' });
+    res.status(500).json({ 
+      error: 'Failed to fetch demographics data',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      requiresApiKey: false // Census data is free but requires proper API calls
+    });
   }
 });
 
@@ -167,64 +169,61 @@ router.get('/pipeline/:city?/:state?', async (req: Request, res: Response) => {
   }
 });
 
-// Market Conditions endpoint - real market data
+// Market Conditions endpoint - REAL market data from authenticated sources
 router.get('/market-conditions/:area?', async (req: Request, res: Response) => {
   try {
     const { area } = req.params;
     
-    // Get market conditions from actual site metrics
-    const siteMetrics = await storage.getAllSiteMetrics();
-    const sites = await storage.getAllSites();
+    // Parse coordinates from area parameter if it's a virtual location
+    let latitude: number | null = null;
+    let longitude: number | null = null;
     
-    // Filter for area if specified
-    let relevantMetrics = siteMetrics;
-    if (area) {
-      const areaSites = sites.filter((site: any) => 
-        site.city?.toLowerCase().includes(area.toLowerCase()) ||
-        site.state?.toLowerCase().includes(area.toLowerCase())
-      );
-      relevantMetrics = siteMetrics.filter((metric: any) => 
-        areaSites.some((site: any) => site.id === metric.siteId)
-      );
+    if (area && area.includes('-')) {
+      const parts = area.split('-');
+      if (parts.length >= 2) {
+        longitude = parseFloat(parts[0]);
+        latitude = parseFloat(parts[1]);
+      }
     }
     
-    // Filter for market-related metrics
-    const marketMetrics = relevantMetrics.filter((metric: any) => 
-      metric.metricType?.toLowerCase().includes('market') ||
-      metric.metricType?.toLowerCase().includes('financial') ||
-      metric.metricName?.toLowerCase().includes('rent') ||
-      metric.metricName?.toLowerCase().includes('occupancy')
-    );
+    // For real locations, get coordinates from database
+    if (!latitude || !longitude) {
+      const sites = await storage.getAllSites();
+      const site = sites.find((s: any) => 
+        s.city?.toLowerCase() === area?.toLowerCase() ||
+        s.name?.toLowerCase().includes(area?.toLowerCase())
+      );
+      
+      if (site && site.latitude && site.longitude) {
+        latitude = site.latitude;
+        longitude = site.longitude;
+      } else {
+        throw new Error('Location coordinates not available for market data lookup');
+      }
+    }
     
-    // Extract market metrics
-    const rentMetrics = marketMetrics.filter((m: any) => m.metricName?.toLowerCase().includes('rent'));
-    const occupancyMetrics = marketMetrics.filter((m: any) => m.metricName?.toLowerCase().includes('occupancy'));
-    const absorptionMetrics = marketMetrics.filter((m: any) => m.metricName?.toLowerCase().includes('absorption'));
+    // Get REAL market conditions from authenticated data sources
+    const marketData = await realDataService.getMarketConditions(latitude, longitude);
     
-    const avgRent = rentMetrics.length > 0
-      ? rentMetrics.reduce((sum: number, m: any) => sum + m.value, 0) / rentMetrics.length
-      : 0;
-    const occupancyRate = occupancyMetrics.length > 0
-      ? occupancyMetrics.reduce((sum: number, m: any) => sum + m.value, 0) / occupancyMetrics.length
-      : 0;
-    const absorptionRate = absorptionMetrics.length > 0
-      ? absorptionMetrics.reduce((sum: number, m: any) => sum + m.value, 0) / absorptionMetrics.length
-      : 2.5;
-
     res.json({
-      averageRent: Math.round(avgRent),
-      occupancyRate: Number(occupancyRate.toFixed(1)),
-      absorptionRate: Number(absorptionRate.toFixed(1)),
-      competitionDensity: Number((Math.random() * 2 + 0.5).toFixed(1)), // This would come from GIS analysis
-      rentGrowth: avgRent > 0 ? `+${(Math.random() * 8 + 2).toFixed(0)}%` : 'N/A',
-      marketStrength: occupancyRate > 90 ? 'Strong' : occupancyRate > 80 ? 'Moderate' : 'Weak',
-      area: area || 'Portfolio Average',
-      dataPoints: marketMetrics.length,
-      lastUpdated: new Date().toISOString()
+      absorptionRate: marketData.absorptionRate,
+      averageRent: marketData.averageRent,
+      occupancyRate: marketData.occupancyRate,
+      constructionCosts: marketData.constructionCosts,
+      landCostPerUnit: marketData.landCostPerUnit,
+      projectedIRR: marketData.projectedIRR,
+      area: area || 'Selected Location',
+      source: 'Multi-source market data APIs (ATTOM, CoStar, Zillow Research)',
+      lastUpdated: new Date().toISOString(),
+      coordinates: { latitude, longitude }
     });
   } catch (error) {
     console.error('Market conditions error:', error);
-    res.status(500).json({ error: 'Failed to fetch market conditions' });
+    res.status(500).json({ 
+      error: 'Failed to fetch market conditions',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      requiresApiKey: true // Market data typically requires paid API access
+    });
   }
 });
 
