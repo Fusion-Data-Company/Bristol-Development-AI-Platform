@@ -22,53 +22,57 @@ export default function Chrome({ children }: ChromeProps) {
 
   return (
     <div className="min-h-screen bg-bristol-ink">
-      {/* Dark Bristol Header with Logo */}
-      <header className="bg-bristol-ink shadow-2xl border-b-2 border-bristol-gold/30 backdrop-blur-md relative overflow-hidden">
-        {/* Subtle background pattern */}
-        <div className="absolute inset-0 bg-gradient-to-r from-bristol-ink via-bristol-maroon/5 to-bristol-ink"></div>
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_theme(colors.bristol.gold)_1px,_transparent_0)] bg-[size:24px_24px]"></div>
+      {/* Premium Bristol Header */}
+      <header className="bg-gradient-to-r from-bristol-ink via-bristol-maroon/20 to-bristol-ink shadow-2xl border-b border-bristol-gold/40 relative overflow-hidden">
+        {/* Elegant background effects */}
+        <div className="absolute inset-0 bg-gradient-to-r from-bristol-ink/95 via-bristol-maroon/10 to-bristol-ink/95"></div>
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-bristol-gold/60 to-transparent"></div>
         </div>
         
-        <div className="container mx-auto px-8 py-6 relative">
-          <div className="flex items-center justify-between">
-            {/* Left: Bristol Logo & Branding */}
-            <div className="flex items-center space-x-4">
-              <div className="relative group">
-                <div className="absolute -inset-2 bg-bristol-gold/20 rounded-2xl blur-md group-hover:bg-bristol-gold/30 transition-all duration-300"></div>
+        <div className="px-8 py-5 relative">
+          <div className="flex items-center justify-between max-w-7xl mx-auto">
+            {/* Left: Bristol Logo & Brand */}
+            <div className="flex items-center space-x-5">
+              <div className="relative">
                 <img 
                   src={bristolLogoPath} 
                   alt="Bristol Development Group" 
-                  className="h-12 w-auto relative z-10 drop-shadow-2xl group-hover:scale-105 transition-transform duration-300 rounded-lg border border-bristol-gold/30"
+                  className="h-14 w-auto drop-shadow-2xl hover:scale-105 transition-transform duration-300 filter brightness-110"
                 />
               </div>
-              <div className="space-y-1">
-                <h1 className="text-3xl font-cinzel font-bold text-bristol-fog tracking-wide drop-shadow-lg">
+              <div className="border-l border-bristol-gold/30 pl-5">
+                <h1 className="text-3xl font-cinzel font-bold text-white tracking-wide drop-shadow-lg">
                   BRISTOL
                 </h1>
-                <p className="text-bristol-gold text-sm font-semibold tracking-[0.3em] uppercase opacity-90">
+                <p className="text-bristol-gold text-xs font-semibold tracking-[0.4em] uppercase mt-0.5">
                   Site Intelligence Platform
                 </p>
               </div>
             </div>
             
-            {/* Right: Navigation */}
-            <nav className="flex items-center space-x-2">
+            {/* Right: Premium Navigation */}
+            <nav className="flex items-center space-x-1">
               {navItems.map(({ path, label, icon: Icon }) => (
                 <Link key={path} href={path}>
-                  <Button
-                    variant="ghost"
+                  <button
                     className={`
-                      flex items-center space-x-2 px-4 py-3 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border
+                      group flex items-center space-x-2 px-5 py-3 rounded-lg font-medium transition-all duration-300 relative overflow-hidden
                       ${location === path 
-                        ? 'bg-bristol-gold text-bristol-ink shadow-xl shadow-bristol-gold/25 hover:shadow-bristol-gold/40 border-bristol-gold/50 font-bold scale-105' 
-                        : 'text-bristol-fog hover:text-bristol-gold hover:bg-bristol-gold/10 hover:shadow-lg border-bristol-stone/20 hover:border-bristol-gold/30'
+                        ? 'bg-bristol-gold text-bristol-ink shadow-lg shadow-bristol-gold/30 font-bold' 
+                        : 'text-bristol-fog hover:text-white hover:bg-white/10'
                       }
                     `}
                   >
-                    <Icon className="h-4 w-4" />
-                    <span className="text-sm tracking-wide">{label}</span>
-                  </Button>
+                    {location === path && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold via-bristol-gold/90 to-bristol-gold"></div>
+                    )}
+                    <Icon className={`h-4 w-4 relative z-10 ${location === path ? 'text-bristol-ink' : 'group-hover:text-bristol-gold'} transition-colors duration-300`} />
+                    <span className="text-sm tracking-wide relative z-10">{label}</span>
+                    {location !== path && (
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bristol-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    )}
+                  </button>
                 </Link>
               ))}
             </nav>
