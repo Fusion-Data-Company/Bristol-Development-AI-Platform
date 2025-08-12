@@ -58,32 +58,45 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
     }
 
     const data = JSON.parse(text);
-    console.log('[FBI] Raw API response:', data);
+    console.log('[FBI] Raw API response:', JSON.stringify(data, null, 2));
 
     // Transform the FBI API response to match our expected format
     const rows = [];
     
     // FBI API returns nested structure with state-specific data
     if (data && data.offenses && data.offenses.actuals) {
-      const stateData = data.offenses.actuals[stateUpper] || data.offenses.actuals[`${stateUpper} Clearances`];
-      const clearanceData = data.offenses.actuals[`${stateUpper} Clearances`];
+      console.log('[FBI] Available keys in actuals:', Object.keys(data.offenses.actuals));
       
-      if (stateData) {
+      const stateData = data.offenses.actuals['North Carolina'];
+      const clearanceData = data.offenses.actuals['North Carolina Clearances'];
+      
+      console.log('[FBI] State data:', stateData);
+      console.log('[FBI] Clearance data:', clearanceData);
+      
+      if (stateData && typeof stateData === 'object') {
         // Extract years and values from the state data object
         for (const [year, value] of Object.entries(stateData)) {
-          if (!isNaN(Number(year))) {
-            const cleared = clearanceData ? clearanceData[year] || 0 : 0;
+          const yearNum = Number(year);
+          if (!isNaN(yearNum) && yearNum >= 2000) { // Only valid years
+            const actualValue = Number(value) || 0;
+            const clearedValue = clearanceData && clearanceData[year] ? Number(clearanceData[year]) : 0;
+            const rateValue = data.offenses.rates && data.offenses.rates['North Carolina'] && data.offenses.rates['North Carolina'][year] ? 
+                             Number(data.offenses.rates['North Carolina'][year]) : 0;
+            
+            console.log(`[FBI] Year ${year}: actual=${actualValue}, cleared=${clearedValue}, rate=${rateValue}`);
+            
             rows.push({
-              year: Number(year),
-              actual: Number(value) || 0,
-              cleared: Number(cleared) || 0,
-              rate: data.offenses.rates && data.offenses.rates[stateUpper] ? 
-                    Number(data.offenses.rates[stateUpper][year]) || 0 : 0
+              year: yearNum,
+              actual: actualValue,
+              cleared: clearedValue,
+              rate: rateValue
             });
           }
         }
       }
     }
+
+    console.log('[FBI] Final rows:', rows);
 
     // Sort by year
     rows.sort((a, b) => a.year - b.year);
