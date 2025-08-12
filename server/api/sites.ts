@@ -6,36 +6,48 @@ import { z } from 'zod';
 
 const router = Router();
 
-// Geocoding utility using Nominatim
+// Improved geocoding utility with fallback strategies
 async function geocodeAddress(address: string): Promise<{ lat?: number; lng?: number; success: boolean }> {
-  try {
-    const encodedAddress = encodeURIComponent(address);
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=1`,
-      {
-        headers: {
-          'User-Agent': 'Bristol-Site-Intelligence/1.0',
-        },
+  const attempts = [
+    address, // Original address
+    address.replace(/\bSW\b|\bNW\b|\bNE\b|\bSE\b/g, ''), // Remove directionals
+    address.replace(/\bSt\b/g, 'Street').replace(/\bAve\b/g, 'Avenue').replace(/\bBlvd\b/g, 'Boulevard').replace(/\bDr\b/g, 'Drive').replace(/\bLn\b/g, 'Lane').replace(/\bCir\b/g, 'Circle'), // Expand abbreviations
+  ];
+
+  for (const attempt of attempts) {
+    try {
+      const encodedAddress = encodeURIComponent(attempt.trim());
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=3`,
+        {
+          headers: {
+            'User-Agent': 'Bristol-Site-Intelligence/1.0',
+          },
+        }
+      );
+      
+      if (!response.ok) continue;
+      
+      const data = await response.json();
+      if (data && data.length > 0) {
+        // Find the most specific result (usually the first with highest importance)
+        const bestMatch = data[0];
+        return {
+          lat: parseFloat(bestMatch.lat),
+          lng: parseFloat(bestMatch.lon),
+          success: true,
+        };
       }
-    );
-    
-    if (!response.ok) {
-      return { success: false };
+      
+      // Rate limiting between attempts
+      await new Promise(resolve => setTimeout(resolve, 200));
+    } catch (error) {
+      console.error(`Geocoding attempt failed for "${attempt}":`, error);
+      continue;
     }
-    
-    const data = await response.json();
-    if (data && data.length > 0) {
-      return {
-        lat: parseFloat(data[0].lat),
-        lng: parseFloat(data[0].lon),
-        success: true,
-      };
-    }
-    return { success: false };
-  } catch (error) {
-    console.error('Geocoding error:', error);
-    return { success: false };
   }
+  
+  return { success: false };
 }
 
 // Helper function to build full address
