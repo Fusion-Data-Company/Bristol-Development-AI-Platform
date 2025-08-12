@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
     const _bbox = bbox ? String(bbox) : bboxAround(Number(lat), Number(lng));
     const _end = endDate ? String(endDate) : new Date().toISOString().slice(0, 10);
     const d = new Date(_end);
-    d.setDate(d.getDate() - 365);
+    d.setFullYear(d.getFullYear() - 1); // Use setFullYear instead of setDate to avoid date issues
     const _start = startDate ? String(startDate) : d.toISOString().slice(0, 10);
 
     // Create cache key

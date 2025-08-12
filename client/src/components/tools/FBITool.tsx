@@ -80,8 +80,14 @@ export function FBITool() {
   }) as { data: FBIData; isLoading: boolean; refetch: any };
 
   const handleRun = () => {
+    console.log('FBI Tool: Running analysis with params:', { geo, state, offense, from, to });
     refetch();
   };
+
+  // Debug logging when data changes
+  if (data) {
+    console.log('FBI Tool: Received data:', data);
+  }
 
   const handleSaveSnapshot = async () => {
     if (!data) return;

@@ -75,8 +75,14 @@ export function FoursquareTool() {
   }) as { data: FoursquareData; isLoading: boolean; refetch: any };
 
   const handleRun = () => {
+    console.log('Foursquare Tool: Running analysis with params:', { lat, lng, radius });
     refetch();
   };
+
+  // Debug logging when data changes
+  if (data) {
+    console.log('Foursquare Tool: Received data:', data);
+  }
 
   const handleSaveSnapshot = async () => {
     if (!data) return;

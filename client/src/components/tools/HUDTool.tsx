@@ -86,8 +86,14 @@ export function HUDTool() {
   }) as { data: HUDData; isLoading: boolean; refetch: any };
 
   const handleRun = () => {
+    console.log('HUD Tool: Running analysis with params:', { mode, zip, lookbackQ });
     refetch();
   };
+
+  // Debug logging when data changes
+  if (data) {
+    console.log('HUD Tool: Received data:', data);
+  }
 
   const handleSaveSnapshot = async () => {
     if (!data) return;

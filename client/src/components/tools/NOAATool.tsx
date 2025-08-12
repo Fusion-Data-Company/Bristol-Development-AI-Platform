@@ -83,6 +83,7 @@ export function NOAATool() {
   }) as { data: NOAAData; isLoading: boolean; refetch: any };
 
   const handleRun = () => {
+    console.log('NOAA Tool: Running analysis with params:', { lat, lng, dataset, startDate, endDate });
     refetch();
   };
 
