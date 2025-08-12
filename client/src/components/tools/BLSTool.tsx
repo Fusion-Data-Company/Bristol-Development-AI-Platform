@@ -117,7 +117,7 @@ export function BLSTool() {
     
     const csvContent = "data:text/csv;charset=utf-8," + 
       "Date,Unemployment Rate (%)\n" +
-      data.rows.map(row => `${row.date},${row.value}`).join("\n");
+      data.rows.map((row: { date: string; value: number }) => `${row.date},${row.value}`).join("\n");
     
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -129,11 +129,11 @@ export function BLSTool() {
   };
 
   const chartData = data ? {
-    labels: data.rows.map(row => row.date),
+    labels: data.rows.map((row: { date: string }) => row.date),
     datasets: [
       {
         label: data.meta.label,
-        data: data.rows.map(row => row.value),
+        data: data.rows.map((row: { value: number }) => row.value),
         borderColor: '#D4A574', // Bristol gold
         backgroundColor: '#D4A574',
         tension: 0.1,
@@ -180,87 +180,89 @@ export function BLSTool() {
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div>
-          <Label htmlFor="level" className="text-gray-900">Geographic Level</Label>
-          <Select value={level} onValueChange={setLevel}>
-            <SelectTrigger className="bg-white border-gray-300 text-gray-900">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-white border-gray-300">
-              <SelectItem value="county">County</SelectItem>
-              <SelectItem value="msa">Metropolitan Area</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-white/50 shadow-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div>
+            <Label htmlFor="level" className="text-slate-700 font-medium">Geographic Level</Label>
+            <Select value={level} onValueChange={setLevel}>
+              <SelectTrigger className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white/95 backdrop-blur-sm border-blue-200/60">
+                <SelectItem value="county">County</SelectItem>
+                <SelectItem value="msa">Metropolitan Area</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
         {level === "county" && (
           <>
             <div>
-              <Label htmlFor="state" className="text-gray-900">State FIPS</Label>
+              <Label htmlFor="state" className="text-slate-700 font-medium">State FIPS</Label>
               <Input
                 id="state"
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="37 (NC)"
-                className="bg-white border-gray-300 text-gray-900"
+                className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
               />
             </div>
             <div>
-              <Label htmlFor="county" className="text-gray-900">County FIPS</Label>
+              <Label htmlFor="county" className="text-slate-700 font-medium">County FIPS</Label>
               <Input
                 id="county"
                 value={county}
                 onChange={(e) => setCounty(e.target.value)}
                 placeholder="119 (Mecklenburg)"
-                className="bg-white border-gray-300 text-gray-900"
+                className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
               />
             </div>
           </>
         )}
 
         {level === "msa" && (
-          <div>
-            <Label htmlFor="msa" className="text-gray-900">MSA Code</Label>
-            <Input
-              id="msa"
-              value={msa}
-              onChange={(e) => setMsa(e.target.value)}
-              placeholder="16740 (Charlotte)"
-              className="bg-white border-gray-300 text-gray-900"
-            />
-          </div>
+            <div>
+              <Label htmlFor="msa" className="text-slate-700 font-medium">MSA Code</Label>
+              <Input
+                id="msa"
+                value={msa}
+                onChange={(e) => setMsa(e.target.value)}
+                placeholder="16740 (Charlotte)"
+                className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              />
+            </div>
         )}
 
-        <div>
-          <Label htmlFor="start" className="text-gray-900">Start Date</Label>
-          <Input
-            id="start"
-            type="month"
-            value={start}
-            onChange={(e) => setStart(e.target.value)}
-            className="bg-white border-gray-300 text-gray-900"
-          />
-        </div>
+          <div>
+            <Label htmlFor="start" className="text-slate-700 font-medium">Start Date</Label>
+            <Input
+              id="start"
+              type="month"
+              value={start}
+              onChange={(e) => setStart(e.target.value)}
+              className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+            />
+          </div>
 
-        <div>
-          <Label htmlFor="end" className="text-gray-900">End Date</Label>
-          <Input
-            id="end"
-            type="month"
-            value={end}
-            onChange={(e) => setEnd(e.target.value)}
-            className="bg-white border-gray-300 text-gray-900"
-          />
+          <div>
+            <Label htmlFor="end" className="text-slate-700 font-medium">End Date</Label>
+            <Input
+              id="end"
+              type="month"
+              value={end}
+              onChange={(e) => setEnd(e.target.value)}
+              className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+            />
+          </div>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bg-bristol-gold text-black hover:bg-bristol-gold/90 border-2 border-bristol-gold shadow-lg font-semibold px-6 py-2"
+          className="bg-gradient-to-r from-bristol-gold to-yellow-400 text-slate-900 hover:from-bristol-gold/90 hover:to-yellow-400/90 border-0 shadow-lg font-semibold px-8 py-3 rounded-xl transition-all duration-200 hover:scale-105"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Run Analysis
@@ -272,7 +274,7 @@ export function BLSTool() {
               onClick={handleSaveSnapshot}
               disabled={isSubmitting}
               variant="outline"
-              className="border-gray-300 text-gray-900 hover:bg-gray-100"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <Save className="mr-2 h-4 w-4" />
@@ -282,7 +284,7 @@ export function BLSTool() {
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="border-gray-300 text-gray-900 hover:bg-gray-100"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV
@@ -301,38 +303,38 @@ export function BLSTool() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
-            <Card className="bg-white border-gray-300 shadow-md">
+            <Card className="bg-gradient-to-br from-white/90 to-blue-50/50 border-blue-200/50 shadow-lg rounded-xl">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-600">Current Rate</CardTitle>
+                <CardTitle className="text-sm text-slate-600 font-medium">Current Rate</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-blue-600 bg-clip-text text-transparent">
                   {data.rows.length > 0 ? `${data.rows[data.rows.length - 1].value.toFixed(1)}%` : 'N/A'}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-gray-300 shadow-md">
+            <Card className="bg-gradient-to-br from-white/90 to-emerald-50/50 border-emerald-200/50 shadow-lg rounded-xl">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-600">12-Month Change</CardTitle>
+                <CardTitle className="text-sm text-slate-600 font-medium">12-Month Change</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-gray-900">
+                <div className="text-lg text-slate-800">
                   {data.rows.length >= 12 ? 
                     formatChange(data.rows[data.rows.length - 1].value - data.rows[data.rows.length - 12].value)
                     : 'N/A'
                   }
-                  <span className="text-sm text-gray-500">pts</span>
+                  <span className="text-sm text-slate-500 ml-1">pts</span>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-gray-300 shadow-md">
+            <Card className="bg-gradient-to-br from-white/90 to-purple-50/50 border-purple-200/50 shadow-lg rounded-xl">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-600">Data Points</CardTitle>
+                <CardTitle className="text-sm text-slate-600 font-medium">Data Points</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-gray-900">
+                <div className="text-lg font-semibold text-slate-800">
                   {data.rows.length} months
                 </div>
               </CardContent>
@@ -341,10 +343,10 @@ export function BLSTool() {
 
           {/* Chart */}
           <div className="lg:col-span-2">
-            <Card className="bg-white border-gray-300 shadow-md">
+            <Card className="bg-gradient-to-br from-white/90 to-slate-50/50 border-slate-200/50 shadow-lg rounded-xl">
               <CardHeader>
-                <CardTitle className="text-gray-900">{data.meta.label} Over Time</CardTitle>
-                <CardDescription className="text-gray-600">
+                <CardTitle className="text-slate-800 font-semibold">{data.meta.label} Over Time</CardTitle>
+                <CardDescription className="text-slate-600">
                   Data from {data.meta.source}
                 </CardDescription>
               </CardHeader>

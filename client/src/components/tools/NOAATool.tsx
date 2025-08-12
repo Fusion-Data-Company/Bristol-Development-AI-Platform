@@ -136,72 +136,74 @@ export function NOAATool() {
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div>
-          <Label htmlFor="lat" className="text-white">Latitude</Label>
-          <Input
-            id="lat"
-            value={lat}
-            onChange={(e) => setLat(e.target.value)}
-            placeholder="35.2271"
-            className="bg-gray-700 border-gray-600 text-white"
-          />
-        </div>
+      <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-white/50 shadow-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div>
+            <Label htmlFor="lat" className="text-slate-700 font-medium">Latitude</Label>
+            <Input
+              id="lat"
+              value={lat}
+              onChange={(e) => setLat(e.target.value)}
+              placeholder="35.2271"
+              className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+            />
+          </div>
 
-        <div>
-          <Label htmlFor="lng" className="text-white">Longitude</Label>
-          <Input
-            id="lng"
-            value={lng}
-            onChange={(e) => setLng(e.target.value)}
-            placeholder="-80.8431"
-            className="bg-gray-700 border-gray-600 text-white"
-          />
-        </div>
+          <div>
+            <Label htmlFor="lng" className="text-slate-700 font-medium">Longitude</Label>
+            <Input
+              id="lng"
+              value={lng}
+              onChange={(e) => setLng(e.target.value)}
+              placeholder="-80.8431"
+              className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+            />
+          </div>
 
-        <div>
-          <Label htmlFor="dataset" className="text-white">Dataset</Label>
-          <Select value={dataset} onValueChange={setDataset}>
-            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-700 border-gray-600">
-              <SelectItem value="daily-summaries">Daily Summaries</SelectItem>
-              <SelectItem value="climate-normals">Climate Normals</SelectItem>
-              <SelectItem value="global-summary">Global Summary</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          <div>
+            <Label htmlFor="dataset" className="text-slate-700 font-medium">Dataset</Label>
+            <Select value={dataset} onValueChange={setDataset}>
+              <SelectTrigger className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white/95 backdrop-blur-sm border-cyan-200/60">
+                <SelectItem value="daily-summaries">Daily Summaries</SelectItem>
+                <SelectItem value="climate-normals">Climate Normals</SelectItem>
+                <SelectItem value="global-summary">Global Summary</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div>
-          <Label htmlFor="startDate" className="text-white">Start Date</Label>
-          <Input
-            id="startDate"
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="bg-gray-700 border-gray-600 text-white"
-          />
-        </div>
+          <div>
+            <Label htmlFor="startDate" className="text-slate-700 font-medium">Start Date</Label>
+            <Input
+              id="startDate"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+            />
+          </div>
 
-        <div>
-          <Label htmlFor="endDate" className="text-white">End Date</Label>
-          <Input
-            id="endDate"
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="bg-gray-700 border-gray-600 text-white"
-          />
+          <div>
+            <Label htmlFor="endDate" className="text-slate-700 font-medium">End Date</Label>
+            <Input
+              id="endDate"
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+            />
+          </div>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bg-bristol-gold text-black hover:bg-bristol-gold/90 border-2 border-bristol-gold shadow-lg font-semibold px-6 py-2"
+          className="bg-gradient-to-r from-bristol-gold to-yellow-400 text-slate-900 hover:from-bristol-gold/90 hover:to-yellow-400/90 border-0 shadow-lg font-semibold px-8 py-3 rounded-xl transition-all duration-200 hover:scale-105"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Run Analysis
@@ -213,7 +215,7 @@ export function NOAATool() {
               onClick={handleSaveSnapshot}
               disabled={isSubmitting}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <Save className="mr-2 h-4 w-4" />
@@ -223,7 +225,7 @@ export function NOAATool() {
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV

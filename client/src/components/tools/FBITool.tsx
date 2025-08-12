@@ -183,81 +183,83 @@ export function FBITool() {
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div>
-          <Label htmlFor="geo" className="text-white">Geographic Level</Label>
-          <Select value={geo} onValueChange={setGeo}>
-            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-700 border-gray-600">
-              <SelectItem value="state">State</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-white/50 shadow-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div>
+            <Label htmlFor="geo" className="text-slate-700 font-medium">Geographic Level</Label>
+            <Select value={geo} onValueChange={setGeo}>
+              <SelectTrigger className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white/95 backdrop-blur-sm border-amber-200/60">
+                <SelectItem value="state">State</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div>
-          <Label htmlFor="state" className="text-white">State Code</Label>
-          <Input
-            id="state"
-            value={state}
-            onChange={(e) => setState(e.target.value.toUpperCase())}
-            placeholder="NC"
-            className="bg-gray-700 border-gray-600 text-white"
-            maxLength={2}
-          />
-        </div>
+          <div>
+            <Label htmlFor="state" className="text-slate-700 font-medium">State Code</Label>
+            <Input
+              id="state"
+              value={state}
+              onChange={(e) => setState(e.target.value.toUpperCase())}
+              placeholder="NC"
+              className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              maxLength={2}
+            />
+          </div>
 
-        <div>
-          <Label htmlFor="offense" className="text-white">Crime Type</Label>
-          <Select value={offense} onValueChange={setOffense}>
-            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-gray-700 border-gray-600">
-              <SelectItem value="violent-crime">Violent Crime</SelectItem>
-              <SelectItem value="property-crime">Property Crime</SelectItem>
-              <SelectItem value="homicide">Homicide</SelectItem>
-              <SelectItem value="rape">Rape</SelectItem>
-              <SelectItem value="robbery">Robbery</SelectItem>
-              <SelectItem value="burglary">Burglary</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+          <div>
+            <Label htmlFor="offense" className="text-slate-700 font-medium">Crime Type</Label>
+            <Select value={offense} onValueChange={setOffense}>
+              <SelectTrigger className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white/95 backdrop-blur-sm border-amber-200/60">
+                <SelectItem value="violent-crime">Violent Crime</SelectItem>
+                <SelectItem value="property-crime">Property Crime</SelectItem>
+                <SelectItem value="homicide">Homicide</SelectItem>
+                <SelectItem value="rape">Rape</SelectItem>
+                <SelectItem value="robbery">Robbery</SelectItem>
+                <SelectItem value="burglary">Burglary</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div>
-          <Label htmlFor="from" className="text-white">From Year</Label>
-          <Input
-            id="from"
-            type="number"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            min="2000"
-            max="2030"
-            className="bg-gray-700 border-gray-600 text-white"
-          />
-        </div>
+          <div>
+            <Label htmlFor="from" className="text-slate-700 font-medium">From Year</Label>
+            <Input
+              id="from"
+              type="number"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+              min="2000"
+              max="2030"
+              className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+            />
+          </div>
 
-        <div>
-          <Label htmlFor="to" className="text-white">To Year</Label>
-          <Input
-            id="to"
-            type="number"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            min="2000"
-            max="2030"
-            className="bg-gray-700 border-gray-600 text-white"
-          />
+          <div>
+            <Label htmlFor="to" className="text-slate-700 font-medium">To Year</Label>
+            <Input
+              id="to"
+              type="number"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              min="2000"
+              max="2030"
+              className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+            />
+          </div>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bg-bristol-gold text-black hover:bg-bristol-gold/90 border-2 border-bristol-gold shadow-lg font-semibold px-6 py-2"
+          className="bg-gradient-to-r from-bristol-gold to-yellow-400 text-slate-900 hover:from-bristol-gold/90 hover:to-yellow-400/90 border-0 shadow-lg font-semibold px-8 py-3 rounded-xl transition-all duration-200 hover:scale-105"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Run Analysis
@@ -269,7 +271,7 @@ export function FBITool() {
               onClick={handleSaveSnapshot}
               disabled={isSubmitting}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <Save className="mr-2 h-4 w-4" />
@@ -279,7 +281,7 @@ export function FBITool() {
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV
