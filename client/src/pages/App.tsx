@@ -9,6 +9,7 @@ import Sites from "./Sites";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Site } from '@shared/schema';
+import { InteractiveMapDashboard } from "../components/dashboards/InteractiveMapDashboard";
 
 export default function App() {
   const [location] = useLocation();
@@ -32,8 +33,9 @@ export default function App() {
     <Chrome>
       <div className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="map">Map</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="map">Portfolio Map</TabsTrigger>
+            <TabsTrigger value="interactive">Interactive Map</TabsTrigger>
             <TabsTrigger value="tables">Tables</TabsTrigger>
             <TabsTrigger value="sandbox">3D Sandbox</TabsTrigger>
           </TabsList>
@@ -44,6 +46,13 @@ export default function App() {
                 <PortfolioMap onSiteSelect={handleSiteSelect} selectedSiteId={selectedSite?.id} />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="interactive" className="mt-6">
+            <InteractiveMapDashboard 
+              selectedSite={selectedSite} 
+              onSiteSelect={handleSiteSelect}
+            />
           </TabsContent>
 
           <TabsContent value="tables" className="mt-6">
