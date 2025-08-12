@@ -37,34 +37,40 @@ router.get('/', async (req, res) => {
       return res.json(cached);
     }
 
-    const base = "https://www.ncei.noaa.gov/access/services/search/v1/data";
+    // Step 1: Discover stations using Search Service
+    const searchBase = "https://www.ncei.noaa.gov/access/services/search/v1/data";
+    const searchUrl = `${searchBase}?dataset=daily-summaries&bbox=${encodeURIComponent(_bbox)}&startDate=${_start}&endDate=${_end}&available=true`;
     
-    // Try multiple dataset names since NOAA is picky
-    const datasets = [dataset as string];
-    if (dataset === "daily-summaries") {
-      datasets.push("global-summary-of-the-day");
+    console.log('NOAA Search API request:', searchUrl);
+    
+    const searchResponse = await fetch(searchUrl);
+    if (!searchResponse.ok) {
+      const errorText = await searchResponse.text();
+      console.error('[tools/noaa] search failed', { url: searchUrl, status: searchResponse.status, txt: errorText });
+      throw new Error(`NOAA Search API error: ${searchResponse.status} - ${errorText}`);
     }
     
-    let json: any = null;
-    let lastError: any = null;
+    const searchJson = await searchResponse.json();
+    console.log('NOAA Search API response:', searchJson);
     
-    for (const dset of datasets) {
-      const url = `${base}?dataset=${encodeURIComponent(dset)}&bbox=${encodeURIComponent(_bbox)}&startDate=${_start}&endDate=${_end}&available=true`;
-      console.log(`NOAA API request (trying ${dset}):`, url);
+    // Step 2: Get actual data using Access Data Service
+    const stations = (searchJson?.results || []).slice(0, 1); // Take first station
+    let json: any = { results: [] };
+    
+    if (stations.length > 0) {
+      const station = stations[0];
+      const stationId = station?.id || station?.stationId;
       
-      const response = await fetch(url);
-      
-      if (response.ok) {
-        json = await response.json();
-        break;
-      } else {
-        const errorText = await response.text();
-        lastError = new Error(`NOAA API error: ${response.status} - ${errorText}`);
+      if (stationId) {
+        const dataUrl = `https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=${stationId}&startDate=${_start}&endDate=${_end}&dataTypes=TMIN,TMAX,PRCP&format=json`;
+        console.log('NOAA Data API request:', dataUrl);
+        
+        const dataResponse = await fetch(dataUrl);
+        if (dataResponse.ok) {
+          const dataJson = await dataResponse.json();
+          json = { results: Array.isArray(dataJson) ? dataJson : [dataJson], stations: [station] };
+        }
       }
-    }
-    
-    if (!json) {
-      throw lastError || new Error("No datasets worked");
     }
     console.log('NOAA API response:', json);
 

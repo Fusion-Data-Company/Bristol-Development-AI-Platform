@@ -1,0 +1,148 @@
+Got it—let’s fix this the right way. I dug through the official docs for each API you wired up. Below is an “actual plan” per tool with the exact endpoints, params, and what to change in your routes so your current test inputs (Charlotte / NC‑37 / 119 / 28202) return data.
+
+I’ll keep it tight and actionable.
+
+⸻
+
+Why nothing is coming back + the exact fixes
+
+1) BLS (LAUS unemployment – county)
+
+Problem: wrong series ID pattern + wrong key field casing.
+Correct series ID (county LAUS, unemployment rate):
+LAUCN + SS + CCC + 0000000003 (SS=state FIPS 2‑digit, CCC=county FIPS 3‑digit, 03 = rate).
+For NC Mecklenburg (37,119) → LAUCN371190000000003.  ￼
+
+Endpoint: POST https://api.bls.gov/publicAPI/v2/timeseries/data/
+Body keys: must use registrationKey (camelCase).  ￼
+
+Change in /api/tools/bls:
+	•	Build series id exactly as above.
+	•	Use:
+
+{
+  "seriesid": ["LAUCN371190000000003"],
+  "startyear": "2020",
+  "endyear": "2025",
+  "registrationKey": "<env BLS_API_KEY>"
+}
+
+
+⸻
+
+2) BEA (Regional GDP / Personal Income)
+
+Problem: you used a table name that isn’t returned by the current API; GeoFIPS format was off for MSA.
+Known‑good tables:
+	•	MSA Real GDP (chained $): TableName=CAGDP2, GeoFIPS=MSA16740 (Charlotte MSA).
+	•	County Personal Income: TableName=CAINC1, GeoFIPS=37119.
+Dataset: DataSetName=Regional, Method=GetData, include LineCode=1, Year=2015-2024.  ￼
+
+Change in /api/tools/bea:
+	•	If geo='msa': TableName=CAGDP2, GeoFIPS=MSA${msa}.
+	•	If geo='county': TableName=CAINC1, GeoFIPS=${state}${county} (zero‑padded).
+(These tables are in BEA’s current Regional API guide.)  ￼
+
+⸻
+
+3) HUD (USPS)
+
+Reality check: HUD exposes two different things:
+	•	Crosswalk API (live, JSON) – ZIP↔tract/county/CBSA mapping + ratios.
+	•	Vacancy counts – quarterly bulk files (CSV), not a JSON “vacancy by ZIP” API. You must fetch the CSV for the latest quarter and filter by ZIP/tract, or pre‑stage it on your server.  ￼
+
+What to implement now (works today):
+	•	Use Crosswalk API to convert your site’s tract/county/CBSA↔ZIP:
+GET https://www.huduser.gov/hudapi/public/usps?type=1&query=28202 (type values 1–12 per docs; pass your Bearer token).  ￼
+	•	For vacancy trend, download the latest USPS Vacancy CSV for the needed quarter(s) from HUD’s dataset page and compute % vacant = vacant/total server‑side (cache the CSV).  ￼
+
+Change in /api/tools/hud:
+	•	Replace the fictional /datasets/usps/vacancy URL with the Crosswalk endpoint above for live lookups. Add a second code path that reads the most recent CSV (HTTP download from HUD USER) to produce vacancy KPIs when you request “trend”.  ￼
+
+⸻
+
+4) Foursquare Places v3
+
+Problem: missing Accept: application/json, and limit too high.
+Endpoint: GET https://api.foursquare.com/v3/places/search
+Headers:
+Authorization: <FOURSQUARE_API_KEY> and Accept: application/json
+Params: ll=35.2271,-80.8431&radius=1600&categories=...&limit=50 (50 max recommended).  ￼ ￼
+
+Change in /api/tools/foursquare:
+	•	Add Accept header.
+	•	Clamp limit to ≤50.
+	•	Keep your category defaults; they match FSQ docs.  ￼
+
+⸻
+
+5) FBI Crime Data
+
+Endpoint (state summarized):
+GET https://api.usa.gov/crime/fbi/sapi/api/summarized/state/NC/violent-crime/2014/2023?api_key=...
+This is the supported pattern for summarized state series. If empty, FBI returns a 204/404; log response text. (Some offense names differ—try property-crime or specific offenses like aggravated-assault if needed.)  ￼ ￼
+
+Change in /api/tools/fbi:
+	•	Ensure the path is exactly /summarized/state/{STATE}/{OFFENSE}/{FROM}/{TO} and you pass your Data.gov key as api_key.
+	•	Log status and await r.text() on failure to see the message.  ￼
+
+⸻
+
+6) NOAA (NCEI)
+
+You used the Search Service with dataset=daily-summaries. That’s OK for discovery, but to get actual weather values (temp/precip), use the Access Data Service (ADS) (no token) after you identify a station. Two‑step flow:
+	1.	Discover stations in a bbox for daily-summaries (Search Service):
+GET https://www.ncei.noaa.gov/access/services/search/v1/data?dataset=daily-summaries&bbox=N,W,S,E&startDate=2024-08-12&endDate=2025-08-12&available=true
+(Your bbox order is correct: N,W,S,E.)  ￼
+	2.	Pull daily data for the selected station with ADS:
+GET https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=USC00xxxxx&startDate=2024-08-12&endDate=2025-08-12&dataTypes=TMIN,TMAX,PRCP&format=json
+(ADS docs: datasets, stations, dataTypes, startDate/endDate.)  ￼
+
+Change in /api/tools/noaa:
+	•	Keep your discovery step (Search Service) to list nearby station candidates.
+	•	Add a second call (ADS) once the user picks a station (or auto‑pick nearest) to return real time‑series.  ￼
+
+⸻
+
+Minimal code deltas (what to actually edit)
+	•	BLS: build LAUCN${SS}${CCC}0000000003; body uses registrationKey.  ￼
+	•	BEA: DataSetName=Regional; TableName=CAGDP2 with GeoFIPS=MSA16740 for MSA GDP; CAINC1 with GeoFIPS=37119 for county PI.  ￼
+	•	HUD: Crosswalk API = GET /hudapi/public/usps?type=1&query=ZIP (Bearer token); vacancy requires downloading the USPS Vacancy CSV from HUD’s site and computing rates (no live JSON).  ￼
+	•	Foursquare: add Accept: application/json, cap limit to 50.  ￼
+	•	FBI: make sure path is /summarized/state/NC/violent-crime/2014/2023?api_key=...; log non‑200 body.  ￼
+	•	NOAA: after search, call ADS /access/services/data/v1 with dataset=daily-summaries&stations=...&dataTypes=...&startDate&endDate.  ￼
+
+⸻
+
+Quick test URLs for your current params
+	•	BLS (Mecklenburg county rate): series LAUCN371190000000003 via POST body (months 2020–2025).  ￼
+	•	BEA (Charlotte MSA GDP): DataSetName=Regional&TableName=CAGDP2&GeoFIPS=MSA16740&LineCode=1&Year=2015-2024&UserID=....  ￼
+	•	HUD Crosswalk: GET https://www.huduser.gov/hudapi/public/usps?type=1&query=28202 (Bearer token).  ￼
+	•	Foursquare: GET https://api.foursquare.com/v3/places/search?ll=35.2271,-80.8431&radius=1600&limit=50 with Authorization + Accept.  ￼
+	•	FBI: GET https://api.usa.gov/crime/fbi/sapi/api/summarized/state/NC/violent-crime/2014/2023?api_key=....  ￼
+	•	NOAA (discover): GET https://www.ncei.noaa.gov/access/services/search/v1/data?dataset=daily-summaries&bbox=35.327,-80.943,35.127,-80.743&startDate=2024-08-12&endDate=2025-08-12&available=true. Then pick a station and call ADS.  ￼
+
+⸻
+
+Add logging (so you see failures instantly)
+
+In every route, before you return on non‑200:
+
+if (!r.ok) {
+  const txt = await r.text();
+  console.error("[tools/<name>] fetch failed", { url, status: r.status, txt });
+  return res.status(r.status).json({ error: `Upstream ${r.status}`, details: txt });
+}
+
+
+⸻
+
+What I’d do next (in order)
+	1.	Patch BLS series id + key casing → verify rows render.  ￼
+	2.	Patch BEA table/GeoFIPS → verify rows render.  ￼
+	3.	Switch HUD to Crosswalk endpoint; add CSV loader for vacancy (cache the last 8 quarters).  ￼
+	4.	Add FSQ Accept header + limit clamp → should flood with POIs near 35.2271,-80.8431.  ￼
+	5.	Verify FBI URL and log failures; try property-crime if violent returns empty.  ￼
+	6.	NOAA: keep your Search tab, add the ADS fetch for a chosen station to show temp/precip charts.  ￼
+
+If you want, paste your five route files here and I’ll mark the exact line edits.

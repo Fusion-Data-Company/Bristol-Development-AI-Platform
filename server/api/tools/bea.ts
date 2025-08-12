@@ -55,7 +55,7 @@ router.get('/', async (req, res) => {
       TableName: tableName,
       LineCode: lineCode,
       GeoFIPS: geoFIPS,
-      Year: Array.from({length: parseInt(endYear.toString()) - parseInt(startYear.toString()) + 1}, (_, i) => (parseInt(startYear.toString()) + i).toString()).join(','),
+      Year: `${startYear}-${endYear}`,
       ResultFormat: "JSON"
     });
 

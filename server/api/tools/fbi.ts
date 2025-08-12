@@ -31,6 +31,7 @@ router.get('/', async (req, res) => {
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('[tools/fbi] fetch failed', { url, status: response.status, txt: errorText });
       throw new Error(`FBI API error: ${response.status} - ${errorText}`);
     }
 
