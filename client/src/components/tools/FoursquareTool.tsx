@@ -58,7 +58,7 @@ interface FoursquareData {
 }
 
 export function FoursquareTool() {
-  const [inputMode, setInputMode] = useState<'coordinates' | 'address'>('coordinates');
+  const [inputMode, setInputMode] = useState<'coordinates' | 'address'>('address');
   const [lat, setLat] = useState("35.2271"); // Charlotte default
   const [lng, setLng] = useState("-80.8431");
   const [address, setAddress] = useState("100 N Tryon St, Charlotte, NC"); // Charlotte default
