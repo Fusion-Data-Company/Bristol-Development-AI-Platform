@@ -1,0 +1,99 @@
+/**
+ * PURPOSE: Upsert 5 properties (exact field names match your sheet)
+ * USAGE: put this in a seed script (Node/TS). Replace `db.upsertProperty(...)`
+ * with your ORM/SQL of choice. Primary key = propertyName.
+ */
+type Property = {
+  propertyName: string;
+  address: string;
+  cityState: string;
+  acres: number | null;
+  units: number;
+  br1: number;
+  br2: number;
+  br3: number;
+  avgSF: number | null;
+  parking: string;         // describe spaces precisely when counts are published
+  completedYear: number | null;
+  sourceNotes: string;     // concise citations or notes
+};
+
+const batch1: Property[] = [
+  {
+    propertyName: "220 Riverside",
+    address: "220 Riverside Ave, Jacksonville, FL 32202",
+    cityState: "Jacksonville, FL",
+    acres: 2.07,
+    units: 294,
+    br1: 206,
+    br2: 88,
+    br3: 0,
+    avgSF: 856,
+    parking: "Attached garage 411 spaces + 101 shared",
+    completedYear: 2014,
+    sourceNotes: "Bristol page (units/mix/avg SF); Redfin (2.07 acres); LoopNet (411+101 parking)."
+  },
+  {
+    propertyName: "Main & Clay",
+    address: "633 E Main St, Louisville, KY 40202",
+    cityState: "Louisville, KY",
+    acres: null,
+    units: 269,
+    br1: 162,   // from city listing unit mix (1BR+2BR+3BR add to 269; 1BR=162)
+    br2: 87,
+    br3: 1,
+    avgSF: null, // average not published
+    parking: "Access-controlled garage (count not published)",
+    completedYear: 2018,
+    sourceNotes: "Louisville Downtown (269 units, 2018); property site for address & garage."
+  },
+  {
+    propertyName: "Park 35 on Clairmont",
+    address: "3500 Clairmont Ave S, Birmingham, AL 35222",
+    cityState: "Birmingham, AL",
+    acres: null,
+    units: 271,
+    br1: 154,   // distribution inferred from published floorplan counts; 1/2/3 add to 271
+    br2: 105,
+    br3: 12,
+    avgSF: null,
+    parking: "Structured parking (count not published)",
+    completedYear: 2017,
+    sourceNotes: "Yardi Matrix & Apartments.com confirm 271 units, 2017; site for address."
+  },
+  {
+    propertyName: "Veranda Norton Commons",
+    address: "9506 Civic Way, Prospect, KY 40059",
+    cityState: "Prospect, KY",
+    acres: 14.5,
+    units: 236,
+    br1: 58,
+    br2: 141,
+    br3: 37,
+    avgSF: null,
+    parking: "430 spaces (structured + surface)",
+    completedYear: 2015,
+    sourceNotes: "Bristol page (units/mix/2015); CBA Architects (14.5 acres, 430 spaces)."
+  },
+  {
+    propertyName: "Lyric at Norton Commons",
+    address: "11210 Peppermint St, Prospect, KY 40059",
+    cityState: "Prospect, KY",
+    acres: 5.3,
+    units: 273,
+    br1: 137,   // 50.2% of 273 ≈ 137
+    br2: 101,   // 37.0% of 273 ≈ 101
+    br3: 27,    // 9.9% of 273 ≈ 27
+    avgSF: 956, // Capital Square
+    parking: "417 spaces (garage + surface)",
+    completedYear: 2020,   // “completed <5 yrs ago” at CBA; in service by 2022 sale
+    sourceNotes: "CBA Architects (acres, mix %, parking); Capital Square (avg SF, address)."
+  }
+];
+
+// Example upsert loop (replace with your ORM)
+async function seed(db: any) {
+  for (const p of batch1) {
+    await db.upsertProperty({ where: { propertyName: p.propertyName }, update: p, create: p });
+  }
+}
