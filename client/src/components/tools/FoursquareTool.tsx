@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,9 +80,9 @@ export function FoursquareTool() {
   };
 
   // Debug logging when data changes
-  if (data) {
-    console.log('Foursquare Tool: Received data:', data);
-  }
+  React.useEffect(() => {
+    console.log('Foursquare Tool: Data changed:', { hasData: !!data, data });
+  }, [data]);
 
   const handleSaveSnapshot = async () => {
     if (!data) return;
