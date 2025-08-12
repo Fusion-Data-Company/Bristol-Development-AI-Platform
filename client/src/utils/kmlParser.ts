@@ -1,203 +1,203 @@
-import { DOMParser } from '@xmldom/xmldom';
-
 export interface KMLFeature {
   id: string;
   name: string;
   description?: string;
+  properties: Record<string, any>;
   geometry: {
-    type: 'Point' | 'LineString' | 'Polygon';
+    type: string;
     coordinates: number[] | number[][] | number[][][];
   };
-  properties: Record<string, any>;
 }
 
 export interface KMLData {
-  type: 'FeatureCollection';
+  name: string;
+  description?: string;
   features: KMLFeature[];
-  networkLinks?: {
-    name: string;
-    href: string;
-  }[];
 }
 
-export function parseKML(kmlString: string): KMLData {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(kmlString, 'text/xml');
-  
-  const features: KMLFeature[] = [];
-  const networkLinks: { name: string; href: string }[] = [];
-  
-  // Parse NetworkLinks
-  const networkLinkElements = doc.getElementsByTagName('NetworkLink');
-  for (let i = 0; i < networkLinkElements.length; i++) {
-    const networkLink = networkLinkElements[i];
-    const nameElement = networkLink.getElementsByTagName('name')[0];
-    const linkElement = networkLink.getElementsByTagName('Link')[0];
-    const hrefElement = linkElement?.getElementsByTagName('href')[0];
-    
-    if (nameElement && hrefElement) {
-      networkLinks.push({
-        name: nameElement.textContent || '',
-        href: hrefElement.textContent || ''
-      });
-    }
-  }
-  
-  // Parse Placemarks
-  const placemarks = doc.getElementsByTagName('Placemark');
-  
-  for (let i = 0; i < placemarks.length; i++) {
-    const placemark = placemarks[i];
-    const feature = parsePlacemark(placemark, i);
-    if (feature) {
-      features.push(feature);
-    }
-  }
-  
-  return {
-    type: 'FeatureCollection',
-    features,
-    networkLinks
-  };
-}
-
-function parsePlacemark(placemark: Element, index: number): KMLFeature | null {
-  const nameElement = placemark.getElementsByTagName('name')[0];
-  const descriptionElement = placemark.getElementsByTagName('description')[0];
-  
-  const name = nameElement?.textContent || `Feature ${index + 1}`;
-  const description = descriptionElement?.textContent || '';
-  
-  // Parse geometry
-  let geometry: KMLFeature['geometry'] | null = null;
-  
-  // Check for Point
-  const pointElement = placemark.getElementsByTagName('Point')[0];
-  if (pointElement) {
-    const coordinates = parseCoordinates(pointElement.getElementsByTagName('coordinates')[0]);
-    if (coordinates && coordinates.length > 0) {
-      geometry = {
-        type: 'Point',
-        coordinates: coordinates[0]
-      };
-    }
-  }
-  
-  // Check for LineString
-  const lineStringElement = placemark.getElementsByTagName('LineString')[0];
-  if (lineStringElement) {
-    const coordinates = parseCoordinates(lineStringElement.getElementsByTagName('coordinates')[0]);
-    if (coordinates) {
-      geometry = {
-        type: 'LineString',
-        coordinates: coordinates
-      };
-    }
-  }
-  
-  // Check for Polygon
-  const polygonElement = placemark.getElementsByTagName('Polygon')[0];
-  if (polygonElement) {
-    const outerBoundary = polygonElement.getElementsByTagName('outerBoundaryIs')[0];
-    const linearRing = outerBoundary?.getElementsByTagName('LinearRing')[0];
-    const coordinates = parseCoordinates(linearRing?.getElementsByTagName('coordinates')[0]);
-    
-    if (coordinates) {
-      geometry = {
-        type: 'Polygon',
-        coordinates: [coordinates]
-      };
-    }
-  }
-  
-  if (!geometry) {
-    return null;
-  }
-  
-  return {
-    id: `kml-feature-${index}`,
-    name,
-    description,
-    geometry,
-    properties: {
-      description
-    }
-  };
-}
-
-function parseCoordinates(coordinatesElement: Element | undefined): number[][] | null {
-  if (!coordinatesElement || !coordinatesElement.textContent) {
-    return null;
-  }
-  
-  const coordinatesText = coordinatesElement.textContent.trim();
-  const coordinateTuples = coordinatesText.split(/\s+/);
-  
-  const coordinates: number[][] = [];
-  
-  for (const tuple of coordinateTuples) {
-    const parts = tuple.split(',');
-    if (parts.length >= 2) {
-      const lon = parseFloat(parts[0]);
-      const lat = parseFloat(parts[1]);
-      const alt = parts.length > 2 ? parseFloat(parts[2]) : 0;
-      
-      if (!isNaN(lon) && !isNaN(lat)) {
-        coordinates.push([lon, lat, alt]);
-      }
-    }
-  }
-  
-  return coordinates;
-}
-
-export async function fetchNetworkLink(href: string): Promise<KMLData | null> {
+export function parseKML(kmlText: string): KMLData {
   try {
-    console.log('Attempting to fetch NetworkLink:', href);
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
     
-    // For PARLAY URLs, use our server proxy to handle KMZ extraction
-    if (href.includes('reportallusa.com/parlay/gearth_layers2.kmz')) {
-      console.log('Using server proxy for PARLAY KMZ...');
-      const response = await fetch('/api/proxy/parlay');
-      
-      if (!response.ok) {
-        throw new Error(`Server proxy failed: ${response.status}`);
-      }
-      
-      const kmlContent = await response.text();
-      console.log('Received KML from server proxy, length:', kmlContent.length);
-      return parseKML(kmlContent);
+    // Check for parsing errors
+    const parserError = xmlDoc.querySelector('parsererror');
+    if (parserError) {
+      throw new Error('Invalid KML format');
     }
     
-    // For other URLs, try direct fetch
-    const response = await fetch(href, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*',
-        'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)'
+    const kmlElement = xmlDoc.querySelector('kml');
+    if (!kmlElement) {
+      throw new Error('No KML element found');
+    }
+    
+    const documentElement = kmlElement.querySelector('Document') || kmlElement;
+    const documentName = documentElement.querySelector('name')?.textContent || 'Unnamed KML';
+    const documentDescription = documentElement.querySelector('description')?.textContent;
+    
+    const features: KMLFeature[] = [];
+    
+    // Parse Placemarks
+    const placemarks = documentElement.querySelectorAll('Placemark');
+    placemarks.forEach((placemark, index) => {
+      const feature = parsePlacemark(placemark, index);
+      if (feature) {
+        features.push(feature);
       }
     });
     
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+    // Parse Folders recursively
+    const folders = documentElement.querySelectorAll('Folder');
+    folders.forEach(folder => {
+      const folderPlacemarks = folder.querySelectorAll('Placemark');
+      folderPlacemarks.forEach((placemark, index) => {
+        const feature = parsePlacemark(placemark, features.length + index);
+        if (feature) {
+          features.push(feature);
+        }
+      });
+    });
     
-    const contentType = response.headers.get('content-type') || '';
-    console.log('Response content type:', contentType);
-    
-    if (contentType.includes('application/xml') || href.endsWith('.kml')) {
-      const kmlContent = await response.text();
-      console.log('Processing KML content, length:', kmlContent.length);
-      return parseKML(kmlContent);
-    }
-    
-    return null;
+    return {
+      name: documentName,
+      description: documentDescription,
+      features
+    };
     
   } catch (error) {
-    console.error('Error fetching network link:', error);
+    console.error('Error parsing KML:', error);
+    throw new Error(`Failed to parse KML: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+function parsePlacemark(placemark: Element, index: number): KMLFeature | null {
+  try {
+    const name = placemark.querySelector('name')?.textContent || `Feature ${index + 1}`;
+    const description = placemark.querySelector('description')?.textContent;
+    
+    // Extract properties from ExtendedData
+    const properties: Record<string, any> = {};
+    const extendedData = placemark.querySelector('ExtendedData');
+    if (extendedData) {
+      const simpleData = extendedData.querySelectorAll('SimpleData');
+      simpleData.forEach(data => {
+        const key = data.getAttribute('name');
+        const value = data.textContent;
+        if (key && value) {
+          properties[key] = value;
+        }
+      });
+    }
+    
+    // Parse geometry
+    const geometry = parseGeometry(placemark);
+    if (!geometry) {
+      console.warn(`No geometry found for placemark: ${name}`);
+      return null;
+    }
+    
+    return {
+      id: `feature-${index}`,
+      name,
+      description,
+      properties,
+      geometry
+    };
+    
+  } catch (error) {
+    console.error('Error parsing placemark:', error);
     return null;
   }
 }
 
-// Server handles KMZ extraction - no client-side KMZ processing needed
+function parseGeometry(element: Element): { type: string; coordinates: any } | null {
+  // Point
+  const point = element.querySelector('Point coordinates');
+  if (point) {
+    const coords = parseCoordinates(point.textContent || '');
+    if (coords.length > 0) {
+      return {
+        type: 'Point',
+        coordinates: coords[0]
+      };
+    }
+  }
+  
+  // LineString
+  const lineString = element.querySelector('LineString coordinates');
+  if (lineString) {
+    const coords = parseCoordinates(lineString.textContent || '');
+    return {
+      type: 'LineString',
+      coordinates: coords
+    };
+  }
+  
+  // Polygon
+  const polygon = element.querySelector('Polygon');
+  if (polygon) {
+    const outerBoundary = polygon.querySelector('outerBoundaryIs LinearRing coordinates');
+    if (outerBoundary) {
+      const coords = parseCoordinates(outerBoundary.textContent || '');
+      const rings = [coords];
+      
+      // Handle inner boundaries (holes)
+      const innerBoundaries = polygon.querySelectorAll('innerBoundaryIs LinearRing coordinates');
+      innerBoundaries.forEach(inner => {
+        const innerCoords = parseCoordinates(inner.textContent || '');
+        if (innerCoords.length > 0) {
+          rings.push(innerCoords);
+        }
+      });
+      
+      return {
+        type: 'Polygon',
+        coordinates: rings
+      };
+    }
+  }
+  
+  // MultiGeometry
+  const multiGeometry = element.querySelector('MultiGeometry');
+  if (multiGeometry) {
+    const geometries: any[] = [];
+    
+    // Collect all sub-geometries
+    multiGeometry.querySelectorAll('Point, LineString, Polygon').forEach(geom => {
+      const subGeometry = parseGeometry(geom);
+      if (subGeometry) {
+        geometries.push(subGeometry);
+      }
+    });
+    
+    if (geometries.length > 0) {
+      return {
+        type: 'GeometryCollection',
+        coordinates: geometries
+      };
+    }
+  }
+  
+  return null;
+}
+
+function parseCoordinates(coordText: string): number[][] {
+  try {
+    const coordinates: number[][] = [];
+    const tuples = coordText.trim().split(/\s+/);
+    
+    for (const tuple of tuples) {
+      const coords = tuple.split(',').map(c => parseFloat(c.trim())).filter(n => !isNaN(n));
+      if (coords.length >= 2) {
+        // KML format is longitude,latitude,altitude (optional)
+        // Convert to [longitude, latitude] for GeoJSON compatibility
+        coordinates.push([coords[0], coords[1]]);
+      }
+    }
+    
+    return coordinates;
+  } catch (error) {
+    console.error('Error parsing coordinates:', error);
+    return [];
+  }
+}

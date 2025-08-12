@@ -1,0 +1,144 @@
+That warning means your table is rendering two header/cell elements with the same React key — specifically "state" and "acreage". In practice this happens when:
+	•	your columns array has duplicate id / accessorKey values (e.g., two different columns both using "state" or "acreage"), and/or
+	•	your map code is using something like key={column.id || column.accessorKey} so those duplicates collide.
+
+Let’s fix it cleanly.
+
+⸻
+
+1) Make every column ID unique (source of truth)
+
+In your SitesTable.tsx (or wherever you define columns), ensure each column has a unique id. If two columns read the same field, give one an explicit id and use an accessorFn.
+
+// SitesTable.tsx (columns excerpt) — make IDs unique
+import { ColumnDef } from "@tanstack/react-table";
+
+type Site = {
+  propertyName: string;
+  address: string;
+  cityState: string;
+  state?: string;       // if you keep a separate state field
+  acreage?: number;
+  acres?: number;       // some data may use 'acres' instead of 'acreage'
+  units?: number;
+  status?: string;
+  // ... other fields
+};
+
+export const columns: ColumnDef<Site>[] = [
+  { id: "propertyName", header: "Property", accessorKey: "propertyName" },
+  { id: "address", header: "Address", accessorKey: "address" },
+  { id: "cityState", header: "City, State", accessorKey: "cityState" },
+
+  // ✅ if you have a 'state' column, make its id unique (NOT "state" twice)
+  { id: "stateAbbr", header: "State", accessorKey: "state" },
+
+  // ✅ If you previously had both "acreage" and "acres", unify or alias one:
+  // Option A: prefer 'acres' everywhere
+  { id: "acres", header: "Acres", accessorFn: r => r.acres ?? r.acreage ?? null },
+
+  // your other unique columns...
+  { id: "units", header: "Units", accessorKey: "units" },
+  { id: "status", header: "Status", accessorKey: "status" },
+];
+
+If you actually want two different “state” columns (e.g., state name vs. state code), give them different ids like "stateName" and "stateCode" and use different accessorFns.
+
+⸻
+
+2) Use TanStack’s stable IDs for keys (not raw field names)
+
+Where you render headers/cells, use header.id and cell.id, which are guaranteed unique by the table instance. Avoid reusing raw accessorKey as your React key.
+
+// SitesTable.tsx — render (relevant bits)
+<Table>
+  <TableHeader>
+    {table.getHeaderGroups().map(hg => (
+      <TableRow key={hg.id}>
+        {hg.headers.map(h => (
+          <TableHead key={h.id}>
+            {h.isPlaceholder ? null : h.column.columnDef.header as React.ReactNode}
+          </TableHead>
+        ))}
+      </TableRow>
+    ))}
+  </TableHeader>
+
+  <TableBody>
+    {table.getRowModel().rows.map(row => (
+      <TableRow key={row.id}>
+        {row.getVisibleCells().map(cell => (
+          <TableCell key={cell.id}>
+            {cell.renderCell ? cell.renderCell() : cell.getValue() as any}
+          </TableCell>
+        ))}
+      </TableRow>
+    ))}
+  </TableBody>
+</Table>
+
+If you’re not using TanStack’s helpers, at minimum: key={col-${index}-${col.id}} for headers, and key={${row.id}-${col.id}} for cells.
+
+⸻
+
+3) Quick guard: assert uniqueness at runtime (helps catch regressions)
+
+Drop this in near your columns to fail fast during dev:
+
+function assertUniqueColumnIds(cols: { id?: string; accessorKey?: string }[]) {
+  const seen = new Set<string>();
+  for (const c of cols) {
+    const id = (c as any).id ?? (c as any).accessorKey;
+    if (!id) continue;
+    if (seen.has(id)) {
+      throw new Error(`Duplicate column id/accessorKey detected: "${id}"`);
+    }
+    seen.add(id);
+  }
+}
+
+assertUniqueColumnIds(columns);
+
+
+⸻
+
+4) If your UI table wrapper creates keys, fix them too
+
+You’ve got stack frames in src/components/ui/table.tsx (lines 20/46/102). Ensure that component also uses unique keys:
+
+// components/ui/table.tsx (example)
+export function TableHeader({ groups }) {
+  return (
+    <thead>
+      {groups.map((hg: any) => (
+        <tr key={hg.id}>
+          {hg.headers.map((h: any) => (
+            <th key={h.id}>{/* ... */}</th>
+          ))}
+        </tr>
+      ))}
+    </thead>
+  );
+}
+
+If it’s currently doing key={header.column.id || header.column.accessorKey}, switch to key={header.id}.
+
+⸻
+
+5) Common culprits (check these in your codebase)
+	•	You imported two columns with the same accessorKey: "state" from different files.
+	•	You kept both acres and acreage as separate columns unintentionally. Merge into one as shown.
+	•	You spread a base columns array and then pushed a duplicate, e.g.:
+
+const cols = [...baseCols, ...extraCols, { accessorKey: "state" }]; // duplicates "state"
+
+
+
+⸻
+
+TL;DR fix path
+	1.	Make column ids unique (stateAbbr, acres via accessorFn, etc.).
+	2.	Render keys with header.id / cell.id.
+	3.	Add the assertUniqueColumnIds(columns) check in dev.
+
+Ping me with the current columns array if you want me to patch it line‑by‑line.

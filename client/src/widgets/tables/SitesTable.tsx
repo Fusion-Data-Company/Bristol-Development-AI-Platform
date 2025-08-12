@@ -224,49 +224,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       size: 100,
       cell: createEditableCell('longitude', 'number'),
     },
-    {
-      accessorKey: 'acreage',
-      header: 'Acreage',
-      size: 80,
-      cell: createEditableCell('acreage', 'number'),
-    },
-    {
-      accessorKey: 'state',
-      header: 'State',
-      cell: ({ row, column }) => {
-        const site = row.original;
-        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
-        const value = row.getValue('state') as string;
-        
-        if (isEditing) {
-          return (
-            <Input
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              onBlur={() => handleCellEdit(site, 'state', editValue)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleCellEdit(site, 'state', editValue);
-                if (e.key === 'Escape') setEditingCell(null);
-              }}
-              className="h-8 w-full"
-              autoFocus
-            />
-          );
-        }
-        
-        return (
-          <div 
-            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded"
-            onClick={() => {
-              setEditingCell({ rowId: site.id, columnId: column.id });
-              setEditValue(value || '');
-            }}
-          >
-            {value || '—'}
-          </div>
-        );
-      },
-    },
+
     {
       accessorKey: 'unitsTotal',
       header: ({ column }) => (
