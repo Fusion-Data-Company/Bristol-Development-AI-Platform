@@ -7,6 +7,26 @@ function pad(n: string | number, len: number) {
   return String(n).padStart(len, "0");
 }
 
+function respondOk(res: express.Response, payload: any) {
+  const rows = payload.rows || [];
+  return res.status(200).json({
+    ...payload,
+    ok: true,
+    hasData: rows.length > 0,
+    data: rows
+  });
+}
+
+function respondErr(res: express.Response, status: number, error: string, details?: string) {
+  return res.status(status).json({
+    ok: false,
+    hasData: false,
+    data: [],
+    error,
+    details
+  });
+}
+
 // BLS API endpoint for employment data
 router.get('/', async (req, res) => {
   try {
@@ -18,10 +38,10 @@ router.get('/', async (req, res) => {
     const end = String(q.end ?? "2025-12");
     
     if (level !== "county") {
-      return res.status(400).json({ ok: false, error: "Only level=county supported in this route." });
+      return respondErr(res, 400, "Only level=county supported in this route.");
     }
     if (!state || !county) {
-      return res.status(400).json({ ok: false, error: "state (2-digit FIPS) and county (3-digit FIPS) required" });
+      return respondErr(res, 400, "state (2-digit FIPS) and county (3-digit FIPS) required");
     }
 
     // Create cache key
@@ -50,7 +70,7 @@ router.get('/', async (req, res) => {
     const text = await r.text();
     if (!r.ok) {
       console.error("[BLS] fetch failed", { status: r.status, text });
-      return res.status(r.status).json({ ok: false, error: `BLS ${r.status}`, details: text });
+      return respondErr(res, r.status, `BLS ${r.status}`, text);
     }
 
     const j = JSON.parse(text);
@@ -64,7 +84,6 @@ router.get('/', async (req, res) => {
       .sort((a: any, b: any) => a.date.localeCompare(b.date));
 
     const result = {
-      ok: true,
       params: { level, state, county, start, end, seriesId },
       rows,
       meta: { label: "Unemployment rate (%)", source: "BLS LAUS" }
@@ -72,11 +91,11 @@ router.get('/', async (req, res) => {
 
     // Cache for 10 minutes
     setCache(key, result, 10 * 60 * 1000);
-    return res.json(result);
+    return respondOk(res, result);
 
   } catch (e: any) {
     console.error("[BLS] error", e);
-    return res.status(500).json({ ok: false, error: e.message });
+    return respondErr(res, 500, e.message);
   }
 });
 

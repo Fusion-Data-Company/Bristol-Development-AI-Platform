@@ -3,6 +3,26 @@ import { getCache, setCache } from '../../tools/cache';
 
 const router = express.Router();
 
+function respondOk(res: express.Response, payload: any) {
+  const rows = payload.rows || [];
+  return res.status(200).json({
+    ...payload,
+    ok: true,
+    hasData: rows.length > 0,
+    data: rows
+  });
+}
+
+function respondErr(res: express.Response, status: number, error: string, details?: string) {
+  return res.status(status).json({
+    ok: false,
+    hasData: false,
+    data: [],
+    error,
+    details
+  });
+}
+
 const HUD_BASE = "https://www.huduser.gov";
 const CROSSWALK = `${HUD_BASE}/hudapi/public/usps`;
 
@@ -18,7 +38,7 @@ router.get('/:mode/:zip/:lookbackQ', async (req, res) => {
   try {
     const { mode = "crosswalk", zip, lookbackQ = "8" } = req.params;
     if (!zip) {
-      return res.status(400).json({ ok: false, error: "zip required" });
+      return respondErr(res, 400, "zip required");
     }
 
     if (mode === "crosswalk") {
@@ -40,9 +60,9 @@ router.get('/:mode/:zip/:lookbackQ', async (req, res) => {
         res_ratio: r.res_ratio ?? null
       }));
 
-      const out = { ok: true, params: { mode, zip }, rows, meta: { source: "HUD USPS Crosswalk" } };
+      const out = { params: { mode, zip }, rows, meta: { source: "HUD USPS Crosswalk" } };
       setCache(key, out, 12 * 60 * 60 * 1000);
-      return res.json(out);
+      return respondOk(res, out);
     }
 
     if (mode === "vacancy") {
@@ -66,7 +86,7 @@ router.get('/:mode/:zip/:lookbackQ', async (req, res) => {
       const totIdx = idx("RESIDENTIAL_TOTAL") !== -1 ? idx("RESIDENTIAL_TOTAL") : idx("total");
 
       if (zipIdx === -1 || qIdx === -1 || vacIdx === -1 || totIdx === -1) {
-        return res.status(500).json({ ok: false, error: "HUD CSV columns not found (schema changed)" });
+        return respondErr(res, 500, "HUD CSV columns not found (schema changed)");
       }
 
       const allRows = lines.map(line => line.split(",")).filter(cols => cols[zipIdx] === zip);
@@ -81,15 +101,15 @@ router.get('/:mode/:zip/:lookbackQ', async (req, res) => {
         .slice(-Number(lookbackQ))
         .map(r => ({ ...r, vacancy_rate: r.vacant / r.total }));
 
-      const out = { ok: true, params: { mode, zip, lookbackQ }, rows, meta: { source: "HUD USPS Vacancy CSV (latest)" } };
+      const out = { params: { mode, zip, lookbackQ }, rows, meta: { source: "HUD USPS Vacancy CSV (latest)" } };
       setCache(key, out, 24 * 60 * 60 * 1000);
-      return res.json(out);
+      return respondOk(res, out);
     }
 
-    return res.status(400).json({ ok: false, error: `Unsupported mode: ${mode}` });
+    return respondErr(res, 400, `Unsupported mode: ${mode}`);
   } catch (e: any) {
     console.error("[HUD] error", e);
-    return res.status(500).json({ ok: false, error: e.message });
+    return respondErr(res, 500, e.message);
   }
 });
 

@@ -31,26 +31,23 @@ ChartJS.register(
 );
 
 interface BLSData {
-  label: string;
-  level: string;
-  state: string;
-  county: string;
-  msa: string;
+  ok: boolean;
+  params: {
+    level: string;
+    state: string;
+    county: string;
+    start: string;
+    end: string;
+    seriesId: string;
+  };
   rows: Array<{
     date: string;
     value: number;
-    year: number;
-    month: number;
   }>;
-  metrics: {
-    latest: number;
-    change12Mo: number | null;
-    change24Mo: number | null;
-    changePercent12Mo: number | null;
-    changePercent24Mo: number | null;
+  meta: {
+    label: string;
+    source: string;
   };
-  dataSource: string;
-  lastUpdated: string;
 }
 
 export function BLSTool() {
@@ -135,7 +132,7 @@ export function BLSTool() {
     labels: data.rows.map(row => row.date),
     datasets: [
       {
-        label: data.label,
+        label: data.meta.label,
         data: data.rows.map(row => row.value),
         borderColor: '#D4A574', // Bristol gold
         backgroundColor: '#D4A574',
@@ -300,7 +297,7 @@ export function BLSTool() {
       {!isLoading && !data && !error && <div className="text-gray-600">Click "Run Analysis" to fetch data</div>}
       
       {/* Results */}
-      {data && (
+      {data && data.ok && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
@@ -309,7 +306,9 @@ export function BLSTool() {
                 <CardTitle className="text-sm text-gray-600">Current Rate</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{data.metrics.latest.toFixed(1)}%</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {data.rows.length > 0 ? `${data.rows[data.rows.length - 1].value.toFixed(1)}%` : 'N/A'}
+                </div>
               </CardContent>
             </Card>
 
@@ -319,7 +318,10 @@ export function BLSTool() {
               </CardHeader>
               <CardContent>
                 <div className="text-lg text-gray-900">
-                  {formatChange(data.metrics.change12Mo)} 
+                  {data.rows.length >= 12 ? 
+                    formatChange(data.rows[data.rows.length - 1].value - data.rows[data.rows.length - 12].value)
+                    : 'N/A'
+                  }
                   <span className="text-sm text-gray-500">pts</span>
                 </div>
               </CardContent>
@@ -327,12 +329,11 @@ export function BLSTool() {
 
             <Card className="bg-white border-gray-300 shadow-md">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-600">24-Month Change</CardTitle>
+                <CardTitle className="text-sm text-gray-600">Data Points</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-lg text-gray-900">
-                  {formatChange(data.metrics.change24Mo)}
-                  <span className="text-sm text-gray-500">pts</span>
+                  {data.rows.length} months
                 </div>
               </CardContent>
             </Card>
@@ -342,9 +343,9 @@ export function BLSTool() {
           <div className="lg:col-span-2">
             <Card className="bg-white border-gray-300 shadow-md">
               <CardHeader>
-                <CardTitle className="text-gray-900">{data.label} Over Time</CardTitle>
+                <CardTitle className="text-gray-900">{data.meta.label} Over Time</CardTitle>
                 <CardDescription className="text-gray-600">
-                  Data from {data.dataSource} • Last updated: {new Date(data.lastUpdated).toLocaleDateString()}
+                  Data from {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -357,6 +358,20 @@ export function BLSTool() {
             </Card>
           </div>
         </div>
+      )}
+
+      {/* Error Display */}
+      {data && !data.ok && (
+        <Card className="bg-red-50 border-red-200 shadow-md">
+          <CardHeader>
+            <CardTitle className="text-red-800">Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-red-700">
+              {(data as any).error || 'Failed to fetch data'}
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

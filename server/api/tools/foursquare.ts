@@ -3,6 +3,26 @@ import { getCache, setCache } from '../../tools/cache';
 
 const router = express.Router();
 
+function respondOk(res: express.Response, payload: any) {
+  const rows = payload.rows || [];
+  return res.status(200).json({
+    ...payload,
+    ok: true,
+    hasData: rows.length > 0,
+    data: rows
+  });
+}
+
+function respondErr(res: express.Response, status: number, error: string, details?: string) {
+  return res.status(status).json({
+    ok: false,
+    hasData: false,
+    data: [],
+    error,
+    details
+  });
+}
+
 const DEFAULT_CATS = "17069,13032,13000,13003,18021,16032,17014,19046";
 const WEIGHTS: Record<string, number> = {
   "17069": 2.0, "13032": 1.5, "13000": 1.0, "13003": 0.8,
@@ -20,7 +40,7 @@ router.get('/:lat/:lng/:radius', async (req, res) => {
     const limitNum = Math.min(Number(limit), 50);
     
     if (!Number.isFinite(latNum) || !Number.isFinite(lngNum)) {
-      return res.status(400).json({ ok: false, error: "lat,lng required" });
+      return respondErr(res, 400, "lat,lng required");
     }
 
     const key = `fsq:${lat}:${lng}:${radius}:${categories}:${limit}`;
@@ -44,7 +64,7 @@ router.get('/:lat/:lng/:radius', async (req, res) => {
     const text = await r.text();
     if (!r.ok) {
       console.error("[FSQ] fetch failed", { url: url.toString(), status: r.status, text });
-      return res.status(r.status).json({ ok: false, error: `Foursquare ${r.status}`, details: text });
+      return respondErr(res, r.status, `Foursquare ${r.status}`, text);
     }
 
     const j = JSON.parse(text);
@@ -69,16 +89,15 @@ router.get('/:lat/:lng/:radius', async (req, res) => {
     const score = Object.values(byCategory).reduce((acc, c) => acc + c.count * c.weight, 0);
 
     const out = {
-      ok: true,
       params: { lat: latNum, lng: lngNum, radius: Number(radius), categories: String(categories), limit: limitNum },
       rows: places,
       meta: { score, byCategory: Object.values(byCategory), source: "Foursquare Places v3" }
     };
     setCache(key, out, 60 * 60 * 1000);
-    return res.json(out);
+    return respondOk(res, out);
   } catch (e: any) {
     console.error("[FSQ] error", e);
-    return res.status(500).json({ ok: false, error: e.message });
+    return respondErr(res, 500, e.message);
   }
 });
 

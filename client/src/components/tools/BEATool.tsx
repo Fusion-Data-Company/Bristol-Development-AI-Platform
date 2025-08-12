@@ -31,25 +31,25 @@ ChartJS.register(
 );
 
 interface BEAData {
-  label: string;
-  geo: string;
-  msa: string;
-  state: string;
-  county: string;
+  ok: boolean;
+  params: {
+    geo: string;
+    msa: string;
+    state: string;
+    county: string;
+    startYear: string;
+    endYear: string;
+    table: string;
+    geoFips: string;
+  };
   rows: Array<{
     year: number;
     value: number;
-    unit: string;
   }>;
-  metrics: {
-    latest: number;
-    change1Yr: number | null;
-    changePercent1Yr: number | null;
-    cagr5Yr: number | null;
-    unit: string;
+  meta: {
+    label: string;
+    source: string;
   };
-  dataSource: string;
-  lastUpdated: string;
 }
 
 export function BEATool() {
@@ -118,8 +118,8 @@ export function BEATool() {
     if (!data) return;
     
     const csvContent = "data:text/csv;charset=utf-8," + 
-      "Year,Value,Unit\n" +
-      data.rows.map(row => `${row.year},${row.value},"${row.unit}"`).join("\n");
+      "Year,Value\n" +
+      data.rows.map(row => `${row.year},${row.value}`).join("\n");
     
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -134,7 +134,7 @@ export function BEATool() {
     labels: data.rows.map(row => row.year.toString()),
     datasets: [
       {
-        label: data.label,
+        label: data.meta.label,
         data: data.rows.map(row => row.value),
         borderColor: '#D4A574', // Bristol gold
         backgroundColor: '#D4A574',
@@ -317,7 +317,7 @@ export function BEATool() {
       {!isLoading && !data && !error && <div className="text-gray-600">Click "Run Analysis" to fetch data</div>}
       
       {/* Results */}
-      {data && (
+      {data && data.ok && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
@@ -326,8 +326,10 @@ export function BEATool() {
                 <CardTitle className="text-sm text-gray-600">Latest Value</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-gray-900">{formatCurrency(data.metrics.latest)}</div>
-                <div className="text-xs text-gray-500">{data.metrics.unit}</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {data.rows.length > 0 ? formatCurrency(data.rows[data.rows.length - 1].value) : 'N/A'}
+                </div>
+                <div className="text-xs text-gray-500">USD</div>
               </CardContent>
             </Card>
 
@@ -337,18 +339,21 @@ export function BEATool() {
               </CardHeader>
               <CardContent>
                 <div className="text-lg text-gray-900">
-                  {formatChange(data.metrics.changePercent1Yr, true)}
+                  {data.rows.length >= 2 ? 
+                    formatChange(((data.rows[data.rows.length - 1].value - data.rows[data.rows.length - 2].value) / data.rows[data.rows.length - 2].value) * 100, true) 
+                    : 'N/A'
+                  }
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white border-gray-300 shadow-md">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-600">5-Year CAGR</CardTitle>
+                <CardTitle className="text-sm text-gray-600">Data Points</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-lg text-gray-900">
-                  {formatChange(data.metrics.cagr5Yr, true)}
+                  {data.rows.length} years
                 </div>
               </CardContent>
             </Card>
@@ -358,9 +363,9 @@ export function BEATool() {
           <div className="lg:col-span-2">
             <Card className="bg-white border-gray-300 shadow-md">
               <CardHeader>
-                <CardTitle className="text-gray-900">{data.label} Over Time</CardTitle>
+                <CardTitle className="text-gray-900">{data.meta.label} Over Time</CardTitle>
                 <CardDescription className="text-gray-600">
-                  Data from {data.dataSource} • Last updated: {new Date(data.lastUpdated).toLocaleDateString()}
+                  Data from {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>

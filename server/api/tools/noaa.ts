@@ -3,6 +3,26 @@ import { getCache, setCache } from '../../tools/cache';
 
 const router = express.Router();
 
+function respondOk(res: express.Response, payload: any) {
+  const rows = payload.rows || [];
+  return res.status(200).json({
+    ...payload,
+    ok: true,
+    hasData: rows.length > 0,
+    data: rows
+  });
+}
+
+function respondErr(res: express.Response, status: number, error: string, details?: string) {
+  return res.status(status).json({
+    ok: false,
+    hasData: false,
+    data: [],
+    error,
+    details
+  });
+}
+
 function bboxAround(lat: number, lng: number, d = 0.2) {
   // N,W,S,E as required by Search API
   return `${(lat + d).toFixed(3)},${(lng - d).toFixed(3)},${(lat - d).toFixed(3)},${(lng + d).toFixed(3)}`;
@@ -20,7 +40,7 @@ router.get('/', async (req, res) => {
     const station = q.station ? String(q.station) : null; // optional, to fetch ADS data
 
     if ((!lat || !lng) && !q.bbox) {
-      return res.status(400).json({ ok: false, error: "lat,lng or bbox required" });
+      return respondErr(res, 400, "lat,lng or bbox required");
     }
     const bbox = String(q.bbox ?? bboxAround(Number(lat), Number(lng)));
 
@@ -33,7 +53,7 @@ router.get('/', async (req, res) => {
       const text = await r.text();
       if (!r.ok) {
         console.error("[NOAA search] failed", { searchUrl, status: r.status, text });
-        return res.status(r.status).json({ ok: false, error: `NOAA search ${r.status}`, details: text });
+        return respondErr(res, r.status, `NOAA search ${r.status}`, text);
       }
       const j = JSON.parse(text);
       const items = (j?.results || []).map((it: any) => ({
@@ -45,7 +65,7 @@ router.get('/', async (req, res) => {
         dataTypes: it.dataTypes || [],
         links: it.links || []
       }));
-      discovered = { ok: true, params: { dataset, bbox, startDate, endDate }, rows: items, meta: { source: "NOAA NCEI Search" } };
+      discovered = { params: { dataset, bbox, startDate, endDate }, rows: items, meta: { source: "NOAA NCEI Search" } };
       setCache(key1, discovered, 6 * 60 * 60 * 1000);
     }
 
@@ -60,7 +80,7 @@ router.get('/', async (req, res) => {
       const text2 = await r2.text();
       if (!r2.ok) {
         console.error("[NOAA ADS] failed", { adsUrl, status: r2.status, text: text2 });
-        return res.status(r2.status).json({ ok: false, error: `NOAA ADS ${r2.status}`, details: text2 });
+        return respondErr(res, r2.status, `NOAA ADS ${r2.status}`, text2);
       }
       const j2 = JSON.parse(text2);
       // Normalize: date, tmin, tmax, prcp
@@ -71,16 +91,16 @@ router.get('/', async (req, res) => {
         prcp: d.PRCP != null ? Number(d.PRCP) : null
       }));
 
-      const out2 = { ok: true, params: { dataset, station, startDate, endDate }, rows, meta: { source: "NOAA ADS daily-summaries" } };
+      const out2 = { params: { dataset, station, startDate, endDate }, rows, meta: { source: "NOAA ADS daily-summaries" } };
       setCache(key2, out2, 6 * 60 * 60 * 1000);
-      return res.json(out2);
+      return respondOk(res, out2);
     }
 
     // If no station specified, return discovery list
-    return res.json(discovered);
+    return respondOk(res, discovered);
   } catch (e: any) {
     console.error("[NOAA] error", e);
-    return res.status(500).json({ ok: false, error: e.message });
+    return respondErr(res, 500, e.message);
   }
 });
 

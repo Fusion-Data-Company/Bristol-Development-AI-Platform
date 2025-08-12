@@ -3,6 +3,26 @@ import { getCache, setCache } from '../../tools/cache';
 
 const router = express.Router();
 
+function respondOk(res: express.Response, payload: any) {
+  const rows = payload.rows || [];
+  return res.status(200).json({
+    ...payload,
+    ok: true,
+    hasData: rows.length > 0,
+    data: rows
+  });
+}
+
+function respondErr(res: express.Response, status: number, error: string, details?: string) {
+  return res.status(status).json({
+    ok: false,
+    hasData: false,
+    data: [],
+    error,
+    details
+  });
+}
+
 // FBI API endpoint for state summarized offenses
 router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
   try {
@@ -20,7 +40,7 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
     const text = await r.text();
     if (!r.ok) {
       console.error("[FBI] fetch failed", { url, status: r.status, text });
-      return res.status(r.status).json({ ok: false, error: `FBI ${r.status}`, details: text });
+      return respondErr(res, r.status, `FBI ${r.status}`, text);
     }
 
     const j = JSON.parse(text);
@@ -29,16 +49,15 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
       .sort((a: any, b: any) => a.year - b.year);
 
     const out = { 
-      ok: true, 
       params: { geo, state: stateUpper, offense, from, to }, 
       rows, 
       meta: { label: `${stateUpper} ${offense}`, source: "FBI CDE API" } 
     };
     setCache(key, out, 12 * 60 * 60 * 1000);
-    return res.json(out);
+    return respondOk(res, out);
   } catch (e: any) {
     console.error("[FBI] error", e);
-    return res.status(500).json({ ok: false, error: e.message });
+    return respondErr(res, 500, e.message);
   }
 });
 

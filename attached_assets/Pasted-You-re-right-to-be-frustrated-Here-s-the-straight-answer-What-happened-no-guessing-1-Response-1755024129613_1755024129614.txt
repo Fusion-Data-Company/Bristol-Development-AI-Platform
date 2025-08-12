@@ -1,0 +1,169 @@
+You’re right to be frustrated. Here’s the straight answer:
+
+What happened (no guessing)
+	1.	Response schema mismatch broke your UI.
+Your Tools UI is clearly expecting something like { hasData, data }. The server routes I gave return { ok, rows, meta }. So your UI logs now show hasData: false, data: undefined even when the upstream API would have returned rows. That’s why it looks like “nothing works.”
+	2.	BLS stopped because of one of these (very likely)
+	•	Env key not available server‑side after the edit (process.env.BLS_API_KEY undefined → BLS returns 401).
+	•	Or we changed the payload and your existing code still posts with different fields.
+	•	Or state/county padding/strings aren’t as expected.
+You’ll see the exact reason if you log the upstream response text (we should add logging).
+	3.	Foursquare/FBI/NOAA/HUD may still be fine server‑to‑server, but the UI disregards their results because it only looks at data/hasData.
+
+⸻
+
+Fastest fix: return the shape your UI expects (keep both shapes)
+
+Add a tiny helper that adapts every route’s success response to include both:
+
+function respondOk(res, payload) {
+  const rows = payload.rows || [];
+  return res.status(200).json({
+    ...payload,
+    ok: true,
+    hasData: rows.length > 0,  // <-- UI expects this
+    data: rows,                // <-- UI expects this
+  });
+}
+
+function respondErr(res, status, error, details?) {
+  return res.status(status).json({
+    ok: false,
+    hasData: false,
+    data: [],
+    error,
+    details
+  });
+}
+
+Then in each route, replace res.json({...}) with respondOk(res, {...}), and replace error returns with respondErr(...).
+
+That alone will make all six tabs show results again without touching the UI.
+
+⸻
+
+BLS—make sure the request actually works
+
+Keep the correct LAUS series ID, but prove the key works and the series is right:
+	•	Series: LAUCN371190000000003 (NC 37, Mecklenburg 119, unemployment rate).
+	•	Body:
+
+{
+  "seriesid": ["LAUCN371190000000003"],
+  "startyear": "2020",
+  "endyear": "2025",
+  "registrationKey": "<your BLS key>"
+}
+
+
+	•	Log on failure (add once):
+
+if (!r.ok) {
+  const txt = await r.text();
+  console.error("[BLS] upstream fail", { status: r.status, txt });
+  return respondErr(res, r.status, `BLS ${r.status}`, txt);
+}
+
+
+	•	Sanity‑check envs: temporarily log initials (masked):
+
+console.log("[BLS] key?", (process.env.BLS_API_KEY||"").slice(0,4)+"***");
+
+If you see ""***, the server doesn’t see your key. In Replit/Next, ensure it’s in the server env (not just NEXT_PUBLIC).
+
+⸻
+
+Apply the compatibility patch (one file pattern you can copy)
+
+Here’s the BLS route rewritten with the adapter + logging. Do the same pattern for the other routes.
+
+// /pages/api/tools/bls.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+
+function pad(n: string | number, len: number) { return String(n).padStart(len, "0"); }
+function respondOk(res: NextApiResponse, payload: any) {
+  const rows = payload.rows || [];
+  return res.status(200).json({ ...payload, ok: true, hasData: rows.length > 0, data: rows });
+}
+function respondErr(res: NextApiResponse, status: number, error: string, details?: string) {
+  return res.status(status).json({ ok: false, hasData: false, data: [], error, details });
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const q = req.method === "POST" ? req.body : req.query;
+    const state = pad(q.state ?? "", 2);
+    const county = pad(q.county ?? "", 3);
+    const start = String(q.start ?? "2020-01");
+    const end = String(q.end ?? "2025-12");
+
+    if (!state || !county) return respondErr(res, 400, "state (2‑digit FIPS) and county (3‑digit) required");
+
+    const seriesId = `LAUCN${state}${county}0000000003`;
+    const body = {
+      seriesid: [seriesId],
+      startyear: start.slice(0,4),
+      endyear: end.slice(0,4),
+      registrationKey: process.env.BLS_API_KEY
+    };
+
+    if (!process.env.BLS_API_KEY) console.warn("[BLS] Missing BLS_API_KEY");
+
+    const r = await fetch("https://api.bls.gov/publicAPI/v2/timeseries/data/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
+
+    const txt = await r.text();
+    if (!r.ok) {
+      console.error("[BLS] upstream fail", { status: r.status, txt });
+      return respondErr(res, r.status, `BLS ${r.status}`, txt);
+    }
+
+    const j = JSON.parse(txt);
+    const s = j?.Results?.series?.[0]?.data ?? [];
+    const rows = s
+      .filter((d: any) => /^M\d{2}$/.test(d.period))
+      .map((d: any) => ({ date: `${d.year}-${d.period.substring(1)}`, value: Number(d.value) }))
+      .sort((a: any, b: any) => a.date.localeCompare(b.date));
+
+    return respondOk(res, {
+      params: { state, county, start, end, seriesId },
+      rows,
+      meta: { label: "Unemployment rate (%)", source: "BLS LAUS" }
+    });
+  } catch (e: any) {
+    console.error("[BLS] error", e);
+    return respondErr(res, 500, e.message);
+  }
+}
+
+Do the same respondOk/Err change for:
+	•	/api/tools/bea.ts
+	•	/api/tools/hud.ts
+	•	/api/tools/foursquare.ts
+	•	/api/tools/fbi.ts
+	•	/api/tools/noaa.ts
+
+(Keep their current logic, just wrap final returns in respondOk/Err.)
+
+⸻
+
+Order of operations (to get you back to green fast)
+	1.	Add the adapter to all six routes → UI will immediately stop saying hasData: false.
+	2.	BLS: confirm the key is present; if 401, it’s env. If 200 with series data, you’ll see rows.
+	3.	Foursquare: ensure Accept: application/json; set limit=50. Charlotte should return lots.
+	4.	FBI: ensure exact URL path and log body on non‑200. Try property-crime if violent is empty.
+	5.	NOAA: if discovery works, pass a station= to hit ADS and return daily time‑series.
+	6.	HUD: use mode=crosswalk for JSON. Vacancy needs CSV (or we pre-cache it server‑side).
+
+⸻
+
+About the “DOMException” and “unknown property” logs
+
+Those are not blocking the data. They’re Vite dev‑client reconnect noise and some custom data-* attributes that your styled components don’t recognize. Annoying, but harmless.
+
+⸻
+
+If you want, paste one failing route here and I’ll return it already adapted with respondOk/Err and proper logging so you can drop it in. Once the adapter is in, your UI should light back up.

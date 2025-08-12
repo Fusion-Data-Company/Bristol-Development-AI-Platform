@@ -7,6 +7,26 @@ function pad(n: string | number, len: number) {
   return String(n).padStart(len, "0");
 }
 
+function respondOk(res: express.Response, payload: any) {
+  const rows = payload.rows || [];
+  return res.status(200).json({
+    ...payload,
+    ok: true,
+    hasData: rows.length > 0,
+    data: rows
+  });
+}
+
+function respondErr(res: express.Response, status: number, error: string, details?: string) {
+  return res.status(status).json({
+    ok: false,
+    hasData: false,
+    data: [],
+    error,
+    details
+  });
+}
+
 // BEA API endpoint for GDP and Personal Income data
 router.get('/', async (req, res) => {
   try {
@@ -52,7 +72,7 @@ router.get('/', async (req, res) => {
     const text = await r.text();
     if (!r.ok) {
       console.error("[BEA] fetch failed", { url, status: r.status, text });
-      return res.status(r.status).json({ ok: false, error: `BEA ${r.status}`, details: text });
+      return respondErr(res, r.status, `BEA ${r.status}`, text);
     }
 
     const j = JSON.parse(text);
@@ -63,7 +83,6 @@ router.get('/', async (req, res) => {
       .sort((a: any, b: any) => a.year - b.year);
 
     const result = {
-      ok: true,
       params: { geo, msa, state, county, startYear, endYear, table, geoFips },
       rows,
       meta: { label: geo === "msa" ? "MSA Real GDP (chained $)" : "County Personal Income ($)", source: "BEA Regional" }
@@ -71,11 +90,11 @@ router.get('/', async (req, res) => {
 
     // Cache for 12 hours
     setCache(key, result, 12 * 60 * 60 * 1000);
-    return res.json(result);
+    return respondOk(res, result);
 
   } catch (e: any) {
     console.error("[BEA] error", e);
-    return res.status(500).json({ ok: false, error: e.message });
+    return respondErr(res, 500, e.message);
   }
 });
 
