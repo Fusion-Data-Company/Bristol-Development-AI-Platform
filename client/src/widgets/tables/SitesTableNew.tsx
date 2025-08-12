@@ -163,11 +163,13 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         return (
           <Badge
             variant={
+              status === 'Operating' ? 'default' :
               status === 'Completed' ? 'default' :
               status === 'Newest' ? 'secondary' :
               status === 'Pipeline' ? 'outline' : 'outline'
             }
             className={
+              status === 'Operating' ? 'bg-green-100 text-green-800 hover:bg-green-200' :
               status === 'Completed' ? 'bg-green-100 text-green-800 hover:bg-green-200' :
               status === 'Newest' ? 'bg-bristol-gold/20 text-bristol-maroon hover:bg-bristol-gold/30' :
               status === 'Pipeline' ? 'bg-blue-100 text-blue-800 hover:bg-blue-200' :
