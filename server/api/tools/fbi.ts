@@ -62,28 +62,25 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
 
     // Transform the FBI API response to match our expected format
     const rows = [];
-    if (data && Array.isArray(data)) {
-      // FBI API returns array directly for summarized data
-      for (const result of data) {
-        if (result && result.data_year) {
-          rows.push({
-            year: result.data_year,
-            actual: result.violent_crime || 0,
-            cleared: result.violent_crime_cleared || 0,
-            rate: result.violent_crime_rate || 0
-          });
-        }
-      }
-    } else if (data && data.results && Array.isArray(data.results)) {
-      // Alternative format if wrapped in results object
-      for (const result of data.results) {
-        if (result && result.data_year) {
-          rows.push({
-            year: result.data_year,
-            actual: result.violent_crime || 0,
-            cleared: result.violent_crime_cleared || 0,
-            rate: result.violent_crime_rate || 0
-          });
+    
+    // FBI API returns nested structure with state-specific data
+    if (data && data.offenses && data.offenses.actuals) {
+      const stateData = data.offenses.actuals[stateUpper] || data.offenses.actuals[`${stateUpper} Clearances`];
+      const clearanceData = data.offenses.actuals[`${stateUpper} Clearances`];
+      
+      if (stateData) {
+        // Extract years and values from the state data object
+        for (const [year, value] of Object.entries(stateData)) {
+          if (!isNaN(Number(year))) {
+            const cleared = clearanceData ? clearanceData[year] || 0 : 0;
+            rows.push({
+              year: Number(year),
+              actual: Number(value) || 0,
+              cleared: Number(cleared) || 0,
+              rate: data.offenses.rates && data.offenses.rates[stateUpper] ? 
+                    Number(data.offenses.rates[stateUpper][year]) || 0 : 0
+            });
+          }
         }
       }
     }
