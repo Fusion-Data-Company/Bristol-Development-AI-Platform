@@ -90,25 +90,30 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
   // Extract demographics data from the address demographics API response
   const rawDemographicsData = mapDemographicsData?.demographics;
   
-  // Transform the data to match the expected format for the UI
+  // Transform the comprehensive census API data to match the expected format for the UI
   const demographicsData = rawDemographicsData ? {
-    populationGrowth: '2.3%', // Placeholder - would need historical data for real calculation
+    // Use total population for growth calculation (would need historical data for real growth rate)
+    populationGrowth: rawDemographicsData.total_population ? 
+      `${(rawDemographicsData.total_population).toLocaleString()} people` : null,
     medianIncome: rawDemographicsData.median_household_income ? 
       `$${rawDemographicsData.median_household_income.toLocaleString()}` : null,
-    employmentRate: rawDemographicsData.percent_employed ? 
-      `${rawDemographicsData.percent_employed.toFixed(1)}%` : null,
-    age25_44Percent: rawDemographicsData.percent_25_to_44 ? 
-      `${rawDemographicsData.percent_25_to_44.toFixed(1)}%` : null,
+    employmentRate: rawDemographicsData.employment_rate ? 
+      `${rawDemographicsData.employment_rate.toFixed(1)}%` : null,
+    age25_44Percent: rawDemographicsData.percent_18_to_64 ? 
+      `${rawDemographicsData.percent_18_to_64.toFixed(1)}%` : null,
   } : null;
   
   const marketConditionsData = rawDemographicsData ? {
     averageRent: rawDemographicsData.median_rent ? 
       `$${rawDemographicsData.median_rent.toLocaleString()}` : null,
-    occupancyRate: rawDemographicsData.percent_occupied_housing ? 
-      `${rawDemographicsData.percent_occupied_housing.toFixed(1)}%` : null,
-    absorptionRate: '85%', // Placeholder - would need real estate data for accurate values
-    projectedIRR: '12.5%', // Placeholder - would need market analysis
-    landCostPerUnit: '$45,000', // Placeholder - would need local land cost data
+    occupancyRate: rawDemographicsData.homeownership_rate ? 
+      `${(100 - rawDemographicsData.homeownership_rate).toFixed(1)}%` : null,
+    absorptionRate: rawDemographicsData.vacancy_rate ? 
+      `${(100 - rawDemographicsData.vacancy_rate).toFixed(1)}%` : null,
+    projectedIRR: rawDemographicsData.percent_income_100k_plus ? 
+      `${rawDemographicsData.percent_income_100k_plus.toFixed(1)}% high income` : null,
+    landCostPerUnit: rawDemographicsData.median_home_value ? 
+      `$${(rawDemographicsData.median_home_value / 1000).toFixed(0)}k avg home` : null,
   } : null;
 
   // Handle map clicks to create virtual site selections
@@ -125,15 +130,25 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
       latitude: lat,
       longitude: lng,
       acreage: 0,
-      zoning: 'TBD',
       status: 'active',
       ownerId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-      countryCode: 'US',
-      propertyType: null,
+      country: 'USA',
       notes: null,
-      acsProfile: null
+      acsProfile: null,
+      unitsTotal: null,
+      units1b: null,
+      units2b: null,
+      units3b: null,
+      avgSf: null,
+      completionYear: null,
+      parkingSpaces: null,
+      sourceUrl: null,
+      fipsState: null,
+      fipsCounty: null,
+      geoidTract: null,
+      acsYear: null
     };
     
     setClickedLocation({ lng, lat });
