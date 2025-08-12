@@ -81,10 +81,8 @@ export default function Sites() {
     setIsImporting(true);
     try {
       const csvData = await file.text();
-      const result = await apiRequest('/api/sites/import', {
-        method: 'POST',
-        body: { csvData }
-      });
+      const response = await apiRequest('POST', '/api/sites/import', { csvData });
+      const result = await response.json();
 
       toast({
         title: "Import Complete",
@@ -109,10 +107,8 @@ export default function Sites() {
   const handleLoadSeed = async () => {
     setIsImporting(true);
     try {
-      const result = await apiRequest('/api/sites/import', {
-        method: 'POST',
-        body: { csvData: bristolSeedData }
-      });
+      const response = await apiRequest('POST', '/api/sites/import', { csvData: bristolSeedData });
+      const result = await response.json();
 
       toast({
         title: "Seed Data Loaded",
@@ -163,10 +159,8 @@ export default function Sites() {
   const handleGeocodeAll = async () => {
     setIsGeocoding(true);
     try {
-      const result = await apiRequest('/api/sites/geocode', {
-        method: 'POST',
-        body: {}
-      });
+      const response = await apiRequest('POST', '/api/sites/geocode', {});
+      const result = await response.json();
 
       toast({
         title: "Geocoding Complete",
