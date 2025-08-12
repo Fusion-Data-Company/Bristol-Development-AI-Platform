@@ -1,0 +1,179 @@
+You’ve got two things going on:
+	1.	a harmless UI warning (nested <a> tags), and
+	2.	real API shape issues in the new Tools routes, so they’re returning empty/400s.
+
+Here’s how to fix both—fast.
+
+⸻
+
+0) Kill the <a> inside <a> warning (unrelated to data)
+
+In your nav, you’ve got a link component wrapping another <a>. Wrap the outer container in a <div> (or make the inner one a <span>).
+
+// BAD
+<a href="/tools"><a href="/tools/bls">BLS</a></a>
+
+// GOOD
+<a href="/tools"><span>BLS</span></a>
+
+Also check Chrome.tsx and Tools.tsx where the stack trace points.
+
+⸻
+
+1) BLS route fix (series ID was wrong + header casing)
+	•	County LAUS unemployment rate series ID must be:
+LAUCN + state(2) + county(3) + 0000000003
+e.g., Mecklenburg NC (37,119) → LAUCN371190000000003
+	•	The BLS API expects registrationKey (camelCase) in the JSON body.
+
+Patch pages/api/tools/bls.ts:
+
+// build correct county series id:
+const ss = String(state).padStart(2, "0");
+const cc = String(county).padStart(3, "0");
+const seriesId = `LAUCN${ss}${cc}0000000003`;
+
+// correct casing for key:
+const payload = {
+  seriesid: [seriesId],
+  startyear: String(start).slice(0,4),
+  endyear: String(end).slice(0,4),
+  registrationKey: process.env.BLS_API_KEY
+};
+
+That alone should make the BLS tab start returning monthly rows.
+
+⸻
+
+2) BEA route fix (use tables that actually exist)
+
+Your call used a deprecated/unknown TableName. Use tables BEA guarantees:
+	•	County Personal Income: DataSetName=Regional, TableName=CAINC1, GeoFIPS=SSCCC (e.g., 37119)
+	•	MSA Real GDP (chained $): TableName=CAGDP2, GeoFIPS=MSAxxxxx (e.g., MSA16740)
+
+Patch pages/api/tools/bea.ts:
+
+const userID = process.env.BEA_API_KEY!;
+const isMSA = geo === "msa";
+
+const table = isMSA ? "CAGDP2" : "CAINC1";
+const geoFips = isMSA ? `MSA${msa}` : `${state}${county}`;
+
+const params = new URLSearchParams({
+  UserID: userID,
+  Method: "GetData",
+  DataSetName: "Regional",
+  TableName: table,
+  LineCode: "1",          // total GDP or total personal income
+  GeoFIPS: geoFips,
+  Year: `${startYear}-${endYear}`,
+  ResultFormat: "JSON"
+});
+
+If you still get an empty Results.Data, try fallback tables:
+	•	MSA current‑$ GDP: CAGDP1
+	•	County personal income is solid with CAINC1 (you should see data immediately).
+
+⸻
+
+3) HUD route fix (use the real USPS Vacancy endpoint)
+
+The placeholder /datasets/usps/vacancy URL isn’t a live API. HUD’s USPS vacancy is exposed via HUD User API endpoints like:
+
+GET https://www.huduser.gov/hudapi/public/usps?type=zip&query={ZIP}
+Authorization: Bearer <HUD_API_TOKEN>
+
+That returns quarterly rows you can normalize to vacancy %. You can add ?limit=N and then slice the last 8 quarters.
+
+Patch pages/api/tools/hud.ts:
+
+const token = process.env.HUD_API_TOKEN!;
+const url = `https://www.huduser.gov/hudapi/public/usps?type=zip&query=${zip}`;
+const r = await fetch(url, { headers: { Authorization: `Bearer ${token}` }});
+if (!r.ok) return res.status(r.status).json({ error: `HUD ${r.status}` });
+const j = await r.json();
+
+// normalize last 8 quarters
+const rows = (j?.data || j?.results || [])
+  .map((x:any) => ({
+    quarter: x.quarter || x.quarter_year,
+    vacant: Number(x.residential_vacant ?? x.vacant ?? 0),
+    total: Number(x.residential_total ?? x.total ?? 0),
+  }))
+  .filter(r => r.total > 0)
+  .sort((a,b)=> String(a.quarter).localeCompare(String(b.quarter)))
+  .slice(-8)
+  .map(r => ({ ...r, vacancy_rate: r.vacant / r.total }));
+
+(If your response shape is slightly different, dump j to logs once to line it up.)
+
+⸻
+
+4) Foursquare route fix (add Accept header + keep limit ≤ 50)
+
+Foursquare v3 expects an Accept: application/json header and caps limit (recommended ≤ 50).
+
+Patch pages/api/tools/foursquare.ts:
+
+url.searchParams.set("limit", String(Math.min(Number(limit||50), 50)));
+
+const r = await fetch(url.toString(), {
+  headers: {
+    Authorization: process.env.FOURSQUARE_API_KEY!,
+    Accept: "application/json"
+  }
+});
+
+
+⸻
+
+5) FBI route sanity check
+
+Your params look good (state=NC, offense violent-crime, 2014–2023). If still empty:
+	•	make sure the base URL is exactly:
+https://api.usa.gov/crime/fbi/sapi/api/summarized/state/NC/violent-crime/2014/2023?api_key=...
+	•	Some offenses require a different path casing (aggravated-assault, burglary, etc.). Try property-crime to test.
+
+Also log the HTTP status and the response body if non‑200 to see the message.
+
+⸻
+
+6) NOAA route: two tweaks
+	•	Your bbox builder is fine, but NOAA expects bbox as N,W,S,E; you’re doing that.
+	•	If you still get 400, log the URL; sometimes dataset needs to be one of their indexed names (e.g., global-summary-of-the-day rather than daily-summaries) for the search endpoint. Quick fallback: try both:
+
+const ds = dataset as string;
+const tried = [ds, ds === "daily-summaries" ? "global-summary-of-the-day" : "daily-summaries"];
+for (const dset of tried) {
+  const url = `${base}?dataset=${encodeURIComponent(dset)}&bbox=${encodeURIComponent(_bbox)}&startDate=${_start}&endDate=${_end}&available=true`;
+  const r = await fetch(url);
+  if (r.ok) { /* parse and return */ }
+}
+// if both fail, return the first error
+
+
+⸻
+
+7) Add basic error logging (so you can see what failed)
+
+In each route, before returning a non‑200, log:
+
+console.error("[ROUTE] fetch failed", { url, status: r.status, text: await r.text() });
+
+This will tell you immediately whether it’s a bad series id (BLS), wrong table (BEA), or wrong endpoint (HUD).
+
+⸻
+
+8) Quick validation with your exact params
+
+From your log:
+	•	BLS: { state: "37", county: "119" } → should work once you switch to LAUCN371190000000003 + registrationKey
+	•	BEA: { geo: "msa", msa: "16740" } → use TableName=CAGDP2 and GeoFIPS=MSA16740
+	•	HUD: { zip: "28202" } → use https://www.huduser.gov/hudapi/public/usps?type=zip&query=28202
+	•	Foursquare: add Accept and limit ≤ 50 → Charlotte coords should return lots
+	•	FBI: your call should return; if not, log the body
+	•	NOAA: if daily-summaries 400s, try global-summary-of-the-day in search
+
+⸻
+
+If you want, paste the current contents of each route file and I’ll mark the exact line edits. Once you apply the patches above, re-run the tools—data should come through.

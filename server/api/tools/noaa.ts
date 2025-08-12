@@ -38,18 +38,34 @@ router.get('/', async (req, res) => {
     }
 
     const base = "https://www.ncei.noaa.gov/access/services/search/v1/data";
-    const url = `${base}?dataset=${dataset}&bbox=${encodeURIComponent(_bbox)}&startDate=${_start}&endDate=${_end}&available=true`;
-
-    console.log('NOAA API request:', url);
-
-    const response = await fetch(url);
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`NOAA API error: ${response.status} - ${errorText}`);
+    
+    // Try multiple dataset names since NOAA is picky
+    const datasets = [dataset as string];
+    if (dataset === "daily-summaries") {
+      datasets.push("global-summary-of-the-day");
     }
-
-    const json = await response.json();
+    
+    let json: any = null;
+    let lastError: any = null;
+    
+    for (const dset of datasets) {
+      const url = `${base}?dataset=${encodeURIComponent(dset)}&bbox=${encodeURIComponent(_bbox)}&startDate=${_start}&endDate=${_end}&available=true`;
+      console.log(`NOAA API request (trying ${dset}):`, url);
+      
+      const response = await fetch(url);
+      
+      if (response.ok) {
+        json = await response.json();
+        break;
+      } else {
+        const errorText = await response.text();
+        lastError = new Error(`NOAA API error: ${response.status} - ${errorText}`);
+      }
+    }
+    
+    if (!json) {
+      throw lastError || new Error("No datasets worked");
+    }
     console.log('NOAA API response:', json);
 
     // Normalize results
@@ -67,19 +83,19 @@ router.get('/', async (req, res) => {
     }));
 
     // Calculate some basic metrics
-    const hasTemp = items.some(item => 
+    const hasTemp = items.some((item: any) => 
       item.dataTypes.some((dt: any) => 
         dt.id && (dt.id.includes('TEMP') || dt.id.includes('TMAX') || dt.id.includes('TMIN'))
       )
     );
 
-    const hasPrecip = items.some(item => 
+    const hasPrecip = items.some((item: any) => 
       item.dataTypes.some((dt: any) => 
         dt.id && (dt.id.includes('PRCP') || dt.id.includes('RAIN'))
       )
     );
 
-    const uniqueStations = [...new Set(items.map(item => item.stationId).filter(Boolean))];
+    const uniqueStations = Array.from(new Set(items.map((item: any) => item.stationId).filter(Boolean)));
 
     const result = {
       params: { lat, lng, dataset, bbox: _bbox, startDate: _start, endDate: _end },

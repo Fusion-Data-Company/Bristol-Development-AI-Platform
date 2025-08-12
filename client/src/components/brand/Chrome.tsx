@@ -31,29 +31,29 @@ export default function Chrome({ children }: ChromeProps) {
             {/* Navigation */}
             <nav className="flex space-x-8">
               <Link href="/">
-                <a className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
                   Map
-                </a>
+                </span>
               </Link>
               <Link href="/sites">
-                <a className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
                   Tables
-                </a>
+                </span>
               </Link>
               <Link href="/sandbox">
-                <a className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
                   3D Sandbox
-                </a>
+                </span>
               </Link>
               <Link href="/integrations">
-                <a className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
                   Integrations
-                </a>
+                </span>
               </Link>
               <Link href="/tools">
-                <a className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium">
+                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
                   Tools
-                </a>
+                </span>
               </Link>
             </nav>
           </div>

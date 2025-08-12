@@ -33,13 +33,14 @@ router.get('/', async (req, res) => {
 
     const beaKey = process.env.BEA_API_KEY!;
     
-    // Determine table and geography
-    const tableName = geo === "msa" ? "CAGDP1" : "CAINC1"; // GDP by MSA or Personal Income by County
-    const lineCode = geo === "msa" ? "1" : "3"; // All industry GDP or Personal Income
+    // Determine table and geography - FIXED per feedback
+    const isMSA = geo === "msa";
+    const tableName = isMSA ? "CAGDP2" : "CAINC1"; // Real GDP by MSA or Personal Income by County
+    const lineCode = "1"; // Total GDP or total personal income
     
     let geoFIPS: string;
-    if (geo === "msa") {
-      geoFIPS = (msa || "").toString();
+    if (isMSA) {
+      geoFIPS = `MSA${(msa || "").toString()}`;
     } else {
       const stateCode = (state || "").toString().padStart(2, '0');
       const countyCode = (county || "").toString().padStart(3, '0');

@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
       // LAUS county unemployment rate: LAUCNSSCCC03 (SS=state, CCC=county, 03=unemployment rate)
       const stateCode = (state || "").toString().padStart(2, '0');
       const countyCode = (county || "").toString().padStart(3, '0');
-      seriesIds.push(`LAUCN${stateCode}${countyCode}03`);
+      seriesIds.push(`LAUCN${stateCode}${countyCode}0000000003`);
     } else if (level === "msa") {
       // MSA unemployment rate: LAUMT + MSA code + 03
       seriesIds.push(`LAUMT${(msa || "").toString()}03`);
@@ -52,7 +52,7 @@ router.get('/', async (req, res) => {
       seriesid: seriesIds,
       startyear: startYear,
       endyear: endYear,
-      registrationkey: apiKey
+      registrationKey: apiKey
     };
 
     console.log('BLS API request:', payload);

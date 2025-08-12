@@ -42,14 +42,15 @@ router.get('/', async (req, res) => {
     url.searchParams.set("ll", `${lat},${lng}`);
     url.searchParams.set("radius", String(radius));
     url.searchParams.set("categories", String(categories));
-    url.searchParams.set("limit", String(limit));
+    url.searchParams.set("limit", String(Math.min(Number(limit), 50))); // Cap at 50
     url.searchParams.set("sort", "RELEVANCE");
 
     console.log('Foursquare API request:', url.toString());
 
     const response = await fetch(url.toString(), {
       headers: {
-        Authorization: apiKey
+        Authorization: apiKey,
+        Accept: "application/json"
       }
     });
 
