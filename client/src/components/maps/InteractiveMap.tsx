@@ -237,8 +237,13 @@ export function InteractiveMap({
   };
 
   const handleMapClick = useCallback((event: any) => {
+    // Prevent event propagation to avoid navigation issues
+    event.preventDefault?.();
+    event.stopPropagation?.();
+    
     if (event.lngLat) {
       const { lng, lat } = event.lngLat;
+      console.log('Map clicked at:', lng, lat); // Debug log
       onMapClick?.(lng, lat);
     }
   }, [onMapClick]);
