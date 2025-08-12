@@ -45,40 +45,49 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
     retry: false,
   });
 
-  // Mock market overview data (this would come from API in production)
-  const marketOverview = {
-    demographics: {
-      medianIncome: 78425,
-      populationGrowth: 4.8,
-      employmentRate: 94.2,
-      ageTarget: 28.4
-    },
-    market: {
-      avgRent: 1485,
-      occupancyRate: 96.8,
-      absorptionRate: 2.3,
-      competitionDensity: 1.2
-    },
-    riskAssessment: {
-      overall: 73.2,
-      regulatory: 85,
-      environmental: 92,
-      market: 68,
-      construction: 75
-    },
-    developmentPipeline: [
-      { name: "Atlantic Station Phase II", units: 324, status: "Planning", completion: "Q3 2025" },
-      { name: "Buckhead Gateway", units: 289, status: "Construction", completion: "Q1 2025" },
-      { name: "Midtown Commons", units: 156, status: "Pre-Development", completion: "Q4 2025" }
-    ]
-  };
+  // Fetch real market analytics data
+  const { data: marketAnalytics, isLoading: marketLoading } = useQuery({
+    queryKey: ['/api/analytics/market', selectedSite?.id],
+    retry: false,
+  });
 
-  // Calculate Bristol Score for selected site
+  // Fetch development pipeline data
+  const { data: pipelineData, isLoading: pipelineLoading } = useQuery({
+    queryKey: ['/api/analytics/pipeline', selectedSite?.city, selectedSite?.state],
+    retry: false,
+  });
+
+  // Fetch demographics data for selected area
+  const { data: demographicsData, isLoading: demographicsLoading } = useQuery({
+    queryKey: ['/api/analytics/demographics', selectedSite?.postalCode || selectedSite?.city],
+    enabled: !!selectedSite,
+    retry: false,
+  });
+
+  // Calculate Bristol Score for selected site using real metrics
   const getBristolScore = (site: Site | null): number => {
-    if (!site) return 73.2; // Default market score
-    // Use a simple scoring algorithm based on available data
-    const score = site.totalUnits ? Math.min(100, 50 + (site.totalUnits / 10)) : 73.2;
-    return score;
+    if (!site) return 0;
+    
+    // Use actual site metrics to calculate Bristol Score
+    const siteMetricsForSite = siteMetrics.filter(m => m.siteId === site.id);
+    if (siteMetricsForSite.length === 0) return 0;
+    
+    // Calculate weighted score based on actual metrics
+    const demographicsScore = siteMetricsForSite
+      .filter(m => m.metricType.toLowerCase().includes('demographic'))
+      .reduce((sum, m) => sum + m.value, 0) / Math.max(1, siteMetricsForSite.filter(m => m.metricType.toLowerCase().includes('demographic')).length);
+    
+    const marketScore = siteMetricsForSite
+      .filter(m => m.metricType.toLowerCase().includes('market'))
+      .reduce((sum, m) => sum + m.value, 0) / Math.max(1, siteMetricsForSite.filter(m => m.metricType.toLowerCase().includes('market')).length);
+    
+    const locationScore = siteMetricsForSite
+      .filter(m => m.metricType.toLowerCase().includes('location'))
+      .reduce((sum, m) => sum + m.value, 0) / Math.max(1, siteMetricsForSite.filter(m => m.metricType.toLowerCase().includes('location')).length);
+    
+    // Weighted average (demographics 40%, market 35%, location 25%)
+    const overallScore = (demographicsScore * 0.4) + (marketScore * 0.35) + (locationScore * 0.25);
+    return Math.round(overallScore * 100) / 100;
   };
 
   const getScoreColor = (score: number): string => {
@@ -176,17 +185,27 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
             </div>
           </div>
           
-          {/* Quick Metrics */}
+          {/* Quick Metrics - Real Data */}
           <div className="grid grid-cols-2 gap-3">
             <div className="text-center">
-              <div className="text-lg font-bold text-bristol-ink">73.2</div>
+              <div className="text-lg font-bold text-bristol-ink">
+                {marketLoading ? '...' : (marketAnalytics?.avgBristolScore?.toFixed(1) || 
+                  (sites.length > 0 ? (sites.reduce((sum, site) => sum + getBristolScore(site), 0) / sites.length).toFixed(1) : '0.0'))}
+              </div>
               <div className="text-xs text-bristol-stone">Avg Bristol Score</div>
-              <div className="text-xs text-green-600">+2.4% YoY</div>
+              <div className="text-xs text-green-600">
+                {marketAnalytics?.bristolScoreChange || 'N/A'}
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-lg font-bold text-bristol-ink">$67.5K</div>
+              <div className="text-lg font-bold text-bristol-ink">
+                {demographicsLoading ? '...' : (demographicsData?.medianIncome ? 
+                  `$${(demographicsData.medianIncome / 1000).toFixed(0)}K` : 'N/A')}
+              </div>
               <div className="text-xs text-bristol-stone">Median Income</div>
-              <div className="text-xs text-green-600">3.4%</div>
+              <div className="text-xs text-green-600">
+                {demographicsData?.incomeGrowth || 'N/A'}
+              </div>
             </div>
           </div>
         </div>
@@ -326,17 +345,27 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                     <CardTitle className="text-sm font-semibold text-bristol-ink">Development Pipeline</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2 pt-0">
-                    {marketOverview.developmentPipeline.map((project, index) => (
-                      <div key={index} className="flex items-center justify-between py-1 border-b border-bristol-stone/10 last:border-b-0">
-                        <div>
-                          <div className="text-xs font-medium text-bristol-ink">{project.name}</div>
-                          <div className="text-xs text-bristol-stone">{project.units} units • {project.completion}</div>
-                        </div>
-                        <Badge variant="outline" className="text-xs">
-                          {project.status}
-                        </Badge>
+                    {pipelineLoading ? (
+                      <div className="text-center py-4">
+                        <div className="text-sm text-bristol-stone">Loading pipeline data...</div>
                       </div>
-                    ))}
+                    ) : pipelineData?.projects?.length > 0 ? (
+                      pipelineData.projects.slice(0, 3).map((project: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between py-1 border-b border-bristol-stone/10 last:border-b-0">
+                          <div>
+                            <div className="text-xs font-medium text-bristol-ink">{project.name}</div>
+                            <div className="text-xs text-bristol-stone">{project.units} units • {project.completion}</div>
+                          </div>
+                          <Badge variant="outline" className="text-xs">
+                            {project.status}
+                          </Badge>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4">
+                        <div className="text-xs text-bristol-stone">No pipeline data available for this area</div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
@@ -347,26 +376,43 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
               <div className="space-y-4">
                 <Card className="border-bristol-stone/20">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-semibold text-bristol-ink">Demographics</CardTitle>
+                    <CardTitle className="text-sm font-semibold text-bristol-ink">Real Demographics Data</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3 pt-0">
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="text-center p-2 bg-bristol-cream/30 rounded">
-                        <div className="text-sm font-bold text-bristol-ink">${marketOverview.demographics.medianIncome.toLocaleString()}</div>
-                        <div className="text-xs text-bristol-stone">Median Income</div>
+                    {demographicsLoading ? (
+                      <div className="text-center py-4">
+                        <div className="text-sm text-bristol-stone">Loading demographics...</div>
                       </div>
-                      <div className="text-center p-2 bg-bristol-cream/30 rounded">
-                        <div className="text-sm font-bold text-bristol-ink">{marketOverview.demographics.populationGrowth}%</div>
-                        <div className="text-xs text-bristol-stone">Population Growth</div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="text-center p-2 bg-bristol-cream/30 rounded">
+                          <div className="text-sm font-bold text-bristol-ink">
+                            {demographicsData?.medianIncome ? `$${demographicsData.medianIncome.toLocaleString()}` : 'N/A'}
+                          </div>
+                          <div className="text-xs text-bristol-stone">Median Income</div>
+                        </div>
+                        <div className="text-center p-2 bg-bristol-cream/30 rounded">
+                          <div className="text-sm font-bold text-bristol-ink">
+                            {demographicsData?.populationGrowth ? `${demographicsData.populationGrowth}%` : 'N/A'}
+                          </div>
+                          <div className="text-xs text-bristol-stone">Population Growth</div>
+                        </div>
+                        <div className="text-center p-2 bg-bristol-cream/30 rounded">
+                          <div className="text-sm font-bold text-bristol-ink">
+                            {demographicsData?.employmentRate ? `${demographicsData.employmentRate}%` : 'N/A'}
+                          </div>
+                          <div className="text-xs text-bristol-stone">Employment Rate</div>
+                        </div>
+                        <div className="text-center p-2 bg-bristol-cream/30 rounded">
+                          <div className="text-sm font-bold text-bristol-ink">
+                            {demographicsData?.ageTarget ? `${demographicsData.ageTarget}%` : 'N/A'}
+                          </div>
+                          <div className="text-xs text-bristol-stone">Age 25-44</div>
+                        </div>
                       </div>
-                      <div className="text-center p-2 bg-bristol-cream/30 rounded">
-                        <div className="text-sm font-bold text-bristol-ink">{marketOverview.demographics.employmentRate}%</div>
-                        <div className="text-xs text-bristol-stone">Employment Rate</div>
-                      </div>
-                      <div className="text-center p-2 bg-bristol-cream/30 rounded">
-                        <div className="text-sm font-bold text-bristol-ink">{marketOverview.demographics.ageTarget}%</div>
-                        <div className="text-xs text-bristol-stone">Age 25-44</div>
-                      </div>
+                    )}
+                    <div className="text-xs text-bristol-stone text-center mt-2">
+                      Source: {demographicsData?.source || 'Bristol Analytics + Real Estate Data'}
                     </div>
                   </CardContent>
                 </Card>

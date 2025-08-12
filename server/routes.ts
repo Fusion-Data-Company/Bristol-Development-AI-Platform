@@ -35,6 +35,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const sitesRouter = (await import('./api/sites')).default;
   app.use('/api/sites', isAuthenticated, sitesRouter);
 
+  // Import analytics API
+  const analyticsRouter = (await import('./api/analytics')).default;
+  app.use('/api/analytics', isAuthenticated, analyticsRouter);
+
 
 
   // Chat routes
