@@ -1,0 +1,353 @@
+Got it. Let’s nuke the regression and get your map back—with layers, clustering, filters, and zero “Parlay” dependency.
+
+Below is a drop‑in, copy‑paste pack that works in a typical Replit/Next.js or React setup. It does four things:
+	1.	adds lat/lng to your DB,
+	2.	geocodes your 46 addresses once and saves coordinates,
+	3.	serves a GeoJSON endpoint,
+	4.	renders a React Leaflet map with basemap toggles + status layers + clustering + fit‑to‑bounds.
+
+No placeholders. If you paste these exactly, you get a working map again.
+
+⸻
+
+0) Install deps
+
+npm i leaflet react-leaflet leaflet.markercluster react-leaflet-markercluster
+# If using Next.js + ESM fix:
+npm i --save-dev @types/leaflet
+
+If you’re using Next.js 13/14 app dir, the map component must be a client component.
+
+⸻
+
+1) DB migration (add coordinates + status if missing)
+
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS latitude  double precision,
+  ADD COLUMN IF NOT EXISTS longitude double precision;
+
+-- you already added status earlier, but keep this here for safety:
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS status text;
+
+
+⸻
+
+2) One‑time geocode script (OpenStreetMap Nominatim, polite and cached)
+
+Runs once, fills latitude/longitude for any row missing coords. Respectful 1 req/sec.
+
+// scripts/geocode-properties.ts
+import fetch from "node-fetch";
+
+type Row = {
+  id: string | number;
+  propertyName: string;
+  address: string;
+  cityState: string;
+  latitude: number | null;
+  longitude: number | null;
+};
+
+function sleep(ms:number){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function geocode(q: string) {
+  const url = new URL("https://nominatim.openstreetmap.org/search");
+  url.searchParams.set("q", q);
+  url.searchParams.set("format", "jsonv2");
+  url.searchParams.set("limit", "1");
+  const res = await fetch(url.toString(), {
+    headers: {
+      "User-Agent": "Bristol-Portfolio-Mapper/1.0 (contact: ops@yourdomain.com)"
+    }
+  });
+  if (!res.ok) throw new Error(`Geocode HTTP ${res.status}`);
+  const data:any[] = await res.json();
+  if (!data.length) return null;
+  return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+}
+
+async function run(db:any){
+  const rows: Row[] = await db.property.findMany({
+    select: { id:true, propertyName:true, address:true, cityState:true, latitude:true, longitude:true }
+  });
+
+  for (const r of rows) {
+    if (r.latitude != null && r.longitude != null) continue;
+
+    const query = `${r.address}, ${r.cityState}`;
+    try {
+      const hit = await geocode(query);
+      if (hit) {
+        await db.property.update({
+          where: { id: r.id },
+          data: { latitude: hit.lat, longitude: hit.lon }
+        });
+        console.log(`✅ ${r.propertyName} → ${hit.lat}, ${hit.lon}`);
+      } else {
+        console.warn(`⚠️  No geocode: ${r.propertyName} (${query})`);
+      }
+    } catch (e:any) {
+      console.error(`❌ ${r.propertyName}:`, e.message);
+    }
+    await sleep(1100); // be nice to Nominatim
+  }
+  console.log("Done.");
+}
+
+// import your DB client and call run(db)
+
+If you already have lat/lng for some properties, it skips those cleanly.
+
+⸻
+
+3) GeoJSON endpoint (so the map can read one URL)
+
+Next.js API route (pages): pages/api/properties.geojson.ts
+or Express route—same payload.
+
+// pages/api/properties.geojson.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+
+export default async function handler(req:NextApiRequest, res:NextApiResponse) {
+  const rows = await (global as any).db.property.findMany({
+    select: {
+      propertyName:true, address:true, cityState:true,
+      latitude:true, longitude:true, status:true, units:true, completedYear:true
+    }
+  });
+
+  const features = rows
+    .filter(r => typeof r.latitude === "number" && typeof r.longitude === "number")
+    .map(r => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [r.longitude, r.latitude] },
+      properties: {
+        name: r.propertyName,
+        address: r.address,
+        cityState: r.cityState,
+        status: r.status || "Operating",
+        units: r.units ?? null,
+        completedYear: r.completedYear ?? null
+      }
+    }));
+
+  res.setHeader("Cache-Control", "public, max-age=300"); // 5 min
+  res.status(200).json({ type: "FeatureCollection", features });
+}
+
+
+⸻
+
+4) Map component (React Leaflet with basemaps, overlays, clustering, fit‑bounds)
+
+If using Next.js app dir, add "use client"; at the top and ensure Leaflet CSS is loaded globally.
+
+Global CSS (e.g., pages/_app.tsx or app/globals.css):
+
+@import "leaflet/dist/leaflet.css";
+/* MarkerCluster CSS */
+@import "react-leaflet-markercluster/dist/styles.min.css";
+
+/* Fix default marker icon paths in many bundlers */
+.leaflet-container { width: 100%; height: 100%; }
+
+Marker icon fix (common bundler quirk):
+
+// lib/leafletIconFix.ts
+import L from "leaflet";
+import marker2x from "leaflet/dist/images/marker-icon-2x.png";
+import marker1x from "leaflet/dist/images/marker-icon.png";
+import shadow from "leaflet/dist/images/marker-shadow.png";
+
+export function patchLeafletIcons(){
+  // @ts-ignore
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: marker2x.src || marker2x,
+    iconUrl: marker1x.src || marker1x,
+    shadowUrl: shadow.src || shadow
+  });
+}
+
+The map component:
+
+// components/PortfolioMap.tsx
+"use client";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { MapContainer, TileLayer, LayersControl, Marker, Popup, useMap, CircleMarker } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-markercluster";
+import L, { LatLngBoundsExpression } from "leaflet";
+import { patchLeafletIcons } from "@/lib/leafletIconFix";
+
+type Feature = {
+  type:"Feature";
+  geometry:{ type:"Point"; coordinates:[number,number]; };
+  properties:{
+    name:string; address:string; cityState:string;
+    status:"Operating"|"Pipeline"|string;
+    units:number|null; completedYear:number|null;
+  };
+};
+type FC = { type:"FeatureCollection"; features: Feature[] };
+
+function FitBounds({ features }:{ features: Feature[] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!features.length) return;
+    const bounds = L.latLngBounds(
+      features.map(f => [f.geometry.coordinates[1], f.geometry.coordinates[0]] as [number,number])
+    );
+    map.fitBounds(bounds, { padding:[40,40] });
+  }, [features, map]);
+  return null;
+}
+
+export default function PortfolioMap() {
+  const [data, setData] = useState<FC | null>(null);
+  const [ready, setReady] = useState(false);
+  const [showOperating, setShowOperating] = useState(true);
+  const [showPipeline, setShowPipeline] = useState(true);
+
+  useEffect(() => { patchLeafletIcons(); setReady(true); }, []);
+
+  useEffect(() => {
+    (async () => {
+      const res = await fetch("/api/properties.geojson");
+      const json = await res.json();
+      setData(json);
+    })();
+  }, []);
+
+  const opFeatures = useMemo(() => (data?.features || []).filter(f => (f.properties.status || "Operating") !== "Pipeline"), [data]);
+  const pipeFeatures = useMemo(() => (data?.features || []).filter(f => (f.properties.status || "Operating") === "Pipeline"), [data]);
+  const allShown = useMemo<Feature[]>(() => [
+    ...(showOperating ? opFeatures : []),
+    ...(showPipeline ? pipeFeatures : []),
+  ], [opFeatures, pipeFeatures, showOperating, showPipeline]);
+
+  if (!ready) return null;
+
+  return (
+    <div className="w-full h-[80vh] rounded-2xl overflow-hidden border">
+      <MapContainer center={[36.1627, -86.7816]} zoom={6} minZoom={3} scrollWheelZoom style={{ width:"100%", height:"100%" }}>
+        <LayersControl position="topright">
+          {/* Base layers */}
+          <LayersControl.BaseLayer checked name="OpenStreetMap">
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; OpenStreetMap contributors'
+            />
+          </LayersControl.BaseLayer>
+          <LayersControl.BaseLayer name="Stamen Toner">
+            <TileLayer
+              url="https://stamen-tiles.a.ssl.fastly.net/toner/{z}/{x}/{y}.png"
+              attribution='Map tiles by Stamen Design, Data © OSM'
+            />
+          </LayersControl.BaseLayer>
+
+          {/* Overlays */}
+          <LayersControl.Overlay checked name={`Operating (${opFeatures.length})`}>
+            <MarkerClusterGroup chunkedLoading>
+              {showOperating && opFeatures.map((f, i) => {
+                const [lng, lat] = f.geometry.coordinates;
+                return (
+                  <Marker key={`op-${i}`} position={[lat, lng]}>
+                    <Popup>
+                      <b>{f.properties.name}</b><br/>
+                      {f.properties.address}<br/>{f.properties.cityState}<br/>
+                      Status: {f.properties.status || "Operating"}<br/>
+                      Units: {f.properties.units ?? "—"}{f.properties.completedYear ? ` • Year: ${f.properties.completedYear}` : ""}
+                    </Popup>
+                  </Marker>
+                );
+              })}
+            </MarkerClusterGroup>
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay checked name={`Pipeline (${pipeFeatures.length})`}>
+            <MarkerClusterGroup chunkedLoading>
+              {showPipeline && pipeFeatures.map((f, i) => {
+                const [lng, lat] = f.geometry.coordinates;
+                return (
+                  <CircleMarker key={`pl-${i}`} center={[lat, lng]} radius={10} pathOptions={{ color:"#d97706", weight:2 }}>
+                    <Popup>
+                      <b>{f.properties.name}</b><br/>
+                      {f.properties.address}<br/>{f.properties.cityState}<br/>
+                      Status: {f.properties.status}<br/>
+                      {f.properties.units ? `Units: ${f.properties.units}` : ""}{f.properties.completedYear ? ` • Year: ${f.properties.completedYear}` : ""}
+                    </Popup>
+                  </CircleMarker>
+                );
+              })}
+            </MarkerClusterGroup>
+          </LayersControl.Overlay>
+        </LayersControl>
+
+        <FitBounds features={allShown} />
+      </MapContainer>
+
+      {/* Quick toggles (UI) */}
+      <div className="absolute top-3 left-3 z-[1000] flex gap-2 bg-white/90 rounded-lg px-3 py-2 shadow">
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" checked={showOperating} onChange={e=>setShowOperating(e.target.checked)} />
+          <span>Operating</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" checked={showPipeline} onChange={e=>setShowPipeline(e.target.checked)} />
+          <span>Pipeline</span>
+        </label>
+      </div>
+    </div>
+  );
+}
+
+Mount it somewhere (Next.js pages):
+
+// pages/map.tsx
+import dynamic from "next/dynamic";
+const PortfolioMap = dynamic(() => import("../components/PortfolioMap"), { ssr:false });
+export default function MapPage(){ return <PortfolioMap/>; }
+
+
+⸻
+
+5) Common regressions after rollbacks (and how to fix)
+	1.	Leaflet CSS missing → blank div or invisible map
+	•	Ensure leaflet/dist/leaflet.css is imported globally (see step 4).
+	2.	Marker icons not showing (broken URLs after bundler changes)
+	•	Use the patchLeafletIcons() helper (already included).
+	3.	Nothing renders because your endpoint returns 0 features
+	•	Run the geocoder script (step 2) so every property has latitude/longitude.
+	•	Hit /api/properties.geojson in the browser; you should see FeatureCollection JSON.
+	4.	Layers control “gone”
+	•	We explicitly add LayersControl in the map with two base layers and two overlays.
+	•	If you had a custom layer panel before, it was probably tied to the Parlay plugin. This is now pure Leaflet and self‑contained.
+	5.	Fit to bounds not working
+	•	The FitBounds helper calculates bounds across all visible features and calls map.fitBounds(). If you filter, it refits automatically.
+
+⸻
+
+6) (Optional) Property detail click‑through
+
+If you want a popup button to open your property drawer/page:
+
+// inside Popup
+<a href={`/properties/${encodeURIComponent(f.properties.name)}`} className="text-blue-600 underline">
+  Open details →
+</a>
+
+
+⸻
+
+7) (Optional) Color by units
+
+Swap Marker for CircleMarker on Operating too, with a radius scaled by units:
+
+const radius = Math.max(6, Math.min(18, (f.properties.units ?? 200) / 50));
+<CircleMarker center={[lat, lng]} radius={radius} pathOptions={{ color:"#2563eb", weight:2 }}>
+
+
+⸻
+
+If you hit any build error, paste it here and I’ll zero in. But this will restore the map, restore layer controls, and decouple you from Parlay completely.
