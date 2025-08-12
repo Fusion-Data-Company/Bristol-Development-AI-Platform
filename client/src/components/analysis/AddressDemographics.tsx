@@ -140,18 +140,21 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
       {locationData && (
         <div className="space-y-6">
           {/* Location Header */}
-          <Card className="bg-white border-bristol-stone/20">
-            <CardHeader>
+          <Card className="bg-gradient-to-br from-cyan-100/90 via-cyan-50 to-white border-cyan-400 border-2 hover:border-cyan-500 hover:shadow-2xl hover:shadow-cyan-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-cyan-300/40">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-300/30 via-transparent to-cyan-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+            <div className="absolute -inset-2 bg-gradient-to-r from-cyan-400/50 via-cyan-500/50 to-cyan-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+            <div className="absolute -top-1 -left-1 w-8 h-8 bg-cyan-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+            <CardHeader className="relative z-10">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-bristol-ink font-serif">
+                  <CardTitle className="text-bristol-ink font-serif group-hover:text-cyan-800 transition-colors duration-300">
                     {locationData.location.address}
                   </CardTitle>
-                  <p className="text-bristol-stone text-sm mt-1">
+                  <p className="text-bristol-stone text-sm mt-1 group-hover:text-cyan-700 transition-colors duration-300">
                     Census Tract {locationData.location.census_tract.geoid} • {locationData.metadata.acs_year} ACS Data
                   </p>
                 </div>
-                <Badge variant="outline" className="border-bristol-gold text-bristol-gold">
+                <Badge variant="outline" className="border-cyan-500 text-cyan-600 group-hover:bg-cyan-100 transition-colors duration-300">
                   Live Data
                 </Badge>
               </div>
@@ -160,35 +163,41 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
 
           {/* Demographics Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="bg-white border-bristol-stone/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+            <Card className="bg-gradient-to-br from-emerald-200/90 via-emerald-50 to-white border-emerald-400 border-2 hover:border-emerald-500 hover:shadow-2xl hover:shadow-emerald-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-emerald-300/40">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-300/30 via-transparent to-emerald-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-emerald-400/50 via-emerald-500/50 to-emerald-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+              <div className="absolute -top-1 -right-1 w-8 h-8 bg-emerald-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+              <CardHeader className="pb-3 relative z-10">
+                <CardTitle className="text-sm font-medium text-emerald-800 group-hover:text-emerald-900 transition-colors duration-300 flex items-center gap-2">
                   <Users className="h-4 w-4" />
                   Population
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+              <CardContent className="relative z-10">
+                <div className="text-2xl font-bold text-emerald-600 group-hover:text-emerald-700 group-hover:drop-shadow-[0_0_8px_rgba(16,185,129,0.8)] group-hover:scale-105 transition-all duration-300">
                   {formatValue(locationData.demographics.total_population)}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-emerald-700 mt-1">
                   Median age: {formatValue(locationData.demographics.median_age)}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-bristol-stone/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+            <Card className="bg-gradient-to-br from-amber-200/90 via-amber-50 to-white border-amber-400 border-2 hover:border-amber-500 hover:shadow-2xl hover:shadow-amber-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-amber-300/40">
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-300/30 via-transparent to-amber-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-amber-400/50 via-amber-500/50 to-amber-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+              <div className="absolute -bottom-1 -left-1 w-8 h-8 bg-amber-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+              <CardHeader className="pb-3 relative z-10">
+                <CardTitle className="text-sm font-medium text-amber-800 group-hover:text-amber-900 transition-colors duration-300 flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Median Income
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+              <CardContent className="relative z-10">
+                <div className="text-2xl font-bold text-amber-600 group-hover:text-amber-700 group-hover:drop-shadow-[0_0_8px_rgba(245,158,11,0.8)] group-hover:scale-105 transition-all duration-300">
                   {formatValue(locationData.demographics.median_household_income, 'currency')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-amber-700 mt-1">
                   Per capita: {formatValue(locationData.demographics.per_capita_income, 'currency')}
                 </div>
               </CardContent>
@@ -211,18 +220,21 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-bristol-stone/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+            <Card className="bg-gradient-to-br from-violet-200/90 via-violet-50 to-white border-violet-400 border-2 hover:border-violet-500 hover:shadow-2xl hover:shadow-violet-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-violet-300/40">
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-300/30 via-transparent to-violet-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+              <div className="absolute -inset-2 bg-gradient-to-r from-violet-400/50 via-violet-500/50 to-violet-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+              <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-violet-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+              <CardHeader className="pb-3 relative z-10">
+                <CardTitle className="text-sm font-medium text-violet-800 group-hover:text-violet-900 transition-colors duration-300 flex items-center gap-2">
                   <GraduationCap className="h-4 w-4" />
                   Education
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+              <CardContent className="relative z-10">
+                <div className="text-2xl font-bold text-violet-600 group-hover:text-violet-700 group-hover:drop-shadow-[0_0_8px_rgba(139,92,246,0.8)] group-hover:scale-105 transition-all duration-300">
                   {formatValue(locationData.demographics.percent_bachelor_plus, 'percent')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-violet-700 mt-1">
                   Bachelor's degree or higher
                 </div>
               </CardContent>
@@ -389,43 +401,52 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Employment Rate</CardTitle>
+                <Card className="bg-gradient-to-br from-green-200/90 via-green-50 to-white border-green-400 border-2 hover:border-green-500 hover:shadow-2xl hover:shadow-green-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-green-300/40">
+                  <div className="absolute inset-0 bg-gradient-to-br from-green-300/30 via-transparent to-green-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                  <div className="absolute -inset-2 bg-gradient-to-r from-green-400/50 via-green-500/50 to-green-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                  <div className="absolute -top-1 -left-1 w-8 h-8 bg-green-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+                  <CardHeader className="pb-3 relative z-10">
+                    <CardTitle className="text-sm font-medium text-green-800 group-hover:text-green-900 transition-colors duration-300">Employment Rate</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-bold text-green-600 group-hover:text-green-700 group-hover:drop-shadow-[0_0_8px_rgba(34,197,94,0.8)] group-hover:scale-105 transition-all duration-300">
                       {formatValue(locationData.demographics.employment_rate, 'percent')}
                     </div>
-                    <div className="text-xs text-bristol-stone mt-1">
+                    <div className="text-xs text-green-700 mt-1">
                       Of labor force
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Unemployment Rate</CardTitle>
+                <Card className="bg-gradient-to-br from-orange-200/90 via-orange-50 to-white border-orange-400 border-2 hover:border-orange-500 hover:shadow-2xl hover:shadow-orange-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-orange-300/40">
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-300/30 via-transparent to-orange-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                  <div className="absolute -inset-2 bg-gradient-to-r from-orange-400/50 via-orange-500/50 to-orange-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-orange-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+                  <CardHeader className="pb-3 relative z-10">
+                    <CardTitle className="text-sm font-medium text-orange-800 group-hover:text-orange-900 transition-colors duration-300">Unemployment Rate</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-bold text-orange-600 group-hover:text-orange-700 group-hover:drop-shadow-[0_0_8px_rgba(251,146,60,0.8)] group-hover:scale-105 transition-all duration-300">
                       {formatValue(locationData.demographics.unemployment_rate, 'percent')}
                     </div>
-                    <div className="text-xs text-bristol-stone mt-1">
+                    <div className="text-xs text-orange-700 mt-1">
                       Unemployed: {formatValue(locationData.demographics.unemployed)}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Poverty Rate</CardTitle>
+                <Card className="bg-gradient-to-br from-red-200/90 via-red-50 to-white border-red-400 border-2 hover:border-red-500 hover:shadow-2xl hover:shadow-red-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-red-300/40">
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-300/30 via-transparent to-red-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                  <div className="absolute -inset-2 bg-gradient-to-r from-red-400/50 via-red-500/50 to-red-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                  <div className="absolute -top-1 -right-1 w-8 h-8 bg-red-400/40 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+                  <CardHeader className="pb-3 relative z-10">
+                    <CardTitle className="text-sm font-medium text-red-800 group-hover:text-red-900 transition-colors duration-300">Poverty Rate</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-bold text-red-600 group-hover:text-red-700 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.8)] group-hover:scale-105 transition-all duration-300">
                       {formatValue(locationData.demographics.poverty_rate, 'percent')}
                     </div>
-                    <div className="text-xs text-bristol-stone mt-1">
+                    <div className="text-xs text-red-700 mt-1">
                       Below poverty line
                     </div>
                   </CardContent>
@@ -920,34 +941,43 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
             <TabsContent value="transportation" className="space-y-4">
               {/* Commute Overview */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="bg-white border-bristol-stone/20">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Total Commuters</CardTitle>
+                <Card className="bg-gradient-to-br from-blue-200/90 via-blue-50 to-white border-blue-400 border-2 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-blue-300/40">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-300/30 via-transparent to-blue-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                  <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/50 via-blue-500/50 to-blue-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                  <div className="absolute -top-1 -left-1 w-8 h-8 bg-blue-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+                  <CardHeader className="pb-3 relative z-10">
+                    <CardTitle className="text-sm font-medium text-blue-800 group-hover:text-blue-900 transition-colors duration-300">Total Commuters</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-bold text-blue-600 group-hover:text-blue-700 group-hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.8)] group-hover:scale-105 transition-all duration-300">
                       {formatValue(locationData.demographics.total_commuters)}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Median Commute Time</CardTitle>
+                <Card className="bg-gradient-to-br from-purple-200/90 via-purple-50 to-white border-purple-400 border-2 hover:border-purple-500 hover:shadow-2xl hover:shadow-purple-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-purple-300/40">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-300/30 via-transparent to-purple-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                  <div className="absolute -inset-2 bg-gradient-to-r from-purple-400/50 via-purple-500/50 to-purple-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-purple-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+                  <CardHeader className="pb-3 relative z-10">
+                    <CardTitle className="text-sm font-medium text-purple-800 group-hover:text-purple-900 transition-colors duration-300">Median Commute Time</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-bold text-purple-600 group-hover:text-purple-700 group-hover:drop-shadow-[0_0_8px_rgba(147,51,234,0.8)] group-hover:scale-105 transition-all duration-300">
                       {formatValue(locationData.demographics.median_commute_time)} min
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Work From Home</CardTitle>
+                <Card className="bg-gradient-to-br from-indigo-200/90 via-indigo-50 to-white border-indigo-400 border-2 hover:border-indigo-500 hover:shadow-2xl hover:shadow-indigo-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-indigo-300/40">
+                  <div className="absolute inset-0 bg-gradient-to-br from-indigo-300/30 via-transparent to-indigo-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                  <div className="absolute -inset-2 bg-gradient-to-r from-indigo-400/50 via-indigo-500/50 to-indigo-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                  <div className="absolute -bottom-1 -left-1 w-8 h-8 bg-indigo-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+                  <CardHeader className="pb-3 relative z-10">
+                    <CardTitle className="text-sm font-medium text-indigo-800 group-hover:text-indigo-900 transition-colors duration-300">Work From Home</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                  <CardContent className="relative z-10">
+                    <div className="text-2xl font-bold text-indigo-600 group-hover:text-indigo-700 group-hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.8)] group-hover:scale-105 transition-all duration-300">
                       {formatValue(locationData.demographics.percent_work_from_home, 'percent')}
                     </div>
                   </CardContent>

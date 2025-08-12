@@ -269,9 +269,9 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
               Bristol Market Intelligence
             </h3>
             {selectedSite && (
-              <div className="bg-bristol-gold/10 rounded-lg p-3 mb-3 border border-bristol-gold/20">
+              <div className="bg-cyan-400/10 rounded-lg p-3 mb-3 border border-cyan-400/20">
                 <div className="flex items-center gap-2 mb-1">
-                  <MapPin className="w-4 h-4 text-bristol-gold" />
+                  <MapPin className="w-4 h-4 text-cyan-600" />
                   <span className="text-sm font-semibold text-bristol-ink">
                     {selectedSite.name !== 'Selected Area' ? selectedSite.name : 'Selected Location'}
                   </span>
@@ -297,10 +297,10 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
             )}
             <div className="space-y-2">
               {/* Bristol Development Score */}
-              <Card className="bg-gradient-to-br from-bristol-maroon/30 via-bristol-gold/10 to-white border-bristol-maroon border-2 hover:border-bristol-maroon/90 hover:shadow-2xl hover:shadow-bristol-maroon/60 transition-all duration-600 hover:scale-[1.03] group backdrop-blur-sm relative overflow-hidden shadow-xl shadow-bristol-maroon/30">
-                <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/20 via-bristol-gold/15 to-transparent opacity-50 group-hover:opacity-80 transition-all duration-600"></div>
-                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-maroon/40 via-bristol-gold/40 to-bristol-maroon/40 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-600 -z-10"></div>
-                <div className="absolute -top-2 -right-2 w-12 h-12 bg-bristol-gold/30 rounded-full blur-xl opacity-60 group-hover:opacity-100 transition-all duration-500"></div>
+              <Card className="bg-gradient-to-br from-bristol-maroon/30 via-cyan-400/10 to-white border-bristol-maroon border-2 hover:border-bristol-maroon/90 hover:shadow-2xl hover:shadow-bristol-maroon/60 transition-all duration-600 hover:scale-[1.03] group backdrop-blur-sm relative overflow-hidden shadow-xl shadow-bristol-maroon/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/20 via-cyan-400/15 to-transparent opacity-50 group-hover:opacity-80 transition-all duration-600"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-maroon/40 via-cyan-400/40 to-bristol-maroon/40 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-600 -z-10"></div>
+                <div className="absolute -top-2 -right-2 w-12 h-12 bg-cyan-400/30 rounded-full blur-xl opacity-60 group-hover:opacity-100 transition-all duration-500"></div>
                 <CardContent className="p-4 relative z-10">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -313,14 +313,14 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-3xl font-black text-bristol-maroon group-hover:text-bristol-gold group-hover:drop-shadow-[0_0_12px_rgba(139,69,19,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">
+                      <span className="text-3xl font-black text-bristol-maroon group-hover:text-cyan-600 group-hover:drop-shadow-[0_0_12px_rgba(139,69,19,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">
                         {selectedSite ? getBristolScore(selectedSite).toFixed(1) : (sites.length > 0 ? (sites.reduce((sum, site) => sum + getBristolScore(site), 0) / sites.length).toFixed(1) : '84.2')}
                       </span>
                       <div className="text-xs text-bristol-maroon/80 font-bold">/ 100</div>
                     </div>
                   </div>
                   <div className="mt-3 h-2 bg-bristol-stone/30 rounded-full overflow-hidden shadow-inner">
-                    <div className="h-full bg-gradient-to-r from-bristol-maroon to-bristol-gold rounded-full group-hover:shadow-[0_0_12px_rgba(139,69,19,0.7)] transition-all duration-500 shadow-lg" 
+                    <div className="h-full bg-gradient-to-r from-bristol-maroon to-cyan-400 rounded-full group-hover:shadow-[0_0_12px_rgba(139,69,19,0.7)] transition-all duration-500 shadow-lg" 
                          style={{ width: `${(sites.length > 0 ? (sites.reduce((sum, site) => sum + getBristolScore(site), 0) / sites.length) : 84.2)}%` }}></div>
                   </div>
                 </CardContent>
@@ -352,10 +352,10 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-bristol-maroon/30 via-bristol-gold/20 to-white border-bristol-maroon border-2 hover:border-bristol-gold hover:shadow-2xl hover:shadow-bristol-maroon/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-bristol-gold/30">
-                <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/20 via-bristol-gold/25 to-transparent opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
-                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-maroon/40 via-bristol-gold/50 to-bristol-maroon/40 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
-                <div className="absolute -bottom-1 -left-1 w-8 h-8 bg-bristol-gold/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+              <Card className="bg-gradient-to-br from-bristol-maroon/30 via-cyan-400/20 to-white border-bristol-maroon border-2 hover:border-cyan-500 hover:shadow-2xl hover:shadow-bristol-maroon/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-cyan-400/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/20 via-cyan-400/25 to-transparent opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-maroon/40 via-cyan-400/50 to-bristol-maroon/40 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                <div className="absolute -bottom-1 -left-1 w-8 h-8 bg-cyan-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                 <CardContent className="p-3 relative z-10">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -368,7 +368,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-black text-bristol-maroon group-hover:text-bristol-gold group-hover:drop-shadow-[0_0_8px_rgba(139,69,19,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                      <span className="text-lg font-black text-bristol-maroon group-hover:text-cyan-600 group-hover:drop-shadow-[0_0_8px_rgba(139,69,19,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
                         {demographicsLoading ? '...' : 
                           (demographicsData?.medianIncome || 'Data unavailable')}
                       </span>
@@ -402,23 +402,23 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-bristol-gold/30 via-bristol-gold/15 to-white border-bristol-gold border-2 hover:border-bristol-gold/90 hover:shadow-2xl hover:shadow-bristol-gold/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-bristol-gold/40">
-                <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/25 via-transparent to-bristol-gold/15 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
-                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-gold/50 via-bristol-gold/60 to-bristol-gold/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
-                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-bristol-gold/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+              <Card className="bg-gradient-to-br from-cyan-400/30 via-cyan-400/15 to-white border-cyan-400 border-2 hover:border-cyan-500/90 hover:shadow-2xl hover:shadow-cyan-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-cyan-400/40">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/25 via-transparent to-cyan-400/15 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-cyan-400/50 via-cyan-500/60 to-cyan-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-cyan-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                 <CardContent className="p-3 relative z-10">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-md bg-bristol-gold/50 flex items-center justify-center group-hover:bg-bristol-gold/70 transition-all duration-300 shadow-md">
-                        <Target className="w-3.5 h-3.5 text-bristol-gold group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(218,165,32,0.8)] group-hover:scale-110 transition-all duration-300" />
+                      <div className="w-6 h-6 rounded-md bg-cyan-400/50 flex items-center justify-center group-hover:bg-cyan-500/70 transition-all duration-300 shadow-md">
+                        <Target className="w-3.5 h-3.5 text-cyan-600 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(6,182,212,0.8)] group-hover:scale-110 transition-all duration-300" />
                       </div>
                       <div>
-                        <span className="text-xs text-bristol-gold font-bold">Age 25-44</span>
-                        <div className="text-xs text-bristol-gold/80 font-medium">Target Demo</div>
+                        <span className="text-xs text-cyan-600 font-bold">Age 25-44</span>
+                        <div className="text-xs text-cyan-600/80 font-medium">Target Demo</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-black text-bristol-gold group-hover:text-bristol-gold/90 group-hover:drop-shadow-[0_0_8px_rgba(218,165,32,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">
+                      <span className="text-lg font-black text-cyan-600 group-hover:text-cyan-700 group-hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">
                         {demographicsLoading ? '...' : 
                           (demographicsData?.age25_44Percent || 'Data unavailable')}
                       </span>
@@ -478,10 +478,10 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-bristol-maroon/30 via-bristol-gold/20 to-white border-bristol-maroon border-2 hover:border-bristol-gold hover:shadow-2xl hover:shadow-bristol-maroon/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-bristol-gold/30">
-                <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/20 via-bristol-gold/25 to-transparent opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
-                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-maroon/40 via-bristol-gold/50 to-bristol-maroon/40 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
-                <div className="absolute -top-1 -left-1 w-8 h-8 bg-bristol-gold/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+              <Card className="bg-gradient-to-br from-bristol-maroon/30 via-cyan-400/20 to-white border-bristol-maroon border-2 hover:border-cyan-500 hover:shadow-2xl hover:shadow-bristol-maroon/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-cyan-400/30">
+                <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/20 via-cyan-400/25 to-transparent opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-maroon/40 via-cyan-400/50 to-bristol-maroon/40 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                <div className="absolute -top-1 -left-1 w-8 h-8 bg-cyan-400/50 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                 <CardContent className="p-3 relative z-10">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -494,7 +494,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-black text-bristol-maroon group-hover:text-bristol-gold group-hover:drop-shadow-[0_0_8px_rgba(139,69,19,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
+                      <span className="text-lg font-black text-bristol-maroon group-hover:text-cyan-600 group-hover:drop-shadow-[0_0_8px_rgba(139,69,19,0.8)] group-hover:scale-105 transition-all duration-300 inline-block">
                         {demographicsLoading ? '...' : 
                           (marketConditionsData?.absorptionRate || 'Data unavailable')}
                       </span>
@@ -529,23 +529,23 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-bristol-gold/30 via-bristol-gold/15 to-white border-bristol-gold border-2 hover:border-bristol-gold/90 hover:shadow-2xl hover:shadow-bristol-gold/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-bristol-gold/40">
-                <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/25 via-transparent to-bristol-gold/15 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
-                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-gold/50 via-bristol-gold/60 to-bristol-gold/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
-                <div className="absolute -top-1 -right-1 w-8 h-8 bg-bristol-gold/60 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
+              <Card className="bg-gradient-to-br from-cyan-400/30 via-cyan-400/15 to-white border-cyan-400 border-2 hover:border-cyan-500/90 hover:shadow-2xl hover:shadow-cyan-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-cyan-400/40">
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/25 via-transparent to-cyan-400/15 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
+                <div className="absolute -inset-2 bg-gradient-to-r from-cyan-400/50 via-cyan-500/60 to-cyan-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>
+                <div className="absolute -top-1 -right-1 w-8 h-8 bg-cyan-400/60 rounded-full blur-lg opacity-60 group-hover:opacity-100 transition-all duration-400"></div>
                 <CardContent className="p-3 relative z-10">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-md bg-bristol-gold/50 flex items-center justify-center group-hover:bg-bristol-gold/70 transition-all duration-300 shadow-md">
-                        <DollarSign className="w-3.5 h-3.5 text-bristol-gold group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(218,165,32,0.8)] group-hover:scale-110 transition-all duration-300" />
+                      <div className="w-6 h-6 rounded-md bg-cyan-400/50 flex items-center justify-center group-hover:bg-cyan-500/70 transition-all duration-300 shadow-md">
+                        <DollarSign className="w-3.5 h-3.5 text-cyan-600 group-hover:text-white group-hover:drop-shadow-[0_0_6px_rgba(6,182,212,0.8)] group-hover:scale-110 transition-all duration-300" />
                       </div>
                       <div>
-                        <span className="text-xs text-bristol-gold font-bold">Land Cost/Unit</span>
-                        <div className="text-xs text-bristol-gold/80 font-medium">Acquisition Cost</div>
+                        <span className="text-xs text-cyan-600 font-bold">Land Cost/Unit</span>
+                        <div className="text-xs text-cyan-600/80 font-medium">Acquisition Cost</div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="text-lg font-black text-bristol-gold group-hover:text-bristol-gold/90 group-hover:drop-shadow-[0_0_8px_rgba(218,165,32,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">
+                      <span className="text-lg font-black text-cyan-600 group-hover:text-cyan-700 group-hover:drop-shadow-[0_0_8px_rgba(6,182,212,0.9)] group-hover:scale-105 transition-all duration-300 inline-block">
                         {demographicsLoading ? '...' : 
                           (marketConditionsData?.landCostPerUnit || 'Data unavailable')}
                       </span>
