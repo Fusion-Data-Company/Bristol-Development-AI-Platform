@@ -153,36 +153,40 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
         </div>
       </div>
 
-      {/* Right Sidebar */}
-      <div className="w-96 bg-white border-l border-bristol-stone/20 flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-bristol-stone/20 bg-bristol-cream/30">
-          <div className="flex items-center justify-between mb-2">
+      {/* Right Sidebar - Dark Bristol Theme */}
+      <div className="w-96 bg-bristol-ink border-l border-bristol-gold/20 flex flex-col shadow-2xl">
+        {/* Header - Premium Dark Bristol */}
+        <div className="p-4 border-b border-bristol-gold/30 bg-gradient-to-r from-bristol-ink via-bristol-maroon/20 to-bristol-ink relative overflow-hidden">
+          {/* Elegant background effects */}
+          <div className="absolute inset-0 bg-gradient-to-r from-bristol-ink/95 via-bristol-maroon/10 to-bristol-ink/95"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-bristol-gold/60 to-transparent"></div>
+          
+          <div className="flex items-center justify-between mb-2 relative">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-red-500"></div>
-              <span className="text-sm font-medium text-bristol-ink">Site Intelligence Platform</span>
+              <div className="w-2 h-2 rounded-full bg-bristol-gold animate-pulse shadow-lg shadow-bristol-gold/50"></div>
+              <span className="text-sm font-medium text-white font-cinzel tracking-wide">Site Intelligence Platform</span>
             </div>
-            <Button variant="ghost" size="sm" className="text-bristol-maroon">
+            <Button variant="ghost" size="sm" className="text-bristol-gold hover:text-white hover:bg-bristol-gold/20">
               <Info className="h-4 w-4" />
             </Button>
           </div>
-          <div className="text-xs text-bristol-stone">
+          <div className="text-xs text-bristol-fog relative">
             Interactive Map • {sites.length} sites • Live data
           </div>
         </div>
 
-        {/* Market Overview Header */}
-        <div className="p-4 bg-gradient-to-r from-bristol-cream/20 to-bristol-sky/20">
+        {/* Market Overview Header - Dark Bristol */}
+        <div className="p-4 bg-gradient-to-r from-bristol-maroon/20 via-bristol-ink to-bristol-maroon/20 border-b border-bristol-gold/20">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold text-bristol-ink">Market Overview</h3>
+            <h3 className="font-semibold text-bristol-gold font-cinzel tracking-wide drop-shadow-lg">Market Overview</h3>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-xs">
-                5 properties
+              <Badge variant="outline" className="text-xs border-bristol-gold/40 text-bristol-fog bg-bristol-ink/50 backdrop-blur-sm">
+                {sites.length} properties
               </Badge>
-              <Badge className="text-xs bg-bristol-maroon text-white">
+              <Badge className="text-xs bg-bristol-gold text-bristol-ink font-bold shadow-lg shadow-bristol-gold/30">
                 {getBristolScore(selectedSite).toFixed(1)}
               </Badge>
-              <Badge variant="outline" className="text-xs">
+              <Badge variant="outline" className="text-xs border-bristol-fog/30 text-bristol-fog bg-bristol-ink/30">
                 {new Date().toLocaleDateString()}
               </Badge>
             </div>
@@ -190,31 +194,31 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
           
           {/* Quick Metrics - Real Data */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="text-center">
-              <div className="text-lg font-bold text-bristol-ink">
+            <div className="text-center bg-bristol-ink/30 rounded-lg p-3 border border-bristol-gold/20">
+              <div className="text-lg font-bold text-bristol-gold drop-shadow-lg">
                 {marketLoading ? '...' : (marketAnalytics?.avgBristolScore?.toFixed(1) || 
                   (sites.length > 0 ? (sites.reduce((sum, site) => sum + getBristolScore(site), 0) / sites.length).toFixed(1) : '0.0'))}
               </div>
-              <div className="text-xs text-bristol-stone">Avg Bristol Score</div>
-              <div className="text-xs text-green-600">
+              <div className="text-xs text-bristol-fog font-medium">Avg Bristol Score</div>
+              <div className="text-xs text-bristol-gold font-medium">
                 {marketAnalytics?.bristolScoreChange || 'N/A'}
               </div>
             </div>
-            <div className="text-center">
-              <div className="text-lg font-bold text-bristol-ink">
+            <div className="text-center bg-bristol-ink/30 rounded-lg p-3 border border-bristol-gold/20">
+              <div className="text-lg font-bold text-bristol-gold drop-shadow-lg">
                 {demographicsLoading ? '...' : (demographicsData?.medianIncome ? 
                   `$${(demographicsData.medianIncome / 1000).toFixed(0)}K` : 'N/A')}
               </div>
-              <div className="text-xs text-bristol-stone">Median Income</div>
-              <div className="text-xs text-green-600">
+              <div className="text-xs text-bristol-fog font-medium">Median Income</div>
+              <div className="text-xs text-bristol-gold font-medium">
                 {demographicsData?.incomeGrowth || 'N/A'}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Analysis Tabs */}
-        <div className="border-b border-bristol-stone/20">
+        {/* Analysis Tabs - Dark Bristol */}
+        <div className="border-b border-bristol-gold/30 bg-bristol-maroon/10">
           <div className="flex">
             {[
               { id: 'overview', label: 'Overview' },
@@ -225,29 +229,32 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
               <button
                 key={tab.id}
                 onClick={() => setActiveAnalysis(tab.id as any)}
-                className={`flex-1 px-3 py-2 text-xs font-medium transition-colors ${
+                className={`flex-1 px-3 py-2 text-xs font-medium transition-all duration-300 relative overflow-hidden ${
                   activeAnalysis === tab.id
-                    ? 'text-bristol-maroon border-b-2 border-bristol-maroon bg-bristol-cream/30'
-                    : 'text-bristol-stone hover:text-bristol-ink'
+                    ? 'text-bristol-gold border-b-2 border-bristol-gold bg-bristol-gold/20 font-bold shadow-lg'
+                    : 'text-bristol-fog hover:text-bristol-gold hover:bg-bristol-gold/10'
                 }`}
               >
-                {tab.label}
+                {activeAnalysis === tab.id && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/10 via-bristol-gold/20 to-bristol-gold/10"></div>
+                )}
+                <span className="relative">{tab.label}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Content Area */}
-        <ScrollArea className="flex-1">
+        {/* Content Area - Dark Bristol */}
+        <ScrollArea className="flex-1 bg-bristol-ink">
           <div className="p-4 space-y-4">
             
-            {/* Site Analysis Section */}
+            {/* Site Analysis Section - Dark Bristol */}
             {selectedSite && (
-              <Card className="border-bristol-stone/20">
+              <Card className="border-bristol-gold/30 bg-bristol-maroon/20 backdrop-blur-sm shadow-xl">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold text-bristol-ink">Site Analysis</CardTitle>
-                    <Button variant="ghost" size="sm" className="text-bristol-maroon h-6 px-2">
+                    <CardTitle className="text-sm font-semibold text-bristol-gold font-cinzel tracking-wide">Site Analysis</CardTitle>
+                    <Button variant="ghost" size="sm" className="text-bristol-gold hover:text-white hover:bg-bristol-gold/20 h-6 px-2">
                       <span className="text-xs">View details</span>
                       <ChevronRight className="h-3 w-3 ml-1" />
                     </Button>
@@ -255,29 +262,29 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                 </CardHeader>
                 <CardContent className="space-y-3 pt-0">
                   <div>
-                    <div className="text-sm font-medium text-bristol-ink mb-1">{selectedSite.name}</div>
-                    <div className="text-xs text-bristol-stone">{selectedSite.addrLine1 || 'Address'}, {selectedSite.city || 'City'}, {selectedSite.state || 'State'}</div>
+                    <div className="text-sm font-medium text-white mb-1 drop-shadow-lg">{selectedSite.name}</div>
+                    <div className="text-xs text-bristol-fog">{selectedSite.addrLine1 || 'Address'}, {selectedSite.city || 'City'}, {selectedSite.state || 'State'}</div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
-                      <span className="text-bristol-stone">Status:</span>
-                      <span className="ml-1 text-bristol-ink font-medium">{selectedSite.status || 'Operating'}</span>
+                      <span className="text-bristol-fog">Status:</span>
+                      <span className="ml-1 text-bristol-gold font-medium">{selectedSite.status || 'Operating'}</span>
                     </div>
                     <div>
-                      <span className="text-bristol-stone">Units:</span>
-                      <span className="ml-1 text-bristol-ink font-medium">{selectedSite.unitsTotal || selectedSite.totalUnits || 'N/A'}</span>
+                      <span className="text-bristol-fog">Units:</span>
+                      <span className="ml-1 text-bristol-gold font-medium">{selectedSite.unitsTotal || selectedSite.totalUnits || 'N/A'}</span>
                     </div>
                   </div>
 
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-bristol-stone">Bristol Score</span>
-                      <span className={`text-xs font-bold ${getScoreColor(getBristolScore(selectedSite))}`}>
+                      <span className="text-xs text-bristol-fog">Bristol Score</span>
+                      <span className="text-xs font-bold text-bristol-gold drop-shadow-lg">
                         {getBristolScore(selectedSite).toFixed(1)}
                       </span>
                     </div>
-                    <Progress value={getBristolScore(selectedSite)} className="h-2" />
+                    <Progress value={getBristolScore(selectedSite)} className="h-2 bg-bristol-ink border border-bristol-gold/20" />
                   </div>
                 </CardContent>
               </Card>
@@ -489,16 +496,16 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
           </div>
         </ScrollArea>
 
-        {/* Footer */}
-        <div className="p-3 border-t border-bristol-stone/20 bg-bristol-cream/20">
-          <div className="flex items-center justify-between text-xs text-bristol-stone">
+        {/* Footer - Dark Bristol */}
+        <div className="p-3 border-t border-bristol-gold/30 bg-gradient-to-r from-bristol-maroon/20 via-bristol-ink to-bristol-maroon/20">
+          <div className="flex items-center justify-between text-xs text-bristol-fog">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>Market Assessment</span>
+              <div className="w-2 h-2 bg-bristol-gold rounded-full animate-pulse shadow-lg shadow-bristol-gold/50"></div>
+              <span className="font-medium">Market Assessment</span>
             </div>
             <div className="flex items-center gap-2">
-              <span>Bristol Analytics</span>
-              <Badge variant="outline" className="text-xs">Live</Badge>
+              <span className="font-cinzel tracking-wide">Bristol Analytics</span>
+              <Badge variant="outline" className="text-xs border-bristol-gold/40 text-bristol-gold bg-bristol-ink/50">Live</Badge>
             </div>
           </div>
         </div>
