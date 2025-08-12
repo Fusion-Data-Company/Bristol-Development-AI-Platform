@@ -39,15 +39,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const analyticsRouter = (await import('./api/analytics')).default;
   app.use('/api/analytics', analyticsRouter);
 
-  // Tools API routes (BLS, BEA, HUD)
+  // Tools API routes (BLS, BEA, HUD, Foursquare, FBI, NOAA)
   const blsRouter = (await import('./api/tools/bls')).default;
   const beaRouter = (await import('./api/tools/bea')).default;
   const hudRouter = (await import('./api/tools/hud')).default;
+  const foursquareRouter = (await import('./api/tools/foursquare')).default;
+  const fbiRouter = (await import('./api/tools/fbi')).default;
+  const noaaRouter = (await import('./api/tools/noaa')).default;
   const snapshotsRouter = (await import('./api/tools/snapshots')).default;
   
   app.use('/api/tools/bls', isAuthenticated, blsRouter);
   app.use('/api/tools/bea', isAuthenticated, beaRouter);
   app.use('/api/tools/hud', isAuthenticated, hudRouter);
+  app.use('/api/tools/foursquare', isAuthenticated, foursquareRouter);
+  app.use('/api/tools/fbi', isAuthenticated, fbiRouter);
+  app.use('/api/tools/noaa', isAuthenticated, noaaRouter);
   app.use('/api/snapshots', isAuthenticated, snapshotsRouter);
 
   // ACS enrichment and GeoJSON routes

@@ -153,14 +153,14 @@ export function HUDTool() {
     plugins: {
       legend: {
         labels: {
-          color: '#ffffff'
+          color: '#374151'
         }
       }
     },
     scales: {
       x: {
-        ticks: { color: '#ffffff' },
-        grid: { color: '#374151' }
+        ticks: { color: '#374151' },
+        grid: { color: '#e5e7eb' }
       },
       y: {
         type: 'linear' as const,

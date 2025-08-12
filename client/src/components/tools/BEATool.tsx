@@ -132,25 +132,25 @@ export function BEATool() {
     plugins: {
       legend: {
         labels: {
-          color: '#ffffff'
+          color: '#374151'
         }
       }
     },
     scales: {
       x: {
-        ticks: { color: '#ffffff' },
-        grid: { color: '#374151' }
+        ticks: { color: '#374151' },
+        grid: { color: '#e5e7eb' }
       },
       y: {
         ticks: { 
-          color: '#ffffff',
+          color: '#374151',
           callback: (value: any) => {
             if (value >= 1000000) return `$${(value/1000000).toFixed(1)}M`;
             if (value >= 1000) return `$${(value/1000).toFixed(0)}K`;
             return `$${value}`;
           }
         },
-        grid: { color: '#374151' }
+        grid: { color: '#e5e7eb' }
       }
     }
   };

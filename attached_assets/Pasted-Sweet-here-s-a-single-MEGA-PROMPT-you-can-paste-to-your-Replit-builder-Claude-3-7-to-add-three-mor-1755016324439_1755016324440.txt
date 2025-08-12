@@ -1,0 +1,360 @@
+Sweet—here’s a single MEGA PROMPT you can paste to your Replit builder (Claude 3.7) to add three more Tools tabs to the same place: Foursquare (Places), FBI (Crime), and NOAA (Climate). It wires them to your keys, builds API routes with caching, and creates real UI (filters, charts, tables, and map overlays). No placeholders.
+
+⸻
+
+MEGA PROMPT — Add 3 New Tools Tabs (Foursquare, FBI, NOAA)
+
+Goal: In the app’s Tools section, create three fully working tabs:
+	•	Places (Foursquare)
+	•	Crime (FBI)
+	•	Climate (NOAA)
+
+Each tab must:
+	1.	read the selected property (or a chosen lat/lng)
+	2.	call the live public API using secrets stored in env vars
+	3.	display useful outputs (KPIs + charts + table + optional map overlay)
+	4.	support filters (date/radius/category where relevant)
+	5.	cache responses (to keep the UX snappy)
+	6.	let the user Save Snapshot to the DB (snapshots table)
+
+Use TypeScript throughout. Fail gracefully with friendly messages.
+
+⸻
+
+0) Environment variables (DON’T hardcode keys)
+
+Add these to .env (they were supplied by the user):
+
+FOURSQUARE_API_KEY=QBP43RBS1NJY1UKUT4VCYBIINXWIRZNUUOYQUTWJWNZRM5QM
+FBI_CRIME_API_KEY=NeQpleS5xbOlf6Qg4jLsiTqgpY5bZzzf3P1Wq14o
+# NOAA has no key
+
+
+⸻
+
+1) Reuse existing plumbing
+	•	Use the same Tools section where BLS/BEA/HUD now live.
+	•	Reuse the simple in‑memory cache helper (getCache, setCache) already created.
+
+If missing, create src/server/tools/cache.ts (same as before):
+
+const store = new Map<string, { until:number; data:any }>();
+export function getCache(k:string){ const it=store.get(k); return it && it.until>Date.now()? it.data : null; }
+export function setCache(k:string,data:any,ttlMs=5*60*1000){ store.set(k,{ until: Date.now()+ttlMs, data }); }
+
+Create/ensure snapshots API/DB exists (POST only) just like before.
+
+⸻
+
+2) API routes (three new endpoints)
+
+A) Foursquare Places — /api/tools/foursquare
+
+Purpose: fetch nearby amenities around a point (property lat/lng) and compute a Bristol Amenity Score.
+
+Request (GET):
+	•	lat (number) – default: selected property latitude
+	•	lng (number) – default: selected property longitude
+	•	radius (meters, default 1600 ≈ 1 mile)
+	•	categories (csv; optional) – if omitted, use a default bundle relevant to multifamily living
+	•	limit (default 100)
+
+Implementation:
+	•	Endpoint: https://api.foursquare.com/v3/places/search
+	•	Headers: Authorization: ${FOURSQUARE_API_KEY}
+	•	Params: ll=${lat},${lng}, radius, categories, limit, sort=RELEVANCE
+	•	Default categories (IDs, v3):
+	•	Grocery: 17069
+	•	Coffee/Tea: 13032
+	•	Restaurants: 13000
+	•	Bars: 13003
+	•	Fitness Center/Gym: 18021
+	•	Park: 16032
+	•	Pharmacy: 17014
+	•	Transit Station: 19046
+(Builder: keep these as default CSV if categories not provided.)
+
+Derivations:
+	•	Group by category → counts within radius
+	•	Compute Amenity Score (weights can be adjusted later):
+	•	Grocery (×2.0), Coffee (×1.5), Restaurants (×1.0), Fitness (×1.5), Park (×1.2), Pharmacy (×1.2), Bars (×0.8), Transit (×1.3)
+
+Caching: 1 hour TTL.
+
+Route code (sketch):
+
+// pages/api/tools/foursquare.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getCache, setCache } from "@/server/tools/cache";
+
+const DEFAULT_CATS = "17069,13032,13000,13003,18021,16032,17014,19046";
+const WEIGHTS: Record<string, number> = {
+  "17069": 2.0, "13032": 1.5, "13000": 1.0, "13003": 0.8,
+  "18021": 1.5, "16032": 1.2, "17014": 1.2, "19046": 1.3
+};
+
+export default async function handler(req:NextApiRequest,res:NextApiResponse){
+  try {
+    const { lat, lng, radius="1600", categories=DEFAULT_CATS, limit="100" } = req.query;
+    if (!lat || !lng) return res.status(400).json({ error:"lat,lng required (use property picker)" });
+
+    const key = `fsq:${lat}:${lng}:${radius}:${categories}:${limit}`;
+    const cached = getCache(key); if (cached) return res.json(cached);
+
+    const url = new URL("https://api.foursquare.com/v3/places/search");
+    url.searchParams.set("ll", `${lat},${lng}`);
+    url.searchParams.set("radius", String(radius));
+    url.searchParams.set("categories", String(categories));
+    url.searchParams.set("limit", String(limit));
+    url.searchParams.set("sort", "RELEVANCE");
+
+    const r = await fetch(url.toString(), { headers: { Authorization: process.env.FOURSQUARE_API_KEY! } });
+    if (!r.ok) return res.status(r.status).json({ error:`Foursquare ${r.status}` });
+    const j = await r.json();
+
+    const rows = (j.results||[]).map((p:any) => ({
+      fsq_id: p.fsq_id,
+      name: p.name,
+      category_id: p.categories?.[0]?.id ?? null,
+      category: p.categories?.[0]?.name ?? null,
+      distance_m: p.distance ?? null,
+      lat: p.geocodes?.main?.latitude ?? null,
+      lng: p.geocodes?.main?.longitude ?? null
+    }));
+
+    const byCat: Record<string, {name:string; id:number; count:number; weight:number}> = {};
+    for (const r of rows) {
+      const id = String(r.category_id ?? "other");
+      const weight = WEIGHTS[id] ?? 0.5;
+      const name = r.category || "Other";
+      byCat[id] = byCat[id] || { name, id: Number(id), count:0, weight };
+      byCat[id].count++;
+    }
+    const score = Object.values(byCat).reduce((acc, c) => acc + c.count * c.weight, 0);
+
+    const out = { params: { lat, lng, radius, categories, limit }, score, byCategory: Object.values(byCat), places: rows };
+    setCache(key, out, 60*60*1000);
+    res.json(out);
+  } catch (e:any) {
+    res.status(500).json({ error: e.message });
+  }
+}
+
+
+⸻
+
+B) FBI Crime — /api/tools/fbi
+
+Purpose: violent/property crime trends for the relevant state/county or ORI agency near the property.
+
+Request (GET):
+	•	geo: 'state' | 'offense' | 'agency' (default 'state')
+	•	state (2‑letter, e.g., TN) – default from property’s state
+	•	offense (e.g., violent-crime, property-crime) default violent-crime
+	•	from (YYYY), to (YYYY) – default last 10 yrs
+
+Implementation notes:
+	•	Base URL: https://api.usa.gov/crime/fbi/sapi/api/summarized/{level}/{code}/{offense}/{from}/{to}?api_key=...
+	•	Example (state): /summarized/state/TN/violent-crime/2014/2024
+	•	For county-level, FBI summaries are limited; safer to use state series or nearest agency series (builder can add agency search later).
+	•	Normalize to annual time series with rate per 100k using state population from series if available; if not, return raw counts first.
+
+Caching: 12 hours TTL.
+
+Route code (sketch):
+
+// pages/api/tools/fbi.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getCache, setCache } from "@/server/tools/cache";
+
+export default async function handler(req:NextApiRequest,res:NextApiResponse){
+  try {
+    const { geo="state", state="TN", offense="violent-crime", from="2014", to="2024" } = req.query;
+    const key = `fbi:${geo}:${state}:${offense}:${from}:${to}`;
+    const cached = getCache(key); if (cached) return res.json(cached);
+
+    const base = "https://api.usa.gov/crime/fbi/sapi/api";
+    const url = `${base}/summarized/${geo}/${state}/${offense}/${from}/${to}?api_key=${process.env.FBI_CRIME_API_KEY}`;
+    const r = await fetch(url);
+    if (!r.ok) return res.status(r.status).json({ error:`FBI ${r.status}` });
+    const j = await r.json();
+
+    const rows = (j?.results||[]).map((d:any)=>({
+      year: d.data_year,
+      offense,
+      actual: Number(d.actual),
+      cleared: Number(d.cleared)
+    })).sort((a:any,b:any)=>a.year-b.year);
+
+    const yoy = rows.length>1 ? rows[rows.length-1].actual - rows[rows.length-2].actual : null;
+
+    const out = { geo, state, offense, from, to, rows, yoy };
+    setCache(key,out,12*60*60*1000);
+    res.json(out);
+  } catch (e:any) {
+    res.status(500).json({ error: e.message });
+  }
+}
+
+
+⸻
+
+C) NOAA Climate (NCEI Search) — /api/tools/noaa
+
+Purpose: pull climate normals or daily summaries for stations near the property to assess heat/rain trends and comfort.
+
+Request (GET):
+	•	dataset (default daily-summaries)
+	•	bbox (N,W,S,E) – if not provided, build a small bbox (e.g., 0.2° box) around lat,lng
+	•	startDate, endDate (ISO 8601) – default last 365 days
+	•	Or: text or keywords (optional)
+
+Implementation:
+	•	Use NCEI Search Service:
+https://www.ncei.noaa.gov/access/services/search/v1/data?dataset=${dataset}&bbox=${bbox}&startDate=${startDate}&endDate=${endDate}&available=true
+	•	Normalize results to a compact table of stations/datasets with precipitation and temperature variables when present.
+	•	First pass: discovery list. If results include data URIs, show a Download link per item.
+
+Caching: 6 hours TTL.
+
+Route code (sketch):
+
+// pages/api/tools/noaa.ts
+import type { NextApiRequest, NextApiResponse } from "next";
+import { getCache, setCache } from "@/server/tools/cache";
+
+function bboxAround(lat:number, lng:number, d=0.2){
+  return `${(lat+d).toFixed(3)},${(lng-d).toFixed(3)},${(lat-d).toFixed(3)},${(lng+d).toFixed(3)}`; // N,W,S,E
+}
+
+export default async function handler(req:NextApiRequest,res:NextApiResponse){
+  try {
+    const { lat, lng, dataset="daily-summaries", bbox, startDate, endDate } = req.query;
+    if ((!lat || !lng) && !bbox) return res.status(400).json({ error:"lat,lng or bbox required" });
+
+    const _bbox = bbox ? String(bbox) : bboxAround(Number(lat), Number(lng));
+    const _end = endDate || new Date().toISOString().slice(0,10);
+    const d = new Date(_end as string); d.setDate(d.getDate()-365);
+    const _start = startDate || d.toISOString().slice(0,10);
+
+    const key = `noaa:${dataset}:${_bbox}:${_start}:${_end}`;
+    const cached = getCache(key); if (cached) return res.json(cached);
+
+    const base = "https://www.ncei.noaa.gov/access/services/search/v1/data";
+    const url = `${base}?dataset=${dataset}&bbox=${encodeURIComponent(_bbox)}&startDate=${_start}&endDate=${_end}&available=true`;
+    const r = await fetch(url);
+    if (!r.ok) return res.status(r.status).json({ error:`NOAA ${r.status}` });
+    const j = await r.json();
+
+    // normalize a few key fields
+    const items = (j?.results||[]).map((it:any) => ({
+      id: it.id,
+      name: it.name || it.title || it.dataType || "Item",
+      summary: it.summary || it.description || null,
+      station: it.stations?.[0] || null,
+      dataTypes: it.dataTypes || [],
+      start: it.startDate || null,
+      end: it.endDate || null,
+      links: it.links || []
+    }));
+
+    const out = { dataset, bbox: _bbox, startDate: _start, endDate: _end, count: items.length, items };
+    setCache(key,out,6*60*60*1000);
+    res.json(out);
+  } catch (e:any) {
+    res.status(500).json({ error: e.message });
+  }
+}
+
+
+⸻
+
+3) UI pages (three tabs)
+
+Create:
+	•	src/pages/tools/foursquare.tsx
+	•	src/pages/tools/fbi.tsx
+	•	src/pages/tools/noaa.tsx
+
+Each page:
+	•	Pulls selected property (lat/lng + state) from your store or lets the user pick one.
+	•	Provides minimal controls (radius/categories for FSQ; offense/from/to for FBI; date & bbox for NOAA).
+	•	Renders 3 blocks: KPIs, Chart, Table; plus Save Snapshot button.
+	•	Adds an optional map overlay layer (points for Foursquare; nothing for FBI/NOAA first pass).
+
+Foursquare tab (UI skeleton)
+	•	Inputs: radius (mi), category multi-select (prepopulated with defaults).
+	•	Button: Run → calls /api/tools/foursquare.
+	•	KPIs: Amenity Score, Grocery within 1 mi, Coffee within 1 mi, Parks within 1 mi.
+	•	Chart: bar chart by category (count).
+	•	Table: top 50 places (name, category, distance).
+	•	Map overlay: symbol layer for places, toggleable.
+
+FBI tab (UI skeleton)
+	•	Inputs: State (selected from property), Offense (violent-crime/property-crime), Year range.
+	•	Button: Run → calls /api/tools/fbi.
+	•	KPIs: Latest year count, YoY Δ.
+	•	Chart: line series over years.
+	•	Table: year | actual | cleared.
+	•	(Later: rate per 100k by merging with Census state pop if desired.)
+
+NOAA tab (UI skeleton)
+	•	Inputs: dataset (default daily-summaries), Start/End date, buffer size (mi).
+	•	Button: Run → calls /api/tools/noaa (auto builds bbox).
+	•	KPIs: Count of items/stations found.
+	•	Table: id | name | station | start | end | dataTypes | download links.
+	•	(Later: follow links to pull daily precip/temp for top station and summarize.)
+
+Each tab: include Save Snapshot that POSTs to /api/snapshots:
+
+await fetch("/api/snapshots", {
+  method:"POST",
+  headers:{ "Content-Type":"application/json" },
+  body: JSON.stringify({ tool:"Foursquare", params, data: result })
+});
+
+(Change tool per tab.)
+
+⸻
+
+4) Map overlays (Foursquare only, first pass)
+	•	Add a GeoJSON source fsq-src and a circle/symbol layer fsq-points.
+	•	On Run: setData with places; zoom/fit bounds if >0 results.
+	•	Add checkbox “Show places on map” → toggles layer visibility.
+
+⸻
+
+5) Defaults and joins
+	•	For all tabs, default to the currently selected property center. If none, prompt user to choose a site.
+	•	Distance conversions: UI shows miles; API uses meters (1 mi = 1609.34 m).
+	•	State code: parse from cityState or store separately (TN, VA, etc.).
+
+⸻
+
+6) Caching & errors
+	•	Foursquare: 1 hour TTL
+	•	FBI: 12 hours TTL
+	•	NOAA: 6 hours TTL
+	•	On non‑200, show a compact inline error with suggested fix (bad state code, too‑large bbox, invalid dates).
+
+⸻
+
+7) Deliverables checklist (builder must confirm)
+	•	New tabs appear under Tools: Places (Foursquare), Crime (FBI), Climate (NOAA)
+	•	Each tab fetches live data with the env secrets (or no key for NOAA)
+	•	Foursquare tab shows Amenity Score, category bar chart, table, and map overlay
+	•	FBI tab shows yearly trend line and table
+	•	NOAA tab lists nearby datasets/stations with dates and links
+	•	Save Snapshot works for all three tabs
+	•	Inputs persist and re‑query correctly; caching verified
+	•	No placeholder toggles; all controls change the actual view
+
+⸻
+
+When finished, print this summary:
+	•	“Created Tools tabs: Foursquare, FBI, NOAA.”
+	•	Selected property used for defaults (name and lat/lng + state).
+	•	Count of Foursquare places returned for default radius.
+	•	FBI offense and years returned.
+	•	NOAA dataset and number of items found.
+	•	Snapshot endpoint path.

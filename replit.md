@@ -39,6 +39,7 @@ Bristol Site Intelligence Platform is a comprehensive enterprise-grade AI-powere
 
 Preferred communication style: Simple, everyday language.
 **CRITICAL BRANDING PREFERENCE:** Dark Bristol header/nav with gold logo in top right corner must NEVER be changed - user has requested this multiple times and styling should remain consistent.
+**THEME PREFERENCE:** All pages created should use light theme by default, not dark themes. Only the header/navigation should remain dark with Bristol branding.
 
 ## System Architecture
 
