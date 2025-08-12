@@ -15,6 +15,7 @@ import Integrations from "@/pages/Integrations";
 import MainApp from "@/pages/App";
 import ToolsConsole from "@/pages/ToolsConsole";
 import IntegrationsNew from "@/pages/IntegrationsNew";
+import Demographics from "@/pages/Demographics";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -29,6 +30,7 @@ function Router() {
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/sites" component={Sites} />
           <Route path="/analytics" component={Analytics} />
+          <Route path="/demographics" component={Demographics} />
           <Route path="/chat" component={Chat} />
           <Route path="/integrations" component={IntegrationsNew} />
           <Route path="/tools" component={ToolsConsole} />

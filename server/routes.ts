@@ -39,6 +39,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const analyticsRouter = (await import('./api/analytics')).default;
   app.use('/api/analytics', analyticsRouter);
 
+  // ACS enrichment and GeoJSON routes
+  const { enrichSites } = await import('./api/enrich');
+  const { getSitesGeoJSON } = await import('./api/sites-geojson');
+  
+  app.post('/api/enrich', isAuthenticated, enrichSites);
+  app.get('/api/sites.geojson', isAuthenticated, getSitesGeoJSON);
+
 
 
   // Chat routes

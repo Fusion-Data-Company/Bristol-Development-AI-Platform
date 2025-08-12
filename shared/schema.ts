@@ -59,6 +59,12 @@ export const sites = pgTable("sites", {
   parkingSpaces: integer("parking_spaces"),
   sourceUrl: text("source_url"),
   notes: text("notes"),
+  // ACS Demographics fields
+  fipsState: text("fips_state"),
+  fipsCounty: text("fips_county"),
+  geoidTract: text("geoid_tract"),
+  acsYear: text("acs_year"),
+  acsProfile: jsonb("acs_profile"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
@@ -165,6 +171,12 @@ export const properties = pgTable("properties", {
   yearBuilt: integer("year_built"),
   source: varchar("source"), // county_assessor, arcgis, manual
   dataDate: timestamp("data_date"),
+  // ACS Demographics fields
+  fipsState: text("fips_state"),
+  fipsCounty: text("fips_county"),
+  geoidTract: text("geoid_tract"),
+  acsYear: text("acs_year"),
+  acsProfile: jsonb("acs_profile"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
