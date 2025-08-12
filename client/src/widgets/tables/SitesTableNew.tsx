@@ -203,15 +203,9 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
     },
     {
       accessorKey: 'addrLine1',
-      header: 'Address Line 1',
-      size: 180,
+      header: 'Address',
+      size: 200,
       cell: createEditableCell('addrLine1'),
-    },
-    {
-      accessorKey: 'addrLine2',
-      header: 'Address Line 2',
-      size: 150,
-      cell: createEditableCell('addrLine2'),
     },
     {
       accessorKey: 'city',
@@ -230,12 +224,6 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       header: 'ZIP',
       size: 80,
       cell: createEditableCell('postalCode'),
-    },
-    {
-      accessorKey: 'country',
-      header: 'Country',
-      size: 80,
-      cell: createEditableCell('country'),
     },
     {
       accessorKey: 'latitude',
