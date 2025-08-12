@@ -1,237 +1,551 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   useReactTable,
   getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   flexRender,
-  createColumnHelper,
-  SortingState,
-} from "@tanstack/react-table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  ColumnDef,
+} from '@tanstack/react-table';
+import { useState, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ArrowUpDown, Edit, Trash2, MapPin, ExternalLink, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, MapPin, Building } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
-import type { Site } from '@shared/schema';
 
-interface SitesTableProps {
-  onSiteSelect?: (site: Site) => void;
-  selectedSiteId?: string;
+interface Site {
+  id: string;
+  status: string;
+  name: string;
+  addrLine1?: string;
+  addrLine2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  latitude?: number;
+  longitude?: number;
+  acreage?: number;
+  unitsTotal?: number;
+  units1b?: number;
+  units2b?: number;
+  units3b?: number;
+  avgSf?: number;
+  completionYear?: number;
+  parkingSpaces?: number;
+  sourceUrl?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-const columnHelper = createColumnHelper<Site>();
+interface SitesTableProps {
+  data: Site[];
+  isLoading: boolean;
+  onSelectSite: (site: Site | null) => void;
+  selectedSite: Site | null;
+  onRefresh: () => void;
+}
 
-export function SitesTable({ onSiteSelect, selectedSiteId }: SitesTableProps) {
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [newSite, setNewSite] = useState({
-    name: "",
-    city: "",
-    state: ""
-  });
-  const [sorting, setSorting] = useState<SortingState>([]);
-  
+export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefresh }: SitesTableProps) {
+  const [sorting, setSorting] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [editingCell, setEditingCell] = useState<{ rowId: string; columnId: string } | null>(null);
+  const [editValue, setEditValue] = useState('');
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
-  // Fetch sites
-  const { data: sites = [], isLoading } = useQuery<Site[]>({
-    queryKey: ["/api/sites"],
-    retry: false,
-  });
+  const handleCellEdit = async (site: Site, field: string, value: any) => {
+    try {
+      const updateData: any = {};
+      
+      // Parse value based on field type
+      if (['latitude', 'longitude', 'acreage', 'avgSf'].includes(field)) {
+        updateData[field] = value ? parseFloat(value) : null;
+      } else if (['unitsTotal', 'units1b', 'units2b', 'units3b', 'completionYear', 'parkingSpaces'].includes(field)) {
+        updateData[field] = value ? parseInt(value) : null;
+      } else {
+        updateData[field] = value || null;
+      }
 
-  // Create site mutation
-  const createSiteMutation = useMutation({
-    mutationFn: async (siteData: any) => {
-      return apiRequest("/api/sites", "POST", siteData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/sites"] });
-      setIsAddDialogOpen(false);
-      setNewSite({ name: "", city: "", state: "" });
-      toast({ title: "Site Created" });
-    },
-    onError: () => {
-      toast({ title: "Error", description: "Failed to create site", variant: "destructive" });
-    },
-  });
+      await apiRequest(`/api/sites/${site.id}`, {
+        method: 'PATCH',
+        body: updateData
+      });
 
-  // Delete site mutation
-  const deleteSiteMutation = useMutation({
-    mutationFn: async (siteId: string) => {
-      return apiRequest(`/api/sites/${siteId}`, "DELETE");
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/sites"] });
-      toast({ title: "Site Deleted" });
-    },
-  });
-
-  const columns = [
-    columnHelper.accessor('name', {
-      header: 'Name',
-      cell: info => (
-        <div className="font-medium">
-          {info.getValue()}
-        </div>
-      ),
-    }),
-    columnHelper.display({
-      id: 'location',
-      header: 'City/State',
-      cell: ({ row }) => (
-        <div className="flex items-center gap-1 text-gray-600">
-          <MapPin className="h-3 w-3" />
-          {row.original.city && row.original.state ? `${row.original.city}, ${row.original.state}` : 'Not set'}
-        </div>
-      ),
-    }),
-    columnHelper.display({
-      id: 'actions',
-      header: 'Actions',
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onSiteSelect?.(row.original)}
-          >
-            Select
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => deleteSiteMutation.mutate(row.original.id)}
-            className="text-red-600"
-          >
-            Delete
-          </Button>
-        </div>
-      ),
-    }),
-  ];
-
-  const table = useReactTable({
-    data: sites,
-    columns,
-    state: { sorting },
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
-
-  const handleCreateSite = () => {
-    if (!newSite.name.trim()) {
-      toast({ title: "Name is required", variant: "destructive" });
-      return;
+      onRefresh();
+      setEditingCell(null);
+      
+      toast({
+        title: "Site Updated",
+        description: `${site.name} has been updated`,
+      });
+    } catch (error) {
+      toast({
+        title: "Update Failed",
+        description: "Failed to update site",
+        variant: "destructive",
+      });
     }
-    createSiteMutation.mutate(newSite);
   };
 
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Building className="h-5 w-5" />
-            Sites
-          </CardTitle>
-          <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Site
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Site</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label>Name (required)</Label>
-                  <Input
-                    value={newSite.name}
-                    onChange={(e) => setNewSite({ ...newSite, name: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>City</Label>
-                  <Input
-                    value={newSite.city}
-                    onChange={(e) => setNewSite({ ...newSite, city: e.target.value })}
-                  />
-                </div>
-                <div>
-                  <Label>State</Label>
-                  <Input
-                    value={newSite.state}
-                    onChange={(e) => setNewSite({ ...newSite, state: e.target.value })}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleCreateSite} disabled={createSiteMutation.isPending}>
-                  {createSiteMutation.isPending ? "Creating..." : "Create"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+  const handleDelete = async (site: Site) => {
+    if (!confirm(`Are you sure you want to delete ${site.name}?`)) return;
+    
+    try {
+      await apiRequest(`/api/sites/${site.id}`, {
+        method: 'DELETE'
+      });
+
+      onRefresh();
+      if (selectedSite?.id === site.id) {
+        onSelectSite(null);
+      }
+      
+      toast({
+        title: "Site Deleted",
+        description: `${site.name} has been deleted`,
+      });
+    } catch (error) {
+      toast({
+        title: "Delete Failed", 
+        description: "Failed to delete site",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const columns: ColumnDef<Site>[] = useMemo(() => [
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => {
+        const status = row.getValue('status') as string;
+        return (
+          <Badge
+            variant={
+              status === 'Completed' ? 'default' :
+              status === 'Newest' ? 'secondary' :
+              status === 'Pipeline' ? 'outline' : 'outline'
+            }
+            className={
+              status === 'Completed' ? 'bg-green-100 text-green-800 hover:bg-green-200' :
+              status === 'Newest' ? 'bg-bristol-gold/20 text-bristol-maroon hover:bg-bristol-gold/30' :
+              status === 'Pipeline' ? 'bg-blue-100 text-blue-800 hover:bg-blue-200' :
+              'bg-gray-100 text-gray-800 hover:bg-gray-200'
+            }
+          >
+            {status}
+          </Badge>
+        );
+      },
+    },
+    {
+      accessorKey: 'name',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-8 p-0 font-semibold hover:bg-transparent"
+        >
+          Site Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row }) => (
+        <div 
+          className="font-medium text-bristol-ink cursor-pointer hover:text-bristol-maroon"
+          onClick={() => onSelectSite(row.original)}
+        >
+          {row.getValue('name')}
         </div>
-      </CardHeader>
-      <CardContent>
-        {isLoading ? (
-          <div>Loading sites...</div>
-        ) : sites.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-gray-500 mb-4">No sites found</p>
-            <Button onClick={() => setIsAddDialogOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Site
+      ),
+    },
+    {
+      accessorKey: 'addrLine1',
+      header: 'Address',
+      cell: ({ row, column }) => {
+        const site = row.original;
+        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
+        const value = row.getValue('addrLine1') as string;
+        
+        if (isEditing) {
+          return (
+            <Input
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onBlur={() => handleCellEdit(site, 'addrLine1', editValue)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCellEdit(site, 'addrLine1', editValue);
+                if (e.key === 'Escape') setEditingCell(null);
+              }}
+              className="h-8 w-full"
+              autoFocus
+            />
+          );
+        }
+        
+        return (
+          <div 
+            className="max-w-[200px] truncate cursor-pointer hover:bg-bristol-cream/20 p-1 rounded"
+            title={value}
+            onClick={() => {
+              setEditingCell({ rowId: site.id, columnId: column.id });
+              setEditValue(value || '');
+            }}
+          >
+            {value || '—'}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'city',
+      header: 'City',
+      cell: ({ row, column }) => {
+        const site = row.original;
+        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
+        const value = row.getValue('city') as string;
+        
+        if (isEditing) {
+          return (
+            <Input
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onBlur={() => handleCellEdit(site, 'city', editValue)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCellEdit(site, 'city', editValue);
+                if (e.key === 'Escape') setEditingCell(null);
+              }}
+              className="h-8 w-full"
+              autoFocus
+            />
+          );
+        }
+        
+        return (
+          <div 
+            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded"
+            onClick={() => {
+              setEditingCell({ rowId: site.id, columnId: column.id });
+              setEditValue(value || '');
+            }}
+          >
+            {value || '—'}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'state',
+      header: 'State',
+      cell: ({ row, column }) => {
+        const site = row.original;
+        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
+        const value = row.getValue('state') as string;
+        
+        if (isEditing) {
+          return (
+            <Input
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onBlur={() => handleCellEdit(site, 'state', editValue)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCellEdit(site, 'state', editValue);
+                if (e.key === 'Escape') setEditingCell(null);
+              }}
+              className="h-8 w-full"
+              autoFocus
+            />
+          );
+        }
+        
+        return (
+          <div 
+            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded"
+            onClick={() => {
+              setEditingCell({ rowId: site.id, columnId: column.id });
+              setEditValue(value || '');
+            }}
+          >
+            {value || '—'}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'unitsTotal',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-8 p-0 font-semibold hover:bg-transparent"
+        >
+          Units
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row, column }) => {
+        const site = row.original;
+        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
+        const value = row.getValue('unitsTotal') as number;
+        
+        if (isEditing) {
+          return (
+            <Input
+              type="number"
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onBlur={() => handleCellEdit(site, 'unitsTotal', editValue)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCellEdit(site, 'unitsTotal', editValue);
+                if (e.key === 'Escape') setEditingCell(null);
+              }}
+              className="h-8 w-full"
+              autoFocus
+            />
+          );
+        }
+        
+        return (
+          <div 
+            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded text-right"
+            onClick={() => {
+              setEditingCell({ rowId: site.id, columnId: column.id });
+              setEditValue(value?.toString() || '');
+            }}
+          >
+            {value || '—'}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'acreage',
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-8 p-0 font-semibold hover:bg-transparent"
+        >
+          Acreage
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
+      cell: ({ row, column }) => {
+        const site = row.original;
+        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
+        const value = row.getValue('acreage') as number;
+        
+        if (isEditing) {
+          return (
+            <Input
+              type="number"
+              step="0.1"
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onBlur={() => handleCellEdit(site, 'acreage', editValue)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCellEdit(site, 'acreage', editValue);
+                if (e.key === 'Escape') setEditingCell(null);
+              }}
+              className="h-8 w-full"
+              autoFocus
+            />
+          );
+        }
+        
+        return (
+          <div 
+            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded text-right"
+            onClick={() => {
+              setEditingCell({ rowId: site.id, columnId: column.id });
+              setEditValue(value?.toString() || '');
+            }}
+          >
+            {value ? `${value} ac` : '—'}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'completionYear',
+      header: 'Year',
+      cell: ({ row, column }) => {
+        const site = row.original;
+        const isEditing = editingCell?.rowId === site.id && editingCell?.columnId === column.id;
+        const value = row.getValue('completionYear') as number;
+        
+        if (isEditing) {
+          return (
+            <Input
+              type="number"
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onBlur={() => handleCellEdit(site, 'completionYear', editValue)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleCellEdit(site, 'completionYear', editValue);
+                if (e.key === 'Escape') setEditingCell(null);
+              }}
+              className="h-8 w-full"
+              autoFocus
+            />
+          );
+        }
+        
+        return (
+          <div 
+            className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded text-right"
+            onClick={() => {
+              setEditingCell({ rowId: site.id, columnId: column.id });
+              setEditValue(value?.toString() || '');
+            }}
+          >
+            {value || '—'}
+          </div>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => {
+        const site = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            {site.latitude && site.longitude && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onSelectSite(site)}
+                className="h-8 w-8 p-0 text-bristol-maroon hover:text-bristol-maroon hover:bg-bristol-cream/20"
+              >
+                <MapPin className="h-4 w-4" />
+              </Button>
+            )}
+            {site.sourceUrl && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => window.open(site.sourceUrl, '_blank')}
+                className="h-8 w-8 p-0"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleDelete(site)}
+              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows.map((row) => (
-                <TableRow 
+        );
+      },
+    },
+  ], [editingCell, editValue, onSelectSite, onRefresh, selectedSite, toast]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    onSortingChange: setSorting,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
+    state: {
+      sorting,
+      globalFilter,
+    },
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="flex items-center gap-2 text-bristol-stone">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Loading sites...
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4 h-full flex flex-col">
+      <div className="rounded-md border bg-white flex-1 overflow-auto">
+        <Table>
+          <TableHeader className="sticky top-0 bg-white z-10">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="hover:bg-transparent border-b">
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="font-cinzel text-bristol-ink">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
                   key={row.id}
-                  className={selectedSiteId === row.original.id ? "bg-blue-50" : ""}
+                  data-state={row.getIsSelected() && "selected"}
+                  className={`hover:bg-bristol-cream/20 ${selectedSite?.id === row.original.id ? 'bg-bristol-cream/30' : ''}`}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="p-2">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </CardContent>
-    </Card>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center text-bristol-stone">
+                  No sites found.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <div className="flex items-center justify-between space-x-2 py-4">
+        <div className="text-sm text-bristol-stone">
+          {table.getFilteredRowModel().rows.length} site(s) total
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }

@@ -31,109 +31,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Site management routes
-  app.get('/api/sites', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const sites = await storage.getUserSites(userId);
-      res.json(sites);
-    } catch (error) {
-      console.error("Error fetching sites:", error);
-      res.status(500).json({ message: "Failed to fetch sites" });
-    }
-  });
+  // Import the new comprehensive sites API
+  const sitesRouter = (await import('./api/sites')).default;
+  app.use('/api/sites', isAuthenticated, sitesRouter);
 
-  app.post('/api/sites', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const siteData = insertSiteSchema.parse({
-        ...req.body,
-        ownerId: userId
-      });
-      
-      const site = await storage.createSite(siteData);
-      res.status(201).json(site);
-    } catch (error) {
-      console.error("Error creating site:", error);
-      if (error instanceof z.ZodError) {
-        res.status(400).json({ message: "Invalid site data", errors: error.errors });
-      } else {
-        res.status(500).json({ message: "Failed to create site" });
-      }
-    }
-  });
 
-  app.get('/api/sites/:siteId', isAuthenticated, async (req: any, res) => {
-    try {
-      const { siteId } = req.params;
-      const site = await storage.getSite(siteId);
-      
-      if (!site) {
-        return res.status(404).json({ message: "Site not found" });
-      }
-
-      // Check if user owns the site
-      const userId = req.user.claims.sub;
-      if (site.ownerId !== userId) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-
-      res.json(site);
-    } catch (error) {
-      console.error("Error fetching site:", error);
-      res.status(500).json({ message: "Failed to fetch site" });
-    }
-  });
-
-  app.get('/api/sites/:siteId/metrics', isAuthenticated, async (req: any, res) => {
-    try {
-      const { siteId } = req.params;
-      const { type } = req.query;
-      
-      // Verify site ownership
-      const site = await storage.getSite(siteId);
-      if (!site) {
-        return res.status(404).json({ message: "Site not found" });
-      }
-
-      const userId = req.user.claims.sub;
-      if (site.ownerId !== userId) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-
-      const metrics = type 
-        ? await storage.getSiteMetricsByType(siteId, type as string)
-        : await storage.getSiteMetrics(siteId);
-      
-      res.json(metrics);
-    } catch (error) {
-      console.error("Error fetching site metrics:", error);
-      res.status(500).json({ message: "Failed to fetch site metrics" });
-    }
-  });
-
-  app.get('/api/sites/:siteId/analysis', isAuthenticated, async (req: any, res) => {
-    try {
-      const { siteId } = req.params;
-      
-      // Verify site ownership
-      const site = await storage.getSite(siteId);
-      if (!site) {
-        return res.status(404).json({ message: "Site not found" });
-      }
-
-      const userId = req.user.claims.sub;
-      if (site.ownerId !== userId) {
-        return res.status(403).json({ message: "Access denied" });
-      }
-
-      const analysis = await aiService.generateSiteAnalysis(siteId);
-      res.json({ analysis });
-    } catch (error) {
-      console.error("Error generating site analysis:", error);
-      res.status(500).json({ message: "Failed to generate site analysis" });
-    }
-  });
 
   // Chat routes
   app.get('/api/chat/sessions', isAuthenticated, async (req: any, res) => {

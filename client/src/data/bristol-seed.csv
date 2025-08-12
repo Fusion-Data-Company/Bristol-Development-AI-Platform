@@ -1,0 +1,9 @@
+status,name,addr_line1,addr_line2,city,state,postal_code,country,latitude,longitude,acreage,units_total,units_1b,units_2b,units_3b,avg_sf,completion_year,parking_spaces,source_url,notes
+"Completed","Vista Germantown","515 Madison St","","Nashville","TN","37208","USA","","","","242","","","","834","2012","316","https://www.bristoldevelopment.com/vista-germantown",""
+"Completed","1700 Midtown","1700 State St","","Nashville","TN","37203","USA","","","","170","","","","776","2010","227","https://www.bristoldevelopment.com/1700-midtown",""
+"Completed","Bristol Heights","","","Austin","TX","","USA","","","","351","","","","1056","2004","","https://www.bristoldevelopment.com/bristol-heights","22 acres per page"
+"Completed","Bristol Park Oak Ridge","","","Oak Ridge","TN","","USA","","","","208","","","","916","2007","","https://www.bristoldevelopment.com/bristol-park-oak-ridge","11.08 acres per page"
+"Newest","Mural at Stovehouse","2900 4th Ave NW","","Huntsville","AL","35805","USA","","","","","","","","","","","https://www.bristoldevelopment.com/new",""
+"Pipeline","Jewel at Santa Rosa","","","Santa Rosa","FL","","USA","","","","","","","","","","","https://www.bristoldevelopment.com/new",""
+"Pipeline","Telegraph Road","","","","","","USA","","","","","","","","","","","https://www.bristoldevelopment.com/new",""
+"Newest","The Drake on The Square","","","","","","USA","","","","","","","","","","","https://www.bristoldevelopment.com/new",""

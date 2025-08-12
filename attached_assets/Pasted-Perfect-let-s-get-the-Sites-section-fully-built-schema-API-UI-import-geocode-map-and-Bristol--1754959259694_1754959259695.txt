@@ -1,0 +1,188 @@
+Perfect—let’s get the Sites section fully built (schema, API, UI, import, geocode, map, and Bristol‑specific fields) and leave PARLAY out of it.
+
+Copy‑paste this exact mega‑prompt into the Replit builder.
+
+⸻
+
+REPLIT BUILDER — BUILD THE FULL “SITES” SECTION (NO PARLAY)
+
+Mission: Implement a complete Sites module end‑to‑end: database, API, CSV import/export, batch geocoding, TanStack Table UI with inline edit, bulk edit, filters, and a live map preview. Use Replit Postgres. Do not touch any PARLAY code. When finished, print a short STATUS REPORT.
+
+⸻
+
+0) Guardrails
+	•	Do not modify or call any PARLAY/ReportAll code.
+	•	Keep the app bootable with only DATABASE_URL and ALLOWED_ORIGIN set.
+	•	If an external API key is missing, show a helpful message and keep the feature hidden or stubbed.
+
+⸻
+
+1) Database (apps/api/src/db.js)
+
+Create (or migrate) a robust sites schema tailored to Bristol:
+
+CREATE TABLE IF NOT EXISTS sites (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  status TEXT CHECK (status IN ('Newest','Completed','Pipeline','Other')) DEFAULT 'Completed',
+  name TEXT NOT NULL,
+  addr_line1 TEXT,
+  addr_line2 TEXT,
+  city TEXT,
+  state TEXT,
+  postal_code TEXT,
+  country TEXT DEFAULT 'USA',
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  acreage NUMERIC,
+  units_total INTEGER,
+  units_1b INTEGER,
+  units_2b INTEGER,
+  units_3b INTEGER,
+  avg_sf NUMERIC,
+  completion_year INTEGER,
+  parking_spaces INTEGER,
+  source_url TEXT,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_sites_name ON sites (name);
+CREATE INDEX IF NOT EXISTS idx_sites_city_state ON sites (city, state);
+CREATE INDEX IF NOT EXISTS idx_sites_geo ON sites (latitude, longitude);
+
+Rationale: Bristol project pages expose acreage, units, mix, avg SF, completion year, parking (e.g., Vista Germantown, 1700 Midtown, Bristol Heights), so we store all.  ￼
+
+⸻
+
+2) API (apps/api/src/routes/sites.js)
+
+Implement a Sites router with:
+	•	GET /api/sites (query by status, q, pagination; sort by name default)
+	•	POST /api/sites (create)
+	•	PATCH /api/sites/:id (partial update)
+	•	DELETE /api/sites/:id (delete)
+	•	POST /api/sites/import (CSV upload; columns below; upsert by name+city+state OR exact address)
+	•	GET /api/sites/export.csv (download all)
+	•	POST /api/sites/geocode (batch geocode rows with missing lat/lon using Nominatim; 1 rps throttle; write results back)
+	•	POST /api/sites/normalize (optional: fix abbreviations, trim whitespace)
+
+Validation with zod; server logs on import showing inserted/updated counts.
+
+CSV columns (case‑insensitive):
+status,name,addr_line1,addr_line2,city,state,postal_code,country,latitude,longitude,acreage,units_total,units_1b,units_2b,units_3b,avg_sf,completion_year,parking_spaces,source_url,notes
+
+Use Nominatim only if no coordinates are provided. Respect 1 request/second. Store a simple success/fail note in notes.
+
+Wire the router in apps/api/src/index.js as /api/sites.
+
+⸻
+
+3) Frontend: Sites UI (apps/web)
+
+3.1 Navigation
+	•	Ensure a top‑nav item “Sites” (or “Tables → Sites”) exists and routes to pages/Sites.jsx.
+
+3.2 Page: src/pages/Sites.jsx
+	•	Three panes vertically (stacked on mobile, side‑by‑side on xl):
+	1.	SitesTable (TanStack Table)
+	2.	Details Drawer (selected site)
+	3.	Map Preview (MapLibre) with a single pin for the selection; if no lat/lon, show “Geocode” button that calls /api/sites/geocode for that row.
+	•	Toolbar above the table:
+	•	Add Site (opens modal AddSiteForm)
+	•	Import CSV (file input; POST /api/sites/import; show import report)
+	•	Export CSV
+	•	Filters: status (multi), quick text search (q against name/city/state)
+	•	Column chooser (TanStack)
+	•	Table columns (all sortable/filterable):
+	•	status (badge)
+	•	name
+	•	addr_line1 (truncate, tooltip full)
+	•	city, state, postal_code
+	•	acreage
+	•	units_total, units_1b, units_2b, units_3b
+	•	avg_sf
+	•	completion_year
+	•	parking_spaces
+	•	latitude, longitude (editable if known)
+	•	source_url (external link)
+	•	actions (Edit, Delete)
+	•	Inline edit: clicking any editable cell opens an in‑place input; commit via PATCH /api/sites/:id.
+
+3.3 Components
+	•	src/widgets/forms/AddSiteForm.jsx
+Fields: name (required), status, address parts, city, state, zip, country, acreage, units, completion_year, parking, source_url, notes → POST /api/sites.
+	•	src/widgets/tables/SitesTable.jsx
+TanStack Table v8 with pagination, column visibility, CSV import/export hooks.
+	•	src/widgets/details/SiteDetails.jsx
+Shows all fields with labels; “Open source” link; “Geocode this address” button if missing coords.
+	•	src/widgets/maps/SiteMapPreview.jsx
+Minimal MapLibre map with a cyan pin at lat/lon; auto‑fit on select.
+	•	src/lib/csv.ts
+Small util to parse and to export CSV (papaparse or vanilla).
+	•	Load maplibre-gl.css once (already in index.css).
+
+Design: Use Cinzel headings with Bristol palette; crisp cards (rounded‑2xl, subtle shadows). Keep interactions snappy.
+
+⸻
+
+4) Seed data & helpers
+
+4.1 Create a seed file: apps/api/seeds/bristol_sites_seed.csv
+
+Seed with at least these accurate rows (pin‑ready addresses; more rows welcomed later):
+
+status,name,addr_line1,city,state,postal_code,country,latitude,longitude,acreage,units_total,avg_sf,completion_year,parking_spaces,source_url,notes
+Completed,Vista Germantown,515 Madison St,Nashville,TN,37208,USA,,,,242,834,2012,316,https://www.bristoldevelopment.com/vista-germantown,
+Completed,1700 Midtown,1700 State St,Nashville,TN,37203,USA,,,,170,776,2010,227,https://www.bristoldevelopment.com/1700-midtown,
+Completed,Bristol Heights,,Austin,TX,,USA,,,,351,1056,2004,,https://www.bristoldevelopment.com/bristol-heights,22 acres per page
+Completed,Bristol Park Oak Ridge,,Oak Ridge,TN,,USA,,,,208,916,2007,,https://www.bristoldevelopment.com/bristol-park-oak-ridge,11.08 acres per page
+Newest,Mural at Stovehouse,2900 4th Ave NW,Huntsville,AL,35805,USA,,,,,,, , ,https://www.bristoldevelopment.com/new,
+
+Acreage/units/avg SF/parking values are present on the Bristol pages for these examples; fill them on import or let staff complete later in the UI.  ￼
+
+4.2 Admin shortcut
+	•	Add a button “Load Seed (CSV)” on the Sites page (visible in dev mode) → POST /api/sites/import with that file.
+
+⸻
+
+5) Geocoding (apps/api/src/geo/geocode.js)
+
+Implement a minimal Nominatim client used by /api/sites/geocode:
+	•	Build a full address string from addr_line1, city, state, postal_code, country.
+	•	GET https://nominatim.openstreetmap.org/search?format=json&q=<addr> with a custom User-Agent (app name) and delay 1 second per request.
+	•	On success, update latitude/longitude and append “Geocoded OK (Nominatim)” to notes.
+	•	On fail, append “Geocode FAIL” to notes. Never throw to the client; return {ok, updated, failed} summary.
+
+(Later, we can swap to ArcGIS/Google if you add keys.)
+
+⸻
+
+6) Testing hooks
+	•	Add GET /api/sites/health → { ok: true, count: <rows> }
+	•	In the UI, when CSV import finishes, show: rows inserted, updated, skipped.
+
+⸻
+
+7) Status report (must print)
+
+After running, print:
+	•	Migrated tables? ✅
+	•	Routes live: /api/sites, /api/sites/import, /api/sites/export.csv, /api/sites/geocode ✅
+	•	Frontend files created/updated (paths)
+	•	Verified: Sites page renders, import works, inline edit works, map pin shows for a row with lat/lon
+	•	Any TODOs
+
+Then run:
+	•	npm install
+	•	npm run dev
+
+⸻
+
+Notes for Bristol content (for your awareness)
+	•	Newest Communities list appears here (names & cities): Jewel at Santa Rosa, Telegraph Road, Mural at Stovehouse, The Drake on The Square. Use those for seeding statuses.  ￼
+	•	Acreage/units examples you should capture in fields above are explicitly listed on Bristol project pages like Vista Germantown, 1700 Midtown, Bristol Heights, Bristol Park Oak Ridge.  ￼
+
+⸻
+
+If anything fails, show the exact file + line + error, fix it, and continue until the Sites page is live with import, edit, and map working.

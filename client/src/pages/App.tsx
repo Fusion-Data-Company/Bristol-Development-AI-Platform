@@ -1,14 +1,23 @@
 import { useState } from "react";
+import { Route, Switch, useLocation } from "wouter";
 import Chrome from "../components/brand/SimpleChrome";
 import Map from "../widgets/Map";
 import { SitesTable } from "../widgets/tables/SitesTable";
 import { MetricsTable } from "../widgets/tables/MetricsTable";
 import { CompsTable } from "../widgets/tables/CompsTable";
+import Sites from "./Sites";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Site } from '@shared/schema';
 
 export default function App() {
+  const [location] = useLocation();
+  
+  // If we're on the Sites page, render it directly
+  if (location === '/sites') {
+    return <Sites />;
+  }
+  
   const [activeTab, setActiveTab] = useState("map");
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
 
@@ -39,8 +48,11 @@ export default function App() {
             <div className="space-y-6">
               {/* Sites Table */}
               <SitesTable 
-                onSiteSelect={handleSiteSelect} 
-                selectedSiteId={selectedSite?.id} 
+                data={[]}
+                isLoading={false}
+                onSelectSite={handleSiteSelect} 
+                selectedSite={selectedSite}
+                onRefresh={() => {}}
               />
               
               {/* Metrics Table */}

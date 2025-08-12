@@ -35,24 +35,36 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Site Intelligence Tables
+// Site Intelligence Tables - Bristol Development Format
 export const sites = pgTable("sites", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  status: varchar("status").notNull().default("Completed"), // Newest, Completed, Pipeline, Other
   name: varchar("name").notNull(),
-  address: text("address").notNull(),
-  city: varchar("city").notNull(),
-  state: varchar("state").notNull(),
-  zipCode: varchar("zip_code").notNull(),
+  addrLine1: text("addr_line1"),
+  addrLine2: text("addr_line2"),
+  city: varchar("city"),
+  state: varchar("state"),
+  postalCode: varchar("postal_code"),
+  country: varchar("country").default("USA"),
   latitude: real("latitude"),
   longitude: real("longitude"),
   acreage: real("acreage"),
-  zoning: varchar("zoning"),
-  status: varchar("status").notNull().default("active"), // active, under_review, archived
-  bristolScore: integer("bristol_score"), // 1-100 Bristol methodology score
-  ownerId: varchar("owner_id").references(() => users.id),
+  unitsTotal: integer("units_total"),
+  units1b: integer("units_1b"),
+  units2b: integer("units_2b"),
+  units3b: integer("units_3b"),
+  avgSf: real("avg_sf"),
+  completionYear: integer("completion_year"),
+  parkingSpaces: integer("parking_spaces"),
+  sourceUrl: text("source_url"),
+  notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table) => [
+  index("idx_sites_name").on(table.name),
+  index("idx_sites_city_state").on(table.city, table.state),
+  index("idx_sites_geo").on(table.latitude, table.longitude),
+]);
 
 export const siteMetrics = pgTable("site_metrics", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -231,6 +243,8 @@ export const insertSiteSchema = createInsertSchema(sites).omit({
   createdAt: true,
   updatedAt: true,
 });
+
+export const updateSiteSchema = insertSiteSchema.partial();
 
 export const insertSiteMetricSchema = createInsertSchema(siteMetrics).omit({
   id: true,
