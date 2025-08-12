@@ -1,0 +1,133 @@
+// Append to your existing seed file and run.
+// Replace db.upsertProperty(...) with your ORM/SQL call.
+
+type Property = {
+  propertyName: string;
+  address: string;
+  cityState: string;
+  acres?: number;
+  units?: number;
+  br1?: number;
+  br2?: number;
+  br3?: number;
+  avgSF?: number;
+  parking?: string;
+  completedYear?: number;
+  sourceNotes?: string;
+};
+
+const missingNine: Property[] = [
+  {
+    propertyName: "Canopy at Ginter Park",
+    address: "3200 Brook Rd, Richmond, VA 23227",
+    cityState: "Richmond, VA",
+    acres: 14.91,
+    units: 301,
+    br1: 112,
+    br2: 186,
+    br3: 3,
+    avgSF: 1032,
+    parking: "423 spaces + 94 garage",
+    completedYear: 2020,
+    sourceNotes: "Bristol page (acres/units/mix/avgSF/parking/year); Zillow confirms street address."
+  },
+  {
+    propertyName: "Vandalia Cottages",
+    address: "410 Boyd Mill Ave, Franklin, TN 37064",
+    cityState: "Franklin, TN",
+    acres: 2,
+    units: 17,
+    parking: "Community parking",
+    sourceNotes: "Bristol page (acres/17 townhomes/community parking); MapQuest confirms street address."
+  },
+  {
+    propertyName: "Governor’s Square II",
+    address: "135 Westfield Ct, Clarksville, TN 37040",
+    cityState: "Clarksville, TN",
+    acres: 11.08,
+    units: 208,
+    br1: 84,
+    br2: 108,
+    br3: 16,
+    avgSF: 916,
+    completedYear: 2007,
+    sourceNotes: "Bristol page (all stats); Yelp/Map confirms exact address."
+  },
+  {
+    propertyName: "Heritage Lake at Westland",
+    address: "1105 Lake Heritage Way, Knoxville, TN 37922",
+    cityState: "Knoxville, TN",
+    acres: 17,
+    units: 262,
+    avgSF: 1036,
+    completedYear: 2002,
+    sourceNotes: "Bristol page (acres/units/avgSF/year); Community site + Apartments.com confirm address."
+  },
+  {
+    propertyName: "Two 21 Armstrong",
+    address: "221 Armstrong St, Auburn, AL 36830",
+    cityState: "Auburn, AL",
+    acres: 3.38,
+    units: 156,
+    br1: 12,
+    br2: 54,
+    br3: 90, // 24 (2‑story) + 66 (1‑story)
+    completedYear: 2008,
+    sourceNotes: "Bristol page (acres/units/detailed mix/year); property site confirms street address."
+  },
+  {
+    propertyName: "The Row at Ghent",
+    address: "1400 Granby St, Norfolk, VA 23510",
+    cityState: "Norfolk, VA",
+    acres: 1.46,
+    units: 84,
+    br1: 26,
+    br2: 58,
+    avgSF: 1089,
+    parking: "Structured garage 320 spaces",
+    completedYear: 2006,
+    sourceNotes: "Bristol page (all stats); Apartments.com/Downtown Norfolk confirm address."
+  },
+  {
+    propertyName: "The Alexander at Ghent",
+    address: "1600 Granby St, Norfolk, VA 23510",
+    cityState: "Norfolk, VA",
+    acres: 3.30,
+    units: 268,
+    br1: 136,
+    br2: 120,
+    br3: 10,
+    avgSF: 899,
+    parking: "Structured garage 420 spaces",
+    completedYear: 2006,
+    sourceNotes: "Bristol page (all stats); Apartments.com/Zillow confirm address."
+  },
+  {
+    propertyName: "Bristol Southside",
+    address: "401 20th St S, Birmingham, AL 35233",
+    cityState: "Birmingham, AL",
+    acres: 1.45,
+    units: 161,
+    br1: 93,
+    br2: 60,
+    br3: 8,
+    avgSF: 858,
+    parking: "Structured garage 265 spaces",
+    completedYear: 2007,
+    sourceNotes: "Bristol page (all stats); Apartments.com confirms address."
+  },
+  {
+    propertyName: "The Monarch Memphis",
+    address: "274 S Highland St, Memphis, TN 38111",
+    cityState: "Memphis, TN",
+    units: 196,
+    completedYear: 1971,
+    sourceNotes: "ApartmentFinder (196 units, 1971); property site confirms street address."
+  }
+];
+
+async function seedMissing(db: any) {
+  for (const p of missingNine) {
+    await db.upsertProperty({ where: { propertyName: p.propertyName }, update: p, create: p });
+  }
+}
