@@ -77,6 +77,7 @@ export default {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
+        cinzel: ["Cinzel", "Georgia", "serif"],
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
