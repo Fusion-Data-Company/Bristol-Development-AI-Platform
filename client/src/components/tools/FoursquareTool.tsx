@@ -17,7 +17,7 @@ import {
   Legend,
 } from 'chart.js';
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 ChartJS.register(
   CategoryScale,
@@ -130,7 +130,7 @@ export function FoursquareTool() {
         return;
       }
 
-      // Update coordinates and run analysis
+      // Update coordinates for display and future use
       setLat(coords.lat.toString());
       setLng(coords.lng.toString());
       
@@ -140,11 +140,18 @@ export function FoursquareTool() {
         lng: coords.lng, 
         radius 
       });
+
+      // Wait for state to update, then invalidate and refetch
+      setTimeout(async () => {
+        await queryClient.invalidateQueries({
+          queryKey: ['/api/tools/foursquare']
+        });
+        refetch();
+      }, 100);
     } else {
       console.log('Foursquare Tool: Running analysis with params:', { lat, lng, radius });
+      refetch();
     }
-    
-    refetch();
   };
 
   // Debug logging when data changes
