@@ -259,7 +259,7 @@ export function FBITool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="relative bg-gradient-to-r from-red-900 to-red-700 text-white border-2 border-red-400/60 shadow-2xl font-bold text-lg px-12 py-4 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-red-500/40 hover:border-red-300/70 hover:from-red-800 hover:to-red-600 before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/5 before:to-transparent before:rounded-2xl before:pointer-events-none active:scale-95 z-10"
+          className="relative bg-gradient-to-r from-red-900 to-red-700 text-white border-2 border-red-400/70 shadow-2xl font-bold text-lg px-12 py-4 rounded-2xl transition-all duration-300 hover:scale-105 hover:border-red-300/80 hover:from-red-800 hover:to-red-600 active:scale-95 overflow-hidden before:absolute before:-inset-2 before:bg-red-500/20 before:blur-xl before:-z-10 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/8 after:via-transparent after:to-transparent after:rounded-2xl after:pointer-events-none"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Run Analysis
