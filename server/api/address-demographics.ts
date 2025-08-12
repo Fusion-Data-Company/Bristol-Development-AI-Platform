@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 const CENSUS_API_KEY = process.env.CENSUS_API_KEY;
 const MAPBOX_TOKEN = process.env.VITE_MAPBOX_ACCESS_TOKEN;
-const YEAR = '2023';
+const YEAR = '2021';
 
 // Comprehensive ACS variables for complete demographic analysis
 const ACS_VARIABLES = {
@@ -188,36 +188,60 @@ async function getCensusTract(latitude: number, longitude: number) {
   };
 }
 
-// Get ACS demographic data
+// Get ACS demographic data with robust error handling
 async function getAcsData(state: string, county: string, tract: string) {
   if (!CENSUS_API_KEY) {
     throw new Error('Census API key not configured');
   }
   
-  const variables = Object.values(ACS_VARIABLES).join(',');
-  const url = `https://api.census.gov/data/${YEAR}/acs/acs5?get=${variables}&for=tract:${tract}&in=state:${state}%20county:${county}&key=${CENSUS_API_KEY}`;
-  
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Census API error: ${response.statusText}`);
-  }
-  
-  const data = await response.json();
-  if (!data || data.length < 2) {
-    throw new Error('No demographic data available for this location');
-  }
-  
-  const headers = data[0];
-  const values = data[1];
-  
+  // Split variables into smaller batches to avoid URL length issues
+  const allVariables = Object.entries(ACS_VARIABLES);
+  const batchSize = 25;
   const demographics: Record<string, number | null> = {};
-  Object.entries(ACS_VARIABLES).forEach(([key, variable]) => {
-    const index = headers.indexOf(variable);
-    if (index !== -1) {
-      const value = parseFloat(values[index]);
-      demographics[key] = isNaN(value) || value < 0 ? null : value;
+  
+  for (let i = 0; i < allVariables.length; i += batchSize) {
+    const batch = allVariables.slice(i, i + batchSize);
+    const variables = batch.map(([_, variable]) => variable).join(',');
+    const url = `https://api.census.gov/data/${YEAR}/acs/acs5?get=${variables}&for=tract:${tract}&in=state:${state}&in=county:${county}&key=${CENSUS_API_KEY}`;
+    
+    try {
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Census API error for batch ${i}: ${response.status} ${response.statusText} - ${errorText}`);
+        continue; // Skip this batch but continue with others
+      }
+      
+      const data = await response.json();
+      
+      if (!data || data.length < 2) {
+        console.warn(`No data returned for batch ${i}`);
+        continue;
+      }
+      
+      const headers = data[0];
+      const values = data[1];
+      
+      // Map the batch results
+      batch.forEach(([key, variable]) => {
+        const index = headers.indexOf(variable);
+        if (index !== -1) {
+          const value = parseFloat(values[index]);
+          demographics[key] = isNaN(value) || value < 0 ? null : value;
+        } else {
+          demographics[key] = null; // Variable not found
+        }
+      });
+      
+    } catch (error) {
+      console.error(`Error fetching batch ${i}:`, error);
+      // Set all variables in this batch to null
+      batch.forEach(([key]) => {
+        demographics[key] = null;
+      });
     }
-  });
+  }
   
   return demographics;
 }
