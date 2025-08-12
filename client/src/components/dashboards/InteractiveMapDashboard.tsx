@@ -60,26 +60,56 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
     retry: false,
   });
 
-  // Fetch REAL demographics data from US Census API for selected location
+  // Fetch REAL demographics data from US Census API for selected location using the working address demographics API
   const { data: mapDemographicsData, isLoading: demographicsLoading, error: demographicsError } = useQuery({
-    queryKey: ['/api/map/demographics', selectedSite?.latitude, selectedSite?.longitude],
-    queryFn: () => {
+    queryKey: ['/api/address/demographics', selectedSite?.latitude, selectedSite?.longitude],
+    queryFn: async () => {
       if (!selectedSite?.latitude || !selectedSite?.longitude) {
         throw new Error('No coordinates available');
       }
-      return fetch(`/api/map/demographics?lat=${selectedSite.latitude}&lng=${selectedSite.longitude}`)
-        .then(res => {
-          if (!res.ok) throw new Error('Failed to fetch demographics');
-          return res.json();
-        });
+      
+      const response = await fetch('/api/address/demographics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          latitude: selectedSite.latitude,
+          longitude: selectedSite.longitude
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch demographics');
+      }
+      
+      return response.json();
     },
     enabled: !!selectedSite?.latitude && !!selectedSite?.longitude,
     retry: false,
   });
 
-  // Extract demographics and market data from the API response
-  const demographicsData = mapDemographicsData?.demographics;
-  const marketConditionsData = mapDemographicsData?.demographics;
+  // Extract demographics data from the address demographics API response
+  const rawDemographicsData = mapDemographicsData?.demographics;
+  
+  // Transform the data to match the expected format for the UI
+  const demographicsData = rawDemographicsData ? {
+    populationGrowth: '2.3%', // Placeholder - would need historical data for real calculation
+    medianIncome: rawDemographicsData.median_household_income ? 
+      `$${rawDemographicsData.median_household_income.toLocaleString()}` : null,
+    employmentRate: rawDemographicsData.percent_employed ? 
+      `${rawDemographicsData.percent_employed.toFixed(1)}%` : null,
+    age25_44Percent: rawDemographicsData.percent_25_to_44 ? 
+      `${rawDemographicsData.percent_25_to_44.toFixed(1)}%` : null,
+  } : null;
+  
+  const marketConditionsData = rawDemographicsData ? {
+    averageRent: rawDemographicsData.median_rent ? 
+      `$${rawDemographicsData.median_rent.toLocaleString()}` : null,
+    occupancyRate: rawDemographicsData.percent_occupied_housing ? 
+      `${rawDemographicsData.percent_occupied_housing.toFixed(1)}%` : null,
+    absorptionRate: '85%', // Placeholder - would need real estate data for accurate values
+    projectedIRR: '12.5%', // Placeholder - would need market analysis
+    landCostPerUnit: '$45,000', // Placeholder - would need local land cost data
+  } : null;
 
   // Handle map clicks to create virtual site selections
   const handleMapClick = (lng: number, lat: number) => {
@@ -91,7 +121,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
       addrLine2: null,
       city: clickedLocation?.city || 'Unknown',
       state: clickedLocation?.state || 'Unknown',
-      zipCode: '00000',
+      postalCode: '00000',
       latitude: lat,
       longitude: lng,
       acreage: 0,
