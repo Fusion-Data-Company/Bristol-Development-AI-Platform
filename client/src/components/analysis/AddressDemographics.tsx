@@ -41,12 +41,22 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
 
   const analyzeMutation = useMutation({
     mutationFn: async (params: { address?: string; latitude?: number; longitude?: number }) => {
-      return apiRequest('/api/address/demographics', {
+      const response = await fetch('/api/address/demographics', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(params)
       });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.details || error.error || 'Failed to analyze address');
+      }
+      
+      return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: (data: LocationData) => {
       setLocationData(data);
       if (onLocationSelect && data.location?.coordinates) {
         onLocationSelect(data.location.coordinates[1], data.location.coordinates[0]);

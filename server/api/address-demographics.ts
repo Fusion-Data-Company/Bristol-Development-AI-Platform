@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 const CENSUS_API_KEY = process.env.CENSUS_API_KEY;
-const MAPBOX_TOKEN = process.env.MAPBOX_ACCESS_TOKEN;
+const MAPBOX_TOKEN = process.env.VITE_MAPBOX_ACCESS_TOKEN;
 const YEAR = '2023';
 
 // Comprehensive ACS variables for address analysis
