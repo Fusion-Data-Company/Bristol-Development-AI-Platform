@@ -47,11 +47,15 @@ router.get('/:mode/:zip/:lookbackQ', async (req, res) => {
       if (cached) return respondOk(res, cached);
 
       const url = `${CROSSWALK}?type=1&query=${encodeURIComponent(zip)}`;
-      const headers = process.env.HUD_API_TOKEN ? { Authorization: `Bearer ${process.env.HUD_API_TOKEN}` } : {};
+      const headers: Record<string, string> = {};
+      if (process.env.HUD_API_TOKEN) {
+        headers.Authorization = `Bearer ${process.env.HUD_API_TOKEN}`;
+      }
       const text = await fetchText(url, headers);
       const j = JSON.parse(text);
 
-      const rows = (j?.data || j?.results || []).map((r: any) => ({
+      const results = j?.data?.results || j?.results || [];
+      const rows = (Array.isArray(results) ? results : []).map((r: any) => ({
         zip: r.zip ?? zip,
         state: r.usps_zip_pref_state ?? r.state ?? null,
         county: r.county ?? r.county_fips ?? null,
