@@ -33,8 +33,8 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
     const cached = getCache(key);
     if (cached) return res.json(cached);
 
-    // Try to fetch data from FBI Crime Data Explorer API using different authentication methods
-    const apiUrl = `https://api.usa.gov/crime/fbi/cde/estimate/state/${stateUpper}?from=${from}&to=${to}&api_key=${process.env.FBI_CRIME_API_KEY}`;
+    // Use FBI Crime Data API with correct endpoint structure from documentation
+    const apiUrl = `https://api.usa.gov/crime/fbi/cde/summarized/state/${stateUpper}?from=${from}&to=${to}&API_KEY=${process.env.FBI_CRIME_API_KEY}`;
     const headers = {
       'Accept': 'application/json',
       'User-Agent': 'Bristol-Site-Intelligence/1.0'
@@ -46,6 +46,11 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
     
     if (!response.ok) {
       console.error('[FBI] API error:', { status: response.status, text });
+      // If unauthorized, show helpful error message to user about API key
+      if (response.status === 401 || response.status === 403 || text.includes('Missing Authentication Token')) {
+        return respondErr(res, response.status, `FBI API Authentication Failed`, 
+          `API key may be invalid or not properly activated. Please check your FBI Crime Data API key at https://api.data.gov/signup/`);
+      }
       return respondErr(res, response.status, `FBI API ${response.status}`, text);
     }
 
