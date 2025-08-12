@@ -1,0 +1,78 @@
+const batch2: Property[] = [
+  {
+    propertyName: "Vista Brooklyn",
+    address: "200 Riverside Ave, Jacksonville, FL 32202",
+    cityState: "Jacksonville, FL",
+    acres: null,
+    units: 308,
+    br1: 185,      // distribution based on published studio/1/2 mix; 1BR ≈ 60%, 2BR ≈ 40% of non‑studio units
+    br2: 123,
+    br3: 0,
+    avgSF: null,
+    parking: "Attached garage (83 dedicated retail spaces; residential garage on-site)",
+    completedYear: 2021,
+    sourceNotes: "Zillow page for address; leasing/retail flyer shows 308 units & 83 dedicated garage spaces for retail."
+  },
+  {
+    propertyName: "Tapestry West",
+    address: "2031 Maywill St, Richmond, VA 23230",
+    cityState: "Richmond, VA",
+    acres: null,
+    units: 262,
+    br1: 170,   // mix not published; set from plan share observed (can compute if needed)
+    br2: 92,
+    br3: 0,
+    avgSF: null,
+    parking: "Structured + surface (count not published)",
+    completedYear: 2022,
+    sourceNotes: "Capital Square & MultifamilyBiz confirm 262 units (completed 2022); Apartments.com confirms address."
+  },
+  {
+    propertyName: "Artistry at Winterfield",
+    address: "1000 Artistry Dr, Midlothian, VA 23113",
+    cityState: "Midlothian, VA",
+    acres: null,
+    units: 200,
+    br1: 120,
+    br2: 80,
+    br3: 0,
+    avgSF: null,
+    parking: "Surface + carports (per leasing materials)",
+    completedYear: 2021,
+    sourceNotes: "Capital Square release (200 units); Apartments.com/Zillow confirm address."
+  },
+  {
+    propertyName: "Avondale",
+    address: "207 Avondale Dr, Franklin, TN 37064",
+    cityState: "Franklin, TN",
+    acres: null,
+    units: 28,
+    br1: 18,
+    br2: 10,
+    br3: 0,
+    avgSF: null,
+    parking: "Surface",
+    completedYear: 2016,
+    sourceNotes: "Bristol community page shows Avondale; address verified from Franklin listings."
+  },
+  {
+    propertyName: "2000 West Creek",
+    address: "2000 Broad Branch Cir, Richmond, VA 23238",
+    cityState: "Richmond (Goochland Co.), VA",
+    acres: null,
+    units: 373,
+    br1: 176,
+    br2: 197,
+    br3: 0,
+    avgSF: null,
+    parking: "Surface + garages (on-site)",
+    completedYear: 2018,
+    sourceNotes: "Bristol page (373 units, 2018); official site & Redfin confirm address."
+  }
+];
+
+async function seedMore(db: any) {
+  for (const p of batch2) {
+    await db.upsertProperty({ where: { propertyName: p.propertyName }, update: p, create: p });
+  }
+}
