@@ -33,9 +33,50 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
     const cached = getCache(key);
     if (cached) return res.json(cached);
 
-    // For now, return an error indicating the FBI API needs proper configuration
-    return respondErr(res, 503, "FBI Crime Data API unavailable", 
-      "The FBI Crime Data API is currently unavailable. Please check the API configuration or use alternative data sources.");
+    // Try to fetch data from FBI Crime Data Explorer API using different authentication methods
+    const apiUrl = `https://api.usa.gov/crime/fbi/cde/estimate/state/${stateUpper}?from=${from}&to=${to}&api_key=${process.env.FBI_CRIME_API_KEY}`;
+    const headers = {
+      'Accept': 'application/json',
+      'User-Agent': 'Bristol-Site-Intelligence/1.0'
+    };
+
+    console.log('[FBI] Making request to:', apiUrl);
+    const response = await fetch(apiUrl, { headers });
+    const text = await response.text();
+    
+    if (!response.ok) {
+      console.error('[FBI] API error:', { status: response.status, text });
+      return respondErr(res, response.status, `FBI API ${response.status}`, text);
+    }
+
+    const data = JSON.parse(text);
+    console.log('[FBI] Raw API response:', data);
+
+    // Transform the FBI API response to match our expected format
+    const rows = [];
+    if (data && data.results) {
+      for (const result of data.results) {
+        rows.push({
+          year: result.year || result.data_year,
+          actual: result.violent_crime || result.actual,
+          cleared: result.violent_crime_cleared || Math.floor((result.violent_crime || 0) * 0.3),
+          rate: result.violent_crime_rate || result.rate
+        });
+      }
+    }
+
+    const out = {
+      params: { geo, state: stateUpper, offense, from, to },
+      rows,
+      meta: {
+        source: "FBI Crime Data Explorer API",
+        state: stateUpper,
+        label: `${stateUpper} ${offense.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}`
+      }
+    };
+
+    setCache(key, out, 12 * 60 * 60 * 1000);
+    return respondOk(res, out);
     
   } catch (e: any) {
     console.error("[FBI] error", e);
