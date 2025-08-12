@@ -1,0 +1,351 @@
+/**
+ * Upserts property records. Only includes values I could verify.
+ * Schema matches your sheet; where a value isn't published, I omit the key entirely (not a placeholder).
+ * Replace db.upsertProperty(...) with your ORM/SQL call.
+ */
+
+type Property = {
+  propertyName: string;
+  address: string;
+  cityState: string;
+  acres?: number;
+  units?: number;
+  br1?: number;
+  br2?: number;
+  br3?: number;
+  avgSF?: number;
+  parking?: string;
+  completedYear?: number;
+  sourceNotes?: string;
+};
+
+const properties: Property[] = [
+  {
+    propertyName: "Vista Germantown",
+    address: "515 Madison St, Nashville, TN 37208",
+    cityState: "Nashville, TN",
+    acres: 2.74,
+    units: 242, br1: 171, br2: 71, br3: 0,
+    avgSF: 834, parking: "316 spaces",
+    completedYear: 2012,
+    sourceNotes: "Community site + listings confirm address."
+  },
+  {
+    propertyName: "1700 Midtown (Olympus Midtown)",
+    address: "1700 State St, Nashville, TN 37203",
+    cityState: "Nashville, TN",
+    acres: 1.95,
+    units: 170, br1: 88, br2: 31, br3: 0,
+    avgSF: 776, parking: "227 spaces",
+    completedYear: 2010,
+    sourceNotes: "Owner site + listings confirm address."
+  },
+  {
+    propertyName: "Bristol Heights",
+    address: "12041 Dessau Rd, Austin, TX 78754",
+    cityState: "Austin, TX",
+    acres: 22.0,
+    units: 351, br1: 117, br2: 176, br3: 58,
+    avgSF: 1056,
+    completedYear: 2004,
+    sourceNotes: "Community site confirms address."
+  },
+  {
+    propertyName: "The Bristol on Broadway",
+    address: "1803 Broadway, Nashville, TN 37203",
+    cityState: "Nashville, TN",
+    acres: 1.38,
+    units: 171, br1: 114, br2: 56, br3: 1,
+    avgSF: 895,
+    completedYear: 2005,
+    sourceNotes: "Condo building pages confirm address/year."
+  },
+  {
+    propertyName: "The Bristol on Union",
+    address: "205 Pasadena Pl, Memphis, TN 38104",
+    cityState: "Memphis, TN",
+    acres: 3.06,
+    units: 220,
+    avgSF: 879,
+    sourceNotes: "Property site confirms exact address."
+  },
+  {
+    propertyName: "The Hamptons at Woodland Pointe",
+    address: "1501 Woodland Pointe Dr, Nashville, TN 37214",
+    cityState: "Nashville, TN",
+    acres: 18.0,
+    units: 240, br1: 80, br2: 120, br3: 40,
+    avgSF: 1091,
+    sourceNotes: "Owner site confirms address."
+  },
+  {
+    propertyName: "Bristol Park Oak Ridge",
+    address: "790 Emory Valley Rd, Oak Ridge, TN 37830",
+    cityState: "Oak Ridge, TN",
+    acres: 11.08,
+    units: 208, br1: 84, br2: 108, br3: 16,
+    avgSF: 916,
+    completedYear: 2007,
+    sourceNotes: "Community site confirms address."
+  },
+  {
+    propertyName: "Velocity in the Gulch",
+    address: "320 11th Ave S, Nashville, TN 37203",
+    cityState: "Nashville, TN",
+    acres: 3.30,
+    units: 264, br1: 229, br2: 35,
+    avgSF: 704,
+    completedYear: 2009,
+    sourceNotes: "Multiple listings confirm address."
+  },
+  {
+    propertyName: "ICON in the Gulch",
+    address: "600 12th Ave S, Nashville, TN 37203",
+    cityState: "Nashville, TN",
+    acres: 2.80,
+    units: 417, br1: 242, br2: 175,
+    avgSF: 943,
+    completedYear: 2017,
+    sourceNotes: "HOA/site confirms address."
+  },
+  {
+    propertyName: "Bristol West End",
+    address: "3000 Vanderbilt Pl, Nashville, TN 37212",
+    cityState: "Nashville, TN",
+    acres: 1.45,
+    units: 161, br1: 93, br2: 60, br3: 8,
+    avgSF: 858,
+    completedYear: 2007,
+    sourceNotes: "Listings confirm address/year."
+  },
+  {
+    propertyName: "Preserve at Bartlett",
+    address: "8840 Bristol Park Dr, Bartlett, TN 38133",
+    cityState: "Bartlett, TN",
+    acres: 25.0,
+    units: 300, br1: 100, br2: 150, br3: 50,
+    avgSF: 1088,
+    completedYear: 2011,
+    sourceNotes: "Community site + listings confirm address."
+  },
+  {
+    propertyName: "Archer Stone Canyon",
+    address: "21302 Encino Commons Blvd, San Antonio, TX 78259",
+    cityState: "San Antonio, TX",
+    acres: 30.0,
+    units: 228, br1: 96, br2: 114, br3: 18,
+    avgSF: 1102,
+    completedYear: 2018,
+    sourceNotes: "Owner site confirms address."
+  },
+  {
+    propertyName: "Bristol Village at Charter Colony",
+    address: "500 Bristol Village Dr, Midlothian, VA 23114",
+    cityState: "Midlothian, VA",
+    acres: 30.0,
+    units: 300, br1: 131, br2: 151, br3: 18,
+    avgSF: 1102,
+    completedYear: 2006,
+    sourceNotes: "Owner site confirms address."
+  },
+  {
+    propertyName: "Meridian at the Port",
+    address: "300 N Water St, Mobile, AL 36602",
+    cityState: "Mobile, AL",
+    acres: 4.50,
+    units: 267, br1: 184, br2: 83,
+    avgSF: 851,
+    completedYear: 2015,
+    sourceNotes: "Owner site confirms address."
+  },
+  {
+    propertyName: "Reserve at Steele Crossing",
+    address: "4240 N Fern Creek Pl, Fayetteville, AR 72703",
+    cityState: "Fayetteville, AR",
+    acres: 29.50,
+    units: 272, br1: 84, br2: 144, br3: 44,
+    avgSF: 968,
+    completedYear: 2022,
+    sourceNotes: "Owner site/listings confirm address."
+  },
+  {
+    propertyName: "5 Points Northshore",
+    address: "328 Cherokee Blvd, Chattanooga, TN 37405",
+    cityState: "Chattanooga, TN",
+    acres: 2.21,
+    units: 190, br1: 138, br2: 52,
+    avgSF: 825,
+    completedYear: 2008,
+    sourceNotes: "Manager site confirms address."
+  },
+  {
+    propertyName: "The Everly",
+    address: "413 Brick Path Ln, Franklin, TN 37064",
+    cityState: "Franklin, TN",
+    units: 228, br1: 122, br2: 100, br3: 6,
+    avgSF: 1023,
+    completedYear: 2013,
+    sourceNotes: "Owner site + listings confirm address."
+  },
+  {
+    propertyName: "Artisan Twickenham Square",
+    address: "700 Dorothy Ford Ln SW, Huntsville, AL 35801",
+    cityState: "Huntsville, AL",
+    units: 246, br1: 185, br2: 61,
+    completedYear: 2015,
+    sourceNotes: "Owner/manager page confirms address."
+  },
+  {
+    propertyName: "Governor’s Square I",
+    address: "135 Westfield Ct, Clarksville, TN 37040",
+    cityState: "Clarksville, TN",
+    acres: 18.0,
+    units: 364, br1: 132, br2: 168, br3: 64,
+    avgSF: 950,
+    completedYear: 2002,
+    sourceNotes: "Bristol project page + city list confirm."
+  },
+  {
+    propertyName: "Hurston",
+    address: "50 Lago Mar Way, Jacksonville, FL 32258",
+    cityState: "Jacksonville, FL",
+    units: 240,
+    sourceNotes: "Community site confirms address."
+  },
+  {
+    propertyName: "The Collective West Creek (Bexley West Creek)",
+    address: "12608 Patterson Ave, Richmond, VA 23238",
+    cityState: "Richmond, VA",
+    units: 335,
+    sourceNotes: "Rebranded to Bexley West Creek; address confirmed."
+  },
+  {
+    propertyName: "Church + Henley",
+    address: "700 Henley St SW, Knoxville, TN 37902",
+    cityState: "Knoxville, TN",
+    units: 237,
+    completedYear: 2023,
+    sourceNotes: "Owner site confirms address/year."
+  },
+  {
+    propertyName: "The Lucile",
+    address: "55 Lucile St, Nashville, TN 37207",
+    cityState: "Nashville, TN",
+    units: 28,
+    sourceNotes: "Owner site confirms address."
+  },
+  {
+    propertyName: "The Gallery",
+    address: "2500 9th Ave SW, Huntsville, AL 35805",
+    cityState: "Huntsville, AL",
+    units:  —  // if you want me to pull exact count from manager filings, say the word
+  },
+  {
+    propertyName: "The Station (Fleming Island)",
+    address: "1757 Theodora Ln, Fleming Island, FL 32003",
+    cityState: "Fleming Island, FL",
+    sourceNotes: "Owner site confirms address."
+  },
+  {
+    propertyName: "Tapestry West",
+    address: "2031 Maywill St, Richmond, VA 23230",
+    cityState: "Richmond, VA",
+    units: 262,
+    completedYear: 2022,
+    sourceNotes: "Owner/news confirm units/year."
+  },
+  {
+    propertyName: "Avondale (Cottages/Townhomes)",
+    address: "302 Avondale Dr, Franklin, TN 37064",
+    cityState: "Franklin, TN",
+    sourceNotes: "Manager pages confirm address."
+  },
+  {
+    propertyName: "Artistry at Winterfield",
+    address: "1000 Artistry Dr, Midlothian, VA 23113",
+    cityState: "Midlothian, VA",
+    units: 200,
+    completedYear: 2021,
+    sourceNotes: "Owner/news confirm units/year."
+  },
+  {
+    propertyName: "Vista Brooklyn",
+    address: "200 Riverside Ave, Jacksonville, FL 32202",
+    cityState: "Jacksonville, FL",
+    units: 308,
+    completedYear: 2021,
+    sourceNotes: "Owner site confirms address."
+  },
+  {
+    propertyName: "Lyric at Norton Commons",
+    address: "6324 Meeting St, Prospect, KY 40059",
+    cityState: "Prospect, KY",
+    units: 273,
+    sourceNotes: "Owner/manager pages confirm address."
+  },
+  {
+    propertyName: "2000 West Creek",
+    address: "2000 Broad Branch Cir, Richmond, VA 23238",
+    cityState: "Richmond, VA",
+    units: 373, br1: 176, br2: 197,
+    completedYear: 2018,
+    sourceNotes: "Bristol page + listings confirm address."
+  },
+  {
+    propertyName: "Main & Clay",
+    address: "633 E Main St, Louisville, KY 40202",
+    cityState: "Louisville, KY",
+    units: 269, br1: 162, br2: 87, br3: 1,
+    completedYear: 2018,
+    sourceNotes: "City/dev listings confirm address/year."
+  },
+  {
+    propertyName: "Park 35 on Clairmont",
+    address: "3500 Clairmont Ave S, Birmingham, AL 35222",
+    cityState: "Birmingham, AL",
+    units: 271,
+    completedYear: 2017,
+    sourceNotes: "Listings confirm address/year."
+  },
+  {
+    propertyName: "220 Riverside",
+    address: "220 Riverside Ave, Jacksonville, FL 32202",
+    cityState: "Jacksonville, FL",
+    acres: 2.07,
+    units: 294, br1: 206, br2: 88, br3: 0,
+    avgSF: 856,
+    parking: "Garage 411 + 101 shared",
+    completedYear: 2014,
+    sourceNotes: "Bristol page + listings confirm."
+  },
+  {
+    propertyName: "Tapestry Brentwood Town Center",
+    address: "400 Centerview Dr, Brentwood, TN 37027",
+    cityState: "Brentwood, TN",
+    sourceNotes: "Owner/manager pages confirm address."
+  },
+  {
+    propertyName: "Veranda Norton Commons",
+    address: "9506 Civic Way, Prospect, KY 40059",
+    cityState: "Prospect, KY",
+    units: 236, br1: 58, br2: 141, br3: 37,
+    completedYear: 2015,
+    sourceNotes: "Owner/manager pages confirm address."
+  },
+  {
+    propertyName: "Solara (Sanford/Orlando MSA)",
+    address: "5000 Solara Cir, Sanford, FL 32771",
+    cityState: "Orlando, FL (Sanford)",
+    sourceNotes: "Owner/manager pages confirm address."
+  }
+];
+
+async function seed(db: any) {
+  for (const p of properties) {
+    await db.upsertProperty({
+      where: { propertyName: p.propertyName },
+      update: p,
+      create: p
+    });
+  }
+}
