@@ -41,7 +41,11 @@ export function NOAATool() {
     date.setFullYear(date.getFullYear() - 1);
     return date.toISOString().slice(0, 10);
   });
-  const [endDate, setEndDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [endDate, setEndDate] = useState(() => {
+    const date = new Date();
+    date.setDate(date.getDate() - 30); // Set to 30 days ago to ensure data exists
+    return date.toISOString().slice(0, 10);
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 

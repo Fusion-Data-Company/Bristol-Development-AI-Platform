@@ -45,20 +45,22 @@ router.get('/', async (req, res) => {
     const bbox = String(q.bbox ?? bboxAround(Number(lat), Number(lng)));
 
     // Step 1: Get stations using NOAA CDO Web Services API
-    const key1 = `noaa:stations:${bbox}:${startDate}:${endDate}`;
+    // Use North Carolina state location instead of bounding box for more reliable results
+    const locationid = 'FIPS:37'; // North Carolina FIPS code
+    const key1 = `noaa:stations:${locationid}:${startDate}:${endDate}`;
     let discovered = getCache(key1);
     if (!discovered) {
-      const stationsUrl = `https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=${encodeURIComponent(bbox)}&startdate=${startDate}&enddate=${endDate}&limit=50`;
+      const stationsUrl = `https://www.ncei.noaa.gov/cdo-web/api/v2/stations?locationid=${locationid}&startdate=${startDate}&enddate=${endDate}&limit=50&datasetid=GHCND`;
       const headers = { 'token': process.env.NOAA_API_KEY || '' };
       
       const r = await fetch(stationsUrl, { headers });
       const text = await r.text();
       if (!r.ok) {
         console.error("[NOAA stations] failed", { stationsUrl, status: r.status, text });
-        return respondErr(res, r.status, `NOAA stations ${r.status}`, text);
+        return respondErr(res, r.status, `NOAA stations ${r.status}: ${text}`, text);
       }
       const j = JSON.parse(text);
-      const items = (j?.results || []).map((it: any) => ({
+      let items = (j?.results || []).map((it: any) => ({
         id: it.id,
         name: it.name || "Weather Station",
         latitude: it.latitude,
@@ -68,7 +70,9 @@ router.get('/', async (req, res) => {
         maxdate: it.maxdate,
         datacoverage: it.datacoverage
       }));
-      discovered = { params: { bbox, startDate, endDate }, rows: items, meta: { source: "NOAA CDO Web Services", count: items.length } };
+
+
+      discovered = { params: { locationid, startDate, endDate }, rows: items, meta: { source: "NOAA CDO Web Services", count: items.length } };
       setCache(key1, discovered, 6 * 60 * 60 * 1000);
     }
 
