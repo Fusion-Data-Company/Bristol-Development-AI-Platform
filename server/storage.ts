@@ -32,6 +32,7 @@ export interface IStorage {
   // Site operations
   createSite(site: InsertSite): Promise<Site>;
   getSite(id: string): Promise<Site | undefined>;
+  getAllSites(): Promise<Site[]>;
   getUserSites(userId: string): Promise<Site[]>;
   updateSite(id: string, updates: Partial<InsertSite>): Promise<Site>;
   deleteSite(id: string): Promise<void>;
@@ -39,6 +40,7 @@ export interface IStorage {
   // Site metrics operations
   createSiteMetric(metric: InsertSiteMetric): Promise<SiteMetric>;
   getSiteMetrics(siteId: string): Promise<SiteMetric[]>;
+  getAllSiteMetrics(): Promise<SiteMetric[]>;
   getSiteMetricsByType(siteId: string, metricType: string): Promise<SiteMetric[]>;
   
   // Chat operations
@@ -93,6 +95,10 @@ export class DatabaseStorage implements IStorage {
     return site;
   }
 
+  async getAllSites(): Promise<Site[]> {
+    return await db.select().from(sites).orderBy(desc(sites.createdAt));
+  }
+
   async getUserSites(userId: string): Promise<Site[]> {
     // For now, return all sites since ownerId might be null for existing data
     // TODO: Filter by userId when ownerId is properly populated
@@ -120,6 +126,10 @@ export class DatabaseStorage implements IStorage {
 
   async getSiteMetrics(siteId: string): Promise<SiteMetric[]> {
     return await db.select().from(siteMetrics).where(eq(siteMetrics.siteId, siteId));
+  }
+
+  async getAllSiteMetrics(): Promise<SiteMetric[]> {
+    return await db.select().from(siteMetrics).orderBy(desc(siteMetrics.createdAt));
   }
 
   async getSiteMetricsByType(siteId: string, metricType: string): Promise<SiteMetric[]> {

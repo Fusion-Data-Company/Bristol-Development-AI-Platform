@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import type { Request, Response } from 'express';
-import { storage } from '../storage.js';
+import { storage } from '../storage';
 import { realDataService } from '../services/realDataService.js';
 
 const router = Router();
@@ -69,16 +69,21 @@ router.get('/demographics/:area', async (req: Request, res: Response) => {
     let latitude: number | null = null;
     let longitude: number | null = null;
     
-    if (area && area.includes('-')) {
-      const parts = area.split('-');
-      if (parts.length >= 2) {
-        longitude = parseFloat(parts[0]);
-        latitude = parseFloat(parts[1]);
+    // Check if area contains coordinate-like numbers (handles negative values)
+    if (area && /^-?\d+(\.\d+)?-\d+(\.\d+)?$/.test(area)) {
+      // Split by the last hyphen to properly handle negative coordinates
+      const lastHyphen = area.lastIndexOf('-');
+      if (lastHyphen > 0) {
+        const longitudeStr = area.substring(0, lastHyphen);
+        const latitudeStr = area.substring(lastHyphen + 1);
+        
+        longitude = parseFloat(longitudeStr);
+        latitude = parseFloat(latitudeStr);
       }
     }
     
-    // For real locations, get coordinates from database
-    if (!latitude || !longitude) {
+    // For real locations, get coordinates from database  
+    if (!latitude || !longitude || isNaN(latitude) || isNaN(longitude)) {
       const sites = await storage.getAllSites();
       const site = sites.find((s: any) => 
         s.city?.toLowerCase() === area?.toLowerCase() ||
@@ -178,11 +183,18 @@ router.get('/market-conditions/:area?', async (req: Request, res: Response) => {
     let latitude: number | null = null;
     let longitude: number | null = null;
     
-    if (area && area.includes('-')) {
-      const parts = area.split('-');
-      if (parts.length >= 2) {
-        longitude = parseFloat(parts[0]);
-        latitude = parseFloat(parts[1]);
+    // Check if area contains coordinate-like numbers (handles negative values)
+    if (area && /^-?\d+(\.\d+)?-\d+(\.\d+)?$/.test(area)) {
+      // Split by the last hyphen to properly handle negative coordinates
+      const lastHyphen = area.lastIndexOf('-');
+      if (lastHyphen > 0) {
+        const longitudeStr = area.substring(0, lastHyphen);
+        const latitudeStr = area.substring(lastHyphen + 1);
+        
+        longitude = parseFloat(longitudeStr);
+        latitude = parseFloat(latitudeStr);
+        
+        // Coordinates parsed successfully
       }
     }
     
