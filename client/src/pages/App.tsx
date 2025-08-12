@@ -24,9 +24,7 @@ export default function App() {
 
   const handleSiteSelect = (site: Site | null) => {
     setSelectedSite(site);
-    if (site) {
-      setActiveTab("tables"); // Switch to tables tab when a site is selected
-    }
+    // Removed automatic tab switching to prevent navigation conflicts
   };
 
   return (
