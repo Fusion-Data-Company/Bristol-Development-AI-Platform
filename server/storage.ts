@@ -6,6 +6,7 @@ import {
   chatMessages,
   integrationLogs,
   mcpTools,
+  snapshots,
   type User,
   type UpsertUser,
   type Site,
@@ -20,6 +21,8 @@ import {
   type InsertIntegrationLog,
   type McpTool,
   type InsertMcpTool,
+  type Snapshot,
+  type InsertSnapshot,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and } from "drizzle-orm";
@@ -60,6 +63,11 @@ export interface IStorage {
   getMcpTool(name: string): Promise<McpTool | undefined>;
   createMcpTool(tool: InsertMcpTool): Promise<McpTool>;
   updateMcpTool(id: string, updates: Partial<InsertMcpTool>): Promise<McpTool>;
+  
+  // Snapshots
+  createSnapshot(snapshot: InsertSnapshot): Promise<Snapshot>;
+  getUserSnapshots(userId: string, tool?: string): Promise<Snapshot[]>;
+  deleteSnapshot(id: string, userId: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -225,6 +233,31 @@ export class DatabaseStorage implements IStorage {
       .where(eq(mcpTools.id, id))
       .returning();
     return updatedTool;
+  }
+
+  // Snapshots
+  async createSnapshot(snapshot: InsertSnapshot): Promise<Snapshot> {
+    const [newSnapshot] = await db.insert(snapshots).values(snapshot).returning();
+    return newSnapshot;
+  }
+
+  async getUserSnapshots(userId: string, tool?: string): Promise<Snapshot[]> {
+    const conditions = [eq(snapshots.userId, userId)];
+    if (tool) conditions.push(eq(snapshots.tool, tool));
+
+    const whereCondition = conditions.length > 1 ? and(...conditions) : conditions[0];
+
+    return await db
+      .select()
+      .from(snapshots)
+      .where(whereCondition)
+      .orderBy(desc(snapshots.createdAt));
+  }
+
+  async deleteSnapshot(id: string, userId: string): Promise<void> {
+    await db
+      .delete(snapshots)
+      .where(and(eq(snapshots.id, id), eq(snapshots.userId, userId)));
   }
 }
 

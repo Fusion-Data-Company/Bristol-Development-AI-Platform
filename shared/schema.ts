@@ -242,6 +242,16 @@ export const tools = pgTable("tools", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Snapshots table for saving tool results
+export const snapshots = pgTable("snapshots", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id).notNull(),
+  tool: varchar("tool").notNull(), // bls, bea, hud
+  params: jsonb("params").notNull(),
+  data: jsonb("data").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   id: true,
@@ -329,6 +339,11 @@ export const insertToolSchema = createInsertSchema(tools).omit({
   updatedAt: true,
 });
 
+export const insertSnapshotSchema = createInsertSchema(snapshots).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -360,3 +375,5 @@ export type MemoryLong = typeof memoryLong.$inferSelect;
 export type InsertMemoryLong = z.infer<typeof insertMemoryLongSchema>;
 export type Tool = typeof tools.$inferSelect;
 export type InsertTool = z.infer<typeof insertToolSchema>;
+export type Snapshot = typeof snapshots.$inferSelect;
+export type InsertSnapshot = z.infer<typeof insertSnapshotSchema>;
