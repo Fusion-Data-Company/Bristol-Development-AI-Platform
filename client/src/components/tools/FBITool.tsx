@@ -40,21 +40,15 @@ interface FBIData {
   };
   rows: Array<{
     year: number;
-    offense: string;
     actual: number;
     cleared: number;
-    clearance_rate: string;
+    rate: number;
   }>;
-  metrics: {
-    latest: number;
-    latestYear: number;
-    yoy: number | null;
-    yoyPercent: string | null;
-    trend: number;
-    avgClearanceRate: string;
+  meta: {
+    label: string;
+    source: string;
+    state: string;
   };
-  dataSource: string;
-  lastUpdated: string;
 }
 
 export function FBITool() {

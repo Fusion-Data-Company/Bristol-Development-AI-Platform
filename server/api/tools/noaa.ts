@@ -44,54 +44,69 @@ router.get('/', async (req, res) => {
     }
     const bbox = String(q.bbox ?? bboxAround(Number(lat), Number(lng)));
 
-    // Step 1: discover stations/datasets via Search Service
-    const key1 = `noaa:search:${dataset}:${bbox}:${startDate}:${endDate}`;
+    // Step 1: Get stations using NOAA CDO Web Services API
+    const key1 = `noaa:stations:${bbox}:${startDate}:${endDate}`;
     let discovered = getCache(key1);
     if (!discovered) {
-      const searchUrl = `https://www.ncei.noaa.gov/access/services/search/v1/data?dataset=${encodeURIComponent(dataset)}&bbox=${encodeURIComponent(bbox)}&startDate=${startDate}&endDate=${endDate}&available=true`;
-      const r = await fetch(searchUrl);
+      const stationsUrl = `https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=${encodeURIComponent(bbox)}&startdate=${startDate}&enddate=${endDate}&limit=50`;
+      const headers = { 'token': process.env.NOAA_API_KEY || '' };
+      
+      const r = await fetch(stationsUrl, { headers });
       const text = await r.text();
       if (!r.ok) {
-        console.error("[NOAA search] failed", { searchUrl, status: r.status, text });
-        return respondErr(res, r.status, `NOAA search ${r.status}`, text);
+        console.error("[NOAA stations] failed", { stationsUrl, status: r.status, text });
+        return respondErr(res, r.status, `NOAA stations ${r.status}`, text);
       }
       const j = JSON.parse(text);
       const items = (j?.results || []).map((it: any) => ({
         id: it.id,
-        name: it.name || it.title || it.dataType || "Item",
-        station: it.stations?.[0] || null,
-        start: it.startDate || null,
-        end: it.endDate || null,
-        dataTypes: it.dataTypes || [],
-        links: it.links || []
+        name: it.name || "Weather Station",
+        latitude: it.latitude,
+        longitude: it.longitude,
+        elevation: it.elevation,
+        mindate: it.mindate,
+        maxdate: it.maxdate,
+        datacoverage: it.datacoverage
       }));
-      discovered = { params: { dataset, bbox, startDate, endDate }, rows: items, meta: { source: "NOAA NCEI Search" } };
+      discovered = { params: { bbox, startDate, endDate }, rows: items, meta: { source: "NOAA CDO Web Services", count: items.length } };
       setCache(key1, discovered, 6 * 60 * 60 * 1000);
     }
 
-    // Step 2: if a station is provided (or auto-pick first with station), call ADS for time-series
+    // Step 2: if a station is provided, get weather data for that station
     if (station) {
-      const key2 = `noaa:ads:${dataset}:${station}:${startDate}:${endDate}`;
+      const key2 = `noaa:data:${dataset}:${station}:${startDate}:${endDate}`;
       const cached2 = getCache(key2);
       if (cached2) return res.json(cached2);
 
-      const adsUrl = `https://www.ncei.noaa.gov/access/services/data/v1?dataset=${encodeURIComponent(dataset)}&stations=${encodeURIComponent(station)}&startDate=${startDate}&endDate=${endDate}&dataTypes=TMIN,TMAX,PRCP&format=json&includeStationName=true&units=standard`;
-      const r2 = await fetch(adsUrl);
+      const dataUrl = `https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=${encodeURIComponent(station)}&startdate=${startDate}&enddate=${endDate}&datatypeid=TMIN,TMAX,PRCP&limit=1000&units=standard`;
+      const headers = { 'token': process.env.NOAA_API_KEY || '' };
+      
+      const r2 = await fetch(dataUrl, { headers });
       const text2 = await r2.text();
       if (!r2.ok) {
-        console.error("[NOAA ADS] failed", { adsUrl, status: r2.status, text: text2 });
-        return respondErr(res, r2.status, `NOAA ADS ${r2.status}`, text2);
+        console.error("[NOAA data] failed", { dataUrl, status: r2.status, text: text2 });
+        return respondErr(res, r2.status, `NOAA data ${r2.status}`, text2);
       }
       const j2 = JSON.parse(text2);
-      // Normalize: date, tmin, tmax, prcp
-      const rows = (Array.isArray(j2) ? j2 : []).map((d: any) => ({
-        date: d.DATE,
-        tmin: d.TMIN != null ? Number(d.TMIN) : null,
-        tmax: d.TMAX != null ? Number(d.TMAX) : null,
-        prcp: d.PRCP != null ? Number(d.PRCP) : null
-      }));
+      
+      // Group data by date and aggregate temperature/precipitation
+      const dataByDate: Record<string, any> = {};
+      (j2?.results || []).forEach((item: any) => {
+        const date = item.date?.substring(0, 10); // Extract YYYY-MM-DD
+        if (!date) return;
+        
+        if (!dataByDate[date]) {
+          dataByDate[date] = { date, tmin: null, tmax: null, prcp: null };
+        }
+        
+        if (item.datatype === 'TMIN') dataByDate[date].tmin = item.value;
+        if (item.datatype === 'TMAX') dataByDate[date].tmax = item.value;
+        if (item.datatype === 'PRCP') dataByDate[date].prcp = item.value;
+      });
+      
+      const rows = Object.values(dataByDate).sort((a: any, b: any) => a.date.localeCompare(b.date));
 
-      const out2 = { params: { dataset, station, startDate, endDate }, rows, meta: { source: "NOAA ADS daily-summaries" } };
+      const out2 = { params: { dataset, station, startDate, endDate }, rows, meta: { source: "NOAA CDO Web Services", station } };
       setCache(key2, out2, 6 * 60 * 60 * 1000);
       return respondOk(res, out2);
     }

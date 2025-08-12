@@ -1,0 +1,79 @@
+The NOAA Climate data does not use a key. It has these instructions:
+Home
+ NCEI Search Service API User Documentation
+NCEI Search Service API User Documentation
+Overview
+The National Centers for Environmental Information (NCEI) Common Access Search Service provides a RESTful application programming interface (API) to discover datasets and data based on a set of parameters to the v1/datasets or v1/data URLs, respectively. The NCEI Common Access Search Service is only available via HTTP Strict Transport Security (HSTS) following Federal government policy. Requests use HTTP 1.1 GET request and results are formatted as JavaScript Object Notation (JSON) that contains a results array property.
+
+Dataset Search Endpoint
+Dataset searches use the v1/datasets endpoint to locate datasets available through the NCEI Common Access Search Service.
+
+Dataset Search Request Endpoint Parameters
+The NCEI Common Access Search Service dataset search endpoint allows several parameters to select and retrieve datasets based on the requested search terms passed to the service. The request parameters are passed using a GET request.
+
+Dataset Temporal Range — startDate/endDate
+This is the date to select datasets whose period of record (PoR) starts on or after the given startDate. This parameter is an ISO 8601 date (YYYY-MM-DD) -or- ISO 8601 combined date and time format (YYYY-MM-DDTHH:mm:ss). If using an ISO 8601 combined date and time format, the T that separates the time is NOT optional. The ISO 8601 combined date and time also supports optional time zone representations.  Use Z or z for UTC and +HH:mm or -HH:mm for the offset from UTC. The start and end dates are not required. The startDate must come before the endDate parameter. Some datasets are averages over time and may ignore parts of a date.
+
+ISO 8601 date format examples:
+
+1776-07-04
+1941-12-07
+
+ISO 8601 combined date and time examples:
+
+2001-11-02T12:45:00Z
+2001-11-02T12:45:00z
+2001-11-02T08:45:00+04:00
+
+...&startDate=1941-12-07T09:31:20z
+For UTC hour and minute offsets (HH:mm), the plus symbol (+) must be URL encoded as “%2B” or it will not validate:
+
+...&startDate=2009-01-27T08:45:00%2B04:00
+ 
+
+...&endDate=1945-07-12
+Bounding Box (N,W,S,E) — bbox
+The bounding box is used to select data from a geographic location contained within the coordinates, given as four comma separated numbers. North and South range from -90 to 90 and East and West range from -180 to 180. If these are not set the geographic extent defaults to the entire globe (90,-180,-90,180).
+
+...&bbox=49.795,-2.073,49.183,-0.992
+Keywords — keywords
+A comma separated list of Global Change Master Directory (GCMD) Keywords or other terms that can be used to locate datasets. The keywords that are available come from the ISO 19115-2 metadata records. A full list is available from the service in an empty query in the keywords.bucket array. The complete list of GCMD keywords are available as an XML document here. Here is an example of the keyword parameter.
+
+...&keywords=precipitation
+Text — text
+The text parameter used to locate datasets by matching the terms of the dataset name and description.
+
+...&text=rain
+Available — available
+A boolean (true or false) used to locate datasets based on whether they are available in the Data Search Endpoint.
+
+...&available=true
+Dataset Search Example Request
+Below are request examples to the NCEI Common Access Search Service.
+
+https://www.ncei.noaa.gov/access/services/search/v1/data?dataset=daily-…
+ 
+
+https://www.ncei.noaa.gov/access/services/search/v1/data?dataset=global…
+Search Request Responses
+The NCEI Common Access Search Service returns HTTP/1.1 status codes and response headers depending on the request and service status. These responses follow RFC 2616 (Fielding, et al).
+
+400 - Bad Request
+The request is malformed and needs to be modified in order to execute. The response headers contain the correct HTTP/1.1 400 Bad Request and provide a JSON response.
+
+{
+    errorMessage: "Bad Request",
+    errorCode: 400,
+    errors: [
+        {
+
+        }
+    ]
+}
+500 - Internal Server Error
+The 500 response code is returned when there is an issue with the service.
+
+{
+    errorMessage: "An unexpected error occurred while servicing your request.",
+    errorCode: 500
+}
