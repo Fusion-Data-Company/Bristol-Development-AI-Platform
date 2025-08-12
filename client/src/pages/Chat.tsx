@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { type ChatSession, type ChatMessage } from '@shared/schema';
 import { format } from 'date-fns';
+import Chrome from '@/components/brand/SimpleChrome';
 
 export default function Chat() {
   const [message, setMessage] = useState('');
@@ -98,7 +99,8 @@ export default function Chat() {
   };
 
   return (
-    <div className="container mx-auto p-6 h-[calc(100vh-6rem)]">
+    <Chrome>
+      <div className="container mx-auto p-6 h-[calc(100vh-6rem)]">
       <div className="grid gap-6 lg:grid-cols-4 h-full">
         {/* Sessions Sidebar */}
         <div className="lg:col-span-1">
@@ -338,6 +340,7 @@ export default function Chat() {
           </Card>
         </div>
       </div>
-    </div>
+      </div>
+    </Chrome>
   );
 }

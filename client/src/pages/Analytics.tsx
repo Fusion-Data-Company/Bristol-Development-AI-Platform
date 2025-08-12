@@ -30,6 +30,7 @@ import {
   Activity,
   Target
 } from 'lucide-react';
+import Chrome from '@/components/brand/SimpleChrome';
 
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
@@ -59,7 +60,8 @@ export default function Analytics() {
   const COLORS = ['#9e1b32', '#d4a574', '#3b4d61', '#87ceeb'];
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <Chrome>
+      <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -352,6 +354,7 @@ export default function Analytics() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </Chrome>
   );
 }
