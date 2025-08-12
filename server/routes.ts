@@ -42,9 +42,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ACS enrichment and GeoJSON routes
   const { enrichSites } = await import('./api/enrich');
   const { getSitesGeoJSON } = await import('./api/sites-geojson');
+  const { getSiteDemographics } = await import('./api/site-demographics');
   
   app.post('/api/enrich', isAuthenticated, enrichSites);
   app.get('/api/sites.geojson', isAuthenticated, getSitesGeoJSON);
+  app.get('/api/sites/:siteId/demographics', isAuthenticated, getSiteDemographics);
 
 
 

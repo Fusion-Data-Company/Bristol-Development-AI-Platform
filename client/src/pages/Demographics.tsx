@@ -3,10 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { MapPin, TrendingUp, Users, DollarSign, BarChart3, Info } from "lucide-react";
+import { MapPin, TrendingUp, Users, DollarSign, BarChart3, Info, Target } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
 import { DemographicMap } from "../components/maps/DemographicMap";
+import { SiteDemographicAnalysis } from "../components/analysis/SiteDemographicAnalysis";
 import { useQuery } from "@tanstack/react-query";
 
 interface DemographicStats {
@@ -17,9 +19,28 @@ interface DemographicStats {
   avgRent: number;
 }
 
+interface Site {
+  id: string;
+  name: string;
+  city?: string;
+  state?: string;
+}
+
 export default function Demographics() {
   const [enrichmentCount, setEnrichmentCount] = useState(0);
+  const [selectedSiteId, setSelectedSiteId] = useState<string>('');
+  const [activeTab, setActiveTab] = useState('overview');
   const { toast } = useToast();
+
+  // Fetch available sites
+  const { data: sites = [] } = useQuery<Site[]>({
+    queryKey: ['sites-list'],
+    queryFn: async () => {
+      const response = await fetch('/api/sites');
+      if (!response.ok) throw new Error('Failed to fetch sites');
+      return response.json();
+    }
+  });
 
   // Fetch demographic statistics
   const { data: stats, refetch: refetchStats } = useQuery<DemographicStats>({
@@ -166,23 +187,31 @@ export default function Demographics() {
           </div>
 
           {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Map */}
-            <div className="lg:col-span-3">
-              <Card className="bg-white border-bristol-stone/20 h-[600px]">
-                <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">
-                    Demographic Map
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0 h-[520px]">
-                  <DemographicMap 
-                    className="w-full h-full rounded-b-lg"
-                    onEnrichComplete={handleEnrichmentComplete}
-                  />
-                </CardContent>
-              </Card>
-            </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="overview">Portfolio Overview</TabsTrigger>
+            <TabsTrigger value="analysis">Site Analysis</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Map */}
+              <div className="lg:col-span-3">
+                <Card className="bg-white border-bristol-stone/20 h-[600px]">
+                  <CardHeader>
+                    <CardTitle className="text-bristol-ink font-serif">
+                      Portfolio Demographic Map
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-0 h-[520px]">
+                    <DemographicMap 
+                      className="w-full h-full rounded-b-lg"
+                      onEnrichComplete={handleEnrichmentComplete}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+              {/* Info Panel - existing content */}
 
             {/* Info Panel */}
             <div className="space-y-4">
@@ -265,8 +294,56 @@ export default function Demographics() {
                   </div>
                 </CardContent>
               </Card>
+              </div>
             </div>
-          </div>
+          </TabsContent>
+
+          <TabsContent value="analysis">
+            <div className="space-y-6">
+              {/* Site Selection */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif flex items-center gap-2">
+                    <Target className="h-5 w-5" />
+                    Focused Site Analysis
+                  </CardTitle>
+                  <p className="text-bristol-stone text-sm mt-1">
+                    Select a site for in-depth demographic analysis including surrounding area comparison
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <Select value={selectedSiteId} onValueChange={setSelectedSiteId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose a site to analyze..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {sites.map((site) => (
+                            <SelectItem key={site.id} value={site.id}>
+                              {site.name} {site.city && site.state && `(${site.city}, ${site.state})`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Badge variant="outline" className="border-bristol-gold text-bristol-gold">
+                      25+ Variables
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Detailed Analysis */}
+              {selectedSiteId && (
+                <SiteDemographicAnalysis 
+                  siteId={selectedSiteId}
+                  siteName={sites.find(s => s.id === selectedSiteId)?.name}
+                />
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
         </div>
       </div>
     </Chrome>
