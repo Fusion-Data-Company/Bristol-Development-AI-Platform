@@ -198,35 +198,35 @@ export function HUDTool() {
       {/* Controls */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <Label htmlFor="mode" className="text-white">Data Mode</Label>
+          <Label htmlFor="mode" className="text-gray-900">Data Mode</Label>
           <Select value={mode} onValueChange={setMode}>
-            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+            <SelectTrigger className="bg-white border-gray-300 text-gray-900">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-gray-700 border-gray-600">
+            <SelectContent className="bg-white border-gray-300">
               <SelectItem value="usps">USPS Vacancy</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div>
-          <Label htmlFor="zip" className="text-white">ZIP Code</Label>
+          <Label htmlFor="zip" className="text-gray-900">ZIP Code</Label>
           <Input
             id="zip"
             value={zip}
             onChange={(e) => setZip(e.target.value)}
             placeholder="28202"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-white border-gray-300 text-gray-900"
           />
         </div>
 
         <div>
-          <Label htmlFor="lookbackQ" className="text-white">Quarters to Include</Label>
+          <Label htmlFor="lookbackQ" className="text-gray-900">Quarters to Include</Label>
           <Select value={lookbackQ} onValueChange={setLookbackQ}>
-            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+            <SelectTrigger className="bg-white border-gray-300 text-gray-900">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-gray-700 border-gray-600">
+            <SelectContent className="bg-white border-gray-300">
               <SelectItem value="4">4 Quarters (1 Year)</SelectItem>
               <SelectItem value="8">8 Quarters (2 Years)</SelectItem>
               <SelectItem value="12">12 Quarters (3 Years)</SelectItem>

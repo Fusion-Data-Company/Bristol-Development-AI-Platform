@@ -175,18 +175,18 @@ export function FoursquareTool() {
             value={lng}
             onChange={(e) => setLng(e.target.value)}
             placeholder="-80.8431"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-white border-gray-300 text-gray-900"
           />
         </div>
 
         <div>
-          <Label htmlFor="radius" className="text-white">Radius (meters)</Label>
+          <Label htmlFor="radius" className="text-gray-900">Radius (meters)</Label>
           <Input
             id="radius"
             value={radius}
             onChange={(e) => setRadius(e.target.value)}
             placeholder="1600"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-white border-gray-300 text-gray-900"
           />
         </div>
       </div>
@@ -208,7 +208,7 @@ export function FoursquareTool() {
               onClick={handleSaveSnapshot}
               disabled={isSubmitting}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="border-gray-300 text-gray-900 hover:bg-gray-100"
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <Save className="mr-2 h-4 w-4" />
@@ -218,7 +218,7 @@ export function FoursquareTool() {
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="border-gray-300 text-gray-900 hover:bg-gray-100"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV

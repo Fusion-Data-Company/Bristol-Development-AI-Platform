@@ -181,12 +181,12 @@ export function BEATool() {
       {/* Controls */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
-          <Label htmlFor="geo" className="text-white">Geographic Level</Label>
+          <Label htmlFor="geo" className="text-gray-900">Geographic Level</Label>
           <Select value={geo} onValueChange={setGeo}>
-            <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+            <SelectTrigger className="bg-white border-gray-300 text-gray-900">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-gray-700 border-gray-600">
+            <SelectContent className="bg-white border-gray-300">
               <SelectItem value="msa">Metropolitan Area</SelectItem>
               <SelectItem value="county">County</SelectItem>
             </SelectContent>
@@ -196,23 +196,23 @@ export function BEATool() {
         {geo === "county" && (
           <>
             <div>
-              <Label htmlFor="state" className="text-white">State FIPS</Label>
+              <Label htmlFor="state" className="text-gray-900">State FIPS</Label>
               <Input
                 id="state"
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="37 (NC)"
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
             <div>
-              <Label htmlFor="county" className="text-white">County FIPS</Label>
+              <Label htmlFor="county" className="text-gray-900">County FIPS</Label>
               <Input
                 id="county"
                 value={county}
                 onChange={(e) => setCounty(e.target.value)}
                 placeholder="119 (Mecklenburg)"
-                className="bg-gray-700 border-gray-600 text-white"
+                className="bg-white border-gray-300 text-gray-900"
               />
             </div>
           </>
@@ -220,19 +220,19 @@ export function BEATool() {
 
         {geo === "msa" && (
           <div>
-            <Label htmlFor="msa" className="text-white">MSA Code</Label>
+            <Label htmlFor="msa" className="text-gray-900">MSA Code</Label>
             <Input
               id="msa"
               value={msa}
               onChange={(e) => setMsa(e.target.value)}
               placeholder="16740 (Charlotte)"
-              className="bg-gray-700 border-gray-600 text-white"
+              className="bg-white border-gray-300 text-gray-900"
             />
           </div>
         )}
 
         <div>
-          <Label htmlFor="startYear" className="text-white">Start Year</Label>
+          <Label htmlFor="startYear" className="text-gray-900">Start Year</Label>
           <Input
             id="startYear"
             type="number"
@@ -240,12 +240,12 @@ export function BEATool() {
             onChange={(e) => setStartYear(e.target.value)}
             min="2005"
             max="2030"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-white border-gray-300 text-gray-900"
           />
         </div>
 
         <div>
-          <Label htmlFor="endYear" className="text-white">End Year</Label>
+          <Label htmlFor="endYear" className="text-gray-900">End Year</Label>
           <Input
             id="endYear"
             type="number"
@@ -253,7 +253,7 @@ export function BEATool() {
             onChange={(e) => setEndYear(e.target.value)}
             min="2005"
             max="2030"
-            className="bg-gray-700 border-gray-600 text-white"
+            className="bg-white border-gray-300 text-gray-900"
           />
         </div>
       </div>
@@ -275,7 +275,7 @@ export function BEATool() {
               onClick={handleSaveSnapshot}
               disabled={isSubmitting}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="border-gray-300 text-gray-900 hover:bg-gray-100"
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <Save className="mr-2 h-4 w-4" />
@@ -285,7 +285,7 @@ export function BEATool() {
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="border-gray-600 text-white hover:bg-gray-700"
+              className="border-gray-300 text-gray-900 hover:bg-gray-100"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV
@@ -299,33 +299,33 @@ export function BEATool() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-white border-gray-300 shadow-md">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Latest Value</CardTitle>
+                <CardTitle className="text-sm text-gray-600">Latest Value</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{formatCurrency(data.metrics.latest)}</div>
-                <div className="text-xs text-gray-400">{data.metrics.unit}</div>
+                <div className="text-2xl font-bold text-gray-900">{formatCurrency(data.metrics.latest)}</div>
+                <div className="text-xs text-gray-500">{data.metrics.unit}</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-white border-gray-300 shadow-md">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">1-Year Change</CardTitle>
+                <CardTitle className="text-sm text-gray-600">1-Year Change</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">
+                <div className="text-lg text-gray-900">
                   {formatChange(data.metrics.changePercent1Yr, true)}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-white border-gray-300 shadow-md">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">5-Year CAGR</CardTitle>
+                <CardTitle className="text-sm text-gray-600">5-Year CAGR</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">
+                <div className="text-lg text-gray-900">
                   {formatChange(data.metrics.cagr5Yr, true)}
                 </div>
               </CardContent>
@@ -334,10 +334,10 @@ export function BEATool() {
 
           {/* Chart */}
           <div className="lg:col-span-2">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-white border-gray-300 shadow-md">
               <CardHeader>
-                <CardTitle className="text-white">{data.label} Over Time</CardTitle>
-                <CardDescription className="text-gray-400">
+                <CardTitle className="text-gray-900">{data.label} Over Time</CardTitle>
+                <CardDescription className="text-gray-600">
                   Data from {data.dataSource} • Last updated: {new Date(data.lastUpdated).toLocaleDateString()}
                 </CardDescription>
               </CardHeader>
