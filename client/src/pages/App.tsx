@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import Chrome from "../components/brand/SimpleChrome";
 import { PortfolioMap } from "../components/maps/PortfolioMap";
-import { SitesTable } from "../widgets/tables/SitesTable";
+
 import { MetricsTable } from "../widgets/tables/MetricsTable";
 import { CompsTable } from "../widgets/tables/CompsTable";
 import Sites from "./Sites";
@@ -57,20 +57,15 @@ export default function App() {
 
           <TabsContent value="tables" className="mt-6">
             <div className="space-y-6">
-              {/* Sites Table */}
-              <SitesTable 
-                data={[]}
-                isLoading={false}
-                onSelectSite={handleSiteSelect} 
-                selectedSite={selectedSite}
-                onRefresh={() => {}}
-              />
-              
               {/* Metrics Table */}
               <MetricsTable siteId={selectedSite?.id} />
               
               {/* Comps Table */}
               <CompsTable siteId={selectedSite?.id} />
+              
+              <div className="text-center p-8 text-gray-500">
+                <p>Visit the <a href="/sites" className="text-bristol-maroon hover:underline">Sites page</a> for the full sites table interface.</p>
+              </div>
             </div>
           </TabsContent>
 

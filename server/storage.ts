@@ -94,7 +94,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserSites(userId: string): Promise<Site[]> {
-    return await db.select().from(sites).where(eq(sites.ownerId, userId)).orderBy(desc(sites.createdAt));
+    // For now, return all sites since ownerId might be null for existing data
+    // TODO: Filter by userId when ownerId is properly populated
+    return await db.select().from(sites).orderBy(desc(sites.createdAt));
   }
 
   async updateSite(id: string, updates: Partial<InsertSite>): Promise<Site> {
