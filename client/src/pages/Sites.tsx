@@ -230,10 +230,16 @@ export default function Sites() {
           <div className="flex flex-wrap items-center gap-4 relative">
             <Button 
               onClick={() => setShowAddForm(true)} 
-              className="bg-gradient-to-r from-bristol-maroon to-bristol-maroon/90 text-white hover:from-bristol-maroon/90 hover:to-bristol-maroon/80 font-bold shadow-2xl shadow-bristol-maroon/30 hover:shadow-bristol-maroon/50 transition-all duration-300 border border-bristol-maroon/20 hover:scale-105"
+              className="relative group overflow-hidden bg-gradient-to-r from-bristol-maroon via-red-600 to-bristol-maroon text-white font-bold px-6 py-3 rounded-xl shadow-2xl shadow-bristol-maroon/40 hover:shadow-bristol-maroon/60 transition-all duration-500 border-2 border-bristol-gold/30 hover:border-bristol-gold/60 hover:scale-110 transform hover:rotate-1"
             >
-              <Plus className="w-5 h-5 mr-2" />
-              Add Site
+              {/* Animated background glow */}
+              <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/20 via-yellow-400/20 to-bristol-gold/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl blur-sm"></div>
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+              <div className="relative flex items-center">
+                <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+                <span className="font-extrabold text-lg tracking-wide">Add Site</span>
+              </div>
             </Button>
 
             <input
@@ -248,39 +254,63 @@ export default function Sites() {
               variant="outline" 
               onClick={() => fileInputRef.current?.click()}
               disabled={isImporting}
-              className="border-bristol-maroon/30 text-bristol-ink hover:bg-bristol-maroon/5 hover:border-bristol-maroon/50 backdrop-blur-sm shadow-lg shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300"
+              className="relative group overflow-hidden border-2 border-green-400 text-green-700 hover:text-white bg-gradient-to-r from-green-100 via-emerald-100 to-green-100 hover:from-green-500 hover:via-emerald-500 hover:to-green-500 backdrop-blur-sm shadow-xl shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-500 font-bold px-4 py-2.5 rounded-lg hover:scale-105"
             >
-              {isImporting ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Upload className="w-5 h-5 mr-2" />}
-              Import CSV
+              {/* Upload arrow animation */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full animate-bounce"></div>
+              </div>
+              <div className="relative flex items-center">
+                {isImporting ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Upload className="w-5 h-5 mr-2 group-hover:-translate-y-1 transition-transform duration-300" />}
+                Import CSV
+              </div>
             </Button>
 
             <Button 
               variant="outline" 
               onClick={handleExportCSV}
-              className="border-bristol-maroon/30 text-bristol-ink hover:bg-bristol-maroon/5 hover:border-bristol-maroon/50 backdrop-blur-sm shadow-lg shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300"
+              className="relative group overflow-hidden border-2 border-orange-400 text-orange-700 hover:text-white bg-gradient-to-r from-orange-100 via-yellow-100 to-orange-100 hover:from-orange-500 hover:via-yellow-500 hover:to-orange-500 backdrop-blur-sm shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 transition-all duration-500 font-bold px-4 py-2.5 rounded-lg hover:scale-105"
             >
-              <Download className="w-5 h-5 mr-2" />
-              Export CSV
+              {/* Download arrow animation */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-white rounded-full animate-bounce"></div>
+              </div>
+              <div className="relative flex items-center">
+                <Download className="w-5 h-5 mr-2 group-hover:translate-y-1 transition-transform duration-300" />
+                Export CSV
+              </div>
             </Button>
 
             <Button 
               variant="outline" 
               onClick={handleLoadSeed}
               disabled={isImporting}
-              className="border-bristol-gold/40 text-bristol-maroon hover:bg-bristol-gold/10 hover:border-bristol-gold/60 backdrop-blur-sm shadow-xl shadow-bristol-gold/20 hover:shadow-bristol-gold/30 transition-all duration-300 font-medium"
+              className="relative group overflow-hidden border-2 border-bristol-gold text-bristol-maroon hover:text-white bg-gradient-to-r from-bristol-gold/10 via-yellow-200/20 to-bristol-gold/10 hover:from-bristol-gold hover:via-yellow-400 hover:to-bristol-gold backdrop-blur-sm shadow-2xl shadow-bristol-gold/30 hover:shadow-bristol-gold/50 transition-all duration-500 font-bold px-5 py-2.5 rounded-lg hover:scale-105"
             >
-              {isImporting ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Settings2 className="w-5 h-5 mr-2" />}
-              Load Seed
+              {/* Sparkle effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute top-1 left-2 w-1 h-1 bg-white rounded-full animate-ping"></div>
+                <div className="absolute bottom-1 right-2 w-1 h-1 bg-white rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
+                <div className="absolute top-2 right-4 w-0.5 h-0.5 bg-white rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
+              </div>
+              <div className="relative flex items-center">
+                {isImporting ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Settings2 className="w-5 h-5 mr-2 group-hover:rotate-180 transition-transform duration-500" />}
+                Load Seed Data
+              </div>
             </Button>
 
             <Button 
               variant="outline" 
               onClick={handleGeocodeAll}
               disabled={isGeocoding}
-              className="border-bristol-maroon/30 text-bristol-ink hover:bg-bristol-maroon/5 hover:border-bristol-maroon/50 backdrop-blur-sm shadow-lg shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300"
+              className="relative group overflow-hidden border-2 border-purple-400 text-purple-700 hover:text-white bg-gradient-to-r from-purple-100 via-blue-100 to-purple-100 hover:from-purple-600 hover:via-blue-600 hover:to-purple-600 backdrop-blur-sm shadow-xl shadow-purple-500/20 hover:shadow-purple-500/40 transition-all duration-500 font-bold px-4 py-2.5 rounded-lg hover:scale-105"
             >
-              {isGeocoding ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <MapPin className="w-5 h-5 mr-2" />}
-              Geocode All
+              {/* Pulsing border effect */}
+              <div className="absolute inset-0 rounded-lg border-2 border-purple-400 opacity-75 group-hover:animate-pulse"></div>
+              <div className="relative flex items-center">
+                {isGeocoding ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <MapPin className="w-5 h-5 mr-2 group-hover:animate-bounce" />}
+                Geocode All
+              </div>
             </Button>
 
             {/* Premium Search with Light Theme */}
