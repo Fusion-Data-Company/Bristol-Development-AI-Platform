@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Download, Save, MapPin, Star } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -57,10 +58,13 @@ interface FoursquareData {
 }
 
 export function FoursquareTool() {
+  const [inputMode, setInputMode] = useState<'coordinates' | 'address'>('coordinates');
   const [lat, setLat] = useState("35.2271"); // Charlotte default
   const [lng, setLng] = useState("-80.8431");
+  const [address, setAddress] = useState("100 N Tryon St, Charlotte, NC"); // Charlotte default
   const [radius, setRadius] = useState("1600"); // ~1 mile in meters
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeocoding, setIsGeocoding] = useState(false);
   const { toast } = useToast();
 
   const { data, isLoading, refetch } = useQuery({
@@ -76,8 +80,70 @@ export function FoursquareTool() {
     enabled: false // Only fetch when user clicks Run
   }) as { data: FoursquareData; isLoading: boolean; refetch: any };
 
-  const handleRun = () => {
-    console.log('Foursquare Tool: Running analysis with params:', { lat, lng, radius });
+  const geocodeAddress = async (addressStr: string): Promise<{ lat: number; lng: number } | null> => {
+    try {
+      // Use OpenStreetMap Nominatim for free geocoding
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressStr)}&limit=1`,
+        {
+          headers: {
+            'User-Agent': 'Bristol-Site-Intelligence/1.0'
+          }
+        }
+      );
+      const data = await response.json();
+      
+      if (data && data.length > 0) {
+        return {
+          lat: parseFloat(data[0].lat),
+          lng: parseFloat(data[0].lon)
+        };
+      }
+      return null;
+    } catch (error) {
+      console.error('Geocoding error:', error);
+      return null;
+    }
+  };
+
+  const handleRun = async () => {
+    if (inputMode === 'address') {
+      if (!address.trim()) {
+        toast({
+          title: "Error",
+          description: "Please enter an address.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      setIsGeocoding(true);
+      const coords = await geocodeAddress(address);
+      setIsGeocoding(false);
+
+      if (!coords) {
+        toast({
+          title: "Geocoding Failed",
+          description: "Could not find coordinates for the provided address. Please try a different address or use coordinates directly.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Update coordinates and run analysis
+      setLat(coords.lat.toString());
+      setLng(coords.lng.toString());
+      
+      console.log('Foursquare Tool: Running analysis with geocoded params:', { 
+        address, 
+        lat: coords.lat, 
+        lng: coords.lng, 
+        radius 
+      });
+    } else {
+      console.log('Foursquare Tool: Running analysis with params:', { lat, lng, radius });
+    }
+    
     refetch();
   };
 
@@ -172,38 +238,70 @@ export function FoursquareTool() {
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="space-y-4">
+        {/* Input Mode Selector */}
         <div>
-          <Label htmlFor="lat" className="text-gray-900">Latitude</Label>
-          <Input
-            id="lat"
-            value={lat}
-            onChange={(e) => setLat(e.target.value)}
-            placeholder="35.2271"
-            className="bg-white border-gray-300 text-gray-900"
-          />
+          <Label className="text-gray-900">Location Input</Label>
+          <Select value={inputMode} onValueChange={(value: 'coordinates' | 'address') => setInputMode(value)}>
+            <SelectTrigger className="bg-white border-gray-300 text-gray-900 w-48">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-white border-gray-300">
+              <SelectItem value="coordinates">Coordinates (Lat/Lng)</SelectItem>
+              <SelectItem value="address">Address</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div>
-          <Label htmlFor="lng" className="text-gray-900">Longitude</Label>
-          <Input
-            id="lng"
-            value={lng}
-            onChange={(e) => setLng(e.target.value)}
-            placeholder="-80.8431"
-            className="bg-white border-gray-300 text-gray-900"
-          />
-        </div>
+        {/* Location Inputs */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {inputMode === 'coordinates' ? (
+            <>
+              <div>
+                <Label htmlFor="lat" className="text-gray-900">Latitude</Label>
+                <Input
+                  id="lat"
+                  value={lat}
+                  onChange={(e) => setLat(e.target.value)}
+                  placeholder="35.2271"
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
 
-        <div>
-          <Label htmlFor="radius" className="text-gray-900">Radius (meters)</Label>
-          <Input
-            id="radius"
-            value={radius}
-            onChange={(e) => setRadius(e.target.value)}
-            placeholder="1600"
-            className="bg-white border-gray-300 text-gray-900"
-          />
+              <div>
+                <Label htmlFor="lng" className="text-gray-900">Longitude</Label>
+                <Input
+                  id="lng"
+                  value={lng}
+                  onChange={(e) => setLng(e.target.value)}
+                  placeholder="-80.8431"
+                  className="bg-white border-gray-300 text-gray-900"
+                />
+              </div>
+            </>
+          ) : (
+            <div className="md:col-span-2">
+              <Label htmlFor="address" className="text-gray-900">Address</Label>
+              <Input
+                id="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="100 N Tryon St, Charlotte, NC"
+                className="bg-white border-gray-300 text-gray-900"
+              />
+            </div>
+          )}
+
+          <div>
+            <Label htmlFor="radius" className="text-gray-900">Radius (meters)</Label>
+            <Input
+              id="radius"
+              value={radius}
+              onChange={(e) => setRadius(e.target.value)}
+              placeholder="1600"
+              className="bg-white border-gray-300 text-gray-900"
+            />
+          </div>
         </div>
       </div>
 
@@ -211,11 +309,11 @@ export function FoursquareTool() {
       <div className="flex gap-2">
         <Button 
           onClick={handleRun} 
-          disabled={isLoading}
+          disabled={isLoading || isGeocoding}
           className="bg-bristol-gold text-black hover:bg-bristol-gold/90 border-2 border-bristol-gold shadow-lg font-semibold px-6 py-2"
         >
-          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Run Analysis
+          {(isLoading || isGeocoding) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {isGeocoding ? 'Finding Location...' : 'Run Analysis'}
         </Button>
         
         {data && (
