@@ -65,27 +65,33 @@ const ACS_VARIABLES = {
 
 // Reverse geocoding to get FIPS codes from coordinates
 async function reverseGeocode(lat: number, lng: number) {
-  const url = `https://geocoding.geo.census.gov/geocoder/geographies/coordinates?x=${lng}&y=${lat}&benchmark=2020&vintage=2021&format=json`;
+  const url = `https://geocoding.geo.census.gov/geocoder/geographies/coordinates?x=${lng}&y=${lat}&benchmark=2020&vintage=2020&format=json`;
   
   const response = await fetch(url);
+  
   if (!response.ok) {
-    throw new Error(`Reverse geocoding failed: ${response.statusText}`);
+    const errorText = await response.text();
+    console.error('Reverse geocoding error:', errorText);
+    throw new Error(`Reverse geocoding failed: ${response.status} ${response.statusText}`);
   }
   
   const data = await response.json();
   
-  if (!data.result?.geographies?.['2021 Census Blocks']?.[0]) {
+  // Get census tract data (which contains state, county, tract)
+  const tractData = data.result?.geographies?.['Census Tracts']?.[0];
+  const blockData = data.result?.geographies?.['Census Blocks']?.[0];
+  
+  if (!tractData) {
+    console.error('No census tract found in response:', data);
     throw new Error('Location not found in US Census boundaries');
   }
   
-  const block = data.result.geographies['2021 Census Blocks'][0];
-  
   return {
-    state: block.STATE,
-    county: block.COUNTY,
-    tract: block.TRACT,
-    block: block.BLOCK,
-    geoid: block.GEOID.substring(0, 11) // First 11 digits for tract
+    state: tractData.STATE,
+    county: tractData.COUNTY,
+    tract: tractData.TRACT,
+    block: blockData?.BLOCK || '000',
+    geoid: tractData.GEOID
   };
 }
 
