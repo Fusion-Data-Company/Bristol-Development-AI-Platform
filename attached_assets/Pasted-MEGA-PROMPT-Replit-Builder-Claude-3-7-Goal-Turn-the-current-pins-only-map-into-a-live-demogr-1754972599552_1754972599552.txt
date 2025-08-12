@@ -1,0 +1,589 @@
+MEGA PROMPT — Replit Builder (Claude 3.7)
+
+Goal: Turn the current “pins-only” map into a live demographic analysis tool for Bristol Development Group. Add end‑to‑end U.S. Census (ACS 5‑year) enrichment, a backend proxy, DB fields, a one‑click enrichment job, and real map UI (metric selector, working layer toggles, colored pins, popups).
+Strict rules: No placeholders. All code must run. If something’s unclear, make a best, production‑safe assumption and implement.
+
+⸻
+
+0) Scope & Success Criteria
+	•	✅ Every property has latitude/longitude and a valid Census Tract GEOID.
+	•	✅ DB stores fips_state, fips_county, geoid_tract, acs_year, acs_profile (JSON), and calculated metrics.
+	•	✅ Backend API: /api/properties.geojson returns a FeatureCollection with acs_profile.
+	•	✅ Backend API: /api/acs fetches live ACS by GEOIDs (for future use); /api/enrich runs our enrichment job.
+	•	✅ Frontend Map (Mapbox GL): real Demographics dropdown (Population/Income/Rent), pins colorize by quantiles, working layer toggles, and popups show values from ACS.
+	•	✅ Documentation: README updates + a quick test checklist.
+	•	❌ Do not depend on Parlay. Use Mapbox GL JS directly.
+
+⸻
+
+1) Packages to Add
+
+npm i d3-array @mapbox/mapbox-gl-geocoder @mapbox/mapbox-gl-draw turf leaflet
+npm i --save-dev @types/geojson
+
+
+⸻
+
+2) Environment Variables
+
+Create/update .env:
+
+MAPBOX_ACCESS_TOKEN=your_mapbox_public_or_restricted_token
+CENSUS_API_YEAR=2023
+
+Census endpoints used do not require a key for this scope. If you add one later: CENSUS_API_KEY= and pass it in requests.
+
+⸻
+
+3) Database Migration (Prisma/SQL)
+
+Add these columns to properties:
+
+ALTER TABLE properties
+  ADD COLUMN IF NOT EXISTS latitude double precision,
+  ADD COLUMN IF NOT EXISTS longitude double precision,
+  ADD COLUMN IF NOT EXISTS fips_state TEXT,
+  ADD COLUMN IF NOT EXISTS fips_county TEXT,
+  ADD COLUMN IF NOT EXISTS geoid_tract TEXT,
+  ADD COLUMN IF NOT EXISTS acs_year TEXT,
+  ADD COLUMN IF NOT EXISTS acs_profile JSONB,
+  ADD COLUMN IF NOT EXISTS status TEXT;
+
+status already exists in this project; keep ALTER as idempotent.
+
+⸻
+
+4) Shared Config — ACS Variables & Profiles
+
+Create src/config/acs.config.ts:
+
+export const ACS_YEAR = process.env.CENSUS_API_YEAR || "2023";
+export const ACS_DATASET = "acs/acs5";
+
+/** Variable codes aligned to ACS 5-year 2023 */
+export const ACS_VARS = {
+  population_total: "B01003_001E",
+  median_income: "B19013_001E",
+  median_rent: "B25064_001E",
+  // Optional expansions available later:
+  renter_occ_num: "B25003_003E",
+  renter_occ_den: "B25003_001E",
+  vacancy_num: "B25002_003E",
+  vacancy_den: "B25002_001E",
+  bachelors_denom: "B15003_001E",
+  bachelors_sum: ["B15003_022E","B15003_023E","B15003_024E","B15003_025E"],
+  no_vehicle_num: "B08201_002E",
+  no_vehicle_den: "B08201_001E",
+  broadband_have_sum: ["B28002_004E","B28002_013E","B28002_021E","B28002_028E"],
+  broadband_den: "B28002_001E",
+};
+
+export type MetricKey = "population"|"median_income"|"median_rent";
+
+export const METRIC_PROFILES: Record<MetricKey, string[]> = {
+  population: [ACS_VARS.population_total],
+  median_income: [ACS_VARS.median_income],
+  median_rent: [ACS_VARS.median_rent],
+};
+
+export const DEFAULT_PROFILE: MetricKey = "median_income";
+
+/** Helper: build joined var list (unique) */
+export function uniqueVars(...lists: (string|string[])[]) {
+  const set = new Set<string>();
+  for (const l of lists) (Array.isArray(l) ? l : [l]).forEach(v=>set.add(v));
+  return [...set];
+}
+
+
+⸻
+
+5) Server Utilities
+
+Create src/server/utils/census.ts:
+
+import { ACS_DATASET, ACS_YEAR } from "@/config/acs.config";
+
+/** FCC Block API -> derive fips + geoid_tract from lat/lng */
+export async function fccBlockFind(lat: number, lon: number) {
+  const url = `https://geo.fcc.gov/api/census/block/find?latitude=${lat}&longitude=${lon}&format=json`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`FCC ${r.status}`);
+  const j: any = await r.json();
+  const state = j?.State?.FIPS;               // 2-digit
+  const county = j?.County?.FIPS?.slice(2);   // 3-digit
+  const tract  = j?.Block?.FIPS?.slice(5, 11);// 6-digit
+  if (!state || !county || !tract) return null;
+  return { state, county, tract, geoid: `${state}${county}${tract}` };
+}
+
+/** Pull all tracts in a county for a list of vars, return Map<GEOID, vals> */
+export async function acsCounty(year: string, state: string, county: string, vars: string[]) {
+  const url = `https://api.census.gov/data/${year}/${ACS_DATASET}?get=NAME,${vars.join(",")}&for=tract:*&in=state:${state}&in=county:${county}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`ACS ${r.status} state:${state} county:${county}`);
+  const json: any[] = await r.json();
+  const header = json[0];
+  const rows = json.slice(1);
+  const out = new Map<string, any>();
+  for (const arr of rows) {
+    const obj: any = {};
+    header.forEach((h: string, i: number) => (obj[h] = arr[i]));
+    const geoid = `${obj.state}${obj.county}${obj.tract}`;
+    out.set(geoid, obj);
+  }
+  return out;
+}
+
+export const CENSUS_YEAR = ACS_YEAR;
+
+
+⸻
+
+6) Enrichment Job (Server)
+
+Create src/server/jobs/enrich-acs.ts:
+
+import { CENSUS_YEAR, acsCounty, fccBlockFind } from "@/server/utils/census";
+import { ACS_VARS, uniqueVars } from "@/config/acs.config";
+
+/** Minimal set we persist in acs_profile */
+const VARS = uniqueVars(
+  ACS_VARS.population_total,
+  ACS_VARS.median_income,
+  ACS_VARS.median_rent,
+  ACS_VARS.renter_occ_den, ACS_VARS.renter_occ_num,
+  ACS_VARS.vacancy_den, ACS_VARS.vacancy_num,
+  ACS_VARS.bachelors_denom, ACS_VARS.bachelors_sum,
+  ACS_VARS.no_vehicle_den, ACS_VARS.no_vehicle_num,
+  ACS_VARS.broadband_den, ACS_VARS.broadband_have_sum
+);
+
+type Db = any; // replace with your real db client type
+
+export async function enrichACS(db: Db) {
+  // Pass A: ensure every property has geoid_tract (via FCC)
+  const props = await db.property.findMany({
+    select: { id:true, propertyName:true, latitude:true, longitude:true, geoid_tract:true, fips_state:true, fips_county:true }
+  });
+
+  for (const p of props) {
+    if (p.geoid_tract || p.latitude == null || p.longitude == null) continue;
+    const hit = await fccBlockFind(p.latitude, p.longitude);
+    if (!hit) continue;
+    await db.property.update({
+      where: { id: p.id },
+      data: { geoid_tract: hit.geoid, fips_state: hit.state, fips_county: hit.county }
+    });
+  }
+
+  // Pass B: group by (state,county); fetch ACS & update
+  const withGeo = await db.property.findMany({
+    select: { id:true, geoid_tract:true, fips_state:true, fips_county:true, propertyName:true },
+    where: { geoid_tract: { not: null } }
+  });
+
+  const buckets = new Map<string, typeof withGeo>();
+  for (const p of withGeo) {
+    const key = `${p.fips_state}-${p.fips_county}`;
+    const list = buckets.get(key) || [];
+    list.push(p);
+    buckets.set(key, list);
+  }
+
+  for (const [key, list] of buckets) {
+    const [state, county] = key.split("-");
+    const countyMap = await acsCounty(CENSUS_YEAR, state, county, VARS);
+
+    for (const p of list) {
+      const row = countyMap.get(p.geoid_tract);
+      if (!row) continue;
+
+      // helpers
+      const num = (k:string) => (row[k] == null ? null : Number(row[k]));
+      const sum = (arr:string[]) => arr.map(k=>num(k) ?? 0).reduce((a,b)=>a+b, 0);
+
+      const population = num(ACS_VARS.population_total);
+      const median_income = num(ACS_VARS.median_income);
+      const median_rent = num(ACS_VARS.median_rent);
+
+      const renter_share = (() => {
+        const den = num(ACS_VARS.renter_occ_den);
+        const val = num(ACS_VARS.renter_occ_num);
+        return den && val != null ? val/den : null;
+      })();
+
+      const vacancy_rate = (() => {
+        const den = num(ACS_VARS.vacancy_den);
+        const val = num(ACS_VARS.vacancy_num);
+        return den && val != null ? val/den : null;
+      })();
+
+      const bachelors_share = (() => {
+        const den = num(ACS_VARS.bachelors_denom);
+        const val = sum(ACS_VARS.bachelors_sum);
+        return den && val != null ? val/den : null;
+      })();
+
+      const no_vehicle_share = (() => {
+        const den = num(ACS_VARS.no_vehicle_den);
+        const val = num(ACS_VARS.no_vehicle_num);
+        return den && val != null ? val/den : null;
+      })();
+
+      const broadband_share = (() => {
+        const den = num(ACS_VARS.broadband_den);
+        const val = sum(ACS_VARS.broadband_have_sum);
+        return den && val != null ? val/den : null;
+      })();
+
+      const acs_profile = {
+        population,
+        median_income,
+        median_rent,
+        renter_share,
+        vacancy_rate,
+        bachelors_share,
+        no_vehicle_share,
+        broadband_share
+      };
+
+      await db.property.update({
+        where: { id: p.id },
+        data: { acs_year: CENSUS_YEAR, acs_profile }
+      });
+    }
+  }
+
+  return { ok: true };
+}
+
+
+⸻
+
+7) API Routes
+
+(A) /api/properties.geojson — serve GeoJSON with ACS
+Create src/pages/api/properties.geojson.ts:
+
+import type { NextApiRequest, NextApiResponse } from "next";
+
+export default async function handler(req:NextApiRequest, res:NextApiResponse) {
+  const rows = await (global as any).db.property.findMany({
+    select: {
+      propertyName:true, address:true, cityState:true,
+      latitude:true, longitude:true, status:true, units:true, completedYear:true,
+      acs_year:true, acs_profile:true
+    }
+  });
+
+  const features = rows
+    .filter(r => typeof r.latitude === "number" && typeof r.longitude === "number")
+    .map((r:any) => ({
+      type:"Feature",
+      geometry:{ type:"Point", coordinates:[r.longitude, r.latitude] },
+      properties:{
+        name: r.propertyName,
+        address: r.address,
+        cityState: r.cityState,
+        status: r.status || "Operating",
+        units: r.units ?? null,
+        completedYear: r.completedYear ?? null,
+        acs_year: r.acs_year ?? null,
+        acs_profile: r.acs_profile ?? null
+      }
+    }));
+
+  res.setHeader("Cache-Control","public, max-age=300");
+  res.status(200).json({ type:"FeatureCollection", features });
+}
+
+(B) /api/acs — live ACS by GEOIDs (for future AOI/tract work)
+Create src/pages/api/acs.ts:
+
+import type { NextApiRequest, NextApiResponse } from "next";
+import { ACS_DATASET, ACS_YEAR, METRIC_PROFILES } from "@/config/acs.config";
+
+export default async function handler(req:NextApiRequest,res:NextApiResponse){
+  try {
+    const { geoids, profile="median_income", year=ACS_YEAR } =
+      req.method === "POST" ? req.body : req.query;
+
+    const ids: string[] = Array.isArray(geoids) ? geoids : String(geoids||"").split(",").filter(Boolean);
+    if (!ids.length) return res.status(400).json({ error:"No GEOIDs provided" });
+
+    const vars = METRIC_PROFILES[profile as any] || METRIC_PROFILES.median_income;
+
+    // group by (state, county) from tract geoid: SSCCCTTTTTT
+    const buckets = new Map<string, string[]>();
+    for (const id of ids) {
+      const state = id.slice(0,2), county = id.slice(2,5);
+      const key = `${state}-${county}`;
+      const arr = buckets.get(key) || [];
+      arr.push(id);
+      buckets.set(key, arr);
+    }
+
+    const fetchJSON = async (url:string) => {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(`Census ${r.status}`);
+      return r.json();
+    };
+
+    const out:any[] = [];
+    for (const [key, list] of buckets) {
+      const [state, county] = key.split("-");
+      const url = `https://api.census.gov/data/${year}/${ACS_DATASET}?get=NAME,${vars.join(",")}&for=tract:*&in=state:${state}&in=county:${county}`;
+      const j:any[] = await fetchJSON(url);
+      const header = j[0], rows = j.slice(1);
+      for (const arr of rows) {
+        const obj:any = {};
+        header.forEach((h:string,i:number)=>obj[h]=arr[i]);
+        const geoid = `${obj.state}${obj.county}${obj.tract}`;
+        if (list.includes(geoid)) {
+          const rec:any = { GEOID: geoid, NAME: obj.NAME };
+          for (const v of vars) rec[v] = obj[v]==null ? null : Number(obj[v]);
+          out.push(rec);
+        }
+      }
+    }
+
+    res.setHeader("Cache-Control","public, max-age=300");
+    return res.json({ year, profile, count: out.length, data: out });
+  } catch (e:any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+(C) /api/enrich — run enrichment job from UI
+Create src/pages/api/enrich.ts:
+
+import type { NextApiRequest, NextApiResponse } from "next";
+import { enrichACS } from "@/server/jobs/enrich-acs";
+
+export default async function handler(req:NextApiRequest,res:NextApiResponse){
+  if (req.method !== "POST") return res.status(405).json({ error:"POST only" });
+  try {
+    const db = (global as any).db; // inject or import your DB client
+    const result = await enrichACS(db);
+    return res.json(result);
+  } catch (e:any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+
+⸻
+
+8) Map: Real UI, Real Colors, Real Popups
+
+Create src/lib/quantiles.ts:
+
+import { quantile } from "d3-array";
+
+export function quantileStops(values:number[]) {
+  const v = values.filter(Number.isFinite).sort((a,b)=>a-b);
+  if (!v.length) return [0,0,0,0,0];
+  return [
+    quantile(v,0.05)!, quantile(v,0.25)!,
+    quantile(v,0.50)!, quantile(v,0.75)!,
+    quantile(v,0.95)!
+  ];
+}
+
+Update/add Map component src/components/map/PortfolioMap.tsx (Mapbox GL JS):
+	•	Load /api/properties.geojson
+	•	Add metric selector
+	•	Compute quantiles and set data-driven color on circle layer
+	•	Implement layer toggles with setLayoutProperty
+	•	Popups show acs_profile values
+
+"use client";
+import mapboxgl from "mapbox-gl";
+import { useEffect, useRef, useState } from "react";
+import { quantileStops } from "@/lib/quantiles";
+
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || process.env.MAPBOX_ACCESS_TOKEN || "";
+
+const SOURCE_ID = "props-src";
+const LAYER_ID = "props-circles";
+
+type Metric = "median_income"|"median_rent"|"population";
+const COLORS = ["#f1eef6","#bdc9e1","#74a9cf","#2b8cbe","#045a8d"];
+
+export default function PortfolioMap(){
+  const mapRef = useRef<mapboxgl.Map|null>(null);
+  const [metric, setMetric] = useState<Metric>("median_income");
+
+  useEffect(() => {
+    if (mapRef.current) return;
+    const map = new mapboxgl.Map({
+      container: "mapbox",
+      style: "mapbox://styles/mapbox/light-v11",
+      center: [-86.7816,36.1627],
+      zoom: 5
+    });
+    mapRef.current = map;
+
+    map.on("load", async () => {
+      const res = await fetch("/api/properties.geojson");
+      const fc = await res.json();
+
+      // add source
+      map.addSource(SOURCE_ID, { type:"geojson", data: fc });
+
+      // initial stops for default metric
+      const nums = fc.features.map((f:any)=>f.properties?.acs_profile?.[metric]).filter((n:number)=>Number.isFinite(n));
+      const [q05,q25,q50,q75,q95] = quantileStops(nums);
+
+      map.addLayer({
+        id: LAYER_ID,
+        type: "circle",
+        source: SOURCE_ID,
+        paint: {
+          "circle-radius": ["interpolate",["linear"],["zoom"],4,4,8,8,12,10],
+          "circle-stroke-color": "#111827",
+          "circle-stroke-width": 1,
+          "circle-color": [
+            "case",
+            ["!",["has","acs_profile",["get","properties"]]], "#9ca3af",
+            ["!",["has",metric,["get","acs_profile",["get","properties"]]]], "#9ca3af",
+            ["interpolate",["linear"],["get",metric,["get","acs_profile",["get","properties"]]],
+              q05, COLORS[0], q25, COLORS[1], q50, COLORS[2], q75, COLORS[3], q95, COLORS[4]
+            ]
+          ]
+        }
+      });
+
+      const popup = new mapboxgl.Popup({ closeButton: true, closeOnClick: true });
+
+      map.on("click", LAYER_ID, (e:any) => {
+        const f = e.features?.[0];
+        if (!f) return;
+        const p = f.properties;
+        const acs = p.acs_profile ? (typeof p.acs_profile === "string" ? JSON.parse(p.acs_profile) : p.acs_profile) : null;
+        const income = acs?.median_income ? `$${acs.median_income.toLocaleString()}` : "—";
+        const rent = acs?.median_rent ? `$${acs.median_rent.toLocaleString()}` : "—";
+        const pop = acs?.population?.toLocaleString?.() ?? "—";
+        const html = `
+          <div style="min-width:220px">
+            <b>${p.name}</b><br/>${p.address}<br/>${p.cityState}<hr/>
+            <div><b>ACS ${p.acs_year || ""}</b></div>
+            <div>Population: ${pop}</div>
+            <div>Median income: ${income}</div>
+            <div>Median rent: ${rent}</div>
+          </div>`;
+        popup.setLngLat(e.lngLat).setHTML(html).addTo(map);
+      });
+    });
+
+    return () => { map.remove(); };
+  }, []);
+
+  // metric change -> recompute stops & update circle-color
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.getSource(SOURCE_ID)) return;
+    const fc = (map.getSource(SOURCE_ID) as any)._data;
+    const nums = fc.features.map((f:any)=>f.properties?.acs_profile?.[metric]).filter((n:number)=>Number.isFinite(n));
+    const [q05,q25,q50,q75,q95] = quantileStops(nums);
+
+    map.setPaintProperty(LAYER_ID, "circle-color", [
+      "case",
+      ["!",["has","acs_profile",["get","properties"]]], "#9ca3af",
+      ["!",["has",metric,["get","acs_profile",["get","properties"]]]], "#9ca3af",
+      ["interpolate",["linear"],["get",metric,["get","acs_profile",["get","properties"]]],
+        q05, COLORS[0], q25, COLORS[1], q50, COLORS[2], q75, COLORS[3], q95, COLORS[4]
+      ]
+    ]);
+  }, [metric]);
+
+  return (
+    <div className="w-full">
+      <div className="flex gap-2 mb-2">
+        <select value={metric} onChange={e=>setMetric(e.target.value as any)} className="border rounded p-2">
+          <option value="median_income">Median income</option>
+          <option value="median_rent">Median rent</option>
+          <option value="population">Population</option>
+        </select>
+        <button
+          className="border rounded px-3"
+          onClick={async ()=>{
+            await fetch("/api/enrich",{method:"POST"});
+            // reload source data
+            const res = await fetch("/api/properties.geojson");
+            const fc = await res.json();
+            const map = mapRef.current!;
+            (map.getSource(SOURCE_ID) as any).setData(fc);
+          }}
+        >Rebuild ACS</button>
+      </div>
+      <div id="mapbox" style={{height:"76vh", width:"100%", borderRadius:12}} />
+    </div>
+  );
+}
+
+If you also have layer checkboxes, wire them to map.setLayoutProperty(LAYER_ID, 'visibility', 'none'|'visible').
+
+⸻
+
+9) Pages/Routes to Mount Map
+
+If Next.js (pages router), create src/pages/map.tsx:
+
+import dynamic from "next/dynamic";
+const PortfolioMap = dynamic(() => import("@/components/map/PortfolioMap"), { ssr:false });
+export default function MapPage(){ return <PortfolioMap/>; }
+
+
+⸻
+
+10) README Update (Builder — write this into README)
+	•	Run POST /api/enrich once, or click Rebuild ACS on the map page.
+	•	Verify /api/properties.geojson returns acs_profile per feature.
+	•	Use the Demographics selector to color pins.
+	•	Click a pin → popup shows real ACS values.
+	•	No external tilesets required yet; polygons can be added later.
+
+⸻
+
+11) Test Checklist (must pass)
+	1.	/api/enrich returns { ok: true } and DB rows have geoid_tract + acs_profile.
+	2.	/api/properties.geojson has acs_profile JSON per feature.
+	3.	Map loads; default metric = Median income.
+	4.	Change metric to Median rent and Population: colors change.
+	5.	Popups show ACS 2023 numbers (present for all properties with coords).
+	6.	No React key warnings; no console errors.
+	7.	Cold refresh works without race conditions.
+
+⸻
+
+12) Nice‑to‑Have (Defer unless trivial)
+	•	Cache /api/properties.geojson server-side (5–15 min).
+	•	Add basic legend (5 color bins, values from quantiles).
+	•	Add AOI search (draw polygon), collect tracts, call /api/acs → show AOI stats panel.
+
+⸻
+
+13) Guardrails & Data Hygiene
+	•	Do not write nulls as strings. Keep numeric fields numeric.
+	•	Keep acs_profile keys exactly: population, median_income, median_rent, renter_share, vacancy_rate, bachelors_share, no_vehicle_share, broadband_share.
+	•	If any property lacks lat/lng, do not crash; skip and log.
+
+⸻
+
+14) Delivery Notes to Builder
+	•	If you must refactor folders, keep imports updated.
+	•	If DB client isn’t global, import it in API files — do not mock.
+	•	Confirm Mapbox token works; if not, print a clear console error with remediation.
+	•	No placeholder UI. All controls must change real map state or be removed.
+
+⸻
+
+Done.
+
+Implement exactly as above. When finished, print:
+	•	A one‑line summary of changes,
+	•	The count of properties enriched,
+	•	The list of metrics supported,
+	•	The link path to the map page.

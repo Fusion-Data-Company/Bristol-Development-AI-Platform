@@ -229,43 +229,70 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
             </Card>
           </div>
 
-          {/* Detailed Tabs */}
+          {/* Comprehensive Data Tabs */}
           <Tabs defaultValue="population" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="population">Population</TabsTrigger>
               <TabsTrigger value="economics">Economics</TabsTrigger>
+              <TabsTrigger value="education">Education</TabsTrigger>
               <TabsTrigger value="housing">Housing</TabsTrigger>
               <TabsTrigger value="transportation">Transportation</TabsTrigger>
+              <TabsTrigger value="social">Social</TabsTrigger>
             </TabsList>
 
             <TabsContent value="population" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Basic Demographics */}
                 <Card className="bg-white border-bristol-stone/20">
                   <CardHeader>
-                    <CardTitle className="text-bristol-ink font-serif">Gender Distribution</CardTitle>
+                    <CardTitle className="text-bristol-ink font-serif">Basic Demographics</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm">Male</span>
-                        <span className="text-sm font-medium">
-                          {formatValue(locationData.demographics.percent_male, 'percent')}
-                        </span>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>Total Population</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.total_population)}</span>
                       </div>
-                      <Progress value={locationData.demographics.percent_male || 0} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm">Female</span>
-                        <span className="text-sm font-medium">
-                          {formatValue(locationData.demographics.percent_female, 'percent')}
-                        </span>
+                      <div className="flex justify-between">
+                        <span>Median Age</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.median_age)} years</span>
                       </div>
-                      <Progress value={locationData.demographics.percent_female || 0} className="h-2" />
+                      <div className="flex justify-between">
+                        <span>Male</span>
+                        <span>{formatValue(locationData.demographics.percent_male, 'percent')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Female</span>
+                        <span>{formatValue(locationData.demographics.percent_female, 'percent')}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
 
+                {/* Age Distribution */}
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader>
+                    <CardTitle className="text-bristol-ink font-serif">Age Groups</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>Under 18</span>
+                        <span>{formatValue(locationData.demographics.percent_under_18, 'percent')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>18-64 (Working Age)</span>
+                        <span>{formatValue(locationData.demographics.percent_18_to_64, 'percent')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>65+ (Seniors)</span>
+                        <span>{formatValue(locationData.demographics.percent_65_plus, 'percent')}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Race & Ethnicity */}
                 <Card className="bg-white border-bristol-stone/20">
                   <CardHeader>
                     <CardTitle className="text-bristol-ink font-serif">Race & Ethnicity</CardTitle>
@@ -273,7 +300,7 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                   <CardContent className="space-y-3">
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span>White</span>
+                        <span>White Alone</span>
                         <span>{formatValue(locationData.demographics.percent_white, 'percent')}</span>
                       </div>
                       <div className="flex justify-between">
@@ -288,14 +315,80 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                         <span>Hispanic/Latino</span>
                         <span>{formatValue(locationData.demographics.percent_hispanic, 'percent')}</span>
                       </div>
+                      <div className="flex justify-between">
+                        <span>Other/Mixed Race</span>
+                        <span>{formatValue(locationData.demographics.percent_other_races, 'percent')}</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
               </div>
+
+              {/* Detailed Age Breakdown */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Detailed Age Breakdown</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="flex justify-between">
+                      <span>Under 5</span>
+                      <span>{formatValue(locationData.demographics.age_under_5)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>5-17</span>
+                      <span>{formatValue(locationData.demographics.age_5_to_17)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>18-24</span>
+                      <span>{formatValue(locationData.demographics.age_18_to_24)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>25-34</span>
+                      <span>{formatValue(locationData.demographics.age_25_to_34)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>35-44</span>
+                      <span>{formatValue(locationData.demographics.age_35_to_44)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>45-54</span>
+                      <span>{formatValue(locationData.demographics.age_45_to_54)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>55-64</span>
+                      <span>{formatValue(locationData.demographics.age_55_to_64)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>65-74</span>
+                      <span>{formatValue(locationData.demographics.age_65_to_74)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>75+</span>
+                      <span>{formatValue(locationData.demographics.age_75_plus)}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="economics" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Income Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Median Household Income</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.median_household_income, 'currency')}
+                    </div>
+                    <div className="text-xs text-bristol-stone mt-1">
+                      Per capita: {formatValue(locationData.demographics.per_capita_income, 'currency')}
+                    </div>
+                  </CardContent>
+                </Card>
+
                 <Card className="bg-white border-bristol-stone/20">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-bristol-stone">Employment Rate</CardTitle>
@@ -305,21 +398,21 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                       {formatValue(locationData.demographics.employment_rate, 'percent')}
                     </div>
                     <div className="text-xs text-bristol-stone mt-1">
-                      Labor force: {formatValue(locationData.demographics.labor_force)}
+                      Of labor force
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="bg-white border-bristol-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Unemployment</CardTitle>
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Unemployment Rate</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-bristol-ink">
-                      {formatValue(locationData.demographics.unemployment_rate)}
+                      {formatValue(locationData.demographics.unemployment_rate, 'percent')}
                     </div>
                     <div className="text-xs text-bristol-stone mt-1">
-                      People unemployed
+                      Unemployed: {formatValue(locationData.demographics.unemployed)}
                     </div>
                   </CardContent>
                 </Card>
@@ -330,18 +423,332 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-bristol-ink">
-                      {formatValue(locationData.demographics.poverty_rate)}
+                      {formatValue(locationData.demographics.poverty_rate, 'percent')}
                     </div>
                     <div className="text-xs text-bristol-stone mt-1">
-                      People in poverty
+                      Below poverty line
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Income Distribution */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Household Income Distribution</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Under $25k</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_income_under_25k, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_income_under_25k || 0} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>$25k - $50k</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_income_25k_to_50k, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_income_25k_to_50k || 0} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>$50k - $100k</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_income_50k_to_100k, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_income_50k_to_100k || 0} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>$100k+</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_income_100k_plus, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_income_100k_plus || 0} className="h-2" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Detailed Income Brackets */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Detailed Income Brackets</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Under $10k</span>
+                        <span>{formatValue(locationData.demographics.income_under_10k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$10k - $15k</span>
+                        <span>{formatValue(locationData.demographics.income_10k_to_15k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$15k - $20k</span>
+                        <span>{formatValue(locationData.demographics.income_15k_to_20k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$20k - $25k</span>
+                        <span>{formatValue(locationData.demographics.income_20k_to_25k)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>$25k - $30k</span>
+                        <span>{formatValue(locationData.demographics.income_25k_to_30k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$30k - $35k</span>
+                        <span>{formatValue(locationData.demographics.income_30k_to_35k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$35k - $40k</span>
+                        <span>{formatValue(locationData.demographics.income_35k_to_40k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$40k - $45k</span>
+                        <span>{formatValue(locationData.demographics.income_40k_to_45k)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>$45k - $50k</span>
+                        <span>{formatValue(locationData.demographics.income_45k_to_50k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$50k - $60k</span>
+                        <span>{formatValue(locationData.demographics.income_50k_to_60k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$60k - $75k</span>
+                        <span>{formatValue(locationData.demographics.income_60k_to_75k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$75k - $100k</span>
+                        <span>{formatValue(locationData.demographics.income_75k_to_100k)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>$100k - $125k</span>
+                        <span>{formatValue(locationData.demographics.income_100k_to_125k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$125k - $150k</span>
+                        <span>{formatValue(locationData.demographics.income_125k_to_150k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$150k - $200k</span>
+                        <span>{formatValue(locationData.demographics.income_150k_to_200k)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>$200k+</span>
+                        <span>{formatValue(locationData.demographics.income_200k_plus)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Additional Economic Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Mean Income</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.mean_household_income, 'currency')}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Gini Index</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.gini_index)}
+                    </div>
+                    <div className="text-xs text-bristol-stone mt-1">
+                      Income inequality measure
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Labor Force Participation</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.labor_force_participation, 'percent')}
+                    </div>
+                    <div className="text-xs text-bristol-stone mt-1">
+                      Labor force: {formatValue(locationData.demographics.labor_force)}
                     </div>
                   </CardContent>
                 </Card>
               </div>
             </TabsContent>
 
+            <TabsContent value="education" className="space-y-4">
+              {/* Education Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Less than High School</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.percent_less_than_high_school, 'percent')}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">High School Graduate</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.percent_high_school, 'percent')}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Some College/Associates</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.percent_some_college, 'percent')}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Bachelor's or Higher</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.percent_bachelors_plus, 'percent')}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Detailed Education Breakdown */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Detailed Educational Attainment</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Less than 9th grade</span>
+                        <span>{formatValue(locationData.demographics.less_than_9th_grade)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>9th to 12th grade</span>
+                        <span>{formatValue(locationData.demographics.grade_9_to_12)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>High school graduate</span>
+                        <span>{formatValue(locationData.demographics.high_school_graduate)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Some college</span>
+                        <span>{formatValue(locationData.demographics.some_college)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Associate's degree</span>
+                        <span>{formatValue(locationData.demographics.associates_degree)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Bachelor's degree</span>
+                        <span>{formatValue(locationData.demographics.bachelors_degree)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Master's degree</span>
+                        <span>{formatValue(locationData.demographics.masters_degree)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Professional degree</span>
+                        <span>{formatValue(locationData.demographics.professional_degree)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Doctorate degree</span>
+                        <span>{formatValue(locationData.demographics.doctorate_degree)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Graduate Education Focus */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Advanced Education</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Graduate Degree or Higher</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_graduate_degree, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_graduate_degree || 0} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Bachelor's Degree or Higher</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_bachelors_plus, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_bachelors_plus || 0} className="h-2" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="housing" className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Housing Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Median Home Value</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.median_home_value, 'currency')}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Median Gross Rent</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.median_gross_rent, 'currency')}
+                    </div>
+                  </CardContent>
+                </Card>
+
                 <Card className="bg-white border-bristol-stone/20">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-sm font-medium text-bristol-stone">Homeownership Rate</CardTitle>
@@ -349,9 +756,6 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                   <CardContent>
                     <div className="text-2xl font-bold text-bristol-ink">
                       {formatValue(locationData.demographics.homeownership_rate, 'percent')}
-                    </div>
-                    <div className="text-xs text-bristol-stone mt-1">
-                      Owner occupied units
                     </div>
                   </CardContent>
                 </Card>
@@ -364,15 +768,128 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                     <div className="text-2xl font-bold text-bristol-ink">
                       {formatValue(locationData.demographics.vacancy_rate, 'percent')}
                     </div>
-                    <div className="text-xs text-bristol-stone mt-1">
-                      Vacant units
-                    </div>
                   </CardContent>
                 </Card>
+              </div>
 
+              {/* Housing Stock */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Housing Stock & Occupancy</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Total Housing Units</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.total_housing_units)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Occupied Units</span>
+                        <span>{formatValue(locationData.demographics.occupied_housing_units)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Owner Occupied</span>
+                        <span>{formatValue(locationData.demographics.owner_occupied_units)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Renter Occupied</span>
+                        <span>{formatValue(locationData.demographics.renter_occupied_units)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Vacant Units</span>
+                        <span>{formatValue(locationData.demographics.vacant_housing_units)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Median Rooms</span>
+                        <span>{formatValue(locationData.demographics.median_rooms)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Rental Rate</span>
+                        <span>{formatValue(locationData.demographics.rental_rate, 'percent')}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Rent Distribution */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Rent Distribution</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Under $500</span>
+                        <span>{formatValue(locationData.demographics.rent_under_500)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>$500-$999</span>
+                        <span>{formatValue(locationData.demographics.rent_500_to_999)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>$1,000-$1,499</span>
+                        <span>{formatValue(locationData.demographics.rent_1000_to_1499)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>$1,500-$1,999</span>
+                        <span>{formatValue(locationData.demographics.rent_1500_to_1999)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>$2,000+</span>
+                        <span>{formatValue(locationData.demographics.rent_2000_plus)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Housing Cost Burden */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Housing Cost Burden</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Pay 30%+ of Income on Housing</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.housing_cost_burden_30_percent, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.housing_cost_burden_30_percent || 0} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Pay 50%+ of Income on Housing</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.housing_cost_burden_50_percent, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.housing_cost_burden_50_percent || 0} className="h-2" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Household Size */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Card className="bg-white border-bristol-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Avg Household Size</CardTitle>
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Average Household Size</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold text-bristol-ink">
@@ -383,46 +900,305 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                     </div>
                   </CardContent>
                 </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Average Family Size</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.average_family_size)}
+                    </div>
+                    <div className="text-xs text-bristol-stone mt-1">
+                      People per family
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
 
             <TabsContent value="transportation" className="space-y-4">
+              {/* Commute Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Total Commuters</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.total_commuters)}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Median Commute Time</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.median_commute_time)} min
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm font-medium text-bristol-stone">Work From Home</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold text-bristol-ink">
+                      {formatValue(locationData.demographics.percent_work_from_home, 'percent')}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Commute Methods */}
               <Card className="bg-white border-bristol-stone/20">
                 <CardHeader>
                   <CardTitle className="text-bristol-ink font-serif flex items-center gap-2">
                     <Car className="h-4 w-4" />
-                    Commute Methods
+                    Transportation Methods
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex justify-between">
-                      <span>Drive alone</span>
-                      <span>{formatValue(locationData.demographics.commute_drive_alone)}</span>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Drive Alone</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_drive_alone, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_drive_alone || 0} className="h-2" />
                     </div>
-                    <div className="flex justify-between">
-                      <span>Carpool</span>
-                      <span>{formatValue(locationData.demographics.commute_carpool)}</span>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Carpool</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_carpool, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_carpool || 0} className="h-2" />
                     </div>
-                    <div className="flex justify-between">
-                      <span>Public transit</span>
-                      <span>{formatValue(locationData.demographics.commute_public_transit)}</span>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Public Transit</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_public_transit, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_public_transit || 0} className="h-2" />
                     </div>
-                    <div className="flex justify-between">
-                      <span>Walk</span>
-                      <span>{formatValue(locationData.demographics.commute_walk)}</span>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Walk</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_walk, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_walk || 0} className="h-2" />
                     </div>
-                    <div className="flex justify-between">
-                      <span>Work from home</span>
-                      <span>{formatValue(locationData.demographics.commute_work_from_home)}</span>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Bicycle</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.commute_bicycle)}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between font-medium">
-                      <span>Median commute time</span>
-                      <span>{formatValue(locationData.demographics.median_commute_time)} min</span>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Other</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.commute_other)}</span>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Vehicle Access */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Vehicle Access</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Households with No Vehicle</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_no_vehicle, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_no_vehicle || 0} className="h-2" />
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>No Vehicle Households</span>
+                        <span>{formatValue(locationData.demographics.no_vehicle_households)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Total Vehicle Households</span>
+                        <span>{formatValue(locationData.demographics.total_vehicle_households)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Detailed Commute Numbers */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Detailed Commute Numbers</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Drive alone</span>
+                        <span>{formatValue(locationData.demographics.commute_drive_alone)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Carpool</span>
+                        <span>{formatValue(locationData.demographics.commute_carpool)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Public transit</span>
+                        <span>{formatValue(locationData.demographics.commute_public_transit)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Walk</span>
+                        <span>{formatValue(locationData.demographics.commute_walk)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Bicycle</span>
+                        <span>{formatValue(locationData.demographics.commute_bicycle)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Work from home</span>
+                        <span>{formatValue(locationData.demographics.commute_work_from_home)}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Other means</span>
+                        <span>{formatValue(locationData.demographics.commute_other)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="social" className="space-y-4">
+              {/* Household & Family Structure */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Household & Family Structure</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Total Households</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.total_households)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Family Households</span>
+                        <span>{formatValue(locationData.demographics.percent_family_households, 'percent')}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Married Couples</span>
+                        <span>{formatValue(locationData.demographics.percent_married_couples, 'percent')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Single Parent Families</span>
+                        <span>{formatValue(locationData.demographics.percent_single_parent, 'percent')}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Households with Children</span>
+                        <span>{formatValue(locationData.demographics.percent_households_with_children, 'percent')}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Non-family Households</span>
+                        <span>{formatValue(locationData.demographics.nonfamily_households)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Technology & Internet */}
+              <Card className="bg-white border-bristol-stone/20">
+                <CardHeader>
+                  <CardTitle className="text-bristol-ink font-serif">Technology & Internet Access</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>Broadband Subscription</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_broadband, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_broadband || 0} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-2">
+                        <span>No Internet Access</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.percent_no_internet, 'percent')}</span>
+                      </div>
+                      <Progress value={locationData.demographics.percent_no_internet || 0} className="h-2" />
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span>Broadband Households</span>
+                        <span>{formatValue(locationData.demographics.broadband_with_subscription)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>No Internet Households</span>
+                        <span>{formatValue(locationData.demographics.no_internet_access)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Veterans & Disability */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader>
+                    <CardTitle className="text-bristol-ink font-serif">Veterans</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>Total Veterans</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.total_veterans)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Veteran Percentage</span>
+                        <span>{formatValue(locationData.demographics.percent_veterans, 'percent')}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-white border-bristol-stone/20">
+                  <CardHeader>
+                    <CardTitle className="text-bristol-ink font-serif">Disability Status</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span>With Disability</span>
+                        <span className="font-medium">{formatValue(locationData.demographics.with_disability)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Disability Rate</span>
+                        <span>{formatValue(locationData.demographics.percent_with_disability, 'percent')}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </TabsContent>
           </Tabs>
         </div>

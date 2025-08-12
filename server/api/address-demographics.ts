@@ -4,52 +4,133 @@ const CENSUS_API_KEY = process.env.CENSUS_API_KEY;
 const MAPBOX_TOKEN = process.env.VITE_MAPBOX_ACCESS_TOKEN;
 const YEAR = '2023';
 
-// Comprehensive ACS variables for address analysis
+// Comprehensive ACS variables for complete demographic analysis
 const ACS_VARIABLES = {
-  // Basic Demographics
+  // Core Demographics
   total_population: 'B01003_001E',
   median_age: 'B01002_001E',
   male_population: 'B01001_002E',
   female_population: 'B01001_026E',
   
-  // Race/Ethnicity
+  // Age Groups (detailed)
+  age_under_5: 'B01001_003E',
+  age_5_to_17: 'B01001_004E',
+  age_18_to_24: 'B01001_007E',
+  age_25_to_34: 'B01001_009E',
+  age_35_to_44: 'B01001_011E',
+  age_45_to_54: 'B01001_013E',
+  age_55_to_64: 'B01001_015E',
+  age_65_to_74: 'B01001_017E',
+  age_75_plus: 'B01001_019E',
+  
+  // Race/Ethnicity (complete)
   white_alone: 'B02001_002E',
   black_alone: 'B02001_003E',
+  american_indian_alone: 'B02001_004E',
   asian_alone: 'B02001_005E',
+  pacific_islander_alone: 'B02001_006E',
+  other_race_alone: 'B02001_007E',
+  two_or_more_races: 'B02001_008E',
   hispanic_latino: 'B03003_003E',
   
-  // Education
-  bachelor_degree_or_higher: 'B15003_022E',
-  graduate_degree: 'B15003_023E',
-  high_school_or_higher: 'B15003_017E',
+  // Education (complete levels)
+  less_than_9th_grade: 'B15003_002E',
+  grade_9_to_12: 'B15003_003E',
+  high_school_graduate: 'B15003_017E',
+  some_college: 'B15003_019E',
+  associates_degree: 'B15003_021E',
+  bachelors_degree: 'B15003_022E',
+  masters_degree: 'B15003_023E',
+  professional_degree: 'B15003_024E',
+  doctorate_degree: 'B15003_025E',
+  total_education_pop: 'B15003_001E',
   
-  // Economics
+  // Economics (comprehensive)
   median_household_income: 'B19013_001E',
   per_capita_income: 'B19301_001E',
-  poverty_rate: 'B17001_002E',
-  unemployment_rate: 'B23025_005E',
-  labor_force: 'B23025_002E',
+  mean_household_income: 'B19025_001E',
+  poverty_total: 'B17001_001E',
+  poverty_below: 'B17001_002E',
+  gini_index: 'B19083_001E',
   
-  // Housing
-  median_home_value: 'B25077_001E',
-  median_gross_rent: 'B25064_001E',
+  // Employment
+  labor_force: 'B23025_002E',
+  employed: 'B23025_004E',
+  unemployed: 'B23025_005E',
+  not_in_labor_force: 'B23025_007E',
+  
+  // Income Brackets
+  income_under_10k: 'B19001_002E',
+  income_10k_to_15k: 'B19001_003E',
+  income_15k_to_20k: 'B19001_004E',
+  income_20k_to_25k: 'B19001_005E',
+  income_25k_to_30k: 'B19001_006E',
+  income_30k_to_35k: 'B19001_007E',
+  income_35k_to_40k: 'B19001_008E',
+  income_40k_to_45k: 'B19001_009E',
+  income_45k_to_50k: 'B19001_010E',
+  income_50k_to_60k: 'B19001_011E',
+  income_60k_to_75k: 'B19001_012E',
+  income_75k_to_100k: 'B19001_013E',
+  income_100k_to_125k: 'B19001_014E',
+  income_125k_to_150k: 'B19001_015E',
+  income_150k_to_200k: 'B19001_016E',
+  income_200k_plus: 'B19001_017E',
+  total_income_households: 'B19001_001E',
+  
+  // Housing (complete)
+  total_housing_units: 'B25001_001E',
+  occupied_housing_units: 'B25003_001E',
   owner_occupied_units: 'B25003_002E',
   renter_occupied_units: 'B25003_003E',
-  total_housing_units: 'B25001_001E',
+  vacant_housing_units: 'B25002_003E',
+  median_home_value: 'B25077_001E',
+  median_gross_rent: 'B25064_001E',
+  median_rooms: 'B25018_001E',
   
-  // Transportation
+  // Housing Costs
+  housing_cost_30_percent_plus: 'B25070_007E',
+  housing_cost_50_percent_plus: 'B25070_010E',
+  rent_under_500: 'B25063_002E',
+  rent_500_to_999: 'B25063_003E',
+  rent_1000_to_1499: 'B25063_004E',
+  rent_1500_to_1999: 'B25063_005E',
+  rent_2000_plus: 'B25063_006E',
+  
+  // Transportation (detailed)
+  total_commuters: 'B08301_001E',
   commute_drive_alone: 'B08301_010E',
   commute_carpool: 'B08301_011E',
   commute_public_transit: 'B08301_021E',
   commute_walk: 'B08301_019E',
+  commute_bicycle: 'B08301_018E',
   commute_work_from_home: 'B08301_021E',
+  commute_other: 'B08301_020E',
   median_commute_time: 'B08013_001E',
+  no_vehicle_households: 'B08201_002E',
+  total_vehicle_households: 'B08201_001E',
   
   // Family Structure
+  total_households: 'B11001_001E',
+  family_households: 'B11001_002E',
   married_couple_families: 'B11001_003E',
   single_parent_families: 'B11001_006E',
+  nonfamily_households: 'B11001_007E',
   households_with_children: 'B11005_002E',
-  average_household_size: 'B25010_001E'
+  average_household_size: 'B25010_001E',
+  average_family_size: 'B25010_002E',
+  
+  // Technology/Broadband
+  total_broadband_households: 'B28002_001E',
+  broadband_with_subscription: 'B28002_004E',
+  no_internet_access: 'B28002_013E',
+  
+  // Veterans
+  total_veterans: 'B21001_002E',
+  
+  // Disability
+  total_disability_pop: 'B18101_001E',
+  with_disability: 'B18101_004E'
 };
 
 // Geocode address using Mapbox
@@ -141,29 +222,88 @@ async function getAcsData(state: string, county: string, tract: string) {
   return demographics;
 }
 
-// Calculate derived metrics
+// Calculate comprehensive derived metrics and percentages
 function calculateDerivedMetrics(demographics: Record<string, number | null>) {
   const total_pop = demographics.total_population || 0;
+  const education_pop = demographics.total_education_pop || 0;
   const labor_force = demographics.labor_force || 0;
   const total_housing = demographics.total_housing_units || 0;
-  const occupied = (demographics.owner_occupied_units || 0) + (demographics.renter_occupied_units || 0);
+  const occupied = demographics.occupied_housing_units || 0;
+  const total_households = demographics.total_households || 0;
+  const total_commuters = demographics.total_commuters || 0;
+  const income_households = demographics.total_income_households || 0;
+  const broadband_households = demographics.total_broadband_households || 0;
+  const disability_pop = demographics.total_disability_pop || 0;
+  const vehicle_households = demographics.total_vehicle_households || 0;
   
   return {
-    // Percentages
+    // Demographics Percentages
     percent_male: total_pop ? (demographics.male_population || 0) / total_pop * 100 : null,
     percent_female: total_pop ? (demographics.female_population || 0) / total_pop * 100 : null,
+    
+    // Age Distribution
+    percent_under_18: total_pop ? ((demographics.age_under_5 || 0) + (demographics.age_5_to_17 || 0)) / total_pop * 100 : null,
+    percent_18_to_64: total_pop ? ((demographics.age_18_to_24 || 0) + (demographics.age_25_to_34 || 0) + (demographics.age_35_to_44 || 0) + (demographics.age_45_to_54 || 0) + (demographics.age_55_to_64 || 0)) / total_pop * 100 : null,
+    percent_65_plus: total_pop ? ((demographics.age_65_to_74 || 0) + (demographics.age_75_plus || 0)) / total_pop * 100 : null,
+    
+    // Race/Ethnicity Percentages
     percent_white: total_pop ? (demographics.white_alone || 0) / total_pop * 100 : null,
     percent_black: total_pop ? (demographics.black_alone || 0) / total_pop * 100 : null,
     percent_asian: total_pop ? (demographics.asian_alone || 0) / total_pop * 100 : null,
     percent_hispanic: total_pop ? (demographics.hispanic_latino || 0) / total_pop * 100 : null,
-    percent_bachelor_plus: total_pop ? (demographics.bachelor_degree_or_higher || 0) / total_pop * 100 : null,
+    percent_other_races: total_pop ? ((demographics.american_indian_alone || 0) + (demographics.pacific_islander_alone || 0) + (demographics.other_race_alone || 0) + (demographics.two_or_more_races || 0)) / total_pop * 100 : null,
     
-    // Employment
-    employment_rate: labor_force ? ((labor_force - (demographics.unemployment_rate || 0)) / labor_force) * 100 : null,
+    // Education Percentages
+    percent_less_than_high_school: education_pop ? ((demographics.less_than_9th_grade || 0) + (demographics.grade_9_to_12 || 0)) / education_pop * 100 : null,
+    percent_high_school: education_pop ? (demographics.high_school_graduate || 0) / education_pop * 100 : null,
+    percent_some_college: education_pop ? ((demographics.some_college || 0) + (demographics.associates_degree || 0)) / education_pop * 100 : null,
+    percent_bachelors_plus: education_pop ? ((demographics.bachelors_degree || 0) + (demographics.masters_degree || 0) + (demographics.professional_degree || 0) + (demographics.doctorate_degree || 0)) / education_pop * 100 : null,
+    percent_graduate_degree: education_pop ? ((demographics.masters_degree || 0) + (demographics.professional_degree || 0) + (demographics.doctorate_degree || 0)) / education_pop * 100 : null,
     
-    // Housing
+    // Employment Rates
+    employment_rate: labor_force ? (demographics.employed || 0) / labor_force * 100 : null,
+    unemployment_rate: labor_force ? (demographics.unemployed || 0) / labor_force * 100 : null,
+    labor_force_participation: total_pop > 16 ? labor_force / total_pop * 100 : null,
+    
+    // Income Distribution
+    percent_income_under_25k: income_households ? ((demographics.income_under_10k || 0) + (demographics.income_10k_to_15k || 0) + (demographics.income_15k_to_20k || 0) + (demographics.income_20k_to_25k || 0)) / income_households * 100 : null,
+    percent_income_25k_to_50k: income_households ? ((demographics.income_25k_to_30k || 0) + (demographics.income_30k_to_35k || 0) + (demographics.income_35k_to_40k || 0) + (demographics.income_40k_to_45k || 0) + (demographics.income_45k_to_50k || 0)) / income_households * 100 : null,
+    percent_income_50k_to_100k: income_households ? ((demographics.income_50k_to_60k || 0) + (demographics.income_60k_to_75k || 0) + (demographics.income_75k_to_100k || 0)) / income_households * 100 : null,
+    percent_income_100k_plus: income_households ? ((demographics.income_100k_to_125k || 0) + (demographics.income_125k_to_150k || 0) + (demographics.income_150k_to_200k || 0) + (demographics.income_200k_plus || 0)) / income_households * 100 : null,
+    
+    // Poverty
+    poverty_rate: demographics.poverty_total ? (demographics.poverty_below || 0) / demographics.poverty_total * 100 : null,
+    
+    // Housing Metrics
     homeownership_rate: occupied ? (demographics.owner_occupied_units || 0) / occupied * 100 : null,
-    vacancy_rate: total_housing ? ((total_housing - occupied) / total_housing) * 100 : null
+    rental_rate: occupied ? (demographics.renter_occupied_units || 0) / occupied * 100 : null,
+    vacancy_rate: total_housing ? (demographics.vacant_housing_units || 0) / total_housing * 100 : null,
+    housing_cost_burden_30_percent: occupied ? (demographics.housing_cost_30_percent_plus || 0) / occupied * 100 : null,
+    housing_cost_burden_50_percent: occupied ? (demographics.housing_cost_50_percent_plus || 0) / occupied * 100 : null,
+    
+    // Transportation
+    percent_drive_alone: total_commuters ? (demographics.commute_drive_alone || 0) / total_commuters * 100 : null,
+    percent_carpool: total_commuters ? (demographics.commute_carpool || 0) / total_commuters * 100 : null,
+    percent_public_transit: total_commuters ? (demographics.commute_public_transit || 0) / total_commuters * 100 : null,
+    percent_walk: total_commuters ? (demographics.commute_walk || 0) / total_commuters * 100 : null,
+    percent_work_from_home: total_commuters ? (demographics.commute_work_from_home || 0) / total_commuters * 100 : null,
+    percent_no_vehicle: vehicle_households ? (demographics.no_vehicle_households || 0) / vehicle_households * 100 : null,
+    
+    // Family Structure
+    percent_family_households: total_households ? (demographics.family_households || 0) / total_households * 100 : null,
+    percent_married_couples: total_households ? (demographics.married_couple_families || 0) / total_households * 100 : null,
+    percent_single_parent: total_households ? (demographics.single_parent_families || 0) / total_households * 100 : null,
+    percent_households_with_children: total_households ? (demographics.households_with_children || 0) / total_households * 100 : null,
+    
+    // Technology
+    percent_broadband: broadband_households ? (demographics.broadband_with_subscription || 0) / broadband_households * 100 : null,
+    percent_no_internet: broadband_households ? (demographics.no_internet_access || 0) / broadband_households * 100 : null,
+    
+    // Health/Disability
+    percent_with_disability: disability_pop ? (demographics.with_disability || 0) / disability_pop * 100 : null,
+    
+    // Veterans
+    percent_veterans: total_pop ? (demographics.total_veterans || 0) / total_pop * 100 : null
   };
 }
 
