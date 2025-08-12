@@ -1,27 +1,29 @@
 import express from 'express';
 import { getCache, setCache } from '../../tools/cache';
-import { safeParseNumber, calculateCAGR, calculateYoYChange } from '../../tools/util';
 
 const router = express.Router();
+
+function pad(n: string | number, len: number) {
+  return String(n).padStart(len, "0");
+}
 
 // BEA API endpoint for GDP and Personal Income data
 router.get('/', async (req, res) => {
   try {
-    const { 
-      geo = "msa", 
-      msa, 
-      state, 
-      county, 
-      startYear = "2015", 
-      endYear = "2023" 
-    } = req.query;
+    const q = req.query;
+    const geo = (q.geo ?? "msa") as "msa" | "county";
+    const state = pad(String(q.state ?? ""), 2);
+    const county = pad(String(q.county ?? ""), 3);
+    const msa = String(q.msa ?? "");
+    const startYear = String(q.startYear ?? "2015");
+    const endYear = String(q.endYear ?? new Date().getFullYear());
 
-    // Validate required parameters
-    if (geo === "county" && (!state || !county)) {
-      return res.status(400).json({ error: "state and county required for county level data" });
-    }
+    const userID = process.env.BEA_API_KEY!;
     if (geo === "msa" && !msa) {
-      return res.status(400).json({ error: "msa (CBSA code) required for MSA level data" });
+      return res.status(400).json({ ok: false, error: "msa (CBSA) required for geo=msa" });
+    }
+    if (geo === "county" && (!state || !county)) {
+      return res.status(400).json({ ok: false, error: "state+county required for geo=county" });
     }
 
     // Create cache key
@@ -31,104 +33,49 @@ router.get('/', async (req, res) => {
       return res.json(cached);
     }
 
-    const beaKey = process.env.BEA_API_KEY!;
-    
-    // Determine table and geography - FIXED per feedback
-    const isMSA = geo === "msa";
-    const tableName = isMSA ? "CAGDP2" : "CAINC1"; // Real GDP by MSA or Personal Income by County
-    const lineCode = "1"; // Total GDP or total personal income
-    
-    let geoFIPS: string;
-    if (isMSA) {
-      geoFIPS = `MSA${(msa || "").toString()}`;
-    } else {
-      const stateCode = (state || "").toString().padStart(2, '0');
-      const countyCode = (county || "").toString().padStart(3, '0');
-      geoFIPS = `${stateCode}${countyCode}`;
-    }
-
-    // Build BEA API URL
+    // Known-good tables:
+    const table = geo === "msa" ? "CAGDP2" : "CAINC1";
+    const geoFips = geo === "msa" ? `MSA${msa}` : `${state}${county}`;
     const params = new URLSearchParams({
-      UserID: beaKey,
+      UserID: userID,
       Method: "GetData",
       DataSetName: "Regional",
-      TableName: tableName,
-      LineCode: lineCode,
-      GeoFIPS: geoFIPS,
+      TableName: table,
+      LineCode: "1",
+      GeoFIPS: geoFips,
       Year: `${startYear}-${endYear}`,
       ResultFormat: "JSON"
     });
 
-    console.log('BEA API request:', `https://apps.bea.gov/api/data?${params.toString()}`);
-
-    const response = await fetch(`https://apps.bea.gov/api/data?${params.toString()}`);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`BEA API error: ${response.status} - ${errorText}`);
+    const url = `https://apps.bea.gov/api/data?${params.toString()}`;
+    const r = await fetch(url);
+    const text = await r.text();
+    if (!r.ok) {
+      console.error("[BEA] fetch failed", { url, status: r.status, text });
+      return res.status(r.status).json({ ok: false, error: `BEA ${r.status}`, details: text });
     }
 
-    const json = await response.json();
-    console.log('BEA API response:', json);
-
-    const beaData = json?.BEAAPI?.Results;
-    if (!beaData || beaData.length === 0) {
-      throw new Error("No data returned from BEA API");
-    }
-
-    const data = beaData[0]?.Data || [];
-    
-    // Process the data
+    const j = JSON.parse(text);
+    const data = j?.BEAAPI?.Results?.Data ?? [];
     const rows = data
-      .filter((d: any) => d.DataValue && d.DataValue !== "(NA)")
-      .map((d: any) => ({
-        year: parseInt(d.TimePeriod),
-        value: safeParseNumber(d.DataValue),
-        unit: d.UNIT_MULT || "Thousands of Dollars"
-      }))
+      .map((d: any) => ({ year: Number(d.Year), value: Number(String(d.DataValue || "0").replace(/,/g, "")) }))
+      .filter((x: any) => Number.isFinite(x.value))
       .sort((a: any, b: any) => a.year - b.year);
 
-    if (rows.length === 0) {
-      throw new Error("No valid data points found");
-    }
-
-    // Calculate derived metrics
-    const latest = rows[rows.length - 1];
-    const yearAgo = rows.find((r: any) => r.year === latest.year - 1);
-    const fiveYearsAgo = rows.find((r: any) => r.year === latest.year - 5);
-
-    const metrics = {
-      latest: latest?.value || 0,
-      change1Yr: yearAgo ? latest.value - yearAgo.value : null,
-      changePercent1Yr: yearAgo ? calculateYoYChange(latest.value, yearAgo.value) : null,
-      cagr5Yr: fiveYearsAgo ? calculateCAGR(fiveYearsAgo.value, latest.value, 5) : null,
-      unit: latest?.unit || "Thousands of Dollars"
-    };
-
     const result = {
-      label: geo === "msa" ? "GDP (Thousands of Dollars)" : "Personal Income (Thousands of Dollars)",
-      geo,
-      msa,
-      state,
-      county,
-      startYear: parseInt(startYear.toString()),
-      endYear: parseInt(endYear.toString()),
+      ok: true,
+      params: { geo, msa, state, county, startYear, endYear, table, geoFips },
       rows,
-      metrics,
-      dataSource: "Bureau of Economic Analysis",
-      lastUpdated: new Date().toISOString()
+      meta: { label: geo === "msa" ? "MSA Real GDP (chained $)" : "County Personal Income ($)", source: "BEA Regional" }
     };
 
     // Cache for 12 hours
     setCache(key, result, 12 * 60 * 60 * 1000);
-    res.json(result);
+    return res.json(result);
 
-  } catch (error: any) {
-    console.error("BEA API error:", error);
-    res.status(500).json({ 
-      error: "Failed to fetch BEA data",
-      details: error.message
-    });
+  } catch (e: any) {
+    console.error("[BEA] error", e);
+    return res.status(500).json({ ok: false, error: e.message });
   }
 });
 

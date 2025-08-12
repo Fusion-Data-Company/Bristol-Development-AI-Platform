@@ -5,106 +5,80 @@ const router = express.Router();
 
 const DEFAULT_CATS = "17069,13032,13000,13003,18021,16032,17014,19046";
 const WEIGHTS: Record<string, number> = {
-  "17069": 2.0, // Grocery
-  "13032": 1.5, // Coffee/Tea
-  "13000": 1.0, // Restaurants
-  "13003": 0.8, // Bars
-  "18021": 1.5, // Fitness Center/Gym
-  "16032": 1.2, // Park
-  "17014": 1.2, // Pharmacy
-  "19046": 1.3  // Transit Station
+  "17069": 2.0, "13032": 1.5, "13000": 1.0, "13003": 0.8,
+  "18021": 1.5, "16032": 1.2, "17014": 1.2, "19046": 1.3
 };
 
-// Foursquare Places API endpoint
-router.get('/', async (req, res) => {
+// Foursquare API endpoint for places data
+router.get('/:lat/:lng/:radius', async (req, res) => {
   try {
-    const { 
-      lat, 
-      lng, 
-      radius = "1600", 
-      categories = DEFAULT_CATS, 
-      limit = "100" 
-    } = req.query;
-
-    if (!lat || !lng) {
-      return res.status(400).json({ error: "lat,lng required (use property picker)" });
+    const { lat, lng, radius = "1600" } = req.params;
+    const { categories = DEFAULT_CATS, limit = "50" } = req.query;
+    
+    const latNum = Number(lat);
+    const lngNum = Number(lng);
+    const limitNum = Math.min(Number(limit), 50);
+    
+    if (!Number.isFinite(latNum) || !Number.isFinite(lngNum)) {
+      return res.status(400).json({ ok: false, error: "lat,lng required" });
     }
 
-    // Create cache key
     const key = `fsq:${lat}:${lng}:${radius}:${categories}:${limit}`;
     const cached = getCache(key);
-    if (cached) {
-      return res.json(cached);
-    }
+    if (cached) return res.json(cached);
 
-    const apiKey = process.env.FOURSQUARE_API_KEY!;
     const url = new URL("https://api.foursquare.com/v3/places/search");
     url.searchParams.set("ll", `${lat},${lng}`);
     url.searchParams.set("radius", String(radius));
     url.searchParams.set("categories", String(categories));
-    url.searchParams.set("limit", String(Math.min(Number(limit), 50))); // Cap at 50
+    url.searchParams.set("limit", String(limitNum));
     url.searchParams.set("sort", "RELEVANCE");
 
-    console.log('Foursquare API request:', url.toString());
-
-    const response = await fetch(url.toString(), {
+    const r = await fetch(url.toString(), {
       headers: {
-        Authorization: apiKey,
+        Authorization: process.env.FOURSQUARE_API_KEY!,
         Accept: "application/json"
       }
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Foursquare API error: ${response.status} - ${errorText}`);
+    const text = await r.text();
+    if (!r.ok) {
+      console.error("[FSQ] fetch failed", { url: url.toString(), status: r.status, text });
+      return res.status(r.status).json({ ok: false, error: `Foursquare ${r.status}`, details: text });
     }
 
-    const json = await response.json();
-    console.log('Foursquare API response:', json);
-
-    const rows = (json.results || []).map((place: any) => ({
-      fsq_id: place.fsq_id,
-      name: place.name,
-      category_id: place.categories?.[0]?.id ?? null,
-      category: place.categories?.[0]?.name ?? null,
-      distance_m: place.distance ?? null,
-      lat: place.geocodes?.main?.latitude ?? null,
-      lng: place.geocodes?.main?.longitude ?? null,
-      address: place.location?.formatted_address ?? null
+    const j = JSON.parse(text);
+    const places = (j.results || []).map((p: any) => ({
+      fsq_id: p.fsq_id,
+      name: p.name,
+      category_id: p.categories?.[0]?.id ?? null,
+      category: p.categories?.[0]?.name ?? null,
+      distance_m: p.distance ?? null,
+      lat: p.geocodes?.main?.latitude ?? null,
+      lng: p.geocodes?.main?.longitude ?? null
     }));
 
-    // Group by category and calculate scores
-    const byCat: Record<string, {name: string; id: string; count: number; weight: number}> = {};
-    for (const row of rows) {
-      const id = String(row.category_id ?? "other");
+    const byCategory: Record<string, { id: number | null; name: string; count: number; weight: number }> = {};
+    for (const pl of places) {
+      const id = String(pl.category_id ?? "other");
+      const name = pl.category ?? "Other";
       const weight = WEIGHTS[id] ?? 0.5;
-      const name = row.category || "Other";
-      byCat[id] = byCat[id] || { name, id, count: 0, weight };
-      byCat[id].count++;
+      byCategory[id] = byCategory[id] || { id: pl.category_id, name, count: 0, weight };
+      byCategory[id].count++;
     }
+    const score = Object.values(byCategory).reduce((acc, c) => acc + c.count * c.weight, 0);
 
-    const amenityScore = Object.values(byCat).reduce((acc, c) => acc + c.count * c.weight, 0);
-
-    const result = {
-      params: { lat, lng, radius, categories, limit },
-      amenityScore: Math.round(amenityScore * 10) / 10,
-      byCategory: Object.values(byCat).sort((a, b) => b.count - a.count),
-      places: rows.slice(0, 50), // Limit for UI
-      totalPlaces: rows.length,
-      dataSource: "Foursquare Places API",
-      lastUpdated: new Date().toISOString()
+    const out = {
+      ok: true,
+      params: { lat: latNum, lng: lngNum, radius: Number(radius), categories: String(categories), limit: limitNum },
+      rows: places,
+      meta: { score, byCategory: Object.values(byCategory), source: "Foursquare Places v3" }
     };
-
-    // Cache for 1 hour
-    setCache(key, result, 60 * 60 * 1000);
-    res.json(result);
-
-  } catch (error: any) {
-    console.error("Foursquare API error:", error);
-    res.status(500).json({ 
-      error: "Failed to fetch Foursquare data",
-      details: error.message
-    });
+    setCache(key, out, 60 * 60 * 1000);
+    return res.json(out);
+  } catch (e: any) {
+    console.error("[FSQ] error", e);
+    return res.status(500).json({ ok: false, error: e.message });
   }
 });
 

@@ -7,6 +7,12 @@ Bristol Site Intelligence Platform is a comprehensive enterprise-grade AI-powere
 ## Recent Changes
 
 **August 2025**
+- ✓ **MAJOR: Complete API Tools Overhaul** - Rewrote all 6 API tools (BLS, BEA, HUD, Foursquare, FBI, NOAA) with uniform response format and proper error handling
+- ✓ **New Unified Response Structure** - All tools now return consistent `{ ok: true/false, params: {...}, rows: [...], meta: {...} }` format
+- ✓ **Enhanced API Endpoints** - Fixed endpoint URLs, parameter handling, and data processing for all external APIs
+- ✓ **Improved Error Reporting** - Added detailed error logging with upstream API response text for debugging
+- ✓ **Updated Cache Strategy** - Optimized cache keys and TTL values for each tool type (10min-24hr based on data volatility)
+- ✓ **Fixed Route Structure** - Corrected HUD routing to support mode/zip/lookback and FBI routing for geo/state/offense/from/to patterns
 - ✓ **Implemented Economic Intelligence Tools** - Added comprehensive BLS, BEA, and HUD API integration for live economic data analysis at /tools
 - ✓ **Created Tools database schema** - Added snapshots table for saving tool results with user-specific data persistence
 - ✓ **Built live API integration** - Three API routes (BLS employment, BEA GDP/income, HUD vacancy) with caching and error handling

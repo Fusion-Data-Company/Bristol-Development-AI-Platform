@@ -4,130 +4,83 @@ import { getCache, setCache } from '../../tools/cache';
 const router = express.Router();
 
 function bboxAround(lat: number, lng: number, d = 0.2) {
-  // Returns bbox as N,W,S,E
+  // N,W,S,E as required by Search API
   return `${(lat + d).toFixed(3)},${(lng - d).toFixed(3)},${(lat - d).toFixed(3)},${(lng + d).toFixed(3)}`;
 }
 
-// NOAA Climate API endpoint
+// NOAA API endpoint for climate data
 router.get('/', async (req, res) => {
   try {
-    const { 
-      lat, 
-      lng, 
-      dataset = "daily-summaries", 
-      bbox, 
-      startDate, 
-      endDate 
-    } = req.query;
+    const q = req.query;
+    const lat = q.lat ? Number(q.lat) : undefined;
+    const lng = q.lng ? Number(q.lng) : undefined;
+    const dataset = String(q.dataset ?? "daily-summaries");
+    const startDate = String(q.startDate ?? "2024-01-01");
+    const endDate = String(q.endDate ?? new Date().toISOString().slice(0, 10));
+    const station = q.station ? String(q.station) : null; // optional, to fetch ADS data
 
-    if ((!lat || !lng) && !bbox) {
-      return res.status(400).json({ error: "lat,lng or bbox required" });
+    if ((!lat || !lng) && !q.bbox) {
+      return res.status(400).json({ ok: false, error: "lat,lng or bbox required" });
     }
+    const bbox = String(q.bbox ?? bboxAround(Number(lat), Number(lng)));
 
-    const _bbox = bbox ? String(bbox) : bboxAround(Number(lat), Number(lng));
-    const _end = endDate ? String(endDate) : new Date().toISOString().slice(0, 10);
-    const d = new Date(_end);
-    d.setFullYear(d.getFullYear() - 1); // Use setFullYear instead of setDate to avoid date issues
-    const _start = startDate ? String(startDate) : d.toISOString().slice(0, 10);
-
-    // Create cache key
-    const key = `noaa:${dataset}:${_bbox}:${_start}:${_end}`;
-    const cached = getCache(key);
-    if (cached) {
-      return res.json(cached);
-    }
-
-    // Step 1: Discover stations using Search Service
-    const searchBase = "https://www.ncei.noaa.gov/access/services/search/v1/data";
-    const searchUrl = `${searchBase}?dataset=daily-summaries&bbox=${encodeURIComponent(_bbox)}&startDate=${_start}&endDate=${_end}&available=true`;
-    
-    console.log('NOAA Search API request:', searchUrl);
-    
-    const searchResponse = await fetch(searchUrl);
-    if (!searchResponse.ok) {
-      const errorText = await searchResponse.text();
-      console.error('[tools/noaa] search failed', { url: searchUrl, status: searchResponse.status, txt: errorText });
-      throw new Error(`NOAA Search API error: ${searchResponse.status} - ${errorText}`);
-    }
-    
-    const searchJson = await searchResponse.json();
-    console.log('NOAA Search API response:', searchJson);
-    
-    // Step 2: Get actual data using Access Data Service
-    const stations = (searchJson?.results || []).slice(0, 1); // Take first station
-    let json: any = { results: [] };
-    
-    if (stations.length > 0) {
-      const station = stations[0];
-      const stationId = station?.id || station?.stationId;
-      
-      if (stationId) {
-        const dataUrl = `https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=${stationId}&startDate=${_start}&endDate=${_end}&dataTypes=TMIN,TMAX,PRCP&format=json`;
-        console.log('NOAA Data API request:', dataUrl);
-        
-        const dataResponse = await fetch(dataUrl);
-        if (dataResponse.ok) {
-          const dataJson = await dataResponse.json();
-          json = { results: Array.isArray(dataJson) ? dataJson : [dataJson], stations: [station] };
-        }
+    // Step 1: discover stations/datasets via Search Service
+    const key1 = `noaa:search:${dataset}:${bbox}:${startDate}:${endDate}`;
+    let discovered = getCache(key1);
+    if (!discovered) {
+      const searchUrl = `https://www.ncei.noaa.gov/access/services/search/v1/data?dataset=${encodeURIComponent(dataset)}&bbox=${encodeURIComponent(bbox)}&startDate=${startDate}&endDate=${endDate}&available=true`;
+      const r = await fetch(searchUrl);
+      const text = await r.text();
+      if (!r.ok) {
+        console.error("[NOAA search] failed", { searchUrl, status: r.status, text });
+        return res.status(r.status).json({ ok: false, error: `NOAA search ${r.status}`, details: text });
       }
+      const j = JSON.parse(text);
+      const items = (j?.results || []).map((it: any) => ({
+        id: it.id,
+        name: it.name || it.title || it.dataType || "Item",
+        station: it.stations?.[0] || null,
+        start: it.startDate || null,
+        end: it.endDate || null,
+        dataTypes: it.dataTypes || [],
+        links: it.links || []
+      }));
+      discovered = { ok: true, params: { dataset, bbox, startDate, endDate }, rows: items, meta: { source: "NOAA NCEI Search" } };
+      setCache(key1, discovered, 6 * 60 * 60 * 1000);
     }
-    console.log('NOAA API response:', json);
 
-    // Normalize results
-    const items = (json?.results || []).map((item: any) => ({
-      id: item.id,
-      name: item.name || item.title || item.dataType || "Climate Data Item",
-      summary: item.summary || item.description || null,
-      station: item.stations?.[0] || null,
-      stationId: item.stations?.[0]?.id || null,
-      dataTypes: Array.isArray(item.dataTypes) ? item.dataTypes.slice(0, 5) : [],
-      startDate: item.startDate || null,
-      endDate: item.endDate || null,
-      bbox: item.bbox || null,
-      links: Array.isArray(item.links) ? item.links.slice(0, 3) : []
-    }));
+    // Step 2: if a station is provided (or auto-pick first with station), call ADS for time-series
+    if (station) {
+      const key2 = `noaa:ads:${dataset}:${station}:${startDate}:${endDate}`;
+      const cached2 = getCache(key2);
+      if (cached2) return res.json(cached2);
 
-    // Calculate some basic metrics
-    const hasTemp = items.some((item: any) => 
-      item.dataTypes.some((dt: any) => 
-        dt.id && (dt.id.includes('TEMP') || dt.id.includes('TMAX') || dt.id.includes('TMIN'))
-      )
-    );
+      const adsUrl = `https://www.ncei.noaa.gov/access/services/data/v1?dataset=${encodeURIComponent(dataset)}&stations=${encodeURIComponent(station)}&startDate=${startDate}&endDate=${endDate}&dataTypes=TMIN,TMAX,PRCP&format=json&includeStationName=true&units=standard`;
+      const r2 = await fetch(adsUrl);
+      const text2 = await r2.text();
+      if (!r2.ok) {
+        console.error("[NOAA ADS] failed", { adsUrl, status: r2.status, text: text2 });
+        return res.status(r2.status).json({ ok: false, error: `NOAA ADS ${r2.status}`, details: text2 });
+      }
+      const j2 = JSON.parse(text2);
+      // Normalize: date, tmin, tmax, prcp
+      const rows = (Array.isArray(j2) ? j2 : []).map((d: any) => ({
+        date: d.DATE,
+        tmin: d.TMIN != null ? Number(d.TMIN) : null,
+        tmax: d.TMAX != null ? Number(d.TMAX) : null,
+        prcp: d.PRCP != null ? Number(d.PRCP) : null
+      }));
 
-    const hasPrecip = items.some((item: any) => 
-      item.dataTypes.some((dt: any) => 
-        dt.id && (dt.id.includes('PRCP') || dt.id.includes('RAIN'))
-      )
-    );
+      const out2 = { ok: true, params: { dataset, station, startDate, endDate }, rows, meta: { source: "NOAA ADS daily-summaries" } };
+      setCache(key2, out2, 6 * 60 * 60 * 1000);
+      return res.json(out2);
+    }
 
-    const uniqueStations = Array.from(new Set(items.map((item: any) => item.stationId).filter(Boolean)));
-
-    const result = {
-      params: { lat, lng, dataset, bbox: _bbox, startDate: _start, endDate: _end },
-      count: items.length,
-      items: items.slice(0, 100), // Limit for UI
-      metrics: {
-        totalItems: items.length,
-        uniqueStations: uniqueStations.length,
-        hasTemperature: hasTemp,
-        hasPrecipitation: hasPrecip,
-        dateRange: `${_start} to ${_end}`
-      },
-      dataSource: "NOAA Climate Data Archive",
-      lastUpdated: new Date().toISOString()
-    };
-
-    // Cache for 6 hours
-    setCache(key, result, 6 * 60 * 60 * 1000);
-    res.json(result);
-
-  } catch (error: any) {
-    console.error("NOAA API error:", error);
-    res.status(500).json({ 
-      error: "Failed to fetch NOAA climate data",
-      details: error.message
-    });
+    // If no station specified, return discovery list
+    return res.json(discovered);
+  } catch (e: any) {
+    console.error("[NOAA] error", e);
+    return res.status(500).json({ ok: false, error: e.message });
   }
 });
 
