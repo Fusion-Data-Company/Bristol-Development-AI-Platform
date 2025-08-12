@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Download, Save, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Loader2, Download, Save, TrendingUp, TrendingDown, Minus, Building, Map } from "lucide-react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,

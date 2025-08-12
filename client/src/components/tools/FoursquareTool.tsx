@@ -353,50 +353,82 @@ export function FoursquareTool() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-yellow-50/90 to-amber-100/60 border-2 border-yellow-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300 flex items-center gap-2">
+                <CardTitle className="text-sm text-yellow-700 font-semibold flex items-center gap-2">
                   <Star className="h-4 w-4 text-bristol-gold" />
-                  Amenity Score
+                  Location Intelligence Score
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-gold">{data.meta.score.toFixed(1)}</div>
-                <div className="text-xs text-gray-400">Higher is better</div>
+                <div className="text-3xl font-bold bg-gradient-to-r from-yellow-800 to-amber-600 bg-clip-text text-transparent">
+                  {data.meta.score.toFixed(1)}
+                </div>
+                <div className="text-xs text-yellow-600 font-medium">Amenity density index</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-emerald-50/90 to-green-100/60 border-2 border-emerald-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-gray-300">Total Places</CardTitle>
+                <CardTitle className="text-sm text-emerald-700 font-semibold flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-emerald-600" />
+                  Discovery Radius
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-lg text-white">{data.rows.length}</div>
-                <div className="text-xs text-gray-400">Within {Math.round(parseInt(radius) / 1609.34 * 10) / 10} miles</div>
+                <div className="text-2xl font-bold bg-gradient-to-r from-emerald-800 to-green-600 bg-clip-text text-transparent">
+                  {data.rows.length}
+                </div>
+                <div className="text-xs text-emerald-600 font-medium">Places within {Math.round(parseInt(radius) / 1609.34 * 10) / 10} miles</div>
               </CardContent>
             </Card>
 
             {/* Top Categories */}
-            {data.meta.byCategory.slice(0, 3).map((cat, index) => (
-              <Card key={cat.id} className="bg-gray-900 border-gray-700">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-gray-300">{cat.name}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-lg text-white">{cat.count} places</div>
-                  <div className="text-xs text-gray-400">Weight: {cat.weight}x</div>
-                </CardContent>
-              </Card>
-            ))}
+            {data.meta.byCategory.slice(0, 3).map((cat, index) => {
+              const gradients = [
+                'from-purple-50/90 to-indigo-100/60 border-purple-200/50',
+                'from-pink-50/90 to-rose-100/60 border-pink-200/50', 
+                'from-orange-50/90 to-red-100/60 border-orange-200/50'
+              ];
+              const textColors = [
+                'text-purple-700',
+                'text-pink-700',
+                'text-orange-700'
+              ];
+              const gradientTexts = [
+                'from-purple-800 to-indigo-600',
+                'from-pink-800 to-rose-600',
+                'from-orange-800 to-red-600'
+              ];
+              return (
+                <Card key={cat.id} className={`bg-gradient-to-br ${gradients[index]} border-2 shadow-2xl rounded-xl backdrop-blur-sm`}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className={`text-sm ${textColors[index]} font-semibold flex items-center gap-2`}>
+                      <Star className="h-4 w-4" />
+                      {cat.name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className={`text-lg font-bold bg-gradient-to-r ${gradientTexts[index]} bg-clip-text text-transparent`}>
+                      {cat.count} places
+                    </div>
+                    <div className={`text-xs ${textColors[index]} font-medium`}>Priority weight: {cat.weight}x</div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
 
           {/* Chart */}
           <div className="lg:col-span-2">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-white/95 to-blue-50/80 border-2 border-blue-200/60 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">Places by Category</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Data from {data.meta.source}
+                <CardTitle className="text-slate-800 font-bold text-xl flex items-center gap-3">
+                  <MapPin className="h-6 w-6 text-blue-600" />
+                  Location Intelligence Matrix
+                </CardTitle>
+                <CardDescription className="text-slate-600 font-medium">
+                  Real-time Data from {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -411,34 +443,51 @@ export function FoursquareTool() {
 
           {/* Places Table */}
           <div className="lg:col-span-3">
-            <Card className="bg-gray-900 border-gray-700">
+            <Card className="bg-gradient-to-br from-white/95 to-emerald-50/80 border-2 border-emerald-200/60 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <MapPin className="h-5 w-5" />
-                  Top Places ({data.rows.length})
+                <CardTitle className="text-slate-800 font-bold text-xl flex items-center gap-3">
+                  <MapPin className="h-6 w-6 text-emerald-600" />
+                  Places Discovery Engine ({data.rows.length})
                 </CardTitle>
+                <CardDescription className="text-slate-600 font-medium">
+                  Geospatial proximity analysis
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full text-white">
+                  <table className="min-w-full">
                     <thead>
-                      <tr className="border-b border-gray-700">
-                        <th className="text-left py-2">Name</th>
-                        <th className="text-left py-2">Category</th>
-                        <th className="text-right py-2">Distance</th>
-                        <th className="text-left py-2">Coordinates</th>
+                      <tr className="border-b-2 border-gradient-to-r from-emerald-200 to-blue-300">
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-emerald-100/80 to-blue-100/60 rounded-l-lg font-bold text-slate-700">Place Name</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-blue-100/60 to-purple-100/60 font-bold text-slate-700">Category</th>
+                        <th className="text-right py-4 px-3 bg-gradient-to-r from-purple-100/60 to-yellow-100/60 font-bold text-slate-700">Distance</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-yellow-100/60 to-pink-100/80 rounded-r-lg font-bold text-slate-700">Coordinates</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data.rows.slice(0, 25).map((place, index) => (
-                        <tr key={place.fsq_id} className="border-b border-gray-800 hover:bg-gray-800">
-                          <td className="py-2 font-medium">{place.name}</td>
-                          <td className="py-2 text-gray-300">{place.category}</td>
-                          <td className="text-right py-2 text-bristol-gold">
-                            {place.distance_m ? formatDistance(place.distance_m) : 'N/A'}
+                        <tr key={place.fsq_id} className={`border-b border-slate-200/50 hover:bg-gradient-to-r hover:from-emerald-50/50 hover:to-blue-50/30 transition-all duration-200 ${index % 2 === 0 ? 'bg-white/70' : 'bg-slate-50/50'}`}>
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-emerald-100 to-blue-100 px-3 py-2 rounded-lg border border-emerald-200/50 font-bold text-slate-800">
+                              {place.name}
+                            </div>
                           </td>
-                          <td className="py-2 text-gray-400 text-sm">
-                            {place.lat && place.lng ? `${place.lat.toFixed(4)}, ${place.lng.toFixed(4)}` : 'N/A'}
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-blue-100 to-purple-100 px-3 py-2 rounded-lg border border-blue-200/50 font-semibold text-slate-800">
+                              {place.category}
+                            </div>
+                          </td>
+                          <td className="py-4 px-3 text-right">
+                            <div className="bg-gradient-to-r from-purple-100 to-yellow-100 px-4 py-2 rounded-lg border border-purple-200/50 inline-block">
+                              <div className="text-lg font-bold text-bristol-gold">
+                                {place.distance_m ? formatDistance(place.distance_m) : 'N/A'}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-4 px-3">
+                            <div className="bg-gradient-to-r from-yellow-100 to-pink-100 px-3 py-2 rounded-lg border border-yellow-200/50 font-mono text-sm font-bold text-slate-800">
+                              {place.lat && place.lng ? `${place.lat.toFixed(4)}, ${place.lng.toFixed(4)}` : 'N/A'}
+                            </div>
                           </td>
                         </tr>
                       ))}
