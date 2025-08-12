@@ -280,7 +280,7 @@ export function BEATool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="relative bg-gradient-to-r from-red-900/90 to-red-700/80 text-white backdrop-blur-md border border-red-500/30 shadow-2xl font-semibold px-8 py-3 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-red-500/25 hover:border-red-400/50 before:absolute before:inset-0 before:bg-gradient-to-r before:from-red-800/20 before:to-red-600/10 before:rounded-xl before:backdrop-blur-sm active:scale-95"
+          className="relative bg-gradient-to-r from-red-900 to-red-700 text-white backdrop-blur-lg border-2 border-red-400/60 shadow-2xl font-bold text-lg px-12 py-4 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-red-500/40 hover:border-red-300/70 hover:from-red-800 hover:to-red-600 before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/10 before:to-transparent before:rounded-2xl before:backdrop-blur-lg active:scale-95"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Run Analysis
