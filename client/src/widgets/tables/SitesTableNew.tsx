@@ -357,7 +357,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
     },
     initialState: {
       pagination: {
-        pageSize: 30,
+        pageSize: 50,
       },
     },
   });
@@ -436,7 +436,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
             onChange={(e) => table.setPageSize(Number(e.target.value))}
             className="text-sm border rounded px-2 py-1"
           >
-            {[10, 20, 30, 50, 100].map(size => (
+            {[25, 50, 100, 200].map(size => (
               <option key={size} value={size}>{size} per page</option>
             ))}
           </select>
