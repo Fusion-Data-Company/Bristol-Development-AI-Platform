@@ -63,6 +63,14 @@ export function FoursquareTool() {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['/api/tools/foursquare', lat, lng, radius],
+    queryFn: () => {
+      return fetch(`/api/tools/foursquare/${lat}/${lng}/${radius}`, {
+        credentials: 'include'
+      }).then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      });
+    },
     enabled: false // Only fetch when user clicks Run
   }) as { data: FoursquareData; isLoading: boolean; refetch: any };
 

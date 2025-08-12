@@ -68,6 +68,14 @@ export function FBITool() {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['/api/tools/fbi', geo, state, offense, from, to],
+    queryFn: () => {
+      return fetch(`/api/tools/fbi/${geo}/${state}/${offense}/${from}/${to}`, {
+        credentials: 'include'
+      }).then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      });
+    },
     enabled: false // Only fetch when user clicks Run
   }) as { data: FBIData; isLoading: boolean; refetch: any };
 

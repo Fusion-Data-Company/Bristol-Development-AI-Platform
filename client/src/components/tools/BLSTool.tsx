@@ -85,7 +85,7 @@ export function BLSTool() {
   });
 
   const handleRun = () => {
-    console.log('BLS Tool: Running analysis with params:', { metro, startYear, endYear });
+    console.log('BLS Tool: Running analysis with params:', { level, state, county, msa, start, end });
     refetch();
   };
 

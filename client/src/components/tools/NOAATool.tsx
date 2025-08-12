@@ -64,6 +64,21 @@ export function NOAATool() {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['/api/tools/noaa', lat, lng, dataset, startDate, endDate],
+    queryFn: () => {
+      const params = new URLSearchParams({
+        lat,
+        lng,
+        dataset,
+        startDate,
+        endDate
+      });
+      return fetch(`/api/tools/noaa?${params}`, {
+        credentials: 'include'
+      }).then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      });
+    },
     enabled: false // Only fetch when user clicks Run
   }) as { data: NOAAData; isLoading: boolean; refetch: any };
 

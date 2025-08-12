@@ -69,6 +69,19 @@ export function HUDTool() {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['/api/tools/hud', mode, zip, lookbackQ],
+    queryFn: () => {
+      const params = new URLSearchParams({
+        mode,
+        zip,
+        lookbackQ
+      });
+      return fetch(`/api/tools/hud/${mode}/${zip}/${lookbackQ}`, {
+        credentials: 'include'
+      }).then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      });
+    },
     enabled: false // Only fetch when user clicks Run
   }) as { data: HUDData; isLoading: boolean; refetch: any };
 
