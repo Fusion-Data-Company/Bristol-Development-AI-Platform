@@ -185,10 +185,10 @@ export function BLSTool() {
           <div>
             <Label htmlFor="level" className="text-slate-800 font-bold text-lg tracking-wide">Geographic Level</Label>
             <Select value={level} onValueChange={setLevel}>
-              <SelectTrigger className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors">
+              <SelectTrigger className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-white/95 backdrop-blur-sm border-blue-200/60">
+              <SelectContent className="bristol-enterprise-card border-2 border-bristol-gold/30 rounded-xl">
                 <SelectItem value="county">County</SelectItem>
                 <SelectItem value="msa">Metropolitan Area</SelectItem>
               </SelectContent>
@@ -204,7 +204,7 @@ export function BLSTool() {
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="37 (NC)"
-                className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+                className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
               />
             </div>
             <div>
@@ -214,7 +214,7 @@ export function BLSTool() {
                 value={county}
                 onChange={(e) => setCounty(e.target.value)}
                 placeholder="119 (Mecklenburg)"
-                className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+                className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
               />
             </div>
           </>
@@ -228,7 +228,7 @@ export function BLSTool() {
                 value={msa}
                 onChange={(e) => setMsa(e.target.value)}
                 placeholder="16740 (Charlotte)"
-                className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+                className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
               />
             </div>
         )}
@@ -240,7 +240,7 @@ export function BLSTool() {
               type="month"
               value={start}
               onChange={(e) => setStart(e.target.value)}
-              className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
             />
           </div>
 
@@ -251,7 +251,7 @@ export function BLSTool() {
               type="month"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
             />
           </div>
         </div>
@@ -262,7 +262,7 @@ export function BLSTool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bristol-elite-button relative text-white font-black text-lg px-12 py-4 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl"
+          className="bristol-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
         >
           <div className="flex items-center gap-3">
             {isLoading ? (
@@ -293,19 +293,19 @@ export function BLSTool() {
               onClick={handleSaveSnapshot}
               disabled={isSubmitting}
               variant="outline"
-              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
+              className="bristol-enterprise-card border-2 border-bristol-gold/30 text-slate-800 font-bold hover:bg-bristol-gold/10 hover:border-bristol-gold/60 hover:scale-105 rounded-2xl px-8 py-4 shadow-lg transition-all duration-300"
             >
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              <Save className="mr-2 h-4 w-4" />
+              {isSubmitting && <Loader2 className="mr-2 h-5 w-5 animate-spin text-bristol-gold" />}
+              <Save className="mr-2 h-5 w-5 text-bristol-gold" />
               Save Snapshot
             </Button>
             
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
+              className="bristol-enterprise-card border-2 border-bristol-gold/30 text-slate-800 font-bold hover:bg-bristol-gold/10 hover:border-bristol-gold/60 hover:scale-105 rounded-2xl px-8 py-4 shadow-lg transition-all duration-300"
             >
-              <Download className="mr-2 h-4 w-4" />
+              <Download className="mr-2 h-5 w-5 text-bristol-gold" />
               Export CSV
             </Button>
           </>
@@ -322,66 +322,87 @@ export function BLSTool() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
-            <Card className="bg-gradient-to-br from-blue-50/90 to-cyan-100/60 border-2 border-blue-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-blue-700 font-semibold flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4 text-blue-600" />
-                  Employment Rate
+            <Card className="bristol-enterprise-card border-3 border-bristol-gold/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/95 via-bristol-gold/5 to-amber-50/80">
+              <CardHeader className="pb-3 relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bristol-gold to-amber-400 rounded-t-2xl"></div>
+                <CardTitle className="text-lg text-slate-800 font-black flex items-center gap-3 mt-2">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-bristol-gold/20 to-amber-400/20 shadow-lg">
+                    <BarChart3 className="h-6 w-6 text-bristol-gold drop-shadow-md" />
+                  </div>
+                  <div>
+                    <span className="bg-gradient-to-r from-bristol-maroon to-bristol-gold bg-clip-text text-transparent">Employment Rate</span>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold bg-gradient-to-r from-blue-800 to-cyan-600 bg-clip-text text-transparent">
+                <div className="text-4xl font-black bg-gradient-to-r from-bristol-maroon via-bristol-gold to-amber-600 bg-clip-text text-transparent drop-shadow-lg">
                   {data.rows.length > 0 ? `${data.rows[data.rows.length - 1].value.toFixed(1)}%` : 'N/A'}
                 </div>
-                <div className="text-xs text-blue-600 font-medium">Current labor market status</div>
+                <div className="text-sm text-slate-700 font-bold mt-2 tracking-wide">Current Labor Market Status</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-emerald-50/90 to-green-100/60 border-2 border-emerald-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-emerald-700 font-semibold flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-emerald-600" />
-                  Annual Change
+            <Card className="bristol-enterprise-card border-3 border-emerald-400/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/95 via-emerald-50/20 to-green-50/80">
+              <CardHeader className="pb-3 relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-green-400 rounded-t-2xl"></div>
+                <CardTitle className="text-lg text-slate-800 font-black flex items-center gap-3 mt-2">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-400/20 to-green-400/20 shadow-lg">
+                    <TrendingUp className="h-6 w-6 text-emerald-600 drop-shadow-md" />
+                  </div>
+                  <div>
+                    <span className="bg-gradient-to-r from-emerald-700 to-green-600 bg-clip-text text-transparent">Annual Change</span>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-xl font-bold text-emerald-800">
+                <div className="text-4xl font-black bg-gradient-to-r from-emerald-700 via-green-600 to-teal-600 bg-clip-text text-transparent drop-shadow-lg">
                   {data.rows.length >= 12 ? 
                     formatChange(data.rows[data.rows.length - 1].value - data.rows[data.rows.length - 12].value)
                     : 'N/A'
                   }
-                  <span className="text-sm text-emerald-600 font-medium ml-1">pts</span>
+                  <span className="text-lg text-emerald-600 font-bold ml-1">pts</span>
                 </div>
-                <div className="text-xs text-emerald-600 font-medium">12-month trend analysis</div>
+                <div className="text-sm text-slate-700 font-bold mt-2 tracking-wide">12-Month Trend Analysis</div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-50/90 to-indigo-100/60 border-2 border-purple-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm text-purple-700 font-semibold flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4 text-purple-600" />
-                  Dataset Coverage
+            <Card className="bristol-enterprise-card border-3 border-purple-400/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/95 via-purple-50/20 to-indigo-50/80">
+              <CardHeader className="pb-3 relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-400 rounded-t-2xl"></div>
+                <CardTitle className="text-lg text-slate-800 font-black flex items-center gap-3 mt-2">
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-purple-400/20 to-indigo-400/20 shadow-lg">
+                    <BarChart3 className="h-6 w-6 text-purple-600 drop-shadow-md" />
+                  </div>
+                  <div>
+                    <span className="bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent">Dataset Coverage</span>
+                  </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold bg-gradient-to-r from-purple-800 to-indigo-600 bg-clip-text text-transparent">
-                  {data.rows.length} months
+                <div className="text-4xl font-black bg-gradient-to-r from-purple-700 via-indigo-600 to-violet-600 bg-clip-text text-transparent drop-shadow-lg">
+                  {data.rows.length} <span className="text-lg">months</span>
                 </div>
-                <div className="text-xs text-purple-600 font-medium">Historical data points</div>
+                <div className="text-sm text-slate-700 font-bold mt-2 tracking-wide">Historical Data Points</div>
               </CardContent>
             </Card>
           </div>
 
           {/* Chart */}
           <div className="lg:col-span-2">
-            <Card className="bg-gradient-to-br from-white/95 to-blue-50/80 border-2 border-blue-200/60 shadow-2xl rounded-xl backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-slate-800 font-bold text-xl flex items-center gap-3">
-                  <BarChart3 className="h-6 w-6 text-blue-600" />
-                  Employment Intelligence - {data.meta.label}
+            <Card className="bristol-enterprise-card border-3 border-bristol-gold/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/98 via-blue-50/30 to-bristol-gold/10">
+              <CardHeader className="relative">
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-bristol-gold via-blue-500 to-purple-600 rounded-t-2xl"></div>
+                <CardTitle className="text-2xl text-slate-800 font-black flex items-center gap-4 mt-3">
+                  <div className="p-3 rounded-2xl bg-gradient-to-br from-bristol-gold/20 to-blue-400/20 shadow-xl">
+                    <BarChart3 className="h-8 w-8 text-bristol-gold drop-shadow-lg" />
+                  </div>
+                  <div>
+                    <span className="bg-gradient-to-r from-bristol-maroon via-bristol-gold to-blue-600 bg-clip-text text-transparent">Employment Intelligence</span>
+                    <div className="text-lg font-bold text-slate-700 mt-1">{data.meta.label}</div>
+                  </div>
                 </CardTitle>
-                <CardDescription className="text-slate-600 font-medium">
-                  Real-time Labor Market Data • {data.meta.source}
+                <CardDescription className="text-slate-700 font-bold text-lg mt-4 leading-relaxed">
+                  <span className="bg-gradient-to-r from-bristol-gold to-amber-600 bg-clip-text text-transparent">Real-time Labor Market Data</span> • {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>
