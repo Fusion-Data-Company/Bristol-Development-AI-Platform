@@ -119,33 +119,13 @@ export function ArcGISLayer({
   );
 }
 
-// Hook for fetching demographic data from ArcGIS
+// Hook for fetching demographic data from ArcGIS - DISABLED TO PREVENT INFINITE LOOPS
 export function useArcGISDemographics(bbox?: [number, number, number, number]) {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<any>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (!bbox) return;
-
-    const fetchDemographics = async () => {
-      setLoading(true);
-      
-      try {
-        // Disable ArcGIS API calls temporarily to prevent errors
-        // This will be replaced with proper API integration once keys are configured
-        console.log('ArcGIS demographics temporarily disabled - bbox:', bbox);
-        
-        // Set mock structure for now
-        setData([]);
-      } catch (error) {
-        console.error('Error fetching ArcGIS demographics:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDemographics();
-  }, [bbox]);
-
+  // Completely disabled to prevent infinite render loops
+  // TODO: Re-enable when proper API keys and error handling is implemented
+  
   return { data, loading };
 }

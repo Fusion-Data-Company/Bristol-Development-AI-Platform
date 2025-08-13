@@ -1,0 +1,200 @@
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+Warning: Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn&#x27;t have a dependency array, or one of the dependencies changes on every render.
+    at InteractiveMap (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/maps/InteractiveMap.tsx:49:3)
+    at div
+    at div
+    at InteractiveMapDashboard (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/dashboards/InteractiveMapDashboard.tsx:40:43)
+    at div
+    at https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3SOETFFG.js?v=9dc0c5dd:42:13
+    at Presence (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-7LBWE4PF.js?v=9dc0c5dd:24:11)
+    at https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=9dc0c5dd:387:13
+    at _c5 (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/ui/tabs.tsx:72:12)
+    at div
+    at https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-3SOETFFG.js?v=9dc0c5dd:42:13
+    at Provider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2M7HY3UG.js?v=9dc0c5dd:38:15)
+    at https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tabs.js?v=9dc0c5dd:265:7
+    at div
+    at main
+    at div
+    at Chrome (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/brand/SimpleChrome.tsx:21:34)
+    at App (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/pages/App.tsx:30:22)
+    at Route (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9dc0c5dd:323:16)
+    at Switch (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=9dc0c5dd:379:17)
+    at Router (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/App.tsx?v=SgW5z6-8Wyi1abrmY_QdS:39:42)
+    at AppContent (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/App.tsx?v=SgW5z6-8Wyi1abrmY_QdS:113:31)
+    at Provider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2M7HY3UG.js?v=9dc0c5dd:38:15)
+    at TooltipProvider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=9dc0c5dd:62:5)
+    at QueryClientProvider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=9dc0c5dd:2805:3)
+    at App
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+ArcGIS demographics temporarily disabled - bbox: 
+(4) [-82.76325792856686, -4.128615554502417, -80.76325792856686, -2.1286155545024172]
+Bristol Development Group
+BRISTOL
+Site Intelligence Platform
+
+
+Map
+
+Sites
+
+Analytics
+
+Demographics
+
+Chat
+
+Integrations
+
+Tools
+MapBox Intelligence
+Basic Map
+Tables
+3D Sandbox
+
+
+
+© Mapbox © OpenStreetMap Improve this map © Maxar
+Map Layers
+
+Market Heat Map
+
+Demographics (ArcGIS)
+
+Housing Density
+Satellite
+Streets
+Bristol Score Legend
+85-100
+Excellent
+70-84
+Good
+55-69
+Average
+40-54
+Below Average
+0-39
+Poor
+Map Layers
+PARLAY Projects
+Market Heat Map
+Demographics (ArcGIS)
+Housing Density
+Bristol Market Intelligence
+How to Use
+Click anywhere on the map to analyze market intelligence for that specific area. Data will update automatically.
+Bristol Score
+Development Rating
+84.2
+/ 100
+Population Growth
+Annual YoY
+Data unavailable
+Median Income
+Household
+Data unavailable
+Employment Rate
+Active Workforce
+Data unavailable
+Age 25-44
+Target Demo
+Data unavailable
+Avg Rent/Unit
+Market Rate
+Data unavailable
+Occupancy Rate
+Market Demand
+Data unavailable
+Absorption Rate
+Lease-up Time
+Data unavailable
+Projected IRR
+Expected Return
+Data unavailable
+Land Cost/Unit
+Acquisition Cost
+Data unavailable
+Poverty Rate
+Economic Risk
+Data unavailable
+College Educated
+Bachelor's+
+Data unavailable
+Work From Home
+Remote Workers
+Data unavailable
+Young Professionals
+Age 25-34
+Data unavailable
+PARLAY Data
+Active Parcels
+Geographic Coverage
+0
+Multi-State
+Coverage
+Live Data
+Real-time
+
+BRISTOL BRAIN
+AI Intelligence
+[plugin:runtime-error-plugin] signal is aborted without reason
+Click outside, press Esc key, or fix the code to dismiss.
+You can also disable this overlay by setting server.hmr.overlay to false in vite.config.js.
