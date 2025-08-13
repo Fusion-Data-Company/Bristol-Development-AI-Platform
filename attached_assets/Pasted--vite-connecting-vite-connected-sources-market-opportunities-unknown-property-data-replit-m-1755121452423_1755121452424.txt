@@ -1,0 +1,36 @@
+[vite] connecting...
+[vite] connected.
+sources.market-opportunities: unknown property "data-replit-metadata"
+sources.market-opportunities: unknown property "data-component-name"
+HUD Tool: Data changed: 
+Object {hasData: false, data: undefined}
+HUD Tool: Running analysis with params: 
+Object {mode: "usps", zip: "28202", lookbackQ: "8"}
+BEA Tool: Running analysis with params: 
+Object {geo: "msa", state: "37", county: "119", msa: "16740", startYear: "2015", …}
+BLS Tool: Running analysis with params: 
+Object {level: "county", state: "37", county: "119", msa: "", start: "2020-01", …}
+Foursquare Tool: Data changed: 
+Object {hasData: false, data: undefined}
+Foursquare Tool: Running analysis with geocoded params: 
+Object {address: "100 N Tryon St, Charlotte, NC", lat: 35.226844, lng: -80.841883, radius: "1600"}
+Foursquare Tool: Running analysis with geocoded params: 
+Object {address: "100 N Tryon St, Charlotte, NC", lat: 35.226844, lng: -80.841883, radius: "1600"}
+FBI Tool: Data changed: 
+Object {hasData: false, data: undefined}
+FBI Tool: Running analysis with params: 
+Object {geo: "state", state: "NC", offense: "violent-crime", from: "2014", to: "2023"}
+NOAA Tool: Running analysis with params: 
+Object {lat: "35.2271", lng: "-80.8431", dataset: "daily-summaries", startDate: "2024-08-13", endDate: "2025-07-14"}
+dataset: "daily-summaries"
+endDate: "2025-07-14"
+lat: "35.2271"
+lng: "-80.8431"
+startDate: "2024-08-13"
+[[Prototype]]: Object
+[vite] invalidate /src/components/analytics/ArcGISLayer.tsx: Could not Fast Refresh ("useArcGISDemographics" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+[vite] hot updated: /src/components/analytics/ArcGISLayer.tsx
+[vite] hot updated: /src/index.css?v=aQdu6ELXFu_65vPn33Umh
+[vite] hot updated: /src/components/maps/InteractiveMap.tsx
+BLS Tool: Running analysis with params: 
+Object {level: "county", state: "37", county: "119", msa: "", start: "2020-01", …}
