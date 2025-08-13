@@ -29,15 +29,15 @@ export function Tools() {
         <div className="container mx-auto px-4 py-8 relative z-10">
           {/* Enterprise Elite Header */}
           <div className="mb-8 relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/10 via-bristol-maroon/5 via-blue-600/8 to-purple-600/10 rounded-3xl blur-3xl animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/10 via-bristol-maroon/5 via-blue-600/8 to-orange-600/10 rounded-3xl blur-3xl animate-pulse"></div>
             <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/5 via-transparent to-bristol-maroon/5 rounded-3xl blur-2xl"></div>
             <div className="relative bg-gradient-to-br from-white/95 via-white/90 to-slate-50/95 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border-2 border-bristol-gold/30 bristol-enterprise-card">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bristol-gold via-bristol-maroon to-purple-600 rounded-t-3xl"></div>
-              <h1 className="text-6xl font-black bg-gradient-to-r from-bristol-maroon via-bristol-gold via-purple-600 to-bristol-ink bg-clip-text text-transparent mb-6 drop-shadow-2xl tracking-tight leading-tight">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bristol-gold via-bristol-maroon to-orange-600 rounded-t-3xl"></div>
+              <h1 className="text-6xl font-black bg-gradient-to-r from-bristol-maroon via-bristol-gold via-orange-600 to-bristol-ink bg-clip-text text-transparent mb-6 drop-shadow-2xl tracking-tight leading-tight">
                 ECONOMIC INTELLIGENCE TOOLS
               </h1>
               <div className="w-24 h-1 bg-gradient-to-r from-bristol-gold to-bristol-maroon rounded-full mb-6"></div>
-              <p className="text-2xl font-bold bg-gradient-to-r from-bristol-maroon via-bristol-ink to-purple-700 bg-clip-text text-transparent leading-relaxed">
+              <p className="text-2xl font-bold bg-gradient-to-r from-bristol-maroon via-bristol-ink to-orange-700 bg-clip-text text-transparent leading-relaxed">
                 Enterprise-Grade Live Data Analytics Platform
               </p>
               <p className="text-lg font-semibold text-slate-600 mt-2 leading-relaxed">
@@ -47,8 +47,11 @@ export function Tools() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 bg-gradient-to-r from-bristol-maroon/20 via-purple-600/15 via-blue-600/15 to-bristol-gold/30 backdrop-blur-xl border-4 border-bristol-gold/50 shadow-2xl rounded-3xl h-auto p-6 bristol-enterprise-card relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
+            <TabsList className="grid w-full grid-cols-6 relative overflow-hidden">
+              {/* Enhanced gradient background with Bristol colors */}
+              <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/25 via-orange-600/20 via-blue-600/15 to-bristol-gold/35 backdrop-blur-xl border-4 border-bristol-gold/60 shadow-2xl rounded-3xl bristol-enterprise-card"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300/15 to-transparent animate-pulse rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/10 via-transparent to-bristol-maroon/8 rounded-3xl"></div>
               <TabsTrigger 
                 value="bls" 
                 className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
