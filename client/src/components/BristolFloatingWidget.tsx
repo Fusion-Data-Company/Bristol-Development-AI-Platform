@@ -136,9 +136,9 @@ export default function BristolFloatingWidget({
         const models: ModelOption[] = await response.json();
         setModelList(models);
         
-        // Set default model - prefer GPT-4o, then Claude 3.5 Sonnet, then first available
-        const preferred = models.find(m => m.id === "openai/gpt-4o") || 
-                         models.find(m => m.id === "anthropic/claude-3.5-sonnet") ||
+        // Set default model - prefer GPT-5 Chat, then GPT-5, then first available
+        const preferred = models.find(m => m.id === "openai/gpt-5-chat") || 
+                         models.find(m => m.id === "openai/gpt-5") ||
                          models[0];
         
         if (preferred) {

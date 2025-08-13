@@ -3,40 +3,34 @@ import { Router } from 'express';
 const router = Router();
 
 const ELITE_MODELS = new Set<string>([
-  "openai/gpt-4o",
-  "openai/gpt-4o-mini",
-  "openai/gpt-4-turbo",
-  "anthropic/claude-3.5-sonnet",
-  "anthropic/claude-3-opus",
-  "anthropic/claude-3-haiku",
-  "google/gemini-2.0-flash-exp",
-  "google/gemini-pro-1.5",
-  "meta-llama/llama-3.1-70b-instruct",
-  "meta-llama/llama-3.1-405b-instruct",
-  "perplexity/sonar",
-  "x-ai/grok-2",
-  "x-ai/grok-2-vision-1212",
-  "deepseek/deepseek-chat",
-  "mistralai/mistral-large"
+  "openai/gpt-5",
+  "openai/gpt-5-chat",
+  "anthropic/claude-opus-4",
+  "anthropic/claude-opus-4.1",
+  "anthropic/claude-sonnet-4",
+  "x-ai/grok-4",
+  "google/gemini-2.5-pro",
+  "google/gemini-2.5-flash",
+  "perplexity/sonar-deep-research",
+  "perplexity/sonar-reasoning",
+  "perplexity/sonar-pro",
+  "perplexity/sonar-reasoning-pro"
 ]);
 
 function getModelLabel(slug: string): string {
   const labelMap: Record<string, string> = {
-    "openai/gpt-4o": "GPT-4o",
-    "openai/gpt-4o-mini": "GPT-4o Mini",
-    "openai/gpt-4-turbo": "GPT-4 Turbo",
-    "anthropic/claude-3.5-sonnet": "Claude 3.5 Sonnet",
-    "anthropic/claude-3-opus": "Claude 3 Opus",
-    "anthropic/claude-3-haiku": "Claude 3 Haiku",
-    "google/gemini-2.0-flash-exp": "Gemini 2.0 Flash",
-    "google/gemini-pro-1.5": "Gemini Pro 1.5",
-    "meta-llama/llama-3.1-70b-instruct": "Llama 3.1 70B",
-    "meta-llama/llama-3.1-405b-instruct": "Llama 3.1 405B",
-    "perplexity/sonar": "Perplexity Sonar",
-    "x-ai/grok-2": "Grok 2",
-    "x-ai/grok-2-vision-1212": "Grok 2 Vision",
-    "deepseek/deepseek-chat": "DeepSeek Chat",
-    "mistralai/mistral-large": "Mistral Large"
+    "openai/gpt-5": "GPT-5",
+    "openai/gpt-5-chat": "GPT-5 Chat",
+    "anthropic/claude-opus-4": "Claude Opus 4",
+    "anthropic/claude-opus-4.1": "Claude Opus 4.1",
+    "anthropic/claude-sonnet-4": "Claude Sonnet 4",
+    "x-ai/grok-4": "Grok 4",
+    "google/gemini-2.5-pro": "Gemini 2.5 Pro",
+    "google/gemini-2.5-flash": "Gemini 2.5 Flash",
+    "perplexity/sonar-deep-research": "Sonar Deep Research",
+    "perplexity/sonar-reasoning": "Sonar Reasoning",
+    "perplexity/sonar-pro": "Sonar Pro",
+    "perplexity/sonar-reasoning-pro": "Sonar Reasoning Pro"
   };
   return labelMap[slug] || slug;
 }
@@ -74,9 +68,9 @@ router.get('/', async (req, res) => {
         context: m.context_length || 0
       }));
 
-    // Prefer GPT-4o as the default model
+    // Prefer GPT-5 Chat as the default model
     filtered.sort((a: any, b: any) => {
-      const preferred = ["openai/gpt-4o", "anthropic/claude-3.5-sonnet", "google/gemini-2.0-flash-exp"];
+      const preferred = ["openai/gpt-5-chat", "openai/gpt-5", "anthropic/claude-opus-4.1", "google/gemini-2.5-pro"];
       const aIndex = preferred.indexOf(a.id);
       const bIndex = preferred.indexOf(b.id);
       if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
