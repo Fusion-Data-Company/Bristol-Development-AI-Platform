@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Download, Save, TrendingUp, TrendingDown, Minus, BarChart3 } from "lucide-react";
+import { Loader2, Download, Save, TrendingUp, TrendingDown, Minus, BarChart3, Brain, Cpu } from "lucide-react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -262,10 +262,29 @@ export function BLSTool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bristol-elite-button relative text-white font-black text-lg px-12 py-4 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl border-bristol-gold/30"
+          className="bristol-elite-button relative text-white font-black text-lg px-12 py-4 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl"
         >
-          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Run Analysis
+          <div className="flex items-center gap-3">
+            {isLoading ? (
+              <Loader2 className="h-6 w-6 animate-spin text-cyan-400" />
+            ) : (
+              <div className="relative">
+                <Brain className="h-6 w-6 text-cyan-400 drop-shadow-lg" />
+                <div className="absolute inset-0 animate-pulse opacity-50">
+                  <Brain className="h-6 w-6 text-cyan-300" />
+                </div>
+              </div>
+            )}
+            <div>
+              <div className="text-cyan-400 font-black tracking-wide">
+                RUN ANALYSIS
+              </div>
+              <div className="text-xs text-amber-300 font-medium -mt-1">
+                Bristol Intelligence
+              </div>
+            </div>
+            <Cpu className="h-4 w-4 text-amber-300/70" />
+          </div>
         </Button>
         
         {data && (

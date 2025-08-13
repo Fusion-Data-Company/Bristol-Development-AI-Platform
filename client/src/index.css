@@ -107,15 +107,16 @@
   filter: brightness(1.1) saturate(1.2);
 }
 
-/* Bristol Elite Button Styling */
+/* Bristol Brain Elite Button Styling */
 .bristol-elite-button {
-  background: linear-gradient(135deg, hsl(45 58% 60%) 0%, hsl(43 96% 56%) 50%, hsl(339 100% 31%) 100%);
-  border: 2px solid transparent;
+  background: linear-gradient(135deg, hsl(217 32% 8%) 0%, hsl(217 58% 12%) 50%, hsl(217 32% 8%) 100%);
+  border: 2px solid rgba(0, 191, 255, 0.3);
   background-clip: padding-box;
   font-weight: 700;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   position: relative;
   overflow: hidden;
+  filter: drop-shadow(0 0 20px rgba(0, 191, 255, 0.4));
 }
 
 .bristol-elite-button:before {
@@ -125,7 +126,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(0, 191, 255, 0.2), transparent);
   transition: left 0.5s;
 }
 
@@ -133,12 +134,28 @@
   left: 100%;
 }
 
+.bristol-elite-button:after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  background: linear-gradient(to right, rgba(0, 191, 255, 0.2), rgba(0, 191, 255, 0.2), rgba(139, 21, 56, 0.2));
+  border-radius: 16px;
+  opacity: 0;
+  animation: pulse 2s infinite;
+  pointer-events: none;
+}
+
 .bristol-elite-button:hover {
   transform: translateY(-1px);
   box-shadow: 
-    0 20px 25px -5px rgba(212, 175, 55, 0.3),
-    0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  filter: brightness(1.1) saturate(1.1);
+    0 20px 25px -5px rgba(0, 191, 255, 0.3),
+    0 10px 15px -3px rgba(0, 0, 0, 0.2);
+  filter: drop-shadow(0 0 30px rgba(0, 191, 255, 0.6)) brightness(1.1);
+  border-color: rgba(0, 191, 255, 0.5);
+}
+
+.bristol-elite-button:hover:after {
+  opacity: 1;
 }
 
 /* Enterprise Card Styling */
