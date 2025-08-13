@@ -9,6 +9,7 @@ import { HUDTool } from "../components/tools/HUDTool";
 import { FoursquareTool } from "../components/tools/FoursquareTool";
 import { FBITool } from "../components/tools/FBITool";
 import { NOAATool } from "../components/tools/NOAATool";
+import cyberpunkBg from "@assets/digital-portrait-woman-with-glowing-lines-code-cyberpunk-art-style_1341597-2299_1755124604878.jpg";
 
 export function Tools() {
   const [activeTab, setActiveTab] = useState("bls");
@@ -20,7 +21,7 @@ export function Tools() {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('/attached_assets/digital-portrait-woman-with-glowing-lines-code-cyberpunk-art-style_1341597-2299_1755124604878.jpg')`,
+            backgroundImage: `url(${cyberpunkBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
