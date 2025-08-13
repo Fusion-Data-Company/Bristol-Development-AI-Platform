@@ -180,14 +180,14 @@ export function BLSTool() {
   return (
     <div className="space-y-8">
       {/* MEGA HEADER */}
-      <div className="text-center space-y-6 bristol-enterprise-card p-12 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-purple-50/50 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-bristol-gold/10 animate-pulse"></div>
+      <div className="text-center space-y-6 bristol-enterprise-card p-8 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-orange-50/50 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-orange-500/5 to-bristol-gold/10 animate-pulse"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-center gap-6 mb-6">
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 shadow-xl animate-bounce">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-orange-500/20 shadow-xl animate-bounce">
               <Briefcase className="h-16 w-16 text-blue-600 drop-shadow-lg" />
             </div>
-            <h1 className="text-7xl font-black bg-gradient-to-r from-blue-800 via-purple-600 via-bristol-gold to-indigo-800 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+            <h1 className="text-5xl font-black bg-gradient-to-r from-blue-800 via-bristol-gold to-orange-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
               📊 Bureau of Labor Statistics
             </h1>
           </div>

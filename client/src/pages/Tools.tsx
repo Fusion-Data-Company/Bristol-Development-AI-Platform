@@ -102,9 +102,7 @@ export function Tools() {
                       </div>
 
                     </CardTitle>
-                    <CardDescription className="text-slate-700 font-semibold text-lg mt-4 leading-relaxed">
-                      Enterprise-grade access to unemployment rates, employment trends, and comprehensive labor market intelligence for counties and metropolitan statistical areas
-                    </CardDescription>
+
                   </CardHeader>
                   <CardContent className="bg-gradient-to-br from-slate-50/80 via-blue-50/40 to-purple-50/30 p-8 relative">
                     <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-white/20 pointer-events-none"></div>
