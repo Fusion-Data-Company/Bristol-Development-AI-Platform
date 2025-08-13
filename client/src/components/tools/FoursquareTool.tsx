@@ -317,7 +317,7 @@ export function FoursquareTool() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="100 N Tryon St, Charlotte, NC"
-                className="bg-white border-gray-300 text-gray-900"
+                className="bristol-form-enhanced"
               />
             </div>
           )}
@@ -329,7 +329,7 @@ export function FoursquareTool() {
               value={radius}
               onChange={(e) => setRadius(e.target.value)}
               placeholder="1600"
-              className="bg-white border-gray-300 text-gray-900"
+              className="bristol-form-enhanced"
             />
           </div>
         </div>

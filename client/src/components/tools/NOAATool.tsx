@@ -177,7 +177,7 @@ export function NOAATool() {
               value={lat}
               onChange={(e) => setLat(e.target.value)}
               placeholder="35.2271"
-              className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              className="bristol-form-enhanced"
             />
           </div>
 
@@ -188,14 +188,14 @@ export function NOAATool() {
               value={lng}
               onChange={(e) => setLng(e.target.value)}
               placeholder="-80.8431"
-              className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              className="bristol-form-enhanced"
             />
           </div>
 
           <div>
             <Label htmlFor="dataset" className="text-slate-700 font-medium">Dataset</Label>
             <Select value={dataset} onValueChange={setDataset}>
-              <SelectTrigger className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors">
+              <SelectTrigger className="bristol-form-enhanced">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white/95 backdrop-blur-sm border-cyan-200/60">
@@ -213,7 +213,7 @@ export function NOAATool() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              className="bristol-form-enhanced"
             />
           </div>
 
@@ -224,7 +224,7 @@ export function NOAATool() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="bg-white/90 border-cyan-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              className="bristol-form-enhanced"
             />
           </div>
         </div>

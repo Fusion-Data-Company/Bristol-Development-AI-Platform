@@ -211,7 +211,7 @@ export function FBITool() {
           <div>
             <Label htmlFor="geo" className="text-slate-700 font-medium">Geographic Level</Label>
             <Select value={geo} onValueChange={setGeo}>
-              <SelectTrigger className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors">
+              <SelectTrigger className="bristol-form-enhanced">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white/95 backdrop-blur-sm border-amber-200/60">
@@ -227,7 +227,7 @@ export function FBITool() {
               value={state}
               onChange={(e) => setState(e.target.value.toUpperCase())}
               placeholder="NC"
-              className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              className="bristol-form-enhanced"
               maxLength={2}
             />
           </div>
@@ -235,7 +235,7 @@ export function FBITool() {
           <div>
             <Label htmlFor="offense" className="text-slate-700 font-medium">Crime Type</Label>
             <Select value={offense} onValueChange={setOffense}>
-              <SelectTrigger className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors">
+              <SelectTrigger className="bristol-form-enhanced">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white/95 backdrop-blur-sm border-amber-200/60">
@@ -258,7 +258,7 @@ export function FBITool() {
               onChange={(e) => setFrom(e.target.value)}
               min="2000"
               max="2030"
-              className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              className="bristol-form-enhanced"
             />
           </div>
 
@@ -271,7 +271,7 @@ export function FBITool() {
               onChange={(e) => setTo(e.target.value)}
               min="2000"
               max="2030"
-              className="bg-white/90 border-amber-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors"
+              className="bristol-form-enhanced"
             />
           </div>
         </div>
