@@ -60,6 +60,34 @@
   --bristol-fog: hsl(210 17% 97%);
   --bristol-sky: hsl(210 40% 94%);
   --bristol-night: hsl(217 58% 8%);
+  --bristol-cyan: hsl(189 85% 67%);
+  --bristol-electric: hsl(267 87% 67%);
+  --bristol-amber: hsl(43 96% 56%);
+  
+  /* Bristol Floating Widget Animations */
+  --bristol-glow: drop-shadow(0 0 20px hsl(189 85% 67% / 0.3));
+  --bristol-glow-strong: drop-shadow(0 0 30px hsl(189 85% 67% / 0.5));
+}
+
+/* Bristol AI Widget Custom Animations */
+@keyframes bristol-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+@keyframes bristol-shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.bristol-pulse {
+  animation: bristol-pulse 2s ease-in-out infinite;
+}
+
+.bristol-shimmer {
+  background: linear-gradient(90deg, transparent, hsl(189 85% 67% / 0.2), transparent);
+  background-size: 200px 100%;
+  animation: bristol-shimmer 2s infinite;
 }
 
 .dark {

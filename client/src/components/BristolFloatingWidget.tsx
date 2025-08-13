@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare } from "lucide-react";
+import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu } from "lucide-react";
 
 /**
  * BristolFloatingWidget.tsx — v1.0
@@ -273,14 +273,25 @@ export default function BristolFloatingWidget({
       <button
         onClick={() => setOpen(true)}
         className={cx(
-          "fixed top-24 left-0 z-50 group flex items-center gap-2 pl-2 pr-3 py-2",
-          "bg-gradient-to-r from-bristol-maroon to-bristol-ink text-white rounded-r-2xl shadow-xl",
-          "backdrop-blur border border-white/10 hover:from-bristol-ink hover:to-bristol-maroon transition-all duration-300"
+          "fixed top-24 left-0 z-50 group flex items-center gap-2 pl-2 pr-4 py-3",
+          "bg-gradient-to-r from-bristol-maroon via-bristol-ink to-bristol-electric text-white rounded-r-2xl shadow-2xl",
+          "backdrop-blur-md border border-bristol-cyan/30 hover:from-bristol-electric hover:via-bristol-maroon hover:to-bristol-ink",
+          "transition-all duration-500 transform hover:scale-105 hover:shadow-bristol-cyan/20 hover:shadow-lg",
+          "font-serif relative overflow-hidden"
         )}
         aria-label="Open Bristol Analyst"
       >
-        <PanelLeftOpen className="h-5 w-5" />
-        <span className="hidden sm:block text-sm font-medium">Bristol AI Analyst</span>
+        {/* Animated background glow */}
+        <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
+        {/* Content */}
+        <div className="relative z-10 flex items-center gap-2">
+          <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
+          <span className="hidden sm:block text-sm font-semibold tracking-wide">
+            Bristol AI Analyst
+          </span>
+          <Sparkles className="h-3 w-3 text-bristol-gold/70 group-hover:text-bristol-gold transition-all duration-300 group-hover:scale-110" />
+        </div>
       </button>
 
       {/* Slideout Panel */}
@@ -290,54 +301,119 @@ export default function BristolFloatingWidget({
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
 
           {/* Panel */}
-          <div className="absolute inset-y-0 left-0 w-[92vw] sm:w-[560px] bg-bristol-ink text-neutral-100 shadow-2xl border-r border-bristol-cyan/20 flex flex-col">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-bristol-cyan/20 bg-gradient-to-r from-bristol-maroon/20 to-bristol-ink">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="h-5 w-5 text-bristol-cyan" />
-                <span className="font-semibold bg-gradient-to-r from-bristol-cyan to-white bg-clip-text text-transparent">
-                  Bristol Development — AI Analyst
-                </span>
+          <div className="absolute inset-y-0 left-0 w-[92vw] sm:w-[580px] bg-bristol-ink/95 text-neutral-100 shadow-2xl border-r border-bristol-cyan/30 flex flex-col backdrop-blur-xl">
+            {/* Header with premium Bristol branding */}
+            <div className="relative overflow-hidden">
+              {/* Animated background gradient */}
+              <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/30 via-bristol-ink to-bristol-electric/20" />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bristol-ink/50" />
+              
+              {/* Header content */}
+              <div className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-bristol-cyan/30">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <Cpu className="h-6 w-6 text-bristol-cyan animate-pulse" />
+                    <div className="absolute inset-0 h-6 w-6 text-bristol-electric/50 animate-spin">
+                      <Sparkles className="h-6 w-6" />
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="font-serif font-bold text-lg bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent">
+                      Bristol Development
+                    </h1>
+                    <p className="text-xs text-bristol-cyan/80 font-medium tracking-wide uppercase">
+                      AI Intelligence Platform
+                    </p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setOpen(false)} 
+                  className="p-2 hover:bg-bristol-cyan/10 rounded-xl transition-all duration-200 group border border-bristol-cyan/20 hover:border-bristol-cyan/40" 
+                  aria-label="Close"
+                >
+                  <X className="h-5 w-5 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                </button>
               </div>
-              <button onClick={() => setOpen(false)} className="p-2 hover:bg-white/5 rounded-lg transition-colors" aria-label="Close">
-                <X className="h-5 w-5" />
-              </button>
             </div>
 
-            {/* Controls */}
-            <div className="px-4 py-3 flex flex-wrap items-center gap-3 border-b border-bristol-cyan/20 bg-black/20">
+            {/* Premium Controls */}
+            <div className="px-6 py-4 border-b border-bristol-cyan/20 bg-gradient-to-r from-black/30 to-bristol-ink/50">
               {modelError && (
-                <div className="w-full text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
-                  {modelError}
+                <div className="mb-3 text-xs text-red-300 bg-red-500/20 border border-red-400/30 rounded-xl px-4 py-3 backdrop-blur">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                    {modelError}
+                  </div>
                 </div>
               )}
-              <select
-                className="bg-black/40 border border-bristol-cyan/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-bristol-cyan disabled:opacity-50"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
-                disabled={modelList.length === 0}
-              >
-                {modelList.length === 0 ? (
-                  <option value="">Loading models...</option>
-                ) : (
-                  modelList.map((m: ModelOption) => (
-                    <option key={m.id} value={m.id}>{m.label}</option>
-                  ))
-                )}
-              </select>
+              
+              <div className="flex flex-wrap items-center gap-4">
+                {/* Elite Model Selector */}
+                <div className="flex-1 min-w-[200px]">
+                  <label className="block text-xs text-bristol-cyan/80 font-medium uppercase tracking-wide mb-2">
+                    Elite AI Model
+                  </label>
+                  <select
+                    className={cx(
+                      "w-full bg-bristol-ink/80 border border-bristol-cyan/40 rounded-xl px-4 py-3 text-sm",
+                      "focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/20",
+                      "disabled:opacity-50 font-medium text-bristol-cyan backdrop-blur transition-all duration-200",
+                      "hover:border-bristol-cyan/60"
+                    )}
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                    disabled={modelList.length === 0}
+                  >
+                    {modelList.length === 0 ? (
+                      <option value="">🔄 Loading Elite Models...</option>
+                    ) : (
+                      modelList.map((m: ModelOption) => (
+                        <option key={m.id} value={m.id} className="bg-bristol-ink text-white">
+                          ✨ {m.label}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                </div>
 
-              <div className="ml-auto flex items-center gap-2 text-xs text-bristol-cyan/70">
-                <span className="hidden sm:block">Context objects:</span>
-                <span className="px-2 py-1 rounded bg-bristol-cyan/10 border border-bristol-cyan/30">
-                  {Object.keys(appData || {}).length}
-                </span>
+                {/* Data Context Badge */}
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-xs text-bristol-cyan/80 font-medium uppercase tracking-wide">
+                    Live Data
+                  </span>
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 border border-bristol-cyan/30">
+                    <Database className="h-4 w-4 text-bristol-cyan" />
+                    <span className="text-sm font-bold text-white">
+                      {Object.keys(appData || {}).length}
+                    </span>
+                    <span className="text-xs text-bristol-cyan/70">objects</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Tabs */}
-            <div className="px-4 pt-3 flex items-center gap-2 text-sm">
-              <TabButton icon={<MessageSquare className="h-4 w-4" />} active={activeTab === "chat"} label="Chat" onClick={() => setActiveTab("chat")} />
-              <TabButton icon={<Database className="h-4 w-4" />} active={activeTab === "data"} label="Data" onClick={() => setActiveTab("data")} />
-              <TabButton icon={<Settings className="h-4 w-4" />} active={activeTab === "admin"} label="Admin" onClick={() => setActiveTab("admin")} />
+            {/* Premium Tab Navigation */}
+            <div className="px-6 pt-4 pb-2 bg-gradient-to-b from-bristol-ink/30 to-transparent">
+              <div className="flex items-center gap-3">
+                <TabButton 
+                  icon={<MessageSquare className="h-4 w-4" />} 
+                  active={activeTab === "chat"} 
+                  label="AI Chat" 
+                  onClick={() => setActiveTab("chat")} 
+                />
+                <TabButton 
+                  icon={<Database className="h-4 w-4" />} 
+                  active={activeTab === "data"} 
+                  label="Live Data" 
+                  onClick={() => setActiveTab("data")} 
+                />
+                <TabButton 
+                  icon={<Settings className="h-4 w-4" />} 
+                  active={activeTab === "admin"} 
+                  label="System" 
+                  onClick={() => setActiveTab("admin")} 
+                />
+              </div>
             </div>
 
             {/* Body */}
@@ -353,26 +429,55 @@ export default function BristolFloatingWidget({
               )}
             </div>
 
-            {/* Composer */}
+            {/* Premium Chat Composer */}
             {activeTab === "chat" && (
-              <div className="border-t border-bristol-cyan/20 p-3 flex items-center gap-2 bg-black/20">
-                <input
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey ? handleSend() : null}
-                  placeholder={loading ? "Waiting for reply…" : "Ask about properties, comps, demographics, market trends…"}
-                  disabled={loading}
-                  className="flex-1 bg-black/40 border border-bristol-cyan/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-bristol-cyan disabled:opacity-60"
-                />
-                <button
-                  onClick={handleSend}
-                  disabled={loading}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-bristol-cyan to-bristol-maroon text-white text-sm font-semibold hover:opacity-90 disabled:opacity-60 transition-opacity"
-                >
-                  <Send className="h-4 w-4" />
-                  Send
-                </button>
+              <div className="border-t border-bristol-cyan/30 bg-gradient-to-r from-bristol-ink/80 to-black/60 backdrop-blur">
+                <div className="px-6 py-4 flex items-center gap-3">
+                  <div className="flex-1 relative">
+                    <input
+                      ref={inputRef}
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && !e.shiftKey ? handleSend() : null}
+                      placeholder={loading ? "AI is analyzing your data..." : "Ask about properties, market analysis, demographics, investment opportunities..."}
+                      disabled={loading}
+                      className={cx(
+                        "w-full bg-bristol-ink/60 border border-bristol-cyan/40 rounded-2xl px-4 py-3 pr-12 text-sm",
+                        "focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/20",
+                        "disabled:opacity-60 placeholder-bristol-cyan/60 text-white transition-all duration-200",
+                        "hover:border-bristol-cyan/60 backdrop-blur"
+                      )}
+                    />
+                    {loading && (
+                      <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                        <div className="w-4 h-4 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin" />
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    onClick={handleSend}
+                    disabled={loading || !input.trim()}
+                    className={cx(
+                      "inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold text-sm transition-all duration-200",
+                      "bg-gradient-to-r from-bristol-cyan to-bristol-electric text-white shadow-lg",
+                      "hover:from-bristol-electric hover:to-bristol-maroon hover:shadow-bristol-cyan/20",
+                      "disabled:opacity-60 disabled:cursor-not-allowed transform hover:scale-105",
+                      "border border-bristol-cyan/30 hover:border-bristol-electric/50"
+                    )}
+                  >
+                    {loading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Analyzing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4" />
+                        <span>Send</span>
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -388,40 +493,82 @@ function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; la
     <button
       onClick={onClick}
       className={cx(
-        "flex items-center gap-2 px-3 py-2 rounded-lg border text-xs sm:text-sm transition-all",
+        "relative flex items-center gap-2 px-4 py-2 rounded-xl border text-xs sm:text-sm font-medium transition-all duration-300 group",
         active 
-          ? "bg-gradient-to-r from-bristol-cyan to-bristol-maroon text-white border-bristol-cyan" 
-          : "bg-black/20 text-white border-bristol-cyan/30 hover:bg-bristol-cyan/10"
+          ? "bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 text-bristol-cyan border-bristol-cyan/50 shadow-lg shadow-bristol-cyan/10" 
+          : "bg-bristol-ink/40 text-bristol-cyan/70 border-bristol-cyan/20 hover:bg-bristol-cyan/10 hover:text-bristol-cyan hover:border-bristol-cyan/40"
       )}
     >
-      {icon}
-      {label}
+      {/* Active indicator */}
+      {active && (
+        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-bristol-cyan to-bristol-electric rounded-t" />
+      )}
+      
+      {/* Content */}
+      <span className={cx("transition-colors", active ? "text-bristol-cyan" : "group-hover:text-bristol-cyan")}>
+        {icon}
+      </span>
+      <span className="tracking-wide">{label}</span>
     </button>
   );
 }
 
 function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boolean }) {
   return (
-    <div className="h-full overflow-y-auto px-4 py-3 space-y-3">
+    <div className="h-full overflow-y-auto px-6 py-4 space-y-4 bg-gradient-to-b from-transparent to-bristol-ink/20">
       {messages.filter(m => m.role !== "system").map((m, i) => (
         <div 
           key={i} 
           className={cx(
-            "p-3 rounded-lg border",
+            "relative rounded-2xl border backdrop-blur transition-all duration-200 hover:shadow-lg",
             m.role === "assistant" 
-              ? "bg-bristol-cyan/5 border-bristol-cyan/20" 
-              : "bg-black/30 border-bristol-maroon/30"
+              ? "bg-gradient-to-br from-bristol-cyan/10 to-bristol-electric/5 border-bristol-cyan/30 hover:border-bristol-cyan/50" 
+              : "bg-gradient-to-br from-bristol-ink/60 to-black/40 border-bristol-maroon/30 hover:border-bristol-maroon/50 ml-4"
           )}
         >
-          <div className="text-[10px] uppercase tracking-wide opacity-60 mb-1 text-bristol-cyan">
-            {m.role}
+          {/* Message header */}
+          <div className="flex items-center justify-between px-4 pt-3 pb-1">
+            <div className="flex items-center gap-2">
+              <span className={cx(
+                "text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full",
+                m.role === "assistant"
+                  ? "bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/30"
+                  : "bg-bristol-maroon/20 text-bristol-gold border border-bristol-maroon/30"
+              )}>
+                {m.role === "assistant" ? "🤖 Bristol AI" : "👤 You"}
+              </span>
+            </div>
+            {m.createdAt && (
+              <span className="text-xs text-bristol-cyan/50">
+                {new Date(m.createdAt).toLocaleTimeString()}
+              </span>
+            )}
           </div>
-          <div className="whitespace-pre-wrap text-sm leading-relaxed">{m.content}</div>
+          
+          {/* Message content */}
+          <div className="px-4 pb-4">
+            <div className={cx(
+              "whitespace-pre-wrap text-sm leading-relaxed",
+              m.role === "assistant" ? "text-white/90" : "text-bristol-cyan/90"
+            )}>
+              {m.content}
+            </div>
+          </div>
         </div>
       ))}
+      
       {loading && (
-        <div className="p-3 rounded-lg border bg-bristol-cyan/5 border-bristol-cyan/20 animate-pulse text-sm">
-          AI is analyzing your data…
+        <div className="relative rounded-2xl border bg-gradient-to-br from-bristol-cyan/10 to-bristol-electric/5 border-bristol-cyan/30 backdrop-blur animate-pulse">
+          <div className="flex items-center gap-3 px-4 py-4">
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce" />
+            </div>
+            <span className="text-sm text-bristol-cyan/80">
+              Bristol AI is analyzing your data and market conditions...
+            </span>
+          </div>
         </div>
       )}
     </div>
@@ -429,40 +576,129 @@ function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boo
 }
 
 function DataPane({ data }: { data: any }) {
+  const dataKeys = Object.keys(data || {});
+  
   return (
-    <div className="h-full overflow-y-auto p-4">
-      <pre className="text-xs leading-relaxed bg-black/40 p-3 rounded-lg border border-bristol-cyan/20 overflow-x-auto text-bristol-cyan/80">
-        {safeStringify(data, 2)}
-      </pre>
-      <p className="text-xs text-bristol-cyan/60 mt-3">
-        This shows all the data context available to the AI analyst including properties, demographics, and external API data.
-      </p>
+    <div className="h-full overflow-y-auto bg-gradient-to-b from-bristol-ink/20 to-transparent">
+      {/* Data overview header */}
+      <div className="sticky top-0 bg-bristol-ink/80 backdrop-blur border-b border-bristol-cyan/20 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-semibold text-bristol-cyan">Live Data Context</h3>
+            <p className="text-xs text-bristol-cyan/70 mt-1">
+              Real-time data available to Bristol AI for analysis
+            </p>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 border border-bristol-cyan/30">
+            <Database className="h-4 w-4 text-bristol-cyan" />
+            <span className="text-sm font-bold text-white">{dataKeys.length}</span>
+            <span className="text-xs text-bristol-cyan/70">datasets</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Data content */}
+      <div className="p-6 space-y-4">
+        {dataKeys.length > 0 ? (
+          dataKeys.map((key, i) => (
+            <div key={key} className="border border-bristol-cyan/20 rounded-2xl bg-gradient-to-br from-bristol-ink/40 to-black/20 backdrop-blur">
+              <div className="px-4 py-3 border-b border-bristol-cyan/20 bg-bristol-cyan/5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs bg-bristol-cyan/20 text-bristol-cyan px-2 py-1 rounded-full font-medium">
+                    {i + 1}
+                  </span>
+                  <span className="font-medium text-bristol-cyan">{key}</span>
+                  <span className="text-xs text-bristol-cyan/60 ml-auto">
+                    {Array.isArray(data[key]) ? `${data[key].length} items` : typeof data[key]}
+                  </span>
+                </div>
+              </div>
+              <div className="p-4">
+                <pre className="text-xs leading-relaxed overflow-x-auto text-bristol-cyan/80 whitespace-pre-wrap max-h-48 overflow-y-auto">
+                  {safeStringify(data[key], 2)}
+                </pre>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className="text-center py-12">
+            <Database className="h-12 w-12 text-bristol-cyan/30 mx-auto mb-4" />
+            <h3 className="text-bristol-cyan/60 font-medium mb-2">No Data Available</h3>
+            <p className="text-xs text-bristol-cyan/40 max-w-md mx-auto">
+              Bristol AI will have access to live property data, demographics, and market intelligence once data sources are connected.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 function AdminPane({ systemPrompt, setSystemPrompt, onSave }: { systemPrompt: string; setSystemPrompt: (v: string) => void; onSave: () => void }) {
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-3 border-b border-bristol-cyan/20">
-        <div className="text-sm font-medium text-bristol-cyan">System Prompt (Bristol Mega Prompt)</div>
-        <div className="text-xs text-bristol-cyan/60">This defines the AI analyst's behavior and knowledge base.</div>
+    <div className="h-full flex flex-col bg-gradient-to-b from-bristol-ink/20 to-transparent">
+      {/* Admin header */}
+      <div className="px-6 py-4 border-b border-bristol-cyan/20 bg-gradient-to-r from-bristol-ink/40 to-black/20 backdrop-blur">
+        <div className="flex items-center gap-3">
+          <Settings className="h-5 w-5 text-bristol-cyan" />
+          <div>
+            <h3 className="font-semibold text-bristol-cyan">System Configuration</h3>
+            <p className="text-xs text-bristol-cyan/70 mt-1">
+              Configure Bristol AI analyst behavior and expertise
+            </p>
+          </div>
+        </div>
       </div>
-      <div className="p-3 flex-1 min-h-0">
-        <textarea
-          value={systemPrompt}
-          onChange={(e) => setSystemPrompt(e.target.value)}
-          className="w-full h-full text-sm bg-black/40 border border-bristol-cyan/30 rounded-lg p-3 focus:outline-none focus:border-bristol-cyan text-white"
-          placeholder="Enter the system prompt..."
-        />
+
+      {/* Prompt editor */}
+      <div className="flex-1 min-h-0 p-6">
+        <div className="h-full flex flex-col">
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-bristol-cyan mb-2">
+              Bristol Mega Prompt
+            </label>
+            <p className="text-xs text-bristol-cyan/60 mb-4">
+              This system prompt defines Bristol AI's expertise, knowledge base, and analytical approach for real estate intelligence.
+            </p>
+          </div>
+          
+          <div className="flex-1 min-h-0">
+            <textarea
+              value={systemPrompt}
+              onChange={(e) => setSystemPrompt(e.target.value)}
+              className={cx(
+                "w-full h-full text-sm leading-relaxed resize-none",
+                "bg-bristol-ink/60 border border-bristol-cyan/40 rounded-2xl p-4",
+                "focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/20",
+                "text-white placeholder-bristol-cyan/50 transition-all duration-200",
+                "hover:border-bristol-cyan/60 backdrop-blur"
+              )}
+              placeholder="Enter the Bristol AI system prompt that defines expertise, analytical approach, and knowledge domains..."
+            />
+          </div>
+        </div>
       </div>
-      <div className="p-3 border-t border-bristol-cyan/20 flex justify-end">
-        <button 
-          onClick={onSave} 
-          className="px-3 py-2 rounded-lg bg-gradient-to-r from-bristol-cyan to-bristol-maroon text-white text-sm font-semibold hover:opacity-90 transition-opacity"
-        >
-          Save Prompt
-        </button>
+
+      {/* Save controls */}
+      <div className="px-6 py-4 border-t border-bristol-cyan/20 bg-gradient-to-r from-bristol-ink/60 to-black/40 backdrop-blur">
+        <div className="flex items-center justify-between">
+          <div className="text-xs text-bristol-cyan/60">
+            Changes are saved locally and used for all future AI conversations
+          </div>
+          <button 
+            onClick={onSave} 
+            className={cx(
+              "inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold text-sm",
+              "bg-gradient-to-r from-bristol-cyan to-bristol-electric text-white shadow-lg",
+              "hover:from-bristol-electric hover:to-bristol-maroon hover:shadow-bristol-cyan/20",
+              "transition-all duration-200 transform hover:scale-105",
+              "border border-bristol-cyan/30 hover:border-bristol-electric/50"
+            )}
+          >
+            <Settings className="h-4 w-4" />
+            Save Configuration
+          </button>
+        </div>
       </div>
     </div>
   );
