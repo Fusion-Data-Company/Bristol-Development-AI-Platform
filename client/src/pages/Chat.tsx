@@ -40,12 +40,15 @@ export default function Chat() {
   // Create new session
   const createSessionMutation = useMutation({
     mutationFn: async (title: string) => {
-      return apiRequest('/api/chat/sessions', {
+      const response = await fetch('/api/chat/sessions', {
         method: 'POST',
-        body: { title }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title })
       });
+      if (!response.ok) throw new Error('Failed to create session');
+      return response.json();
     },
-    onSuccess: (newSession) => {
+    onSuccess: (newSession: any) => {
       setSelectedSession(newSession.id);
       queryClient.invalidateQueries({ queryKey: ['/api/chat/sessions'] });
     }
@@ -55,10 +58,13 @@ export default function Chat() {
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
       if (!selectedSession) throw new Error('No session selected');
-      return apiRequest(`/api/chat/sessions/${selectedSession}/messages`, {
+      const response = await fetch(`/api/chat/sessions/${selectedSession}/messages`, {
         method: 'POST',
-        body: { content }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content })
       });
+      if (!response.ok) throw new Error('Failed to send message');
+      return response.json();
     },
     onSuccess: () => {
       setMessage('');
@@ -148,7 +154,7 @@ export default function Chat() {
                         <div className="flex-1 text-left">
                           <p className="truncate">{session.title}</p>
                           <p className="text-xs text-muted-foreground">
-                            {format(new Date(session.createdAt), 'MMM d, h:mm a')}
+                            {session.createdAt ? format(new Date(session.createdAt), 'MMM d, h:mm a') : ''}
                           </p>
                         </div>
                       </Button>
@@ -223,7 +229,7 @@ export default function Chat() {
                             >
                               <p className="whitespace-pre-wrap">{msg.content}</p>
                               <p className="text-xs opacity-70 mt-1">
-                                {format(new Date(msg.createdAt), 'h:mm a')}
+                                {msg.createdAt ? format(new Date(msg.createdAt), 'h:mm a') : ''}
                               </p>
                             </div>
                           </div>
@@ -318,7 +324,7 @@ export default function Chat() {
                               <div>
                                 <p className="font-medium">{session.title}</p>
                                 <p className="text-sm text-muted-foreground">
-                                  {format(new Date(session.createdAt), 'MMMM d, yyyy h:mm a')}
+                                  {session.createdAt ? format(new Date(session.createdAt), 'MMMM d, yyyy h:mm a') : ''}
                                 </p>
                               </div>
                               <Button

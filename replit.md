@@ -7,15 +7,17 @@ Bristol Site Intelligence Platform is a comprehensive enterprise-grade AI-powere
 ## Recent Changes
 
 **August 2025**
-- ✓ **Bristol Floating AI Analyst Widget** - Integrated enterprise-grade floating analyst widget with OpenRouter AI integration
+- ✓ **Bristol Floating AI Analyst Widget** - Completed production-ready floating analyst widget with OpenRouter AI integration
   - Slide-out panel from left edge with Chat/Data/Admin tabs
-  - Model switcher supporting GPT-4o, Claude 3.5 Sonnet, GPT-4 Turbo, Gemini 1.5 Pro, and Llama 3.1
+  - Dynamic model fetching from OpenRouter API filtering to elite models only (GPT-5, Claude 4, Grok 4, Perplexity)
+  - Model switcher with automatic default selection preferring GPT-5 Chat
   - Admin tab for customizing Bristol mega-prompt with localStorage persistence
   - Data inspector showing all available app context (properties, demographics, analytics)
-  - Secure OpenRouter proxy endpoint at /api/openrouter (API key never exposed to frontend)
+  - Secure OpenRouter proxy endpoint at /api/openrouter using OPENROUTER_API_KEY2
   - Automatic data context injection into each AI request for grounded analysis
   - Optional n8n webhook integration for telemetry and logging
   - Bristol-branded UI with gradient styling matching platform design system
+  - Fixed all TypeScript compilation errors preventing app startup
 
 **August 2025 (Previous)**
 - ✓ **CRITICAL: Fixed API Tools Compatibility** - Successfully implemented compatibility layer that returns both new format `{ ok, rows, meta }` and legacy format `{ hasData, data }` for frontend
