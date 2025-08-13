@@ -9,7 +9,7 @@ import { HUDTool } from "../components/tools/HUDTool";
 import { FoursquareTool } from "../components/tools/FoursquareTool";
 import { FBITool } from "../components/tools/FBITool";
 import { NOAATool } from "../components/tools/NOAATool";
-import techBg from "@assets/abstract-digital-technology-concept-with-artificial-intelligence-dark-data-background-concept-digital-technology-artificial-intelligence-abstract-concept-dark-background-data-environment_864588-88878_1755124842693.avif";
+import globalTechBg from "@assets/persons-hand-holding-glowing-digital-globe-palm-their-hand-representing-global-connection-technology_885831-126040_1755124929584.avif";
 
 export function Tools() {
   const [activeTab, setActiveTab] = useState("bls");
@@ -17,11 +17,11 @@ export function Tools() {
   return (
     <Chrome>
       <div className="min-h-screen relative overflow-hidden">
-        {/* Abstract Digital Technology Background */}
+        {/* Global Digital Connection Background */}
         <div 
           className="absolute inset-0 bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url(${techBg})`,
+            backgroundImage: `url(${globalTechBg})`,
             backgroundSize: 'contain',
             backgroundPosition: 'center'
           }}
