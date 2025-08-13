@@ -1,0 +1,36 @@
+Here’s the exact Replit Builder prompt you can paste so it will dump everything I’d need to debug and stabilize your current state:
+
+⸻
+
+Prompt for Replit AI Builder
+
+Inspect my project and produce a full environment + runtime state report so I can pass it to another developer for debugging.
+Include:
+	1.	Framework detection – exact framework (Next.js, Vite, Remix, CRA, etc.), version numbers, and whether running in dev or prod mode.
+	2.	Entry points & build pipeline – list the entry file(s) (main.tsx, index.tsx, _app.tsx, etc.), bundler config (vite.config.js/ts, next.config.js), and any build commands in package.json.
+	3.	Routing setup – file/folder structure of pages or app directory, any dynamic routes, and API route files.
+	4.	Server setup – if custom Express/Fastify/etc. is used, show the server file(s) and middleware config.
+	5.	Env variables – list all env vars present in .env, .env.local, and Replit Secrets (values redacted, just show names).
+	6.	Dependencies – list full package.json dependencies + versions.
+	7.	Running processes & ports – show which dev servers are running, their host/port, and protocol (HTTP/HTTPS).
+	8.	WebSocket/HMR configuration – detect if @vite/client or HMR is running, and where it’s configured (vite.config.ts/js).
+	9.	Browser console errors – capture all console errors and warnings from current runtime in the browser, including full stack traces.
+	10.	Network tab logs – capture all failed or pending network requests with method, URL, status code, and response body (if available).
+	11.	Crash logs – any uncaught exceptions or stack traces from both client and server consoles.
+	12.	OpenRouter integration check – search the codebase for /api/openrouter and /api/openrouter-models routes; show full file contents if found.
+	13.	Global CSS & theme handling – identify theme providers, global styles, or Tailwind config that might affect rendering.
+	14.	Stateful components – detect if BristolFloatingWidget or any major components are imported into server components and where.
+
+Output this as a single markdown file with clear headings for each section and full code blocks for relevant configs or files.
+Do not summarize—return all the details you find so we can debug without assumptions.
+
+⸻
+
+When you bring me that report, I’ll be able to:
+	•	See if the crash is HMR/Vite related or widget logic
+	•	Check if /api/openrouter is actually in your codebase
+	•	Spot SSR vs client component problems
+	•	Fix the WebSocket error
+	•	Wire the widget end-to-end without more guessing
+
+Do you want me to also give you a slim version of that prompt that just outputs the critical network & crash diagnostics so you can get me answers faster? That might be quicker to run in Replit before doing the full dump.

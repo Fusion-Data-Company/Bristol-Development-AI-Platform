@@ -1,7 +1,7 @@
 import type { Express } from "express";
-import { createServer } from "http";
+import { createServer, type Server } from "http";
 
-export async function registerRoutes(app: Express) {
+export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
   // Simple health check
