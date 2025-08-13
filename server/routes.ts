@@ -80,15 +80,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Validate model against elite models allowlist (same as models endpoint)
       const ELITE_MODELS = new Set([
-        "openai/gpt-5-chat", 
-        "openai/gpt-5",
-        "anthropic/claude-opus-4", 
-        "anthropic/claude-sonnet-4",
-        "x-ai/grok-4",
-        "perplexity/sonar-deep-research", 
-        "perplexity/sonar-reasoning",
-        "perplexity/sonar-pro", 
-        "perplexity/sonar-reasoning-pro",
+        "openai/gpt-4o",
+        "openai/gpt-4o-mini",
+        "openai/gpt-4-turbo",
+        "anthropic/claude-3.5-sonnet",
+        "anthropic/claude-3-opus",
+        "anthropic/claude-3-haiku",
+        "google/gemini-2.0-flash-exp",
+        "google/gemini-pro-1.5",
+        "meta-llama/llama-3.1-70b-instruct",
+        "meta-llama/llama-3.1-405b-instruct",
+        "perplexity/sonar",
+        "x-ai/grok-2",
+        "x-ai/grok-2-vision-1212",
+        "deepseek/deepseek-chat",
+        "mistralai/mistral-large"
       ]);
       
       if (!ELITE_MODELS.has(model)) {

@@ -1,0 +1,153 @@
+Skip to content
+
+OpenRouter
+Search
+/
+Models
+Chat
+Rankings
+Docs
+
+Avatar for 
+xAI: Grok 4
+x-ai/grok-4
+
+Chat
+Compare
+Created Jul 9, 2025
+256,000 context
+Starting at $3/M input tokens
+Starting at $15/M output tokens
+
+Technology (#6)
+Grok 4 is xAI's latest reasoning model with a 256k context window. It supports parallel tool calling, structured outputs, and both image and text inputs. Note that reasoning is not exposed, reasoning cannot be disabled, and the reasoning effort cannot be specified. Pricing increases once the total tokens in a given request is greater than 128k tokens. See more details on the xAI docs
+
+
+Overview
+Providers
+Apps
+Activity
+Uptime
+API
+Sample code and API for Grok 4
+OpenRouter normalizes requests and responses across providers for you.
+Create API key
+OpenRouter provides an OpenAI-compatible completion API to 400+ models & providers that you can call directly, or using the OpenAI SDK. Additionally, some third-party SDKs are available.
+
+In the examples below, the OpenRouter-specific headers are optional. Setting them allows your app to appear on the OpenRouter leaderboards.
+
+openai-python
+python
+typescript
+openai-typescript
+curl
+
+Copy
+from openai import OpenAI
+
+client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key="<OPENROUTER_API_KEY>",
+)
+
+completion = client.chat.completions.create(
+  extra_headers={
+    "HTTP-Referer": "<YOUR_SITE_URL>", # Optional. Site URL for rankings on openrouter.ai.
+    "X-Title": "<YOUR_SITE_NAME>", # Optional. Site title for rankings on openrouter.ai.
+  },
+  extra_body={},
+  model="x-ai/grok-4",
+  messages=[
+    {
+      "role": "user",
+      "content": [
+        {
+          "type": "text",
+          "text": "What is in this image?"
+        },
+        {
+          "type": "image_url",
+          "image_url": {
+            "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Gfp-wisconsin-madison-the-nature-boardwalk.jpg/2560px-Gfp-wisconsin-madison-the-nature-boardwalk.jpg"
+          }
+        }
+      ]
+    }
+  ]
+)
+print(completion.choices[0].message.content)
+Using third-party SDKs
+For information about using third-party SDKs and frameworks with OpenRouter, please see our frameworks documentation.
+
+See the Request docs for all possible fields, and Parameters for explanations of specific sampling parameters.
+
+More models from xAI
+Grok 3 Mini
+A lightweight model that thinks before responding. Fast, smart, and great for logic-based tasks that do not require deep domain knowledge. The raw thinking traces are accessible.
+
+Grok 3
+Grok 3 is the latest model from xAI. It's their flagship model that excels at enterprise use cases like data extraction, coding, and text summarization. Possesses deep domain knowledge in finance, healthcare, law, and science.
+
+Grok 3 Mini Beta
+Grok 3 Mini is a lightweight, smaller thinking model. Unlike traditional models that generate answers immediately, Grok 3 Mini thinks before responding. It’s ideal for reasoning-heavy tasks that don’t demand extensive domain knowledge, and shines in math-specific and quantitative use cases, such as solving challenging puzzles or math problems.
+
+Transparent "thinking" traces accessible. Defaults to low reasoning, can boost with setting reasoning: { effort: "high" }
+
+Note: That there are two xAI endpoints for this model. By default when using this model we will always route you to the base endpoint. If you want the fast endpoint you can add provider: { sort: throughput}, to sort by throughput instead.
+
+Grok 3 Beta
+Grok 3 is the latest model from xAI. It's their flagship model that excels at enterprise use cases like data extraction, coding, and text summarization. Possesses deep domain knowledge in finance, healthcare, law, and science.
+
+Excels in structured tasks and benchmarks like GPQA, LCB, and MMLU-Pro where it outperforms Grok 3 Mini even on high thinking.
+
+Note: That there are two xAI endpoints for this model. By default when using this model we will always route you to the base endpoint. If you want the fast endpoint you can add provider: { sort: throughput}, to sort by throughput instead.
+
+Grok 2 Vision 1212
+Grok 2 Vision 1212 advances image-based AI with stronger visual comprehension, refined instruction-following, and multilingual support. From object recognition to style analysis, it empowers developers to build more intuitive, visually aware applications. Its enhanced steerability and reasoning establish a robust foundation for next-generation image solutions.
+
+To read more about this model, check out xAI's announcement.
+
+Grok 2 1212
+Grok 2 1212 introduces significant enhancements to accuracy, instruction adherence, and multilingual support, making it a powerful and flexible choice for developers seeking a highly steerable, intelligent model.
+
+Grok Vision Beta
+Grok Vision Beta is xAI's experimental language model with vision capability.
+
+Grok Beta
+Grok Beta is xAI's experimental language model with state-of-the-art reasoning capabilities, best for complex and multi-step use cases.
+
+It is the successor of Grok 2 with enhanced context length.
+
+Grok 2 mini
+Grok 2 Mini is xAI's fast, lightweight language model that offers a balance between speed and answer quality.
+
+To use the stronger model, see Grok Beta.
+
+For more information, see the launch announcement.
+
+Grok 2
+Grok 2 is xAI's frontier language model with state-of-the-art reasoning capabilities, best for complex and multi-step use cases.
+
+To use a faster version, see Grok 2 Mini.
+
+For more information, see the launch announcement.
+
+Previous slideNext slide
+Status
+Announcements
+Docs
+About
+Partners
+Enterprise
+Careers
+Pricing
+Privacy
+Terms
+ 
+© 2023 – 2025 OpenRouter, Inc
+
+
+
+
+xAI: Grok 4 – Run with an API | OpenRouter
+6

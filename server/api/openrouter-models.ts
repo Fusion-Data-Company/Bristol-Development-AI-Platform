@@ -3,28 +3,40 @@ import { Router } from 'express';
 const router = Router();
 
 const ELITE_MODELS = new Set<string>([
-  "openai/gpt-5-chat", 
-  "openai/gpt-5",
-  "anthropic/claude-opus-4", 
-  "anthropic/claude-sonnet-4",
-  "x-ai/grok-4",
-  "perplexity/sonar-deep-research", 
-  "perplexity/sonar-reasoning",
-  "perplexity/sonar-pro", 
-  "perplexity/sonar-reasoning-pro",
+  "openai/gpt-4o",
+  "openai/gpt-4o-mini",
+  "openai/gpt-4-turbo",
+  "anthropic/claude-3.5-sonnet",
+  "anthropic/claude-3-opus",
+  "anthropic/claude-3-haiku",
+  "google/gemini-2.0-flash-exp",
+  "google/gemini-pro-1.5",
+  "meta-llama/llama-3.1-70b-instruct",
+  "meta-llama/llama-3.1-405b-instruct",
+  "perplexity/sonar",
+  "x-ai/grok-2",
+  "x-ai/grok-2-vision-1212",
+  "deepseek/deepseek-chat",
+  "mistralai/mistral-large"
 ]);
 
 function getModelLabel(slug: string): string {
   const labelMap: Record<string, string> = {
-    "openai/gpt-5-chat": "GPT-5 Chat",
-    "openai/gpt-5": "GPT-5",
-    "anthropic/claude-opus-4": "Claude 4 Opus",
-    "anthropic/claude-sonnet-4": "Claude 4 Sonnet",
-    "x-ai/grok-4": "Grok 4",
-    "perplexity/sonar-deep-research": "Perplexity Sonar Deep Research",
-    "perplexity/sonar-reasoning": "Perplexity Sonar Reasoning",
-    "perplexity/sonar-pro": "Perplexity Sonar Pro",
-    "perplexity/sonar-reasoning-pro": "Perplexity Sonar Reasoning Pro",
+    "openai/gpt-4o": "GPT-4o",
+    "openai/gpt-4o-mini": "GPT-4o Mini",
+    "openai/gpt-4-turbo": "GPT-4 Turbo",
+    "anthropic/claude-3.5-sonnet": "Claude 3.5 Sonnet",
+    "anthropic/claude-3-opus": "Claude 3 Opus",
+    "anthropic/claude-3-haiku": "Claude 3 Haiku",
+    "google/gemini-2.0-flash-exp": "Gemini 2.0 Flash",
+    "google/gemini-pro-1.5": "Gemini Pro 1.5",
+    "meta-llama/llama-3.1-70b-instruct": "Llama 3.1 70B",
+    "meta-llama/llama-3.1-405b-instruct": "Llama 3.1 405B",
+    "perplexity/sonar": "Perplexity Sonar",
+    "x-ai/grok-2": "Grok 2",
+    "x-ai/grok-2-vision-1212": "Grok 2 Vision",
+    "deepseek/deepseek-chat": "DeepSeek Chat",
+    "mistralai/mistral-large": "Mistral Large"
   };
   return labelMap[slug] || slug;
 }
@@ -62,9 +74,9 @@ router.get('/', async (req, res) => {
         context: m.context_length || 0
       }));
 
-    // Prefer GPT-5 Chat if both are present
+    // Prefer GPT-4o as the default model
     filtered.sort((a: any, b: any) => {
-      const preferred = ["openai/gpt-5-chat", "openai/gpt-5"];
+      const preferred = ["openai/gpt-4o", "anthropic/claude-3.5-sonnet", "google/gemini-2.0-flash-exp"];
       const aIndex = preferred.indexOf(a.id);
       const bIndex = preferred.indexOf(b.id);
       if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;

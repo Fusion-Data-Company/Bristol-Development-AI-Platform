@@ -1,0 +1,151 @@
+Skip to content
+
+OpenRouter
+Search
+/
+Models
+Chat
+Rankings
+Docs
+
+Avatar for 
+Perplexity: Sonar Deep Research
+perplexity/sonar-deep-research
+
+Chat
+Compare
+Created Mar 7, 2025
+128,000 context
+$2/M input tokens
+$8/M output tokens
+$5/K web search
+Sonar Deep Research is a research-focused model designed for multi-step retrieval, synthesis, and reasoning across complex topics. It autonomously searches, reads, and evaluates sources, refining its approach as it gathers information. This enables comprehensive report generation across domains like finance, technology, health, and current events.
+
+Notes on Pricing (Source)
+
+Input tokens comprise of Prompt tokens (user prompt) + Citation tokens (these are processed tokens from running searches)
+Deep Research runs multiple searches to conduct exhaustive research. Searches are priced at $5/1000 searches. A request that does 30 searches will cost $0.15 in this step.
+Reasoning is a distinct step in Deep Research since it does extensive automated reasoning through all the material it gathers during its research phase. Reasoning tokens here are a bit different than the CoTs in the answer - these are tokens that we use to reason through the research material prior to generating the outputs via the CoTs. Reasoning tokens are priced at $3/1M tokens
+
+Overview
+Providers
+Apps
+Activity
+Uptime
+API
+Sample code and API for Sonar Deep Research
+OpenRouter normalizes requests and responses across providers for you.
+Create API key
+OpenRouter provides an OpenAI-compatible completion API to 400+ models & providers that you can call directly, or using the OpenAI SDK. Additionally, some third-party SDKs are available.
+
+In the examples below, the OpenRouter-specific headers are optional. Setting them allows your app to appear on the OpenRouter leaderboards.
+
+openai-python
+python
+typescript
+openai-typescript
+curl
+
+Copy
+from openai import OpenAI
+
+client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key="<OPENROUTER_API_KEY>",
+)
+
+completion = client.chat.completions.create(
+  extra_headers={
+    "HTTP-Referer": "<YOUR_SITE_URL>", # Optional. Site URL for rankings on openrouter.ai.
+    "X-Title": "<YOUR_SITE_NAME>", # Optional. Site title for rankings on openrouter.ai.
+  },
+  extra_body={},
+  model="perplexity/sonar-deep-research",
+  messages=[
+    {
+      "role": "user",
+      "content": "What is the meaning of life?"
+    }
+  ]
+)
+print(completion.choices[0].message.content)
+Using third-party SDKs
+For information about using third-party SDKs and frameworks with OpenRouter, please see our frameworks documentation.
+
+See the Request docs for all possible fields, and Parameters for explanations of specific sampling parameters.
+
+More models from Perplexity
+Sonar Reasoning Pro
+Note: Sonar Pro pricing includes Perplexity search pricing. See details here
+
+Sonar Reasoning Pro is a premier reasoning model powered by DeepSeek R1 with Chain of Thought (CoT). Designed for advanced use cases, it supports in-depth, multi-step queries with a larger context window and can surface more citations per search, enabling more comprehensive and extensible responses.
+
+Sonar Pro
+Note: Sonar Pro pricing includes Perplexity search pricing. See details here
+
+For enterprises seeking more advanced capabilities, the Sonar Pro API can handle in-depth, multi-step queries with added extensibility, like double the number of citations per search as Sonar on average. Plus, with a larger context window, it can handle longer and more nuanced searches and follow-up questions.
+
+R1 1776
+R1 1776 is a version of DeepSeek-R1 that has been post-trained to remove censorship constraints related to topics restricted by the Chinese government. The model retains its original reasoning capabilities while providing direct responses to a wider range of queries. R1 1776 is an offline chat model that does not use the perplexity search subsystem.
+
+The model was tested on a multilingual dataset of over 1,000 examples covering sensitive topics to measure its likelihood of refusal or overly filtered responses. Evaluation Results Its performance on math and reasoning benchmarks remains similar to the base R1 model. Reasoning Performance
+
+Read more on the Blog Post
+
+Sonar Reasoning
+Sonar Reasoning is a reasoning model provided by Perplexity based on DeepSeek R1.
+
+It allows developers to utilize long chain of thought with built-in web search. Sonar Reasoning is uncensored and hosted in US datacenters.
+
+Sonar
+Sonar is lightweight, affordable, fast, and simple to use — now featuring citations and the ability to customize sources. It is designed for companies seeking to integrate lightweight question-and-answer features optimized for speed.
+
+Llama 3.1 Sonar 8B Online
+Llama 3.1 Sonar is Perplexity's latest model family. It surpasses their earlier Sonar models in cost-efficiency, speed, and performance.
+
+This is the online version of the offline chat model. It is focused on delivering helpful, up-to-date, and factual responses. #online
+
+Llama 3.1 Sonar 70B Online
+Llama 3.1 Sonar is Perplexity's latest model family. It surpasses their earlier Sonar models in cost-efficiency, speed, and performance.
+
+This is the online version of the offline chat model. It is focused on delivering helpful, up-to-date, and factual responses. #online
+
+Llama3 Sonar 70B Online
+Llama3 Sonar is Perplexity's latest model family. It surpasses their earlier Sonar models in cost-efficiency, speed, and performance.
+
+This is the online version of the offline chat model. It is focused on delivering helpful, up-to-date, and factual responses. #online
+
+Llama3 Sonar 8B
+Llama3 Sonar is Perplexity's latest model family. It surpasses their earlier Sonar models in cost-efficiency, speed, and performance.
+
+This is a normal offline LLM, but the online version of this model has Internet access.
+
+Llama3 Sonar 8B Online
+Llama3 Sonar is Perplexity's latest model family. It surpasses their earlier Sonar models in cost-efficiency, speed, and performance.
+
+This is the online version of the offline chat model. It is focused on delivering helpful, up-to-date, and factual responses. #online
+
+Llama3 Sonar 70B
+Llama3 Sonar is Perplexity's latest model family. It surpasses their earlier Sonar models in cost-efficiency, speed, and performance.
+
+This is a normal offline LLM, but the online version of this model has Internet access.
+
+Previous slideNext slide
+Status
+Announcements
+Docs
+About
+Partners
+Enterprise
+Careers
+Pricing
+Privacy
+Terms
+ 
+© 2023 – 2025 OpenRouter, Inc
+
+
+
+
+Perplexity: Sonar Deep Research – Run with an API | OpenRouter
+150M
