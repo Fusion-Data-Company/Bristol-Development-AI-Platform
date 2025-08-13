@@ -270,35 +270,11 @@ export default function BristolFloatingWidget({
   return (
     <>
       {/* Bristol Brain Launcher Button */}
-      <button
+      <div
         onClick={() => setOpen(true)}
         className="bristol-brain-button"
         style={{
-          position: 'fixed !important',
-          top: '80px !important',
-          left: '0px !important',
-          right: 'auto !important',
-          bottom: 'auto !important',
-          zIndex: '9999 !important',
-          display: 'flex !important',
-          alignItems: 'center !important',
-          gap: '12px !important',
-          paddingLeft: '12px !important',
-          paddingRight: '20px !important',
-          paddingTop: '16px !important',
-          paddingBottom: '16px !important',
-          background: 'linear-gradient(to right, rgba(139, 21, 56, 0.95), rgba(45, 48, 62, 0.95), rgba(0, 191, 255, 0.85)) !important',
-          color: 'white !important',
-          borderTopRightRadius: '24px !important',
-          borderBottomRightRadius: '24px !important',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 191, 255, 0.4) !important',
-          backdropFilter: 'blur(16px) !important',
-          border: '1px solid rgba(0, 191, 255, 0.4) !important',
-          transition: 'all 0.7s cubic-bezier(0.4, 0, 0.2, 1) !important',
-          fontFamily: 'Cinzel, serif !important',
-          overflow: 'hidden !important',
-          cursor: 'pointer !important',
-          filter: 'drop-shadow(0 0 20px rgba(0, 191, 255, 0.4)) !important',
+          filter: 'drop-shadow(0 0 20px rgba(0, 191, 255, 0.4))',
         }}
         aria-label="Open Bristol Brain"
       >
@@ -329,7 +305,7 @@ export default function BristolFloatingWidget({
           display: 'flex',
           alignItems: 'center', 
           gap: '12px',
-          color: 'white !important'
+          color: 'white'
         }}>
           <div style={{ position: 'relative' }}>
             <Brain style={{ 
@@ -355,14 +331,14 @@ export default function BristolFloatingWidget({
               fontSize: '14px',
               fontWeight: 'bold',
               letterSpacing: '0.05em',
-              color: '#00bfff !important',
+              color: '#00bfff',
               transition: 'color 0.3s',
             }}>
               BRISTOL BRAIN
             </div>
             <div style={{
               fontSize: '12px',
-              color: 'rgba(255, 178, 0, 0.8) !important',
+              color: 'rgba(255, 178, 0, 0.8)',
               fontWeight: '500',
               transition: 'color 0.3s',
             }}>
@@ -376,7 +352,7 @@ export default function BristolFloatingWidget({
             transition: 'all 0.3s',
           }} />
         </div>
-      </button>
+      </div>
 
       {/* Slideout Panel */}
       {open && (

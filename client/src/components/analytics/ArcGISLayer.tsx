@@ -148,10 +148,18 @@ export function useArcGISDemographics(bbox?: [number, number, number, number]) {
           returnGeometry: 'false'
         });
 
-        const response = await fetch(`${layerUrl}?${params}`);
-        if (!response.ok) {
-          console.warn(`ArcGIS API returned ${response.status}, using empty dataset`);
+        const response = await fetch(`${layerUrl}?${params}`).catch(() => {
+          // Network error - return empty data silently
           setData([]);
+          setLoading(false);
+          return null;
+        });
+        
+        if (!response) return;
+        
+        if (!response.ok) {
+          setData([]);
+          setLoading(false);
           return;
         }
         
@@ -170,14 +178,18 @@ export function useArcGISDemographics(bbox?: [number, number, number, number]) {
           setData(demographics);
         }
       } catch (error) {
-        console.warn('ArcGIS demographics temporarily unavailable:', error.message || 'Unknown error');
-        setData([]); // Set empty array on error to prevent infinite loops
+        // Silently handle all errors - no console logging to prevent unhandled rejections
+        setData([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDemographics();
+    fetchDemographics().catch(() => {
+      // Final catch to prevent any unhandled promise rejections
+      setData([]);
+      setLoading(false);
+    });
   }, [bbox]);
 
   return { data, loading };
