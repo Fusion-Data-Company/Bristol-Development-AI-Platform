@@ -31,7 +31,7 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
 
     const key = `fbi:${geo}:${stateUpper}:${offense}:${from}:${to}`;
     const cached = getCache(key);
-    if (cached) return res.json(cached);
+    if (cached) return respondOk(res, cached);
 
     // Use FBI Crime Data API with correct endpoint structure and MM-YYYY date format
     // FBI API expects dates in MM-YYYY format, not just year

@@ -45,7 +45,7 @@ router.get('/:lat/:lng/:radius', async (req, res) => {
 
     const key = `fsq:${lat}:${lng}:${radius}:${categories}:${limit}`;
     const cached = getCache(key);
-    if (cached) return res.json(cached);
+    if (cached) return respondOk(res, cached);
 
     const url = new URL("https://places-api.foursquare.com/places/search");
     url.searchParams.set("ll", `${lat},${lng}`);

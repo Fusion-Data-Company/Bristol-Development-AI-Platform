@@ -50,7 +50,7 @@ router.get('/', async (req, res) => {
     const key = `bea:${geo}:${msa}:${state}:${county}:${startYear}:${endYear}`;
     const cached = getCache(key);
     if (cached) {
-      return res.json(cached);
+      return respondOk(res, cached);
     }
 
     // Known-good tables:

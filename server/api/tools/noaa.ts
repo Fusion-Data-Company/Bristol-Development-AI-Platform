@@ -80,7 +80,7 @@ router.get('/', async (req, res) => {
     if (station) {
       const key2 = `noaa:data:${dataset}:${station}:${startDate}:${endDate}`;
       const cached2 = getCache(key2);
-      if (cached2) return res.json(cached2);
+      if (cached2) return respondOk(res, cached2);
 
       const dataUrl = `https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=${encodeURIComponent(station)}&startdate=${startDate}&enddate=${endDate}&datatypeid=TMIN,TMAX,PRCP&limit=1000&units=standard`;
       const headers = { 'token': process.env.NOAA_API_KEY || '' };

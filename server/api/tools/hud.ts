@@ -76,7 +76,7 @@ router.get('/:mode/:zip/:lookbackQ', async (req, res) => {
       const latestUrl = `${HUD_BASE}/portal/sites/default/files/zip_by_quarter/latest_zip_usps.csv`;
       const key = `hud:vacancy:${latestUrl}:${zip}:${lookbackQ}`;
       const cached = getCache(key);
-      if (cached) return res.json(cached);
+      if (cached) return respondOk(res, cached);
 
       const csv = await fetchText(latestUrl);
       // very simple CSV parse (no commas in fields in this dataset)

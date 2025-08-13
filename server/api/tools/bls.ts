@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
     const key = `bls:${level}:${state}:${county}:${start}:${end}`;
     const cached = getCache(key);
     if (cached) {
-      return res.json(cached);
+      return respondOk(res, cached);
     }
 
     // Correct LAUS county unemployment rate series id:

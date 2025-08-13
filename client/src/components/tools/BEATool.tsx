@@ -119,7 +119,7 @@ export function BEATool() {
     
     const csvContent = "data:text/csv;charset=utf-8," + 
       "Year,Value\n" +
-      data.rows.map(row => `${row.year},${row.value}`).join("\n");
+      data.rows.map((row: { year: number; value: number }) => `${row.year},${row.value}`).join("\n");
     
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -131,11 +131,11 @@ export function BEATool() {
   };
 
   const chartData = data ? {
-    labels: data.rows.map(row => row.year.toString()),
+    labels: data.rows.map((row: { year: number }) => row.year.toString()),
     datasets: [
       {
         label: data.meta.label,
-        data: data.rows.map(row => row.value),
+        data: data.rows.map((row: { value: number }) => row.value),
         borderColor: '#D4A574', // Bristol gold
         backgroundColor: '#D4A574',
         tension: 0.1,
