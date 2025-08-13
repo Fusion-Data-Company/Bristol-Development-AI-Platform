@@ -16,20 +16,15 @@ export function Tools() {
   return (
     <Chrome>
       <div className="min-h-screen relative overflow-hidden">
-        {/* AI Circuit Board Background */}
+        {/* Cyberpunk Digital Portrait Background */}
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('/attached_assets/Screenshot 2025-08-13 at 15.34.14_1755124461851.png')`,
+            backgroundImage: `url('/attached_assets/digital-portrait-woman-with-glowing-lines-code-cyberpunk-art-style_1341597-2299_1755124604878.jpg')`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'brightness(0.25) contrast(1.3) saturate(0.9)'
+            backgroundPosition: 'center'
           }}
         ></div>
-        {/* Dark overlay for content readability */}
-        <div className="absolute inset-0 bg-black/75"></div>
-        {/* Subtle tech gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/8 via-purple-500/5 to-pink-500/8"></div>
         <div className="container mx-auto px-4 py-8 relative z-10">
           {/* Enterprise Elite Header */}
           <div className="mb-8 relative">
