@@ -74,24 +74,30 @@ Available Data Context includes:
 
 Provide actionable intelligence for property investment, development, and portfolio optimization decisions.`;
 
-// ---------- Common OpenRouter model identifiers (your proxy should map/validate) ----------
-const DEFAULT_MODELS = [
-  { id: "openai/gpt-4o", label: "GPT-4o (Latest)" },
-  { id: "anthropic/claude-3.5-sonnet", label: "Claude 3.5 Sonnet" },
-  { id: "openai/gpt-4-turbo", label: "GPT-4 Turbo" },
-  { id: "google/gemini-1.5-pro", label: "Gemini 1.5 Pro" },
-  { id: "meta-llama/llama-3.1-70b-instruct", label: "Llama 3.1 70B" },
-];
+// ---------- Types for dynamic models ----------
+type ModelOption = { id: string; label: string; context?: number };
 
 // ---------- Utilities ----------
 const nowISO = () => new Date().toISOString();
 const cx = (...classes: (string | undefined | false)[]) => classes.filter(Boolean).join(" ");
 
+// Safe JSON stringify to handle circular references
+function safeStringify(obj: any, space = 2) {
+  const seen = new WeakSet();
+  return JSON.stringify(obj, (k, v) => {
+    if (typeof v === "object" && v !== null) {
+      if (seen.has(v)) return "[Circular]";
+      seen.add(v);
+    }
+    return v;
+  }, space);
+}
+
 // ---------- Component ----------
 export default function BristolFloatingWidget({
   appData = {},
   defaultSystemPrompt,
-  defaultModel = DEFAULT_MODELS[0].id,
+  defaultModel,
   webhookUrl,
   onSaveSystemPrompt,
   onSend,
@@ -99,16 +105,56 @@ export default function BristolFloatingWidget({
 }: BristolWidgetProps) {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"chat" | "data" | "admin">("chat");
-  const [model, setModel] = useState(defaultModel);
-  const [systemPrompt, setSystemPrompt] = useState<string>(() =>
-    localStorage.getItem("bristol.systemPrompt") || defaultSystemPrompt || DEFAULT_MEGA_PROMPT
-  );
+  const [model, setModel] = useState(defaultModel || "");
+  const [modelList, setModelList] = useState<ModelOption[]>([]);
+  const [systemPrompt, setSystemPrompt] = useState<string>(defaultSystemPrompt || DEFAULT_MEGA_PROMPT);
   const [messages, setMessages] = useState<ChatMessage[]>([
     { role: "system", content: systemPrompt, createdAt: nowISO() },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [modelError, setModelError] = useState<string>("");
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // SSR-safe localStorage loading
+  useEffect(() => {
+    try {
+      const saved = typeof window !== "undefined" ? localStorage.getItem("bristol.systemPrompt") : null;
+      if (saved) setSystemPrompt(saved);
+    } catch (error) {
+      console.warn("Failed to load saved system prompt:", error);
+    }
+  }, []);
+
+  // Fetch dynamic model list from OpenRouter
+  useEffect(() => {
+    const fetchModels = async () => {
+      try {
+        const response = await fetch("/api/openrouter-models", { cache: "no-store" });
+        if (!response.ok) throw new Error(`Failed to fetch models: ${response.status}`);
+        
+        const models: ModelOption[] = await response.json();
+        setModelList(models);
+        
+        // Set default model - prefer GPT-5 Chat, then GPT-5, then first available
+        const preferred = models.find(m => m.id === "openai/gpt-5-chat") || 
+                         models.find(m => m.id === "openai/gpt-5") ||
+                         models[0];
+        
+        if (preferred) {
+          setModel(preferred.id);
+        } else {
+          setModelError("No eligible models for this API key (GPT-5 may require BYOK).");
+        }
+      } catch (error) {
+        console.error("Error fetching models:", error);
+        setModelError("Failed to load model list. Check your OpenRouter API key.");
+        setModelList([]);
+      }
+    };
+
+    fetchModels();
+  }, []);
 
   // Keep the system message in sync if user edits Admin tab
   useEffect(() => {
@@ -160,7 +206,7 @@ export default function BristolFloatingWidget({
 
     try {
       await onSend?.(payload);
-      await sendTelemetry("chat_send", { model, promptSize: JSON.stringify(newMessages).length });
+      await sendTelemetry("chat_send", { model, promptSize: safeStringify(newMessages).length });
     } catch (error) {
       console.error("Error in onSend callback or telemetry:", error);
     }
@@ -246,14 +292,24 @@ export default function BristolFloatingWidget({
 
             {/* Controls */}
             <div className="px-4 py-3 flex flex-wrap items-center gap-3 border-b border-bristol-cyan/20 bg-black/20">
+              {modelError && (
+                <div className="w-full text-xs text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-3 py-2">
+                  {modelError}
+                </div>
+              )}
               <select
-                className="bg-black/40 border border-bristol-cyan/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-bristol-cyan"
+                className="bg-black/40 border border-bristol-cyan/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-bristol-cyan disabled:opacity-50"
                 value={model}
                 onChange={(e) => setModel(e.target.value)}
+                disabled={modelList.length === 0}
               >
-                {DEFAULT_MODELS.map((m) => (
-                  <option key={m.id} value={m.id}>{m.label}</option>
-                ))}
+                {modelList.length === 0 ? (
+                  <option value="">Loading models...</option>
+                ) : (
+                  modelList.map((m: ModelOption) => (
+                    <option key={m.id} value={m.id}>{m.label}</option>
+                  ))
+                )}
               </select>
 
               <div className="ml-auto flex items-center gap-2 text-xs text-bristol-cyan/70">
@@ -363,7 +419,7 @@ function DataPane({ data }: { data: any }) {
   return (
     <div className="h-full overflow-y-auto p-4">
       <pre className="text-xs leading-relaxed bg-black/40 p-3 rounded-lg border border-bristol-cyan/20 overflow-x-auto text-bristol-cyan/80">
-        {JSON.stringify(data, null, 2)}
+        {safeStringify(data, 2)}
       </pre>
       <p className="text-xs text-bristol-cyan/60 mt-3">
         This shows all the data context available to the AI analyst including properties, demographics, and external API data.

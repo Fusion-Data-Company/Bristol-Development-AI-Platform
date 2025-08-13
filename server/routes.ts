@@ -56,6 +56,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/tools/noaa', isAuthenticated, noaaRouter);
   app.use('/api/snapshots', isAuthenticated, snapshotsRouter);
 
+  // OpenRouter models endpoint
+  const openrouterModelsRouter = (await import('./api/openrouter-models')).default;
+  app.use('/api/openrouter-models', isAuthenticated, openrouterModelsRouter);
+
   // ACS enrichment and GeoJSON routes
   const { enrichSites } = await import('./api/enrich');
   const { getSitesGeoJSON } = await import('./api/sites-geojson');
@@ -93,10 +97,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: "OpenRouter API key not configured. Please set OPENROUTER_API_KEY2 environment variable." });
       }
 
-      // Find system message and inject data context
+      // Find system message and inject data context with safe stringify
       const sysIndex = messages.findIndex((m: any) => m.role === "system");
       const baseSystem = sysIndex >= 0 ? messages[sysIndex].content : "";
-      const groundedSystem = baseSystem + "\n\nDATA CONTEXT (JSON):\n" + JSON.stringify(dataContext).slice(0, 50000);
+      
+      // Safe stringify to handle circular references
+      const safeStringify = (obj: any) => {
+        const seen = new WeakSet();
+        return JSON.stringify(obj, (k, v) => {
+          if (typeof v === "object" && v !== null) {
+            if (seen.has(v)) return "[Circular]";
+            seen.add(v);
+          }
+          return v;
+        });
+      };
+      
+      const groundedSystem = baseSystem + "\n\nDATA CONTEXT (JSON):\n" + safeStringify(dataContext).slice(0, 50000);
 
       const finalMessages = [
         { role: "system", content: groundedSystem },
