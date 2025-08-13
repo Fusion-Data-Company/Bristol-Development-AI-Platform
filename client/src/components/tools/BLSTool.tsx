@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Download, Save, TrendingUp, TrendingDown, Minus, BarChart3, Brain, Cpu } from "lucide-react";
+import { Loader2, Download, Save, TrendingUp, TrendingDown, Minus, BarChart3, Brain, Cpu, Briefcase } from "lucide-react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -178,17 +178,49 @@ export function BLSTool() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Controls */}
-      <div className="bristol-enterprise-card rounded-2xl p-8 shadow-xl border-2 border-bristol-gold/20">
+    <div className="space-y-8">
+      {/* MEGA HEADER */}
+      <div className="text-center space-y-6 bristol-enterprise-card p-12 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-purple-50/50 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-bristol-gold/10 animate-pulse"></div>
+        <div className="relative z-10">
+          <div className="flex items-center justify-center gap-6 mb-6">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 shadow-xl animate-bounce">
+              <Briefcase className="h-16 w-16 text-blue-600 drop-shadow-lg" />
+            </div>
+            <h1 className="text-7xl font-black bg-gradient-to-r from-blue-800 via-purple-600 via-bristol-gold to-indigo-800 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+              📊 Bureau of Labor Statistics
+            </h1>
+          </div>
+          <div className="space-y-4">
+            <p className="text-slate-800 text-3xl font-black max-w-5xl mx-auto leading-relaxed">
+              🚀 <span className="bg-gradient-to-r from-bristol-gold to-amber-600 bg-clip-text text-transparent">Real-Time Employment Intelligence Platform</span>
+            </p>
+            <p className="text-slate-700 text-xl font-bold max-w-4xl mx-auto leading-relaxed">
+              💼 Live Employment Data • 📈 Unemployment Rates • 🎯 Labor Market Intelligence 
+              <br />
+              ⚡ Workforce Analysis • 🔍 Economic Insights • 📊 Bristol-Powered Analytics
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ENHANCED Controls */}
+      <div className="bristol-enterprise-card rounded-3xl p-12 shadow-2xl border-4 border-bristol-gold/40 bg-gradient-to-br from-white/98 via-blue-50/30 to-bristol-gold/10 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bristol-gold/5 to-transparent animate-pulse"></div>
+        <div className="relative z-10">
+          <h3 className="text-3xl font-black text-slate-900 mb-8 text-center bg-gradient-to-r from-bristol-maroon to-bristol-gold bg-clip-text text-transparent">
+            🎛️ Intelligence Configuration Panel
+          </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <Label htmlFor="level" className="text-slate-800 font-bold text-lg tracking-wide">Geographic Level</Label>
+            <Label htmlFor="level" className="text-slate-900 font-black text-xl tracking-wide flex items-center gap-2">
+              📍 Geographic Level
+            </Label>
             <Select value={level} onValueChange={setLevel}>
-              <SelectTrigger className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12">
+              <SelectTrigger className="bg-gradient-to-r from-bristol-gold/10 via-white/95 to-amber-50/80 border-3 border-bristol-gold/40 text-slate-900 font-black shadow-xl hover:border-bristol-gold/70 hover:scale-105 hover:shadow-2xl transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bristol-enterprise-card border-2 border-bristol-gold/30 rounded-xl">
+              <SelectContent className="bg-gradient-to-br from-white/98 to-bristol-gold/10 border-3 border-bristol-gold/50 rounded-2xl shadow-2xl backdrop-blur-xl p-2">
                 <SelectItem value="county">County</SelectItem>
                 <SelectItem value="msa">Metropolitan Area</SelectItem>
               </SelectContent>
@@ -198,23 +230,27 @@ export function BLSTool() {
         {level === "county" && (
           <>
             <div>
-              <Label htmlFor="state" className="text-slate-800 font-bold text-lg tracking-wide">State FIPS</Label>
+              <Label htmlFor="state" className="text-slate-900 font-black text-xl tracking-wide flex items-center gap-2">
+                🏛️ State FIPS Code
+              </Label>
               <Input
                 id="state"
                 value={state}
                 onChange={(e) => setState(e.target.value)}
-                placeholder="37 (NC)"
-                className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
+                placeholder="37 (NC) 🌟"
+                className="bg-gradient-to-r from-red-50/80 via-white/95 to-pink-50/80 border-3 border-red-400/50 text-slate-900 font-black shadow-xl hover:border-red-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
               />
             </div>
             <div>
-              <Label htmlFor="county" className="text-slate-800 font-bold text-lg tracking-wide">County FIPS</Label>
+              <Label htmlFor="county" className="text-slate-900 font-black text-xl tracking-wide flex items-center gap-2">
+                🏘️ County FIPS Code
+              </Label>
               <Input
                 id="county"
                 value={county}
                 onChange={(e) => setCounty(e.target.value)}
-                placeholder="119 (Mecklenburg)"
-                className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
+                placeholder="119 (Mecklenburg) ✨"
+                className="bg-gradient-to-r from-green-50/80 via-white/95 to-emerald-50/80 border-3 border-green-400/50 text-slate-900 font-black shadow-xl hover:border-green-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
               />
             </div>
           </>
@@ -222,43 +258,50 @@ export function BLSTool() {
 
         {level === "msa" && (
             <div>
-              <Label htmlFor="msa" className="text-slate-800 font-bold text-lg tracking-wide">MSA Code</Label>
+              <Label htmlFor="msa" className="text-slate-900 font-black text-xl tracking-wide flex items-center gap-2">
+                🌆 Metro Area Code
+              </Label>
               <Input
                 id="msa"
                 value={msa}
                 onChange={(e) => setMsa(e.target.value)}
-                placeholder="16740 (Charlotte)"
-                className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
+                placeholder="16740 (Charlotte) 🚀"
+                className="bg-gradient-to-r from-purple-50/80 via-white/95 to-indigo-50/80 border-3 border-purple-400/50 text-slate-900 font-black shadow-xl hover:border-purple-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
               />
             </div>
         )}
 
           <div>
-            <Label htmlFor="start" className="text-slate-800 font-bold text-lg tracking-wide">Start Date</Label>
+            <Label htmlFor="start" className="text-slate-900 font-black text-xl tracking-wide flex items-center gap-2">
+              📅 Start Date
+            </Label>
             <Input
               id="start"
               type="month"
               value={start}
               onChange={(e) => setStart(e.target.value)}
-              className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
+              className="bg-gradient-to-r from-orange-50/80 via-white/95 to-amber-50/80 border-3 border-orange-400/50 text-slate-900 font-black shadow-xl hover:border-orange-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
             />
           </div>
 
           <div>
-            <Label htmlFor="end" className="text-slate-800 font-bold text-lg tracking-wide">End Date</Label>
+            <Label htmlFor="end" className="text-slate-900 font-black text-xl tracking-wide flex items-center gap-2">
+              🏁 End Date
+            </Label>
             <Input
               id="end"
               type="month"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className="bristol-enterprise-card border-2 border-bristol-gold/20 text-slate-800 font-semibold shadow-lg hover:border-bristol-gold/50 hover:scale-102 transition-all duration-200 rounded-xl h-12"
+              className="bg-gradient-to-r from-teal-50/80 via-white/95 to-cyan-50/80 border-3 border-teal-400/50 text-slate-900 font-black shadow-xl hover:border-teal-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
             />
           </div>
         </div>
+        </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-3">
+      {/* 🚀 ENHANCED Action Buttons */}
+      <div className="flex gap-6 justify-center">
         <Button 
           onClick={handleRun} 
           disabled={isLoading}

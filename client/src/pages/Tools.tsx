@@ -37,7 +37,8 @@ export function Tools() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 bg-gradient-to-r from-bristol-maroon/15 via-purple-600/12 to-bristol-gold/25 backdrop-blur-lg border-3 border-bristol-gold/40 shadow-2xl rounded-3xl h-auto p-4 bristol-enterprise-card">
+            <TabsList className="grid w-full grid-cols-6 bg-gradient-to-r from-bristol-maroon/20 via-purple-600/15 via-blue-600/15 to-bristol-gold/30 backdrop-blur-xl border-4 border-bristol-gold/50 shadow-2xl rounded-3xl h-auto p-6 bristol-enterprise-card relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
               <TabsTrigger 
                 value="bls" 
                 className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
