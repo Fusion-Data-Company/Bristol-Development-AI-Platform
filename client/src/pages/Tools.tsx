@@ -47,16 +47,18 @@ export function Tools() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 relative overflow-hidden h-48 p-8 gap-4">
-              {/* Enhanced multi-layer background with Bristol colors */}
-              <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/30 via-orange-600/25 via-blue-600/20 to-bristol-gold/40 backdrop-blur-xl border-4 border-bristol-gold/70 shadow-2xl rounded-3xl bristol-enterprise-card"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300/20 to-transparent animate-pulse rounded-3xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/15 via-transparent to-bristol-maroon/12 rounded-3xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-white/5 rounded-3xl"></div>
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-bristol-gold/10 via-transparent to-transparent rounded-3xl"></div>
+            <TabsList className="grid w-full grid-cols-6 relative overflow-hidden h-64 p-12 gap-6">
+              {/* Premium multi-layer background with Bristol colors */}
+              <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/40 via-orange-600/35 via-blue-600/30 to-bristol-gold/50 backdrop-blur-xl border-4 border-bristol-gold/80 shadow-2xl rounded-3xl bristol-enterprise-card"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300/25 to-transparent animate-pulse rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-transparent to-bristol-maroon/18 rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/15 via-transparent to-white/8 rounded-3xl"></div>
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-bristol-gold/15 via-orange-500/8 to-transparent rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-bristol-maroon/10 via-transparent to-blue-600/8 rounded-3xl"></div>
+              <div className="absolute inset-0 bg-[conic-gradient(from_180deg_at_50%_50%,_var(--tw-gradient-stops))] from-bristol-gold/5 via-transparent to-bristol-maroon/5 rounded-3xl animate-pulse"></div>
               <TabsTrigger 
                 value="bls" 
-                className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/50 shadow-xl bg-gradient-to-br from-white/95 to-slate-100/90 backdrop-blur-lg hover:border-bristol-gold/80 hover:shadow-2xl relative overflow-hidden"
+                className="flex flex-col items-center justify-center gap-4 p-10 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/60 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-lg hover:border-bristol-gold/90 hover:shadow-2xl relative overflow-hidden my-4"
               >
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-bristol-maroon/10 to-orange-500/15 rounded-2xl"></div>
@@ -68,7 +70,7 @@ export function Tools() {
               </TabsTrigger>
               <TabsTrigger 
                 value="bea"
-                className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/50 shadow-xl bg-gradient-to-br from-white/95 to-slate-100/90 backdrop-blur-lg hover:border-bristol-gold/80 hover:shadow-2xl relative overflow-hidden"
+                className="flex flex-col items-center justify-center gap-4 p-10 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/60 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-lg hover:border-bristol-gold/90 hover:shadow-2xl relative overflow-hidden my-4"
               >
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-bristol-maroon/10 to-blue-600/15 rounded-2xl"></div>
@@ -80,7 +82,7 @@ export function Tools() {
               </TabsTrigger>
               <TabsTrigger 
                 value="hud"
-                className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/50 shadow-xl bg-gradient-to-br from-white/95 to-slate-100/90 backdrop-blur-lg hover:border-bristol-gold/80 hover:shadow-2xl relative overflow-hidden"
+                className="flex flex-col items-center justify-center gap-4 p-10 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/60 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-lg hover:border-bristol-gold/90 hover:shadow-2xl relative overflow-hidden my-4"
               >
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/20 via-bristol-gold/10 to-orange-600/15 rounded-2xl"></div>
@@ -92,7 +94,7 @@ export function Tools() {
               </TabsTrigger>
               <TabsTrigger 
                 value="foursquare"
-                className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/50 shadow-xl bg-gradient-to-br from-white/95 to-slate-100/90 backdrop-blur-lg hover:border-bristol-gold/80 hover:shadow-2xl relative overflow-hidden"
+                className="flex flex-col items-center justify-center gap-4 p-10 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/60 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-lg hover:border-bristol-gold/90 hover:shadow-2xl relative overflow-hidden my-4"
               >
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-bristol-gold/10 to-bristol-maroon/15 rounded-2xl"></div>
@@ -104,7 +106,7 @@ export function Tools() {
               </TabsTrigger>
               <TabsTrigger 
                 value="fbi"
-                className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/50 shadow-xl bg-gradient-to-br from-white/95 to-slate-100/90 backdrop-blur-lg hover:border-bristol-gold/80 hover:shadow-2xl relative overflow-hidden"
+                className="flex flex-col items-center justify-center gap-4 p-10 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/60 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-lg hover:border-bristol-gold/90 hover:shadow-2xl relative overflow-hidden my-4"
               >
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-600/20 via-bristol-maroon/10 to-bristol-gold/15 rounded-2xl"></div>
@@ -116,7 +118,7 @@ export function Tools() {
               </TabsTrigger>
               <TabsTrigger 
                 value="noaa"
-                className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/50 shadow-xl bg-gradient-to-br from-white/95 to-slate-100/90 backdrop-blur-lg hover:border-bristol-gold/80 hover:shadow-2xl relative overflow-hidden"
+                className="flex flex-col items-center justify-center gap-4 p-10 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/60 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-lg hover:border-bristol-gold/90 hover:shadow-2xl relative overflow-hidden my-4"
               >
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-blue-600/10 to-bristol-maroon/15 rounded-2xl"></div>
