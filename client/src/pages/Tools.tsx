@@ -100,14 +100,7 @@ export function Tools() {
                       <div className="p-3 rounded-2xl bg-gradient-to-br from-bristol-gold/30 to-yellow-400/30 shadow-lg border border-bristol-gold/30 backdrop-blur-sm">
                         <BarChart3 className="h-8 w-8 text-bristol-gold drop-shadow-lg" />
                       </div>
-                      <div>
-                        <h3 className="text-2xl font-black bg-gradient-to-r from-bristol-maroon via-bristol-gold to-purple-600 bg-clip-text text-transparent tracking-tight">
-                          BUREAU OF LABOR STATISTICS
-                        </h3>
-                        <p className="text-lg font-bold text-bristol-ink/80 tracking-wide">
-                          Employment Data Analytics
-                        </p>
-                      </div>
+
                     </CardTitle>
                     <CardDescription className="text-slate-700 font-semibold text-lg mt-4 leading-relaxed">
                       Enterprise-grade access to unemployment rates, employment trends, and comprehensive labor market intelligence for counties and metropolitan statistical areas
