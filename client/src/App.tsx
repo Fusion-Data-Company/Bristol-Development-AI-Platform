@@ -1,10 +1,11 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import { ChatDock } from "@/components/chat/ChatDock";
+import BristolFloatingWidget from "@/components/BristolFloatingWidget";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
@@ -46,10 +47,43 @@ function Router() {
 function AppContent() {
   const { isAuthenticated } = useAuth();
   
+  // Aggregate app data for Bristol Floating Widget
+  const { data: sites } = useQuery({
+    queryKey: ['/api/sites'],
+    enabled: isAuthenticated,
+  });
+  
+  const { data: analytics } = useQuery({
+    queryKey: ['/api/analytics/overview'],
+    enabled: isAuthenticated,
+  });
+  
+  // Combine all data sources
+  const appData = {
+    sites: sites || [],
+    analytics: analytics || {},
+    timestamp: new Date().toISOString(),
+    user: { authenticated: isAuthenticated }
+  };
+  
   return (
     <>
       <Router />
-      {isAuthenticated && <ChatDock />}
+      {isAuthenticated && (
+        <>
+          <ChatDock />
+          <BristolFloatingWidget 
+            appData={appData}
+            webhookUrl={import.meta.env.VITE_N8N_WEBHOOK_URL}
+            onSaveSystemPrompt={async (prompt) => {
+              console.log("System prompt saved:", prompt.length, "characters");
+            }}
+            onSend={async (payload) => {
+              console.log("Chat sent:", payload.model, payload.messages.length, "messages");
+            }}
+          />
+        </>
+      )}
     </>
   );
 }

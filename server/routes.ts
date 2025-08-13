@@ -69,7 +69,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/address/demographics', isAuthenticated, getAddressDemographics);
   app.get('/api/map/demographics', isAuthenticated, getMapDemographics);
 
+  // OpenRouter proxy for Bristol Floating Widget
+  app.post('/api/openrouter', isAuthenticated, async (req: any, res) => {
+    try {
+      const { model, messages, dataContext, temperature = 0.2, maxTokens = 1200 } = req.body || {};
+      
+      // Validate model against allowlist
+      const ALLOWED_MODELS = new Set([
+        "openai/gpt-4o",
+        "anthropic/claude-3.5-sonnet", 
+        "openai/gpt-4-turbo",
+        "google/gemini-1.5-pro",
+        "meta-llama/llama-3.1-70b-instruct"
+      ]);
+      
+      if (!ALLOWED_MODELS.has(model)) {
+        return res.status(400).json({ error: "model_not_allowed" });
+      }
 
+      // Get API key from environment
+      const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+      if (!OPENROUTER_API_KEY) {
+        return res.status(500).json({ error: "OpenRouter API key not configured. Please set OPENROUTER_API_KEY environment variable." });
+      }
+
+      // Find system message and inject data context
+      const sysIndex = messages.findIndex((m: any) => m.role === "system");
+      const baseSystem = sysIndex >= 0 ? messages[sysIndex].content : "";
+      const groundedSystem = baseSystem + "\n\nDATA CONTEXT (JSON):\n" + JSON.stringify(dataContext).slice(0, 50000);
+
+      const finalMessages = [
+        { role: "system", content: groundedSystem },
+        ...messages.filter((m: any, i: number) => i !== sysIndex),
+      ];
+
+      // Call OpenRouter API
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "HTTP-Referer": process.env.SITE_URL || "http://localhost:5000",
+          "X-Title": "Bristol Development AI Analyst",
+        },
+        body: JSON.stringify({
+          model,
+          messages: finalMessages,
+          temperature,
+          max_tokens: maxTokens,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("OpenRouter API error:", errorText);
+        return res.status(502).json({ error: "openrouter_error", details: errorText });
+      }
+
+      const json = await response.json();
+      const text = json?.choices?.[0]?.message?.content || "";
+      res.json({ text });
+      
+    } catch (error: any) {
+      console.error("OpenRouter proxy error:", error);
+      res.status(500).json({ error: error?.message || "unknown" });
+    }
+  });
 
   // Chat routes
   app.get('/api/chat/sessions', isAuthenticated, async (req: any, res) => {
