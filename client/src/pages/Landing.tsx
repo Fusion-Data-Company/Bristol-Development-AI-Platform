@@ -21,15 +21,10 @@ export default function Landing() {
     window.location.href = "/api/login";
   };
 
-  const backgroundImages = [
-    "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080", // Modern luxury apartments
-    "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080", // Aerial development view
-  ];
-
   return (
     <div className="min-h-screen bg-bristol-fog font-sans relative overflow-x-hidden">
       {/* Parallax Background */}
-      <ParallaxBackground images={backgroundImages} />
+      <ParallaxBackground />
 
       {/* Navigation Header */}
       <header className="relative z-10 bg-bristol-ink text-white shadow-xl">
