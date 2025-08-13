@@ -9,7 +9,7 @@ import { HUDTool } from "../components/tools/HUDTool";
 import { FoursquareTool } from "../components/tools/FoursquareTool";
 import { FBITool } from "../components/tools/FBITool";
 import { NOAATool } from "../components/tools/NOAATool";
-import globalTechBg from "@assets/persons-hand-holding-glowing-digital-globe-palm-their-hand-representing-global-connection-technology_885831-126040_1755124929584.avif";
+import darkEarthBg from "@assets/3d-rendering-dark-earth-space_23-2151051281_1755125083945.avif";
 
 export function Tools() {
   const [activeTab, setActiveTab] = useState("bls");
@@ -17,11 +17,11 @@ export function Tools() {
   return (
     <Chrome>
       <div className="min-h-screen relative overflow-hidden">
-        {/* Global Digital Connection Background */}
+        {/* Dark Earth Space Background */}
         <div 
           className="absolute inset-0 bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url(${globalTechBg})`,
+            backgroundImage: `url(${darkEarthBg})`,
             backgroundSize: 'contain',
             backgroundPosition: 'center'
           }}
@@ -47,58 +47,58 @@ export function Tools() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 relative overflow-hidden">
+            <TabsList className="grid w-full grid-cols-6 relative overflow-hidden h-32">
               {/* Enhanced gradient background with Bristol colors */}
               <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/25 via-orange-600/20 via-blue-600/15 to-bristol-gold/35 backdrop-blur-xl border-4 border-bristol-gold/60 shadow-2xl rounded-3xl bristol-enterprise-card"></div>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300/15 to-transparent animate-pulse rounded-3xl"></div>
               <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/10 via-transparent to-bristol-maroon/8 rounded-3xl"></div>
               <TabsTrigger 
                 value="bls" 
-                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
+                className="flex flex-col items-center gap-3 p-6 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-2 border-bristol-gold/40 shadow-lg bg-gradient-to-br from-white/90 to-slate-100/80 backdrop-blur-sm hover:border-bristol-gold/70 hover:shadow-xl"
               >
-                <BarChart3 className="h-6 w-6 drop-shadow-lg" />
-                <span className="text-sm font-black tracking-wide">BLS</span>
-                <span className="text-xs font-bold opacity-90">Employment</span>
+                <BarChart3 className="h-8 w-8 drop-shadow-lg text-bristol-maroon" />
+                <span className="text-lg font-black tracking-wide">BLS</span>
+                <span className="text-sm font-bold">Employment</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="bea"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
+                className="flex flex-col items-center gap-3 p-6 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-2 border-bristol-gold/40 shadow-lg bg-gradient-to-br from-white/90 to-slate-100/80 backdrop-blur-sm hover:border-bristol-gold/70 hover:shadow-xl"
               >
-                <TrendingUp className="h-6 w-6 drop-shadow-lg" />
-                <span className="text-sm font-black tracking-wide">BEA</span>
-                <span className="text-xs font-bold opacity-90">GDP/Income</span>
+                <TrendingUp className="h-8 w-8 drop-shadow-lg text-bristol-maroon" />
+                <span className="text-lg font-black tracking-wide">BEA</span>
+                <span className="text-sm font-bold">GDP/Income</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="hud"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
+                className="flex flex-col items-center gap-3 p-6 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-2 border-bristol-gold/40 shadow-lg bg-gradient-to-br from-white/90 to-slate-100/80 backdrop-blur-sm hover:border-bristol-gold/70 hover:shadow-xl"
               >
-                <Home className="h-6 w-6 drop-shadow-lg" />
-                <span className="text-sm font-black tracking-wide">HUD</span>
-                <span className="text-xs font-bold opacity-90">Vacancy</span>
+                <Home className="h-8 w-8 drop-shadow-lg text-bristol-maroon" />
+                <span className="text-lg font-black tracking-wide">HUD</span>
+                <span className="text-sm font-bold">Vacancy</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="foursquare"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
+                className="flex flex-col items-center gap-3 p-6 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-2 border-bristol-gold/40 shadow-lg bg-gradient-to-br from-white/90 to-slate-100/80 backdrop-blur-sm hover:border-bristol-gold/70 hover:shadow-xl"
               >
-                <MapPin className="h-6 w-6 drop-shadow-lg" />
-                <span className="text-sm font-black tracking-wide">Places</span>
-                <span className="text-xs font-bold opacity-90">Foursquare</span>
+                <MapPin className="h-8 w-8 drop-shadow-lg text-bristol-maroon" />
+                <span className="text-lg font-black tracking-wide">Places</span>
+                <span className="text-sm font-bold">Foursquare</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="fbi"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
+                className="flex flex-col items-center gap-3 p-6 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-2 border-bristol-gold/40 shadow-lg bg-gradient-to-br from-white/90 to-slate-100/80 backdrop-blur-sm hover:border-bristol-gold/70 hover:shadow-xl"
               >
-                <Shield className="h-6 w-6 drop-shadow-lg" />
-                <span className="text-sm font-black tracking-wide">Crime</span>
-                <span className="text-xs font-bold opacity-90">FBI</span>
+                <Shield className="h-8 w-8 drop-shadow-lg text-bristol-maroon" />
+                <span className="text-lg font-black tracking-wide">Crime</span>
+                <span className="text-sm font-bold">FBI</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="noaa"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
+                className="flex flex-col items-center gap-3 p-6 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-2 border-bristol-gold/40 shadow-lg bg-gradient-to-br from-white/90 to-slate-100/80 backdrop-blur-sm hover:border-bristol-gold/70 hover:shadow-xl"
               >
-                <Cloud className="h-6 w-6 drop-shadow-lg" />
-                <span className="text-sm font-black tracking-wide">Climate</span>
-                <span className="text-xs font-bold opacity-90">NOAA</span>
+                <Cloud className="h-8 w-8 drop-shadow-lg text-bristol-maroon" />
+                <span className="text-lg font-black tracking-wide">Climate</span>
+                <span className="text-sm font-bold">NOAA</span>
               </TabsTrigger>
             </TabsList>
 
