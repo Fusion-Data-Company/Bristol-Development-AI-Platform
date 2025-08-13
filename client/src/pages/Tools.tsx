@@ -9,7 +9,7 @@ import { HUDTool } from "../components/tools/HUDTool";
 import { FoursquareTool } from "../components/tools/FoursquareTool";
 import { FBITool } from "../components/tools/FBITool";
 import { NOAATool } from "../components/tools/NOAATool";
-import cyberpunkBg from "@assets/digital-portrait-woman-with-glowing-lines-code-cyberpunk-art-style_1341597-2299_1755124604878.jpg";
+import techBg from "@assets/abstract-digital-technology-concept-with-artificial-intelligence-dark-data-background-concept-digital-technology-artificial-intelligence-abstract-concept-dark-background-data-environment_864588-88878_1755124842693.avif";
 
 export function Tools() {
   const [activeTab, setActiveTab] = useState("bls");
@@ -17,12 +17,12 @@ export function Tools() {
   return (
     <Chrome>
       <div className="min-h-screen relative overflow-hidden">
-        {/* Cyberpunk Digital Portrait Background */}
+        {/* Abstract Digital Technology Background */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url(${cyberpunkBg})`,
-            backgroundSize: 'cover',
+            backgroundImage: `url(${techBg})`,
+            backgroundSize: 'contain',
             backgroundPosition: 'center'
           }}
         ></div>
