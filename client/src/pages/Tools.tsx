@@ -19,14 +19,14 @@ export function Tools() {
       <div className="min-h-screen relative overflow-hidden">
         {/* Circuit World Map Background */}
         <div 
-          className="absolute inset-0 bg-center bg-no-repeat opacity-30"
+          className="absolute inset-0 bg-center bg-no-repeat opacity-50"
           style={{
             backgroundImage: `url(${circuitWorldBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         ></div>
-        <div className="absolute inset-0 bg-white/20"></div>
+        <div className="absolute inset-0 bg-white/10"></div>
         <div className="container mx-auto px-4 py-8 relative z-10">
           {/* Enterprise Elite Header */}
           <div className="mb-8 relative">
