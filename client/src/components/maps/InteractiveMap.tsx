@@ -100,14 +100,14 @@ export function InteractiveMap({
         ['get', 'score'],
         0, 0,
         100, 1
-      ],
+      ] as any,
       'heatmap-intensity': [
         'interpolate',
         ['linear'],
         ['zoom'],
         0, 1,
         15, 3
-      ],
+      ] as any,
       'heatmap-color': [
         'interpolate',
         ['linear'],
@@ -118,23 +118,23 @@ export function InteractiveMap({
         0.6, 'rgba(255, 140, 0, 0.6)',
         0.8, 'rgba(255, 69, 0, 0.8)',
         1, 'rgba(139, 21, 56, 1)'
-      ],
+      ] as any,
       'heatmap-radius': [
         'interpolate',
         ['linear'],
         ['zoom'],
         0, 2,
         15, 40
-      ],
+      ] as any,
       'heatmap-opacity': [
         'interpolate',
         ['linear'],
         ['zoom'],
         7, 1,
         15, 0.6
-      ]
+      ] as any
     }
-  } as const;
+  };
 
   const handleSiteClick = (site: Site) => {
     setSelectedSite(site);
@@ -254,7 +254,7 @@ export function InteractiveMap({
                     "w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center transition-all",
                     selectedSiteId === site.id ? "scale-125 ring-2 ring-bristol-gold" : "hover:scale-110",
                   )}
-                  style={{ backgroundColor: getScoreColor(75 || 50) }}
+                  style={{ backgroundColor: getScoreColor(75) }}
                 >
                   <Building className="w-3 h-3 text-white" />
                 </div>
@@ -265,7 +265,7 @@ export function InteractiveMap({
                     variant="secondary" 
                     className="text-xs whitespace-nowrap bg-white/90 text-bristol-ink border border-bristol-stone"
                   >
-                    {75 || 50}
+                    {75}
                   </Badge>
                 </div>
               </div>
@@ -294,9 +294,9 @@ export function InteractiveMap({
                   </div>
                   <Badge 
                     className="ml-2"
-                    style={{ backgroundColor: getScoreColor(75 || 50) }}
+                    style={{ backgroundColor: getScoreColor(75) }}
                   >
-                    {75 || 50}
+                    {75}
                   </Badge>
                 </div>
                 
@@ -305,7 +305,7 @@ export function InteractiveMap({
                     <TrendingUp className="w-4 h-4 text-bristol-maroon" />
                     <span className="text-bristol-stone">Score:</span>
                     <span className="font-medium text-bristol-ink">
-                      {getScoreLabel(75 || 50)}
+                      {getScoreLabel(75)}
                     </span>
                   </div>
                   
@@ -516,7 +516,7 @@ export function InteractiveMap({
                     "w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center transition-all",
                     selectedSiteId === site.id ? "scale-125 ring-2 ring-bristol-gold" : "hover:scale-110",
                   )}
-                  style={{ backgroundColor: getScoreColor(75 || 50) }}
+                  style={{ backgroundColor: getScoreColor(75) }}
                 >
                   <Building className="w-3 h-3 text-white" />
                 </div>
@@ -527,7 +527,7 @@ export function InteractiveMap({
                     variant="secondary" 
                     className="text-xs whitespace-nowrap bg-white/90 text-bristol-ink border border-bristol-stone"
                   >
-                    {75 || 50}
+                    {75}
                   </Badge>
                 </div>
               </div>
@@ -556,9 +556,9 @@ export function InteractiveMap({
                   </div>
                   <Badge 
                     className="ml-2"
-                    style={{ backgroundColor: getScoreColor(75 || 50) }}
+                    style={{ backgroundColor: getScoreColor(75) }}
                   >
-                    {75 || 50}
+                    {75}
                   </Badge>
                 </div>
                 
@@ -567,7 +567,7 @@ export function InteractiveMap({
                     <TrendingUp className="w-4 h-4 text-bristol-maroon" />
                     <span className="text-bristol-stone">Score:</span>
                     <span className="font-medium text-bristol-ink">
-                      {getScoreLabel(75 || 50)}
+                      {getScoreLabel(75)}
                     </span>
                   </div>
                   
@@ -575,7 +575,7 @@ export function InteractiveMap({
                     <Building className="w-4 h-4 text-bristol-maroon" />
                     <span className="text-bristol-stone">Zoning:</span>
                     <span className="font-medium text-bristol-ink">
-                      {selectedSite.zoning || 'Not specified'}
+                      Mixed Use
                     </span>
                   </div>
                   

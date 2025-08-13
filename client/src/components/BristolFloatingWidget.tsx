@@ -273,7 +273,7 @@ export default function BristolFloatingWidget({
       <button
         onClick={() => setOpen(true)}
         className={cx(
-          "fixed top-20 left-0 z-[9999] group flex items-center gap-3 pl-3 pr-5 py-4",
+          "fixed z-[9999] group flex items-center gap-3 pl-3 pr-5 py-4",
           "bg-gradient-to-r from-bristol-maroon/90 via-bristol-ink/90 to-bristol-electric/80 text-white rounded-r-3xl shadow-2xl",
           "backdrop-blur-xl border border-bristol-cyan/40 hover:border-bristol-electric/60",
           "transition-all duration-700 transform hover:scale-110 hover:shadow-bristol-cyan/30",
@@ -283,6 +283,10 @@ export default function BristolFloatingWidget({
         )}
         style={{
           filter: 'drop-shadow(0 0 20px hsl(189 85% 67% / 0.4))',
+          top: '80px !important',
+          left: '0px !important',
+          bottom: 'auto !important',
+          right: 'auto !important',
         }}
         aria-label="Open Bristol Brain"
       >

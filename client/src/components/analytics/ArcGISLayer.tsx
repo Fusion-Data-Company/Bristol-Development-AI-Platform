@@ -119,13 +119,66 @@ export function ArcGISLayer({
   );
 }
 
-// Hook for fetching demographic data from ArcGIS - DISABLED TO PREVENT INFINITE LOOPS
+// Hook for fetching demographic data from ArcGIS
 export function useArcGISDemographics(bbox?: [number, number, number, number]) {
-  const [data, setData] = useState<any>([]);
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
-  // Completely disabled to prevent infinite render loops
-  // TODO: Re-enable when proper API keys and error handling is implemented
-  
+  useEffect(() => {
+    if (!bbox) return;
+
+    const fetchDemographics = async () => {
+      setLoading(true);
+      
+      try {
+        // Example: US Census demographic boundaries
+        const serviceUrl = 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services';
+        const layerUrl = `${serviceUrl}/USA_Demographics_Boundaries/FeatureServer/0/query`;
+        
+        const [west, south, east, north] = bbox;
+        const geometry = `${west},${south},${east},${north}`;
+        
+        const params = new URLSearchParams({
+          where: '1=1',
+          geometry,
+          geometryType: 'esriGeometryEnvelope',
+          spatialRel: 'esriSpatialRelIntersects',
+          outFields: 'TOTPOP_CY,MEDHINC_CY,AVGHINC_CY,POP25_64,EDUCYPOSTGRAD',
+          f: 'json',
+          returnGeometry: 'false'
+        });
+
+        const response = await fetch(`${layerUrl}?${params}`);
+        if (!response.ok) {
+          console.warn(`ArcGIS API returned ${response.status}, using empty dataset`);
+          setData([]);
+          return;
+        }
+        
+        const result = await response.json();
+        
+        if (result.features) {
+          // Process demographic data
+          const demographics = result.features.map((feature: any) => ({
+            totalPopulation: feature.attributes.TOTPOP_CY,
+            medianIncome: feature.attributes.MEDHINC_CY,
+            averageIncome: feature.attributes.AVGHINC_CY,
+            workingAge: feature.attributes.POP25_64,
+            education: feature.attributes.EDUCYPOSTGRAD
+          }));
+          
+          setData(demographics);
+        }
+      } catch (error) {
+        console.warn('ArcGIS demographics temporarily unavailable:', error.message || 'Unknown error');
+        setData([]); // Set empty array on error to prevent infinite loops
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDemographics();
+  }, [bbox]);
+
   return { data, loading };
 }
