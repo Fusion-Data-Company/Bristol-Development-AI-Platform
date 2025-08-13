@@ -40,9 +40,8 @@ app.use((req, res, next) => {
   try {
     console.log("Starting server initialization...");
     
-    // Use simple routes temporarily to ensure server starts
-    const { registerRoutes: registerSimpleRoutes } = await import('./simple-routes');
-    const server = await registerSimpleRoutes(app);
+    // Register full routes including tools API
+    const server = await registerRoutes(app);
     
     console.log("Routes registered successfully");
 
