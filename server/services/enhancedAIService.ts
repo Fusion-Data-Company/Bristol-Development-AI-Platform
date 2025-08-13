@@ -40,11 +40,13 @@ export class EnhancedAIService {
       const wsService = getWebSocketService();
       
       // Broadcast data collection start
-      wsService?.broadcast(JSON.stringify({
-        type: "system",
-        data: { message: "Collecting real-time data context..." },
-        timestamp: new Date()
-      }));
+      if (wsService) {
+        wsService.broadcastToAll({
+          type: "system",
+          data: { message: "Collecting real-time data context..." },
+          timestamp: Date.now()
+        });
+      }
 
       // Aggregate all available data sources
       const [sites, analytics, mcpTools] = await Promise.all([
@@ -72,11 +74,13 @@ export class EnhancedAIService {
       this.dataContext.set(sessionId, context);
       
       // Broadcast completion
-      wsService?.broadcast(JSON.stringify({
-        type: "system", 
-        data: { message: "Data context aggregated successfully" },
-        timestamp: new Date()
-      }));
+      if (wsService) {
+        wsService.broadcastToAll({
+          type: "system",
+          data: { message: "Data context aggregated successfully" },
+          timestamp: Date.now()
+        });
+      }
       
       return context;
     } catch (error) {
@@ -132,15 +136,49 @@ export class EnhancedAIService {
       // Prepare function definitions for MCP tools
       const functions = executeMCPTools ? this.buildMCPFunctions() : [];
 
-      // Call OpenAI with function calling capabilities
-      const completion = await this.openai.chat.completions.create({
-        model: model, // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-        messages: openAIMessages,
-        functions: functions.length > 0 ? functions : undefined,
-        function_call: functions.length > 0 ? "auto" : undefined,
-        temperature: 0.3,
-        max_tokens: 4000
-      });
+      // Call AI service (OpenAI or OpenRouter) with function calling capabilities
+      let completion;
+      
+      if (model.startsWith('anthropic/') || model.startsWith('google/') || model.startsWith('meta/')) {
+        // Use OpenRouter for non-OpenAI models
+        const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
+        
+        if (!OPENROUTER_API_KEY) {
+          throw new Error("OpenRouter API key not configured for this model");
+        }
+
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": process.env.REPLIT_DOMAINS?.split(",")[0] || "http://localhost:5000",
+            "X-Title": "Bristol Site Intelligence Platform"
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: openAIMessages,
+            temperature: 0.3,
+            max_tokens: 4000
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+        }
+
+        completion = await response.json();
+      } else {
+        // Use OpenAI directly for GPT models
+        completion = await this.openai.chat.completions.create({
+          model: model, // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+          messages: openAIMessages,
+          functions: functions.length > 0 ? functions : undefined,
+          function_call: functions.length > 0 ? "auto" : undefined,
+          temperature: 0.3,
+          max_tokens: 4000
+        });
+      }
 
       const assistantMessage = completion.choices[0].message;
       let finalResponse = assistantMessage.content || "";
@@ -198,12 +236,14 @@ export class EnhancedAIService {
 
       // Broadcast the response via WebSocket
       const wsService = getWebSocketService();
-      wsService?.broadcast(JSON.stringify({
-        type: "message",
-        sessionId,
-        data: savedMessage,
-        timestamp: new Date()
-      }));
+      if (wsService) {
+        wsService.broadcastToAll({
+          type: "message",
+          sessionId,
+          data: savedMessage,
+          timestamp: Date.now()
+        });
+      }
 
       return {
         success: true,
@@ -392,12 +432,14 @@ Use these tools when you need to gather additional data or perform specific anal
           context.realTimeMetrics = newMetrics;
           
           // Broadcast updates
-          wsService?.broadcast(JSON.stringify({
-            type: "data_update",
-            sessionId,
-            data: newMetrics,
-            timestamp: new Date()
-          }));
+          if (wsService) {
+            wsService.broadcastToAll({
+              type: "data_update",
+              sessionId,
+              data: newMetrics,
+              timestamp: Date.now()
+            });
+          }
         }
       } catch (error) {
         console.error("Error in data monitoring:", error);

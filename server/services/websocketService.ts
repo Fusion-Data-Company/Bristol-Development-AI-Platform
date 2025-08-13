@@ -182,6 +182,14 @@ export class WebSocketService {
     });
   }
 
+  public broadcastToAll(message: any) {
+    this.clients.forEach((client, clientId) => {
+      if (client.socket.readyState === WebSocket.OPEN) {
+        client.socket.send(JSON.stringify(message));
+      }
+    });
+  }
+
   private sendToClient(clientId: string, message: WebSocketMessage) {
     const client = this.clients.get(clientId);
     if (client && client.socket.readyState === WebSocket.OPEN) {

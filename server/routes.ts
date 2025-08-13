@@ -55,8 +55,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/snapshots', snapshotsRouter);
 
   // OpenRouter models endpoint
-  const openrouterModelsRouter = (await import('./api/openrouter-models')).default;
-  app.use('/api/openrouter-models', isAuthenticated, openrouterModelsRouter);
+  // OpenRouter models endpoint - fix authentication
+  app.get('/api/openrouter-models', async (req, res) => {
+    try {
+      const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
+      
+      if (!OPENROUTER_API_KEY) {
+        return res.status(500).json({ 
+          message: "OpenRouter API key not configured",
+          models: [
+            { id: "gpt-4o", label: "GPT-4o" },
+            { id: "anthropic/claude-3.5-sonnet", label: "Claude 3.5 Sonnet" }
+          ]
+        });
+      }
+
+      const response = await fetch("https://openrouter.ai/api/v1/models", {
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenRouter API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Filter to elite models only
+      const eliteModels = data.data?.filter((model: any) => 
+        model.id.includes('gpt-4') || 
+        model.id.includes('claude-3') || 
+        model.id.includes('grok') ||
+        model.id.includes('perplexity')
+      ).map((model: any) => ({
+        id: model.id,
+        label: model.name || model.id
+      })) || [];
+
+      // Add fallback models if none found
+      if (eliteModels.length === 0) {
+        eliteModels.push(
+          { id: "gpt-4o", label: "GPT-4o" },
+          { id: "anthropic/claude-3.5-sonnet", label: "Claude 3.5 Sonnet" }
+        );
+      }
+
+      res.json(eliteModels);
+    } catch (error) {
+      console.error("Error fetching OpenRouter models:", error);
+      res.json([
+        { id: "gpt-4o", label: "GPT-4o" },
+        { id: "anthropic/claude-3.5-sonnet", label: "Claude 3.5 Sonnet" }
+      ]);
+    }
+  });
 
   // ACS enrichment and GeoJSON routes
   const { enrichSites } = await import('./api/enrich');
