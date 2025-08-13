@@ -295,6 +295,128 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Enhanced AI Agent routes
+  const { enhancedAIService } = await import('./services/enhancedAIService');
+  const { dataAggregationService } = await import('./services/dataAggregationService');
+  
+  app.post('/api/ai/enhanced/chat', isAuthenticated, async (req: any, res) => {
+    try {
+      const { sessionId, message, options = {} } = req.body;
+      const userId = req.user.claims.sub;
+
+      if (!sessionId || !message) {
+        return res.status(400).json({ message: "Session ID and message are required" });
+      }
+
+      const result = await enhancedAIService.processEnhancedMessage(
+        sessionId, 
+        message, 
+        userId, 
+        options
+      );
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error in enhanced AI chat:", error);
+      res.status(500).json({ message: "Failed to process enhanced message" });
+    }
+  });
+
+  app.post('/api/ai/enhanced/context', isAuthenticated, async (req: any, res) => {
+    try {
+      const { sessionId, dataTypes = ['all'] } = req.body;
+      const userId = req.user.claims.sub;
+
+      if (!sessionId) {
+        return res.status(400).json({ message: "Session ID is required" });
+      }
+
+      // Use data aggregation service for comprehensive data access
+      const context = await dataAggregationService.getDataForAI(userId, dataTypes);
+      res.json(context);
+    } catch (error) {
+      console.error("Error aggregating data context:", error);
+      res.status(500).json({ message: "Failed to aggregate data context" });
+    }
+  });
+
+  app.post('/api/ai/enhanced/monitor', isAuthenticated, async (req: any, res) => {
+    try {
+      const { sessionId } = req.body;
+
+      if (!sessionId) {
+        return res.status(400).json({ message: "Session ID is required" });
+      }
+
+      await enhancedAIService.startDataMonitoring(sessionId);
+      res.json({ success: true, message: "Data monitoring started" });
+    } catch (error) {
+      console.error("Error starting data monitoring:", error);
+      res.status(500).json({ message: "Failed to start data monitoring" });
+    }
+  });
+
+  // Agent chat route for simple dock widget
+  app.post('/api/agent/chat', isAuthenticated, async (req: any, res) => {
+    try {
+      const { message, model, bristolMode } = req.body;
+      
+      if (!message) {
+        return res.status(400).json({ message: "Message is required" });
+      }
+
+      // Simple OpenRouter proxy for the dock widget
+      const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
+      if (!OPENROUTER_API_KEY) {
+        return res.status(500).json({ 
+          ok: false, 
+          message: "OpenRouter API key not configured" 
+        });
+      }
+
+      const systemPrompt = bristolMode 
+        ? "You are the Bristol Development Group AI Assistant. Provide professional real estate development insights and analysis."
+        : "You are a helpful AI assistant.";
+
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": process.env.REPLIT_DOMAINS?.split(",")[0] || "http://localhost:5000",
+          "X-Title": "Bristol Site Intelligence Platform"
+        },
+        body: JSON.stringify({
+          model: model || "anthropic/claude-3.5-sonnet",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: message }
+          ],
+          max_tokens: 2000,
+          temperature: 0.7
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`OpenRouter API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const aiMessage = data.choices[0].message.content;
+
+      res.json({
+        ok: true,
+        message: aiMessage
+      });
+    } catch (error) {
+      console.error("Agent chat error:", error);
+      res.status(500).json({
+        ok: false,
+        message: "Failed to get AI response"
+      });
+    }
+  });
+
   // Analytics endpoints
   app.get('/api/analytics/dashboard', isAuthenticated, async (req: any, res) => {
     try {

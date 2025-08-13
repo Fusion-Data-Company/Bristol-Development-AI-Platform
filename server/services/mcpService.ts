@@ -119,6 +119,10 @@ export class McpService {
     }
   }
 
+  async getAvailableTools(): Promise<any[]> {
+    return Array.from(this.tools.values());
+  }
+
   async executeTool(toolName: string, payload: any, userId?: string): Promise<ToolResult> {
     const wsService = getWebSocketService();
     

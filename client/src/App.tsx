@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import { ChatDock } from "@/components/chat/ChatDock";
 import BristolFloatingWidget from "@/components/BristolFloatingWidget";
+import EnhancedAIAgent from "@/components/EnhancedAIAgent";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
@@ -72,6 +73,7 @@ function AppContent() {
       {isAuthenticated && (
         <>
           <ChatDock />
+          <EnhancedAIAgent />
           <BristolFloatingWidget 
             appData={appData}
             webhookUrl={import.meta.env.VITE_N8N_WEBHOOK_URL}
