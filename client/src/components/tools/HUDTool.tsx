@@ -221,7 +221,7 @@ export function HUDTool() {
         <div>
           <Label htmlFor="mode" className="text-gray-900">Data Mode</Label>
           <Select value={mode} onValueChange={setMode}>
-            <SelectTrigger className="bg-white border-gray-300 text-gray-900">
+            <SelectTrigger className="bristol-form-enhanced">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-300">
@@ -237,14 +237,14 @@ export function HUDTool() {
             value={zip}
             onChange={(e) => setZip(e.target.value)}
             placeholder="28202"
-            className="bg-white border-gray-300 text-gray-900"
+            className="bristol-form-enhanced"
           />
         </div>
 
         <div>
           <Label htmlFor="lookbackQ" className="text-gray-900">Quarters to Include</Label>
           <Select value={lookbackQ} onValueChange={setLookbackQ}>
-            <SelectTrigger className="bg-white border-gray-300 text-gray-900">
+            <SelectTrigger className="bristol-form-enhanced">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-300">

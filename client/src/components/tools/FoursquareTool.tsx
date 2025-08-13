@@ -273,7 +273,7 @@ export function FoursquareTool() {
         <div>
           <Label className="text-gray-900">Location Input</Label>
           <Select value={inputMode} onValueChange={(value: 'coordinates' | 'address') => setInputMode(value)}>
-            <SelectTrigger className="bg-white border-gray-300 text-gray-900 w-48">
+            <SelectTrigger className="bristol-form-enhanced w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-300">
@@ -294,7 +294,7 @@ export function FoursquareTool() {
                   value={lat}
                   onChange={(e) => setLat(e.target.value)}
                   placeholder="35.2271"
-                  className="bg-white border-gray-300 text-gray-900"
+                  className="bristol-form-enhanced"
                 />
               </div>
 
@@ -305,7 +305,7 @@ export function FoursquareTool() {
                   value={lng}
                   onChange={(e) => setLng(e.target.value)}
                   placeholder="-80.8431"
-                  className="bg-white border-gray-300 text-gray-900"
+                  className="bristol-form-enhanced"
                 />
               </div>
             </>

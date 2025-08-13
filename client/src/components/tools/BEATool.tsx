@@ -223,7 +223,7 @@ export function BEATool() {
         <div>
           <Label htmlFor="geo" className="text-gray-900">Geographic Level</Label>
           <Select value={geo} onValueChange={setGeo}>
-            <SelectTrigger className="bg-white border-gray-300 text-gray-900">
+            <SelectTrigger className="bristol-form-enhanced">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-300">
@@ -242,7 +242,7 @@ export function BEATool() {
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="37 (NC)"
-                className="bg-white border-gray-300 text-gray-900"
+                className="bristol-form-enhanced"
               />
             </div>
             <div>
@@ -252,7 +252,7 @@ export function BEATool() {
                 value={county}
                 onChange={(e) => setCounty(e.target.value)}
                 placeholder="119 (Mecklenburg)"
-                className="bg-white border-gray-300 text-gray-900"
+                className="bristol-form-enhanced"
               />
             </div>
           </>
@@ -266,7 +266,7 @@ export function BEATool() {
               value={msa}
               onChange={(e) => setMsa(e.target.value)}
               placeholder="16740 (Charlotte)"
-              className="bg-white border-gray-300 text-gray-900"
+              className="bristol-form-enhanced"
             />
           </div>
         )}
@@ -280,7 +280,7 @@ export function BEATool() {
             onChange={(e) => setStartYear(e.target.value)}
             min="2005"
             max="2030"
-            className="bg-white border-gray-300 text-gray-900"
+            className="bristol-form-enhanced"
           />
         </div>
 
@@ -293,7 +293,7 @@ export function BEATool() {
             onChange={(e) => setEndYear(e.target.value)}
             min="2005"
             max="2030"
-            className="bg-white border-gray-300 text-gray-900"
+            className="bristol-form-enhanced"
           />
         </div>
       </div>

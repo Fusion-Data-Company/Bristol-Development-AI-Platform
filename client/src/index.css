@@ -353,6 +353,63 @@
   }
 }
 
+/* Enhanced Bristol data table styling */
+.bristol-data-table {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  border: 2px solid rgba(212, 165, 116, 0.3);
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+}
+
+.bristol-data-table th {
+  background: linear-gradient(135deg, rgba(212, 165, 116, 0.2), rgba(255, 255, 255, 0.9));
+  color: #1e293b !important;
+  font-weight: 900 !important;
+  font-size: 1rem !important;
+  padding: 1.25rem 1rem !important;
+  border-bottom: 2px solid rgba(212, 165, 116, 0.3) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+.bristol-data-table td {
+  padding: 1rem !important;
+  border-bottom: 1px solid rgba(212, 165, 116, 0.15) !important;
+  font-weight: 600 !important;
+  color: #334155 !important;
+}
+
+.bristol-data-table tbody tr:hover {
+  background: rgba(212, 165, 116, 0.08) !important;
+  transform: scale(1.01);
+  transition: all 0.2s ease;
+}
+
+/* Enhanced form controls styling */
+.bristol-form-enhanced {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9)) !important;
+  border: 3px solid rgba(212, 165, 116, 0.4) !important;
+  border-radius: 1rem !important;
+  padding: 1rem 1.25rem !important;
+  font-weight: 600 !important;
+  font-size: 1.1rem !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.3s ease !important;
+}
+
+.bristol-form-enhanced:hover {
+  border-color: rgba(212, 165, 116, 0.6) !important;
+  box-shadow: 0 6px 16px rgba(212, 165, 116, 0.15) !important;
+}
+
+.bristol-form-enhanced:focus {
+  border-color: rgba(212, 165, 116, 0.9) !important;
+  box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.25) !important;
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95)) !important;
+}
+
 /* Bristol specific animations and effects */
 @layer utilities {
   .thinking-ring {
