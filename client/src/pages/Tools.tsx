@@ -59,86 +59,98 @@ export function Tools() {
               <div className="absolute inset-0 bg-[conic-gradient(from_180deg_at_50%_50%,_var(--tw-gradient-stops))] from-bristol-gold/5 via-transparent to-bristol-maroon/5 rounded-3xl animate-pulse"></div>
               <TabsTrigger 
                 value="bls" 
-                className="flex flex-col items-center justify-center gap-4 p-12 m-6 rounded-3xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-500 border-4 border-bristol-gold/80 shadow-2xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-3xl hover:scale-105 relative overflow-hidden transform-gpu"
+                className="flex flex-col items-center justify-center gap-4 p-6 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-4 border-bristol-gold/70 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-2xl relative overflow-hidden"
               >
-                {/* Enhanced multi-layer card background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/30 via-bristol-maroon/15 to-orange-500/20 rounded-3xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/10 to-bristol-gold/10 rounded-3xl animate-pulse"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,_var(--tw-gradient-stops))] from-bristol-gold/20 via-transparent to-transparent rounded-3xl"></div>
-                <div className="relative z-20 flex flex-col items-center gap-4">
-                  <BarChart3 className="h-12 w-12 drop-shadow-2xl text-bristol-gold filter drop-shadow-lg" />
-                  <span className="text-2xl font-black tracking-wide drop-shadow-sm">BLS</span>
-                  <span className="text-lg font-bold drop-shadow-sm">Employment</span>
+                {/* Premium multi-layer card background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/25 via-bristol-maroon/12 to-orange-500/18 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/8 to-bristol-gold/8 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_70%,_var(--tw-gradient-stops))] from-bristol-gold/15 via-transparent to-transparent rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.1)_45%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.1)_55%,transparent_100%)] rounded-2xl"></div>
+                <div className="absolute inset-0 border border-white/20 rounded-2xl"></div>
+                <div className="relative z-20 flex flex-col items-center gap-3">
+                  <BarChart3 className="h-10 w-10 drop-shadow-xl text-bristol-gold filter brightness-110" />
+                  <span className="text-xl font-black tracking-wide drop-shadow-sm">BLS</span>
+                  <span className="text-base font-bold drop-shadow-sm opacity-90">Employment</span>
                 </div>
               </TabsTrigger>
               <TabsTrigger 
                 value="bea"
-                className="flex flex-col items-center justify-center gap-4 p-12 m-6 rounded-3xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-500 border-4 border-bristol-gold/80 shadow-2xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-3xl hover:scale-105 relative overflow-hidden transform-gpu"
+                className="flex flex-col items-center justify-center gap-4 p-6 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-4 border-bristol-gold/70 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-2xl relative overflow-hidden"
               >
-                {/* Enhanced multi-layer card background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/30 via-bristol-maroon/15 to-blue-600/20 rounded-3xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/10 to-green-500/10 rounded-3xl animate-pulse"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,_var(--tw-gradient-stops))] from-green-500/20 via-transparent to-transparent rounded-3xl"></div>
-                <div className="relative z-20 flex flex-col items-center gap-4">
-                  <TrendingUp className="h-12 w-12 drop-shadow-2xl text-green-600 filter drop-shadow-lg" />
-                  <span className="text-2xl font-black tracking-wide drop-shadow-sm">BEA</span>
-                  <span className="text-lg font-bold drop-shadow-sm">GDP/Income</span>
+                {/* Premium multi-layer card background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/25 via-bristol-maroon/12 to-blue-600/18 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/8 to-green-500/8 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,_var(--tw-gradient-stops))] from-green-500/15 via-transparent to-transparent rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.1)_45%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.1)_55%,transparent_100%)] rounded-2xl"></div>
+                <div className="absolute inset-0 border border-white/20 rounded-2xl"></div>
+                <div className="relative z-20 flex flex-col items-center gap-3">
+                  <TrendingUp className="h-10 w-10 drop-shadow-xl text-green-600 filter brightness-110" />
+                  <span className="text-xl font-black tracking-wide drop-shadow-sm">BEA</span>
+                  <span className="text-base font-bold drop-shadow-sm opacity-90">GDP/Income</span>
                 </div>
               </TabsTrigger>
               <TabsTrigger 
                 value="hud"
-                className="flex flex-col items-center justify-center gap-4 p-12 m-6 rounded-3xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-500 border-4 border-bristol-gold/80 shadow-2xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-3xl hover:scale-105 relative overflow-hidden transform-gpu"
+                className="flex flex-col items-center justify-center gap-4 p-6 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-4 border-bristol-gold/70 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-2xl relative overflow-hidden"
               >
-                {/* Enhanced multi-layer card background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/30 via-bristol-gold/15 to-orange-600/20 rounded-3xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/10 to-orange-500/10 rounded-3xl animate-pulse"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_80%,_var(--tw-gradient-stops))] from-orange-500/20 via-transparent to-transparent rounded-3xl"></div>
-                <div className="relative z-20 flex flex-col items-center gap-4">
-                  <Home className="h-12 w-12 drop-shadow-2xl text-orange-600 filter drop-shadow-lg" />
-                  <span className="text-2xl font-black tracking-wide drop-shadow-sm">HUD</span>
-                  <span className="text-lg font-bold drop-shadow-sm">Vacancy</span>
+                {/* Premium multi-layer card background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/25 via-bristol-gold/12 to-orange-600/18 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/8 to-orange-500/8 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_80%,_var(--tw-gradient-stops))] from-orange-500/15 via-transparent to-transparent rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.1)_45%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.1)_55%,transparent_100%)] rounded-2xl"></div>
+                <div className="absolute inset-0 border border-white/20 rounded-2xl"></div>
+                <div className="relative z-20 flex flex-col items-center gap-3">
+                  <Home className="h-10 w-10 drop-shadow-xl text-orange-600 filter brightness-110" />
+                  <span className="text-xl font-black tracking-wide drop-shadow-sm">HUD</span>
+                  <span className="text-base font-bold drop-shadow-sm opacity-90">Vacancy</span>
                 </div>
               </TabsTrigger>
               <TabsTrigger 
                 value="foursquare"
-                className="flex flex-col items-center justify-center gap-4 p-12 m-6 rounded-3xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-500 border-4 border-bristol-gold/80 shadow-2xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-3xl hover:scale-105 relative overflow-hidden transform-gpu"
+                className="flex flex-col items-center justify-center gap-4 p-6 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-4 border-bristol-gold/70 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-2xl relative overflow-hidden"
               >
-                {/* Enhanced multi-layer card background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/30 via-bristol-gold/15 to-bristol-maroon/20 rounded-3xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/10 to-blue-500/10 rounded-3xl animate-pulse"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,_var(--tw-gradient-stops))] from-blue-500/20 via-transparent to-transparent rounded-3xl"></div>
-                <div className="relative z-20 flex flex-col items-center gap-4">
-                  <MapPin className="h-12 w-12 drop-shadow-2xl text-blue-600 filter drop-shadow-lg" />
-                  <span className="text-2xl font-black tracking-wide drop-shadow-sm">Places</span>
-                  <span className="text-lg font-bold drop-shadow-sm">Foursquare</span>
+                {/* Premium multi-layer card background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/25 via-bristol-gold/12 to-bristol-maroon/18 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/8 to-blue-500/8 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,_var(--tw-gradient-stops))] from-blue-500/15 via-transparent to-transparent rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.1)_45%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.1)_55%,transparent_100%)] rounded-2xl"></div>
+                <div className="absolute inset-0 border border-white/20 rounded-2xl"></div>
+                <div className="relative z-20 flex flex-col items-center gap-3">
+                  <MapPin className="h-10 w-10 drop-shadow-xl text-blue-600 filter brightness-110" />
+                  <span className="text-xl font-black tracking-wide drop-shadow-sm">Places</span>
+                  <span className="text-base font-bold drop-shadow-sm opacity-90">Foursquare</span>
                 </div>
               </TabsTrigger>
               <TabsTrigger 
                 value="fbi"
-                className="flex flex-col items-center justify-center gap-4 p-12 m-6 rounded-3xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-500 border-4 border-bristol-gold/80 shadow-2xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-3xl hover:scale-105 relative overflow-hidden transform-gpu"
+                className="flex flex-col items-center justify-center gap-4 p-6 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-4 border-bristol-gold/70 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-2xl relative overflow-hidden"
               >
-                {/* Enhanced multi-layer card background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-600/30 via-bristol-maroon/15 to-bristol-gold/20 rounded-3xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/10 to-bristol-maroon/10 rounded-3xl animate-pulse"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_60%,_var(--tw-gradient-stops))] from-bristol-maroon/20 via-transparent to-transparent rounded-3xl"></div>
-                <div className="relative z-20 flex flex-col items-center gap-4">
-                  <Shield className="h-12 w-12 drop-shadow-2xl text-bristol-maroon filter drop-shadow-lg" />
-                  <span className="text-2xl font-black tracking-wide drop-shadow-sm">Crime</span>
-                  <span className="text-lg font-bold drop-shadow-sm">FBI</span>
+                {/* Premium multi-layer card background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-600/25 via-bristol-maroon/12 to-bristol-gold/18 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/8 to-bristol-maroon/8 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_60%,_var(--tw-gradient-stops))] from-bristol-maroon/15 via-transparent to-transparent rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.1)_45%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.1)_55%,transparent_100%)] rounded-2xl"></div>
+                <div className="absolute inset-0 border border-white/20 rounded-2xl"></div>
+                <div className="relative z-20 flex flex-col items-center gap-3">
+                  <Shield className="h-10 w-10 drop-shadow-xl text-bristol-maroon filter brightness-110" />
+                  <span className="text-xl font-black tracking-wide drop-shadow-sm">Crime</span>
+                  <span className="text-base font-bold drop-shadow-sm opacity-90">FBI</span>
                 </div>
               </TabsTrigger>
               <TabsTrigger 
                 value="noaa"
-                className="flex flex-col items-center justify-center gap-4 p-12 m-6 rounded-3xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-500 border-4 border-bristol-gold/80 shadow-2xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-3xl hover:scale-105 relative overflow-hidden transform-gpu"
+                className="flex flex-col items-center justify-center gap-4 p-6 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-4 border-bristol-gold/70 shadow-xl bg-gradient-to-br from-white/98 to-slate-50/95 backdrop-blur-xl hover:border-bristol-gold/100 hover:shadow-2xl relative overflow-hidden"
               >
-                {/* Enhanced multi-layer card background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/30 via-blue-600/15 to-bristol-maroon/20 rounded-3xl"></div>
-                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/10 to-cyan-500/10 rounded-3xl animate-pulse"></div>
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_40%,_var(--tw-gradient-stops))] from-cyan-500/20 via-transparent to-transparent rounded-3xl"></div>
-                <div className="relative z-20 flex flex-col items-center gap-4">
-                  <Cloud className="h-12 w-12 drop-shadow-2xl text-cyan-600 filter drop-shadow-lg" />
-                  <span className="text-2xl font-black tracking-wide drop-shadow-sm">Climate</span>
-                  <span className="text-lg font-bold drop-shadow-sm">NOAA</span>
+                {/* Premium multi-layer card background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/25 via-blue-600/12 to-bristol-maroon/18 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-tl from-transparent via-white/8 to-cyan-500/8 rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_40%,_var(--tw-gradient-stops))] from-cyan-500/15 via-transparent to-transparent rounded-2xl"></div>
+                <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,rgba(255,255,255,0.1)_45%,rgba(255,255,255,0.2)_50%,rgba(255,255,255,0.1)_55%,transparent_100%)] rounded-2xl"></div>
+                <div className="absolute inset-0 border border-white/20 rounded-2xl"></div>
+                <div className="relative z-20 flex flex-col items-center gap-3">
+                  <Cloud className="h-10 w-10 drop-shadow-xl text-cyan-600 filter brightness-110" />
+                  <span className="text-xl font-black tracking-wide drop-shadow-sm">Climate</span>
+                  <span className="text-base font-bold drop-shadow-sm opacity-90">NOAA</span>
                 </div>
               </TabsTrigger>
             </TabsList>
