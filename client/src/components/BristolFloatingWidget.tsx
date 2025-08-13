@@ -272,45 +272,109 @@ export default function BristolFloatingWidget({
       {/* Bristol Brain Launcher Button */}
       <button
         onClick={() => setOpen(true)}
-        className={cx(
-          "fixed z-[9999] group flex items-center gap-3 pl-3 pr-5 py-4",
-          "bg-gradient-to-r from-bristol-maroon/90 via-bristol-ink/90 to-bristol-electric/80 text-white rounded-r-3xl shadow-2xl",
-          "backdrop-blur-xl border border-bristol-cyan/40 hover:border-bristol-electric/60",
-          "transition-all duration-700 transform hover:scale-110 hover:shadow-bristol-cyan/30",
-          "font-serif relative overflow-hidden bristol-glow-hover",
-          "before:absolute before:inset-0 before:bg-gradient-to-r before:from-bristol-cyan/10 before:to-bristol-electric/10",
-          "before:opacity-0 before:transition-opacity before:duration-300 group-hover:before:opacity-100"
-        )}
+        className="bristol-brain-button"
         style={{
-          filter: 'drop-shadow(0 0 20px hsl(189 85% 67% / 0.4))',
+          position: 'fixed !important',
           top: '80px !important',
           left: '0px !important',
-          bottom: 'auto !important',
           right: 'auto !important',
+          bottom: 'auto !important',
+          zIndex: '9999 !important',
+          display: 'flex !important',
+          alignItems: 'center !important',
+          gap: '12px !important',
+          paddingLeft: '12px !important',
+          paddingRight: '20px !important',
+          paddingTop: '16px !important',
+          paddingBottom: '16px !important',
+          background: 'linear-gradient(to right, rgba(139, 21, 56, 0.95), rgba(45, 48, 62, 0.95), rgba(0, 191, 255, 0.85)) !important',
+          color: 'white !important',
+          borderTopRightRadius: '24px !important',
+          borderBottomRightRadius: '24px !important',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 191, 255, 0.4) !important',
+          backdropFilter: 'blur(16px) !important',
+          border: '1px solid rgba(0, 191, 255, 0.4) !important',
+          transition: 'all 0.7s cubic-bezier(0.4, 0, 0.2, 1) !important',
+          fontFamily: 'Cinzel, serif !important',
+          overflow: 'hidden !important',
+          cursor: 'pointer !important',
+          filter: 'drop-shadow(0 0 20px rgba(0, 191, 255, 0.4)) !important',
         }}
         aria-label="Open Bristol Brain"
       >
         {/* Animated glow rings */}
-        <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/20 via-bristol-electric/20 to-bristol-maroon/20 rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-500" />
-        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-electric/30 to-bristol-cyan/30 rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-700" />
+        <div style={{
+          position: 'absolute',
+          inset: '-8px',
+          background: 'linear-gradient(to right, rgba(0, 191, 255, 0.2), rgba(0, 191, 255, 0.2), rgba(139, 21, 56, 0.2))',
+          borderRadius: '50%',
+          opacity: '0',
+          animation: 'pulse 2s infinite',
+          transition: 'opacity 0.5s',
+        }} />
+        <div style={{
+          position: 'absolute',
+          inset: '-4px', 
+          background: 'linear-gradient(to right, rgba(0, 191, 255, 0.3), rgba(0, 191, 255, 0.3))',
+          borderRadius: '50%',
+          opacity: '0',
+          animation: 'ping 3s infinite',
+          transition: 'opacity 0.7s',
+        }} />
         
         {/* Content */}
-        <div className="relative z-10 flex items-center gap-3">
-          <div className="relative">
-            <Brain className="h-6 w-6 text-bristol-cyan group-hover:text-white transition-all duration-300 drop-shadow-lg" />
-            <div className="absolute inset-0 h-6 w-6 text-bristol-electric/50 animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <Sparkles className="h-6 w-6" />
+        <div style={{
+          position: 'relative',
+          zIndex: '10',
+          display: 'flex',
+          alignItems: 'center', 
+          gap: '12px',
+          color: 'white !important'
+        }}>
+          <div style={{ position: 'relative' }}>
+            <Brain style={{ 
+              height: '24px', 
+              width: '24px', 
+              color: '#00bfff',
+              filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5))'
+            }} />
+            <div style={{
+              position: 'absolute',
+              inset: '0',
+              height: '24px',
+              width: '24px',
+              color: 'rgba(0, 191, 255, 0.5)',
+              animation: 'pulse 2s infinite',
+              opacity: '0.5',
+            }}>
+              <Sparkles style={{ height: '24px', width: '24px' }} />
             </div>
           </div>
-          <div className="hidden sm:block">
-            <div className="text-sm font-bold tracking-wide text-bristol-cyan group-hover:text-white transition-colors duration-300">
+          <div style={{ display: window.innerWidth >= 640 ? 'block' : 'none' }}>
+            <div style={{
+              fontSize: '14px',
+              fontWeight: 'bold',
+              letterSpacing: '0.05em',
+              color: '#00bfff !important',
+              transition: 'color 0.3s',
+            }}>
               BRISTOL BRAIN
             </div>
-            <div className="text-xs text-bristol-gold/80 group-hover:text-bristol-gold font-medium transition-colors duration-300">
+            <div style={{
+              fontSize: '12px',
+              color: 'rgba(255, 178, 0, 0.8) !important',
+              fontWeight: '500',
+              transition: 'color 0.3s',
+            }}>
               AI Intelligence
             </div>
           </div>
-          <Cpu className="h-4 w-4 text-bristol-gold/70 group-hover:text-bristol-gold transition-all duration-300 group-hover:rotate-180" />
+          <Cpu style={{ 
+            height: '16px', 
+            width: '16px', 
+            color: 'rgba(255, 178, 0, 0.7)',
+            transition: 'all 0.3s',
+          }} />
         </div>
       </button>
 
