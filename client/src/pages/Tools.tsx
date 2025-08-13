@@ -91,26 +91,7 @@ export function Tools() {
 
             <div className="mt-8">
               <TabsContent value="bls" className="space-y-6">
-                <Card className="bristol-enterprise-card shadow-2xl rounded-3xl overflow-hidden border-2 border-bristol-gold/30 relative">
-                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-bristol-gold via-blue-500 to-purple-600"></div>
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none"></div>
-                  <CardHeader className="bg-gradient-to-r from-blue-50/80 via-indigo-50/60 to-purple-50/80 border-b-2 border-bristol-gold/20 relative">
-                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
-                    <CardTitle className="text-slate-900 flex items-center gap-4 relative z-10">
-                      <div className="p-3 rounded-2xl bg-gradient-to-br from-bristol-gold/30 to-yellow-400/30 shadow-lg border border-bristol-gold/30 backdrop-blur-sm">
-                        <BarChart3 className="h-8 w-8 text-bristol-gold drop-shadow-lg" />
-                      </div>
-
-                    </CardTitle>
-
-                  </CardHeader>
-                  <CardContent className="bg-gradient-to-br from-slate-50/80 via-blue-50/40 to-purple-50/30 p-8 relative">
-                    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-white/20 pointer-events-none"></div>
-                    <div className="relative z-10">
-                      <BLSTool />
-                    </div>
-                  </CardContent>
-                </Card>
+                <BLSTool />
               </TabsContent>
 
               <TabsContent value="bea" className="space-y-6">
