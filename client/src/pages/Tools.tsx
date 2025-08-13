@@ -34,51 +34,51 @@ export function Tools() {
             <TabsList className="grid w-full grid-cols-6 bg-gradient-to-r from-bristol-maroon/10 via-purple-500/10 to-bristol-gold/20 backdrop-blur-sm border-2 border-bristol-gold/30 shadow-2xl rounded-2xl h-auto p-3">
               <TabsTrigger 
                 value="bls" 
-                className="flex flex-col items-center gap-2 p-4 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-bristol-gold/90 data-[state=active]:to-yellow-400/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-lg data-[state=active]:scale-105 text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-200"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
                 <BarChart3 className="h-5 w-5" />
                 <span className="text-sm font-medium">BLS</span>
-                <span className="text-xs opacity-70">Employment</span>
+                <span className="text-xs opacity-80">Employment</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="bea"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-bristol-gold/90 data-[state=active]:to-yellow-400/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-lg data-[state=active]:scale-105 text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-200"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
                 <TrendingUp className="h-5 w-5" />
                 <span className="text-sm font-medium">BEA</span>
-                <span className="text-xs opacity-70">GDP/Income</span>
+                <span className="text-xs opacity-80">GDP/Income</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="hud"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-bristol-gold/90 data-[state=active]:to-yellow-400/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-lg data-[state=active]:scale-105 text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-200"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
                 <Home className="h-5 w-5" />
                 <span className="text-sm font-medium">HUD</span>
-                <span className="text-xs opacity-70">Vacancy</span>
+                <span className="text-xs opacity-80">Vacancy</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="foursquare"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-bristol-gold/90 data-[state=active]:to-yellow-400/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-lg data-[state=active]:scale-105 text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-200"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
                 <MapPin className="h-5 w-5" />
                 <span className="text-sm font-medium">Places</span>
-                <span className="text-xs opacity-70">Foursquare</span>
+                <span className="text-xs opacity-80">Foursquare</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="fbi"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-bristol-gold/90 data-[state=active]:to-yellow-400/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-lg data-[state=active]:scale-105 text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-200"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
                 <Shield className="h-5 w-5" />
                 <span className="text-sm font-medium">Crime</span>
-                <span className="text-xs opacity-70">FBI</span>
+                <span className="text-xs opacity-80">FBI</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="noaa"
-                className="flex flex-col items-center gap-2 p-4 rounded-xl data-[state=active]:bg-gradient-to-br data-[state=active]:from-bristol-gold/90 data-[state=active]:to-yellow-400/80 data-[state=active]:text-slate-900 data-[state=active]:shadow-lg data-[state=active]:scale-105 text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-all duration-200"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
                 <Cloud className="h-5 w-5" />
                 <span className="text-sm font-medium">Climate</span>
-                <span className="text-xs opacity-70">NOAA</span>
+                <span className="text-xs opacity-80">NOAA</span>
               </TabsTrigger>
             </TabsList>
 
