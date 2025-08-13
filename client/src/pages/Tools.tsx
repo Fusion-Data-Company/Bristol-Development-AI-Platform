@@ -15,12 +15,21 @@ export function Tools() {
 
   return (
     <Chrome>
-      <div className="min-h-screen bg-gradient-to-br from-slate-100/80 via-stone-50/60 via-blue-50/40 to-amber-50/30 relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-slate-100/10 opacity-60"></div>
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0)`,
-          backgroundSize: '20px 20px'
-        }}></div>
+      <div className="min-h-screen relative overflow-hidden">
+        {/* AI Circuit Board Background */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/attached_assets/Screenshot 2025-08-13 at 15.34.14_1755124461851.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'brightness(0.25) contrast(1.3) saturate(0.9)'
+          }}
+        ></div>
+        {/* Dark overlay for content readability */}
+        <div className="absolute inset-0 bg-black/75"></div>
+        {/* Subtle tech gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/8 via-purple-500/5 to-pink-500/8"></div>
         <div className="container mx-auto px-4 py-8 relative z-10">
           {/* Enterprise Elite Header */}
           <div className="mb-8 relative">
