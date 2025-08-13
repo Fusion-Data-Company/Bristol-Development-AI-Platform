@@ -88,9 +88,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Get API key from environment
-      const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+      const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY2;
       if (!OPENROUTER_API_KEY) {
-        return res.status(500).json({ error: "OpenRouter API key not configured. Please set OPENROUTER_API_KEY environment variable." });
+        return res.status(500).json({ error: "OpenRouter API key not configured. Please set OPENROUTER_API_KEY2 environment variable." });
       }
 
       // Find system message and inject data context
