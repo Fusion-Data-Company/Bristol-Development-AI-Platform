@@ -69,19 +69,87 @@
   --bristol-glow-strong: drop-shadow(0 0 30px hsl(189 85% 67% / 0.5));
 }
 
-/* Tools Tab Enhanced Styling */
+/* Enterprise Elite Tools Styling */
+.tools-tab-enhanced {
+  position: relative;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(240, 244, 255, 0.8));
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+}
+
 .tools-tab-enhanced:hover {
-  background: rgba(255, 255, 255, 0.8) !important;
-  transform: scale(1.02) !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 1), rgba(250, 250, 255, 0.95)) !important;
+  transform: scale(1.03) translateY(-1px) !important;
+  box-shadow: 
+    0 20px 25px -5px rgba(212, 175, 55, 0.15),
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(212, 175, 55, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(212, 175, 55, 0.4) !important;
+  filter: brightness(1.05);
 }
 
 .tools-tab-active {
-  background: linear-gradient(to bottom right, hsl(45 58% 60%), hsl(43 96% 56%)) !important;
-  color: #1e293b !important;
-  transform: scale(1.05) !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
-  border: 2px solid hsl(45 58% 60%) !important;
+  background: linear-gradient(145deg, hsl(45 58% 60%), hsl(43 96% 56%)) !important;
+  color: #1a202c !important;
+  font-weight: 800 !important;
+  transform: scale(1.06) translateY(-2px) !important;
+  box-shadow: 
+    0 25px 50px -12px rgba(212, 175, 55, 0.25),
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 0 0 2px rgba(212, 175, 55, 0.8),
+    inset 0 2px 4px rgba(255, 255, 255, 0.4),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.1) !important;
+  border: 2px solid rgba(212, 175, 55, 0.9) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  filter: brightness(1.1) saturate(1.2);
+}
+
+/* Bristol Elite Button Styling */
+.bristol-elite-button {
+  background: linear-gradient(135deg, hsl(45 58% 60%) 0%, hsl(43 96% 56%) 50%, hsl(339 100% 31%) 100%);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.bristol-elite-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.bristol-elite-button:hover:before {
+  left: 100%;
+}
+
+.bristol-elite-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 20px 25px -5px rgba(212, 175, 55, 0.3),
+    0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  filter: brightness(1.1) saturate(1.1);
+}
+
+/* Enterprise Card Styling */
+.bristol-enterprise-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
+  border: 2px solid rgba(212, 175, 55, 0.2);
+  backdrop-filter: blur(12px);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 /* Bristol AI Widget Custom Animations */

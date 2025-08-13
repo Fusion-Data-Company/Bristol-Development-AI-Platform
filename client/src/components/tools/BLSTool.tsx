@@ -180,10 +180,10 @@ export function BLSTool() {
   return (
     <div className="space-y-6">
       {/* Controls */}
-      <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 border border-white/50 shadow-lg">
+      <div className="bristol-enterprise-card rounded-2xl p-8 shadow-xl border-2 border-bristol-gold/20">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <Label htmlFor="level" className="text-slate-700 font-medium">Geographic Level</Label>
+            <Label htmlFor="level" className="text-slate-800 font-bold text-lg tracking-wide">Geographic Level</Label>
             <Select value={level} onValueChange={setLevel}>
               <SelectTrigger className="bg-white/90 border-blue-200/60 text-slate-700 shadow-sm hover:border-bristol-gold/40 transition-colors">
                 <SelectValue />
@@ -198,7 +198,7 @@ export function BLSTool() {
         {level === "county" && (
           <>
             <div>
-              <Label htmlFor="state" className="text-slate-700 font-medium">State FIPS</Label>
+              <Label htmlFor="state" className="text-slate-800 font-bold text-lg tracking-wide">State FIPS</Label>
               <Input
                 id="state"
                 value={state}
@@ -208,7 +208,7 @@ export function BLSTool() {
               />
             </div>
             <div>
-              <Label htmlFor="county" className="text-slate-700 font-medium">County FIPS</Label>
+              <Label htmlFor="county" className="text-slate-800 font-bold text-lg tracking-wide">County FIPS</Label>
               <Input
                 id="county"
                 value={county}
@@ -222,7 +222,7 @@ export function BLSTool() {
 
         {level === "msa" && (
             <div>
-              <Label htmlFor="msa" className="text-slate-700 font-medium">MSA Code</Label>
+              <Label htmlFor="msa" className="text-slate-800 font-bold text-lg tracking-wide">MSA Code</Label>
               <Input
                 id="msa"
                 value={msa}
@@ -234,7 +234,7 @@ export function BLSTool() {
         )}
 
           <div>
-            <Label htmlFor="start" className="text-slate-700 font-medium">Start Date</Label>
+            <Label htmlFor="start" className="text-slate-800 font-bold text-lg tracking-wide">Start Date</Label>
             <Input
               id="start"
               type="month"
@@ -245,7 +245,7 @@ export function BLSTool() {
           </div>
 
           <div>
-            <Label htmlFor="end" className="text-slate-700 font-medium">End Date</Label>
+            <Label htmlFor="end" className="text-slate-800 font-bold text-lg tracking-wide">End Date</Label>
             <Input
               id="end"
               type="month"
@@ -262,7 +262,7 @@ export function BLSTool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="relative bg-gradient-to-r from-red-900 to-red-700 text-white border-2 border-red-400/70 shadow-2xl font-bold text-lg px-12 py-4 rounded-2xl transition-all duration-300 hover:scale-105 hover:border-red-300/80 hover:from-red-800 hover:to-red-600 active:scale-95 overflow-hidden before:absolute before:-inset-2 before:bg-red-500/20 before:blur-xl before:-z-10 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/8 after:via-transparent after:to-transparent after:rounded-2xl after:pointer-events-none"
+          className="bristol-elite-button relative text-white font-black text-lg px-12 py-4 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl border-bristol-gold/30"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Run Analysis

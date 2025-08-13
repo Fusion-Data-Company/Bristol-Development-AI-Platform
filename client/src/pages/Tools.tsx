@@ -17,87 +17,106 @@ export function Tools() {
     <Chrome>
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-amber-50/20">
         <div className="container mx-auto px-4 py-8">
-          {/* Header with gradient background */}
+          {/* Enterprise Elite Header */}
           <div className="mb-8 relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/5 via-blue-500/5 to-purple-500/5 rounded-3xl blur-3xl"></div>
-            <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/50">
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-bristol-maroon via-bristol-gold via-purple-600 to-bristol-ink bg-clip-text text-transparent mb-4 drop-shadow-2xl">
-                Economic Intelligence Tools
+            <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/10 via-bristol-maroon/5 via-blue-600/8 to-purple-600/10 rounded-3xl blur-3xl animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/5 via-transparent to-bristol-maroon/5 rounded-3xl blur-2xl"></div>
+            <div className="relative bg-gradient-to-br from-white/95 via-white/90 to-slate-50/95 backdrop-blur-lg rounded-3xl p-12 shadow-2xl border-2 border-bristol-gold/30 bristol-enterprise-card">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bristol-gold via-bristol-maroon to-purple-600 rounded-t-3xl"></div>
+              <h1 className="text-6xl font-black bg-gradient-to-r from-bristol-maroon via-bristol-gold via-purple-600 to-bristol-ink bg-clip-text text-transparent mb-6 drop-shadow-2xl tracking-tight leading-tight">
+                ECONOMIC INTELLIGENCE TOOLS
               </h1>
-              <p className="text-xl font-semibold bg-gradient-to-r from-bristol-maroon to-purple-700 bg-clip-text text-transparent">
-                Access live data from BLS, BEA, HUD, Foursquare, FBI, and NOAA for comprehensive property analysis
+              <div className="w-24 h-1 bg-gradient-to-r from-bristol-gold to-bristol-maroon rounded-full mb-6"></div>
+              <p className="text-2xl font-bold bg-gradient-to-r from-bristol-maroon via-bristol-ink to-purple-700 bg-clip-text text-transparent leading-relaxed">
+                Enterprise-Grade Live Data Analytics Platform
+              </p>
+              <p className="text-lg font-semibold text-slate-600 mt-2 leading-relaxed">
+                Access real-time data from BLS, BEA, HUD, Foursquare, FBI, and NOAA APIs for comprehensive property intelligence
               </p>
             </div>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-6 bg-gradient-to-r from-bristol-maroon/10 via-purple-500/10 to-bristol-gold/20 backdrop-blur-sm border-2 border-bristol-gold/30 shadow-2xl rounded-2xl h-auto p-3">
+            <TabsList className="grid w-full grid-cols-6 bg-gradient-to-r from-bristol-maroon/15 via-purple-600/12 to-bristol-gold/25 backdrop-blur-lg border-3 border-bristol-gold/40 shadow-2xl rounded-3xl h-auto p-4 bristol-enterprise-card">
               <TabsTrigger 
                 value="bls" 
                 className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
-                <BarChart3 className="h-5 w-5" />
-                <span className="text-sm font-medium">BLS</span>
-                <span className="text-xs opacity-80">Employment</span>
+                <BarChart3 className="h-6 w-6 drop-shadow-lg" />
+                <span className="text-sm font-black tracking-wide">BLS</span>
+                <span className="text-xs font-bold opacity-90">Employment</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="bea"
                 className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
-                <TrendingUp className="h-5 w-5" />
-                <span className="text-sm font-medium">BEA</span>
-                <span className="text-xs opacity-80">GDP/Income</span>
+                <TrendingUp className="h-6 w-6 drop-shadow-lg" />
+                <span className="text-sm font-black tracking-wide">BEA</span>
+                <span className="text-xs font-bold opacity-90">GDP/Income</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="hud"
                 className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
-                <Home className="h-5 w-5" />
-                <span className="text-sm font-medium">HUD</span>
-                <span className="text-xs opacity-80">Vacancy</span>
+                <Home className="h-6 w-6 drop-shadow-lg" />
+                <span className="text-sm font-black tracking-wide">HUD</span>
+                <span className="text-xs font-bold opacity-90">Vacancy</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="foursquare"
                 className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
-                <MapPin className="h-5 w-5" />
-                <span className="text-sm font-medium">Places</span>
-                <span className="text-xs opacity-80">Foursquare</span>
+                <MapPin className="h-6 w-6 drop-shadow-lg" />
+                <span className="text-sm font-black tracking-wide">Places</span>
+                <span className="text-xs font-bold opacity-90">Foursquare</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="fbi"
                 className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
-                <Shield className="h-5 w-5" />
-                <span className="text-sm font-medium">Crime</span>
-                <span className="text-xs opacity-80">FBI</span>
+                <Shield className="h-6 w-6 drop-shadow-lg" />
+                <span className="text-sm font-black tracking-wide">Crime</span>
+                <span className="text-xs font-bold opacity-90">FBI</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="noaa"
                 className="flex flex-col items-center gap-2 p-4 rounded-xl tools-tab-enhanced data-[state=active]:tools-tab-active text-slate-700 transition-all duration-300 border border-transparent"
               >
-                <Cloud className="h-5 w-5" />
-                <span className="text-sm font-medium">Climate</span>
-                <span className="text-xs opacity-80">NOAA</span>
+                <Cloud className="h-6 w-6 drop-shadow-lg" />
+                <span className="text-sm font-black tracking-wide">Climate</span>
+                <span className="text-xs font-bold opacity-90">NOAA</span>
               </TabsTrigger>
             </TabsList>
 
             <div className="mt-8">
               <TabsContent value="bls" className="space-y-6">
-                <Card className="bg-white/90 backdrop-blur-sm border-white/50 shadow-xl rounded-2xl overflow-hidden">
-                  <CardHeader className="bg-gradient-to-r from-blue-50/50 to-indigo-50/50 border-b border-blue-100/50">
-                    <CardTitle className="text-slate-900 flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-gradient-to-br from-bristol-gold/20 to-yellow-400/20">
-                        <BarChart3 className="h-5 w-5 text-bristol-gold" />
+                <Card className="bristol-enterprise-card shadow-2xl rounded-3xl overflow-hidden border-2 border-bristol-gold/30 relative">
+                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-bristol-gold via-blue-500 to-purple-600"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-3xl pointer-events-none"></div>
+                  <CardHeader className="bg-gradient-to-r from-blue-50/80 via-indigo-50/60 to-purple-50/80 border-b-2 border-bristol-gold/20 relative">
+                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                    <CardTitle className="text-slate-900 flex items-center gap-4 relative z-10">
+                      <div className="p-3 rounded-2xl bg-gradient-to-br from-bristol-gold/30 to-yellow-400/30 shadow-lg border border-bristol-gold/30 backdrop-blur-sm">
+                        <BarChart3 className="h-8 w-8 text-bristol-gold drop-shadow-lg" />
                       </div>
-                      Bureau of Labor Statistics - Employment Data
+                      <div>
+                        <h3 className="text-2xl font-black bg-gradient-to-r from-bristol-maroon via-bristol-gold to-purple-600 bg-clip-text text-transparent tracking-tight">
+                          BUREAU OF LABOR STATISTICS
+                        </h3>
+                        <p className="text-lg font-bold text-bristol-ink/80 tracking-wide">
+                          Employment Data Analytics
+                        </p>
+                      </div>
                     </CardTitle>
-                    <CardDescription className="text-slate-600">
-                      Access unemployment rates, employment trends, and labor market conditions for counties and metropolitan areas
+                    <CardDescription className="text-slate-700 font-semibold text-lg mt-4 leading-relaxed">
+                      Enterprise-grade access to unemployment rates, employment trends, and comprehensive labor market intelligence for counties and metropolitan statistical areas
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="bg-gradient-to-br from-slate-50/50 to-blue-50/30 p-6">
-                    <BLSTool />
+                  <CardContent className="bg-gradient-to-br from-slate-50/80 via-blue-50/40 to-purple-50/30 p-8 relative">
+                    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-white/20 pointer-events-none"></div>
+                    <div className="relative z-10">
+                      <BLSTool />
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
