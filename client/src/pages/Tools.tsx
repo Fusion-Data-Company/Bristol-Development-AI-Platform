@@ -48,10 +48,12 @@ export function Tools() {
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-6 relative overflow-hidden h-48 p-8 gap-4">
-              {/* Enhanced gradient background with Bristol colors */}
-              <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/25 via-orange-600/20 via-blue-600/15 to-bristol-gold/35 backdrop-blur-xl border-4 border-bristol-gold/60 shadow-2xl rounded-3xl bristol-enterprise-card"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300/15 to-transparent animate-pulse rounded-3xl"></div>
-              <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/10 via-transparent to-bristol-maroon/8 rounded-3xl"></div>
+              {/* Enhanced multi-layer background with Bristol colors */}
+              <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/30 via-orange-600/25 via-blue-600/20 to-bristol-gold/40 backdrop-blur-xl border-4 border-bristol-gold/70 shadow-2xl rounded-3xl bristol-enterprise-card"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-300/20 to-transparent animate-pulse rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/15 via-transparent to-bristol-maroon/12 rounded-3xl"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-white/5 rounded-3xl"></div>
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-bristol-gold/10 via-transparent to-transparent rounded-3xl"></div>
               <TabsTrigger 
                 value="bls" 
                 className="flex flex-col items-center justify-center gap-4 p-8 rounded-2xl tools-tab-enhanced data-[state=active]:tools-tab-active text-black font-black transition-all duration-300 border-3 border-bristol-gold/50 shadow-xl bg-gradient-to-br from-white/95 to-slate-100/90 backdrop-blur-lg hover:border-bristol-gold/80 hover:shadow-2xl relative overflow-hidden"
@@ -59,7 +61,7 @@ export function Tools() {
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-bristol-maroon/10 to-orange-500/15 rounded-2xl"></div>
                 <div className="relative z-10 flex flex-col items-center gap-4">
-                  <BarChart3 className="h-10 w-10 drop-shadow-lg text-bristol-maroon" />
+                  <BarChart3 className="h-10 w-10 drop-shadow-lg text-bristol-gold" />
                   <span className="text-xl font-black tracking-wide">BLS</span>
                   <span className="text-base font-bold">Employment</span>
                 </div>
@@ -71,7 +73,7 @@ export function Tools() {
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-bristol-maroon/10 to-blue-600/15 rounded-2xl"></div>
                 <div className="relative z-10 flex flex-col items-center gap-4">
-                  <TrendingUp className="h-10 w-10 drop-shadow-lg text-bristol-maroon" />
+                  <TrendingUp className="h-10 w-10 drop-shadow-lg text-green-600" />
                   <span className="text-xl font-black tracking-wide">BEA</span>
                   <span className="text-base font-bold">GDP/Income</span>
                 </div>
@@ -83,7 +85,7 @@ export function Tools() {
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/20 via-bristol-gold/10 to-orange-600/15 rounded-2xl"></div>
                 <div className="relative z-10 flex flex-col items-center gap-4">
-                  <Home className="h-10 w-10 drop-shadow-lg text-bristol-maroon" />
+                  <Home className="h-10 w-10 drop-shadow-lg text-orange-600" />
                   <span className="text-xl font-black tracking-wide">HUD</span>
                   <span className="text-base font-bold">Vacancy</span>
                 </div>
@@ -95,7 +97,7 @@ export function Tools() {
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-bristol-gold/10 to-bristol-maroon/15 rounded-2xl"></div>
                 <div className="relative z-10 flex flex-col items-center gap-4">
-                  <MapPin className="h-10 w-10 drop-shadow-lg text-bristol-maroon" />
+                  <MapPin className="h-10 w-10 drop-shadow-lg text-blue-600" />
                   <span className="text-xl font-black tracking-wide">Places</span>
                   <span className="text-base font-bold">Foursquare</span>
                 </div>
@@ -119,7 +121,7 @@ export function Tools() {
                 {/* Individual card gradient background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/20 via-blue-600/10 to-bristol-maroon/15 rounded-2xl"></div>
                 <div className="relative z-10 flex flex-col items-center gap-4">
-                  <Cloud className="h-10 w-10 drop-shadow-lg text-bristol-maroon" />
+                  <Cloud className="h-10 w-10 drop-shadow-lg text-cyan-600" />
                   <span className="text-xl font-black tracking-wide">Climate</span>
                   <span className="text-base font-bold">NOAA</span>
                 </div>
