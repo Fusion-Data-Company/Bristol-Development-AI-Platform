@@ -235,10 +235,26 @@ export function NOAATool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="relative bg-gradient-to-r from-red-900 to-red-700 text-white border-2 border-red-400/70 shadow-2xl font-bold text-lg px-12 py-4 rounded-2xl transition-all duration-300 hover:scale-105 hover:border-red-300/80 hover:from-red-800 hover:to-red-600 active:scale-95 overflow-hidden before:absolute before:-inset-2 before:bg-red-500/20 before:blur-xl before:-z-10 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/8 after:via-transparent after:to-transparent after:rounded-2xl after:pointer-events-none"
+          className="group relative bg-gradient-to-r from-bristol-maroon via-red-800 to-bristol-maroon text-white border-4 border-bristol-gold/60 shadow-2xl font-black text-xl px-16 py-6 rounded-3xl transition-all duration-500 hover:scale-110 hover:border-bristol-gold/90 hover:from-bristol-maroon/90 hover:to-red-700 active:scale-95 overflow-hidden before:absolute before:-inset-3 before:bg-bristol-gold/30 before:blur-2xl before:-z-10 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-700 after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/12 after:via-transparent after:to-transparent after:rounded-3xl after:pointer-events-none bristol-enterprise-card"
         >
-          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Run Analysis
+          <div className="relative flex items-center justify-center gap-4 z-10">
+            {isLoading ? (
+              <Loader2 className="h-6 w-6 animate-spin text-bristol-gold drop-shadow-lg" />
+            ) : (
+              <div className="p-2 rounded-xl bg-gradient-to-br from-bristol-gold/30 to-amber-400/20 shadow-inner group-hover:animate-pulse">
+                <Cpu className="h-6 w-6 text-bristol-gold drop-shadow-lg animate-pulse" />
+              </div>
+            )}
+            <div className="text-center">
+              <div className="font-black text-xl tracking-wide drop-shadow-lg">
+                {isLoading ? 'ANALYZING...' : 'RUN ANALYSIS'}
+              </div>
+              <div className="text-xs text-amber-300 font-medium -mt-1">
+                Bristol Intelligence
+              </div>
+            </div>
+            <Cpu className="h-4 w-4 text-amber-300/70" />
+          </div>
         </Button>
         
         {data && (
