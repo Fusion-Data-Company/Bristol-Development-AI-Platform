@@ -9,7 +9,7 @@ import { HUDTool } from "../components/tools/HUDTool";
 import { FoursquareTool } from "../components/tools/FoursquareTool";
 import { FBITool } from "../components/tools/FBITool";
 import { NOAATool } from "../components/tools/NOAATool";
-import darkEarthBg from "@assets/3d-rendering-dark-earth-space_23-2151051281_1755125083945.avif";
+import circuitWorldBg from "@assets/peakpx_1755125718140.jpg";
 
 export function Tools() {
   const [activeTab, setActiveTab] = useState("bls");
@@ -17,15 +17,16 @@ export function Tools() {
   return (
     <Chrome>
       <div className="min-h-screen relative overflow-hidden">
-        {/* Dark Earth Space Background */}
+        {/* Circuit World Map Background */}
         <div 
-          className="absolute inset-0 bg-center bg-no-repeat"
+          className="absolute inset-0 bg-center bg-no-repeat opacity-30"
           style={{
-            backgroundImage: `url(${darkEarthBg})`,
-            backgroundSize: 'contain',
+            backgroundImage: `url(${circuitWorldBg})`,
+            backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         ></div>
+        <div className="absolute inset-0 bg-white/20"></div>
         <div className="container mx-auto px-4 py-8 relative z-10">
           {/* Enterprise Elite Header */}
           <div className="mb-8 relative">
