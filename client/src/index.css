@@ -90,6 +90,17 @@
   animation: bristol-shimmer 2s infinite;
 }
 
+/* Bristol Glass Effects */
+.bristol-glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.bristol-glow-hover:hover {
+  filter: drop-shadow(0 0 30px hsl(189 85% 67% / 0.6)) drop-shadow(0 0 60px hsl(267 87% 67% / 0.3));
+}
+
 .dark {
   --background: hsl(0 0% 0%);
   --foreground: hsl(200 6.6667% 91.1765%);

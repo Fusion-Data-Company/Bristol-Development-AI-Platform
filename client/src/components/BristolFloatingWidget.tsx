@@ -269,28 +269,44 @@ export default function BristolFloatingWidget({
 
   return (
     <>
-      {/* Launcher Button (fixed on left) */}
+      {/* Bristol Brain Launcher Button */}
       <button
         onClick={() => setOpen(true)}
         className={cx(
-          "fixed top-24 left-0 z-50 group flex items-center gap-2 pl-2 pr-4 py-3",
-          "bg-gradient-to-r from-bristol-maroon via-bristol-ink to-bristol-electric text-white rounded-r-2xl shadow-2xl",
-          "backdrop-blur-md border border-bristol-cyan/30 hover:from-bristol-electric hover:via-bristol-maroon hover:to-bristol-ink",
-          "transition-all duration-500 transform hover:scale-105 hover:shadow-bristol-cyan/20 hover:shadow-lg",
-          "font-serif relative overflow-hidden"
+          "fixed top-20 left-0 z-50 group flex items-center gap-3 pl-3 pr-5 py-4",
+          "bg-gradient-to-r from-bristol-maroon/90 via-bristol-ink/90 to-bristol-electric/80 text-white rounded-r-3xl shadow-2xl",
+          "backdrop-blur-xl border border-bristol-cyan/40 hover:border-bristol-electric/60",
+          "transition-all duration-700 transform hover:scale-110 hover:shadow-bristol-cyan/30",
+          "font-serif relative overflow-hidden bristol-glow-hover",
+          "before:absolute before:inset-0 before:bg-gradient-to-r before:from-bristol-cyan/10 before:to-bristol-electric/10",
+          "before:opacity-0 before:transition-opacity before:duration-300 group-hover:before:opacity-100"
         )}
-        aria-label="Open Bristol Analyst"
+        style={{
+          filter: 'drop-shadow(0 0 20px hsl(189 85% 67% / 0.4))',
+        }}
+        aria-label="Open Bristol Brain"
       >
-        {/* Animated background glow */}
-        <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Animated glow rings */}
+        <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/20 via-bristol-electric/20 to-bristol-maroon/20 rounded-full opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-500" />
+        <div className="absolute -inset-1 bg-gradient-to-r from-bristol-electric/30 to-bristol-cyan/30 rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity duration-700" />
         
         {/* Content */}
-        <div className="relative z-10 flex items-center gap-2">
-          <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
-          <span className="hidden sm:block text-sm font-semibold tracking-wide">
-            Bristol AI Analyst
-          </span>
-          <Sparkles className="h-3 w-3 text-bristol-gold/70 group-hover:text-bristol-gold transition-all duration-300 group-hover:scale-110" />
+        <div className="relative z-10 flex items-center gap-3">
+          <div className="relative">
+            <Brain className="h-6 w-6 text-bristol-cyan group-hover:text-white transition-all duration-300 drop-shadow-lg" />
+            <div className="absolute inset-0 h-6 w-6 text-bristol-electric/50 animate-pulse opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <Sparkles className="h-6 w-6" />
+            </div>
+          </div>
+          <div className="hidden sm:block">
+            <div className="text-sm font-bold tracking-wide text-bristol-cyan group-hover:text-white transition-colors duration-300">
+              BRISTOL BRAIN
+            </div>
+            <div className="text-xs text-bristol-gold/80 group-hover:text-bristol-gold font-medium transition-colors duration-300">
+              AI Intelligence
+            </div>
+          </div>
+          <Cpu className="h-4 w-4 text-bristol-gold/70 group-hover:text-bristol-gold transition-all duration-300 group-hover:rotate-180" />
         </div>
       </button>
 
@@ -300,46 +316,91 @@ export default function BristolFloatingWidget({
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
 
-          {/* Panel */}
-          <div className="absolute inset-y-0 left-0 w-[92vw] sm:w-[580px] bg-bristol-ink/95 text-neutral-100 shadow-2xl border-r border-bristol-cyan/30 flex flex-col backdrop-blur-xl">
-            {/* Header with premium Bristol branding */}
+          {/* Glass Panel with Ambient Glow */}
+          <div 
+            className="absolute inset-y-0 left-0 w-[92vw] sm:w-[620px] text-neutral-100 shadow-2xl border-r border-bristol-cyan/40 flex flex-col"
+            style={{
+              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 50%, rgba(15, 23, 42, 0.95) 100%)',
+              backdropFilter: 'blur(24px) saturate(1.5)',
+              boxShadow: '0 0 60px rgba(69, 214, 202, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            {/* Premium Glass Header */}
             <div className="relative overflow-hidden">
-              {/* Animated background gradient */}
-              <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/30 via-bristol-ink to-bristol-electric/20" />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-bristol-ink/50" />
+              {/* Ambient glow effects */}
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-bristol-cyan/10 rounded-full blur-3xl animate-pulse" />
+              <div className="absolute -top-5 -right-10 w-32 h-32 bg-bristol-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
+              
+              {/* Glass header background */}
+              <div 
+                className="absolute inset-0" 
+                style={{
+                  background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.15) 0%, rgba(168, 85, 247, 0.1) 50%, rgba(239, 68, 68, 0.08) 100%)',
+                }}
+              />
               
               {/* Header content */}
-              <div className="relative z-10 flex items-center justify-between px-6 py-4 border-b border-bristol-cyan/30">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <Cpu className="h-6 w-6 text-bristol-cyan animate-pulse" />
-                    <div className="absolute inset-0 h-6 w-6 text-bristol-electric/50 animate-spin">
-                      <Sparkles className="h-6 w-6" />
+              <div className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-bristol-cyan/30">
+                <div className="flex items-center gap-4">
+                  <div className="relative group">
+                    <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-full blur-sm opacity-75 group-hover:opacity-100 animate-pulse" />
+                    <div className="relative bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 p-2 rounded-full border border-bristol-cyan/30">
+                      <Brain className="h-7 w-7 text-bristol-cyan" />
                     </div>
                   </div>
                   <div>
-                    <h1 className="font-serif font-bold text-lg bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent">
-                      Bristol Development
+                    <h1 className="font-serif font-bold text-xl bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">
+                      BRISTOL BRAIN
                     </h1>
-                    <p className="text-xs text-bristol-cyan/80 font-medium tracking-wide uppercase">
-                      AI Intelligence Platform
+                    <p className="text-xs text-bristol-cyan/90 font-semibold tracking-wider uppercase mt-1">
+                      AI Real Estate Intelligence
                     </p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setOpen(false)} 
-                  className="p-2 hover:bg-bristol-cyan/10 rounded-xl transition-all duration-200 group border border-bristol-cyan/20 hover:border-bristol-cyan/40" 
+                  className={cx(
+                    "p-3 rounded-2xl transition-all duration-300 group relative",
+                    "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
+                    "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
+                    "hover:shadow-lg hover:shadow-bristol-cyan/20"
+                  )}
                   aria-label="Close"
                 >
                   <X className="h-5 w-5 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
                 </button>
               </div>
+              
+              {/* Welcome Greeting */}
+              <div className="px-6 py-4 bg-gradient-to-r from-bristol-ink/30 to-transparent border-b border-bristol-cyan/20">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="h-4 w-4 text-bristol-gold animate-pulse" />
+                  <p className="text-sm text-bristol-cyan/90 font-medium">
+                    Welcome to Bristol Brain. Ask me about properties, market analysis, demographics, and investment opportunities.
+                  </p>
+                </div>
+              </div>
             </div>
 
-            {/* Premium Controls */}
-            <div className="px-6 py-4 border-b border-bristol-cyan/20 bg-gradient-to-r from-black/30 to-bristol-ink/50">
+            {/* Glass Controls Panel */}
+            <div 
+              className="px-6 py-5 border-b border-bristol-cyan/30 relative"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(69, 214, 202, 0.05) 50%, rgba(168, 85, 247, 0.02) 100%)',
+                backdropFilter: 'blur(12px)',
+              }}
+            >
+              {/* Ambient glow */}
+              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-bristol-cyan/10 rounded-full blur-2xl" />
+              
               {modelError && (
-                <div className="mb-3 text-xs text-red-300 bg-red-500/20 border border-red-400/30 rounded-xl px-4 py-3 backdrop-blur">
+                <div 
+                  className="mb-4 text-xs text-red-300 rounded-2xl px-4 py-3 backdrop-blur-md border border-red-400/40"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%)',
+                    boxShadow: '0 4px 20px rgba(239, 68, 68, 0.1)',
+                  }}
+                >
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
                     {modelError}
@@ -347,54 +408,77 @@ export default function BristolFloatingWidget({
                 </div>
               )}
               
-              <div className="flex flex-wrap items-center gap-4">
-                {/* Elite Model Selector */}
-                <div className="flex-1 min-w-[200px]">
-                  <label className="block text-xs text-bristol-cyan/80 font-medium uppercase tracking-wide mb-2">
+              <div className="flex flex-wrap items-center gap-6">
+                {/* Glass Elite Model Selector */}
+                <div className="flex-1 min-w-[240px]">
+                  <label className="block text-xs text-bristol-cyan font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Brain className="h-3 w-3" />
                     Elite AI Model
                   </label>
-                  <select
-                    className={cx(
-                      "w-full bg-bristol-ink/80 border border-bristol-cyan/40 rounded-xl px-4 py-3 text-sm",
-                      "focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/20",
-                      "disabled:opacity-50 font-medium text-bristol-cyan backdrop-blur transition-all duration-200",
-                      "hover:border-bristol-cyan/60"
-                    )}
-                    value={model}
-                    onChange={(e) => setModel(e.target.value)}
-                    disabled={modelList.length === 0}
-                  >
-                    {modelList.length === 0 ? (
-                      <option value="">🔄 Loading Elite Models...</option>
-                    ) : (
-                      modelList.map((m: ModelOption) => (
-                        <option key={m.id} value={m.id} className="bg-bristol-ink text-white">
-                          ✨ {m.label}
-                        </option>
-                      ))
-                    )}
-                  </select>
+                  <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
+                    <select
+                      className={cx(
+                        "relative w-full text-sm font-medium transition-all duration-300 backdrop-blur-sm",
+                        "rounded-2xl px-5 py-4 border focus:outline-none",
+                        "text-bristol-cyan hover:text-white focus:text-white",
+                        "disabled:opacity-50 hover:shadow-lg hover:shadow-bristol-cyan/10",
+                        "focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/30"
+                      )}
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(69, 214, 202, 0.1) 50%, rgba(30, 41, 59, 0.8) 100%)',
+                        borderColor: 'rgba(69, 214, 202, 0.4)',
+                      }}
+                      value={model}
+                      onChange={(e) => setModel(e.target.value)}
+                      disabled={modelList.length === 0}
+                    >
+                      {modelList.length === 0 ? (
+                        <option value="">🧠 Loading Elite Models...</option>
+                      ) : (
+                        modelList.map((m: ModelOption) => (
+                          <option key={m.id} value={m.id} className="bg-bristol-ink text-white py-2">
+                            🚀 {m.label}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  </div>
                 </div>
 
-                {/* Data Context Badge */}
-                <div className="flex flex-col items-center gap-1">
-                  <span className="text-xs text-bristol-cyan/80 font-medium uppercase tracking-wide">
-                    Live Data
+                {/* Glass Data Context Badge */}
+                <div className="flex flex-col items-center gap-2">
+                  <span className="text-xs text-bristol-cyan font-semibold uppercase tracking-wider">
+                    Live Intelligence
                   </span>
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 border border-bristol-cyan/30">
-                    <Database className="h-4 w-4 text-bristol-cyan" />
-                    <span className="text-sm font-bold text-white">
-                      {Object.keys(appData || {}).length}
-                    </span>
-                    <span className="text-xs text-bristol-cyan/70">objects</span>
+                  <div 
+                    className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-bristol-cyan/40 backdrop-blur-sm hover:shadow-lg hover:shadow-bristol-cyan/20 transition-all duration-300"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.15) 0%, rgba(168, 85, 247, 0.1) 100%)',
+                    }}
+                  >
+                    <Database className="h-5 w-5 text-bristol-cyan animate-pulse" />
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-white">
+                        {Object.keys(appData || {}).length}
+                      </div>
+                      <div className="text-xs text-bristol-cyan/80 font-medium">
+                        datasets
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Premium Tab Navigation */}
-            <div className="px-6 pt-4 pb-2 bg-gradient-to-b from-bristol-ink/30 to-transparent">
-              <div className="flex items-center gap-3">
+            {/* Glass Tab Navigation */}
+            <div 
+              className="px-6 py-4 border-b border-bristol-cyan/20"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(30, 41, 59, 0.3) 100%)',
+              }}
+            >
+              <div className="flex items-center gap-2">
                 <TabButton 
                   icon={<MessageSquare className="h-4 w-4" />} 
                   active={activeTab === "chat"} 
@@ -410,14 +494,23 @@ export default function BristolFloatingWidget({
                 <TabButton 
                   icon={<Settings className="h-4 w-4" />} 
                   active={activeTab === "admin"} 
-                  label="System" 
+                  label="Brain Config" 
                   onClick={() => setActiveTab("admin")} 
                 />
               </div>
             </div>
 
-            {/* Body */}
-            <div className="flex-1 min-h-0">
+            {/* Glass Body Container */}
+            <div 
+              className="flex-1 min-h-0 relative"
+              style={{
+                background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.2) 50%, rgba(15, 23, 42, 0.4) 100%)',
+              }}
+            >
+              {/* Subtle ambient glow */}
+              <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
+              <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
+              
               {activeTab === "chat" && <ChatPane messages={messages} loading={loading} />}
               {activeTab === "data" && <DataPane data={dataContext} />}
               {activeTab === "admin" && (
@@ -429,53 +522,86 @@ export default function BristolFloatingWidget({
               )}
             </div>
 
-            {/* Premium Chat Composer */}
+            {/* Glass Chat Composer */}
             {activeTab === "chat" && (
-              <div className="border-t border-bristol-cyan/30 bg-gradient-to-r from-bristol-ink/80 to-black/60 backdrop-blur">
-                <div className="px-6 py-4 flex items-center gap-3">
-                  <div className="flex-1 relative">
+              <div 
+                className="border-t border-bristol-cyan/40 relative"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.95) 100%)',
+                  backdropFilter: 'blur(20px) saturate(1.2)',
+                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+                }}
+              >
+                {/* Ambient glow */}
+                <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-40 h-6 bg-bristol-cyan/10 rounded-full blur-2xl" />
+                
+                <div className="px-6 py-5 flex items-end gap-4">
+                  <div className="flex-1 relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-3xl blur opacity-0 group-focus-within:opacity-100 transition duration-300" />
                     <input
                       ref={inputRef}
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && !e.shiftKey ? handleSend() : null}
-                      placeholder={loading ? "AI is analyzing your data..." : "Ask about properties, market analysis, demographics, investment opportunities..."}
+                      placeholder={loading ? "Bristol Brain is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
                       disabled={loading}
                       className={cx(
-                        "w-full bg-bristol-ink/60 border border-bristol-cyan/40 rounded-2xl px-4 py-3 pr-12 text-sm",
-                        "focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/20",
-                        "disabled:opacity-60 placeholder-bristol-cyan/60 text-white transition-all duration-200",
-                        "hover:border-bristol-cyan/60 backdrop-blur"
+                        "relative w-full text-sm font-medium transition-all duration-300 backdrop-blur-sm",
+                        "rounded-3xl px-6 py-4 pr-12 border focus:outline-none",
+                        "text-white placeholder-bristol-cyan/60 disabled:opacity-60",
+                        "hover:shadow-lg hover:shadow-bristol-cyan/10",
+                        "focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/30"
                       )}
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(69, 214, 202, 0.08) 50%, rgba(30, 41, 59, 0.6) 100%)',
+                        borderColor: 'rgba(69, 214, 202, 0.4)',
+                      }}
                     />
                     {loading && (
-                      <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                        <div className="w-4 h-4 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin" />
+                      <div className="absolute right-5 top-1/2 transform -translate-y-1/2">
+                        <div className="w-5 h-5 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin" />
                       </div>
                     )}
                   </div>
+                  
+                  {/* Glass Send Button */}
                   <button
                     onClick={handleSend}
                     disabled={loading || !input.trim()}
                     className={cx(
-                      "inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold text-sm transition-all duration-200",
-                      "bg-gradient-to-r from-bristol-cyan to-bristol-electric text-white shadow-lg",
-                      "hover:from-bristol-electric hover:to-bristol-maroon hover:shadow-bristol-cyan/20",
-                      "disabled:opacity-60 disabled:cursor-not-allowed transform hover:scale-105",
-                      "border border-bristol-cyan/30 hover:border-bristol-electric/50"
+                      "relative inline-flex items-center gap-3 px-6 py-4 rounded-3xl font-bold text-sm transition-all duration-300 group overflow-hidden",
+                      "backdrop-blur-sm border shadow-lg hover:shadow-bristol-cyan/25",
+                      "disabled:opacity-50 disabled:cursor-not-allowed",
+                      "transform hover:scale-105 active:scale-95",
+                      loading || !input.trim() 
+                        ? "border-bristol-cyan/20" 
+                        : "border-bristol-cyan/50 hover:border-bristol-electric/60"
                     )}
+                    style={{
+                      background: loading || !input.trim() 
+                        ? 'linear-gradient(135deg, rgba(69, 214, 202, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%)'
+                        : 'linear-gradient(135deg, rgba(69, 214, 202, 0.2) 0%, rgba(168, 85, 247, 0.15) 50%, rgba(239, 68, 68, 0.1) 100%)',
+                    }}
                   >
-                    {loading ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>Analyzing...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4" />
-                        <span>Send</span>
-                      </>
-                    )}
+                    {/* Glass shimmer effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                    
+                    {/* Button content */}
+                    <div className="relative z-10 flex items-center gap-2">
+                      {loading ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin" />
+                          <span className="text-bristol-cyan/80 font-bold">Processing</span>
+                        </>
+                      ) : (
+                        <>
+                          <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
+                          <span className="text-bristol-cyan group-hover:text-white transition-colors duration-300 font-bold">
+                            Ask Bristol Brain
+                          </span>
+                        </>
+                      )}
+                    </div>
                   </button>
                 </div>
               </div>
@@ -493,22 +619,31 @@ function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; la
     <button
       onClick={onClick}
       className={cx(
-        "relative flex items-center gap-2 px-4 py-2 rounded-xl border text-xs sm:text-sm font-medium transition-all duration-300 group",
+        "relative flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300 group overflow-hidden",
+        "backdrop-blur-sm border hover:shadow-lg hover:shadow-bristol-cyan/20",
         active 
-          ? "bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 text-bristol-cyan border-bristol-cyan/50 shadow-lg shadow-bristol-cyan/10" 
-          : "bg-bristol-ink/40 text-bristol-cyan/70 border-bristol-cyan/20 hover:bg-bristol-cyan/10 hover:text-bristol-cyan hover:border-bristol-cyan/40"
+          ? "text-white border-bristol-cyan/60 shadow-lg shadow-bristol-cyan/15" 
+          : "text-bristol-cyan/80 border-bristol-cyan/30 hover:text-bristol-cyan hover:border-bristol-cyan/50"
       )}
+      style={{
+        background: active 
+          ? 'linear-gradient(135deg, rgba(69, 214, 202, 0.2) 0%, rgba(168, 85, 247, 0.15) 50%, rgba(69, 214, 202, 0.1) 100%)'
+          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(69, 214, 202, 0.05) 100%)',
+      }}
     >
-      {/* Active indicator */}
+      {/* Glass shimmer effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+      
+      {/* Active glow */}
       {active && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-bristol-cyan to-bristol-electric rounded-t" />
+        <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/10 to-bristol-electric/10 animate-pulse" />
       )}
       
       {/* Content */}
-      <span className={cx("transition-colors", active ? "text-bristol-cyan" : "group-hover:text-bristol-cyan")}>
+      <span className={cx("relative z-10 transition-all duration-300", active ? "text-bristol-cyan scale-110" : "group-hover:text-bristol-cyan group-hover:scale-105")}>
         {icon}
       </span>
-      <span className="tracking-wide">{label}</span>
+      <span className="relative z-10 tracking-wide font-semibold">{label}</span>
     </button>
   );
 }
