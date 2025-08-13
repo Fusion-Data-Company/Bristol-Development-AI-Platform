@@ -76,10 +76,18 @@ function AppContent() {
             appData={appData}
             webhookUrl={import.meta.env.VITE_N8N_WEBHOOK_URL}
             onSaveSystemPrompt={async (prompt) => {
-              console.log("System prompt saved:", prompt.length, "characters");
+              try {
+                console.log("System prompt saved:", prompt.length, "characters");
+              } catch (error) {
+                console.error("Error saving system prompt:", error);
+              }
             }}
             onSend={async (payload) => {
-              console.log("Chat sent:", payload.model, payload.messages.length, "messages");
+              try {
+                console.log("Chat sent:", payload.model, payload.messages.length, "messages");
+              } catch (error) {
+                console.error("Error sending chat:", error);
+              }
             }}
           />
         </>

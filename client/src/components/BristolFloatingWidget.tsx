@@ -158,8 +158,12 @@ export default function BristolFloatingWidget({
       maxTokens: 1200,
     };
 
-    onSend?.(payload);
-    sendTelemetry("chat_send", { model, promptSize: JSON.stringify(newMessages).length });
+    try {
+      await onSend?.(payload);
+      await sendTelemetry("chat_send", { model, promptSize: JSON.stringify(newMessages).length });
+    } catch (error) {
+      console.error("Error in onSend callback or telemetry:", error);
+    }
 
     try {
       // The proxy should call OpenRouter, inject the dataContext into the system or tool context, and stream back tokens
@@ -181,7 +185,7 @@ export default function BristolFloatingWidget({
         createdAt: nowISO(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
-      sendTelemetry("chat_receive", { tokens: assistantText.length });
+      await sendTelemetry("chat_receive", { tokens: assistantText.length });
     } catch (err: any) {
       const assistantMessage: ChatMessage = {
         role: "assistant",
@@ -195,9 +199,13 @@ export default function BristolFloatingWidget({
   };
 
   const saveSystemPrompt = async () => {
-    localStorage.setItem("bristol.systemPrompt", systemPrompt);
-    await onSaveSystemPrompt?.(systemPrompt);
-    sendTelemetry("system_prompt_saved", { size: systemPrompt.length });
+    try {
+      localStorage.setItem("bristol.systemPrompt", systemPrompt);
+      await onSaveSystemPrompt?.(systemPrompt);
+      await sendTelemetry("system_prompt_saved", { size: systemPrompt.length });
+    } catch (error) {
+      console.error("Error saving system prompt:", error);
+    }
   };
 
   return (
