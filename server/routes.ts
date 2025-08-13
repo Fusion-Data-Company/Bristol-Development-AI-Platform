@@ -78,17 +78,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { model, messages, dataContext, temperature = 0.2, maxTokens = 1200 } = req.body || {};
       
-      // Validate model against allowlist
-      const ALLOWED_MODELS = new Set([
-        "openai/gpt-4o",
-        "anthropic/claude-3.5-sonnet", 
-        "openai/gpt-4-turbo",
-        "google/gemini-1.5-pro",
-        "meta-llama/llama-3.1-70b-instruct"
+      // Validate model against elite models allowlist (same as models endpoint)
+      const ELITE_MODELS = new Set([
+        "openai/gpt-5-chat", 
+        "openai/gpt-5",
+        "anthropic/claude-opus-4", 
+        "anthropic/claude-sonnet-4",
+        "x-ai/grok-4",
+        "perplexity/sonar-deep-research", 
+        "perplexity/sonar-reasoning",
+        "perplexity/sonar-pro", 
+        "perplexity/sonar-reasoning-pro",
       ]);
       
-      if (!ALLOWED_MODELS.has(model)) {
-        return res.status(400).json({ error: "model_not_allowed" });
+      if (!ELITE_MODELS.has(model)) {
+        return res.status(400).json({ error: "model_not_allowed", message: `Model ${model} is not in the elite allowlist` });
       }
 
       // Get API key from environment

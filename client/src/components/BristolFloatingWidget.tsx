@@ -144,7 +144,7 @@ export default function BristolFloatingWidget({
         if (preferred) {
           setModel(preferred.id);
         } else {
-          setModelError("No eligible models for this API key (GPT-5 may require BYOK).");
+          setModelError(`No eligible models found. Available models: ${models.map(m => m.id).join(', ') || 'none'}`);
         }
       } catch (error) {
         console.error("Error fetching models:", error);
@@ -233,9 +233,22 @@ export default function BristolFloatingWidget({
       setMessages((prev) => [...prev, assistantMessage]);
       await sendTelemetry("chat_receive", { tokens: assistantText.length });
     } catch (err: any) {
+      console.error("Full error object:", err);
+      let errorMessage = "Failed to reach model proxy.";
+      
+      if (err?.message?.includes("401") || err?.message?.includes("Unauthorized")) {
+        errorMessage = "Authentication required. Please make sure you're logged in.";
+      } else if (err?.message?.includes("400")) {
+        errorMessage = "Invalid request. The selected model may not be available.";
+      } else if (err?.message?.includes("502")) {
+        errorMessage = "OpenRouter API error. Please try again or select a different model.";
+      } else if (err?.message) {
+        errorMessage = `Error: ${err.message}`;
+      }
+      
       const assistantMessage: ChatMessage = {
         role: "assistant",
-        content: `Error: ${err?.message || "Failed to reach model proxy."}`,
+        content: errorMessage,
         createdAt: nowISO(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
