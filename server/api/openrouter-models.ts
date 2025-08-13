@@ -31,10 +31,10 @@ function getModelLabel(slug: string): string {
 
 router.get('/', async (req, res) => {
   try {
-    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY2;
+    const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
     
     if (!OPENROUTER_API_KEY) {
-      return res.status(500).json({ error: "OpenRouter API key not configured" });
+      return res.status(500).json({ error: "API key not configured" });
     }
 
     const response = await fetch("https://openrouter.ai/api/v1/models", {

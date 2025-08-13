@@ -95,10 +95,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "model_not_allowed", message: `Model ${model} is not in the elite allowlist` });
       }
 
-      // Get API key from environment
-      const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY2;
+      // Get API key from environment (support both OpenRouter and OpenAI)
+      const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
       if (!OPENROUTER_API_KEY) {
-        return res.status(500).json({ error: "OpenRouter API key not configured. Please set OPENROUTER_API_KEY2 environment variable." });
+        return res.status(500).json({ error: "API key not configured. Please set OPENROUTER_API_KEY2 or OPENAI_API_KEY environment variable." });
       }
 
       // Find system message and inject data context with safe stringify

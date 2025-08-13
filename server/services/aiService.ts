@@ -25,9 +25,9 @@ export class AIService {
   private baseUrl = "https://openrouter.ai/api/v1";
 
   constructor() {
-    this.apiKey = process.env.OPENROUTER_API_KEY || "";
+    this.apiKey = process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY || "";
     if (!this.apiKey) {
-      throw new Error("OPENROUTER_API_KEY environment variable is required");
+      throw new Error("OPENROUTER_API_KEY or OPENAI_API_KEY environment variable is required");
     }
   }
 
@@ -172,10 +172,10 @@ When discussing sites or markets, consider:
 
 Site Details:
 - Name: ${site.name}
-- Location: ${site.address}, ${site.city}, ${site.state} ${site.zipCode}
+- Location: ${site.addrLine1 || "Not specified"}, ${site.city || "Not specified"}, ${site.state || "Not specified"} ${site.postalCode || "Not specified"}
 - Acreage: ${site.acreage || "Not specified"}
-- Zoning: ${site.zoning || "Not specified"}
-- Bristol Score: ${site.bristolScore || "Not yet scored"}
+- Total Units: ${site.unitsTotal || "Not specified"}
+- Completion Year: ${site.completionYear || "Not yet built"}
 
 Available Metrics:
 ${metrics.map(m => `- ${m.metricName}: ${m.value} ${m.unit || ""} (Source: ${m.source})`).join("\n")}
