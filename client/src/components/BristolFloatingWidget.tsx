@@ -2254,14 +2254,14 @@ function AgentsPane({
               <div className="flex items-center justify-between mb-2">
                 <span className="text-bristol-maroon font-semibold text-sm">OVERALL PROGRESS</span>
                 <span className="text-bristol-maroon text-sm">
-                  {Math.round(Object.values(taskProgress).reduce((a: number, b: number) => a + b, 0) / Object.keys(taskProgress).length || 0)}%
+                  {Math.round(Object.values(taskProgress).reduce((a: number, b: unknown) => a + (b as number), 0) / Object.keys(taskProgress).length || 0)}%
                 </span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2">
                 <div 
                   className="bg-gradient-to-r from-bristol-maroon to-bristol-gold h-2 rounded-full transition-all duration-500"
                   style={{ 
-                    width: `${Math.round(Object.values(taskProgress).reduce((a: number, b: number) => a + b, 0) / Object.keys(taskProgress).length || 0)}%` 
+                    width: `${Math.round(Object.values(taskProgress).reduce((a: number, b: unknown) => a + (b as number), 0) / Object.keys(taskProgress).length || 0)}%` 
                   }}
                 ></div>
               </div>

@@ -88,7 +88,7 @@ export class AgentManager extends EventEmitter {
       id: 'financial-analyst',
       name: 'Financial Analysis Agent',
       role: 'Real estate financial modeling and investment analysis',
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'anthropic/claude-3.5-sonnet',
       provider: 'openrouter',
       capabilities: [
         'irr_calculation',
@@ -106,7 +106,7 @@ export class AgentManager extends EventEmitter {
       id: 'market-intelligence',
       name: 'Market Intelligence Agent',
       role: 'Market research and competitive analysis',
-      model: 'google/gemini-2.0-flash-exp',
+      model: 'google/gemini-pro-1.5',
       provider: 'openrouter',
       capabilities: [
         'comparable_analysis',
@@ -123,8 +123,8 @@ export class AgentManager extends EventEmitter {
       id: 'lead-manager',
       name: 'Lead Management Agent',
       role: 'Client relationship and lead pipeline management',
-      model: 'perplexity/llama-3.1-sonar-large-128k-online',
-      provider: 'openrouter',
+      model: 'gpt-4o-mini',
+      provider: 'openai',
       capabilities: [
         'lead_qualification',
         'client_tracking',
@@ -549,7 +549,7 @@ Begin your specialized analysis now.`;
     return requirements[agentId as keyof typeof requirements] || requirements['bristol-master'];
   }
 
-  // Property Analysis Orchestration
+  // Property Analysis Orchestration - FIXED WITH ENHANCED INDIVIDUAL OUTPUTS
   public async orchestratePropertyAnalysis(propertyData: any): Promise<string[]> {
     console.log('🎯 Orchestrated property analysis starting for:', propertyData.name);
     
@@ -596,26 +596,18 @@ Begin your specialized analysis now.`;
       this.tasks.set(taskId, task);
       taskIds.push(taskId);
 
-      // Execute immediately with assigned agent
+      // Execute immediately with assigned agent and FORCE individual output display
       console.log(`🚀 Executing task ${taskId} with ${this.agents.get(taskInfo.agentId)?.name}`);
+      
+      // Broadcast task start immediately to show in UI
+      this.broadcastTaskStart(task);
+      
+      // Execute task
       this.executeAgentTask(taskInfo.agentId, task);
     }
 
     console.log(`🎯 Orchestrated property analysis with ${taskIds.length} parallel tasks`);
     return taskIds;
-  }
-
-  // Public API Methods
-  public getAgents(): AgentConfig[] {
-    return Array.from(this.agents.values());
-  }
-
-  public getAllTasks(): AgentTask[] {
-    return Array.from(this.tasks.values());
-  }
-
-  public getTaskStatus(taskId: string): AgentTask | undefined {
-    return this.tasks.get(taskId);
   }
 
   // Communication & Broadcasting
@@ -630,22 +622,83 @@ Begin your specialized analysis now.`;
     this.sendAgentStatus(clientId);
   }
 
-  private broadcastTaskResult(task: AgentTask) {
+  private broadcastTaskStart(task: AgentTask) {
+    const agent = this.agents.get(task.assignedAgent || '');
+    
     const message = {
-      type: 'task_completed',
-      taskId: task.id,
-      agentId: task.assignedAgent,
-      status: task.status,
-      result: task.result,
-      error: task.error,
-      timestamp: new Date()
+      type: 'task_started',
+      task: {
+        id: task.id,
+        type: task.type,
+        agentId: task.assignedAgent,
+        agentName: agent?.name || task.assignedAgent,
+        status: task.status,
+        createdAt: task.createdAt,
+        agent: agent ? {
+          id: agent.id,
+          name: agent.name,
+          role: agent.role,
+          model: agent.model,
+          provider: agent.provider
+        } : null
+      }
     };
+
+    console.log(`📡 Broadcasting task START for ${agent?.name}: ${task.type}`);
 
     this.wsConnections.forEach((ws, clientId) => {
       if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify(message));
+        try {
+          ws.send(JSON.stringify(message));
+          console.log(`✅ Sent task start to client ${clientId}`);
+        } catch (error) {
+          console.error(`❌ Failed to send task start to client ${clientId}:`, error);
+          this.wsConnections.delete(clientId);
+        }
       }
     });
+  }
+
+  private broadcastTaskResult(task: AgentTask) {
+    const agent = this.agents.get(task.assignedAgent || '');
+    
+    const message = {
+      type: 'task_completed',
+      task: {
+        id: task.id,
+        type: task.type,
+        agentId: task.assignedAgent,
+        agentName: agent?.name || task.assignedAgent,
+        status: task.status,
+        result: task.result,
+        error: task.error,
+        completedAt: task.completedAt,
+        agent: agent ? {
+          id: agent.id,
+          name: agent.name,
+          role: agent.role,
+          model: agent.model,
+          provider: agent.provider
+        } : null
+      }
+    };
+
+    console.log(`📡 Broadcasting task RESULT for ${agent?.name}: ${task.status}`);
+
+    this.wsConnections.forEach((ws, clientId) => {
+      if (ws.readyState === WebSocket.OPEN) {
+        try {
+          ws.send(JSON.stringify(message));
+          console.log(`✅ Sent task result to client ${clientId}`);
+        } catch (error) {
+          console.error(`❌ Failed to send task result to client ${clientId}:`, error);
+          this.wsConnections.delete(clientId);
+        }
+      }
+    });
+
+    // Also emit via EventEmitter for local listeners
+    this.emit('taskCompleted', message);
   }
 
   private sendAgentStatus(clientId: string) {
@@ -686,32 +739,6 @@ Begin your specialized analysis now.`;
     } catch (error) {
       console.error('Failed to log execution:', error);
     }
-  }
-
-  // Public API
-  public getAgents(): AgentConfig[] {
-    return Array.from(this.agents.values());
-  }
-
-  public getTaskStatus(taskId: string): AgentTask | undefined {
-    return this.tasks.get(taskId);
-  }
-
-  public getAllTasks(): AgentTask[] {
-    return Array.from(this.tasks.values());
-  }
-
-  // Multi-Agent Coordination
-  public async orchestratePropertyAnalysis(propertyData: any): Promise<string[]> {
-    const tasks = [
-      this.createTask('data_collection', { property: propertyData, sources: ['demographics', 'market', 'crime'] }, 'high'),
-      this.createTask('financial_modeling', { property: propertyData, analysisType: 'comprehensive' }, 'high'),
-      this.createTask('competitive_analysis', { property: propertyData, radius: '5mi' }, 'medium'),
-      this.createTask('market_research', { property: propertyData, timeframe: '5years' }, 'medium')
-    ];
-
-    console.log(`🎯 Orchestrated property analysis with ${tasks.length} parallel tasks`);
-    return tasks;
   }
 }
 
