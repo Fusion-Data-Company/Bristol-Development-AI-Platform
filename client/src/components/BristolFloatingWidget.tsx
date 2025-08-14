@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle, ChevronDown, CircuitBoard } from "lucide-react";
+import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle, ChevronDown, CircuitBoard, HelpCircle, BarChart, PieChart, MapPin, Users, Calendar, Minimize2, Maximize2 } from "lucide-react";
+import { DataVisualizationPanel } from "./chat/DataVisualizationPanel";
+import { OnboardingGuide } from "./chat/OnboardingGuide";
 
 /**
  * BristolFloatingWidget.tsx — v1.0
@@ -130,6 +132,8 @@ export default function BristolFloatingWidget({
 }: BristolWidgetProps) {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
+  const [showDataViz, setShowDataViz] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [model, setModel] = useState(defaultModel || "openai/gpt-5-chat");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [systemPrompt, setSystemPrompt] = useState<string>(defaultSystemPrompt || DEFAULT_MEGA_PROMPT);
@@ -587,18 +591,51 @@ export default function BristolFloatingWidget({
                     </p>
                   </div>
                 </div>
-                <button 
-                  onClick={() => setOpen(false)} 
-                  className={cx(
-                    "p-3 rounded-2xl transition-all duration-300 group relative",
-                    "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
-                    "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
-                    "hover:shadow-lg hover:shadow-bristol-cyan/20"
-                  )}
-                  aria-label="Close"
-                >
-                  <X className="h-5 w-5 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Data Visualization Toggle */}
+                  <button 
+                    onClick={() => setShowDataViz(!showDataViz)} 
+                    className={cx(
+                      "p-2 rounded-xl transition-all duration-300 group relative",
+                      "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
+                      "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
+                      "hover:shadow-lg hover:shadow-bristol-cyan/20",
+                      showDataViz && "bg-bristol-cyan/20 border-bristol-cyan/60"
+                    )}
+                    aria-label="Toggle Data Visualization"
+                    title="View Live Data Context"
+                  >
+                    <BarChart3 className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                  </button>
+
+                  {/* Onboarding Guide Toggle */}
+                  <button 
+                    onClick={() => setShowOnboarding(true)} 
+                    className={cx(
+                      "p-2 rounded-xl transition-all duration-300 group relative",
+                      "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
+                      "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
+                      "hover:shadow-lg hover:shadow-bristol-cyan/20"
+                    )}
+                    aria-label="Open AI Guide"
+                    title="Learn How to Use Bristol A.I."
+                  >
+                    <HelpCircle className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                  </button>
+
+                  <button 
+                    onClick={() => setOpen(false)} 
+                    className={cx(
+                      "p-3 rounded-2xl transition-all duration-300 group relative",
+                      "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
+                      "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
+                      "hover:shadow-lg hover:shadow-bristol-cyan/20"
+                    )}
+                    aria-label="Close"
+                  >
+                    <X className="h-5 w-5 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                  </button>
+                </div>
               </div>
               
               {/* Navigation Tabs */}
@@ -816,7 +853,7 @@ export default function BristolFloatingWidget({
                   <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
                   <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
                   <div className="relative z-10 flex-1 overflow-hidden flex flex-col">
-                    <ChatPane messages={messages} loading={loading} />
+                    <ChatPane messages={messages} loading={loading} appData={appData} />
                   </div>
                 </div>
               )}
@@ -934,6 +971,20 @@ export default function BristolFloatingWidget({
         </div>
       )}
 
+      {/* Data Visualization Panel */}
+      <DataVisualizationPanel
+        appData={appData}
+        isOpen={showDataViz}
+        onClose={() => setShowDataViz(false)}
+        className="fixed bottom-6 left-[38rem] z-[9997]"
+      />
+
+      {/* Onboarding Guide */}
+      <OnboardingGuide
+        isOpen={showOnboarding}
+        onClose={() => setShowOnboarding(false)}
+        appData={appData}
+      />
     </>
   );
 }
@@ -1282,8 +1333,8 @@ function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; la
   );
 }
 
-// Missing ChatPane function
-function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boolean }) {
+// Enhanced ChatPane function with data context
+function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loading: boolean; appData?: any }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -1304,6 +1355,54 @@ function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boo
         scrollBehavior: 'smooth'
       }}
     >
+      {/* Smart Context Panel - Show available data only once per session */}
+      {messages.length <= 1 && appData && (
+        <div className="mb-4">
+          <div className="bg-bristol-cyan/5 border border-bristol-cyan/20 rounded-2xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Brain className="h-4 w-4 text-bristol-cyan animate-pulse" />
+              <span className="text-sm font-bold text-bristol-cyan">Live Data Intelligence</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="flex items-center gap-2">
+                <Building2 className="h-3 w-3 text-bristol-gold" />
+                <span className="text-bristol-cyan">{appData.sites?.length || 0} Properties</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapPin className="h-3 w-3 text-bristol-gold" />
+                <span className="text-bristol-cyan">{Object.keys(appData.analytics?.stateDistribution || {}).length} Markets</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Users className="h-3 w-3 text-bristol-gold" />
+                <span className="text-bristol-cyan">{appData.analytics?.totalUnits || 0} Total Units</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Database className="h-3 w-3 text-bristol-gold" />
+                <span className="text-bristol-cyan">BLS, HUD, FBI, NOAA APIs</span>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-bristol-cyan/20">
+              <div className="text-xs text-bristol-cyan/80 font-medium mb-2">Try asking:</div>
+              <div className="flex flex-wrap gap-1">
+                {[
+                  "Analyze our portfolio performance",
+                  "Show me Charlotte market trends", 
+                  "Compare units by state",
+                  "Latest employment data for our markets"
+                ].map((suggestion, idx) => (
+                  <span
+                    key={idx}
+                    className="text-xs px-2 py-1 bg-bristol-cyan/10 text-bristol-cyan rounded-full border border-bristol-cyan/30"
+                  >
+                    {suggestion}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showWelcome && (
         <div className="animate-fade-in">
           <div className="relative rounded-3xl border bg-gradient-to-br from-bristol-cyan/20 via-bristol-electric/10 to-bristol-gold/5 border-bristol-cyan/40 backdrop-blur p-6 shadow-2xl">

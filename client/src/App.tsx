@@ -4,7 +4,7 @@ import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
-import { ChatDock } from "@/components/chat/ChatDock";
+
 import BristolFloatingWidget from "@/components/BristolFloatingWidget";
 
 import NotFound from "@/pages/not-found";
@@ -71,10 +71,7 @@ function AppContent() {
     <>
       <Router />
       {isAuthenticated && (
-        <>
-          <ChatDock />
-
-          <BristolFloatingWidget 
+        <BristolFloatingWidget 
             appData={appData}
             webhookUrl={import.meta.env.VITE_N8N_WEBHOOK_URL}
             onSaveSystemPrompt={async (prompt) => {
@@ -92,7 +89,6 @@ function AppContent() {
               }
             }}
           />
-        </>
       )}
     </>
   );
