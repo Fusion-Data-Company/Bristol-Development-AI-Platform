@@ -199,6 +199,29 @@ export function registerCompsAnnexRoutes(app: Express) {
     }
   });
 
+  // Enhanced scraping agent endpoint
+  app.post('/api/comps-annex/agent/scrape', async (req, res) => {
+    try {
+      const { newScrapeJob } = await import('../scrapers/runner');
+      const jobId = await newScrapeJob(req.body);
+      
+      // Start job in background
+      setImmediate(async () => {
+        try {
+          const { runJobNow } = await import('../scrapers/runner');
+          await runJobNow(jobId);
+        } catch (error) {
+          console.error('Background job failed:', error);
+        }
+      });
+      
+      res.json({ id: jobId, status: 'queued' });
+    } catch (error) {
+      console.error('Error creating agent scrape job:', error);
+      res.status(500).json({ error: 'Failed to create scrape job' });
+    }
+  });
+
   // Delete a comparable
   app.delete('/api/comps-annex/:id', async (req, res) => {
     try {

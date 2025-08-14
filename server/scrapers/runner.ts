@@ -3,6 +3,7 @@ import { db } from '../db';
 import { scrapeJobsAnnex, compsAnnex } from '../../shared/schema';
 import { adapters } from './sources';
 import { sql, eq } from 'drizzle-orm';
+import { runScrapeAgent, ScrapeQuery } from './agent';
 
 export async function newScrapeJob(query: any) {
   const id = randomUUID();
@@ -28,17 +29,36 @@ export async function runJobNow(id: string) {
   const job = await getJob(id);
   if (!job) throw new Error('job not found');
 
-  const { address, radius_mi = 5, asset_type = 'Multifamily', keywords = [] } = (job.query as any) || {};
+  const { address, radius_mi = 5, asset_type = 'Multifamily', keywords = [], amenities = [] } = (job.query as any) || {};
   const results: any[] = [];
 
-  // Run all adapters
-  for (const adapter of adapters) {
-    try {
-      const out = await adapter.search({ address, radius_mi, asset_type, keywords });
-      results.push(...out.records);
-    } catch (e) {
-      console.warn(`Adapter ${adapter.name} failed:`, e);
-      // continue with other adapters
+  try {
+    // Use the enhanced scraping agent
+    const scrapeQuery: ScrapeQuery = {
+      address,
+      radius_mi,
+      asset_type,
+      keywords,
+      amenities
+    };
+    
+    console.log('🤖 Running enhanced scraping agent...');
+    const agentResult = await runScrapeAgent(scrapeQuery);
+    results.push(...agentResult.records);
+    
+    console.log(`✅ Agent found ${agentResult.records.length} properties`);
+  } catch (error) {
+    console.warn('Enhanced scraping agent failed, falling back to adapters:', error);
+    
+    // Fallback to existing adapters
+    for (const adapter of adapters) {
+      try {
+        const out = await adapter.search({ address, radius_mi, asset_type, keywords });
+        results.push(...out.records);
+      } catch (e) {
+        console.warn(`Adapter ${adapter.name} failed:`, e);
+        // continue with other adapters
+      }
     }
   }
 

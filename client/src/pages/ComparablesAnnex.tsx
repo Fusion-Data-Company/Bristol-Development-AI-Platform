@@ -70,6 +70,7 @@ interface ScrapeQuery {
   radius_mi: number;
   asset_type: string;
   keywords: string[];
+  amenities: string[];
 }
 
 interface FilterState {
@@ -115,7 +116,18 @@ export default function ComparablesAnnex() {
     address: '',
     radius_mi: 5,
     asset_type: 'Multifamily',
-    keywords: []
+    keywords: [],
+    amenities: []
+  });
+  
+  // Enhanced scraping agent state
+  const [agentDialogOpen, setAgentDialogOpen] = useState(false);
+  const [agentQuery, setAgentQuery] = useState<ScrapeQuery>({
+    address: '',
+    radius_mi: 5,
+    asset_type: 'Multifamily',
+    keywords: [],
+    amenities: []
   });
 
   // Fetch comparables data
@@ -234,7 +246,29 @@ export default function ComparablesAnnex() {
     },
   });
 
-
+  // Enhanced scraping agent mutation
+  const agentScrapeMutation = useMutation({
+    mutationFn: async (query: ScrapeQuery) => {
+      const response = await fetch('/api/comps-annex/agent/scrape', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(query),
+      });
+      if (!response.ok) throw new Error('Enhanced scrape failed');
+      return response.json();
+    },
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] });
+      toast({ 
+        title: '🤖 Enhanced Scraping Agent Started', 
+        description: `Job ID: ${data.id} - Using enterprise-grade scrapers` 
+      });
+      setAgentDialogOpen(false);
+    },
+    onError: () => {
+      toast({ title: 'Enhanced scrape failed to start', variant: 'destructive' });
+    },
+  });
 
   // Export to CSV
   const handleExport = () => {
@@ -291,11 +325,99 @@ export default function ComparablesAnnex() {
                   />
                 </div>
             
+                {/* Enhanced Scraping Agent */}
+                <Dialog open={agentDialogOpen} onOpenChange={setAgentDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-gradient-to-r from-bristol-maroon to-bristol-gold hover:from-bristol-maroon/90 hover:to-bristol-gold/90 text-white h-12 px-6 rounded-xl shadow-xl border border-bristol-gold/50">
+                      🤖 Enterprise Agent
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-bristol-maroon font-cinzel text-xl">
+                        🤖 Enhanced Scraping Agent
+                      </DialogTitle>
+                      <DialogDescription>
+                        Enterprise-grade property intelligence using Firecrawl, Apify, and advanced fallback systems
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label className="text-right font-medium">Address:</label>
+                        <Input
+                          className="col-span-3"
+                          placeholder="e.g., 123 Main St, Nashville, TN"
+                          value={agentQuery.address}
+                          onChange={(e) => setAgentQuery({...agentQuery, address: e.target.value})}
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label className="text-right font-medium">Radius (mi):</label>
+                        <Input
+                          type="number"
+                          className="col-span-3"
+                          value={agentQuery.radius_mi}
+                          onChange={(e) => setAgentQuery({...agentQuery, radius_mi: parseInt(e.target.value) || 5})}
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label className="text-right font-medium">Asset Type:</label>
+                        <select 
+                          className="col-span-3 p-2 border rounded"
+                          value={agentQuery.asset_type}
+                          onChange={(e) => setAgentQuery({...agentQuery, asset_type: e.target.value})}
+                        >
+                          <option value="Multifamily">Multifamily</option>
+                          <option value="Condo">Condo</option>
+                          <option value="Mixed-Use">Mixed-Use</option>
+                          <option value="Commercial">Commercial</option>
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label className="text-right font-medium">Amenities:</label>
+                        <Input
+                          className="col-span-3"
+                          placeholder="pool, fitness, parking (comma-separated)"
+                          value={agentQuery.amenities.join(', ')}
+                          onChange={(e) => setAgentQuery({
+                            ...agentQuery, 
+                            amenities: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                          })}
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label className="text-right font-medium">Keywords:</label>
+                        <Input
+                          className="col-span-3"
+                          placeholder="luxury, renovated, new (comma-separated)"
+                          value={agentQuery.keywords.join(', ')}
+                          onChange={(e) => setAgentQuery({
+                            ...agentQuery, 
+                            keywords: e.target.value.split(',').map(s => s.trim()).filter(Boolean)
+                          })}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button variant="outline" onClick={() => setAgentDialogOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button 
+                        onClick={() => agentScrapeMutation.mutate(agentQuery)}
+                        disabled={agentScrapeMutation.isPending || !agentQuery.address}
+                        className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+                      >
+                        {agentScrapeMutation.isPending ? 'Starting...' : '🚀 Run Enhanced Agent'}
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+                
                 <Dialog open={scrapeDialogOpen} onOpenChange={setScrapeDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="bg-gradient-to-r from-bristol-maroon to-bristol-maroon/80 hover:from-bristol-maroon/90 hover:to-bristol-maroon/70 text-white h-12 px-6 rounded-xl shadow-lg border border-bristol-gold/30">
                       <Play className="h-5 w-5 mr-2" />
-                      Launch Scrape
+                      Legacy Scraper
                     </Button>
                   </DialogTrigger>
               <DialogContent>
