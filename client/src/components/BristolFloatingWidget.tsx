@@ -1485,7 +1485,7 @@ function AdminPane({
   const [loadingMcp, setLoadingMcp] = useState(false);
   const [showMcpConfig, setShowMcpConfig] = useState(false);
 
-  // Load existing MCP configuration
+  // Load existing MCP configuration and status
   useEffect(() => {
     const loadMcpConfig = async () => {
       try {
@@ -1495,11 +1495,33 @@ function AdminPane({
           setMcpServers(config.mcpServers || {});
           setMcpConfigText(JSON.stringify({ mcpServers: config.mcpServers || {} }, null, 2));
         }
+
+        // Load real server status
+        const statusResponse = await fetch('/api/mcp-config/status');
+        if (statusResponse.ok) {
+          const status = await statusResponse.json();
+          setMcpStatus(status.status);
+        }
       } catch (error) {
         console.error('Error loading MCP config:', error);
       }
     };
     loadMcpConfig();
+
+    // Poll for status updates every 10 seconds
+    const interval = setInterval(async () => {
+      try {
+        const statusResponse = await fetch('/api/mcp-config/status');
+        if (statusResponse.ok) {
+          const status = await statusResponse.json();
+          setMcpStatus(status.status);
+        }
+      } catch (error) {
+        console.error('Error polling MCP status:', error);
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleMcpConfigSave = async () => {
@@ -1786,10 +1808,19 @@ function AdminPane({
               <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-xl p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div className={`w-3 h-3 rounded-full ${
+                      mcpStatus?.runningCount > 0 ? 'bg-green-500 animate-pulse' : 
+                      Object.keys(mcpServers).length > 0 ? 'bg-yellow-500' : 'bg-gray-500'
+                    }`}></div>
                     <span className="text-bristol-gold font-semibold text-sm">MCP System Status</span>
                   </div>
-                  <span className="text-yellow-500 text-sm font-bold">CONFIGURED</span>
+                  <span className={`text-sm font-bold ${
+                    mcpStatus?.runningCount > 0 ? 'text-green-400' : 
+                    Object.keys(mcpServers).length > 0 ? 'text-yellow-500' : 'text-gray-400'
+                  }`}>
+                    {mcpStatus?.runningCount > 0 ? 'RUNNING' : 
+                     Object.keys(mcpServers).length > 0 ? 'CONFIGURED' : 'INACTIVE'}
+                  </span>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-3 text-xs">
                   <div>
@@ -1798,7 +1829,11 @@ function AdminPane({
                   </div>
                   <div>
                     <span className="text-bristol-gold/80">Active Connections:</span>
-                    <span className="text-yellow-500 font-semibold ml-2">0</span>
+                    <span className={`font-semibold ml-2 ${
+                      mcpStatus?.runningCount > 0 ? 'text-green-400' : 'text-yellow-500'
+                    }`}>
+                      {mcpStatus?.runningCount || 0}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1808,24 +1843,56 @@ function AdminPane({
                 <div className="bg-bristol-electric/10 border border-bristol-electric/30 rounded-xl p-4">
                   <h5 className="text-bristol-electric font-semibold mb-3 text-sm">Configured MCP Servers</h5>
                   <div className="grid gap-2">
-                    {Object.entries(mcpServers).map(([name, config]: [string, any]) => (
-                      <div key={name} className="flex items-center justify-between p-3 bg-black/40 border border-gray-700 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-                          <div>
-                            <div className="text-white font-medium text-sm">{name}</div>
-                            <div className="text-xs text-gray-400">{config.command} {config.args?.join(' ')}</div>
+                    {Object.entries(mcpServers).map(([name, config]: [string, any]) => {
+                      const serverStatus = mcpStatus?.servers?.[name];
+                      const isRunning = serverStatus?.status === 'running';
+                      const hasError = serverStatus?.status === 'error';
+                      
+                      return (
+                        <div key={name} className="flex items-center justify-between p-3 bg-black/40 border border-gray-700 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-2 h-2 rounded-full ${
+                              isRunning ? 'bg-green-400 animate-pulse' : 
+                              hasError ? 'bg-red-500' : 'bg-gray-500'
+                            }`}></div>
+                            <div>
+                              <div className="text-white font-medium text-sm">{name}</div>
+                              <div className="text-xs text-gray-400">{config.command} {config.args?.join(' ')}</div>
+                              {serverStatus?.pid && (
+                                <div className="text-xs text-green-400">PID: {serverStatus.pid}</div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className={`text-xs font-semibold ${
+                              isRunning ? 'text-green-400' : hasError ? 'text-red-400' : 'text-gray-400'
+                            }`}>
+                              {isRunning ? 'RUNNING' : hasError ? 'ERROR' : 'NOT STARTED'}
+                            </span>
+                            {serverStatus?.uptime && (
+                              <div className="text-xs text-gray-500">
+                                {Math.floor(serverStatus.uptime / 1000)}s
+                              </div>
+                            )}
                           </div>
                         </div>
-                        <span className="text-xs text-gray-400 font-semibold">NOT STARTED</span>
+                      );
+                    })}
+                  </div>
+                  {Object.keys(mcpServers).length > 0 && mcpStatus?.runningCount === 0 && (
+                    <div className="mt-3 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
+                      <div className="text-xs text-yellow-400">
+                        ⚠️ <strong>Note:</strong> MCP servers are configured but not running. Click "Restart MCP Servers" to start them.
                       </div>
-                    ))}
-                  </div>
-                  <div className="mt-3 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
-                    <div className="text-xs text-yellow-400">
-                      ⚠️ <strong>Note:</strong> MCP servers are configured but not actively running. In a full implementation, these would spawn as separate processes and show real connection status.
                     </div>
-                  </div>
+                  )}
+                  {mcpStatus?.runningCount > 0 && (
+                    <div className="mt-3 p-3 bg-green-900/20 border border-green-600/30 rounded-lg">
+                      <div className="text-xs text-green-400">
+                        ✅ <strong>Active:</strong> {mcpStatus.runningCount} MCP server{mcpStatus.runningCount > 1 ? 's' : ''} running successfully. Bristol AI now has real-time access to configured tools.
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1958,16 +2025,30 @@ function AdminPane({
                         </tr>
                       </thead>
                       <tbody>
-                        {Object.keys(mcpServers).length > 0 ? Object.keys(mcpServers).map((serverName) => (
-                          <tr key={serverName} className="border-b border-gray-700/30">
-                            <td className="py-2 text-white">{serverName}</td>
-                            <td className="py-2">
-                              <span className="text-gray-400 text-xs">● NOT RUNNING</span>
-                            </td>
-                            <td className="py-2 text-gray-500">--</td>
-                            <td className="py-2 text-gray-500">Configured</td>
-                          </tr>
-                        )) : (
+                        {Object.keys(mcpServers).length > 0 ? Object.keys(mcpServers).map((serverName) => {
+                          const serverStatus = mcpStatus?.servers?.[serverName];
+                          const isRunning = serverStatus?.status === 'running';
+                          const hasError = serverStatus?.status === 'error';
+                          
+                          return (
+                            <tr key={serverName} className="border-b border-gray-700/30">
+                              <td className="py-2 text-white">{serverName}</td>
+                              <td className="py-2">
+                                <span className={`text-xs ${
+                                  isRunning ? 'text-green-400' : hasError ? 'text-red-400' : 'text-gray-400'
+                                }`}>
+                                  ● {isRunning ? 'RUNNING' : hasError ? 'ERROR' : 'NOT RUNNING'}
+                                </span>
+                              </td>
+                              <td className="py-2 text-gray-300">
+                                {serverStatus?.uptime ? `${Math.floor(serverStatus.uptime / 1000)}s` : '--'}
+                              </td>
+                              <td className="py-2 text-gray-300">
+                                {isRunning ? 'Active' : hasError ? 'Failed' : 'Configured'}
+                              </td>
+                            </tr>
+                          );
+                        }) : (
                           <tr>
                             <td colSpan={4} className="py-4 text-center text-gray-500 text-xs">
                               No MCP servers configured

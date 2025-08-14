@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import { mcpServerManager } from '../services/mcpServerManager';
 
 const router = express.Router();
 
@@ -122,30 +123,28 @@ router.post('/', async (req, res) => {
 // Restart MCP servers
 router.post('/restart', async (req, res) => {
   try {
-    // In a real implementation, this would:
-    // 1. Stop all currently running MCP server processes
-    // 2. Read the updated configuration
-    // 3. Start new MCP server processes based on the config
+    console.log('🔄 Restarting MCP servers...');
     
-    // For now, we'll simulate the restart process
-    const configData = fs.readFileSync(MCP_CONFIG_PATH, 'utf8');
-    const config = JSON.parse(configData);
+    // Stop all running servers first
+    await mcpServerManager.stopAllServers();
     
-    console.log('MCP Configuration Updated - Servers Configured:');
-    Object.entries(config.mcpServers || {}).forEach(([name, serverConfig]: [string, any]) => {
-      console.log(`  - ${name}: ${serverConfig.command} ${serverConfig.args?.join(' ') || ''}`);
-    });
-    console.log('Note: In production, these would spawn as actual MCP server processes');
+    // Wait a moment for cleanup
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Load and start servers from configuration
+    await mcpServerManager.loadAndStartServers();
+    
+    // Get current status
+    const serverStatus = mcpServerManager.getServerStatus();
+    const runningCount = mcpServerManager.getRunningServerCount();
 
-    // Simulate restart delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log(`✅ MCP restart complete. ${runningCount} servers running.`);
 
     res.json({
       ok: true,
-      message: 'MCP configuration updated successfully',
-      configuredServers: Object.keys(config.mcpServers || {}),
-      activeConnections: 0, // None actually running in this demo
-      note: 'Servers configured but not actively spawned in demo mode',
+      message: `MCP servers restarted successfully. ${runningCount} servers running.`,
+      activeConnections: runningCount,
+      serverStatus,
       restartedAt: new Date().toISOString()
     });
 
@@ -153,7 +152,8 @@ router.post('/restart', async (req, res) => {
     console.error('Error restarting MCP servers:', error);
     res.status(500).json({
       ok: false,
-      error: 'Failed to restart MCP servers'
+      error: 'Failed to restart MCP servers',
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
@@ -162,22 +162,27 @@ router.post('/restart', async (req, res) => {
 router.get('/status', async (req, res) => {
   try {
     const configExists = fs.existsSync(MCP_CONFIG_PATH);
-    let serverCount = 0;
+    let configuredCount = 0;
     let configData = null;
 
     if (configExists) {
       configData = JSON.parse(fs.readFileSync(MCP_CONFIG_PATH, 'utf8'));
-      serverCount = Object.keys(configData.mcpServers || {}).length;
+      configuredCount = Object.keys(configData.mcpServers || {}).length;
     }
+
+    const serverStatus = mcpServerManager.getServerStatus();
+    const runningCount = mcpServerManager.getRunningServerCount();
 
     res.json({
       ok: true,
       status: {
         configExists,
-        serverCount,
-        healthy: true,
+        configuredCount,
+        runningCount,
+        healthy: runningCount > 0,
         lastCheck: new Date().toISOString(),
-        configPath: MCP_CONFIG_PATH
+        configPath: MCP_CONFIG_PATH,
+        servers: serverStatus
       }
     });
 
@@ -185,7 +190,8 @@ router.get('/status', async (req, res) => {
     console.error('Error getting MCP status:', error);
     res.status(500).json({
       ok: false,
-      error: 'Failed to get MCP status'
+      error: 'Failed to get MCP status',
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });

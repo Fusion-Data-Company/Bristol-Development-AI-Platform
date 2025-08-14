@@ -70,9 +70,19 @@ app.use((req, res, next) => {
       port,
       host: "0.0.0.0",
       reusePort: true,
-    }, () => {
+    }, async () => {
       log(`serving on port ${port}`);
       console.log(`✅ Server successfully started on http://0.0.0.0:${port}`);
+      
+      // Initialize MCP servers after main server is running
+      try {
+        const { mcpServerManager } = await import('./services/mcpServerManager');
+        setTimeout(() => {
+          mcpServerManager.loadAndStartServers().catch(console.error);
+        }, 3000);
+      } catch (error) {
+        console.error('Failed to initialize MCP server manager:', error);
+      }
     });
 
     // Handle server errors
