@@ -7,6 +7,11 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { useWebSocket } from '@/hooks/useWebSocket';
 import { 
   Send, 
   Plus, 
@@ -15,16 +20,94 @@ import {
   Sparkles,
   History,
   Settings,
-  Trash2
+  Trash2,
+  Cpu,
+  Shield,
+  Activity,
+  Zap,
+  Database,
+  Terminal,
+  Users,
+  Building2,
+  MapPin,
+  TrendingUp,
+  BarChart3,
+  DollarSign,
+  Save,
+  Loader2,
+  ChevronDown,
+  Palette,
+  Wrench,
+  Target,
+  AlertCircle
 } from 'lucide-react';
 import { type ChatSession, type ChatMessage } from '@shared/schema';
 import { format } from 'date-fns';
 import Chrome from '@/components/brand/SimpleChrome';
+import { cn } from '@/lib/utils';
+
+interface PremiumModel {
+  id: string;
+  label: string;
+  provider: string;
+  category: string;
+  description: string;
+  features: string[];
+  contextLength: number;
+  pricing: { input: string; output: string; images?: string; search?: string };
+  bestFor: string[];
+  status: 'active' | 'byok-required';
+}
+
+interface SystemStatus {
+  websocket: string;
+  database: string;
+  apis: any[];
+  mcpTools: any[];
+}
 
 export default function Chat() {
   const [message, setMessage] = useState('');
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  const [selectedModel, setSelectedModel] = useState('gpt-5'); // Default to GPT-5 like the widget
+  const [mcpEnabled, setMcpEnabled] = useState(true);
+  const [realTimeData, setRealTimeData] = useState(true);
+  const [systemPrompt, setSystemPrompt] = useState('');
+  const [isThinking, setIsThinking] = useState(false);
+  const [activeTab, setActiveTab] = useState('chat');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // WebSocket for real-time updates like the floating widget
+  const { isConnected: wsConnected, sendMessage: sendWsMessage } = useWebSocket({
+    onMessage: (wsMessage) => {
+      if (wsMessage.type === "chat_typing") {
+        setIsThinking(wsMessage.data?.typing || false);
+      }
+    }
+  });
+
+  // Get comprehensive app data like the floating widget
+  const { data: sites } = useQuery({
+    queryKey: ['/api/sites'],
+  });
+  
+  const { data: analytics } = useQuery({
+    queryKey: ['/api/analytics/overview'],
+  });
+
+  const { data: premiumModels } = useQuery<PremiumModel[]>({
+    queryKey: ['/api/openrouter-models'],
+    select: (data: any) => data || []
+  });
+
+  // Combine all data sources like the floating widget
+  const appData = {
+    sites: sites || [],
+    analytics: analytics || {},
+    timestamp: new Date().toISOString(),
+    user: { authenticated: true }
+  };
 
   // Get chat sessions
   const { data: sessions = [], isLoading: sessionsLoading } = useQuery<ChatSession[]>({
@@ -54,23 +137,60 @@ export default function Chat() {
     }
   });
 
-  // Send message
+  // Send message using Elite Bristol AI endpoint like the floating widget
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
-      if (!selectedSession) throw new Error('No session selected');
-      const response = await fetch(`/api/chat/sessions/${selectedSession}/messages`, {
+      if (!selectedSession && !content.trim()) throw new Error('No session or content');
+      
+      setIsThinking(true);
+      
+      // Use the same elite endpoint as the floating widget
+      const endpoint = "/api/bristol-brain-elite/chat";
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content })
+        body: JSON.stringify({
+          message: content,
+          sessionId: selectedSession || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          selectedModel: selectedModel,
+          dataContext: appData,
+          enableAdvancedReasoning: true,
+          mcpTools: mcpEnabled ? [] : undefined, // Will be populated by backend
+          enableMCPExecution: mcpEnabled,
+          userAgent: "Bristol A.I. Elite Chat v1.0",
+          systemStatus: {
+            websocket: wsConnected ? "connected" : "disconnected",
+            database: "connected",
+            apis: [],
+            mcpTools: []
+          }
+        })
       });
-      if (!response.ok) throw new Error('Failed to send message');
+      
+      if (!response.ok) {
+        // Fallback to standard chat endpoint if elite fails
+        console.warn('Elite endpoint failed, using fallback');
+        const fallbackResponse = await fetch(`/api/chat/sessions/${selectedSession}/messages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content })
+        });
+        if (!fallbackResponse.ok) throw new Error('Failed to send message');
+        return fallbackResponse.json();
+      }
+      
       return response.json();
     },
     onSuccess: () => {
       setMessage('');
+      setIsThinking(false);
       queryClient.invalidateQueries({ 
         queryKey: [`/api/chat/sessions/${selectedSession}/messages`] 
       });
+    },
+    onError: () => {
+      setIsThinking(false);
     }
   });
 
@@ -92,7 +212,7 @@ export default function Chat() {
   }, [messages]);
 
   const handleSend = () => {
-    if (message.trim() && !sendMessageMutation.isPending) {
+    if (message.trim() && !sendMessageMutation.isPending && !isThinking) {
       sendMessageMutation.mutate(message.trim());
     }
   };
@@ -104,20 +224,44 @@ export default function Chat() {
     }
   };
 
+  // Load settings from localStorage like the floating widget
+  useEffect(() => {
+    const savedModel = localStorage.getItem("bristol.selectedModel");
+    const savedMcp = localStorage.getItem("bristol.mcpEnabled");
+    const savedRealTime = localStorage.getItem("bristol.realTimeData");
+    const savedPrompt = localStorage.getItem("bristol.systemPrompt");
+    
+    if (savedModel) setSelectedModel(savedModel);
+    if (savedMcp) setMcpEnabled(savedMcp === 'true');
+    if (savedRealTime) setRealTimeData(savedRealTime === 'true');
+    if (savedPrompt) setSystemPrompt(savedPrompt);
+  }, []);
+
+  const systemStatus: SystemStatus = {
+    websocket: wsConnected ? "connected" : "disconnected",
+    database: "connected",
+    apis: [],
+    mcpTools: []
+  };
+
   return (
     <Chrome>
       <div className="container mx-auto p-6 h-[calc(100vh-6rem)]">
       <div className="grid gap-6 lg:grid-cols-4 h-full">
         {/* Sessions Sidebar */}
         <div className="lg:col-span-1">
-          <Card className="h-full">
+          <Card className="h-full border-bristol-cyan/20 bg-gradient-to-b from-slate-900/40 to-slate-800/40 backdrop-blur-md">
             <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>Conversations</span>
+              <CardTitle className="flex items-center justify-between text-bristol-cyan">
+                <span className="flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5" />
+                  Conversations
+                </span>
                 <Button
                   size="icon"
                   variant="ghost"
-                  onClick={() => createSessionMutation.mutate('New Chat')}
+                  onClick={() => createSessionMutation.mutate('New Bristol AI Chat')}
+                  className="hover:bg-bristol-cyan/10 text-bristol-cyan"
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
@@ -166,52 +310,128 @@ export default function Chat() {
           </Card>
         </div>
 
-        {/* Chat Area */}
+        {/* Elite Bristol AI Chat Area */}
         <div className="lg:col-span-3">
-          <Card className="h-full flex flex-col">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Brain className="h-5 w-5" />
-                Bristol AI Assistant
+          <Card className="h-full flex flex-col border-bristol-cyan/20 bg-gradient-to-b from-slate-900/40 to-slate-800/40 backdrop-blur-md">
+            <CardHeader className="border-b border-bristol-cyan/20">
+              <CardTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-full blur-sm animate-pulse" />
+                    <div className="relative bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 p-2 rounded-full border border-bristol-cyan/30">
+                      <Brain className="h-6 w-6 text-bristol-cyan" />
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent">
+                      BRISTOL A.I. ELITE
+                    </h1>
+                    <p className="text-sm text-bristol-cyan/80">
+                      Enterprise Real Estate Intelligence Platform
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Elite Status Indicators */}
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="border-bristol-cyan/40 text-bristol-cyan bg-bristol-cyan/10">
+                    <Activity className="h-3 w-3 mr-1" />
+                    {wsConnected ? 'ONLINE' : 'OFFLINE'}
+                  </Badge>
+                  <Badge variant="outline" className="border-bristol-gold/40 text-bristol-gold bg-bristol-gold/10">
+                    <Shield className="h-3 w-3 mr-1" />
+                    SECURE
+                  </Badge>
+                  {mcpEnabled && (
+                    <Badge variant="outline" className="border-bristol-electric/40 text-bristol-electric bg-bristol-electric/10">
+                      <Cpu className="h-3 w-3 mr-1" />
+                      MCP
+                    </Badge>
+                  )}
+                </div>
               </CardTitle>
-              <CardDescription>
-                Intelligent insights for your development projects
-              </CardDescription>
+              
+              {/* Model Selection */}
+              <div className="flex items-center gap-4 mt-3">
+                <Label className="text-bristol-cyan font-medium">AI Model:</Label>
+                <Select value={selectedModel} onValueChange={setSelectedModel}>
+                  <SelectTrigger className="w-64 border-bristol-cyan/20 bg-slate-800/50 text-bristol-cyan">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="border-bristol-cyan/20 bg-slate-800">
+                    {(premiumModels || []).map((model) => (
+                      <SelectItem key={model.id} value={model.id} className="text-bristol-cyan hover:bg-bristol-cyan/10">
+                        {model.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col">
-              <Tabs defaultValue="chat" className="flex-1 flex flex-col">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="chat">
+            
+            <CardContent className="flex-1 flex flex-col p-0">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+                <TabsList className="grid w-full grid-cols-5 m-4 bg-slate-800/50 border border-bristol-cyan/20">
+                  <TabsTrigger value="chat" className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan">
                     <MessageCircle className="h-4 w-4 mr-2" />
                     Chat
                   </TabsTrigger>
-                  <TabsTrigger value="insights">
-                    <Sparkles className="h-4 w-4 mr-2" />
-                    Insights
+                  <TabsTrigger value="data" className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan">
+                    <Database className="h-4 w-4 mr-2" />
+                    Data
                   </TabsTrigger>
-                  <TabsTrigger value="history">
-                    <History className="h-4 w-4 mr-2" />
-                    History
+                  <TabsTrigger value="tools" className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan">
+                    <Terminal className="h-4 w-4 mr-2" />
+                    Tools
+                  </TabsTrigger>
+                  <TabsTrigger value="agents" className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan">
+                    <Users className="h-4 w-4 mr-2" />
+                    Agents
+                  </TabsTrigger>
+                  <TabsTrigger value="admin" className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan">
+                    <Settings className="h-4 w-4 mr-2" />
+                    Admin
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="chat" className="flex-1 flex flex-col mt-4">
-                  {/* Messages */}
-                  <ScrollArea ref={scrollAreaRef} className="flex-1 pr-4">
+                <TabsContent value="chat" className="flex-1 flex flex-col">
+                  {/* Elite Chat Messages */}
+                  <ScrollArea ref={scrollAreaRef} className="flex-1 px-4 py-2">
                     {messagesLoading ? (
-                      <div className="flex items-center justify-center h-full text-muted-foreground">
-                        Loading messages...
+                      <div className="flex items-center justify-center h-full text-bristol-cyan/60">
+                        <Loader2 className="h-8 w-8 animate-spin mr-2" />
+                        Loading conversation...
                       </div>
                     ) : messages.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-center">
-                        <Brain className="h-12 w-12 text-muted-foreground mb-3" />
-                        <p className="text-lg font-medium mb-1">
-                          How can I assist you today?
+                        <div className="relative mb-6">
+                          <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-full blur-lg animate-pulse" />
+                          <Brain className="h-16 w-16 text-bristol-cyan relative" />
+                        </div>
+                        <h2 className="text-2xl font-bold text-bristol-cyan mb-2">
+                          Bristol A.I. Elite Ready
+                        </h2>
+                        <p className="text-bristol-cyan/80 max-w-md mb-4">
+                          I'm your elite real estate intelligence partner. Ask me about:
                         </p>
-                        <p className="text-sm text-muted-foreground max-w-md">
-                          I can help analyze sites, provide market insights, generate reports, 
-                          and answer questions about your development projects.
-                        </p>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div className="flex items-center gap-2 text-bristol-cyan/70">
+                            <Building2 className="h-4 w-4" />
+                            Property Analysis
+                          </div>
+                          <div className="flex items-center gap-2 text-bristol-cyan/70">
+                            <TrendingUp className="h-4 w-4" />
+                            Market Intelligence
+                          </div>
+                          <div className="flex items-center gap-2 text-bristol-cyan/70">
+                            <BarChart3 className="h-4 w-4" />
+                            Investment Underwriting
+                          </div>
+                          <div className="flex items-center gap-2 text-bristol-cyan/70">
+                            <MapPin className="h-4 w-4" />
+                            Demographics & Crime
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       <div className="space-y-4 pb-4">
@@ -221,26 +441,30 @@ export default function Chat() {
                             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                           >
                             <div
-                              className={`max-w-[70%] rounded-lg px-4 py-3 ${
+                              className={cn(
+                                "max-w-[80%] rounded-xl px-4 py-3 border backdrop-blur-sm",
                                 msg.role === 'user'
-                                  ? 'bg-bristol-maroon text-white'
-                                  : 'bg-gray-100 text-gray-900'
-                              }`}
+                                  ? 'bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 border-bristol-cyan/30 text-white'
+                                  : 'bg-gradient-to-r from-slate-800/80 to-slate-700/80 border-bristol-cyan/20 text-bristol-cyan'
+                              )}
                             >
-                              <p className="whitespace-pre-wrap">{msg.content}</p>
-                              <p className="text-xs opacity-70 mt-1">
+                              <p className="whitespace-pre-wrap text-sm">{msg.content}</p>
+                              <p className="text-xs opacity-60 mt-2">
                                 {msg.createdAt ? format(new Date(msg.createdAt), 'h:mm a') : ''}
                               </p>
                             </div>
                           </div>
                         ))}
-                        {sendMessageMutation.isPending && (
+                        {(sendMessageMutation.isPending || isThinking) && (
                           <div className="flex justify-start">
-                            <div className="bg-gray-100 text-gray-900 rounded-lg px-4 py-3">
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
+                            <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border border-bristol-cyan/20 rounded-xl px-4 py-3 backdrop-blur-sm">
+                              <div className="flex items-center gap-3 text-bristol-cyan">
+                                <div className="flex gap-1">
+                                  <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce" />
+                                  <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce delay-100" />
+                                  <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce delay-200" />
+                                </div>
+                                <span className="text-sm font-medium">Bristol A.I. is analyzing...</span>
                               </div>
                             </div>
                           </div>
@@ -249,97 +473,212 @@ export default function Chat() {
                     )}
                   </ScrollArea>
 
-                  {/* Input */}
-                  <div className="flex gap-2 mt-4">
-                    <Input
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="Type your message..."
-                      disabled={sendMessageMutation.isPending || !selectedSession}
-                      className="flex-1"
-                    />
-                    <Button
-                      onClick={handleSend}
-                      disabled={!message.trim() || sendMessageMutation.isPending || !selectedSession}
-                      className="bg-bristol-maroon hover:bg-bristol-maroon/90"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
+                  {/* Elite Input Area */}
+                  <div className="border-t border-bristol-cyan/20 p-4 bg-gradient-to-r from-slate-900/50 to-slate-800/50 backdrop-blur-sm">
+                    <div className="flex gap-3">
+                      <div className="flex-1 relative">
+                        <Input
+                          ref={inputRef}
+                          value={message}
+                          onChange={(e) => setMessage(e.target.value)}
+                          onKeyPress={handleKeyPress}
+                          placeholder={isThinking ? "Bristol A.I. is analyzing..." : "Ask about properties, markets, demographics, investments..."}
+                          disabled={sendMessageMutation.isPending || isThinking}
+                          className="bg-slate-800/50 border-bristol-cyan/20 text-white placeholder-bristol-cyan/50 focus:border-bristol-cyan focus:ring-bristol-cyan/30"
+                        />
+                      </div>
+                      <Button
+                        onClick={handleSend}
+                        disabled={!message.trim() || sendMessageMutation.isPending || isThinking}
+                        className="bg-gradient-to-r from-bristol-cyan to-bristol-electric hover:from-bristol-cyan/80 hover:to-bristol-electric/80 text-slate-900 font-bold min-w-[100px]"
+                      >
+                        {sendMessageMutation.isPending || isThinking ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <>
+                            <Brain className="h-4 w-4 mr-2" />
+                            Analyze
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 </TabsContent>
 
-                <TabsContent value="insights" className="flex-1 mt-4">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-base">Market Trends</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                          Charlotte market showing 12% YoY growth in multifamily demand
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-base">Top Opportunity</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                          South End district: High Bristol Score sites with favorable zoning
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-base">Risk Alert</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                          Rising construction costs may impact Q2 project viability
-                        </p>
-                      </CardContent>
-                    </Card>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-base">Recommendation</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-muted-foreground">
-                          Consider accelerating pre-development on high-score sites
-                        </p>
-                      </CardContent>
-                    </Card>
+                {/* Data Tab - Mirror of floating widget */}
+                <TabsContent value="data" className="flex-1 px-4 py-2">
+                  <div className="space-y-4">
+                    <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-xl p-4">
+                      <h3 className="text-bristol-cyan font-semibold mb-3 flex items-center gap-2">
+                        <Database className="h-4 w-4" />
+                        Live Data Context
+                      </h3>
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-bristol-cyan/80">Total Sites:</span>
+                          <span className="text-bristol-cyan font-bold">{appData.analytics?.totalSites || 0}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-bristol-cyan/80">Total Units:</span>
+                          <span className="text-bristol-cyan font-bold">{appData.analytics?.totalUnits || 0}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-slate-800/50 border border-bristol-cyan/20 rounded-xl p-4">
+                      <h4 className="text-bristol-cyan font-medium mb-2">Raw Data Preview</h4>
+                      <ScrollArea className="h-64">
+                        <pre className="text-xs text-bristol-cyan/70 whitespace-pre-wrap">
+                          {JSON.stringify(appData, null, 2)}
+                        </pre>
+                      </ScrollArea>
+                    </div>
                   </div>
                 </TabsContent>
 
-                <TabsContent value="history" className="flex-1 mt-4">
-                  <ScrollArea className="h-[calc(100vh-20rem)]">
-                    <div className="space-y-2">
-                      {sessions.map((session) => (
-                        <Card key={session.id}>
-                          <CardContent className="p-4">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <p className="font-medium">{session.title}</p>
-                                <p className="text-sm text-muted-foreground">
-                                  {session.createdAt ? format(new Date(session.createdAt), 'MMMM d, yyyy h:mm a') : ''}
-                                </p>
-                              </div>
-                              <Button
-                                size="icon"
-                                variant="ghost"
-                                className="h-8 w-8"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </Card>
+                {/* Tools Tab - Mirror of floating widget */}
+                <TabsContent value="tools" className="flex-1 px-4 py-2">
+                  <div className="space-y-4">
+                    <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-xl p-4">
+                      <h3 className="text-bristol-cyan font-semibold mb-3 flex items-center gap-2">
+                        <Terminal className="h-4 w-4" />
+                        MCP Tools & APIs
+                      </h3>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-bristol-cyan/80">MCP Execution:</span>
+                        <Switch
+                          checked={mcpEnabled}
+                          onCheckedChange={setMcpEnabled}
+                          className="data-[state=checked]:bg-bristol-cyan"
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-bristol-cyan/80">Real-time Data:</span>
+                        <Switch
+                          checked={realTimeData}
+                          onCheckedChange={setRealTimeData}
+                          className="data-[state=checked]:bg-bristol-cyan"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        { name: 'Demographics', icon: Users, status: 'active' },
+                        { name: 'Employment', icon: TrendingUp, status: 'active' },
+                        { name: 'Crime Stats', icon: Shield, status: 'active' },
+                        { name: 'Climate Data', icon: Activity, status: 'active' },
+                        { name: 'Housing Data', icon: Building2, status: 'active' },
+                        { name: 'Deal Pipeline', icon: DollarSign, status: 'active' }
+                      ].map((tool) => (
+                        <div key={tool.name} className="bg-slate-800/50 border border-bristol-cyan/20 rounded-xl p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <tool.icon className="h-4 w-4 text-bristol-cyan" />
+                            <span className="text-bristol-cyan font-medium text-sm">{tool.name}</span>
+                          </div>
+                          <Badge 
+                            variant="outline" 
+                            className="text-xs border-bristol-cyan/30 text-bristol-cyan bg-bristol-cyan/10"
+                          >
+                            {tool.status}
+                          </Badge>
+                        </div>
                       ))}
                     </div>
-                  </ScrollArea>
+                  </div>
+                </TabsContent>
+
+                {/* Agents Tab - Mirror of floating widget */}
+                <TabsContent value="agents" className="flex-1 px-4 py-2">
+                  <div className="space-y-4">
+                    <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-xl p-4">
+                      <h3 className="text-bristol-cyan font-semibold mb-3 flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        Multi-Agent System
+                      </h3>
+                      <p className="text-bristol-cyan/80 text-sm">
+                        Bristol A.I. Elite orchestrates multiple specialized agents for comprehensive analysis.
+                      </p>
+                    </div>
+
+                    <div className="grid gap-3">
+                      {[
+                        { name: 'Financial Analyst', specialty: 'Investment Underwriting', status: 'ready' },
+                        { name: 'Market Intelligence', specialty: 'Competitive Analysis', status: 'ready' },
+                        { name: 'Data Processor', specialty: 'Demographics & Crime', status: 'ready' },
+                        { name: 'Lead Manager', specialty: 'Deal Pipeline', status: 'ready' }
+                      ].map((agent) => (
+                        <div key={agent.name} className="bg-slate-800/50 border border-bristol-cyan/20 rounded-xl p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <h4 className="text-bristol-cyan font-medium">{agent.name}</h4>
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs border-bristol-cyan/30 text-bristol-cyan bg-bristol-cyan/10"
+                            >
+                              {agent.status}
+                            </Badge>
+                          </div>
+                          <p className="text-bristol-cyan/70 text-sm">{agent.specialty}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </TabsContent>
+
+                {/* Admin Tab - Mirror of floating widget */}
+                <TabsContent value="admin" className="flex-1 px-4 py-2">
+                  <div className="space-y-4">
+                    <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-xl p-4">
+                      <h3 className="text-bristol-cyan font-semibold mb-3 flex items-center gap-2">
+                        <Settings className="h-4 w-4" />
+                        Elite Configuration
+                      </h3>
+                      
+                      <div className="space-y-4">
+                        <div>
+                          <Label className="text-bristol-cyan font-medium">System Prompt</Label>
+                          <Textarea
+                            value={systemPrompt}
+                            onChange={(e) => setSystemPrompt(e.target.value)}
+                            placeholder="Enter custom system prompt for Bristol A.I. Elite..."
+                            className="mt-2 bg-slate-800/50 border-bristol-cyan/20 text-bristol-cyan placeholder-bristol-cyan/50"
+                            rows={6}
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <Label className="text-bristol-cyan font-medium">Real-time Data Integration</Label>
+                          <Switch
+                            checked={realTimeData}
+                            onCheckedChange={setRealTimeData}
+                            className="data-[state=checked]:bg-bristol-cyan"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <Label className="text-bristol-cyan font-medium">MCP Tool Execution</Label>
+                          <Switch
+                            checked={mcpEnabled}
+                            onCheckedChange={setMcpEnabled}
+                            className="data-[state=checked]:bg-bristol-cyan"
+                          />
+                        </div>
+
+                        <Button
+                          onClick={() => {
+                            localStorage.setItem("bristol.selectedModel", selectedModel);
+                            localStorage.setItem("bristol.mcpEnabled", mcpEnabled.toString());
+                            localStorage.setItem("bristol.realTimeData", realTimeData.toString());
+                            localStorage.setItem("bristol.systemPrompt", systemPrompt);
+                          }}
+                          className="w-full bg-gradient-to-r from-bristol-cyan to-bristol-electric hover:from-bristol-cyan/80 hover:to-bristol-electric/80 text-slate-900 font-bold"
+                        >
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Elite Configuration
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </TabsContent>
               </Tabs>
             </CardContent>
