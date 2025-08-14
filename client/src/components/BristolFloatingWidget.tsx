@@ -421,16 +421,14 @@ export default function BristolFloatingWidget({
     <>
       {/* Bristol Brain Launcher Button - Bottom Right */}
       {!open && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <button
-            onClick={() => setOpen(true)}
-            className="h-16 w-16 rounded-full bg-gradient-to-r from-bristol-maroon via-red-800 to-purple-900 hover:from-bristol-maroon/90 hover:via-red-800/90 hover:to-purple-900/90 border-2 border-bristol-gold/40 shadow-2xl shadow-purple-500/20 transition-all duration-300 hover:scale-110 hover:shadow-purple-500/40 cyberpunk-glow"
-            aria-label="Open Bristol Brain Intelligence"
-          >
-            <Brain className="h-8 w-8 text-white animate-pulse mx-auto" />
-            <div className="absolute -inset-1 bg-gradient-to-r from-bristol-gold/20 to-purple-500/20 rounded-full blur opacity-75 animate-pulse"></div>
-          </button>
-        </div>
+        <button
+          onClick={() => setOpen(true)}
+          className="bristol-brain-button"
+          aria-label="Open Bristol Brain Intelligence"
+        >
+          <Brain className="h-6 w-6" />
+          <span className="font-bold text-lg">Bristol Brain Intelligence</span>
+        </button>
       )}
 
       {/* Slideout Panel */}
@@ -947,7 +945,65 @@ function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; la
   );
 }
 
-
-
+// Missing ChatPane function
+function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boolean }) {
+  return (
+    <div className="h-full overflow-y-auto px-6 py-4 space-y-4 bg-gradient-to-b from-transparent to-bristol-ink/20">
+      {messages.filter(m => m.role !== "system").map((m, i) => (
+        <div 
+          key={i} 
+          className={`
+            relative rounded-2xl border backdrop-blur transition-all duration-200 hover:shadow-lg p-4
+            ${m.role === "assistant" 
+              ? "bg-gradient-to-br from-bristol-cyan/10 to-bristol-electric/5 border-bristol-cyan/30 hover:border-bristol-cyan/50" 
+              : "bg-gradient-to-br from-bristol-ink/60 to-black/40 border-bristol-maroon/30 hover:border-bristol-maroon/50 ml-4"
+            }
+          `}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <span className={`
+                text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full
+                ${m.role === "assistant"
+                  ? "bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/30"
+                  : "bg-bristol-maroon/20 text-bristol-gold border border-bristol-maroon/30"
+                }
+              `}>
+                {m.role === "assistant" ? "🤖 Bristol Brain" : "👤 You"}
+              </span>
+            </div>
+            {m.createdAt && (
+              <span className="text-xs text-bristol-cyan/50">
+                {new Date(m.createdAt).toLocaleTimeString()}
+              </span>
+            )}
+          </div>
+          
+          <div className={`
+            whitespace-pre-wrap text-sm leading-relaxed
+            ${m.role === "assistant" ? "text-white/90" : "text-bristol-cyan/90"}
+          `}>
+            {m.content}
+          </div>
+        </div>
+      ))}
+      
+      {loading && (
+        <div className="relative rounded-2xl border bg-gradient-to-br from-bristol-cyan/10 to-bristol-electric/5 border-bristol-cyan/30 backdrop-blur animate-pulse p-4">
+          <div className="flex items-center gap-3">
+            <div className="flex space-x-1">
+              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce" />
+            </div>
+            <span className="text-sm text-bristol-cyan/80">
+              Bristol Brain Boss Agent is analyzing your request...
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 
