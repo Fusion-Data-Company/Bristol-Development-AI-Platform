@@ -8,7 +8,8 @@ import { ThinkingIndicator } from "./ThinkingIndicator";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import { Send, Paperclip, Mic, X, MapPin, BarChart, Brain } from "lucide-react";
+import { Send, Paperclip, Mic, X, MapPin, BarChart, Brain, Settings, Cpu } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 interface ChatMessage {
@@ -37,6 +38,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
   const [isThinking, setIsThinking] = useState(false);
   const [activeTools, setActiveTools] = useState<string[]>(["search"]);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const [selectedModel, setSelectedModel] = useState("x-ai/grok-4"); // Default to Grok 4
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
@@ -55,6 +57,12 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
     sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
   );
 
+  // Fetch premium models
+  const { data: premiumModelsData } = useQuery({
+    queryKey: ['/api/premium-models'],
+    queryFn: () => apiRequest('/api/premium-models', 'GET'),
+  });
+
   // Send message mutation using Bristol Brain Elite
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
@@ -62,6 +70,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
         sessionId: currentSessionId,
         message: content,
         enableAdvancedReasoning: true,
+        selectedModel, // Include selected model
         dataContext: {} // Could include current app context here
       });
       return response;
@@ -252,6 +261,46 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
             </div>
           </div>
         )}
+
+        {/* AI Engine Selector */}
+        <div className="px-6 py-4 border-b border-bristol-sky">
+          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 rounded-xl border border-bristol-maroon/20">
+            <Cpu className="h-5 w-5 text-bristol-maroon" />
+            <div className="flex-1">
+              <label className="text-sm font-medium text-bristol-ink mb-1 block">AI Engine</label>
+              <Select value={selectedModel} onValueChange={setSelectedModel}>
+                <SelectTrigger className="w-full bg-white border-bristol-maroon/20 text-bristol-ink">
+                  <SelectValue placeholder="Select AI model..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {premiumModelsData?.models?.map((model: any) => (
+                    <SelectItem key={model.id} value={model.id} className="cursor-pointer">
+                      <div className="flex items-center gap-3 py-1">
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{model.name}</span>
+                            <Badge 
+                              variant={model.status === 'active' ? 'default' : 'secondary'} 
+                              className={cn(
+                                "text-xs",
+                                model.status === 'active' 
+                                  ? "bg-green-100 text-green-800" 
+                                  : "bg-yellow-100 text-yellow-800"
+                              )}
+                            >
+                              {model.status === 'byok-required' ? 'BYOK' : 'Active'}
+                            </Badge>
+                          </div>
+                          <span className="text-xs text-muted-foreground">{model.provider} • {model.description}</span>
+                        </div>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
 
         {/* Function Toggles */}
         <div className="px-6 py-4 flex items-center gap-3 border-b border-bristol-sky">

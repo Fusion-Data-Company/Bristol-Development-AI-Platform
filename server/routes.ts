@@ -61,6 +61,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bristol Brain Elite API with advanced memory and attachments
   const bristolBrainEliteRouter = (await import('./api/bristol-brain-elite')).default;
   app.use('/api/bristol-brain-elite', bristolBrainEliteRouter);
+  
+  // Premium Models API for Bristol Brain Elite
+  const premiumModelsRouter = (await import('./routes/premium-models')).default;
+  app.use('/api/premium-models', premiumModelsRouter);
 
   // OpenRouter models endpoint
   // OpenRouter models endpoint - fix authentication
@@ -91,8 +95,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const data = await response.json();
       
-      // Filter to elite models only
+      // Filter to elite models only - prioritize our premium models
+      const PREMIUM_MODEL_IDS = [
+        "x-ai/grok-4",
+        "anthropic/claude-opus-4.1", 
+        "google/gemini-2.5-pro",
+        "perplexity/sonar-deep-research",
+        "openai/gpt-5"
+      ];
+      
       const eliteModels = data.data?.filter((model: any) => 
+        PREMIUM_MODEL_IDS.includes(model.id) ||
         model.id.includes('gpt-4') || 
         model.id.includes('claude-3') || 
         model.id.includes('grok') ||
@@ -102,11 +115,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         label: model.name || model.id
       })) || [];
 
-      // Add fallback models if none found
+      // Add our guaranteed premium models if not found
       if (eliteModels.length === 0) {
         eliteModels.push(
-          { id: "gpt-4o", label: "GPT-4o" },
-          { id: "anthropic/claude-3.5-sonnet", label: "Claude 3.5 Sonnet" }
+          { id: "x-ai/grok-4", label: "Grok 4" },
+          { id: "anthropic/claude-opus-4.1", label: "Claude Opus 4.1" },
+          { id: "google/gemini-2.5-pro", label: "Gemini 2.5 Pro" },
+          { id: "perplexity/sonar-deep-research", label: "Sonar Deep Research" }
         );
       }
 

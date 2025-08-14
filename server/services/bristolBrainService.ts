@@ -25,6 +25,7 @@ interface BristolBrainContext {
   attachments?: AgentAttachment[];
   dataContext?: Record<string, any>;
   enableAdvancedReasoning?: boolean;
+  selectedModel?: string;
 }
 
 interface DecisionAnalysis {
@@ -407,9 +408,10 @@ Remember: You're not providing general advice. You're making real-time decisions
         });
       }
       
-      // Call AI with enhanced context
+      // Call AI with enhanced context - using Grok 4 as default premium model
+      const selectedModel = context.selectedModel || "x-ai/grok-4"; // Default to Grok 4 - xAI's latest reasoning model
       const completion = await this.openai.chat.completions.create({
-        model: "openai/gpt-5", // GPT-5 - OpenAI's most advanced model for elite responses
+        model: selectedModel,
         messages: aiMessages as any,
         temperature: 0.2, // Lower temperature for more consistent, professional responses
         max_tokens: 2000,

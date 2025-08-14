@@ -37,12 +37,13 @@ const chatRequestSchema = z.object({
   message: z.string(),
   enableAdvancedReasoning: z.boolean().optional(),
   dataContext: z.record(z.any()).optional(),
+  selectedModel: z.string().optional(), // Premium model selection
 });
 
 // Elite chat endpoint with full Bristol Brain capabilities
 router.post("/chat", async (req, res) => {
   try {
-    const { sessionId: providedSessionId, message, enableAdvancedReasoning, dataContext } = 
+    const { sessionId: providedSessionId, message, enableAdvancedReasoning, dataContext, selectedModel } = 
       chatRequestSchema.parse(req.body);
     
     // Generate sessionId if not provided
@@ -68,6 +69,7 @@ router.post("/chat", async (req, res) => {
       attachments,
       dataContext,
       enableAdvancedReasoning,
+      selectedModel,
     });
     
     // Return in format expected by frontend
