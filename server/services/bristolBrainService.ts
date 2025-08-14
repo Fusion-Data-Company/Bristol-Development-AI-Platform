@@ -40,6 +40,7 @@ interface DecisionAnalysis {
 
 class BristolBrainService {
   private openai: OpenAI;
+  private openaiDirect: OpenAI;
   
   // Elite system prompt for Bristol Development Group
   private readonly ELITE_SYSTEM_PROMPT = `You are the Bristol Brain - the premier AI intelligence system for Bristol Development Group, a $200+ million real estate investment firm.
@@ -138,6 +139,13 @@ Remember: You're not providing general advice. You're making real-time decisions
       apiKey,
       baseURL: "https://openrouter.ai/api/v1",
     });
+
+    // Initialize direct OpenAI client for BYOK GPT-5 access
+    if (process.env.OPENAI_API_KEY2) {
+      this.openaiDirect = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY2, // BYOK key for direct GPT-5 access
+      });
+    }
   }
 
   /**
@@ -409,27 +417,29 @@ Remember: You're not providing general advice. You're making real-time decisions
         });
       }
       
-      // Call AI with enhanced context - using Grok 4 as default (GPT-5 requires BYOK setup)
-      const selectedModel = context.selectedModel || "x-ai/grok-4"; // Default to Grok 4 - xAI's latest reasoning model
+      // Call AI with enhanced context - using GPT-5 as default with BYOK
+      const selectedModel = context.selectedModel || "gpt-5"; // Default to GPT-5 with BYOK
       
       // Enhanced error handling and model-specific configuration
       let completion;
       try {
-        const isGPT5 = selectedModel.includes('gpt-5');
-        const isOpenAI = selectedModel.includes('openai/');
+        const isGPT5 = selectedModel === 'gpt-5' || selectedModel.includes('gpt-5');
+        const hasDirectClient = !!this.openaiDirect;
+        const useDirectOpenAI = isGPT5 && hasDirectClient;
         
-        completion = await this.openai.chat.completions.create({
-          model: selectedModel,
+        console.log(`Bristol Brain: Model=${selectedModel}, isGPT5=${isGPT5}, hasDirectClient=${hasDirectClient}, useDirectOpenAI=${useDirectOpenAI}`);
+        
+        // Use direct OpenAI client for GPT-5 with BYOK, otherwise use OpenRouter
+        const client = useDirectOpenAI ? this.openaiDirect : this.openai;
+        const modelName = useDirectOpenAI ? "gpt-5" : selectedModel;
+        
+        completion = await client.chat.completions.create({
+          model: modelName,
           messages: aiMessages as any,
           temperature: 0.2, // Lower temperature for more consistent, professional responses
           max_tokens: isGPT5 ? 4000 : 2000, // GPT-5 supports higher output tokens
           presence_penalty: 0.1,
           frequency_penalty: 0.1,
-          // Add reasoning support for GPT-5
-          ...(isGPT5 && { 
-            response_format: { type: "text" },
-            tools: context.enableAdvancedReasoning ? [] : undefined
-          })
         });
       } catch (error: any) {
         console.error(`Bristol Brain API Error for model ${selectedModel}:`, error);
@@ -438,22 +448,9 @@ Remember: You're not providing general advice. You're making real-time decisions
         if (error?.status === 401) {
           throw new Error(`Authentication failed for ${selectedModel}. Please check API key configuration.`);
         } else if (error?.status === 403) {
-          // If GPT-5 fails, provide specific BYOK guidance and fall back to Grok 4
+          // If direct GPT-5 fails, provide specific BYOK guidance
           if (selectedModel.includes('gpt-5')) {
-            console.log(`GPT-5 BYOK not configured, falling back to Grok 4`);
-            // Automatically fall back to Grok 4
-            try {
-              completion = await this.openai.chat.completions.create({
-                model: "x-ai/grok-4",
-                messages: aiMessages as any,
-                temperature: 0.2,
-                max_tokens: 2000,
-                presence_penalty: 0.1,
-                frequency_penalty: 0.1,
-              });
-            } catch (fallbackError) {
-              throw new Error(`GPT-5 requires BYOK setup in OpenRouter integrations. Fallback to Grok 4 also failed: ${fallbackError}`);
-            }
+            throw new Error(`GPT-5 access denied. Please verify your OpenAI API key is correctly configured in OPENAI_API_KEY2 environment variable.`);
           } else {
             throw new Error(`Access denied for ${selectedModel}. Model may require additional setup.`);
           }

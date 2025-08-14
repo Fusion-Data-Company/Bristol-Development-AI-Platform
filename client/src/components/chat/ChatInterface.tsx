@@ -57,7 +57,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
   const [isThinking, setIsThinking] = useState(false);
   const [activeTools, setActiveTools] = useState<string[]>(["search"]);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [selectedModel, setSelectedModel] = useState("x-ai/grok-4"); // Default to Grok 4 (GPT-5 requires BYOK setup)
+  const [selectedModel, setSelectedModel] = useState("gpt-5"); // Default to GPT-5 with BYOK
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 

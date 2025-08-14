@@ -5,7 +5,7 @@ const router = Router();
 // Premium AI Models Configuration for Bristol Brain Elite
 const PREMIUM_MODELS = [
   {
-    id: "openai/gpt-5",
+    id: "gpt-5",
     name: "GPT-5",
     provider: "OpenAI",
     category: "general",
@@ -17,7 +17,7 @@ const PREMIUM_MODELS = [
       output: "$10/M tokens"
     },
     bestFor: ["Coding", "Agentic Tasks", "Complex Reasoning", "Real Estate Analysis"],
-    status: "byok-required"
+    status: "active"
   },
   {
     id: "x-ai/grok-4",
@@ -88,7 +88,7 @@ const PREMIUM_MODELS = [
 router.get("/", (req, res) => {
   res.json({
     models: PREMIUM_MODELS,
-    default: "x-ai/grok-4",
+    default: "gpt-5",
     categories: ["general", "reasoning", "coding", "research"]
   });
 });
