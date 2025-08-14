@@ -132,7 +132,7 @@ export default function BristolFloatingWidget({
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content: "Welcome to Bristol Brain Elite v5.0. I provide institutional-grade real estate analysis including property valuations, market intelligence, demographic analytics, and investment opportunity assessments. Ask me about specific properties, portfolio performance, market trends, or complex deal structures.",
+      content: "Welcome to Bristol A.I. Elite v5.0. I provide institutional-grade real estate analysis including property valuations, market intelligence, demographic analytics, and investment opportunity assessments. Ask me about specific properties, portfolio performance, market trends, or complex deal structures.",
       createdAt: nowISO(),
     }
   ]);
@@ -470,11 +470,11 @@ export default function BristolFloatingWidget({
             <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out">
               <div className="h-full w-8 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12" />
             </div>
-            {/* Elite brain icon with metallic finish */}
+            {/* Brain icon with metallic finish */}
             <div className="relative z-10">
               <div className="absolute inset-0 bg-bristol-cyan blur-lg opacity-80 animate-pulse" />
               <div 
-                className="relative w-10 h-10 rounded-2xl border-2 flex items-center justify-center shadow-2xl overflow-hidden"
+                className="relative w-12 h-12 rounded-2xl border-2 flex items-center justify-center shadow-2xl overflow-hidden"
                 style={{
                   background: 'linear-gradient(135deg, #64748b 0%, #94a3b8 25%, #cbd5e1 50%, #94a3b8 75%, #64748b 100%)',
                   borderColor: '#45d6ca',
@@ -483,64 +483,46 @@ export default function BristolFloatingWidget({
               >
                 {/* Glass overlay on icon */}
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-bristol-cyan/20 rounded-2xl" />
-                <Brain className="w-5 h-5 text-bristol-cyan relative z-10 drop-shadow-lg animate-pulse" />
+                <Brain className="w-6 h-6 text-bristol-cyan relative z-10 drop-shadow-lg animate-pulse" />
               </div>
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-bristol-gold to-yellow-400 rounded-full animate-pulse border border-white/50" />
             </div>
             
-            {/* Elite branding with metallic text */}
-            <div className="flex flex-col relative z-10">
-              <div className="flex items-center gap-2">
-                <span 
-                  className="text-lg font-black drop-shadow-lg"
-                  style={{
-                    background: 'linear-gradient(135deg, #45d6ca 0%, #ffffff 50%, #a8d5f2 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    textShadow: '0 0 10px rgba(69, 214, 202, 0.5)',
-                  }}
-                >
-                  BRISTOL BRAIN
-                </span>
-                <div 
-                  className="px-2 py-0.5 text-xs font-black rounded-md border uppercase tracking-wider"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.8) 0%, rgba(255, 215, 0, 0.6) 100%)',
-                    borderColor: '#d4af37',
-                    color: '#1e293b',
-                    textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
-                  }}
-                >
-                  ELITE
-                </div>
-              </div>
-              <span className="text-sm font-bold text-bristol-cyan drop-shadow-md">
+            {/* A.I. branding with metallic text - positioned between icons */}
+            <div className="flex flex-col relative z-10 flex-1">
+              <span 
+                className="text-xl font-black drop-shadow-lg text-center"
+                style={{
+                  background: 'linear-gradient(135deg, #45d6ca 0%, #ffffff 50%, #a8d5f2 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  textShadow: '0 0 10px rgba(69, 214, 202, 0.5)',
+                }}
+              >
+                BRISTOL A.I.
+              </span>
+              <span className="text-sm font-bold text-bristol-cyan drop-shadow-md text-center">
                 AI Real Estate Intelligence
               </span>
             </div>
             
-            {/* CPU chip icon and status indicator */}
-            <div className="flex items-center gap-3 relative z-10">
-              <div className="relative">
-                <div 
-                  className="w-6 h-6 rounded border-2 flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(135deg, #64748b 0%, #94a3b8 50%, #64748b 100%)',
-                    borderColor: '#45d6ca',
-                    boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.3), 0 0 8px rgba(69, 214, 202, 0.4)',
-                  }}
-                >
-                  <Cpu className="w-3 h-3 text-bristol-cyan animate-pulse" />
-                </div>
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-gradient-to-br from-bristol-gold to-yellow-400 rounded-full animate-pulse border border-white/50" />
+            {/* CPU chip icon */}
+            <div className="relative z-10">
+              <div className="absolute inset-0 bg-bristol-cyan blur-lg opacity-80 animate-pulse" />
+              <div 
+                className="relative w-12 h-12 rounded-xl border-2 flex items-center justify-center shadow-2xl overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #64748b 0%, #94a3b8 25%, #cbd5e1 50%, #94a3b8 75%, #64748b 100%)',
+                  borderColor: '#45d6ca',
+                  boxShadow: 'inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2), 0 0 15px rgba(69, 214, 202, 0.6)',
+                }}
+              >
+                {/* Glass overlay on CPU icon */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-bristol-cyan/20 rounded-xl" />
+                <Cpu className="w-6 h-6 text-bristol-cyan relative z-10 drop-shadow-lg animate-pulse" />
               </div>
-              <div className="flex flex-col items-end">
-                <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse shadow-lg shadow-bristol-cyan/50" />
-                <span className="text-xs text-bristol-cyan font-bold uppercase tracking-wider mt-1 drop-shadow-md">
-                  READY
-                </span>
-              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-bristol-gold to-yellow-400 rounded-full animate-pulse border border-white/50" />
             </div>
           </div>
         </button>
@@ -594,7 +576,7 @@ export default function BristolFloatingWidget({
                   </div>
                   <div>
                     <h1 className="font-serif font-bold text-2xl bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">
-                      BRISTOL BRAIN
+                      BRISTOL A.I.
                     </h1>
                     <p className="text-lg text-bristol-cyan font-bold tracking-wide uppercase mt-1 drop-shadow-lg">
                       AI Real Estate Intelligence
