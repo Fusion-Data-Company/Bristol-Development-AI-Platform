@@ -236,23 +236,64 @@ export default function BristolFloatingWidget({
     console.log("WebSocket message received:", data);
     
     switch (data.type) {
+      case 'task_started':
+        // Add new task to active tasks for immediate display
+        const newTask = {
+          id: data.task.id,
+          type: data.task.type,
+          agentId: data.task.agentId,
+          status: 'processing' as const,
+          result: null,
+          agent: data.task.agent
+        };
+        
+        setActiveTasks(prevTasks => {
+          const exists = prevTasks.find(t => t.id === newTask.id);
+          if (!exists) {
+            console.log(`🚀 Adding new task to UI: ${data.task.agentName} - ${data.task.type}`);
+            return [...prevTasks, newTask];
+          }
+          return prevTasks;
+        });
+        
+        // Start progress animation
+        setTaskProgress(prev => ({
+          ...prev,
+          [data.task.agentId]: 10
+        }));
+        break;
+        
+      case 'task_completed':
+        setTaskProgress(prev => ({
+          ...prev,
+          [data.task.agentId]: 100
+        }));
+        
+        // Update the task result with individual agent output
+        setActiveTasks(prevTasks => 
+          prevTasks.map(task => 
+            task.id === data.task.id 
+              ? { 
+                  ...task, 
+                  result: data.task.result, 
+                  status: data.task.status,
+                  agent: data.task.agent,
+                  completedAt: data.task.completedAt
+                }
+              : task
+          )
+        );
+        
+        console.log(`✅ Task completed: ${data.task.agentName} - ${data.task.status}`);
+        break;
+        
       case 'agent-task-result':
-        // Update task progress
+        // Legacy support
         setTaskProgress(prev => ({
           ...prev,
           [data.taskId]: data.task
         }));
         
-        // Add to agent communication log
-        setAgentCommunication(prev => [...prev, {
-          timestamp: new Date(),
-          agentId: data.agentId,
-          taskId: data.taskId,
-          type: 'result',
-          content: data.task.result
-        }]);
-        
-        // Update active tasks
         setActiveTasks(prev => 
           prev.map(task => 
             task.id === data.taskId 
@@ -2135,111 +2176,68 @@ function AgentsPane({
                       </div>
                     </div>
                     
-                    {/* Live Output Stream */}
-                    <div className={`bg-black/60 border border-${colorClass}/20 rounded-lg p-3 max-h-48 overflow-y-auto cyberpunk-scrollbar`}>
-                      <div className="space-y-1 text-sm font-mono">
-                        {/* Static initialization messages */}
+                    {/* LIVE AGENT OUTPUT STREAM - Real data from WebSocket */}
+                    <div className={`bg-black/60 border border-${colorClass}/20 rounded-lg p-3 max-h-64 overflow-y-auto cyberpunk-scrollbar`}>
+                      <div className="space-y-2 text-sm font-mono">
+                        {/* Show agent initialization */}
                         <div className={`text-${colorClass} flex items-center gap-2`}>
-                          <span className={`w-1.5 h-1.5 bg-${colorClass} rounded-full animate-pulse`}></span>
-                          <span>Initializing {agent?.name}...</span>
-                        </div>
-                        <div className="text-gray-300 ml-4">
-                          → Loading property data: {testProperty.name}
-                        </div>
-                        <div className="text-gray-300 ml-4">
-                          → Processing {testProperty.units} units, {testProperty.sqft.toLocaleString()} sq ft
+                          <span className={`w-1.5 h-1.5 bg-${colorClass} rounded-full ${task.status === 'processing' ? 'animate-pulse' : ''}`}></span>
+                          <span className="font-bold">{agent?.name || task.agentId} - {task.type}</span>
                         </div>
                         
-                        {/* Dynamic agent-specific messages */}
-                        {(() => {
-                          const getAgentMessages = (agentId: string) => {
-                            switch(agentId) {
-                              case 'master':
-                                return [
-                                  '→ Orchestrating multi-agent analysis',
-                                  '→ Coordinating data processing pipeline',
-                                  '→ Synthesizing cross-agent insights',
-                                  '→ Evaluating investment opportunities'
-                                ];
-                              case 'data-processing':
-                                return [
-                                  '→ Processing demographic datasets',
-                                  '→ Analyzing economic indicators',
-                                  '→ Calculating population metrics',
-                                  '→ Evaluating market fundamentals'
-                                ];
-                              case 'market-intelligence':
-                                return [
-                                  '→ Analyzing comparable properties',
-                                  '→ Evaluating market trends',
-                                  '→ Assessing competitive landscape',
-                                  '→ Forecasting demand drivers'
-                                ];
-                              case 'financial-analysis':
-                                return [
-                                  '→ Calculating IRR scenarios',
-                                  '→ Modeling cash flow projections',
-                                  '→ Computing cap rate analysis',
-                                  '→ Evaluating financing structures'
-                                ];
-                              case 'lead-management':
-                                return [
-                                  '→ Assessing investor profiles',
-                                  '→ Calculating conversion probabilities',
-                                  '→ Optimizing lead qualification',
-                                  '→ Preparing presentation materials'
-                                ];
-                              default:
-                                return ['→ Processing analysis...'];
-                            }
-                          };
-
-                          const messages = getAgentMessages(task.agentId);
-                          const displayCount = Math.min(Math.floor((progress / 100) * messages.length) + 1, messages.length);
-                          
-                          return messages.slice(0, displayCount).map((text, idx) => (
-                            <div key={idx} className={`text-gray-300 ml-4 animate-fade-in`}>
-                              {text}
+                        {/* Show actual agent results when available */}
+                        {task.result && (
+                          <div className="bg-gray-900/50 border border-gray-600 rounded-lg p-3 mt-2">
+                            <div className="text-green-400 font-bold mb-2 flex items-center gap-2">
+                              <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                              ANALYSIS COMPLETE
                             </div>
-                          ));
-                        })()}
-
-                        {/* Dynamic real-time messages */}
-                        {outputMessages[task.agentId]?.map((msg, idx) => (
-                          <div key={idx} className={`flex items-center gap-2 animate-fade-in ${
-                            msg.type === 'success' ? 'text-green-400' :
-                            msg.type === 'error' ? 'text-red-400' :
-                            msg.type === 'progress' ? `text-${colorClass}` :
-                            'text-gray-300'
-                          }`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${
-                              msg.type === 'success' ? 'bg-green-400' :
-                              msg.type === 'error' ? 'bg-red-400' :
-                              msg.type === 'progress' ? `bg-${colorClass} animate-pulse` :
-                              'bg-gray-500'
-                            }`}></span>
-                            <span className="ml-2">→ {msg.text}</span>
-                          </div>
-                        ))}
-                        
-                        {task.status === 'running' && (
-                          <div className={`text-${colorClass} flex items-center gap-2 animate-pulse`}>
-                            <span className={`w-1.5 h-1.5 bg-${colorClass} rounded-full animate-ping`}></span>
-                            <span>Analysis in progress... {progress}% complete</span>
+                            <div className="text-gray-200 whitespace-pre-wrap text-xs leading-relaxed">
+                              {task.result}
+                            </div>
                           </div>
                         )}
                         
-                        {task.status === 'completed' && (
-                          <div className="text-green-400 flex items-center gap-2 animate-fade-in">
-                            <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
-                            <span>✓ Analysis completed successfully</span>
+                        {/* Show processing status */}
+                        {!task.result && task.status === 'processing' && (
+                          <div className="space-y-1">
+                            <div className={`text-${colorClass} flex items-center gap-2 animate-pulse`}>
+                              <span className={`w-1.5 h-1.5 bg-${colorClass} rounded-full animate-ping`}></span>
+                              <span>Processing {task.type}... {progress}%</span>
+                            </div>
+                            
+                            {/* Agent-specific live status */}
+                            {(() => {
+                              const getStatusMessage = (agentId: string, progress: number) => {
+                                if (progress < 25) return "Initializing analysis engine...";
+                                if (progress < 50) return "Processing real estate data...";
+                                if (progress < 75) return "Running calculations...";
+                                if (progress < 100) return "Finalizing results...";
+                                return "Complete";
+                              };
+                              
+                              return (
+                                <div className="text-gray-400 ml-4">
+                                  → {getStatusMessage(task.agentId, progress)}
+                                </div>
+                              );
+                            })()}
                           </div>
                         )}
                         
-                        {task.status === 'error' && (
+                        {/* Show error state */}
+                        {task.status === 'failed' && (
                           <div className="text-red-400 flex items-center gap-2 animate-fade-in">
                             <span className="w-1.5 h-1.5 bg-red-400 rounded-full"></span>
-                            <span>✗ Analysis failed - API connection error</span>
+                            <span>✗ Analysis failed - Will retry automatically</span>
+                          </div>
+                        )}
+                        
+                        {/* Show completion state */}
+                        {task.status === 'completed' && task.result && (
+                          <div className="text-green-400 flex items-center gap-2 animate-fade-in">
+                            <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                            <span>✓ {agent?.name} analysis completed successfully</span>
                           </div>
                         )}
                       </div>
