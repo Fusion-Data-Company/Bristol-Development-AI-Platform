@@ -40,6 +40,7 @@ function Router() {
           <Route path="/tools-console" component={ToolsConsole} />
           <Route path="/tools" component={Tools} />
           <Route path="/comparables" component={ComparablesAnnex} />
+          <Route path="/comparables-annex" component={ComparablesAnnex} />
         </>
       )}
       <Route component={NotFound} />
