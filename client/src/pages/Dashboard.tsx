@@ -582,9 +582,58 @@ export default function Dashboard() {
 
 
 
-        {/* Interactive Mapping Tab - Full Screen Override */}
+        {/* Interactive Mapping Tab - Full Screen */}
         {activeTab === "mapping" && (
-          <InteractiveMapDashboard />
+          <div className="h-screen bg-bristol-cream flex flex-col">
+            {/* Top Info Panel */}
+            <div className="bg-white/95 backdrop-blur-sm border-b border-bristol-stone p-4 z-20 relative">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <img src={bristolLogoPath} alt="Bristol Development Group" className="h-8 w-auto" />
+                  <div>
+                    <h1 className="text-xl font-serif font-bold text-bristol-ink">Bristol Site Intelligence</h1>
+                    <p className="text-sm text-bristol-stone">Geographic Data & Market Analysis</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  {/* Live Stats */}
+                  <div className="flex gap-4">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-bristol-maroon">{sites?.length || 46}</div>
+                      <div className="text-xs text-bristol-stone">Active Sites</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-bristol-maroon">9,953</div>
+                      <div className="text-xs text-bristol-stone">Total Units</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-bristol-maroon">84.2</div>
+                      <div className="text-xs text-bristol-stone">Avg Score</div>
+                    </div>
+                  </div>
+                  
+                  <Badge variant="outline" className="text-bristol-maroon border-bristol-maroon">
+                    <Activity className="w-3 h-3 mr-1" />
+                    Live Data
+                  </Badge>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setActiveTab("overview")}
+                  >
+                    <Home className="w-4 h-4 mr-1" />
+                    Dashboard
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Interactive Map Dashboard with Area Selection */}
+            <div className="flex-1 flex relative">
+              <InteractiveMapDashboard />
+            </div>
+          </div>
         )}
 
         {/* Scoring Tab */}
