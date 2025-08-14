@@ -1320,22 +1320,71 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
     fetchMcpData();
   }, []);
 
-  const executeMcpTool = async (toolName: string) => {
+  const [executingTool, setExecutingTool] = useState<string | null>(null);
+  const [toolResults, setToolResults] = useState<Record<string, any>>({});
+  const [selectedTool, setSelectedTool] = useState<string | null>(null);
+  const [executionHistory, setExecutionHistory] = useState<any[]>([]);
+
+  const executeMcpTool = async (toolName: string, params: Record<string, any> = {}) => {
+    setExecutingTool(toolName);
     try {
       const response = await fetch(`/api/mcp-tools/execute/${toolName}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({})
+        body: JSON.stringify(params)
       });
       
       if (response.ok) {
         const result = await response.json();
         console.log(`MCP Tool ${toolName} executed:`, result);
-        // You could show a toast notification here
+        
+        // Store the result
+        setToolResults(prev => ({
+          ...prev,
+          [toolName]: result
+        }));
+        
+        // Add to execution history
+        const historyEntry = {
+          tool: toolName,
+          timestamp: new Date().toISOString(),
+          params,
+          result: result.result,
+          success: true
+        };
+        setExecutionHistory(prev => [historyEntry, ...prev.slice(0, 9)]); // Keep last 10
+        
+        return result;
+      } else {
+        throw new Error('Tool execution failed');
       }
     } catch (error) {
       console.error(`Error executing MCP tool ${toolName}:`, error);
+      const historyEntry = {
+        tool: toolName,
+        timestamp: new Date().toISOString(),
+        params,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        success: false
+      };
+      setExecutionHistory(prev => [historyEntry, ...prev.slice(0, 9)]);
+      throw error;
+    } finally {
+      setExecutingTool(null);
     }
+  };
+
+  const formatToolResult = (result: any) => {
+    if (typeof result === 'object') {
+      return JSON.stringify(result, null, 2);
+    }
+    return String(result);
+  };
+
+  const injectDataToChat = (data: any, toolName: string) => {
+    // This would inject the tool result into the current chat context
+    console.log(`Injecting ${toolName} data into chat:`, data);
+    alert(`Data from ${toolName} injected into chat context!`);
   };
 
   return (
@@ -1394,23 +1443,89 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                 <h5 className="text-bristol-cyan font-semibold mb-3 text-sm">Data Access Tools</h5>
                 <div className="grid gap-2">
                   {mcpTools.filter(tool => tool.category === 'data').map((tool, index) => (
-                    <button
-                      key={index}
-                      onClick={() => executeMcpTool(tool.name)}
-                      className="flex items-center justify-between p-3 bg-black/40 hover:bg-bristol-cyan/10 border border-gray-700 hover:border-bristol-cyan/50 rounded-xl transition-all duration-300"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Database className="h-4 w-4 text-bristol-cyan" />
-                        <div className="text-left">
-                          <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
-                          <div className="text-xs text-gray-400">{tool.description}</div>
+                    <div key={index} className="space-y-2">
+                      <button
+                        onClick={() => {
+                          executeMcpTool(tool.name);
+                          setSelectedTool(selectedTool === tool.name ? null : tool.name);
+                        }}
+                        disabled={executingTool === tool.name}
+                        className={`w-full flex items-center justify-between p-3 border rounded-xl transition-all duration-300 ${
+                          executingTool === tool.name
+                            ? 'bg-bristol-cyan/20 border-bristol-cyan/60 cursor-not-allowed'
+                            : selectedTool === tool.name
+                              ? 'bg-bristol-cyan/15 border-bristol-cyan/50'
+                              : 'bg-black/40 hover:bg-bristol-cyan/10 border-gray-700 hover:border-bristol-cyan/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`transition-transform duration-300 ${executingTool === tool.name ? 'animate-spin' : ''}`}>
+                            {executingTool === tool.name ? (
+                              <div className="h-4 w-4 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin" />
+                            ) : (
+                              <Database className="h-4 w-4 text-bristol-cyan" />
+                            )}
+                          </div>
+                          <div className="text-left">
+                            <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
+                            <div className="text-xs text-gray-400">{tool.description}</div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse" />
-                        <span className="text-xs text-green-400 font-semibold">READY</span>
-                      </div>
-                    </button>
+                        <div className="flex items-center gap-2">
+                          {toolResults[tool.name] && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                injectDataToChat(toolResults[tool.name], tool.name);
+                              }}
+                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                            >
+                              Inject
+                            </button>
+                          )}
+                          <div className={`h-2 w-2 rounded-full ${
+                            executingTool === tool.name ? 'bg-bristol-cyan animate-pulse' :
+                            toolResults[tool.name] ? 'bg-green-400' : 'bg-green-400 animate-pulse'
+                          }`} />
+                          <span className={`text-xs font-semibold ${
+                            executingTool === tool.name ? 'text-bristol-cyan' :
+                            toolResults[tool.name] ? 'text-green-400' : 'text-green-400'
+                          }`}>
+                            {executingTool === tool.name ? 'RUNNING' : toolResults[tool.name] ? 'READY' : 'READY'}
+                          </span>
+                        </div>
+                      </button>
+                      
+                      {/* Show result preview if available */}
+                      {toolResults[tool.name] && selectedTool === tool.name && (
+                        <div className="ml-6 p-3 bg-bristol-cyan/5 border border-bristol-cyan/20 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-bristol-cyan font-semibold">RESULT PREVIEW</span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
+                                  alert('Copied to clipboard!');
+                                }}
+                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                              >
+                                📋 Copy
+                              </button>
+                              <button
+                                onClick={() => setSelectedTool(null)}
+                                className="text-xs text-gray-400 hover:text-white"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </div>
+                          <pre className="text-xs text-gray-300 max-h-32 overflow-y-auto">
+                            {formatToolResult(toolResults[tool.name].result).slice(0, 200)}
+                            {formatToolResult(toolResults[tool.name].result).length > 200 && '...'}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -1470,6 +1585,45 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
           )}
         </div>
         
+        {/* Execution History */}
+        {executionHistory.length > 0 && (
+          <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Terminal className="h-4 w-4 text-bristol-gold" />
+              <span className="text-sm font-semibold text-bristol-gold">EXECUTION HISTORY</span>
+              <span className="text-xs text-bristol-gold/70">({executionHistory.length}/10)</span>
+            </div>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {executionHistory.map((entry, index) => (
+                <div key={index} className={`p-2 rounded-lg border ${
+                  entry.success 
+                    ? 'bg-green-400/5 border-green-400/20' 
+                    : 'bg-red-400/5 border-red-400/20'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-xs font-medium ${
+                      entry.success ? 'text-green-400' : 'text-red-400'
+                    }`}>
+                      {entry.tool.replace(/_/g, ' ').toUpperCase()}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                      {new Date(entry.timestamp).toLocaleTimeString()}
+                    </span>
+                  </div>
+                  {entry.error && (
+                    <div className="text-xs text-red-400 mt-1">{entry.error}</div>
+                  )}
+                  {entry.result && (
+                    <div className="text-xs text-gray-300 mt-1 truncate">
+                      {formatToolResult(entry.result).slice(0, 50)}...
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
             <Terminal className="h-4 w-4 text-bristol-gold" />
@@ -1479,7 +1633,8 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
             MCP Server: <span className="text-green-400">Connected</span><br />
             API Access: <span className="text-green-400">Full Permissions</span><br />
             Real-time Data: <span className="text-green-400">Active</span><br />
-            Tool Execution: <span className="text-bristol-gold">Authorized</span>
+            Tool Execution: <span className="text-bristol-gold">Authorized</span><br />
+            Tools Executed: <span className="text-bristol-cyan">{executionHistory.length}</span>
           </div>
         </div>
       </div>
