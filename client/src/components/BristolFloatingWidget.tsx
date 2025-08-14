@@ -306,7 +306,7 @@ export default function BristolFloatingWidget({
           });
         }, 2000);
 
-        // Poll for task results every 3 seconds
+        // Poll for task results every 2 seconds for faster response
         const pollInterval = setInterval(async () => {
           try {
             const response = await fetch(`/api/agents/task-results/${taskId}`);
@@ -322,20 +322,37 @@ export default function BristolFloatingWidget({
                   [agentId]: 100
                 }));
                 
-                // Display the actual result in chat
+                // Update the task in active tasks with real result
+                setActiveTasks(prevTasks => 
+                  prevTasks.map(task => 
+                    task.id === taskId 
+                      ? { 
+                          ...task, 
+                          result: data.task.result?.content || data.task.result, 
+                          status: 'completed',
+                          completedAt: new Date()
+                        }
+                      : task
+                  )
+                );
+                
+                // Display the actual result in chat with enhanced formatting
+                const agentName = data.task.agentName || 'Agent';
+                const resultText = data.task.result || 'Analysis completed successfully.';
+                
                 setMessages(prev => [...prev, {
                   role: 'assistant',
-                  content: `**${data.task.agentName} Analysis Complete** ✅\n\n${data.task.result}`,
+                  content: `**${agentName} Analysis Complete** ✅\n\n${resultText}`,
                   createdAt: nowISO()
                 }]);
                 
-                console.log(`🎯 Received live agent result: ${data.task.agentName}`);
+                console.log(`🎯 Received live agent result: ${agentName} (${resultText.length} characters)`);
               }
             }
           } catch (error) {
             console.error('Failed to poll task result:', error);
           }
-        }, 3000);
+        }, 2000);
         
         // Clean up polling after 3 minutes
         setTimeout(() => {

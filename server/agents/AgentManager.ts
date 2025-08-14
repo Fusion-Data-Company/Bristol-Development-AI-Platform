@@ -688,7 +688,7 @@ Begin your specialized analysis now.`;
     };
 
     console.log(`📡 Broadcasting task RESULT for ${agent?.name}: ${task.status}`);
-    console.log(`📊 Task result content:`, task.result ? task.result.substring(0, 100) + '...' : 'No result');
+    console.log(`📊 Task result content:`, task.result ? String(task.result).substring(0, 100) + '...' : 'No result');
 
     this.wsConnections.forEach((ws, clientId) => {
       if (ws.readyState === WebSocket.OPEN) {
@@ -730,6 +730,14 @@ Begin your specialized analysis now.`;
 
   getTask(taskId: string): AgentTask | undefined {
     return this.tasks.get(taskId);
+  }
+
+  getAgents(): Agent[] {
+    return Array.from(this.agents.values());
+  }
+
+  async getAllTasks(): Promise<AgentTask[]> {
+    return Array.from(this.tasks.values());
   }
 
   // Database Operations
