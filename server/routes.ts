@@ -62,6 +62,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const bristolBrainEliteRouter = (await import('./api/bristol-brain-elite')).default;
   app.use('/api/bristol-brain-elite', bristolBrainEliteRouter);
   
+  // App Data Aggregation endpoint for AI context
+  const { dataAggregationService } = await import('./services/dataAggregationService');
+  app.get('/api/app-data', async (req: any, res) => {
+    try {
+      const userId = req.user?.id || "demo-user";
+      const appData = await dataAggregationService.getCompleteAppData(userId);
+      res.json(appData);
+    } catch (error) {
+      console.error("Error fetching app data:", error);
+      res.status(500).json({ error: "Failed to fetch app data" });
+    }
+  });
+  
   // Premium Models API for Bristol A.I. Elite
   const premiumModelsRouter = (await import('./routes/premium-models')).default;
   app.use('/api/premium-models', premiumModelsRouter);
@@ -374,7 +387,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Enhanced AI Agent routes
   const { enhancedAIService } = await import('./services/enhancedAIService');
-  const { dataAggregationService } = await import('./services/dataAggregationService');
   
   app.post('/api/ai/enhanced/chat', isAuthenticated, async (req: any, res) => {
     try {
@@ -409,7 +421,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Use data aggregation service for comprehensive data access
-      const context = await dataAggregationService.getDataForAI(userId, dataTypes);
+      const { dataAggregationService } = await import('./services/dataAggregationService');
+      const context = await dataAggregationService.getCompleteAppData(userId);
       res.json(context);
     } catch (error) {
       console.error("Error aggregating data context:", error);

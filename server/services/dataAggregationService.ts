@@ -1,218 +1,216 @@
 import { storage } from "../storage";
+import type { Site, SiteMetric, Comp, Property } from "@shared/schema";
 
-export interface SystemDataSnapshot {
-  sites: any[];
-  analytics: any;
-  realTimeMetrics: any;
-  integrationStatus: any;
-  timestamp: Date;
+export interface AppDataContext {
+  sites: Site[];
+  siteMetrics: Record<string, SiteMetric[]>;
+  properties: Property[];
+  comps: Record<string, Comp[]>;
+  analytics: {
+    totalSites: number;
+    totalUnits: number;
+    avgUnitsPerSite: number;
+    completionYears: Record<number, number>;
+    stateDistribution: Record<string, number>;
+  };
+  tools: {
+    bls: any[];
+    bea: any[];
+    hud: any[];
+    foursquare: any[];
+    fbi: any[];
+    noaa: any[];
+  };
+  snapshots: any[];
+  timestamp: string;
 }
 
-export class DataAggregationService {
-  private dataCache: Map<string, { data: any; timestamp: Date; ttl: number }> = new Map();
+/**
+ * Comprehensive data aggregation service for Bristol A.I.
+ * Pulls all available data from APIs, database, and tools
+ */
+class DataAggregationService {
   
-  // Comprehensive data aggregation for AI agent
-  async aggregateSystemData(userId: string): Promise<SystemDataSnapshot> {
+  /**
+   * Get complete application data context for AI
+   */
+  async getCompleteAppData(userId?: string): Promise<AppDataContext> {
     try {
-      // Check cache first
-      const cacheKey = `system_data_${userId}`;
-      const cached = this.dataCache.get(cacheKey);
+      // Get all sites and related data
+      const sites = await storage.getAllSites();
+      const properties: Property[] = []; // Properties table is empty, using sites instead
+      const snapshots = await storage.getUserSnapshots(userId || "demo-user");
       
-      if (cached && (Date.now() - cached.timestamp.getTime()) < cached.ttl) {
-        return cached.data;
-      }
-
-      // Aggregate data from all sources
-      const [sites, analytics, realTimeMetrics, integrationStatus] = await Promise.all([
-        this.getSitesData(userId),
-        this.getAnalyticsData(userId),
-        this.getRealTimeMetrics(),
-        this.getIntegrationStatus()
-      ]);
-
-      const snapshot: SystemDataSnapshot = {
-        sites,
-        analytics,
-        realTimeMetrics,
-        integrationStatus,
-        timestamp: new Date()
-      };
-
-      // Cache for 30 seconds
-      this.dataCache.set(cacheKey, {
-        data: snapshot,
-        timestamp: new Date(),
-        ttl: 30000
-      });
-
-      return snapshot;
-    } catch (error) {
-      console.error("Error aggregating system data:", error);
-      throw error;
-    }
-  }
-
-  private async getSitesData(userId: string): Promise<any[]> {
-    try {
-      const sites = await storage.getUserSites(userId);
+      // Get site metrics for each site
+      const siteMetrics: Record<string, SiteMetric[]> = {};
+      const comps: Record<string, Comp[]> = {};
       
-      // Enrich with metrics data
-      const enrichedSites = await Promise.all(
-        sites.map(async (site) => {
-          try {
-            const metrics = await storage.getSiteMetrics(site.id);
-            return {
-              ...site,
-              metrics: metrics || [],
-              lastUpdated: new Date().toISOString()
-            };
-          } catch (error) {
-            return {
-              ...site,
-              metrics: [],
-              lastUpdated: new Date().toISOString()
-            };
+      for (const site of sites) {
+        // Get metrics for this site
+        try {
+          const metrics = await storage.getSiteMetrics(site.id);
+          if (metrics.length > 0) {
+            siteMetrics[site.id] = metrics;
           }
-        })
-      );
-
-      return enrichedSites;
-    } catch (error) {
-      console.error("Error getting sites data:", error);
-      return [];
-    }
-  }
-
-  private async getAnalyticsData(userId: string): Promise<any> {
-    try {
-      // Aggregate analytics from different endpoints
-      const overview = await fetch('/api/analytics/overview').then(r => r.json()).catch(() => ({}));
-      const market = await fetch('/api/analytics/market/').then(r => r.json()).catch(() => ({}));
-      const pipeline = await fetch('/api/analytics/pipeline/').then(r => r.json()).catch(() => ({}));
-
-      return {
-        overview,
-        market,
-        pipeline,
-        lastUpdated: new Date().toISOString()
-      };
-    } catch (error) {
-      console.error("Error getting analytics data:", error);
-      return {
-        overview: {},
-        market: {},
-        pipeline: {},
-        lastUpdated: new Date().toISOString()
-      };
-    }
-  }
-
-  private async getRealTimeMetrics(): Promise<any> {
-    try {
-      return {
-        timestamp: new Date().toISOString(),
-        systemHealth: {
-          database: "connected",
-          apis: {
-            bls: "operational",
-            bea: "operational",
-            hud: "operational",
-            foursquare: "operational",
-            fbi: "operational",
-            noaa: "operational"
-          },
-          websockets: "active"
-        },
-        metrics: {
-          activeSessions: 1,
-          dataPoints: 0,
-          lastSync: new Date().toISOString()
+        } catch (error) {
+          console.log(`No metrics found for site ${site.id}`);
         }
-      };
-    } catch (error) {
-      console.error("Error getting real-time metrics:", error);
-      return {
-        timestamp: new Date().toISOString(),
-        error: "Failed to collect metrics"
-      };
-    }
-  }
-
-  private async getIntegrationStatus(): Promise<any> {
-    try {
-      // Check integration logs to determine status
-      const recentLogs = await storage.getIntegrationLogs("system", null);
+        
+        // Get comps for this site (placeholder - comps not yet implemented in storage)
+        // TODO: Implement comps in storage interface
+        comps[site.id] = [];
+      }
+      
+      // Calculate analytics
+      const analytics = this.calculateAnalytics(sites);
+      
+      // Get recent tool data from snapshots
+      const tools = this.extractToolData(snapshots);
       
       return {
-        mcp: {
-          status: "active",
-          toolsAvailable: 5,
-          lastExecution: recentLogs[0]?.createdAt || null
-        },
-        apis: {
-          bls: { status: "operational", lastCheck: new Date().toISOString() },
-          bea: { status: "operational", lastCheck: new Date().toISOString() },
-          hud: { status: "operational", lastCheck: new Date().toISOString() },
-          foursquare: { status: "operational", lastCheck: new Date().toISOString() },
-          fbi: { status: "operational", lastCheck: new Date().toISOString() },
-          noaa: { status: "operational", lastCheck: new Date().toISOString() }
-        },
-        database: {
-          status: "connected",
-          pools: "active",
-          lastQuery: new Date().toISOString()
-        }
+        sites,
+        siteMetrics,
+        properties,
+        comps,
+        analytics,
+        tools,
+        snapshots: snapshots.slice(0, 10), // Last 10 snapshots
+        timestamp: new Date().toISOString()
       };
+      
     } catch (error) {
-      console.error("Error getting integration status:", error);
+      console.error("Error aggregating app data:", error);
       return {
-        mcp: { status: "error", toolsAvailable: 0 },
-        apis: {},
-        database: { status: "error" }
+        sites: [],
+        siteMetrics: {},
+        properties: [],
+        comps: {},
+        analytics: {
+          totalSites: 0,
+          totalUnits: 0,
+          avgUnitsPerSite: 0,
+          completionYears: {},
+          stateDistribution: {}
+        },
+        tools: {
+          bls: [],
+          bea: [],
+          hud: [],
+          foursquare: [],
+          fbi: [],
+          noaa: []
+        },
+        snapshots: [],
+        timestamp: new Date().toISOString()
       };
     }
   }
-
-  // Get specific data for AI context
-  async getDataForAI(userId: string, dataTypes: string[] = ['all']): Promise<any> {
-    try {
-      if (dataTypes.includes('all')) {
-        return await this.aggregateSystemData(userId);
+  
+  /**
+   * Calculate portfolio analytics
+   */
+  private calculateAnalytics(sites: Site[]) {
+    const analytics = {
+      totalSites: sites.length,
+      totalUnits: 0,
+      avgUnitsPerSite: 0,
+      completionYears: {} as Record<number, number>,
+      stateDistribution: {} as Record<string, number>
+    };
+    
+    sites.forEach(site => {
+      // Count units
+      if (site.unitsTotal) {
+        analytics.totalUnits += site.unitsTotal;
       }
-
-      const result: any = {};
-
-      if (dataTypes.includes('sites')) {
-        result.sites = await this.getSitesData(userId);
+      
+      // Track completion years
+      if (site.completionYear) {
+        analytics.completionYears[site.completionYear] = 
+          (analytics.completionYears[site.completionYear] || 0) + 1;
       }
-
-      if (dataTypes.includes('analytics')) {
-        result.analytics = await this.getAnalyticsData(userId);
+      
+      // Track state distribution
+      if (site.state) {
+        analytics.stateDistribution[site.state] = 
+          (analytics.stateDistribution[site.state] || 0) + 1;
       }
-
-      if (dataTypes.includes('metrics')) {
-        result.realTimeMetrics = await this.getRealTimeMetrics();
-      }
-
-      if (dataTypes.includes('integrations')) {
-        result.integrationStatus = await this.getIntegrationStatus();
-      }
-
-      result.timestamp = new Date();
-      return result;
-    } catch (error) {
-      console.error("Error getting data for AI:", error);
-      throw error;
-    }
+    });
+    
+    analytics.avgUnitsPerSite = analytics.totalSites > 0 
+      ? Math.round(analytics.totalUnits / analytics.totalSites) 
+      : 0;
+    
+    return analytics;
   }
-
-  // Clear cache when data is updated
-  clearCache(userId?: string): void {
-    if (userId) {
-      this.dataCache.delete(`system_data_${userId}`);
-    } else {
-      this.dataCache.clear();
+  
+  /**
+   * Extract and organize tool data from snapshots
+   */
+  private extractToolData(snapshots: any[]) {
+    const tools = {
+      bls: [] as any[],
+      bea: [] as any[],
+      hud: [] as any[],
+      foursquare: [] as any[],
+      fbi: [] as any[],
+      noaa: [] as any[]
+    };
+    
+    snapshots.forEach(snapshot => {
+      if (snapshot.tool && tools.hasOwnProperty(snapshot.tool)) {
+        tools[snapshot.tool as keyof typeof tools].push({
+          params: snapshot.params,
+          data: snapshot.data,
+          createdAt: snapshot.createdAt
+        });
+      }
+    });
+    
+    return tools;
+  }
+  
+  /**
+   * Get data for specific geographic area
+   */
+  async getAreaData(state?: string, city?: string): Promise<any> {
+    const sites = await storage.getAllSites();
+    
+    let filteredSites = sites;
+    if (state) {
+      filteredSites = filteredSites.filter(s => s.state === state);
     }
+    if (city) {
+      filteredSites = filteredSites.filter(s => s.city === city);
+    }
+    
+    return {
+      sites: filteredSites,
+      analytics: this.calculateAnalytics(filteredSites),
+      area: { state, city }
+    };
+  }
+  
+  /**
+   * Get recent market data summary
+   */
+  async getMarketSummary(): Promise<any> {
+    const appData = await this.getCompleteAppData();
+    
+    return {
+      portfolio: {
+        totalSites: appData.analytics.totalSites,
+        totalUnits: appData.analytics.totalUnits,
+        keyMarkets: Object.entries(appData.analytics.stateDistribution)
+          .sort(([,a], [,b]) => b - a)
+          .slice(0, 5)
+      },
+      recentData: {
+        latestSnapshots: appData.snapshots.slice(0, 5),
+        activeSites: appData.sites.filter(s => s.status === "Operating").length,
+        pipelineSites: appData.sites.filter(s => s.status === "Pipeline").length
+      }
+    };
   }
 }
 

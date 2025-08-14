@@ -1,6 +1,7 @@
 import { storage } from "../storage";
 import OpenAI from "openai";
 import { OPENAI_DOCUMENTATION } from "../data/openai-documentation";
+import { dataAggregationService } from "./dataAggregationService";
 import type {
   ChatMessage,
   InsertChatMessage,
@@ -40,7 +41,7 @@ interface DecisionAnalysis {
 
 class BristolBrainService {
   private openai: OpenAI;
-  private openaiDirect: OpenAI;
+  private openaiDirect?: OpenAI;
   
   // Elite system prompt for Bristol Development Group
   private readonly ELITE_SYSTEM_PROMPT = `You are the Bristol A.I. - the premier AI intelligence system for Bristol Development Group, a $200+ million real estate investment firm.
@@ -195,10 +196,30 @@ Remember: You're not providing general advice. You're making real-time decisions
       });
     }
     
-    // Include real-time data context
+    // Include real-time data context - enhance with live app data
     if (context.dataContext) {
-      contextParts.push("\n# LIVE MARKET DATA");
-      contextParts.push(JSON.stringify(context.dataContext, null, 2));
+      contextParts.push("\n# LIVE BRISTOL DEVELOPMENT DATA");
+      
+      // If dataContext doesn't have comprehensive data, fetch it
+      if (!context.dataContext.sites || !context.dataContext.analytics) {
+        try {
+          const liveAppData = await dataAggregationService.getCompleteAppData(context.userId);
+          context.dataContext = { ...context.dataContext, ...liveAppData };
+        } catch (error) {
+          console.log("Could not fetch live app data for AI context");
+        }
+      }
+      
+      // Format the data for AI consumption
+      if (context.dataContext.sites) {
+        contextParts.push(`## PORTFOLIO OVERVIEW`);
+        contextParts.push(`- Total Sites: ${context.dataContext.analytics?.totalSites || 0}`);
+        contextParts.push(`- Total Units: ${context.dataContext.analytics?.totalUnits || 0}`);
+        contextParts.push(`- Key Markets: ${Object.keys(context.dataContext.analytics?.stateDistribution || {}).join(', ')}`);
+      }
+      
+      contextParts.push(`## DETAILED DATA (JSON)`);
+      contextParts.push(JSON.stringify(context.dataContext, null, 2).slice(0, 8000)); // Limit size
     }
     
     return contextParts.join("\n");

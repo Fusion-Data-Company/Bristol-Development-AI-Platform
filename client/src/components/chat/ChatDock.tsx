@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Minimize2, Maximize2, Brain, Settings } from 'lucide-react';
+import { MessageCircle, X, Send, Minimize2, Maximize2, Brain, Settings, Database, Activity } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 
 interface ChatMessage {
@@ -28,8 +28,28 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [isThinking, setIsThinking] = useState(false);
+  const [showDataPanel, setShowDataPanel] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch live app data for AI context
+  const { data: appData, refetch: refetchAppData } = useQuery({
+    queryKey: ['app-data'],
+    queryFn: async () => {
+      try {
+        const response = await fetch('/api/app-data');
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return await response.json();
+      } catch (error) {
+        console.warn('Could not fetch app data for AI context:', error);
+        return null;
+      }
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds
+    staleTime: 15000
+  });
 
   // Send message mutation using Bristol A.I. Elite
   const sendMessageMutation = useMutation({
@@ -38,7 +58,7 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
         sessionId,
         message: content,
         enableAdvancedReasoning: true,
-        dataContext: {} // Could include current app context here
+        dataContext: appData || {} // Live app data context
       });
       return response;
     },
@@ -134,11 +154,29 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
           <div>
             <span className="font-bold text-sm">Bristol A.I. Elite</span>
             <Badge variant="secondary" className="ml-2 bg-bristol-gold text-bristol-ink text-xs">
-              GPT-5
+              {appData ? `${appData.sites?.length || 0} Sites` : 'Loading...'}
             </Badge>
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-7 w-7 text-white hover:bg-white/20"
+            onClick={() => setShowDataPanel(!showDataPanel)}
+            title="View App Data Context"
+          >
+            <Database className="h-4 w-4" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-7 w-7 text-white hover:bg-white/20"
+            onClick={() => refetchAppData()}
+            title="Refresh Data"
+          >
+            <Activity className="h-4 w-4" />
+          </Button>
           <Button
             size="icon"
             variant="ghost"
@@ -160,8 +198,24 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
 
       {!isMinimized && (
         <>
+          {/* Data Panel */}
+          {showDataPanel && appData && (
+            <div className="p-3 border-b bg-gray-50 text-xs">
+              <div className="font-semibold mb-2">Live Data Context</div>
+              <div className="grid grid-cols-2 gap-2 text-gray-600">
+                <div>Sites: {appData.analytics?.totalSites || 0}</div>
+                <div>Units: {appData.analytics?.totalUnits || 0}</div>
+                <div>Markets: {Object.keys(appData.analytics?.stateDistribution || {}).length}</div>
+                <div>Tools: {Object.values(appData.tools || {}).flat().length}</div>
+              </div>
+              <div className="mt-2 text-gray-500">
+                Last Updated: {new Date(appData.timestamp).toLocaleTimeString()}
+              </div>
+            </div>
+          )}
+          
           {/* Messages */}
-          <ScrollArea ref={scrollAreaRef} className="flex-1 p-4 h-[380px]">
+          <ScrollArea ref={scrollAreaRef} className={cn("flex-1 p-4", showDataPanel ? "h-[320px]" : "h-[380px]")}>
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <div className="relative mb-4">
@@ -173,8 +227,17 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
                   Your AI-powered real estate intelligence partner
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Ask about deals, market analysis, or property insights
+                  I can access all {appData?.sites?.length || 0} properties and live market data
                 </p>
+                {appData && (
+                  <div className="mt-3 text-xs space-y-1 bg-gray-50 p-2 rounded-lg">
+                    <div className="font-semibold">Available Data:</div>
+                    <div>• {appData.analytics?.totalSites || 0} Sites across {Object.keys(appData.analytics?.stateDistribution || {}).length} markets</div>
+                    <div>• {appData.analytics?.totalUnits || 0} total units</div>
+                    <div>• Real-time BLS, HUD, FBI, NOAA data</div>
+                    <div>• {Object.values(appData.tools || {}).flat().length} recent tool queries</div>
+                  </div>
+                )}
               </div>
             ) : (
               <div className="space-y-3">
@@ -222,6 +285,30 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
             )}
           </ScrollArea>
 
+          {/* Smart Suggestions */}
+          {messages.length === 0 && appData && (
+            <div className="px-3 pb-2">
+              <div className="text-xs font-medium mb-2 text-gray-600">Try asking:</div>
+              <div className="flex flex-wrap gap-1">
+                {[
+                  "Analyze our portfolio performance",
+                  "Show me Charlotte market trends",
+                  "Compare units by state",
+                  "What's our average cap rate?",
+                  "Review latest BLS employment data"
+                ].map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setMessage(suggestion)}
+                    className="text-xs px-2 py-1 bg-bristol-maroon/10 text-bristol-maroon rounded-full hover:bg-bristol-maroon/20 transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Input */}
           <div className="p-3 border-t bg-gray-50/50">
             <div className="flex gap-2">
@@ -230,7 +317,10 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask Bristol A.I. about deals, markets, or properties..."
+                placeholder={appData ? 
+                  `Ask about ${appData.analytics?.totalSites || 0} sites, market data, or analysis...` : 
+                  "Ask Bristol A.I. about deals, markets, or properties..."
+                }
                 disabled={sendMessageMutation.isPending}
                 className="flex-1 border-gray-200 focus:border-bristol-maroon"
               />
