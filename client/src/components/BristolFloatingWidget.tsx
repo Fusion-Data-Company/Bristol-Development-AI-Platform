@@ -160,6 +160,13 @@ export default function BristolFloatingWidget({
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
+  
+  // Multi-Agent System States
+  const [agents, setAgents] = useState<any[]>([]);
+  const [activeTasks, setActiveTasks] = useState<any[]>([]);
+  const [taskProgress, setTaskProgress] = useState<Record<string, any>>({});
+  const [agentCommunication, setAgentCommunication] = useState<any[]>([]);
+  const [multiAgentMode, setMultiAgentMode] = useState(false);
 
   // SSR-safe localStorage loading and WebSocket connection
   useEffect(() => {
@@ -226,24 +233,83 @@ export default function BristolFloatingWidget({
   };
 
   const handleWebSocketMessage = (data: any) => {
+    console.log("WebSocket message received:", data);
+    
     switch (data.type) {
+      case 'agent-task-result':
+        // Update task progress
+        setTaskProgress(prev => ({
+          ...prev,
+          [data.taskId]: data.task
+        }));
+        
+        // Add to agent communication log
+        setAgentCommunication(prev => [...prev, {
+          timestamp: new Date(),
+          agentId: data.agentId,
+          taskId: data.taskId,
+          type: 'result',
+          content: data.task.result
+        }]);
+        
+        // Update active tasks
+        setActiveTasks(prev => 
+          prev.map(task => 
+            task.id === data.taskId 
+              ? { ...task, ...data.task }
+              : task
+          )
+        );
+        break;
+        
+      case 'agent-status':
+        setAgents(prev => 
+          prev.map(agent => 
+            agent.id === data.agentId 
+              ? { ...agent, status: data.status }
+              : agent
+          )
+        );
+        break;
+        
       case 'mcp_tool_update':
         setSystemStatus(prev => ({
           ...prev,
           mcpTools: data.tools || prev.mcpTools
         }));
         break;
+        
       case 'api_status_update':
         setSystemStatus(prev => ({
           ...prev,
           apis: data.apis || prev.apis
         }));
         break;
+        
       case 'real_time_data':
         // Handle real-time data updates
         break;
     }
   };
+
+  // Load multi-agent system data
+  useEffect(() => {
+    const loadAgents = async () => {
+      try {
+        const response = await fetch('/api/agents');
+        if (response.ok) {
+          const data = await response.json();
+          setAgents(data.agents || []);
+        }
+      } catch (error) {
+        console.error('Failed to load agents:', error);
+      }
+    };
+    
+    if (open) {
+      loadAgents();
+    }
+  }, [open]);
 
   // Fetch dynamic model list from OpenRouter
   useEffect(() => {
@@ -435,6 +501,41 @@ export default function BristolFloatingWidget({
     } catch (error) {
       console.error("Error saving system prompt:", error);
     }
+  };
+
+  // Multi-Agent Property Analysis
+  const analyzePropertyWithAgents = async (propertyData: any) => {
+    try {
+      setMultiAgentMode(true);
+      setActiveTasks([]);
+      setTaskProgress({});
+      
+      const response = await fetch('/api/agents/analyze-property', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ propertyData })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        setActiveTasks(result.taskIds.map((id: string) => ({ id, status: 'pending' })));
+        
+        // Add system message about multi-agent analysis
+        setMessages(prev => [...prev, {
+          role: 'assistant',
+          content: `🚀 **Multi-Agent Analysis Initiated**\n\nI've activated the Bristol A.I. Elite multi-agent system for comprehensive property analysis:\n\n${agents.map(agent => `• **${agent.name}**: ${agent.role}`).join('\n')}\n\nAll agents are now processing the property data in parallel. You'll see real-time updates as each agent completes their specialized analysis.`,
+          createdAt: nowISO()
+        }]);
+      }
+    } catch (error) {
+      console.error('Failed to start multi-agent analysis:', error);
+    }
+  };
+
+  // Smart property analysis detection
+  const detectPropertyAnalysisRequest = (message: string) => {
+    const propertyKeywords = ['property', 'site', 'address', 'analyze', 'underwrite', 'deal', 'investment'];
+    return propertyKeywords.some(keyword => message.toLowerCase().includes(keyword));
   };
 
   return (
@@ -693,6 +794,22 @@ export default function BristolFloatingWidget({
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
+                      console.log("Agents tab clicked");
+                      setActiveTab("agents");
+                    }}
+                    className={cx(
+                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
+                      activeTab === "agents"
+                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                    )}
+                  >
+                    🤖 Agents
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
                       console.log("Admin tab clicked");
                       setActiveTab("admin");
                     }}
@@ -865,6 +982,16 @@ export default function BristolFloatingWidget({
                 apis: [],
                 mcpTools: []
               }} mcpEnabled={mcpEnabled} setMcpEnabled={setMcpEnabled} />}
+
+              {activeTab === "agents" && <AgentsPane 
+                agents={agents}
+                activeTasks={activeTasks}
+                taskProgress={taskProgress}
+                agentCommunication={agentCommunication}
+                multiAgentMode={multiAgentMode}
+                onAnalyzeProperty={analyzePropertyWithAgents}
+                wsConnected={wsConnected}
+              />}
 
               {activeTab === "admin" && <AdminPane 
                 systemPrompt={systemPrompt} 
@@ -1277,6 +1404,294 @@ function DataPane({ data }: { data: any }) {
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function AgentsPane({ 
+  agents, 
+  activeTasks, 
+  taskProgress, 
+  agentCommunication, 
+  multiAgentMode, 
+  onAnalyzeProperty,
+  wsConnected 
+}: { 
+  agents: any[];
+  activeTasks: any[];
+  taskProgress: any;
+  agentCommunication: any[];
+  multiAgentMode: boolean;
+  onAnalyzeProperty: (property: any) => void;
+  wsConnected: boolean;
+}) {
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const [orchestrationMode, setOrchestrationMode] = useState<'parallel' | 'sequential'>('parallel');
+  const [testProperty, setTestProperty] = useState({
+    name: "Sunbelt Plaza",
+    address: "1234 Main St, Austin, TX",
+    type: "Multifamily",
+    units: 250,
+    sqft: 280000
+  });
+
+  // Agent status colors and icons
+  const getAgentStatus = (agentId: string) => {
+    const task = activeTasks.find(t => t.agentId === agentId);
+    if (task?.status === 'running') return { color: 'bg-bristol-cyan', icon: '🔄', text: 'ACTIVE' };
+    if (task?.status === 'completed') return { color: 'bg-green-400', icon: '✅', text: 'COMPLETE' };
+    if (task?.status === 'error') return { color: 'bg-red-400', icon: '❌', text: 'ERROR' };
+    return { color: 'bg-bristol-gold', icon: '⚡', text: 'READY' };
+  };
+
+  const agentColors = {
+    'master': 'bristol-cyan',
+    'data-processing': 'bristol-gold',
+    'financial-analysis': 'emerald-400',
+    'market-intelligence': 'purple-400',
+    'lead-management': 'pink-400'
+  };
+
+  return (
+    <div className="flex-1 p-6">
+      <div className="space-y-6">
+        {/* Multi-Agent System Header */}
+        <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-bristol-gold/20 border border-bristol-gold/40 rounded-lg flex items-center justify-center">
+                <Brain className="h-5 w-5 text-bristol-gold" />
+              </div>
+              <div>
+                <h4 className="text-bristol-gold font-bold text-xl tracking-wide">BRISTOL AI AGENTS</h4>
+                <p className="text-bristol-gold/70 text-sm">5-Agent Intelligence System • Parallel Processing</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
+                wsConnected 
+                  ? 'bg-green-400/10 border-green-400/30 text-green-400'
+                  : 'bg-red-400/10 border-red-400/30 text-red-400'
+              }`}>
+                <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
+                <span className="text-xs font-medium">{wsConnected ? 'CONNECTED' : 'DISCONNECTED'}</span>
+              </div>
+              
+              <button
+                onClick={() => setOrchestrationMode(orchestrationMode === 'parallel' ? 'sequential' : 'parallel')}
+                className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
+                  orchestrationMode === 'parallel'
+                    ? 'bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/30'
+                    : 'bg-bristol-gold/20 text-bristol-gold border border-bristol-gold/30'
+                }`}
+              >
+                <Zap className="h-3 w-3" />
+                {orchestrationMode === 'parallel' ? 'PARALLEL' : 'SEQUENTIAL'}
+              </button>
+            </div>
+          </div>
+
+          {/* System Status Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-bristol-cyan/10 border border-bristol-cyan/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-bristol-cyan">{agents.length}</div>
+              <div className="text-xs text-bristol-cyan/80">Active Agents</div>
+            </div>
+            <div className="bg-bristol-gold/10 border border-bristol-gold/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-bristol-gold">{activeTasks.length}</div>
+              <div className="text-xs text-bristol-gold/80">Running Tasks</div>
+            </div>
+            <div className="bg-green-400/10 border border-green-400/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-green-400">{agentCommunication.length}</div>
+              <div className="text-xs text-green-400/80">Messages</div>
+            </div>
+            <div className="bg-purple-400/10 border border-purple-400/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-purple-400">10x</div>
+              <div className="text-xs text-purple-400/80">Speed Boost</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Agent Grid */}
+        <div className="grid gap-4">
+          {agents.map((agent, index) => {
+            const status = getAgentStatus(agent.id);
+            const colorClass = agentColors[agent.id as keyof typeof agentColors] || 'bristol-cyan';
+            const task = activeTasks.find(t => t.agentId === agent.id);
+            const progress = taskProgress[agent.id] || 0;
+
+            return (
+              <div 
+                key={agent.id}
+                className={`bg-black/40 border rounded-2xl p-4 transition-all duration-300 cursor-pointer hover:border-${colorClass}/50 ${
+                  selectedAgent === agent.id ? `border-${colorClass}/60 bg-${colorClass}/5` : 'border-gray-700'
+                }`}
+                onClick={() => setSelectedAgent(selectedAgent === agent.id ? null : agent.id)}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 bg-${colorClass}/20 border border-${colorClass}/40 rounded-lg flex items-center justify-center`}>
+                      <span className="text-lg">{status.icon}</span>
+                    </div>
+                    <div>
+                      <h5 className={`text-${colorClass} font-bold text-sm uppercase tracking-wide`}>
+                        {agent.name}
+                      </h5>
+                      <p className="text-xs text-gray-400">{agent.model}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs font-bold text-${colorClass}`}>{status.text}</span>
+                    <div className={`w-2 h-2 rounded-full ${status.color} ${status.text === 'ACTIVE' ? 'animate-pulse' : ''}`}></div>
+                  </div>
+                </div>
+
+                {/* Agent Description */}
+                <p className="text-gray-300 text-sm mb-3">{agent.description}</p>
+
+                {/* Task Progress */}
+                {task && (
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-gray-400">Current Task</span>
+                      <span className="text-xs text-gray-400">{progress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-1.5">
+                      <div 
+                        className={`bg-${colorClass} h-1.5 rounded-full transition-all duration-300`}
+                        style={{ width: `${progress}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1">{task.description}</p>
+                  </div>
+                )}
+
+                {/* Agent Communication */}
+                {selectedAgent === agent.id && agentCommunication.filter(msg => msg.from === agent.id || msg.to === agent.id).length > 0 && (
+                  <div className="mt-4 pt-3 border-t border-gray-700">
+                    <h6 className="text-xs font-semibold text-gray-300 mb-2">RECENT COMMUNICATION</h6>
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                      {agentCommunication
+                        .filter(msg => msg.from === agent.id || msg.to === agent.id)
+                        .slice(-3)
+                        .map((msg, idx) => (
+                          <div key={idx} className="text-xs p-2 bg-gray-800/50 rounded border border-gray-600">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-gray-400">{msg.from}</span>
+                              <span className="text-gray-500">→</span>
+                              <span className="text-gray-400">{msg.to}</span>
+                              <span className="text-gray-500 ml-auto">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                            </div>
+                            <p className="text-gray-300">{msg.message}</p>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Property Analysis Test */}
+        <div className="bg-bristol-electric/10 border border-bristol-electric/30 rounded-2xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-bristol-electric/20 border border-bristol-electric/40 rounded-lg flex items-center justify-center">
+              <Target className="h-4 w-4 text-bristol-electric" />
+            </div>
+            <div>
+              <h4 className="text-bristol-electric font-bold text-lg">COORDINATED ANALYSIS</h4>
+              <p className="text-bristol-electric/70 text-sm">Test multi-agent property evaluation</p>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label className="block text-bristol-electric/80 text-sm font-medium mb-2">Property Name</label>
+              <input
+                type="text"
+                value={testProperty.name}
+                onChange={(e) => setTestProperty({...testProperty, name: e.target.value})}
+                className="w-full bg-black/40 border border-bristol-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-bristol-electric/60"
+              />
+            </div>
+            <div>
+              <label className="block text-bristol-electric/80 text-sm font-medium mb-2">Address</label>
+              <input
+                type="text"
+                value={testProperty.address}
+                onChange={(e) => setTestProperty({...testProperty, address: e.target.value})}
+                className="w-full bg-black/40 border border-bristol-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-bristol-electric/60"
+              />
+            </div>
+            <div>
+              <label className="block text-bristol-electric/80 text-sm font-medium mb-2">Units</label>
+              <input
+                type="number"
+                value={testProperty.units}
+                onChange={(e) => setTestProperty({...testProperty, units: parseInt(e.target.value)})}
+                className="w-full bg-black/40 border border-bristol-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-bristol-electric/60"
+              />
+            </div>
+            <div>
+              <label className="block text-bristol-electric/80 text-sm font-medium mb-2">Square Feet</label>
+              <input
+                type="number"
+                value={testProperty.sqft}
+                onChange={(e) => setTestProperty({...testProperty, sqft: parseInt(e.target.value)})}
+                className="w-full bg-black/40 border border-bristol-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-bristol-electric/60"
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={() => onAnalyzeProperty(testProperty)}
+            disabled={activeTasks.length > 0}
+            className="w-full px-6 py-3 bg-bristol-electric hover:bg-bristol-electric/80 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <Zap className="h-4 w-4" />
+            {activeTasks.length > 0 ? 'AGENTS ANALYZING...' : 'START COORDINATED ANALYSIS'}
+          </button>
+        </div>
+
+        {/* Agent Communication Log */}
+        {agentCommunication.length > 0 && (
+          <div className="bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-bristol-maroon/20 border border-bristol-maroon/40 rounded-lg flex items-center justify-center">
+                <MessageSquare className="h-4 w-4 text-bristol-maroon" />
+              </div>
+              <div>
+                <h4 className="text-bristol-maroon font-bold text-lg">INTER-AGENT COMMUNICATION</h4>
+                <p className="text-bristol-maroon/70 text-sm">Real-time agent coordination messages</p>
+              </div>
+            </div>
+            
+            <div className="max-h-64 overflow-y-auto space-y-2">
+              {agentCommunication.slice(-10).map((msg, index) => (
+                <div key={index} className="bg-black/40 border border-gray-700 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-bristol-cyan text-sm font-medium">{msg.from}</span>
+                      <span className="text-gray-500">→</span>
+                      <span className="text-bristol-gold text-sm font-medium">{msg.to}</span>
+                    </div>
+                    <span className="text-xs text-gray-400">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                  </div>
+                  <p className="text-gray-300 text-sm">{msg.message}</p>
+                  {msg.data && (
+                    <div className="mt-2 text-xs text-gray-400 bg-gray-800/50 rounded p-2 border border-gray-600">
+                      {JSON.stringify(msg.data, null, 2)}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

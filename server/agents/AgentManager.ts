@@ -210,7 +210,7 @@ export class AgentManager extends EventEmitter {
       task.completedAt = new Date();
 
       // Log execution to database
-      await this.logExecution(agentId, task, true, null);
+      await this.logExecution(agentId, task, true, undefined);
 
       // Broadcast result to connected clients
       this.broadcastTaskResult(task);

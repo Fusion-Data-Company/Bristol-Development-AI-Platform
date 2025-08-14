@@ -121,7 +121,7 @@ router.get('/task/:taskId', (req, res) => {
 });
 
 // Orchestrate property analysis (multiple agents)
-router.post('/analyze-property', (req, res) => {
+router.post('/analyze-property', async (req, res) => {
   try {
     const { propertyData } = req.body;
     
