@@ -1,0 +1,187 @@
+import express from 'express';
+import { agentManager } from '../agents/AgentManager';
+
+const router = express.Router();
+
+// Get all agents status
+router.get('/status', (req, res) => {
+  try {
+    const agents = agentManager.getAgents();
+    const tasks = agentManager.getAllTasks();
+    
+    const status = {
+      totalAgents: agents.length,
+      activeAgents: agents.length, // All are active by default
+      runningTasks: tasks.filter(t => t.status === 'processing').length,
+      completedTasks: tasks.filter(t => t.status === 'completed').length,
+      failedTasks: tasks.filter(t => t.status === 'failed').length,
+      agents: agents.map(agent => ({
+        id: agent.id,
+        name: agent.name,
+        role: agent.role,
+        model: agent.model,
+        provider: agent.provider,
+        capabilities: agent.capabilities,
+        status: 'active'
+      }))
+    };
+
+    res.json({ ok: true, status });
+  } catch (error) {
+    console.error('Error getting agent status:', error);
+    res.status(500).json({ 
+      ok: false, 
+      error: 'Failed to get agent status' 
+    });
+  }
+});
+
+// Get specific agent details
+router.get('/:agentId', (req, res) => {
+  try {
+    const { agentId } = req.params;
+    const agents = agentManager.getAgents();
+    const agent = agents.find(a => a.id === agentId);
+    
+    if (!agent) {
+      return res.status(404).json({ 
+        ok: false, 
+        error: 'Agent not found' 
+      });
+    }
+
+    const tasks = agentManager.getAllTasks()
+      .filter(t => t.assignedAgent === agentId)
+      .slice(-10); // Last 10 tasks
+
+    res.json({ 
+      ok: true, 
+      agent, 
+      recentTasks: tasks 
+    });
+  } catch (error) {
+    console.error('Error getting agent details:', error);
+    res.status(500).json({ 
+      ok: false, 
+      error: 'Failed to get agent details' 
+    });
+  }
+});
+
+// Create a new task for agents
+router.post('/task', (req, res) => {
+  try {
+    const { type, data, priority = 'medium' } = req.body;
+    
+    if (!type || !data) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: 'Task type and data are required' 
+      });
+    }
+
+    const taskId = agentManager.createTask(type, data, priority);
+    
+    res.json({ 
+      ok: true, 
+      taskId,
+      message: 'Task created and assigned to agent',
+      estimatedCompletion: '30-60 seconds'
+    });
+  } catch (error) {
+    console.error('Error creating task:', error);
+    res.status(500).json({ 
+      ok: false, 
+      error: 'Failed to create task' 
+    });
+  }
+});
+
+// Get task status
+router.get('/task/:taskId', (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const task = agentManager.getTaskStatus(taskId);
+    
+    if (!task) {
+      return res.status(404).json({ 
+        ok: false, 
+        error: 'Task not found' 
+      });
+    }
+
+    res.json({ ok: true, task });
+  } catch (error) {
+    console.error('Error getting task status:', error);
+    res.status(500).json({ 
+      ok: false, 
+      error: 'Failed to get task status' 
+    });
+  }
+});
+
+// Orchestrate property analysis (multiple agents)
+router.post('/analyze-property', (req, res) => {
+  try {
+    const { propertyData } = req.body;
+    
+    if (!propertyData) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: 'Property data is required' 
+      });
+    }
+
+    const taskIds = await agentManager.orchestratePropertyAnalysis(propertyData);
+    
+    res.json({ 
+      ok: true, 
+      taskIds,
+      message: `Property analysis initiated with ${taskIds.length} parallel tasks`,
+      estimatedCompletion: '2-3 minutes',
+      agents: ['Data Processor', 'Financial Analyst', 'Market Intelligence', 'Lead Manager']
+    });
+  } catch (error) {
+    console.error('Error orchestrating property analysis:', error);
+    res.status(500).json({ 
+      ok: false, 
+      error: 'Failed to orchestrate property analysis' 
+    });
+  }
+});
+
+// Get all tasks (with filters)
+router.get('/tasks/all', (req, res) => {
+  try {
+    const { status, agent, limit = 50 } = req.query;
+    let tasks = agentManager.getAllTasks();
+    
+    // Apply filters
+    if (status) {
+      tasks = tasks.filter(t => t.status === status);
+    }
+    
+    if (agent) {
+      tasks = tasks.filter(t => t.assignedAgent === agent);
+    }
+    
+    // Sort by creation date (newest first) and limit
+    tasks = tasks
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, parseInt(limit as string));
+
+    res.json({ 
+      ok: true, 
+      tasks,
+      total: tasks.length 
+    });
+  } catch (error) {
+    console.error('Error getting tasks:', error);
+    res.status(500).json({ 
+      ok: false, 
+      error: 'Failed to get tasks' 
+    });
+  }
+});
+
+export default router;

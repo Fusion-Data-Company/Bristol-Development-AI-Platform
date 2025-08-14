@@ -74,6 +74,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const mcpConfigRouter = (await import('./api/mcp-config')).default;
   app.use('/api/mcp-config', mcpConfigRouter);
   
+  // Multi-Agent System API
+  const agentsRouter = (await import('./api/agents')).default;
+  app.use('/api/agents', agentsRouter);
+  
   // MCP Testing API
   const mcpTestRouter = (await import('./api/mcp-test')).default;
   app.use('/api/mcp-test', mcpTestRouter);
