@@ -1532,11 +1532,11 @@ function AgentsPane({
   };
 
   const agentColors = {
-    'master': 'bristol-cyan',
-    'data-processing': 'bristol-gold',
-    'financial-analysis': 'emerald-400',
+    'bristol-master': 'bristol-cyan',
+    'data-processor': 'bristol-gold',
+    'financial-analyst': 'emerald-400',
     'market-intelligence': 'purple-400',
-    'lead-management': 'pink-400'
+    'lead-manager': 'pink-400'
   };
 
   return (
@@ -2043,34 +2043,34 @@ function AgentsPane({
                 // Get agent specialization info
                 const getAgentSpecialization = (agentId: string) => {
                   switch(agentId) {
-                    case 'master':
+                    case 'bristol-master':
                       return {
                         category: 'MASTER COORDINATION',
-                        description: 'Orchestrates analysis & synthesizes insights',
+                        description: 'Bristol Master Agent - Orchestrates analysis & synthesizes insights',
                         icon: '🧠'
                       };
-                    case 'data-processing':
+                    case 'data-processor':
                       return {
                         category: 'DATA INTELLIGENCE',
-                        description: 'Processes demographics & economic data',
+                        description: 'Data Processing Agent - Processes demographics & economic data',
                         icon: '📊'
                       };
                     case 'market-intelligence':
                       return {
                         category: 'MARKET INTELLIGENCE',
-                        description: 'Analyzes market trends & comparables',
+                        description: 'Market Intelligence Agent - Analyzes market trends & comparables',
                         icon: '📈'
                       };
-                    case 'financial-analysis':
+                    case 'financial-analyst':
                       return {
                         category: 'FINANCIAL ANALYSIS',
-                        description: 'Calculates IRR/NPV/Cap rates',
+                        description: 'Financial Analysis Agent - Calculates IRR/NPV/Cap rates',
                         icon: '💰'
                       };
-                    case 'lead-management':
+                    case 'lead-manager':
                       return {
                         category: 'LEAD MANAGEMENT',
-                        description: 'Manages investor conversion strategies',
+                        description: 'Lead Management Agent - Manages investor conversion strategies',
                         icon: '🎯'
                       };
                     default:
