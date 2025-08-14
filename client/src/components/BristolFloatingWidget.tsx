@@ -199,6 +199,18 @@ export default function BristolFloatingWidget({
       wsRef.current.onopen = () => {
         setWsConnected(true);
         console.log("Bristol A.I. WebSocket connected");
+        
+        // Send periodic ping to keep connection alive
+        const pingInterval = setInterval(() => {
+          if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+            wsRef.current.send(JSON.stringify({ type: 'ping', timestamp: Date.now() }));
+          } else {
+            clearInterval(pingInterval);
+          }
+        }, 30000); // Ping every 30 seconds
+        
+        // Store interval ID to clear on disconnect
+        (wsRef.current as any).pingInterval = pingInterval;
       };
       
       wsRef.current.onmessage = (event) => {
@@ -213,6 +225,16 @@ export default function BristolFloatingWidget({
       wsRef.current.onclose = () => {
         setWsConnected(false);
         console.log("Bristol A.I. WebSocket disconnected");
+        
+        // Auto-reconnect after 2 seconds if widget is still open
+        if (open) {
+          setTimeout(() => {
+            if (open && !wsRef.current) {
+              console.log("Attempting WebSocket reconnection...");
+              connectWebSocket();
+            }
+          }, 2000);
+        }
       };
       
       wsRef.current.onerror = (error) => {
@@ -226,6 +248,10 @@ export default function BristolFloatingWidget({
 
   const disconnectWebSocket = () => {
     if (wsRef.current) {
+      // Clear ping interval
+      if ((wsRef.current as any).pingInterval) {
+        clearInterval((wsRef.current as any).pingInterval);
+      }
       wsRef.current.close();
       wsRef.current = null;
     }
@@ -261,6 +287,22 @@ export default function BristolFloatingWidget({
           ...prev,
           [data.task.agentId]: 10
         }));
+        
+        // Simulate progress for better UX
+        const agentId = data.task.agentId;
+        const progressInterval = setInterval(() => {
+          setTaskProgress(currentProgress => {
+            const current = currentProgress[agentId] || 10;
+            if (current >= 90) {
+              clearInterval(progressInterval);
+              return currentProgress;
+            }
+            return {
+              ...currentProgress,
+              [agentId]: Math.min(current + Math.random() * 15, 90)
+            };
+          });
+        }, 2000);
         break;
         
       case 'task_completed':
@@ -289,7 +331,7 @@ export default function BristolFloatingWidget({
           console.log(`🎯 Adding agent result to chat: ${data.task.agentName}`, data.task.result);
           setMessages(prev => [...prev, {
             role: 'assistant',
-            content: `**${data.task.agentName || data.task.agent} Analysis Complete** ✅\n\n${data.task.result}`,
+            content: `**${data.task.agentName || data.task.agent?.name || 'Agent'} Analysis Complete** ✅\n\n${data.task.result}`,
             createdAt: nowISO()
           }]);
         } else {
