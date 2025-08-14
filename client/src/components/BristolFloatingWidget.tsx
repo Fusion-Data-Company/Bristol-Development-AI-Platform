@@ -1010,21 +1010,21 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
               className={`
                 w-14 h-7 rounded-full transition-all duration-300 relative border-2 shadow-lg
                 ${mcpEnabled 
-                  ? 'bg-gradient-to-r from-bristol-maroon to-bristol-gold border-bristol-gold shadow-bristol-gold/50' 
-                  : 'bg-gradient-to-r from-gray-700 to-gray-600 border-gray-500 shadow-gray-500/30'
+                  ? 'bg-gradient-to-r from-green-500 to-green-400 border-green-400 shadow-green-500/50' 
+                  : 'bg-gradient-to-r from-red-600 to-red-500 border-red-500 shadow-red-500/30'
                 }
               `}
               style={{
                 boxShadow: mcpEnabled 
-                  ? '0 0 20px rgba(251, 191, 36, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
-                  : '0 0 10px rgba(107, 114, 128, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  ? '0 0 20px rgba(34, 197, 94, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                  : '0 0 15px rgba(239, 68, 68, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
               }}
             >
               <div className={`
                 w-5 h-5 rounded-full absolute top-0.5 transition-all duration-300 border border-white/30 shadow-md
                 ${mcpEnabled 
-                  ? 'left-7 bg-gradient-to-br from-white to-bristol-gold/20' 
-                  : 'left-0.5 bg-gradient-to-br from-white to-gray-300'
+                  ? 'left-7 bg-gradient-to-br from-white to-green-100' 
+                  : 'left-0.5 bg-gradient-to-br from-white to-red-100'
                 }
               `} 
               style={{
@@ -1103,21 +1103,21 @@ function AdminPane({
               className={`
                 w-14 h-7 rounded-full transition-all duration-300 relative border-2 shadow-lg
                 ${realTimeData 
-                  ? 'bg-gradient-to-r from-bristol-cyan to-bristol-electric border-bristol-cyan shadow-bristol-cyan/50' 
-                  : 'bg-gradient-to-r from-gray-700 to-gray-600 border-gray-500 shadow-gray-500/30'
+                  ? 'bg-gradient-to-r from-green-500 to-green-400 border-green-400 shadow-green-500/50' 
+                  : 'bg-gradient-to-r from-red-600 to-red-500 border-red-500 shadow-red-500/30'
                 }
               `}
               style={{
                 boxShadow: realTimeData 
-                  ? '0 0 20px rgba(69, 214, 202, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
-                  : '0 0 10px rgba(107, 114, 128, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  ? '0 0 20px rgba(34, 197, 94, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                  : '0 0 15px rgba(239, 68, 68, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
               }}
             >
               <div className={`
                 w-5 h-5 rounded-full absolute top-0.5 transition-all duration-300 border border-white/30 shadow-md
                 ${realTimeData 
-                  ? 'left-7 bg-gradient-to-br from-white to-bristol-cyan/20' 
-                  : 'left-0.5 bg-gradient-to-br from-white to-gray-300'
+                  ? 'left-7 bg-gradient-to-br from-white to-green-100' 
+                  : 'left-0.5 bg-gradient-to-br from-white to-red-100'
                 }
               `}
               style={{
@@ -1176,13 +1176,13 @@ function AdminPane({
                   }
                 }
               }}
-              className="px-4 py-2 bg-bristol-maroon/20 hover:bg-bristol-maroon/30 border border-bristol-maroon/40 rounded-lg text-bristol-maroon font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-bristol-maroon/20"
+              className="px-4 py-2 bg-bristol-maroon/80 hover:bg-bristol-maroon border border-bristol-maroon rounded-lg text-white font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-bristol-maroon/50"
             >
               Save Prompt
             </button>
             <button
               onClick={() => setSystemPrompt(DEFAULT_MEGA_PROMPT)}
-              className="px-4 py-2 bg-bristol-gold/20 hover:bg-bristol-gold/30 border border-bristol-gold/40 rounded-lg text-bristol-gold font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-bristol-gold/20"
+              className="px-4 py-2 bg-bristol-gold/80 hover:bg-bristol-gold border border-bristol-gold rounded-lg text-black font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-bristol-gold/50"
             >
               Reset to Default
             </button>
