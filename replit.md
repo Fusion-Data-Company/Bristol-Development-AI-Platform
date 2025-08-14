@@ -1,7 +1,7 @@
 # Bristol Site Intelligence Platform
 
 ## Overview
-The Bristol Site Intelligence Platform is an enterprise-grade, AI-powered real estate development analysis tool. It is designed for multifamily development opportunities within Sunbelt markets. The platform provides comprehensive site analytics, interactive mapping, a proprietary 100-point Bristol scoring methodology, and real-time market intelligence. A key feature is the integrated AI assistant, Bristol Brain, which functions as an always-on "boss agent" for advanced deal analysis. The platform aims to provide institutional-quality real estate analysis capabilities, supporting decisions related to IRR, NPV, cap rates, and LP/GP structures.
+The Bristol Site Intelligence Platform is an enterprise-grade, AI-powered real estate development analysis tool. It is designed for multifamily development opportunities within Sunbelt markets. The platform provides comprehensive site analytics, interactive mapping, a proprietary 100-point Bristol scoring methodology, and real-time market intelligence. A key feature is the integrated AI assistant, Bristol Brain Elite v5.0, which functions as a Fortune 500-grade always-on "boss agent" for advanced deal analysis with full-screen cyberpunk/glassomorphic interface. The platform aims to provide institutional-quality real estate analysis capabilities, supporting decisions related to IRR, NPV, cap rates, and LP/GP structures.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -23,7 +23,7 @@ Preferred communication style: Simple, everyday language.
 - **Runtime**: Node.js with Express.
 - **Database**: PostgreSQL with Neon serverless hosting via Drizzle ORM.
 - **Authentication**: Replit Auth with OpenID Connect.
-- **AI Integration**: OpenRouter API for conversational AI, supporting models like GPT-5, GPT-5 Vision, GPT-5 Reasoning, Claude 4 Opus, Gemini 2.0 Ultra, and Grok 4. The Bristol Brain AI agent is integrated with advanced persistent memory management and comprehensive PostgreSQL database schema (tables for agents, conversations, memories, files, prompts, context, decisions).
+- **AI Integration**: OpenRouter API for conversational AI, supporting models like GPT-5, GPT-5 Vision, GPT-5 Reasoning, Claude 4 Opus, Gemini 2.0 Ultra, and Grok 4. The Bristol Brain Elite v5.0 AI agent is permanently in elite mode with advanced persistent memory management, full-screen cyberpunk/glassomorphic popout widget with fixed input bar at bottom, comprehensive PostgreSQL database schema (tables for agents, conversations, memories, files, prompts, context, decisions), and enhanced property analysis visualization with special formatting for IRR/NPV/Cap Rate metrics and risk assessments.
 - **File Storage**: Google Cloud Storage.
 - **Real-time Features**: WebSocket server for live updates, chat, and tool execution status.
 - **System Design Choices**: The Bristol Brain acts as a central AI controller with full website API access and MCP (Model Context Protocol) server integration, allowing real-time data injection and tool execution. API tools are designed with a uniform response format `{ ok, params, rows, meta }` and robust error handling. A memory-based caching system is implemented for API responses.

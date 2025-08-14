@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File } from "lucide-react";
+import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle } from "lucide-react";
 
 /**
  * BristolFloatingWidget.tsx — v1.0
@@ -445,9 +445,9 @@ export default function BristolFloatingWidget({
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
 
-          {/* Cyberpunk Glassomorphic Panel with Neon Glow */}
+          {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout */}
           <div 
-            className="absolute inset-y-0 left-0 w-[92vw] sm:w-[620px] text-neutral-100 shadow-2xl flex flex-col cyberpunk-elite-panel"
+            className="absolute inset-y-0 left-0 w-[92vw] sm:w-[620px] h-screen text-neutral-100 shadow-2xl flex flex-col cyberpunk-elite-panel"
             style={{
               background: 'linear-gradient(135deg, rgba(5, 10, 20, 0.98) 0%, rgba(15, 25, 45, 0.95) 25%, rgba(69, 214, 202, 0.08) 50%, rgba(212, 175, 55, 0.06) 75%, rgba(10, 15, 30, 0.98) 100%)',
               backdropFilter: 'blur(30px) saturate(200%) brightness(1.1)',
@@ -682,20 +682,23 @@ export default function BristolFloatingWidget({
               </div>
             </div>
 
-            {/* Glass Body Container - Tall for chat */}
+            {/* Glass Body Container - Full Height with Fixed Layout */}
             <div 
-              className="flex-1 min-h-0 relative overflow-hidden"
+              className="flex-1 min-h-0 relative flex flex-col overflow-hidden"
               style={{
                 background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.2) 50%, rgba(15, 23, 42, 0.4) 100%)',
-                minHeight: '60vh'
               }}
             >
-              {/* Subtle ambient glow */}
-              <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
-              <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
-              
-              {activeTab === "chat" && <ChatPane messages={messages} loading={loading} />}
-              {activeTab === "prompts" && (
+              {/* Chat Content Area - Scrollable */}
+              {activeTab === "chat" ? (
+                <div className="flex-1 overflow-hidden flex flex-col">
+                  {/* Subtle ambient glow */}
+                  <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
+                  <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
+                  
+                  <ChatPane messages={messages} loading={loading} />
+                </div>
+              ) : activeTab === "prompts" ? (
                 <div className="flex flex-col h-full p-6 overflow-y-auto">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <FileText className="h-5 w-5 text-bristol-gold" />
@@ -705,8 +708,7 @@ export default function BristolFloatingWidget({
                     Manage system and project prompts for enhanced AI intelligence.
                   </div>
                 </div>
-              )}
-              {activeTab === "files" && (
+              ) : activeTab === "files" ? (
                 <div className="flex flex-col h-full p-6 overflow-y-auto">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Paperclip className="h-5 w-5 text-bristol-gold" />
@@ -716,10 +718,11 @@ export default function BristolFloatingWidget({
                     Upload documents for AI analysis and context enhancement.
                   </div>
                 </div>
-              )}
-              {activeTab === "data" && <DataPane data={dataContext} />}
-              {activeTab === "tools" && <ToolsPane systemStatus={systemStatus} mcpEnabled={mcpEnabled} setMcpEnabled={setMcpEnabled} />}
-              {activeTab === "admin" && (
+              ) : activeTab === "data" ? (
+                <DataPane data={dataContext} />
+              ) : activeTab === "tools" ? (
+                <ToolsPane systemStatus={systemStatus} mcpEnabled={mcpEnabled} setMcpEnabled={setMcpEnabled} />
+              ) : activeTab === "admin" ? (
                 <AdminPane
                   systemPrompt={systemPrompt}
                   setSystemPrompt={setSystemPrompt}
@@ -727,13 +730,13 @@ export default function BristolFloatingWidget({
                   realTimeData={realTimeData}
                   setRealTimeData={setRealTimeData}
                 />
-              )}
+              ) : null}
             </div>
 
-            {/* Glass Chat Composer */}
+            {/* Glass Chat Composer - Fixed at Bottom */}
             {activeTab === "chat" && (
               <div 
-                className="border-t border-bristol-cyan/40 relative"
+                className="border-t border-bristol-cyan/40 relative flex-shrink-0"
                 style={{
                   background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.95) 100%)',
                   backdropFilter: 'blur(20px) saturate(1.2)',
@@ -1027,8 +1030,97 @@ function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; la
 
 // Missing ChatPane function
 function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boolean }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    // Auto-scroll to bottom when new messages arrive
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, loading]);
+
+  // Welcome message for new sessions
+  const showWelcome = messages.length === 0 && !loading;
+
   return (
-    <div className="h-full overflow-y-auto px-6 py-4 space-y-4 bg-gradient-to-b from-transparent to-bristol-ink/20" style={{ maxHeight: 'calc(60vh - 120px)' }}>
+    <div 
+      ref={scrollRef}
+      className="flex-1 overflow-y-auto custom-scrollbar px-6 py-4 space-y-4 bg-gradient-to-b from-transparent via-bristol-ink/10 to-bristol-ink/20" 
+      style={{ 
+        scrollBehavior: 'smooth'
+      }}
+    >
+      {showWelcome && (
+        <div className="animate-fade-in">
+          <div className="relative rounded-3xl border bg-gradient-to-br from-bristol-cyan/20 via-bristol-electric/10 to-bristol-gold/5 border-bristol-cyan/40 backdrop-blur p-6 shadow-2xl">
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-bristol-cyan rounded-full animate-pulse" />
+            <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-bristol-gold rounded-full animate-pulse animation-delay-500" />
+            
+            <div className="flex items-center gap-3 mb-4">
+              <div className="relative">
+                <div className="absolute inset-0 bg-bristol-cyan blur-xl opacity-50 animate-pulse" />
+                <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-bristol-cyan via-bristol-electric to-bristol-cyan flex items-center justify-center">
+                  <Brain className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-white">Bristol Brain Elite v5.0</h3>
+                <p className="text-xs text-bristol-cyan/80">Fortune 500 Real Estate Intelligence</p>
+              </div>
+            </div>
+            
+            <div className="space-y-3 text-sm text-white/90">
+              <p className="leading-relaxed">
+                🚀 <strong>Bristol Brain Elite v5.0 ACTIVATED</strong> - Fortune 500-grade AI system online with full property intelligence capabilities.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-2 mt-4">
+                <div className="bg-bristol-ink/40 rounded-xl p-3 border border-bristol-cyan/20">
+                  <div className="text-bristol-cyan text-xs font-semibold mb-1">CAPABILITIES</div>
+                  <ul className="text-xs space-y-1 text-white/80">
+                    <li>• $200M+ Deal Analysis</li>
+                    <li>• IRR/NPV Modeling</li>
+                    <li>• Market Intelligence</li>
+                    <li>• Risk Assessment</li>
+                  </ul>
+                </div>
+                <div className="bg-bristol-ink/40 rounded-xl p-3 border border-bristol-gold/20">
+                  <div className="text-bristol-gold text-xs font-semibold mb-1">QUICK START</div>
+                  <ul className="text-xs space-y-1 text-white/80">
+                    <li>• "Analyze this property"</li>
+                    <li>• "Show market trends"</li>
+                    <li>• "Calculate returns"</li>
+                    <li>• "Risk assessment"</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="mt-4 p-3 bg-gradient-to-r from-bristol-cyan/10 to-bristol-electric/10 rounded-xl border border-bristol-cyan/30">
+                <p className="text-xs text-bristol-cyan font-semibold mb-1 flex items-center gap-2">
+                  <Activity className="w-3 h-3 animate-pulse" />
+                  SYSTEM STATUS: FULLY OPERATIONAL
+                </p>
+                <p className="text-xs text-white/80">
+                  All systems active. Access to complete portfolio data, real-time market intelligence, demographic analytics, and MCP server integration. Ready for enterprise-level property evaluation and deal analysis.
+                </p>
+              </div>
+              
+              <div className="flex gap-2 mt-4">
+                <div className="flex-1 p-2 bg-gradient-to-r from-bristol-gold/10 to-transparent rounded-lg border border-bristol-gold/20">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-bristol-gold" />
+                    <span className="text-xs text-bristol-gold font-bold">PRO TIP</span>
+                  </div>
+                  <p className="text-xs text-white/70 mt-1">
+                    Try: "Analyze 123 Main St" or "Show portfolio performance metrics"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {messages.filter(m => m.role !== "system").map((m, i) => (
         <div 
           key={i} 
@@ -1063,7 +1155,52 @@ function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boo
             whitespace-pre-wrap text-sm leading-relaxed
             ${m.role === "assistant" ? "text-white/90" : "text-bristol-cyan/90"}
           `}>
-            {m.content}
+            {/* Check if content has property analysis data */}
+            {m.role === "assistant" && m.content.includes("PROPERTY ANALYSIS") ? (
+              <div className="space-y-4">
+                {m.content.split('\n').map((line, idx) => {
+                  if (line.startsWith('##')) {
+                    return (
+                      <h3 key={idx} className="text-bristol-cyan font-bold text-base mt-4 mb-2 flex items-center gap-2">
+                        <Building2 className="w-4 h-4" />
+                        {line.replace('##', '').trim()}
+                      </h3>
+                    );
+                  } else if (line.startsWith('•')) {
+                    return (
+                      <div key={idx} className="flex items-start gap-2 ml-4">
+                        <div className="w-1 h-1 bg-bristol-gold rounded-full mt-2" />
+                        <span className="flex-1">{line.replace('•', '').trim()}</span>
+                      </div>
+                    );
+                  } else if (line.includes('IRR:') || line.includes('NPV:') || line.includes('Cap Rate:')) {
+                    return (
+                      <div key={idx} className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-lg p-3 flex items-center gap-2">
+                        <DollarSign className="w-4 h-4 text-bristol-gold" />
+                        <span className="font-mono text-bristol-gold">{line}</span>
+                      </div>
+                    );
+                  } else if (line.includes('RISK:') || line.includes('WARNING:')) {
+                    return (
+                      <div key={idx} className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-400" />
+                        <span className="text-red-400">{line}</span>
+                      </div>
+                    );
+                  } else if (line.includes('RECOMMENDATION:')) {
+                    return (
+                      <div key={idx} className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-lg p-3 flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-bristol-gold" />
+                        <span className="text-bristol-gold font-semibold">{line}</span>
+                      </div>
+                    );
+                  }
+                  return <p key={idx} className="leading-relaxed">{line}</p>;
+                })}
+              </div>
+            ) : (
+              m.content
+            )}
           </div>
         </div>
       ))}
