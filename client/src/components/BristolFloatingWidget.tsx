@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle, ChevronDown } from "lucide-react";
+import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle, ChevronDown, CircuitBoard } from "lucide-react";
 
 /**
  * BristolFloatingWidget.tsx — v1.0
@@ -442,13 +442,13 @@ export default function BristolFloatingWidget({
           <div className="absolute -inset-3 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-bristol-gold/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
           <div className="absolute -inset-1 bg-gradient-to-r from-bristol-cyan/40 to-bristol-electric/40 rounded-3xl blur opacity-75 group-hover:opacity-100 transition-all duration-300" />
           
-          {/* Main button */}
+          {/* Main button - Enhanced visibility and styling */}
           <div 
             className="relative flex items-center gap-4 px-6 py-4 rounded-3xl border backdrop-blur-sm transition-all duration-300 hover:scale-105"
             style={{
-              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
-              borderColor: 'rgba(69, 214, 202, 0.6)',
-              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(69, 214, 202, 0.2)',
+              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(69, 214, 202, 0.25) 30%, rgba(30, 41, 59, 0.95) 100%)',
+              borderColor: 'rgba(69, 214, 202, 0.8)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 32px rgba(69, 214, 202, 0.4), 0 0 0 1px rgba(69, 214, 202, 0.3)',
             }}
           >
             {/* Elite brain icon */}
@@ -475,12 +475,18 @@ export default function BristolFloatingWidget({
               </span>
             </div>
             
-            {/* Status indicator */}
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
-              <span className="text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider">
-                READY
-              </span>
+            {/* Circuit icon and status indicator */}
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <CircuitBoard className="w-5 h-5 text-bristol-electric animate-pulse" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-bristol-gold rounded-full animate-pulse" />
+              </div>
+              <div className="flex flex-col items-end">
+                <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
+                <span className="text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mt-1">
+                  READY
+                </span>
+              </div>
             </div>
           </div>
         </button>
@@ -796,7 +802,7 @@ export default function BristolFloatingWidget({
                         <>
                           <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
                           <span className="text-bristol-cyan group-hover:text-white transition-colors duration-300 font-bold">
-                            Ask Bristol Brain
+                            ANALYZE
                           </span>
                         </>
                       )}
