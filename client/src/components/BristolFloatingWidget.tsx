@@ -1180,13 +1180,23 @@ function AdminPane({
                   }
                 }
               }}
-              className="px-4 py-2 bg-bristol-maroon/80 hover:bg-bristol-maroon border border-bristol-maroon rounded-lg text-white font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-bristol-maroon/50"
+              className="px-6 py-3 bg-bristol-maroon hover:bg-bristol-maroon/90 border-2 border-bristol-maroon rounded-xl text-white font-bold text-sm transition-all duration-200 hover:shadow-xl hover:shadow-bristol-maroon/60 hover:scale-105"
+              style={{
+                backgroundColor: '#8B1538',
+                borderColor: '#8B1538',
+                boxShadow: '0 4px 12px rgba(139, 21, 56, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+              }}
             >
               Save Prompt
             </button>
             <button
               onClick={() => setSystemPrompt(DEFAULT_MEGA_PROMPT)}
-              className="px-4 py-2 bg-bristol-gold/80 hover:bg-bristol-gold border border-bristol-gold rounded-lg text-black font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-bristol-gold/50"
+              className="px-6 py-3 bg-bristol-gold hover:bg-bristol-gold/90 border-2 border-bristol-gold rounded-xl text-black font-bold text-sm transition-all duration-200 hover:shadow-xl hover:shadow-bristol-gold/60 hover:scale-105"
+              style={{
+                backgroundColor: '#fbbf24',
+                borderColor: '#fbbf24',
+                boxShadow: '0 4px 12px rgba(251, 191, 36, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+              }}
             >
               Reset to Default
             </button>
