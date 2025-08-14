@@ -585,9 +585,14 @@ export default function ComparablesAnnex() {
             <ScraperJobManager />
           </div>
 
-          {/* Analytics Panels */}
-          <div className="grid lg:grid-cols-3 gap-6 mb-8">
+          {/* Analytics Panels - Redesigned Layout */}
+          {/* AI Analytics gets full width for breathing room */}
+          <div className="mb-8">
             <AIAnalyticsPanel data={comps} />
+          </div>
+          
+          {/* Secondary Analytics - Two columns with more space */}
+          <div className="grid lg:grid-cols-2 gap-8 mb-8">
             <DataVisualization data={comps} />
             <CompAnalysisWidget data={comps} />
           </div>
