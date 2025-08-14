@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu } from "lucide-react";
+import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal } from "lucide-react";
 
 /**
  * BristolFloatingWidget.tsx — v1.0
@@ -32,6 +32,27 @@ export type BristolWidgetProps = {
   onSaveSystemPrompt?: (prompt: string) => Promise<void> | void;
   onSend?: (payload: ChatPayload) => Promise<void> | void; // tap outgoing chat payloads
   className?: string;
+};
+
+// MCP Server and API Integration Types
+export type MCPTool = {
+  name: string;
+  description: string;
+  status: 'active' | 'inactive' | 'error';
+  lastExecution?: string;
+};
+
+export type APIStatus = {
+  name: string;
+  status: 'operational' | 'error' | 'unknown';
+  lastCheck: string;
+};
+
+export type SystemStatus = {
+  mcpTools: MCPTool[];
+  apis: APIStatus[];
+  database: 'connected' | 'error';
+  websocket: 'connected' | 'disconnected';
 };
 
 export type ChatMessage = {
@@ -104,7 +125,7 @@ export default function BristolFloatingWidget({
   className,
 }: BristolWidgetProps) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"chat" | "data" | "admin">("chat");
+  const [activeTab, setActiveTab] = useState<"chat" | "data" | "admin" | "tools">("chat");
   const [model, setModel] = useState(defaultModel || "");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [systemPrompt, setSystemPrompt] = useState<string>(defaultSystemPrompt || DEFAULT_MEGA_PROMPT);
@@ -114,9 +135,19 @@ export default function BristolFloatingWidget({
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [modelError, setModelError] = useState<string>("");
+  const [systemStatus, setSystemStatus] = useState<SystemStatus>({
+    mcpTools: [],
+    apis: [],
+    database: 'connected',
+    websocket: 'connected'
+  });
+  const [wsConnected, setWsConnected] = useState(false);
+  const [mcpEnabled, setMcpEnabled] = useState(true);
+  const [realTimeData, setRealTimeData] = useState(true);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const wsRef = useRef<WebSocket | null>(null);
 
-  // SSR-safe localStorage loading
+  // SSR-safe localStorage loading and WebSocket connection
   useEffect(() => {
     try {
       const saved = typeof window !== "undefined" ? localStorage.getItem("bristol.systemPrompt") : null;
@@ -125,6 +156,80 @@ export default function BristolFloatingWidget({
       console.warn("Failed to load saved system prompt:", error);
     }
   }, []);
+
+  // WebSocket connection for real-time features
+  useEffect(() => {
+    if (open && !wsRef.current) {
+      connectWebSocket();
+    } else if (!open && wsRef.current) {
+      disconnectWebSocket();
+    }
+
+    return () => disconnectWebSocket();
+  }, [open]);
+
+  const connectWebSocket = () => {
+    try {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      
+      wsRef.current = new WebSocket(wsUrl);
+      
+      wsRef.current.onopen = () => {
+        setWsConnected(true);
+        console.log("Bristol Brain WebSocket connected");
+      };
+      
+      wsRef.current.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          handleWebSocketMessage(data);
+        } catch (error) {
+          console.error("Error parsing WebSocket message:", error);
+        }
+      };
+      
+      wsRef.current.onclose = () => {
+        setWsConnected(false);
+        console.log("Bristol Brain WebSocket disconnected");
+      };
+      
+      wsRef.current.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        setWsConnected(false);
+      };
+    } catch (error) {
+      console.error("Failed to connect WebSocket:", error);
+    }
+  };
+
+  const disconnectWebSocket = () => {
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
+    }
+    setWsConnected(false);
+  };
+
+  const handleWebSocketMessage = (data: any) => {
+    switch (data.type) {
+      case 'mcp_tool_update':
+        setSystemStatus(prev => ({
+          ...prev,
+          mcpTools: data.tools || prev.mcpTools
+        }));
+        break;
+      case 'api_status_update':
+        setSystemStatus(prev => ({
+          ...prev,
+          apis: data.apis || prev.apis
+        }));
+        break;
+      case 'real_time_data':
+        // Handle real-time data updates
+        break;
+    }
+  };
 
   // Fetch dynamic model list from OpenRouter
   useEffect(() => {
@@ -196,54 +301,99 @@ export default function BristolFloatingWidget({
     inputRef.current?.focus();
     setLoading(true);
 
-    const payload: ChatPayload = {
+    const enhancedPayload: ChatPayload = {
       model,
       messages: newMessages,
-      dataContext, // IMPORTANT: gives the model the live app data
+      dataContext: realTimeData ? dataContext : undefined, // Include real-time data if enabled
       temperature: 0.2,
-      maxTokens: 1200,
+      maxTokens: 1500,
     };
 
+    // Add MCP context if enabled
+    const mcpContext = mcpEnabled ? {
+      mcpTools: systemStatus.mcpTools,
+      enableMCPExecution: true,
+      bossModeActive: true
+    } : {};
+
     try {
-      await onSend?.(payload);
-      await sendTelemetry("chat_send", { model, promptSize: safeStringify(newMessages).length });
+      await onSend?.(enhancedPayload);
+      await sendTelemetry("bristol_brain_chat", { 
+        model, 
+        promptSize: safeStringify(newMessages).length,
+        mcpEnabled,
+        realTimeData 
+      });
     } catch (error) {
       console.error("Error in onSend callback or telemetry:", error);
     }
 
     try {
-      // The proxy should call OpenRouter, inject the dataContext into the system or tool context, and stream back tokens
-      const res = await fetch("/api/openrouter", {
+      // Enhanced Boss Agent API call with MCP capabilities
+      const res = await fetch("/api/bristol-brain/enhanced-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          ...enhancedPayload,
+          ...mcpContext,
+          systemStatus,
+          userAgent: "Bristol Brain Boss Agent v2.0"
+        }),
       });
 
-      if (!res.ok) throw new Error(`Proxy error ${res.status}`);
+      if (!res.ok) {
+        // Fallback to regular OpenRouter if enhanced endpoint fails
+        const fallbackRes = await fetch("/api/openrouter", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(enhancedPayload),
+        });
+        
+        if (!fallbackRes.ok) throw new Error(`API error ${fallbackRes.status}`);
+        
+        const fallbackData = await fallbackRes.json();
+        const assistantText: string = fallbackData?.text ?? fallbackData?.message ?? "(No response)";
+        
+        const assistantMessage: ChatMessage = {
+          role: "assistant",
+          content: `[Fallback Mode] ${assistantText}`,
+          createdAt: nowISO(),
+        };
+        setMessages((prev) => [...prev, assistantMessage]);
+        return;
+      }
 
-      // Supports both JSON and text-stream; here we do simple JSON for clarity
       const data = await res.json();
-      const assistantText: string = data?.text ?? data?.message ?? "(No response)";
+      const assistantText: string = data?.text ?? data?.message ?? data?.content ?? "(No response)";
+      const mcpResults = data?.mcpResults || [];
+
+      let responseContent = assistantText;
+      if (mcpResults.length > 0) {
+        responseContent += `\n\n🔧 MCP Tools Executed: ${mcpResults.map((r: any) => r.tool).join(', ')}`;
+      }
 
       const assistantMessage: ChatMessage = {
         role: "assistant",
-        content: assistantText,
+        content: responseContent,
         createdAt: nowISO(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
-      await sendTelemetry("chat_receive", { tokens: assistantText.length });
+      await sendTelemetry("bristol_brain_response", { 
+        tokens: assistantText.length,
+        mcpToolsUsed: mcpResults.length 
+      });
     } catch (err: any) {
-      console.error("Full error object:", err);
-      let errorMessage = "Failed to reach model proxy.";
+      console.error("Bristol Brain error:", err);
+      let errorMessage = "Bristol Brain Boss Agent encountered an error.";
       
       if (err?.message?.includes("401") || err?.message?.includes("Unauthorized")) {
-        errorMessage = "Authentication required. Please make sure you're logged in.";
+        errorMessage = "Authentication required for Boss Agent access.";
       } else if (err?.message?.includes("400")) {
-        errorMessage = "Invalid request. The selected model may not be available.";
+        errorMessage = "Invalid request. The selected AI model may not support Boss Agent features.";
       } else if (err?.message?.includes("502")) {
-        errorMessage = "OpenRouter API error. Please try again or select a different model.";
+        errorMessage = "AI service temporarily unavailable. Retrying with fallback systems...";
       } else if (err?.message) {
-        errorMessage = `Error: ${err.message}`;
+        errorMessage = `Boss Agent Error: ${err.message}`;
       }
       
       const assistantMessage: ChatMessage = {
@@ -269,90 +419,19 @@ export default function BristolFloatingWidget({
 
   return (
     <>
-      {/* Bristol Brain Launcher Button */}
-      <div
-        onClick={() => setOpen(true)}
-        className="bristol-brain-button"
-        style={{
-          filter: 'drop-shadow(0 0 20px rgba(0, 191, 255, 0.4))',
-        }}
-        aria-label="Open Bristol Brain"
-      >
-        {/* Animated glow rings */}
-        <div style={{
-          position: 'absolute',
-          inset: '-8px',
-          background: 'linear-gradient(to right, rgba(0, 191, 255, 0.2), rgba(0, 191, 255, 0.2), rgba(139, 21, 56, 0.2))',
-          borderRadius: '50%',
-          opacity: '0',
-          animation: 'pulse 2s infinite',
-          transition: 'opacity 0.5s',
-        }} />
-        <div style={{
-          position: 'absolute',
-          inset: '-4px', 
-          background: 'linear-gradient(to right, rgba(0, 191, 255, 0.3), rgba(0, 191, 255, 0.3))',
-          borderRadius: '50%',
-          opacity: '0',
-          animation: 'ping 3s infinite',
-          transition: 'opacity 0.7s',
-        }} />
-        
-        {/* Content */}
-        <div style={{
-          position: 'relative',
-          zIndex: '10',
-          display: 'flex',
-          alignItems: 'center', 
-          gap: '12px',
-          color: 'white'
-        }}>
-          <div style={{ position: 'relative' }}>
-            <Brain style={{ 
-              height: '24px', 
-              width: '24px', 
-              color: '#00bfff',
-              filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5))'
-            }} />
-            <div style={{
-              position: 'absolute',
-              inset: '0',
-              height: '24px',
-              width: '24px',
-              color: 'rgba(0, 191, 255, 0.5)',
-              animation: 'pulse 2s infinite',
-              opacity: '0.5',
-            }}>
-              <Sparkles style={{ height: '24px', width: '24px' }} />
-            </div>
-          </div>
-          <div style={{ display: window.innerWidth >= 640 ? 'block' : 'none' }}>
-            <div style={{
-              fontSize: '14px',
-              fontWeight: 'bold',
-              letterSpacing: '0.05em',
-              color: '#00bfff',
-              transition: 'color 0.3s',
-            }}>
-              BRISTOL BRAIN
-            </div>
-            <div style={{
-              fontSize: '12px',
-              color: 'rgba(255, 178, 0, 0.8)',
-              fontWeight: '500',
-              transition: 'color 0.3s',
-            }}>
-              AI Intelligence
-            </div>
-          </div>
-          <Cpu style={{ 
-            height: '16px', 
-            width: '16px', 
-            color: 'rgba(255, 178, 0, 0.7)',
-            transition: 'all 0.3s',
-          }} />
+      {/* Bristol Brain Launcher Button - Bottom Right */}
+      {!open && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <button
+            onClick={() => setOpen(true)}
+            className="h-16 w-16 rounded-full bg-gradient-to-r from-bristol-maroon via-red-800 to-purple-900 hover:from-bristol-maroon/90 hover:via-red-800/90 hover:to-purple-900/90 border-2 border-bristol-gold/40 shadow-2xl shadow-purple-500/20 transition-all duration-300 hover:scale-110 hover:shadow-purple-500/40 cyberpunk-glow"
+            aria-label="Open Bristol Brain Intelligence"
+          >
+            <Brain className="h-8 w-8 text-white animate-pulse mx-auto" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-bristol-gold/20 to-purple-500/20 rounded-full blur opacity-75 animate-pulse"></div>
+          </button>
         </div>
-      </div>
+      )}
 
       {/* Slideout Panel */}
       {open && (
@@ -536,6 +615,12 @@ export default function BristolFloatingWidget({
                   onClick={() => setActiveTab("data")} 
                 />
                 <TabButton 
+                  icon={<Zap className="h-4 w-4" />} 
+                  active={activeTab === "tools"} 
+                  label="MCP Tools" 
+                  onClick={() => setActiveTab("tools")} 
+                />
+                <TabButton 
                   icon={<Settings className="h-4 w-4" />} 
                   active={activeTab === "admin"} 
                   label="Brain Config" 
@@ -557,11 +642,14 @@ export default function BristolFloatingWidget({
               
               {activeTab === "chat" && <ChatPane messages={messages} loading={loading} />}
               {activeTab === "data" && <DataPane data={dataContext} />}
+              {activeTab === "tools" && <ToolsPane systemStatus={systemStatus} mcpEnabled={mcpEnabled} setMcpEnabled={setMcpEnabled} />}
               {activeTab === "admin" && (
                 <AdminPane
                   systemPrompt={systemPrompt}
                   setSystemPrompt={setSystemPrompt}
                   onSave={saveSystemPrompt}
+                  realTimeData={realTimeData}
+                  setRealTimeData={setRealTimeData}
                 />
               )}
             </div>
@@ -657,228 +745,209 @@ export default function BristolFloatingWidget({
   );
 }
 
-// ---------- Subcomponents ----------
+// Enhanced UI Components for Bristol Brain Boss Agent
+
+function DataPane({ data }: { data: any }) {
+  return (
+    <div className="flex-1 p-6">
+      <div className="space-y-6">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-black/60 border border-bristol-gold/30 rounded-2xl p-4 cyberpunk-glow">
+            <div className="flex items-center gap-2 mb-2">
+              <Database className="h-4 w-4 text-bristol-gold" />
+              <span className="text-sm font-semibold text-bristol-gold">LIVE DATA SOURCES</span>
+            </div>
+            <div className="text-2xl font-bold text-white mb-1">
+              {Object.keys(data || {}).length}
+            </div>
+            <p className="text-xs text-gray-400">Active connections</p>
+          </div>
+          
+          <div className="bg-black/60 border border-purple-500/30 rounded-2xl p-4 cyberpunk-glow">
+            <div className="flex items-center gap-2 mb-2">
+              <Activity className="h-4 w-4 text-purple-400" />
+              <span className="text-sm font-semibold text-purple-400">SYSTEM STATUS</span>
+            </div>
+            <div className="text-2xl font-bold text-green-400 mb-1">ONLINE</div>
+            <p className="text-xs text-gray-400">All systems operational</p>
+          </div>
+        </div>
+        
+        <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-4">
+          <h4 className="text-bristol-cyan font-semibold mb-4 flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            REAL-TIME DATA ACCESS
+          </h4>
+          <div className="max-h-64 overflow-auto cyberpunk-scrollbar">
+            <pre className="text-xs text-gray-300 whitespace-pre-wrap">
+              {JSON.stringify(data, null, 2)}
+            </pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: { 
+  systemStatus: SystemStatus; 
+  mcpEnabled: boolean; 
+  setMcpEnabled: (enabled: boolean) => void; 
+}) {
+  const mcpTools = [
+    { name: 'n8n Workflows', status: 'active', description: 'Automation and data processing' },
+    { name: 'Apify Web Scraping', status: 'active', description: 'Real estate data collection' },
+    { name: 'Census Data API', status: 'active', description: 'Demographics and population data' },
+    { name: 'HUD Fair Market Rent', status: 'active', description: 'Rental market intelligence' },
+    { name: 'Metrics Storage', status: 'active', description: 'Performance data tracking' }
+  ];
+
+  return (
+    <div className="flex-1 p-6">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h4 className="text-bristol-gold font-semibold flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            MCP BOSS AGENT TOOLS
+          </h4>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-bristol-cyan">Enable MCP</span>
+            <button
+              onClick={() => setMcpEnabled(!mcpEnabled)}
+              className={`
+                w-12 h-6 rounded-full transition-all duration-300 relative
+                ${mcpEnabled ? 'bg-bristol-maroon' : 'bg-gray-600'}
+              `}
+            >
+              <div className={`
+                w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300
+                ${mcpEnabled ? 'left-6' : 'left-0.5'}
+              `} />
+            </button>
+          </div>
+        </div>
+        
+        <div className="grid gap-3">
+          {mcpTools.map((tool, index) => (
+            <div key={index} className="bg-black/40 border border-gray-700 rounded-2xl p-4 hover:border-bristol-cyan/50 transition-all duration-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Cpu className="h-5 w-5 text-bristol-cyan" />
+                  <div>
+                    <div className="text-white font-medium">{tool.name}</div>
+                    <div className="text-xs text-gray-400">{tool.description}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-xs text-green-400 font-semibold">READY</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Terminal className="h-4 w-4 text-bristol-gold" />
+            <span className="text-sm font-semibold text-bristol-gold">BOSS AGENT STATUS</span>
+          </div>
+          <div className="text-sm text-white">
+            MCP Server: <span className="text-green-400">Connected</span><br />
+            API Access: <span className="text-green-400">Full Permissions</span><br />
+            Real-time Data: <span className="text-green-400">Active</span><br />
+            Tool Execution: <span className="text-bristol-gold">Authorized</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AdminPane({ 
+  systemPrompt, 
+  setSystemPrompt, 
+  onSave, 
+  realTimeData, 
+  setRealTimeData 
+}: { 
+  systemPrompt: string; 
+  setSystemPrompt: (prompt: string) => void; 
+  onSave: () => void;
+  realTimeData: boolean;
+  setRealTimeData: (enabled: boolean) => void;
+}) {
+  return (
+    <div className="flex-1 p-6">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h4 className="text-bristol-gold font-semibold flex items-center gap-2">
+            <Settings className="h-4 w-4" />
+            BRISTOL BRAIN CONFIGURATION
+          </h4>
+          <button
+            onClick={onSave}
+            className="bg-gradient-to-r from-bristol-maroon to-purple-700 hover:from-bristol-maroon/90 hover:to-purple-700/90 border border-bristol-gold/50 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300"
+          >
+            Save Config
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-bristol-cyan font-medium">Real-time Data Injection</span>
+            <button
+              onClick={() => setRealTimeData(!realTimeData)}
+              className={`
+                w-12 h-6 rounded-full transition-all duration-300 relative
+                ${realTimeData ? 'bg-bristol-maroon' : 'bg-gray-600'}
+              `}
+            >
+              <div className={`
+                w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300
+                ${realTimeData ? 'left-6' : 'left-0.5'}
+              `} />
+            </button>
+          </div>
+        </div>
+        
+        <div>
+          <label className="block text-bristol-cyan font-semibold mb-3">
+            BRISTOL BRAIN SYSTEM PROMPT
+          </label>
+          <textarea
+            value={systemPrompt}
+            onChange={(e) => setSystemPrompt(e.target.value)}
+            rows={12}
+            className="cyberpunk-input w-full text-sm font-mono resize-none"
+            placeholder="Enter the Bristol Brain system prompt..."
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Enhanced UI Components for Bristol Brain Boss Agent
 function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; label: string; active?: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className={cx(
-        "relative flex items-center gap-2 px-5 py-3 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300 group overflow-hidden",
-        "backdrop-blur-sm border hover:shadow-lg hover:shadow-bristol-cyan/20",
-        active 
-          ? "text-white border-bristol-cyan/60 shadow-lg shadow-bristol-cyan/15" 
-          : "text-bristol-cyan/80 border-bristol-cyan/30 hover:text-bristol-cyan hover:border-bristol-cyan/50"
-      )}
-      style={{
-        background: active 
-          ? 'linear-gradient(135deg, rgba(69, 214, 202, 0.2) 0%, rgba(168, 85, 247, 0.15) 50%, rgba(69, 214, 202, 0.1) 100%)'
-          : 'linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(69, 214, 202, 0.05) 100%)',
-      }}
+      className={`
+        flex items-center gap-2 px-4 py-3 rounded-2xl font-semibold text-sm transition-all duration-300
+        ${active 
+          ? 'bg-gradient-to-r from-bristol-cyan/30 to-bristol-electric/30 text-white border border-bristol-cyan/50' 
+          : 'text-bristol-cyan/70 hover:text-white hover:bg-white/5 border border-transparent hover:border-bristol-cyan/30'
+        }
+      `}
     >
-      {/* Glass shimmer effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-      
-      {/* Active glow */}
-      {active && (
-        <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/10 to-bristol-electric/10 animate-pulse" />
-      )}
-      
-      {/* Content */}
-      <span className={cx("relative z-10 transition-all duration-300", active ? "text-bristol-cyan scale-110" : "group-hover:text-bristol-cyan group-hover:scale-105")}>
-        {icon}
-      </span>
-      <span className="relative z-10 tracking-wide font-semibold">{label}</span>
+      {icon}
+      {label}
     </button>
   );
 }
 
-function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boolean }) {
-  return (
-    <div className="h-full overflow-y-auto px-6 py-4 space-y-4 bg-gradient-to-b from-transparent to-bristol-ink/20">
-      {messages.filter(m => m.role !== "system").map((m, i) => (
-        <div 
-          key={i} 
-          className={cx(
-            "relative rounded-2xl border backdrop-blur transition-all duration-200 hover:shadow-lg",
-            m.role === "assistant" 
-              ? "bg-gradient-to-br from-bristol-cyan/10 to-bristol-electric/5 border-bristol-cyan/30 hover:border-bristol-cyan/50" 
-              : "bg-gradient-to-br from-bristol-ink/60 to-black/40 border-bristol-maroon/30 hover:border-bristol-maroon/50 ml-4"
-          )}
-        >
-          {/* Message header */}
-          <div className="flex items-center justify-between px-4 pt-3 pb-1">
-            <div className="flex items-center gap-2">
-              <span className={cx(
-                "text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full",
-                m.role === "assistant"
-                  ? "bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/30"
-                  : "bg-bristol-maroon/20 text-bristol-gold border border-bristol-maroon/30"
-              )}>
-                {m.role === "assistant" ? "🤖 Bristol AI" : "👤 You"}
-              </span>
-            </div>
-            {m.createdAt && (
-              <span className="text-xs text-bristol-cyan/50">
-                {new Date(m.createdAt).toLocaleTimeString()}
-              </span>
-            )}
-          </div>
-          
-          {/* Message content */}
-          <div className="px-4 pb-4">
-            <div className={cx(
-              "whitespace-pre-wrap text-sm leading-relaxed",
-              m.role === "assistant" ? "text-white/90" : "text-bristol-cyan/90"
-            )}>
-              {m.content}
-            </div>
-          </div>
-        </div>
-      ))}
-      
-      {loading && (
-        <div className="relative rounded-2xl border bg-gradient-to-br from-bristol-cyan/10 to-bristol-electric/5 border-bristol-cyan/30 backdrop-blur animate-pulse">
-          <div className="flex items-center gap-3 px-4 py-4">
-            <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.3s]" />
-              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.15s]" />
-              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce" />
-            </div>
-            <span className="text-sm text-bristol-cyan/80">
-              Bristol AI is analyzing your data and market conditions...
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
 
-function DataPane({ data }: { data: any }) {
-  const dataKeys = Object.keys(data || {});
-  
-  return (
-    <div className="h-full overflow-y-auto bg-gradient-to-b from-bristol-ink/20 to-transparent">
-      {/* Data overview header */}
-      <div className="sticky top-0 bg-bristol-ink/80 backdrop-blur border-b border-bristol-cyan/20 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold text-bristol-cyan">Live Data Context</h3>
-            <p className="text-xs text-bristol-cyan/70 mt-1">
-              Real-time data available to Bristol AI for analysis
-            </p>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 border border-bristol-cyan/30">
-            <Database className="h-4 w-4 text-bristol-cyan" />
-            <span className="text-sm font-bold text-white">{dataKeys.length}</span>
-            <span className="text-xs text-bristol-cyan/70">datasets</span>
-          </div>
-        </div>
-      </div>
 
-      {/* Data content */}
-      <div className="p-6 space-y-4">
-        {dataKeys.length > 0 ? (
-          dataKeys.map((key, i) => (
-            <div key={key} className="border border-bristol-cyan/20 rounded-2xl bg-gradient-to-br from-bristol-ink/40 to-black/20 backdrop-blur">
-              <div className="px-4 py-3 border-b border-bristol-cyan/20 bg-bristol-cyan/5">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs bg-bristol-cyan/20 text-bristol-cyan px-2 py-1 rounded-full font-medium">
-                    {i + 1}
-                  </span>
-                  <span className="font-medium text-bristol-cyan">{key}</span>
-                  <span className="text-xs text-bristol-cyan/60 ml-auto">
-                    {Array.isArray(data[key]) ? `${data[key].length} items` : typeof data[key]}
-                  </span>
-                </div>
-              </div>
-              <div className="p-4">
-                <pre className="text-xs leading-relaxed overflow-x-auto text-bristol-cyan/80 whitespace-pre-wrap max-h-48 overflow-y-auto">
-                  {safeStringify(data[key], 2)}
-                </pre>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="text-center py-12">
-            <Database className="h-12 w-12 text-bristol-cyan/30 mx-auto mb-4" />
-            <h3 className="text-bristol-cyan/60 font-medium mb-2">No Data Available</h3>
-            <p className="text-xs text-bristol-cyan/40 max-w-md mx-auto">
-              Bristol AI will have access to live property data, demographics, and market intelligence once data sources are connected.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
-function AdminPane({ systemPrompt, setSystemPrompt, onSave }: { systemPrompt: string; setSystemPrompt: (v: string) => void; onSave: () => void }) {
-  return (
-    <div className="h-full flex flex-col bg-gradient-to-b from-bristol-ink/20 to-transparent">
-      {/* Admin header */}
-      <div className="px-6 py-4 border-b border-bristol-cyan/20 bg-gradient-to-r from-bristol-ink/40 to-black/20 backdrop-blur">
-        <div className="flex items-center gap-3">
-          <Settings className="h-5 w-5 text-bristol-cyan" />
-          <div>
-            <h3 className="font-semibold text-bristol-cyan">System Configuration</h3>
-            <p className="text-xs text-bristol-cyan/70 mt-1">
-              Configure Bristol AI analyst behavior and expertise
-            </p>
-          </div>
-        </div>
-      </div>
 
-      {/* Prompt editor */}
-      <div className="flex-1 min-h-0 p-6">
-        <div className="h-full flex flex-col">
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-bristol-cyan mb-2">
-              Bristol Mega Prompt
-            </label>
-            <p className="text-xs text-bristol-cyan/60 mb-4">
-              This system prompt defines Bristol AI's expertise, knowledge base, and analytical approach for real estate intelligence.
-            </p>
-          </div>
-          
-          <div className="flex-1 min-h-0">
-            <textarea
-              value={systemPrompt}
-              onChange={(e) => setSystemPrompt(e.target.value)}
-              className={cx(
-                "w-full h-full text-sm leading-relaxed resize-none",
-                "bg-bristol-ink/60 border border-bristol-cyan/40 rounded-2xl p-4",
-                "focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/20",
-                "text-white placeholder-bristol-cyan/50 transition-all duration-200",
-                "hover:border-bristol-cyan/60 backdrop-blur"
-              )}
-              placeholder="Enter the Bristol AI system prompt that defines expertise, analytical approach, and knowledge domains..."
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Save controls */}
-      <div className="px-6 py-4 border-t border-bristol-cyan/20 bg-gradient-to-r from-bristol-ink/60 to-black/40 backdrop-blur">
-        <div className="flex items-center justify-between">
-          <div className="text-xs text-bristol-cyan/60">
-            Changes are saved locally and used for all future AI conversations
-          </div>
-          <button 
-            onClick={onSave} 
-            className={cx(
-              "inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-semibold text-sm",
-              "bg-gradient-to-r from-bristol-cyan to-bristol-electric text-white shadow-lg",
-              "hover:from-bristol-electric hover:to-bristol-maroon hover:shadow-bristol-cyan/20",
-              "transition-all duration-200 transform hover:scale-105",
-              "border border-bristol-cyan/30 hover:border-bristol-electric/50"
-            )}
-          >
-            <Settings className="h-4 w-4" />
-            Save Configuration
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}

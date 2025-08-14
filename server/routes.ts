@@ -54,6 +54,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/tools/noaa', noaaRouter);
   app.use('/api/snapshots', snapshotsRouter);
 
+  // Bristol Brain Enhanced API with MCP integration
+  const bristolBrainRouter = (await import('./api/bristol-brain-enhanced')).default;
+  app.use('/api/bristol-brain', bristolBrainRouter);
+
   // OpenRouter models endpoint
   // OpenRouter models endpoint - fix authentication
   app.get('/api/openrouter-models', async (req, res) => {
