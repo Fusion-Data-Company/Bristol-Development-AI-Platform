@@ -26,7 +26,7 @@ export function registerCompsAnnexRoutes(app: Express) {
         .orderBy(desc(compsAnnex.updatedAt));
       
       const totalResult = await db.execute(sql`select count(*)::int as c from comps_annex`);
-      const total = Number((totalResult as any)[0].c);
+      const total = totalResult.rows?.[0]?.c || totalResult[0]?.c || 0;
       
       res.json({ rows, total, limit, offset });
     } catch (error) {
@@ -122,6 +122,38 @@ export function registerCompsAnnexRoutes(app: Express) {
     } catch (error) {
       console.error('Error starting scrape job:', error);
       res.status(500).json({ error: 'Failed to start scrape job' });
+    }
+  });
+
+  // Import CSV data
+  app.post('/api/comps-annex/import', async (req, res) => {
+    try {
+      // For now, return success - would need multer and CSV parsing
+      res.json({ ok: true, count: 0, message: 'CSV import not yet implemented' });
+    } catch (error) {
+      console.error('Error importing CSV:', error);
+      res.status(500).json({ error: 'Failed to import CSV' });
+    }
+  });
+
+  // Seed with sample data
+  app.post('/api/comps-annex/seed', async (req, res) => {
+    try {
+      // Trigger a scrape job to populate with sample data
+      const jobId = await newScrapeJob({
+        address: 'Atlanta, GA',
+        radius_mi: 10,
+        asset_type: 'Multifamily',
+        keywords: ['apartments', 'luxury']
+      });
+      
+      // Run the job to populate data
+      const count = await runJobNow(jobId);
+      
+      res.json({ ok: true, count });
+    } catch (error) {
+      console.error('Error seeding data:', error);
+      res.status(500).json({ error: 'Failed to seed data' });
     }
   });
 

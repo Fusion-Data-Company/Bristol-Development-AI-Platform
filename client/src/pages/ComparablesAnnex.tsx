@@ -6,31 +6,19 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import Chrome from '@/components/brand/Chrome';
-import { apiRequest } from '@/lib/queryClient';
+import CompsTable from '@/components/comparables/CompsTable';
+import AdvancedFilters from '@/components/comparables/AdvancedFilters';
+import BulkImport from '@/components/comparables/BulkImport';
 import { 
   Search, 
   Download, 
   Upload, 
   Play, 
-  Trash2, 
-  Edit3, 
-  Save, 
-  X,
   Building2,
-  MapPin,
-  DollarSign,
-  Calendar,
-  Users,
+  TrendingUp,
+  BarChart3,
   Settings
 } from 'lucide-react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import {
   Dialog,
   DialogContent,
@@ -77,12 +65,26 @@ interface ScrapeQuery {
   keywords: string[];
 }
 
+interface FilterState {
+  assetType?: string;
+  subtype?: string;
+  minUnits?: number;
+  maxUnits?: number;
+  minRentPsf?: number;
+  maxRentPsf?: number;
+  minOccupancy?: number;
+  maxOccupancy?: number;
+  minYearBuilt?: number;
+  maxYearBuilt?: number;
+  amenities?: string[];
+}
+
 export default function ComparablesAnnex() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
-  const [editingCell, setEditingCell] = useState<{ id: string; field: string } | null>(null);
-  const [editValue, setEditValue] = useState('');
+  const [filters, setFilters] = useState<FilterState>({});
+
   const [scrapeDialogOpen, setScrapeDialogOpen] = useState(false);
   const [scrapeQuery, setScrapeQuery] = useState<ScrapeQuery>({
     address: '',
@@ -104,43 +106,45 @@ export default function ComparablesAnnex() {
     },
   });
 
-  const comps: CompRecord[] = compsData?.rows || [];
+  const rawComps: CompRecord[] = compsData?.rows || [];
   const total = compsData?.total || 0;
 
-  // Mutations
-  const updateCompMutation = useMutation({
-    mutationFn: async ({ id, field, value }: { id: string; field: string; value: any }) => {
-      const response = await fetch(`/api/comps-annex/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ [field]: value }),
-      });
-      if (!response.ok) throw new Error('Update failed');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] });
-      toast({ title: 'Updated successfully' });
-    },
-    onError: () => {
-      toast({ title: 'Update failed', variant: 'destructive' });
-    },
-  });
+  // Apply client-side filters
+  const comps = useMemo(() => {
+    return rawComps.filter(comp => {
+      // Asset type filter
+      if (filters.assetType && comp.assetType !== filters.assetType) return false;
+      
+      // Subtype filter
+      if (filters.subtype && comp.subtype !== filters.subtype) return false;
+      
+      // Units range filter
+      if (filters.minUnits && (!comp.units || comp.units < filters.minUnits)) return false;
+      if (filters.maxUnits && (!comp.units || comp.units > filters.maxUnits)) return false;
+      
+      // Rent PSF range filter
+      if (filters.minRentPsf && (!comp.rentPsf || comp.rentPsf < filters.minRentPsf)) return false;
+      if (filters.maxRentPsf && (!comp.rentPsf || comp.rentPsf > filters.maxRentPsf)) return false;
+      
+      // Occupancy range filter
+      if (filters.minOccupancy && (!comp.occupancyPct || comp.occupancyPct < filters.minOccupancy)) return false;
+      if (filters.maxOccupancy && (!comp.occupancyPct || comp.occupancyPct > filters.maxOccupancy)) return false;
+      
+      // Year built range filter
+      if (filters.minYearBuilt && (!comp.yearBuilt || comp.yearBuilt < filters.minYearBuilt)) return false;
+      if (filters.maxYearBuilt && (!comp.yearBuilt || comp.yearBuilt > filters.maxYearBuilt)) return false;
+      
+      // Amenities filter
+      if (filters.amenities && filters.amenities.length > 0) {
+        const compAmenities = comp.amenityTags || [];
+        if (!filters.amenities.every(amenity => compAmenities.includes(amenity))) return false;
+      }
+      
+      return true;
+    });
+  }, [rawComps, filters]);
 
-  const deleteCompMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const response = await fetch(`/api/comps-annex/${id}`, { method: 'DELETE' });
-      if (!response.ok) throw new Error('Delete failed');
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] });
-      toast({ title: 'Deleted successfully' });
-    },
-    onError: () => {
-      toast({ title: 'Delete failed', variant: 'destructive' });
-    },
-  });
+
 
   const scrapeMutation = useMutation({
     mutationFn: async (query: ScrapeQuery) => {
@@ -165,77 +169,14 @@ export default function ComparablesAnnex() {
     },
   });
 
-  // Handle inline editing
-  const handleCellEdit = useCallback((id: string, field: string, currentValue: any) => {
-    setEditingCell({ id, field });
-    setEditValue(String(currentValue || ''));
-  }, []);
 
-  const handleSaveEdit = useCallback(() => {
-    if (!editingCell) return;
-    
-    let value: any = editValue;
-    
-    // Parse numeric fields
-    if (['units', 'yearBuilt', 'rentPsf', 'rentPu', 'occupancyPct', 'concessionPct', 'lat', 'lng'].includes(editingCell.field)) {
-      value = editValue ? Number(editValue) : null;
-    }
-    
-    updateCompMutation.mutate({ 
-      id: editingCell.id, 
-      field: editingCell.field, 
-      value 
-    });
-    
-    setEditingCell(null);
-  }, [editingCell, editValue, updateCompMutation]);
-
-  const handleCancelEdit = useCallback(() => {
-    setEditingCell(null);
-    setEditValue('');
-  }, []);
 
   // Export to CSV
   const handleExport = () => {
     window.open('/api/comps-annex/export.csv', '_blank');
   };
 
-  // Render editable cell
-  const renderEditableCell = (comp: CompRecord, field: keyof CompRecord, displayValue: any) => {
-    const isEditing = editingCell?.id === comp.id && editingCell?.field === field;
-    
-    if (isEditing) {
-      return (
-        <div className="flex items-center gap-1">
-          <Input
-            value={editValue}
-            onChange={(e) => setEditValue(e.target.value)}
-            className="h-6 text-xs"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSaveEdit();
-              if (e.key === 'Escape') handleCancelEdit();
-            }}
-            autoFocus
-          />
-          <Button size="sm" variant="ghost" onClick={handleSaveEdit} className="h-6 w-6 p-0">
-            <Save className="h-3 w-3" />
-          </Button>
-          <Button size="sm" variant="ghost" onClick={handleCancelEdit} className="h-6 w-6 p-0">
-            <X className="h-3 w-3" />
-          </Button>
-        </div>
-      );
-    }
-    
-    return (
-      <div 
-        className="cursor-pointer hover:bg-muted p-1 rounded text-xs min-h-[20px]"
-        onClick={() => handleCellEdit(comp.id, field, displayValue)}
-      >
-        {displayValue || '-'}
-      </div>
-    );
-  };
+
 
   return (
     <Chrome>
@@ -314,12 +255,83 @@ export default function ComparablesAnnex() {
               </DialogContent>
             </Dialog>
 
+            <AdvancedFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+              availableAssetTypes={Array.from(new Set(rawComps.map(c => c.assetType).filter(Boolean)))}
+              availableSubtypes={Array.from(new Set(rawComps.map(c => c.subtype).filter(Boolean)))}
+              availableAmenities={Array.from(new Set(rawComps.flatMap(c => c.amenityTags || [])))}
+            />
+
+            <BulkImport onImportComplete={() => queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] })} />
+
             <Button variant="outline" onClick={handleExport}>
               <Download className="h-4 w-4 mr-2" />
               Export CSV
             </Button>
           </div>
         </div>
+
+        {/* Quick Analytics Cards */}
+        {comps.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <TrendingUp className="h-4 w-4 text-bristol-maroon" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Avg Rent/SF</p>
+                    <p className="text-lg font-semibold">
+                      ${(comps.filter(c => c.rentPsf).reduce((sum, c) => sum + (c.rentPsf || 0), 0) / comps.filter(c => c.rentPsf).length || 0).toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <Building2 className="h-4 w-4 text-bristol-maroon" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Total Units</p>
+                    <p className="text-lg font-semibold">
+                      {comps.filter(c => c.units).reduce((sum, c) => sum + (c.units || 0), 0).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <BarChart3 className="h-4 w-4 text-bristol-maroon" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Avg Occupancy</p>
+                    <p className="text-lg font-semibold">
+                      {(comps.filter(c => c.occupancyPct).reduce((sum, c) => sum + (c.occupancyPct || 0), 0) / comps.filter(c => c.occupancyPct).length || 0).toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center space-x-2">
+                  <TrendingUp className="h-4 w-4 text-bristol-maroon" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Avg Year Built</p>
+                    <p className="text-lg font-semibold">
+                      {Math.round(comps.filter(c => c.yearBuilt).reduce((sum, c) => sum + (c.yearBuilt || 0), 0) / comps.filter(c => c.yearBuilt).length || 0)}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         {/* Main Data Table */}
         <Card>
@@ -335,90 +347,7 @@ export default function ComparablesAnnex() {
                 <div className="text-gray-500">Loading comparables...</div>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[200px]">Property</TableHead>
-                      <TableHead className="w-[300px]">Address</TableHead>
-                      <TableHead className="w-[80px]">Units</TableHead>
-                      <TableHead className="w-[80px]">Year</TableHead>
-                      <TableHead className="w-[100px]">Rent/SF</TableHead>
-                      <TableHead className="w-[100px]">Rent/Unit</TableHead>
-                      <TableHead className="w-[80px]">Occ%</TableHead>
-                      <TableHead className="w-[100px]">Concession%</TableHead>
-                      <TableHead className="w-[150px]">Amenities</TableHead>
-                      <TableHead className="w-[100px]">Source</TableHead>
-                      <TableHead className="w-[80px]">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {comps.map((comp) => (
-                      <TableRow key={comp.id}>
-                        <TableCell>
-                          {renderEditableCell(comp, 'name', comp.name)}
-                          <div className="text-xs text-gray-500 mt-1">
-                            {comp.assetType} {comp.subtype && `• ${comp.subtype}`}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {renderEditableCell(comp, 'address', comp.address)}
-                          <div className="text-xs text-gray-500 mt-1">
-                            {comp.city}, {comp.state} {comp.zip}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {renderEditableCell(comp, 'units', comp.units)}
-                        </TableCell>
-                        <TableCell>
-                          {renderEditableCell(comp, 'yearBuilt', comp.yearBuilt)}
-                        </TableCell>
-                        <TableCell>
-                          {renderEditableCell(comp, 'rentPsf', comp.rentPsf ? `$${comp.rentPsf.toFixed(2)}` : null)}
-                        </TableCell>
-                        <TableCell>
-                          {renderEditableCell(comp, 'rentPu', comp.rentPu ? `$${comp.rentPu.toLocaleString()}` : null)}
-                        </TableCell>
-                        <TableCell>
-                          {renderEditableCell(comp, 'occupancyPct', comp.occupancyPct ? `${comp.occupancyPct}%` : null)}
-                        </TableCell>
-                        <TableCell>
-                          {renderEditableCell(comp, 'concessionPct', comp.concessionPct ? `${comp.concessionPct}%` : null)}
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-wrap gap-1">
-                            {comp.amenityTags?.slice(0, 3).map((tag, i) => (
-                              <Badge key={i} variant="outline" className="text-xs">
-                                {tag}
-                              </Badge>
-                            ))}
-                            {comp.amenityTags && comp.amenityTags.length > 3 && (
-                              <Badge variant="outline" className="text-xs">
-                                +{comp.amenityTags.length - 3}
-                              </Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="text-xs">
-                            {comp.source}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => deleteCompMutation.mutate(comp.id)}
-                            className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+              <CompsTable comps={comps} isLoading={isLoading} />
             )}
           </CardContent>
         </Card>
