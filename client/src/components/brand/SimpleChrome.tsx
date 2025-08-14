@@ -83,9 +83,30 @@ export default function Chrome({ children }: ChromeProps) {
       </header>
 
       {/* Main Content with light theme */}
-      <main className="flex-1 bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10 min-h-screen">
+      <main className="flex-1 bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10">
         {children}
       </main>
+
+      {/* Unified Footer */}
+      <footer className="bg-bristol-ink border-t border-bristol-gold/30">
+        <div className="px-8 py-6">
+          <div className="flex items-center justify-between max-w-7xl mx-auto">
+            <div className="flex items-center space-x-6">
+              <div className="text-bristol-fog text-sm">
+                © 2024 Bristol Development Group. All rights reserved.
+              </div>
+              <div className="text-bristol-gold text-xs font-semibold tracking-wider">
+                INSTITUTIONAL REAL ESTATE INTELLIGENCE
+              </div>
+            </div>
+            <div className="flex items-center space-x-4 text-bristol-fog text-sm">
+              <span>v2.0.1</span>
+              <span className="text-bristol-gold">•</span>
+              <span>Enterprise Platform</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

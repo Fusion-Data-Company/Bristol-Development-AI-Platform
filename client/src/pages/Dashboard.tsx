@@ -53,6 +53,7 @@ import { apiRequest } from "@/lib/queryClient";
 import type { Site, SiteMetric, ChatSession } from '@shared/schema';
 import bristolLogoPath from '@assets/bristol-logo_1754934306711.gif';
 import propertyImage1 from '@assets/Screenshot 2025-08-11 at 10.44.53_1754934296368.png';
+import Chrome from "@/components/brand/SimpleChrome";
 import propertyImage2 from '@assets/Screenshot 2025-08-11 at 10.45.12_1754934314469.png';
 
 interface DashboardData {
@@ -187,120 +188,72 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-bristol-fog relative overflow-x-hidden">
-      {/* Parallax Background */}
-      <ParallaxBackground />
-
-      {/* Navigation Header */}
-      <header className="relative z-50 bg-gradient-to-r from-bristol-ink via-bristol-maroon/90 to-bristol-ink text-white shadow-2xl border-b-2 border-bristol-gold/30">
-        <div className="max-w-7xl mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-6">
-              <div className="flex items-center justify-center hover:scale-105 transition-all duration-300">
-                <img 
-                  src={bristolLogoPath} 
-                  alt="Bristol Development Group" 
-                  className="h-16 w-auto drop-shadow-2xl"
-                />
-              </div>
-              <div>
-                <h1 className="font-serif text-3xl font-black bg-gradient-to-r from-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">Bristol Development</h1>
-                <p className="text-bristol-gold/90 text-sm font-bold tracking-wide">Site Intelligence Platform</p>
-              </div>
-            </div>
-            
-            <nav className="hidden lg:flex items-center space-x-8">
-              <button 
-                onClick={() => setActiveTab("overview")}
-                className={cn(
-                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
-                  activeTab === "overview" 
-                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
-                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
-                )}
-              >
-                Overview
-              </button>
-              <button 
-                onClick={() => setActiveTab("mapping")}
-                className={cn(
-                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
-                  activeTab === "mapping" 
-                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
-                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
-                )}
-              >
-                Interactive Map
-              </button>
-              <button 
-                onClick={() => setActiveTab("scoring")}
-                className={cn(
-                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
-                  activeTab === "scoring" 
-                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
-                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
-                )}
-              >
-                Site Scoring
-              </button>
-              <button 
-                onClick={() => setActiveTab("analytics")}
-                className={cn(
-                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
-                  activeTab === "analytics" 
-                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
-                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
-                )}
-              >
-                Market Analytics
-              </button>
-              <button 
-                onClick={() => setActiveTab("chat")}
-                className={cn(
-                  "px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 hover:shadow-lg",
-                  activeTab === "chat" 
-                    ? "bg-white text-bristol-ink shadow-lg shadow-white/30 border-2 border-bristol-gold" 
-                    : "text-white/90 hover:text-white hover:bg-white/10 border-2 border-transparent"
-                )}
-              >
-                AI Assistant
-              </button>
-            </nav>
-            
-            <div className="flex items-center space-x-6">
-              
-              {/* WebSocket Status Indicator */}
-              <div className="flex items-center gap-2">
-                <div className={cn(
-                  "w-3 h-3 rounded-full",
-                  isConnected ? "bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.6)]"
-                )} />
-                <span className="text-sm font-bold text-bristol-gold">{isConnected ? "Live" : "Offline"}</span>
-              </div>
-              
-              {/* User Profile */}
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-bristol-maroon to-bristol-gold rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-white text-sm font-bold">
-                    {(user as any)?.firstName?.[0] || (user as any)?.email?.[0] || "U"}
-                  </span>
-                </div>
-                <Button 
-                  onClick={handleLogout}
-                  variant="outline"
-                  size="sm"
-                  className="border-2 border-bristol-gold/60 text-bristol-gold font-bold hover:bg-bristol-gold hover:text-bristol-ink transition-all duration-300 hover:shadow-lg hover:shadow-bristol-gold/40"
-                >
-                  Logout
-                </Button>
-              </div>
-            </div>
+    <Chrome>
+      <div className="relative min-h-screen">
+        {/* Parallax Background */}
+        <ParallaxBackground />
+        {/* Dashboard Tabs Navigation */}
+        <div className="bg-white/90 backdrop-blur-sm rounded-xl mx-6 mb-6 p-4 shadow-lg border border-white/20">
+          <div className="flex items-center justify-center space-x-4">
+            <button 
+              onClick={() => setActiveTab("overview")}
+              className={cn(
+                "px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300",
+                activeTab === "overview" 
+                  ? "bg-bristol-maroon text-white shadow-lg" 
+                  : "text-bristol-maroon hover:bg-bristol-maroon/10"
+              )}
+            >
+              Overview
+            </button>
+            <button 
+              onClick={() => setActiveTab("mapping")}
+              className={cn(
+                "px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300",
+                activeTab === "mapping" 
+                  ? "bg-bristol-maroon text-white shadow-lg" 
+                  : "text-bristol-maroon hover:bg-bristol-maroon/10"
+              )}
+            >
+              Interactive Map
+            </button>
+            <button 
+              onClick={() => setActiveTab("scoring")}
+              className={cn(
+                "px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300",
+                activeTab === "scoring" 
+                  ? "bg-bristol-maroon text-white shadow-lg" 
+                  : "text-bristol-maroon hover:bg-bristol-maroon/10"
+              )}
+            >
+              Site Scoring
+            </button>
+            <button 
+              onClick={() => setActiveTab("analytics")}
+              className={cn(
+                "px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300",
+                activeTab === "analytics" 
+                  ? "bg-bristol-maroon text-white shadow-lg" 
+                  : "text-bristol-maroon hover:bg-bristol-maroon/10"
+              )}
+            >
+              Market Analytics
+            </button>
+            <button 
+              onClick={() => setActiveTab("chat")}
+              className={cn(
+                "px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300",
+                activeTab === "chat" 
+                  ? "bg-bristol-maroon text-white shadow-lg" 
+                  : "text-bristol-maroon hover:bg-bristol-maroon/10"
+              )}
+            >
+              AI Assistant
+            </button>
           </div>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="relative z-10 min-h-screen">
+        {/* Dashboard Content */}
+        <div className="relative z-10 py-8">
         {/* Overview Tab */}
         {activeTab === "overview" && (
           <div className="py-8">
@@ -800,24 +753,25 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-      </main>
-
-      {/* Floating Chat Button */}
-      {activeTab !== "chat" && (
-        <div className="fixed bottom-6 right-6 z-50">
-          <button 
-            onClick={() => setActiveTab("chat")}
-            className="w-16 h-16 bg-bristol-maroon text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-bristol-maroon/90 transition-all group relative"
-          >
-            <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform" />
-            {isConnected && (
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-bristol-gold rounded-full flex items-center justify-center">
-                <span className="text-xs font-bold text-bristol-ink">AI</span>
-              </div>
-            )}
-          </button>
+        
+        {/* Floating Chat Button */}
+        {activeTab !== "chat" && (
+          <div className="fixed bottom-6 right-6 z-50">
+            <button 
+              onClick={() => setActiveTab("chat")}
+              className="w-16 h-16 bg-bristol-maroon text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-bristol-maroon/90 transition-all group relative"
+            >
+              <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              {isConnected && (
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-bristol-gold rounded-full flex items-center justify-center">
+                  <span className="text-xs font-bold text-bristol-ink">AI</span>
+                </div>
+              )}
+            </button>
+          </div>
+        )}
         </div>
-      )}
-    </div>
+      </div>
+    </Chrome>
   );
 }

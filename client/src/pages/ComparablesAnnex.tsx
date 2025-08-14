@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-// import Chrome from '@/components/brand/SimpleChrome';
+import Chrome from '@/components/brand/SimpleChrome';
 import TanStackCompsTable from '@/components/comparables/TanStackCompsTable';
 import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
@@ -184,43 +184,37 @@ export default function ComparablesAnnex() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10">
-        {/* Bristol Mega Header */}
-        <div className="bg-gradient-to-r from-bristol-maroon via-bristol-maroon/90 to-bristol-maroon border-b-4 border-bristol-gold">
-          <div className="container mx-auto px-6 py-8">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-6">
-                <div className="p-4 bg-bristol-gold/10 rounded-2xl backdrop-blur border border-bristol-gold/30">
-                  <Building2 className="h-12 w-12 text-bristol-gold" />
-                </div>
-                <div>
-                  <h1 className="text-4xl font-cinzel font-bold text-white tracking-wide drop-shadow-lg">
-                    COMPARABLES ANNEX
-                  </h1>
-                  <p className="text-bristol-gold/90 text-lg font-medium mt-1">
-                    Bristol Development Group's Flagship Intelligence Platform
-                  </p>
-                  <p className="text-bristol-fog text-sm mt-2">
-                    Google Sheets-scale performance • AI-powered analytics • Real-time scraping
-                  </p>
-                </div>
+    <Chrome>
+      <div className="container mx-auto px-6 py-8">
+        {/* Page Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-bristol-maroon/10 rounded-xl">
+                <Building2 className="h-8 w-8 text-bristol-maroon" />
               </div>
-              
-              <div className="text-right">
-                <div className="bg-bristol-gold/20 rounded-xl p-4 backdrop-blur border border-bristol-gold/40">
-                  <div className="text-3xl font-bold text-bristol-gold">
-                    {total.toLocaleString()}
-                  </div>
-                  <div className="text-bristol-fog text-sm font-medium">
-                    Total Records
-                  </div>
+              <div>
+                <h1 className="text-3xl font-cinzel font-bold text-bristol-maroon">
+                  Comparables Annex
+                </h1>
+                <p className="text-bristol-stone text-lg">
+                  Bristol Development Group's Intelligence Platform
+                </p>
+              </div>
+            </div>
+            
+            <div className="text-right">
+              <div className="bg-bristol-maroon/5 rounded-xl p-4 border border-bristol-maroon/10">
+                <div className="text-2xl font-bold text-bristol-maroon">
+                  {total.toLocaleString()}
+                </div>
+                <div className="text-bristol-stone text-sm font-medium">
+                  Total Records
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="container mx-auto px-6 py-8">
           <div className="mb-8">
             <div className="mb-6">
 
@@ -407,6 +401,6 @@ export default function ComparablesAnnex() {
           </Card>
         </div>
       </div>
-    </div>
+    </Chrome>
   );
 }

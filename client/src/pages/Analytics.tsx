@@ -105,7 +105,7 @@ export default function Analytics() {
             <MapPin className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analytics?.summary?.totalSites || 0}</div>
+            <div className="text-2xl font-bold">{(analytics as any)?.summary?.totalSites || 0}</div>
             <p className="text-xs text-muted-foreground">
               <span className="text-green-600">+12%</span> from last month
             </p>
@@ -118,8 +118,8 @@ export default function Analytics() {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analytics?.summary?.avgBristolScore || 0}</div>
-            <Progress value={analytics?.summary?.avgBristolScore || 0} className="mt-2" />
+            <div className="text-2xl font-bold">{(analytics as any)?.summary?.avgBristolScore || 0}</div>
+            <Progress value={(analytics as any)?.summary?.avgBristolScore || 0} className="mt-2" />
           </CardContent>
         </Card>
         
@@ -130,7 +130,7 @@ export default function Analytics() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${(analytics?.metrics?.medianIncome || 0).toLocaleString()}
+              ${((analytics as any)?.metrics?.medianIncome || 0).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
               Target market average
@@ -144,7 +144,7 @@ export default function Analytics() {
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{analytics?.metrics?.vacancyRate || 0}%</div>
+            <div className="text-2xl font-bold">{(analytics as any)?.metrics?.vacancyRate || 0}%</div>
             <p className="text-xs text-muted-foreground">
               <span className="text-red-600">-2.1%</span> from last quarter
             </p>
@@ -256,7 +256,7 @@ export default function Analytics() {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm text-muted-foreground">Employment Growth</p>
-                    <p className="text-2xl font-bold">{analytics?.metrics?.employmentGrowth || 0}%</p>
+                    <p className="text-2xl font-bold">{(analytics as any)?.metrics?.employmentGrowth || 0}%</p>
                   </div>
                   <TrendingUp className="h-8 w-8 text-green-600" />
                 </div>
