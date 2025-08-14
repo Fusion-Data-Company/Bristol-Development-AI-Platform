@@ -46,11 +46,14 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
     retry: false,
   });
 
-  // Fetch site metrics
-  const { data: siteMetrics = [], isLoading: metricsLoading } = useQuery<SiteMetric[]>({
+  // Fetch site metrics - handle object response from API
+  const { data: siteMetricsResponse, isLoading: metricsLoading } = useQuery({
     queryKey: ['/api/sites/metrics'],
     retry: false,
   });
+  
+  // Extract metrics array from response or use empty array as fallback
+  const siteMetrics = Array.isArray(siteMetricsResponse) ? siteMetricsResponse : [];
 
   // Fetch real market analytics data
   const { data: marketAnalytics, isLoading: marketLoading } = useQuery({

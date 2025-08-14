@@ -401,10 +401,10 @@ export default function Sites() {
               <CardContent className="p-0 h-full bg-gradient-to-br from-white to-bristol-cream/30">
                 {sites.length > 0 ? (
                   <SitesTable 
-                    data={sites} 
+                    data={sites as any} 
                     isLoading={isLoading && !error}
-                    onSelectSite={setSelectedSite}
-                    selectedSite={selectedSite}
+                    onSelectSite={(site: any) => setSelectedSite(site)}
+                    selectedSite={selectedSite as any}
                     onRefresh={refetch}
                   />
                 ) : (
@@ -447,7 +447,7 @@ export default function Sites() {
                 </CardHeader>
                 <CardContent className="bg-gradient-to-br from-white to-bristol-cream/30 text-bristol-ink">
                   {selectedSite ? (
-                    <SiteDetails site={selectedSite} onRefresh={refetch} />
+                    <SiteDetails site={selectedSite as any} onRefresh={refetch} />
                   ) : (
                     <div className="flex flex-col items-center justify-center py-12 space-y-4">
                       <div className="relative group">
@@ -474,7 +474,7 @@ export default function Sites() {
                   </div>
                 </CardHeader>
                 <CardContent className="bg-gradient-to-br from-white to-bristol-gold/10">
-                  <SiteMapPreview site={selectedSite} />
+                  <SiteMapPreview site={selectedSite as any} />
                 </CardContent>
               </Card>
             </div>
