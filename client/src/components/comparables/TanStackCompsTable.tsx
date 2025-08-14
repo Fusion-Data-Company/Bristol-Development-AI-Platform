@@ -70,6 +70,22 @@ interface CompRecord {
   createdAt: string;
   updatedAt: string;
   jobId?: string;
+  // Enhanced comparable fields
+  capRate?: number;
+  noi?: number;
+  pricePerUnit?: number;
+  pricePerSqft?: number;
+  totalSqft?: number;
+  parkingRatio?: number;
+  lotSize?: number;
+  stories?: number;
+  constructionType?: string;
+  unitMix?: Record<string, number>;
+  marketRentPsf?: number;
+  effectiveRentPsf?: number;
+  leaseUpStatus?: string;
+  developer?: string;
+  propertyManager?: string;
 }
 
 interface TanStackCompsTableProps {
@@ -142,7 +158,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
       let value: any = editValue;
       
       // Parse numeric fields
-      if (['units', 'yearBuilt', 'rentPsf', 'rentPu', 'occupancyPct', 'concessionPct', 'lat', 'lng'].includes(column.id)) {
+      if (['units', 'yearBuilt', 'rentPsf', 'rentPu', 'occupancyPct', 'concessionPct', 'lat', 'lng', 'capRate', 'noi', 'pricePerUnit', 'pricePerSqft', 'totalSqft', 'parkingRatio', 'lotSize', 'stories', 'marketRentPsf', 'effectiveRentPsf'].includes(column.id)) {
         value = editValue ? Number(editValue) : null;
       }
       
@@ -353,6 +369,74 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
           table={table} 
         />
       ),
+    }),
+    // Cap Rate
+    columnHelper.accessor('capRate', {
+      header: 'Cap Rate',
+      cell: ({ getValue, row, column, table }) => (
+        <EditableCell 
+          getValue={() => getValue() ? `${Number(getValue()).toFixed(2)}%` : null} 
+          row={row} 
+          column={column} 
+          table={table} 
+        />
+      ),
+    }),
+    // NOI
+    columnHelper.accessor('noi', {
+      header: 'NOI',
+      cell: ({ getValue, row, column, table }) => (
+        <EditableCell 
+          getValue={() => getValue() ? `$${Number(getValue()).toLocaleString()}` : null} 
+          row={row} 
+          column={column} 
+          table={table} 
+        />
+      ),
+    }),
+    // Price per Unit
+    columnHelper.accessor('pricePerUnit', {
+      header: 'Price/Unit',
+      cell: ({ getValue, row, column, table }) => (
+        <EditableCell 
+          getValue={() => getValue() ? `$${Number(getValue()).toLocaleString()}` : null} 
+          row={row} 
+          column={column} 
+          table={table} 
+        />
+      ),
+    }),
+    // Total Square Feet
+    columnHelper.accessor('totalSqft', {
+      header: 'Total SF',
+      cell: ({ getValue, row, column, table }) => (
+        <EditableCell 
+          getValue={() => getValue() ? Number(getValue()).toLocaleString() : null} 
+          row={row} 
+          column={column} 
+          table={table} 
+        />
+      ),
+    }),
+    // Construction Type
+    columnHelper.accessor('constructionType', {
+      header: 'Construction',
+      cell: ({ getValue, row, column, table }) => (
+        <EditableCell getValue={getValue} row={row} column={column} table={table} />
+      ),
+    }),
+    // Lease-Up Status
+    columnHelper.accessor('leaseUpStatus', {
+      header: 'Status',
+      cell: ({ getValue }) => {
+        const status = getValue();
+        const variant = status === 'Stabilized' ? 'default' : status === 'Lease-Up' ? 'secondary' : 'outline';
+        return (
+          <Badge variant={variant} className="text-xs">
+            {status || 'Unknown'}
+          </Badge>
+        );
+      },
     }),
     columnHelper.accessor('amenityTags', {
       header: 'Amenities',
