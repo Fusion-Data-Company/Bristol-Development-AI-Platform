@@ -89,13 +89,26 @@ async function scrapeUrl(url: string, query: ScrapeQuery): Promise<FirecrawlResp
               items: {
                 type: 'object',
                 properties: {
-                  name: { type: 'string' },
-                  address: { type: 'string' },
-                  units: { type: 'number' },
-                  rent: { type: 'string' },
-                  amenities: { type: 'array', items: { type: 'string' } },
-                  yearBuilt: { type: 'number' },
-                  occupancy: { type: 'string' }
+                  name: { type: 'string', description: 'Property or complex name' },
+                  address: { type: 'string', description: 'Full street address' },
+                  city: { type: 'string', description: 'City name' },
+                  state: { type: 'string', description: 'State abbreviation' },
+                  zip: { type: 'string', description: 'ZIP code' },
+                  units: { type: 'number', description: 'Total number of units' },
+                  rent: { type: 'string', description: 'Rent range or price' },
+                  rentPerUnit: { type: 'number', description: 'Average rent per unit' },
+                  rentPerSqft: { type: 'number', description: 'Rent per square foot' },
+                  amenities: { 
+                    type: 'array', 
+                    items: { type: 'string' },
+                    description: 'List of property amenities'
+                  },
+                  yearBuilt: { type: 'number', description: 'Year property was built' },
+                  occupancy: { type: 'string', description: 'Occupancy status or rate' },
+                  squareFeet: { type: 'number', description: 'Total or average square footage' },
+                  assetType: { type: 'string', description: 'Property type (e.g., Multifamily, Apartment)' },
+                  phone: { type: 'string', description: 'Contact phone number' },
+                  website: { type: 'string', description: 'Property website URL' }
                 }
               }
             }

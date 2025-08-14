@@ -41,7 +41,7 @@ export async function runJobNow(id: string) {
       .set({ status: 'running', meta: { stage: 'initializing', progress: 0 } })
       .where(eq(scrapeJobsAnnex.id, id));
 
-    // Use the enhanced scraping agent
+    // Primary: Use Firecrawl as the default scraper
     const scrapeQuery: ScrapeQuery = {
       address,
       radius_mi,
@@ -50,48 +50,76 @@ export async function runJobNow(id: string) {
       amenities
     };
     
-    console.log(`🤖 Running enhanced scraping agent for: ${address}`);
+    console.log(`🔥 Running Firecrawl primary scraper for: ${address}`);
     
     // Update progress
     await db.update(scrapeJobsAnnex)
-      .set({ meta: { stage: 'enhanced_scraping', progress: 25 } })
+      .set({ meta: { stage: 'firecrawl_scraping', progress: 25 } })
       .where(eq(scrapeJobsAnnex.id, id));
     
-    const agentResult = await runScrapeAgent(scrapeQuery);
+    // Try Firecrawl first - import here to avoid circular dependency
+    const { scrapeFirecrawl } = await import('./firecrawl');
+    const firecrawlResult = await scrapeFirecrawl(scrapeQuery);
     
-    if (agentResult.records && agentResult.records.length > 0) {
-      results.push(...agentResult.records);
+    if (firecrawlResult.records && firecrawlResult.records.length > 0) {
+      results.push(...firecrawlResult.records);
       scrapeSuccess = true;
-      console.log(`✅ Enhanced agent found ${agentResult.records.length} properties`);
+      console.log(`✅ Firecrawl found ${firecrawlResult.records.length} properties`);
       
       // Update progress
       await db.update(scrapeJobsAnnex)
         .set({ meta: { stage: 'processing_results', progress: 75 } })
         .where(eq(scrapeJobsAnnex.id, id));
     } else {
-      errorMessages.push('Enhanced agent returned no results');
+      errorMessages.push('Firecrawl returned no results');
+      console.log('🔄 Firecrawl found no results, trying enhanced agent...');
+      
+      // Fallback: Enhanced scraping agent
+      await db.update(scrapeJobsAnnex)
+        .set({ meta: { stage: 'enhanced_agent_fallback', progress: 40 } })
+        .where(eq(scrapeJobsAnnex.id, id));
+      
+      const agentResult = await runScrapeAgent(scrapeQuery);
+      
+      if (agentResult.records && agentResult.records.length > 0) {
+        results.push(...agentResult.records);
+        scrapeSuccess = true;
+        console.log(`✅ Enhanced agent found ${agentResult.records.length} properties`);
+        
+        // Update progress
+        await db.update(scrapeJobsAnnex)
+          .set({ meta: { stage: 'processing_results', progress: 75 } })
+          .where(eq(scrapeJobsAnnex.id, id));
+      } else {
+        errorMessages.push('Enhanced agent returned no results');
+      }
+      
+      // Add caveats to error messages if present
+      if (agentResult.caveats) {
+        errorMessages.push(...agentResult.caveats);
+      }
     }
     
-    // Add caveats to error messages if present
-    if (agentResult.caveats) {
-      errorMessages.push(...agentResult.caveats);
+    // Add Firecrawl caveats to error messages if present
+    if (firecrawlResult.caveats) {
+      errorMessages.push(...firecrawlResult.caveats);
     }
     
   } catch (error) {
-    const errorMsg = `Enhanced scraping agent failed: ${error}`;
+    const errorMsg = `Primary scraping (Firecrawl + Enhanced agent) failed: ${error}`;
     console.warn(errorMsg);
     errorMessages.push(errorMsg);
     
     // Update progress to fallback adapters
     try {
       await db.update(scrapeJobsAnnex)
-        .set({ meta: { stage: 'fallback_adapters', progress: 50 } })
+        .set({ meta: { stage: 'legacy_adapters_fallback', progress: 50 } })
         .where(eq(scrapeJobsAnnex.id, id));
     } catch (updateError) {
       console.warn('Failed to update job progress:', updateError);
     }
     
-    // Fallback to existing adapters
+    // Final fallback: Legacy adapters (for demo/backup purposes)
     console.log('🔄 Falling back to legacy adapters...');
     for (const adapter of adapters) {
       try {

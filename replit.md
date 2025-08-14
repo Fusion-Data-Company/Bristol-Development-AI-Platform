@@ -71,8 +71,10 @@ Preferred communication style: Simple, everyday language.
 
 ### Integrated Services
 - **AI Services**: OpenRouter API (for models like GPT-5, Claude 4, Grok 4, Perplexity).
+- **Primary Web Scraping**: Firecrawl API (default scraper for property data extraction with LLM-ready markdown output and structured data extraction).
+- **Fallback Scrapers**: Enhanced scraping agent and legacy adapters (ApartmentList, Rentals.com, LoopNet, Craigslist) for backup data collection.
 - **Economic Data APIs**: BLS (employment), BEA (GDP/income), HUD (vacancy rates).
 - **Other Data APIs**: Foursquare, FBI, NOAA.
-- **Automation Tools**: n8n Workflows, Apify Web Scraping, Census Data API, HUD Fair Market Rent, Metrics Storage.
+- **Automation Tools**: n8n Workflows, Census Data API, HUD Fair Market Rent, Metrics Storage.
 - **Mapping**: MapBox GL.
 - **Microsoft 365**: Integration foundation for OneDrive and Outlook connectivity.
