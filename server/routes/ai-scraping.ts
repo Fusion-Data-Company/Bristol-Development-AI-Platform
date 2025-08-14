@@ -30,40 +30,11 @@ router.post('/ai-scrape', async (req, res) => {
     const results: any[] = [];
     const jobId = randomUUID();
     
-    // Default schema for property extraction
-    const propertySchema = extractSchema || {
-      type: 'object',
-      properties: {
-        properties: {
-          type: 'array',
-          items: {
-            type: 'object',
-            properties: {
-              name: { type: 'string', description: 'Property or complex name' },
-              address: { type: 'string', description: 'Full street address' },
-              city: { type: 'string', description: 'City name' },
-              state: { type: 'string', description: 'State abbreviation' },
-              zip: { type: 'string', description: 'ZIP code' },
-              units: { type: 'number', description: 'Total number of units' },
-              rent: { type: 'string', description: 'Rent range or price' },
-              rentPerUnit: { type: 'number', description: 'Average rent per unit' },
-              rentPerSqft: { type: 'number', description: 'Rent per square foot' },
-              amenities: { 
-                type: 'array', 
-                items: { type: 'string' },
-                description: 'List of property amenities'
-              },
-              yearBuilt: { type: 'number', description: 'Year property was built' },
-              occupancy: { type: 'string', description: 'Occupancy status or rate' },
-              squareFeet: { type: 'number', description: 'Total or average square footage' },
-              assetType: { type: 'string', description: 'Property type (e.g., Multifamily, Apartment)' },
-              phone: { type: 'string', description: 'Contact phone number' },
-              website: { type: 'string', description: 'Property website URL' }
-            }
-          }
-        }
-      }
-    };
+    // Import elite real estate schema
+    const { ELITE_REAL_ESTATE_SCHEMA } = await import('../mcp-tools/firecrawl-elite-real-estate');
+    
+    // Use elite schema or provided custom schema
+    const propertySchema = extractSchema || ELITE_REAL_ESTATE_SCHEMA;
 
     // Process each URL
     for (const url of urls.slice(0, 10)) { // Limit to 10 URLs for cost control
@@ -152,10 +123,24 @@ async function extractPropertyDataFromUrl(url: string, schema: any): Promise<any
     },
     body: JSON.stringify({
       urls: [url],
-      prompt: 'Extract detailed property information including names, addresses, rent prices, amenities, unit counts, and contact details for multifamily/apartment properties.',
+      prompt: `Extract comprehensive multifamily/apartment property data including:
+      
+      FINANCIAL: Rent ranges, pricing, fees, unit costs, investment metrics, cap rates, NOI
+      PROPERTY: Unit counts, square footage, year built, amenities, features, unit mix
+      PERFORMANCE: Occupancy rates, lease terms, turnover, concessions, lease-up velocity
+      LOCATION: Address details, neighborhood info, walkability, transit scores, nearby attractions
+      MANAGEMENT: Contact info, leasing details, management company, office hours
+      MARKET: Property class, positioning, competitors, demographics, market analysis
+      
+      Focus on quantitative data and specific financial metrics. Extract all available investment-grade data.`,
+      
+      systemPrompt: 'You are an elite real estate data extraction specialist for multifamily investment analysis. Extract detailed, accurate property information focusing on financial metrics, unit counts, rental rates, occupancy data, and market positioning. Be precise with numbers and comprehensive with investment-grade details.',
+      
       schema,
       allowExternalLinks: false,
-      includeSubdomains: false
+      includeSubdomains: true,
+      timeout: 45000,
+      waitFor: 3000
     })
   });
 

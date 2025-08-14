@@ -163,6 +163,9 @@ export class McpService {
         case "hud.fmr":
           result = await this.executeHudFmr(payload);
           break;
+        case "bristol_property_scraper":
+          result = await this.executeBristolPropertyScraper(payload);
+          break;
         default:
           throw new Error(`Tool execution not implemented: ${toolName}`);
       }
@@ -345,6 +348,55 @@ export class McpService {
       return { success: true, data: mockFmrData };
     } catch (error) {
       return { success: false, error: error instanceof Error ? error.message : "HUD FMR fetch failed" };
+    }
+  }
+
+  private async executeBristolPropertyScraper(payload: any): Promise<ToolResult> {
+    try {
+      console.log(`🏢 Bristol AI property scraper executing: ${payload.urls?.length || 0} URLs`);
+      
+      // Call the elite search API endpoint
+      const response = await fetch('http://localhost:5000/api/bristol-elite/elite-search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          query: payload.query || `Property search for ${payload.location || 'multiple locations'}`,
+          location: payload.location,
+          propertyType: payload.propertyType || 'multifamily',
+          limit: 15,
+          sessionId: 'bristol-ai-mcp',
+          userId: 'bristol-ai-agent'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Elite search API failed: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      return {
+        success: result.success || false,
+        data: {
+          jobId: result.jobId,
+          propertiesFound: result.propertiesFound || 0,
+          properties: result.properties || [],
+          metadata: {
+            ...result.metadata,
+            mcpTool: 'bristol_property_scraper',
+            comparablesAnnexUrl: '/comparables-annex'
+          }
+        }
+      };
+
+    } catch (error) {
+      console.error('Bristol property scraper failed:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Bristol property scraper failed' 
+      };
     }
   }
 
