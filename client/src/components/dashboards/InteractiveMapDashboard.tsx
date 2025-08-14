@@ -216,7 +216,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
   };
 
   return (
-    <div className="h-full w-full flex bg-bristol-ink max-w-none">
+    <div className="h-full w-full flex bg-bristol-ink">
       {/* Main Map Area - Expanded */}
       <div className="flex-1 relative">
         <InteractiveMap

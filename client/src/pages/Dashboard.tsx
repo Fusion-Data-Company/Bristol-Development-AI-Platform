@@ -582,9 +582,11 @@ export default function Dashboard() {
 
 
 
-        {/* Interactive Mapping Tab - Full Screen */}
+        {/* Interactive Mapping Tab - Breaks out of container constraints */}
+        </div>
+        
         {activeTab === "mapping" && (
-          <div className="h-screen bg-bristol-cream flex flex-col">
+          <div className="fixed inset-0 z-40 h-screen bg-bristol-cream flex flex-col">
             {/* Top Info Panel */}
             <div className="bg-white/95 backdrop-blur-sm border-b border-bristol-stone p-4 z-20 relative">
               <div className="flex items-center justify-between">
@@ -629,12 +631,14 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Interactive Map Dashboard - Expanded Container */}
+            {/* Interactive Map Dashboard - Full Width Container */}
             <div className="flex-1 flex relative w-full h-full">
               <InteractiveMapDashboard />
             </div>
           </div>
         )}
+        
+        <div className="relative z-10 py-8">
 
         {/* Scoring Tab */}
         {activeTab === "scoring" && (
