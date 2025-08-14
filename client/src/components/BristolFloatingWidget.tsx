@@ -144,7 +144,7 @@ export default function BristolFloatingWidget({
   const [wsConnected, setWsConnected] = useState(false);
   const [mcpEnabled, setMcpEnabled] = useState(true);
   const [realTimeData, setRealTimeData] = useState(true);
-  const [eliteMode, setEliteMode] = useState(false);
+  // Always elite mode - no toggle needed
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
@@ -332,7 +332,7 @@ export default function BristolFloatingWidget({
 
     try {
       // Use elite endpoint when elite mode is on, otherwise use enhanced endpoint
-      const endpoint = eliteMode ? "/api/bristol-brain-elite/chat" : "/api/bristol-brain/enhanced-chat";
+      const endpoint = "/api/bristol-brain-elite/chat"; // Always use elite endpoint
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -340,8 +340,8 @@ export default function BristolFloatingWidget({
           ...enhancedPayload,
           ...mcpContext,
           systemStatus,
-          sessionId: eliteMode ? sessionId : undefined,
-          userAgent: eliteMode ? "Bristol Brain Elite v1.0" : "Bristol Brain Boss Agent v2.0"
+          sessionId: sessionId,
+          userAgent: "Bristol Brain Elite v1.0"
         }),
       });
 
@@ -441,13 +441,21 @@ export default function BristolFloatingWidget({
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
 
-          {/* Glass Panel with Ambient Glow */}
+          {/* Cyberpunk Glassomorphic Panel with Neon Glow */}
           <div 
-            className="absolute inset-y-0 left-0 w-[92vw] sm:w-[620px] text-neutral-100 shadow-2xl border-r border-bristol-cyan/40 flex flex-col"
+            className="absolute inset-y-0 left-0 w-[92vw] sm:w-[620px] text-neutral-100 shadow-2xl flex flex-col cyberpunk-elite-panel"
             style={{
-              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 50%, rgba(15, 23, 42, 0.95) 100%)',
-              backdropFilter: 'blur(24px) saturate(1.5)',
-              boxShadow: '0 0 60px rgba(69, 214, 202, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+              background: 'linear-gradient(135deg, rgba(5, 10, 20, 0.98) 0%, rgba(15, 25, 45, 0.95) 25%, rgba(69, 214, 202, 0.08) 50%, rgba(212, 175, 55, 0.06) 75%, rgba(10, 15, 30, 0.98) 100%)',
+              backdropFilter: 'blur(30px) saturate(200%) brightness(1.1)',
+              border: '1px solid transparent',
+              borderImage: 'linear-gradient(135deg, #45d6ca 0%, #d4af37 50%, #45d6ca 100%) 1',
+              boxShadow: `
+                0 0 100px rgba(69, 214, 202, 0.4),
+                0 0 200px rgba(212, 175, 55, 0.2),
+                inset 0 0 60px rgba(69, 214, 202, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 2px 2px rgba(69, 214, 202, 0.3)
+              `,
             }}
           >
             {/* Premium Glass Header */}
@@ -534,39 +542,33 @@ export default function BristolFloatingWidget({
               )}
               
               <div className="flex flex-wrap items-center gap-6">
-                {/* Elite Mode Toggle */}
-                <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-bristol-gold/40 backdrop-blur-sm"
+                {/* Elite AI Status - Always Active */}
+                <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-bristol-gold/40 backdrop-blur-sm cyberpunk-glow"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%)',
+                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(69, 214, 202, 0.1) 100%)',
+                    boxShadow: '0 0 30px rgba(212, 175, 55, 0.3), inset 0 0 20px rgba(69, 214, 202, 0.1)',
                   }}>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={eliteMode}
-                      onChange={(e) => setEliteMode(e.target.checked)}
-                      className="sr-only"
-                    />
-                    <div className={cx(
-                      "relative w-12 h-6 rounded-full transition-colors duration-300",
-                      eliteMode ? "bg-bristol-gold" : "bg-gray-600"
-                    )}>
-                      <div className={cx(
-                        "absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300",
-                        eliteMode ? "translate-x-6" : "translate-x-0"
-                      )} />
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-bristol-gold rounded-full blur-sm animate-pulse" />
+                      <Brain className="relative h-5 w-5 text-bristol-gold animate-float" />
                     </div>
-                    <span className="text-xs font-semibold text-bristol-gold uppercase tracking-wider flex items-center gap-2">
-                      <Target className="h-4 w-4" />
-                      Elite Mode {eliteMode ? "ON" : "OFF"}
+                    <span className="text-xs font-bold text-bristol-gold uppercase tracking-wider">
+                      $200M+ ELITE AI • ALWAYS ACTIVE
                     </span>
-                  </label>
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 bg-bristol-cyan rounded-full animate-pulse" />
+                      <div className="w-1.5 h-1.5 bg-bristol-cyan rounded-full animate-pulse delay-75" />
+                      <div className="w-1.5 h-1.5 bg-bristol-cyan rounded-full animate-pulse delay-150" />
+                    </div>
+                  </div>
                 </div>
                 
                 {/* Glass Elite Model Selector */}
                 <div className="flex-1 min-w-[240px]">
                   <label className="block text-xs text-bristol-cyan font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
                     <Brain className="h-3 w-3" />
-                    {eliteMode ? "$200M+ Deal AI" : "Elite AI Model"}
+                    $200M+ Deal AI Engine
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
@@ -638,7 +640,8 @@ export default function BristolFloatingWidget({
                   label="Chat" 
                   onClick={() => setActiveTab("chat")} 
                 />
-                {eliteMode && (
+                {/* Always show elite tabs */}
+                {true && (
                   <>
                     <TabButton 
                       icon={<FileText className="h-4 w-4" />} 
@@ -810,22 +813,7 @@ export default function BristolFloatingWidget({
         </div>
       )}
       
-      {/* Render Elite Mode Component */}
-      {open && eliteMode && (
-        <div className="fixed inset-0 z-[999]">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <div className="absolute inset-4 md:inset-8 lg:inset-12">
-            <BristolBrainElite 
-              sessionId={sessionId}
-              dataContext={appData}
-              onClose={() => {
-                setEliteMode(false);
-                setOpen(false);
-              }}
-            />
-          </div>
-        </div>
-      )}
+
     </>
   );
 }

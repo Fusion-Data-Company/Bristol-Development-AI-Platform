@@ -4,6 +4,130 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Cyberpunk Elite AI Animations */
+@keyframes neon-pulse {
+  0%, 100% { 
+    filter: brightness(1) drop-shadow(0 0 10px currentColor);
+  }
+  50% { 
+    filter: brightness(1.2) drop-shadow(0 0 20px currentColor);
+  }
+}
+
+@keyframes cyber-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes data-stream {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+@keyframes hologram-glitch {
+  0%, 100% { 
+    transform: translateX(0);
+    filter: hue-rotate(0deg);
+  }
+  20% { 
+    transform: translateX(-2px);
+    filter: hue-rotate(90deg);
+  }
+  40% { 
+    transform: translateX(2px);
+    filter: hue-rotate(180deg);
+  }
+  60% { 
+    transform: translateX(-1px);
+    filter: hue-rotate(270deg);
+  }
+  80% { 
+    transform: translateX(1px);
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* Cyberpunk Panel Styles */
+.cyberpunk-elite-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.cyberpunk-elite-panel::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #45d6ca, #d4af37, #a855f7, #45d6ca);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+  opacity: 0.3;
+  z-index: -1;
+  filter: blur(4px);
+}
+
+.cyberpunk-elite-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(69, 214, 202, 0.03) 2px,
+    rgba(69, 214, 202, 0.03) 4px
+  );
+  pointer-events: none;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.cyberpunk-glow {
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: cyber-float 3s ease-in-out infinite;
+}
+
+/* Glitch text effect for headers */
+.glitch-text {
+  position: relative;
+  animation: hologram-glitch 5s ease-in-out infinite;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text::before {
+  animation: hologram-glitch 0.3s ease-in-out infinite;
+  color: #45d6ca;
+  z-index: -1;
+  animation-delay: 0.1s;
+}
+
+.glitch-text::after {
+  animation: hologram-glitch 0.3s ease-in-out infinite reverse;
+  color: #d4af37;
+  z-index: -2;
+  animation-delay: 0.2s;
+}
+
 /* Cyberpunk Futuristic AI Agent Styles */
 @layer utilities {
   .cyberpunk-text {

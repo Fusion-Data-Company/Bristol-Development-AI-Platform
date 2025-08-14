@@ -6,20 +6,22 @@ Bristol Site Intelligence Platform is a comprehensive enterprise-grade AI-powere
 
 ## Recent Changes
 
-**August 2025 - Bristol Brain Elite Integration**
-- ✓ **MAJOR: Bristol Brain Elite Fully Integrated into Popout** - All elite AI functionality now exists within the single popout widget
+**January 2025 - Bristol Brain Elite Always-On Integration**
+- ✓ **MAJOR: Bristol Brain Elite Fully Integrated as Always-Elite Agent** - Single powerful AI agent with no toggles or modes
+  - Removed all elite mode toggles - agent is always elite with $200M+ deal intelligence
+  - Enhanced with full cyberpunk glassomorphic styling with neon glows and animations
   - Implemented comprehensive PostgreSQL database schema with persistent memory across sessions
   - Created tables for agents, conversations, memories (short/long term), files, prompts, context, and decisions
   - Built BristolBrainService with elite-level AI capabilities and persistent memory management
   - Developed advanced API routes with file upload functionality (PDF, Excel, CSV, JSON) and conversation management
   - Fully integrated elite features into existing BristolFloatingWidget popout:
-    - Elite Mode toggle switches between standard and advanced AI capabilities
-    - New tabs added: Prompts (system/project prompt management) and Files (document attachments)
-    - Shared session ID enables conversation continuity between popout and chat page
-    - All functionality contained within the single popout interface - no separate windows
-  - AI now thinks like senior partner with 30+ years experience handling IRR, NPV, cap rates, waterfalls, LP/GP structures
+    - Always uses elite endpoint for $200M+ deal analysis
+    - Prompts and Files tabs always visible for document and context management
+    - Shared session ID enables conversation continuity across sessions
+    - Cyberpunk UI with animated gradients, neon borders, and holographic effects
+  - AI always thinks like senior partner with 30+ years experience handling IRR, NPV, cap rates, waterfalls, LP/GP structures
   - System maintains memory of user preferences, past decisions, and deal analysis patterns
-  - Elite mode provides comprehensive deal analysis with confidence scores and impact values
+  - Always provides comprehensive deal analysis with confidence scores and impact values
   - File attachment system processes documents for context-aware analysis
   - Decision tracking logs all investment recommendations with reasoning and confidence levels
 
