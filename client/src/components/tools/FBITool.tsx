@@ -277,8 +277,8 @@ export function FBITool() {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-3">
+      {/* 🚀 ENHANCED Action Buttons */}
+      <div className="flex gap-6 justify-center">
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
