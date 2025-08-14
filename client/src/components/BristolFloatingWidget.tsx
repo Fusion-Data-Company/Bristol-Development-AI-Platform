@@ -132,7 +132,7 @@ export default function BristolFloatingWidget({
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content: "Welcome to Bristol A.I. Elite v5.0. I provide institutional-grade real estate analysis including property valuations, market intelligence, demographic analytics, and investment opportunity assessments. Ask me about specific properties, portfolio performance, market trends, or complex deal structures.",
+      content: "I'm the Bristol Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.\n\nIf you're inquiring about a specific modeling approach – say, for cap rate projections, value-add strategies, or portfolio optimization – provide the details, and I'll dive in with quantitative analysis. What's the opportunity on the table? Let's evaluate it now.",
       createdAt: nowISO(),
     }
   ]);
@@ -712,15 +712,73 @@ export default function BristolFloatingWidget({
                   </div>
                 </div>
                 
-                {/* Enterprise Status Indicators */}
+                {/* Futuristic Live Status Indicators */}
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-bristol-ink/60 border border-bristol-cyan/30">
-                    <div className="w-2 h-2 rounded-full bg-bristol-cyan animate-pulse" />
-                    <span className="text-xs text-bristol-cyan font-bold">ONLINE</span>
+                  {/* Live Online Status */}
+                  <div className="relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-bristol-cyan/40 to-bristol-electric/40 rounded-2xl blur opacity-75 group-hover:opacity-100 animate-pulse" />
+                    <div 
+                      className="relative flex items-center gap-3 px-4 py-2 rounded-2xl border overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(69, 214, 202, 0.1) 50%, rgba(30, 41, 59, 0.9) 100%)',
+                        borderColor: 'rgba(69, 214, 202, 0.8)',
+                        boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 0 15px rgba(69, 214, 202, 0.3)',
+                      }}
+                    >
+                      {/* Animated data flow effect */}
+                      <div className="absolute inset-0 opacity-30">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-transparent via-bristol-cyan to-transparent animate-pulse" />
+                        <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-transparent via-bristol-cyan to-transparent animate-pulse delay-300" />
+                      </div>
+                      
+                      <div className="relative flex items-center gap-2">
+                        <div className="relative">
+                          <div className="w-3 h-3 rounded-full bg-bristol-cyan animate-pulse shadow-lg shadow-bristol-cyan/50" />
+                          <div className="absolute inset-0 w-3 h-3 rounded-full bg-bristol-cyan animate-ping opacity-20" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-xs text-bristol-cyan font-black uppercase tracking-wider leading-none">ONLINE</span>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse" />
+                            <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse delay-100" />
+                            <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse delay-200" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-bristol-ink/60 border border-bristol-gold/30">
-                    <Shield className="h-3 w-3 text-bristol-gold" />
-                    <span className="text-xs text-bristol-gold font-bold">SECURE</span>
+
+                  {/* Live Secure Status */}
+                  <div className="relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-bristol-gold/40 to-yellow-400/40 rounded-2xl blur opacity-75 group-hover:opacity-100 animate-pulse" />
+                    <div 
+                      className="relative flex items-center gap-3 px-4 py-2 rounded-2xl border overflow-hidden"
+                      style={{
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(212, 175, 55, 0.1) 50%, rgba(30, 41, 59, 0.9) 100%)',
+                        borderColor: 'rgba(212, 175, 55, 0.8)',
+                        boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 0 15px rgba(212, 175, 55, 0.3)',
+                      }}
+                    >
+                      {/* Security scan effect */}
+                      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-2000 ease-in-out">
+                        <div className="h-full w-6 bg-gradient-to-r from-transparent via-bristol-gold/20 to-transparent skew-x-12" />
+                      </div>
+                      
+                      <div className="relative flex items-center gap-2">
+                        <div className="relative">
+                          <Shield className="h-4 w-4 text-bristol-gold animate-pulse" />
+                          <div className="absolute -inset-1 border border-bristol-gold/30 rounded animate-pulse" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-xs text-bristol-gold font-black uppercase tracking-wider leading-none">SECURE</span>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <div className="w-1 h-0.5 bg-bristol-gold rounded-full animate-pulse" />
+                            <div className="w-2 h-0.5 bg-bristol-gold rounded-full animate-pulse delay-150" />
+                            <div className="w-1 h-0.5 bg-bristol-gold rounded-full animate-pulse delay-300" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
