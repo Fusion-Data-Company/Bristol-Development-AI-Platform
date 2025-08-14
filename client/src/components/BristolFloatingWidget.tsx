@@ -802,6 +802,7 @@ export default function BristolFloatingWidget({
               }}
             >
               {/* Tab Content */}
+              {console.log("Current activeTab:", activeTab)}
               {activeTab === "chat" && (
                 <div className="flex-1 overflow-hidden flex flex-col relative">
                   {/* Background tint overlay for chat area */}
@@ -825,15 +826,23 @@ export default function BristolFloatingWidget({
               {activeTab === "tools" && <ToolsPane systemStatus={{
                 websocket: "connected",
                 database: "connected",
-                apis: []
-              }} mcpEnabled={true} setMcpEnabled={() => {}} />}
+                apis: [],
+                mcpTools: []
+              }} mcpEnabled={mcpEnabled} setMcpEnabled={setMcpEnabled} />}
 
               {activeTab === "admin" && <AdminPane 
                 systemPrompt={systemPrompt} 
                 setSystemPrompt={setSystemPrompt}
-                onSave={saveSystemPrompt}
-                realTimeData={true}
-                setRealTimeData={() => {}}
+                onSave={() => {
+                  try {
+                    localStorage.setItem("bristol.systemPrompt", systemPrompt);
+                    console.log("System prompt saved to localStorage");
+                  } catch (error) {
+                    console.error("Error saving system prompt:", error);
+                  }
+                }}
+                realTimeData={realTimeData}
+                setRealTimeData={setRealTimeData}
               />}
             </div>
 
@@ -1067,7 +1076,7 @@ function AdminPane({
         <div className="flex items-center justify-between">
           <h4 className="text-bristol-gold font-semibold flex items-center gap-2">
             <Settings className="h-4 w-4" />
-            BRISTOL BRAIN CONFIGURATION
+            BRISTOL A.I. CONFIGURATION
           </h4>
           <button
             onClick={onSave}
@@ -1109,9 +1118,9 @@ function AdminPane({
           
           <div className="flex gap-2 mt-3">
             <button
-              onClick={async () => {
+              onClick={() => {
                 try {
-                  await onSaveSystemPrompt?.(systemPrompt);
+                  localStorage.setItem("bristol.systemPrompt", systemPrompt);
                   console.log("System prompt saved successfully");
                 } catch (error) {
                   console.error("Error saving system prompt:", error);
