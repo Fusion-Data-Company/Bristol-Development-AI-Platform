@@ -1,5 +1,6 @@
 import { storage } from "../storage";
 import OpenAI from "openai";
+import { OPENAI_DOCUMENTATION } from "../data/openai-documentation";
 import type {
   ChatMessage,
   InsertChatMessage,
@@ -408,16 +409,62 @@ Remember: You're not providing general advice. You're making real-time decisions
         });
       }
       
-      // Call AI with enhanced context - using Grok 4 as default premium model
+      // Call AI with enhanced context - using Grok 4 as default (GPT-5 requires BYOK setup)
       const selectedModel = context.selectedModel || "x-ai/grok-4"; // Default to Grok 4 - xAI's latest reasoning model
-      const completion = await this.openai.chat.completions.create({
-        model: selectedModel,
-        messages: aiMessages as any,
-        temperature: 0.2, // Lower temperature for more consistent, professional responses
-        max_tokens: 2000,
-        presence_penalty: 0.1,
-        frequency_penalty: 0.1,
-      });
+      
+      // Enhanced error handling and model-specific configuration
+      let completion;
+      try {
+        const isGPT5 = selectedModel.includes('gpt-5');
+        const isOpenAI = selectedModel.includes('openai/');
+        
+        completion = await this.openai.chat.completions.create({
+          model: selectedModel,
+          messages: aiMessages as any,
+          temperature: 0.2, // Lower temperature for more consistent, professional responses
+          max_tokens: isGPT5 ? 4000 : 2000, // GPT-5 supports higher output tokens
+          presence_penalty: 0.1,
+          frequency_penalty: 0.1,
+          // Add reasoning support for GPT-5
+          ...(isGPT5 && { 
+            response_format: { type: "text" },
+            tools: context.enableAdvancedReasoning ? [] : undefined
+          })
+        });
+      } catch (error: any) {
+        console.error(`Bristol Brain API Error for model ${selectedModel}:`, error);
+        
+        // Enhanced error handling with fallback
+        if (error?.status === 401) {
+          throw new Error(`Authentication failed for ${selectedModel}. Please check API key configuration.`);
+        } else if (error?.status === 403) {
+          // If GPT-5 fails, provide specific BYOK guidance and fall back to Grok 4
+          if (selectedModel.includes('gpt-5')) {
+            console.log(`GPT-5 BYOK not configured, falling back to Grok 4`);
+            // Automatically fall back to Grok 4
+            try {
+              completion = await this.openai.chat.completions.create({
+                model: "x-ai/grok-4",
+                messages: aiMessages as any,
+                temperature: 0.2,
+                max_tokens: 2000,
+                presence_penalty: 0.1,
+                frequency_penalty: 0.1,
+              });
+            } catch (fallbackError) {
+              throw new Error(`GPT-5 requires BYOK setup in OpenRouter integrations. Fallback to Grok 4 also failed: ${fallbackError}`);
+            }
+          } else {
+            throw new Error(`Access denied for ${selectedModel}. Model may require additional setup.`);
+          }
+        } else if (error?.status === 429) {
+          throw new Error(`Rate limit exceeded for ${selectedModel}. Please try again in a moment.`);
+        } else if (error?.status >= 500) {
+          throw new Error(`${selectedModel} service is temporarily unavailable. Please try a different model.`);
+        }
+        
+        throw new Error(`Failed to get response from ${selectedModel}: ${error?.message || 'Unknown error'}`);
+      }
       
       const aiResponse = completion.choices[0]?.message?.content || 
         "I need to analyze this further. Please provide additional context.";

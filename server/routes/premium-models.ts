@@ -5,6 +5,21 @@ const router = Router();
 // Premium AI Models Configuration for Bristol Brain Elite
 const PREMIUM_MODELS = [
   {
+    id: "openai/gpt-5",
+    name: "GPT-5",
+    provider: "OpenAI",
+    category: "general",
+    description: "OpenAI's most advanced model for coding and agentic tasks",
+    features: ["Step-by-step Reasoning", "400k Context Window", "Tool Support", "Function Calling"],
+    contextLength: 400000,
+    pricing: {
+      input: "$1.25/M tokens",
+      output: "$10/M tokens"
+    },
+    bestFor: ["Coding", "Agentic Tasks", "Complex Reasoning", "Real Estate Analysis"],
+    status: "byok-required"
+  },
+  {
     id: "x-ai/grok-4",
     name: "Grok 4",
     provider: "xAI", 
@@ -66,21 +81,6 @@ const PREMIUM_MODELS = [
     },
     bestFor: ["Market Research", "Due Diligence", "Competitive Analysis"],
     status: "active"
-  },
-  {
-    id: "openai/gpt-5",
-    name: "GPT-5",
-    provider: "OpenAI",
-    category: "general",
-    description: "OpenAI's most advanced model (requires BYOK setup)",
-    features: ["Step-by-step Reasoning", "Test-time Routing", "Advanced Prompt Understanding"],
-    contextLength: 128000,
-    pricing: {
-      input: "BYOK Required",
-      output: "BYOK Required"
-    },
-    bestFor: ["General Analysis", "Complex Reasoning", "High-stakes Decisions"],
-    status: "byok-required"
   }
 ];
 
@@ -89,7 +89,7 @@ router.get("/", (req, res) => {
   res.json({
     models: PREMIUM_MODELS,
     default: "x-ai/grok-4",
-    categories: ["reasoning", "coding", "research", "general"]
+    categories: ["general", "reasoning", "coding", "research"]
   });
 });
 

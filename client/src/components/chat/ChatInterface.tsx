@@ -27,6 +27,25 @@ interface ChatSession {
   createdAt: string;
 }
 
+interface PremiumModel {
+  id: string;
+  name: string;
+  provider: string;
+  category: string;
+  description: string;
+  features: string[];
+  contextLength: number;
+  pricing: { input: string; output: string; images?: string; search?: string };
+  bestFor: string[];
+  status: 'active' | 'byok-required';
+}
+
+interface PremiumModelsResponse {
+  models: PremiumModel[];
+  default: string;
+  categories: string[];
+}
+
 interface ChatInterfaceProps {
   sessionId?: string;
   onSessionCreate?: (session: ChatSession) => void;
@@ -38,7 +57,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
   const [isThinking, setIsThinking] = useState(false);
   const [activeTools, setActiveTools] = useState<string[]>(["search"]);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [selectedModel, setSelectedModel] = useState("x-ai/grok-4"); // Default to Grok 4
+  const [selectedModel, setSelectedModel] = useState("x-ai/grok-4"); // Default to Grok 4 (GPT-5 requires BYOK setup)
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
@@ -60,7 +79,10 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
   // Fetch premium models
   const { data: premiumModelsData } = useQuery({
     queryKey: ['/api/premium-models'],
-    queryFn: () => apiRequest('/api/premium-models', 'GET'),
+    queryFn: async () => {
+      const response = await apiRequest('/api/premium-models', 'GET');
+      return response as PremiumModelsResponse;
+    },
   });
 
   // Send message mutation using Bristol Brain Elite
@@ -273,7 +295,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
                   <SelectValue placeholder="Select AI model..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {premiumModelsData?.models?.map((model: any) => (
+                  {premiumModelsData?.models?.map((model: PremiumModel) => (
                     <SelectItem key={model.id} value={model.id} className="cursor-pointer">
                       <div className="flex items-center gap-3 py-1">
                         <div className="flex flex-col">
