@@ -43,7 +43,7 @@ export default function Chrome({ children }: ChromeProps) {
             {/* Bristol Logo & Brand - Aligned to left edge */}
             <div className="flex items-center space-x-4 lg:space-x-6 pl-6">
               <div className="relative flex-shrink-0 group">
-                <div className="absolute inset-0 bg-cyan-400/10 rounded-lg blur-sm group-hover:bg-cyan-400/20 transition-all duration-300"></div>
+                <div className="absolute inset-0 bg-bristol-maroon/20 rounded-lg blur-sm group-hover:bg-bristol-maroon/30 transition-all duration-300"></div>
                 <img 
                   src={bristolLogoPath} 
                   alt="Bristol Development Group" 
