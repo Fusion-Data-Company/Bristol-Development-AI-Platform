@@ -312,6 +312,18 @@ Remember: You're not providing general advice. You're making real-time decisions
    */
   async processMessage(context: BristolBrainContext): Promise<ChatMessage> {
     try {
+      // Ensure session exists or create it
+      const existingSessions = await storage.getChatSessions(context.userId);
+      const sessionExists = existingSessions.some(s => s.id === context.sessionId);
+      
+      if (!sessionExists) {
+        await storage.createChatSession({
+          id: context.sessionId,
+          userId: context.userId,
+          title: "Bristol Brain Elite Session",
+        });
+      }
+      
       // Store user message
       const userMessage: InsertChatMessage = {
         sessionId: context.sessionId,
@@ -382,7 +394,7 @@ Remember: You're not providing general advice. You're making real-time decisions
       
       // Call AI with enhanced context
       const completion = await this.openai.chat.completions.create({
-        model: "openai/gpt-4o", // Premium model for elite responses
+        model: "openai/gpt-5", // GPT-5 - OpenAI's most advanced model for elite responses
         messages: aiMessages as any,
         temperature: 0.2, // Lower temperature for more consistent, professional responses
         max_tokens: 2000,

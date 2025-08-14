@@ -134,7 +134,7 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
           <div>
             <span className="font-bold text-sm">Bristol Brain Elite</span>
             <Badge variant="secondary" className="ml-2 bg-bristol-gold text-bristol-ink text-xs">
-              GPT-4o
+              GPT-5
             </Badge>
           </div>
         </div>
