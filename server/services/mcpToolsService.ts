@@ -6,7 +6,7 @@ interface McpTool {
   endpoint: string;
   method: 'GET' | 'POST';
   parameters?: Record<string, any>;
-  category: 'data' | 'analysis' | 'external' | 'storage';
+  category: 'data' | 'analysis' | 'external' | 'storage' | 'workflow' | 'content' | 'utility';
 }
 
 export class McpToolsService {
@@ -72,6 +72,156 @@ export class McpToolsService {
       endpoint: '/api/analytics/pipeline',
       method: 'GET',
       category: 'analysis'
+    });
+
+    // Real Estate MCP Tools - Memory Server
+    this.registerTool({
+      name: 'store_property_data',
+      description: 'Store property information for analysis and tracking',
+      endpoint: '/api/mcp-tools/execute/store_memory',
+      method: 'POST',
+      category: 'data',
+      parameters: { propertyData: 'object' }
+    });
+
+    this.registerTool({
+      name: 'store_lead_info',
+      description: 'Store and manage client lead information',
+      endpoint: '/api/mcp-tools/execute/store_memory',
+      method: 'POST',
+      category: 'data',
+      parameters: { leadData: 'object' }
+    });
+
+    // Real Estate MCP Tools - Fetch Server
+    this.registerTool({
+      name: 'fetch_property_value',
+      description: 'Scrape property valuation data from public sources',
+      endpoint: '/api/mcp-tools/execute/fetch',
+      method: 'POST',
+      category: 'external',
+      parameters: { address: 'string' }
+    });
+
+    this.registerTool({
+      name: 'fetch_neighborhood_data',
+      description: 'Pull neighborhood statistics and amenities',
+      endpoint: '/api/mcp-tools/execute/fetch',
+      method: 'POST',
+      category: 'external',
+      parameters: { location: 'string' }
+    });
+
+    this.registerTool({
+      name: 'get_flood_risk_data',
+      description: 'Access FEMA flood maps and risk assessment data',
+      endpoint: '/api/mcp-tools/execute/fetch',
+      method: 'POST',
+      category: 'external',
+      parameters: { coordinates: 'string' }
+    });
+
+    // Real Estate MCP Tools - Sequential Thinking Server
+    this.registerTool({
+      name: 'sequential_property_analysis',
+      description: 'Step-by-step complex property investment analysis',
+      endpoint: '/api/mcp-tools/execute/sequential_thinking',
+      method: 'POST',
+      category: 'analysis',
+      parameters: { analysisType: 'string', propertyData: 'object' }
+    });
+
+    this.registerTool({
+      name: 'comparative_market_analysis',
+      description: 'Multi-property comparison with sequential reasoning',
+      endpoint: '/api/mcp-tools/execute/sequential_thinking',
+      method: 'POST',
+      category: 'analysis',
+      parameters: { properties: 'array' }
+    });
+
+    // Real Estate MCP Tools - Time Server
+    this.registerTool({
+      name: 'schedule_property_showing',
+      description: 'Schedule and track property showings with time management',
+      endpoint: '/api/mcp-tools/execute/time',
+      method: 'POST',
+      category: 'workflow',
+      parameters: { propertyId: 'string', dateTime: 'string' }
+    });
+
+    this.registerTool({
+      name: 'track_closing_deadlines',
+      description: 'Monitor contract deadlines and important dates',
+      endpoint: '/api/mcp-tools/execute/time',
+      method: 'POST',
+      category: 'workflow',
+      parameters: { contractData: 'object' }
+    });
+
+    this.registerTool({
+      name: 'calculate_days_on_market',
+      description: 'Calculate property listing duration and market trends',
+      endpoint: '/api/mcp-tools/execute/time',
+      method: 'POST',
+      category: 'workflow',
+      parameters: { listingDate: 'string' }
+    });
+
+    // Real Estate MCP Tools - EverArt Server
+    this.registerTool({
+      name: 'generate_property_description',
+      description: 'Create compelling property listing descriptions',
+      endpoint: '/api/mcp-tools/execute/everart',
+      method: 'POST',
+      category: 'content',
+      parameters: { propertyDetails: 'object' }
+    });
+
+    this.registerTool({
+      name: 'create_marketing_materials',
+      description: 'Generate flyers and marketing content for properties',
+      endpoint: '/api/mcp-tools/execute/everart',
+      method: 'POST',
+      category: 'content',
+      parameters: { propertyData: 'object', style: 'string' }
+    });
+
+    this.registerTool({
+      name: 'process_listing_images',
+      description: 'Enhance and process property photos for listings',
+      endpoint: '/api/mcp-tools/execute/everart',
+      method: 'POST',
+      category: 'content',
+      parameters: { images: 'array' }
+    });
+
+    // Real Estate MCP Tools - Everything Server
+    this.registerTool({
+      name: 'process_contract_data',
+      description: 'Extract and process data from real estate contracts',
+      endpoint: '/api/mcp-tools/execute/everything',
+      method: 'POST',
+      category: 'utility',
+      parameters: { contractText: 'string' }
+    });
+
+    this.registerTool({
+      name: 'convert_data_formats',
+      description: 'Transform data between JSON, CSV, and other formats',
+      endpoint: '/api/mcp-tools/execute/everything',
+      method: 'POST',
+      category: 'utility',
+      parameters: { data: 'any', targetFormat: 'string' }
+    });
+
+    this.registerTool({
+      name: 'clean_property_data',
+      description: 'Standardize and clean property information',
+      endpoint: '/api/mcp-tools/execute/everything',
+      method: 'POST',
+      category: 'utility',
+      parameters: { rawData: 'object' }
     });
 
     this.registerTool({

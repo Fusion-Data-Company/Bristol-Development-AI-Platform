@@ -19,6 +19,30 @@
       "args": [
         "@modelcontextprotocol/server-fetch"
       ]
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "everart": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-everart"
+      ]
+    },
+    "time": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-time"
+      ]
+    },
+    "everything": {
+      "command": "npx",
+      "args": [
+        "@modelcontextprotocol/server-everything"
+      ]
     }
   },
   "lastUpdated": "2025-08-14T03:38:30.874Z",

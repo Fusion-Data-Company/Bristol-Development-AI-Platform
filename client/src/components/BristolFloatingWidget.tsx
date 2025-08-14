@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle, ChevronDown, CircuitBoard, HelpCircle, BarChart, PieChart, MapPin, Users, Calendar, Minimize2, Maximize2 } from "lucide-react";
+import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle, ChevronDown, CircuitBoard, HelpCircle, BarChart, PieChart, MapPin, Users, Calendar, Minimize2, Maximize2, Clock, Palette, Wrench } from "lucide-react";
 import { DataVisualizationPanel } from "./chat/DataVisualizationPanel";
 import { OnboardingGuide } from "./chat/OnboardingGuide";
 
@@ -1561,23 +1561,362 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                 <h5 className="text-purple-400 font-semibold mb-3 text-sm">Analysis Tools</h5>
                 <div className="grid gap-2">
                   {mcpTools.filter(tool => tool.category === 'analysis').map((tool, index) => (
-                    <button
-                      key={index}
-                      onClick={() => executeMcpTool(tool.name)}
-                      className="flex items-center justify-between p-3 bg-black/40 hover:bg-purple-400/10 border border-gray-700 hover:border-purple-400/50 rounded-xl transition-all duration-300"
-                    >
-                      <div className="flex items-center gap-3">
-                        <BarChart3 className="h-4 w-4 text-purple-400" />
-                        <div className="text-left">
-                          <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
-                          <div className="text-xs text-gray-400">{tool.description}</div>
+                    <div key={index} className="space-y-2">
+                      <button
+                        onClick={() => {
+                          executeMcpTool(tool.name);
+                          setSelectedTool(selectedTool === tool.name ? null : tool.name);
+                        }}
+                        disabled={executingTool === tool.name}
+                        className={`w-full flex items-center justify-between p-3 border rounded-xl transition-all duration-300 ${
+                          executingTool === tool.name
+                            ? 'bg-purple-400/20 border-purple-400/60 cursor-not-allowed'
+                            : selectedTool === tool.name
+                              ? 'bg-purple-400/15 border-purple-400/50'
+                              : 'bg-black/40 hover:bg-purple-400/10 border-gray-700 hover:border-purple-400/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`transition-transform duration-300 ${executingTool === tool.name ? 'animate-spin' : ''}`}>
+                            {executingTool === tool.name ? (
+                              <div className="h-4 w-4 border-2 border-purple-400/30 border-t-purple-400 rounded-full animate-spin" />
+                            ) : (
+                              <BarChart3 className="h-4 w-4 text-purple-400" />
+                            )}
+                          </div>
+                          <div className="text-left">
+                            <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
+                            <div className="text-xs text-gray-400">{tool.description}</div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse" />
-                        <span className="text-xs text-green-400 font-semibold">READY</span>
-                      </div>
-                    </button>
+                        <div className="flex items-center gap-2">
+                          {toolResults[tool.name] && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                injectDataToChat(toolResults[tool.name], tool.name);
+                              }}
+                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                            >
+                              Inject
+                            </button>
+                          )}
+                          <div className={`h-2 w-2 rounded-full ${
+                            executingTool === tool.name ? 'bg-purple-400 animate-pulse' :
+                            toolResults[tool.name] ? 'bg-green-400' : 'bg-green-400 animate-pulse'
+                          }`} />
+                          <span className={`text-xs font-semibold ${
+                            executingTool === tool.name ? 'text-purple-400' :
+                            toolResults[tool.name] ? 'text-green-400' : 'text-green-400'
+                          }`}>
+                            {executingTool === tool.name ? 'RUNNING' : toolResults[tool.name] ? 'READY' : 'READY'}
+                          </span>
+                        </div>
+                      </button>
+                      
+                      {/* Show result preview if available */}
+                      {toolResults[tool.name] && selectedTool === tool.name && (
+                        <div className="ml-6 p-3 bg-purple-400/5 border border-purple-400/20 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-purple-400 font-semibold">RESULT PREVIEW</span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
+                                  alert('Copied to clipboard!');
+                                }}
+                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                              >
+                                📋 Copy
+                              </button>
+                              <button
+                                onClick={() => setSelectedTool(null)}
+                                className="text-xs text-gray-400 hover:text-white"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </div>
+                          <pre className="text-xs text-gray-300 max-h-32 overflow-y-auto">
+                            {formatToolResult(toolResults[tool.name].result).slice(0, 200)}
+                            {formatToolResult(toolResults[tool.name].result).length > 200 && '...'}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Workflow Tools */}
+              <div className="bg-emerald-400/10 border border-emerald-400/30 rounded-2xl p-4">
+                <h5 className="text-emerald-400 font-semibold mb-3 text-sm">Workflow & Scheduling Tools</h5>
+                <div className="grid gap-2">
+                  {mcpTools.filter(tool => tool.category === 'workflow').map((tool, index) => (
+                    <div key={index} className="space-y-2">
+                      <button
+                        onClick={() => {
+                          executeMcpTool(tool.name);
+                          setSelectedTool(selectedTool === tool.name ? null : tool.name);
+                        }}
+                        disabled={executingTool === tool.name}
+                        className={`w-full flex items-center justify-between p-3 border rounded-xl transition-all duration-300 ${
+                          executingTool === tool.name
+                            ? 'bg-emerald-400/20 border-emerald-400/60 cursor-not-allowed'
+                            : selectedTool === tool.name
+                              ? 'bg-emerald-400/15 border-emerald-400/50'
+                              : 'bg-black/40 hover:bg-emerald-400/10 border-gray-700 hover:border-emerald-400/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`transition-transform duration-300 ${executingTool === tool.name ? 'animate-spin' : ''}`}>
+                            {executingTool === tool.name ? (
+                              <div className="h-4 w-4 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin" />
+                            ) : (
+                              <Clock className="h-4 w-4 text-emerald-400" />
+                            )}
+                          </div>
+                          <div className="text-left">
+                            <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
+                            <div className="text-xs text-gray-400">{tool.description}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {toolResults[tool.name] && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                injectDataToChat(toolResults[tool.name], tool.name);
+                              }}
+                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                            >
+                              Inject
+                            </button>
+                          )}
+                          <div className={`h-2 w-2 rounded-full ${
+                            executingTool === tool.name ? 'bg-emerald-400 animate-pulse' :
+                            toolResults[tool.name] ? 'bg-green-400' : 'bg-green-400 animate-pulse'
+                          }`} />
+                          <span className={`text-xs font-semibold ${
+                            executingTool === tool.name ? 'text-emerald-400' :
+                            toolResults[tool.name] ? 'text-green-400' : 'text-green-400'
+                          }`}>
+                            {executingTool === tool.name ? 'RUNNING' : toolResults[tool.name] ? 'READY' : 'READY'}
+                          </span>
+                        </div>
+                      </button>
+                      
+                      {toolResults[tool.name] && selectedTool === tool.name && (
+                        <div className="ml-6 p-3 bg-emerald-400/5 border border-emerald-400/20 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-emerald-400 font-semibold">RESULT PREVIEW</span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
+                                  alert('Copied to clipboard!');
+                                }}
+                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                              >
+                                📋 Copy
+                              </button>
+                              <button
+                                onClick={() => setSelectedTool(null)}
+                                className="text-xs text-gray-400 hover:text-white"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </div>
+                          <pre className="text-xs text-gray-300 max-h-32 overflow-y-auto">
+                            {formatToolResult(toolResults[tool.name].result).slice(0, 200)}
+                            {formatToolResult(toolResults[tool.name].result).length > 200 && '...'}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Content & Marketing Tools */}
+              <div className="bg-pink-400/10 border border-pink-400/30 rounded-2xl p-4">
+                <h5 className="text-pink-400 font-semibold mb-3 text-sm">Content & Marketing Tools</h5>
+                <div className="grid gap-2">
+                  {mcpTools.filter(tool => tool.category === 'content').map((tool, index) => (
+                    <div key={index} className="space-y-2">
+                      <button
+                        onClick={() => {
+                          executeMcpTool(tool.name);
+                          setSelectedTool(selectedTool === tool.name ? null : tool.name);
+                        }}
+                        disabled={executingTool === tool.name}
+                        className={`w-full flex items-center justify-between p-3 border rounded-xl transition-all duration-300 ${
+                          executingTool === tool.name
+                            ? 'bg-pink-400/20 border-pink-400/60 cursor-not-allowed'
+                            : selectedTool === tool.name
+                              ? 'bg-pink-400/15 border-pink-400/50'
+                              : 'bg-black/40 hover:bg-pink-400/10 border-gray-700 hover:border-pink-400/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`transition-transform duration-300 ${executingTool === tool.name ? 'animate-spin' : ''}`}>
+                            {executingTool === tool.name ? (
+                              <div className="h-4 w-4 border-2 border-pink-400/30 border-t-pink-400 rounded-full animate-spin" />
+                            ) : (
+                              <Palette className="h-4 w-4 text-pink-400" />
+                            )}
+                          </div>
+                          <div className="text-left">
+                            <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
+                            <div className="text-xs text-gray-400">{tool.description}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {toolResults[tool.name] && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                injectDataToChat(toolResults[tool.name], tool.name);
+                              }}
+                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                            >
+                              Inject
+                            </button>
+                          )}
+                          <div className={`h-2 w-2 rounded-full ${
+                            executingTool === tool.name ? 'bg-pink-400 animate-pulse' :
+                            toolResults[tool.name] ? 'bg-green-400' : 'bg-green-400 animate-pulse'
+                          }`} />
+                          <span className={`text-xs font-semibold ${
+                            executingTool === tool.name ? 'text-pink-400' :
+                            toolResults[tool.name] ? 'text-green-400' : 'text-green-400'
+                          }`}>
+                            {executingTool === tool.name ? 'RUNNING' : toolResults[tool.name] ? 'READY' : 'READY'}
+                          </span>
+                        </div>
+                      </button>
+                      
+                      {toolResults[tool.name] && selectedTool === tool.name && (
+                        <div className="ml-6 p-3 bg-pink-400/5 border border-pink-400/20 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-pink-400 font-semibold">RESULT PREVIEW</span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
+                                  alert('Copied to clipboard!');
+                                }}
+                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                              >
+                                📋 Copy
+                              </button>
+                              <button
+                                onClick={() => setSelectedTool(null)}
+                                className="text-xs text-gray-400 hover:text-white"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </div>
+                          <pre className="text-xs text-gray-300 max-h-32 overflow-y-auto">
+                            {formatToolResult(toolResults[tool.name].result).slice(0, 200)}
+                            {formatToolResult(toolResults[tool.name].result).length > 200 && '...'}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Utility Tools */}
+              <div className="bg-orange-400/10 border border-orange-400/30 rounded-2xl p-4">
+                <h5 className="text-orange-400 font-semibold mb-3 text-sm">Utility & Data Processing Tools</h5>
+                <div className="grid gap-2">
+                  {mcpTools.filter(tool => tool.category === 'utility').map((tool, index) => (
+                    <div key={index} className="space-y-2">
+                      <button
+                        onClick={() => {
+                          executeMcpTool(tool.name);
+                          setSelectedTool(selectedTool === tool.name ? null : tool.name);
+                        }}
+                        disabled={executingTool === tool.name}
+                        className={`w-full flex items-center justify-between p-3 border rounded-xl transition-all duration-300 ${
+                          executingTool === tool.name
+                            ? 'bg-orange-400/20 border-orange-400/60 cursor-not-allowed'
+                            : selectedTool === tool.name
+                              ? 'bg-orange-400/15 border-orange-400/50'
+                              : 'bg-black/40 hover:bg-orange-400/10 border-gray-700 hover:border-orange-400/50'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`transition-transform duration-300 ${executingTool === tool.name ? 'animate-spin' : ''}`}>
+                            {executingTool === tool.name ? (
+                              <div className="h-4 w-4 border-2 border-orange-400/30 border-t-orange-400 rounded-full animate-spin" />
+                            ) : (
+                              <Wrench className="h-4 w-4 text-orange-400" />
+                            )}
+                          </div>
+                          <div className="text-left">
+                            <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
+                            <div className="text-xs text-gray-400">{tool.description}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {toolResults[tool.name] && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                injectDataToChat(toolResults[tool.name], tool.name);
+                              }}
+                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                            >
+                              Inject
+                            </button>
+                          )}
+                          <div className={`h-2 w-2 rounded-full ${
+                            executingTool === tool.name ? 'bg-orange-400 animate-pulse' :
+                            toolResults[tool.name] ? 'bg-green-400' : 'bg-green-400 animate-pulse'
+                          }`} />
+                          <span className={`text-xs font-semibold ${
+                            executingTool === tool.name ? 'text-orange-400' :
+                            toolResults[tool.name] ? 'text-green-400' : 'text-green-400'
+                          }`}>
+                            {executingTool === tool.name ? 'RUNNING' : toolResults[tool.name] ? 'READY' : 'READY'}
+                          </span>
+                        </div>
+                      </button>
+                      
+                      {toolResults[tool.name] && selectedTool === tool.name && (
+                        <div className="ml-6 p-3 bg-orange-400/5 border border-orange-400/20 rounded-lg">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs text-orange-400 font-semibold">RESULT PREVIEW</span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
+                                  alert('Copied to clipboard!');
+                                }}
+                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                              >
+                                📋 Copy
+                              </button>
+                              <button
+                                onClick={() => setSelectedTool(null)}
+                                className="text-xs text-gray-400 hover:text-white"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </div>
+                          <pre className="text-xs text-gray-300 max-h-32 overflow-y-auto">
+                            {formatToolResult(toolResults[tool.name].result).slice(0, 200)}
+                            {formatToolResult(toolResults[tool.name].result).length > 200 && '...'}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>

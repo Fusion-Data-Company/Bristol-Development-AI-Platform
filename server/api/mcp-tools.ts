@@ -15,7 +15,10 @@ router.get('/', async (req, res) => {
         data: mcpToolsService.getToolsByCategory('data').length,
         analysis: mcpToolsService.getToolsByCategory('analysis').length,
         external: mcpToolsService.getToolsByCategory('external').length,
-        storage: mcpToolsService.getToolsByCategory('storage').length
+        storage: mcpToolsService.getToolsByCategory('storage').length,
+        workflow: mcpToolsService.getToolsByCategory('workflow').length,
+        content: mcpToolsService.getToolsByCategory('content').length,
+        utility: mcpToolsService.getToolsByCategory('utility').length
       }
     });
   } catch (error) {
