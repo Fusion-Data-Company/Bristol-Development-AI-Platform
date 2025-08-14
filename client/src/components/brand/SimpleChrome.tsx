@@ -36,18 +36,23 @@ export default function Chrome({ children }: ChromeProps) {
           <div className="flex items-center justify-between max-w-7xl mx-auto">
             {/* Left: Bristol Logo & Brand */}
             <div className="flex items-center space-x-5">
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <img 
                   src={bristolLogoPath} 
                   alt="Bristol Development Group" 
-                  className="h-14 w-auto drop-shadow-2xl hover:scale-105 transition-transform duration-300 filter brightness-110"
+                  className="h-12 w-auto max-w-none object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-300 filter brightness-110"
+                  style={{ 
+                    imageRendering: 'crisp-edges',
+                    WebkitImageRendering: 'crisp-edges',
+                    msInterpolationMode: 'nearest-neighbor'
+                  } as React.CSSProperties}
                 />
               </div>
-              <div className="border-l border-bristol-gold/30 pl-5">
-                <h1 className="text-3xl font-cinzel font-bold text-white tracking-wide drop-shadow-lg">
+              <div className="border-l border-bristol-gold/30 pl-5 hidden sm:block">
+                <h1 className="text-2xl lg:text-3xl font-cinzel font-bold text-white tracking-wide drop-shadow-lg">
                   BRISTOL
                 </h1>
-                <p className="text-bristol-gold text-xs font-semibold tracking-[0.4em] uppercase mt-0.5">
+                <p className="text-bristol-gold text-xs font-semibold tracking-[0.2em] lg:tracking-[0.4em] uppercase mt-0.5">
                   Site Intelligence Platform
                 </p>
               </div>
