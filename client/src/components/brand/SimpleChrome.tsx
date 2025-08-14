@@ -38,10 +38,10 @@ export default function Chrome({ children }: ChromeProps) {
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent animate-pulse"></div>
         </div>
         
-        <div className="px-6 lg:px-8 py-4 lg:py-6 relative">
-          <div className="flex items-center justify-start max-w-7xl mx-auto space-x-6 lg:space-x-8">
-            {/* Bristol Logo & Brand - Moved to far left */}
-            <div className="flex items-center space-x-4 lg:space-x-6">
+        <div className="pl-0 pr-6 lg:pr-8 py-4 lg:py-6 relative">
+          <div className="flex items-center justify-start w-full space-x-6 lg:space-x-8">
+            {/* Bristol Logo & Brand - Aligned to left edge */}
+            <div className="flex items-center space-x-4 lg:space-x-6 pl-6">
               <div className="relative flex-shrink-0 group">
                 <div className="absolute inset-0 bg-cyan-400/10 rounded-lg blur-sm group-hover:bg-cyan-400/20 transition-all duration-300"></div>
                 <img 
