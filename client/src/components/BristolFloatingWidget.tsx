@@ -126,7 +126,7 @@ export default function BristolFloatingWidget({
 }: BristolWidgetProps) {
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
-  const [model, setModel] = useState(defaultModel || "");
+  const [model, setModel] = useState(defaultModel || "openai/gpt-5-chat");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [systemPrompt, setSystemPrompt] = useState<string>(defaultSystemPrompt || DEFAULT_MEGA_PROMPT);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -570,6 +570,17 @@ export default function BristolFloatingWidget({
                     AI Chat
                   </button>
                   <button
+                    onClick={() => setActiveTab("data")}
+                    className={cx(
+                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
+                      activeTab === "data"
+                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                    )}
+                  >
+                    Data
+                  </button>
+                  <button
                     onClick={() => setActiveTab("tools")}
                     className={cx(
                       "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
@@ -581,15 +592,15 @@ export default function BristolFloatingWidget({
                     Tools
                   </button>
                   <button
-                    onClick={() => setActiveTab("settings")}
+                    onClick={() => setActiveTab("admin")}
                     className={cx(
                       "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
-                      activeTab === "settings"
+                      activeTab === "admin"
                         ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
                         : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
                     )}
                   >
-                    Settings
+                    Admin
                   </button>
                 </div>
               </div>
@@ -693,34 +704,21 @@ export default function BristolFloatingWidget({
                 </div>
               )}
 
-              {activeTab === "tools" && (
-                <div className="flex-1 overflow-y-auto p-6">
-                  <h3 className="text-xl font-bold text-bristol-cyan mb-4">MCP Tools & APIs</h3>
-                  <div className="grid gap-4">
-                    <div className="p-4 rounded-xl border border-bristol-cyan/30 bg-bristol-ink/20">
-                      <h4 className="text-lg font-bold text-white mb-2">Available Tools</h4>
-                      <p className="text-sm text-bristol-cyan/80">Real estate analysis tools, demographic APIs, and market intelligence systems are available through the chat interface.</p>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {activeTab === "data" && <DataPane data={appData} />}
+              
+              {activeTab === "tools" && <ToolsPane systemStatus={{
+                websocket: "connected",
+                database: "connected",
+                apis: []
+              }} mcpEnabled={true} setMcpEnabled={() => {}} />}
 
-              {activeTab === "settings" && (
-                <div className="flex-1 overflow-y-auto p-6">
-                  <h3 className="text-xl font-bold text-bristol-cyan mb-4">System Settings</h3>
-                  <div className="space-y-4">
-                    <div className="p-4 rounded-xl border border-bristol-cyan/30 bg-bristol-ink/20">
-                      <label className="block text-sm font-bold text-white mb-2">System Prompt</label>
-                      <textarea
-                        className="w-full h-32 p-3 rounded-xl bg-bristol-ink/40 border border-bristol-cyan/30 text-white text-sm"
-                        value={systemPrompt}
-                        onChange={(e) => setSystemPrompt(e.target.value)}
-                        placeholder="Configure the AI system prompt..."
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
+              {activeTab === "admin" && <AdminPane 
+                systemPrompt={systemPrompt} 
+                setSystemPrompt={setSystemPrompt}
+                onSave={saveSystemPrompt}
+                realTimeData={true}
+                setRealTimeData={() => {}}
+              />}
             </div>
 
             {/* Glass Chat Composer - Fixed at Bottom - Only show on chat tab */}
