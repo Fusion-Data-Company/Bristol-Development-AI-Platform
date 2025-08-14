@@ -5,7 +5,7 @@ import type { Site } from '@shared/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Building, TrendingUp, Users, DollarSign, Info, Layers, Satellite, Map as MapIcon } from 'lucide-react';
+import { MapPin, Building, TrendingUp, Users, DollarSign, Info, Layers, Satellite, Map as MapIcon, Home, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ArcGISLayer, useArcGISDemographics } from '../analytics/ArcGISLayer';
 import { KMLLayer } from './KMLLayer';
@@ -65,6 +65,7 @@ export function InteractiveMap({
   const [showHousing, setShowHousing] = useState(false);
   const [showHeatmap, setShowHeatmap] = useState(true);
   const [showKML, setShowKML] = useState(!!kmlData);
+  const [demographicPopup, setDemographicPopup] = useState<{lat: number, lng: number, loading: boolean, data?: any} | null>(null);
   const [viewport, setViewport] = useState({
     longitude: -82.4572, // Atlanta/Sunbelt center
     latitude: 33.7490,
@@ -150,7 +151,7 @@ export function InteractiveMap({
     }
   };
 
-  const handleMapClick = useCallback((event: any) => {
+  const handleMapClick = useCallback(async (event: any) => {
     // Prevent event propagation to avoid navigation issues
     event.preventDefault?.();
     event.stopPropagation?.();
@@ -158,6 +159,32 @@ export function InteractiveMap({
     if (event.lngLat) {
       const { lng, lat } = event.lngLat;
       console.log('Map clicked at:', lng, lat); // Debug log
+      
+      // Show loading popup immediately
+      setDemographicPopup({ lat, lng, loading: true });
+      
+      try {
+        // Fetch demographic data for these coordinates
+        const response = await fetch('/api/address/demographics', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ latitude: lat, longitude: lng })
+        });
+        
+        if (response.ok) {
+          const demographicData = await response.json();
+          setDemographicPopup({ lat, lng, loading: false, data: demographicData });
+        } else {
+          console.error('Failed to fetch demographics:', response.statusText);
+          setDemographicPopup(null);
+        }
+      } catch (error) {
+        console.error('Error fetching demographics:', error);
+        setDemographicPopup(null);
+      }
+      
       onMapClick?.(lng, lat);
     }
   }, [onMapClick]);
@@ -325,6 +352,101 @@ export function InteractiveMap({
                 >
                   View Full Analysis
                 </Button>
+              </div>
+            </Popup>
+          )}
+
+          {/* Demographic Popup for Map Clicks */}
+          {demographicPopup && (
+            <Popup
+              longitude={demographicPopup.lng}
+              latitude={demographicPopup.lat}
+              anchor="bottom"
+              onClose={() => setDemographicPopup(null)}
+              closeButton={true}
+              className="bristol-demographic-popup"
+            >
+              <div className="p-4 min-w-[320px] max-w-[400px]">
+                <div className="flex items-center gap-2 mb-3">
+                  <MapPin className="w-5 h-5 text-bristol-maroon" />
+                  <h3 className="font-serif text-lg font-semibold text-bristol-ink">
+                    Location Demographics
+                  </h3>
+                </div>
+                
+                {demographicPopup.loading ? (
+                  <div className="flex items-center justify-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-bristol-maroon"></div>
+                    <span className="ml-2 text-bristol-stone">Loading demographic data...</span>
+                  </div>
+                ) : demographicPopup.data ? (
+                  <div className="space-y-3">
+                    <div className="text-xs text-bristol-stone mb-2">
+                      {demographicPopup.data.location?.address || `${demographicPopup.lat.toFixed(4)}, ${demographicPopup.lng.toFixed(4)}`}
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <Users className="w-3 h-3 text-bristol-maroon" />
+                          <span className="text-bristol-stone">Population</span>
+                        </div>
+                        <div className="font-medium text-bristol-ink">
+                          {demographicPopup.data.demographics?.population?.toLocaleString() || '—'}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <DollarSign className="w-3 h-3 text-bristol-maroon" />
+                          <span className="text-bristol-stone">Med. Income</span>
+                        </div>
+                        <div className="font-medium text-bristol-ink">
+                          {demographicPopup.data.demographics?.median_income 
+                            ? `$${demographicPopup.data.demographics.median_income.toLocaleString()}`
+                            : '—'
+                          }
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <Home className="w-3 h-3 text-bristol-maroon" />
+                          <span className="text-bristol-stone">Med. Rent</span>
+                        </div>
+                        <div className="font-medium text-bristol-ink">
+                          {demographicPopup.data.demographics?.median_rent 
+                            ? `$${demographicPopup.data.demographics.median_rent.toLocaleString()}`
+                            : '—'
+                          }
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <GraduationCap className="w-3 h-3 text-bristol-maroon" />
+                          <span className="text-bristol-stone">Bachelor's+</span>
+                        </div>
+                        <div className="font-medium text-bristol-ink">
+                          {demographicPopup.data.demographics?.bachelor_plus_pct 
+                            ? `${demographicPopup.data.demographics.bachelor_plus_pct.toFixed(1)}%`
+                            : '—'
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {demographicPopup.data.location?.census_tract && (
+                      <div className="pt-2 border-t border-bristol-stone/20 text-xs text-bristol-stone">
+                        Census Tract: {demographicPopup.data.location.census_tract.geoid}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-bristol-stone text-sm py-2">
+                    No demographic data available for this location.
+                  </div>
+                )}
               </div>
             </Popup>
           )}

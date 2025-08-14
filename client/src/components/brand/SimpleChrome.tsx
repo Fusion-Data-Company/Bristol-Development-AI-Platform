@@ -24,37 +24,54 @@ export default function Chrome({ children }: ChromeProps) {
 
   return (
     <div className="min-h-screen bg-bristol-ink">
-      {/* Premium Bristol Header with Stucco Texture */}
-      <header className="relative overflow-hidden shadow-2xl border-b-2 border-cyan-400/50" style={{
-        background: `
-          radial-gradient(circle at 20% 20%, rgba(100, 100, 100, 0.8) 0%, transparent 25%),
-          radial-gradient(circle at 80% 80%, rgba(120, 120, 120, 0.6) 0%, transparent 25%),
-          radial-gradient(circle at 40% 60%, rgba(90, 90, 90, 0.7) 0%, transparent 30%),
-          radial-gradient(circle at 60% 20%, rgba(110, 110, 110, 0.5) 0%, transparent 35%),
-          linear-gradient(135deg, #2d3748 0%, #4a5568 25%, #2d3748 50%, #4a5568 75%, #2d3748 100%)
+      {/* Premium Bristol Header with Real Stucco Texture */}
+      <header className="relative overflow-hidden shadow-2xl border-b-2 border-cyan-400/50 bg-slate-800" style={{
+        backgroundImage: `
+          radial-gradient(circle at 12% 34%, #374151 0%, transparent 20%),
+          radial-gradient(circle at 67% 23%, #475569 0%, transparent 18%),
+          radial-gradient(circle at 89% 78%, #374151 0%, transparent 22%),
+          radial-gradient(circle at 23% 89%, #475569 0%, transparent 19%),
+          radial-gradient(circle at 45% 12%, #334155 0%, transparent 17%),
+          radial-gradient(circle at 78% 45%, #374151 0%, transparent 21%),
+          radial-gradient(circle at 34% 67%, #475569 0%, transparent 16%),
+          conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,0.08) 0deg, transparent 45deg, rgba(0,0,0,0.12) 90deg, transparent 135deg, rgba(255,255,255,0.06) 180deg, transparent 225deg, rgba(0,0,0,0.10) 270deg, transparent 315deg, rgba(255,255,255,0.08) 360deg),
+          repeating-conic-gradient(from 45deg at 30% 70%, transparent 0deg, rgba(255,255,255,0.03) 2deg, transparent 4deg, rgba(0,0,0,0.06) 6deg, transparent 8deg)
         `,
-        backgroundSize: '300px 300px, 250px 250px, 200px 200px, 350px 350px, 100% 100%'
+        backgroundSize: '45px 67px, 38px 52px, 51px 43px, 42px 59px, 36px 48px, 49px 41px, 33px 55px, 25px 25px, 18px 18px',
+        backgroundPosition: '0 0, 12px 8px, 25px 15px, 8px 22px, 18px 5px, 32px 18px, 5px 28px, 0 0, 9px 14px'
       }}>
-        {/* Stucco-like texture overlay */}
+        {/* Fine stucco grain texture overlay */}
         <div className="absolute inset-0" style={{
           backgroundImage: `
-            radial-gradient(circle at 25% 25%, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 3px, transparent 3px),
-            radial-gradient(circle at 75% 75%, transparent 1px, rgba(0,0,0,0.05) 1px, rgba(0,0,0,0.05) 2px, transparent 2px),
-            radial-gradient(circle at 50% 10%, transparent 1.5px, rgba(255,255,255,0.02) 1.5px, rgba(255,255,255,0.02) 2.5px, transparent 2.5px)
+            radial-gradient(circle at 15% 25%, rgba(255,255,255,0.15) 0.5px, transparent 0.6px),
+            radial-gradient(circle at 85% 75%, rgba(0,0,0,0.20) 0.3px, transparent 0.4px),
+            radial-gradient(circle at 45% 65%, rgba(255,255,255,0.12) 0.4px, transparent 0.5px),
+            radial-gradient(circle at 75% 15%, rgba(0,0,0,0.18) 0.6px, transparent 0.7px),
+            radial-gradient(circle at 25% 85%, rgba(255,255,255,0.10) 0.3px, transparent 0.4px),
+            radial-gradient(circle at 65% 45%, rgba(0,0,0,0.16) 0.5px, transparent 0.6px),
+            radial-gradient(circle at 35% 5%, rgba(255,255,255,0.14) 0.4px, transparent 0.5px),
+            radial-gradient(circle at 95% 35%, rgba(0,0,0,0.22) 0.2px, transparent 0.3px)
           `,
-          backgroundSize: '15px 15px, 12px 12px, 18px 18px'
+          backgroundSize: '8px 11px, 6px 9px, 7px 10px, 9px 7px, 5px 8px, 10px 6px, 8px 9px, 4px 7px',
+          backgroundPosition: '0 0, 3px 2px, 6px 5px, 2px 7px, 9px 1px, 1px 8px, 4px 3px, 7px 6px'
         }}></div>
         
-        {/* Enhanced gradient layers */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-700/60 via-slate-600/40 to-slate-700/60"></div>
+        {/* Physical texture bumps and ridges */}
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            linear-gradient(45deg, transparent 48%, rgba(255,255,255,0.08) 49%, rgba(255,255,255,0.08) 50%, transparent 51%),
+            linear-gradient(-45deg, transparent 48%, rgba(0,0,0,0.12) 49%, rgba(0,0,0,0.12) 50%, transparent 51%),
+            linear-gradient(135deg, transparent 47%, rgba(255,255,255,0.06) 48%, rgba(255,255,255,0.06) 52%, transparent 53%),
+            linear-gradient(-135deg, transparent 47%, rgba(0,0,0,0.10) 48%, rgba(0,0,0,0.10) 52%, transparent 53%)
+          `,
+          backgroundSize: '3px 3px, 3px 3px, 5px 5px, 5px 5px',
+          backgroundPosition: '0 0, 1px 1px, 2px 0, 0 2px'
+        }}></div>
+        
+        {/* Minimal accent lines only */}
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"></div>
           <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent"></div>
-        </div>
-        
-        {/* Subtle animated glow */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/8 to-transparent animate-pulse"></div>
         </div>
         
         <div className="pl-0 pr-6 lg:pr-8 py-4 lg:py-6 relative">

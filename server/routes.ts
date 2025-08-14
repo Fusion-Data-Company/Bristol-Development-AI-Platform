@@ -202,7 +202,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/enrich', isAuthenticated, enrichSites);
   app.get('/api/sites.geojson', isAuthenticated, getSitesGeoJSON);
   app.get('/api/sites/:siteId/demographics', isAuthenticated, getSiteDemographics);
-  app.post('/api/address/demographics', isAuthenticated, getAddressDemographics);
+  app.post('/api/address/demographics', getAddressDemographics);
   app.get('/api/map/demographics', isAuthenticated, getMapDemographics);
 
   // OpenRouter proxy for Bristol Floating Widget
