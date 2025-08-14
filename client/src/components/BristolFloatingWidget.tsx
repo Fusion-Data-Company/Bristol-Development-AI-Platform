@@ -2084,6 +2084,12 @@ function AgentsPane({
 
                 const specialization = getAgentSpecialization(task.agentId);
                 
+                // Debug logging
+                console.log('Debug: Task agentId:', task.agentId);
+                console.log('Debug: Agent found:', agent);
+                console.log('Debug: Specialization:', specialization);
+                console.log('Debug: Color class:', colorClass);
+                
                 return (
                   <div key={task.id} className={`bg-black/40 border border-${colorClass}/30 rounded-xl p-4`}>
                     {/* Enhanced Agent Header with Specialization */}
