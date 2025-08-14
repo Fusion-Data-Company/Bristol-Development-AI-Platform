@@ -536,7 +536,7 @@ export default function BristolFloatingWidget({
 
           {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout */}
           <div 
-            className="absolute inset-y-0 left-0 w-[92vw] sm:w-[620px] h-screen text-neutral-100 shadow-2xl flex flex-col cyberpunk-elite-panel"
+            className="absolute inset-y-0 left-0 w-[92vw] sm:w-[620px] h-screen text-neutral-100 shadow-2xl flex flex-col cyberpunk-elite-panel font-cinzel"
             style={{
               background: 'linear-gradient(135deg, rgba(5, 10, 20, 0.98) 0%, rgba(15, 25, 45, 0.95) 25%, rgba(69, 214, 202, 0.08) 50%, rgba(212, 175, 55, 0.06) 75%, rgba(10, 15, 30, 0.98) 100%)',
               backdropFilter: 'blur(30px) saturate(200%) brightness(1.1)',
@@ -712,71 +712,40 @@ export default function BristolFloatingWidget({
                   </div>
                 </div>
                 
-                {/* Futuristic Live Status Indicators */}
-                <div className="flex items-center gap-4">
-                  {/* Live Online Status */}
-                  <div className="relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-bristol-cyan/40 to-bristol-electric/40 rounded-2xl blur opacity-75 group-hover:opacity-100 animate-pulse" />
+                {/* Elite Status Badges */}
+                <div className="flex items-center gap-3">
+                  {/* ONLINE Badge */}
+                  <div className="relative">
                     <div 
-                      className="relative flex items-center gap-3 px-4 py-2 rounded-2xl border overflow-hidden"
+                      className="px-3 py-1.5 rounded-lg border font-bold text-xs uppercase tracking-wider transition-all duration-300"
                       style={{
-                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(69, 214, 202, 0.1) 50%, rgba(30, 41, 59, 0.9) 100%)',
-                        borderColor: 'rgba(69, 214, 202, 0.8)',
-                        boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 0 15px rgba(69, 214, 202, 0.3)',
+                        background: 'linear-gradient(45deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+                        borderColor: '#22d3ee',
+                        color: '#22d3ee',
+                        boxShadow: '0 0 10px rgba(34, 211, 238, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
                       }}
                     >
-                      {/* Animated data flow effect */}
-                      <div className="absolute inset-0 opacity-30">
-                        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-transparent via-bristol-cyan to-transparent animate-pulse" />
-                        <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-transparent via-bristol-cyan to-transparent animate-pulse delay-300" />
-                      </div>
-                      
-                      <div className="relative flex items-center gap-2">
-                        <div className="relative">
-                          <div className="w-3 h-3 rounded-full bg-bristol-cyan animate-pulse shadow-lg shadow-bristol-cyan/50" />
-                          <div className="absolute inset-0 w-3 h-3 rounded-full bg-bristol-cyan animate-ping opacity-20" />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-xs text-bristol-cyan font-black uppercase tracking-wider leading-none">ONLINE</span>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse" />
-                            <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse delay-100" />
-                            <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse delay-200" />
-                          </div>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                        ONLINE
                       </div>
                     </div>
                   </div>
 
-                  {/* Live Secure Status */}
-                  <div className="relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-bristol-gold/40 to-yellow-400/40 rounded-2xl blur opacity-75 group-hover:opacity-100 animate-pulse" />
+                  {/* SECURE Badge */}
+                  <div className="relative">
                     <div 
-                      className="relative flex items-center gap-3 px-4 py-2 rounded-2xl border overflow-hidden"
+                      className="px-3 py-1.5 rounded-lg border font-bold text-xs uppercase tracking-wider transition-all duration-300"
                       style={{
-                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(212, 175, 55, 0.1) 50%, rgba(30, 41, 59, 0.9) 100%)',
-                        borderColor: 'rgba(212, 175, 55, 0.8)',
-                        boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.1), 0 0 15px rgba(212, 175, 55, 0.3)',
+                        background: 'linear-gradient(45deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+                        borderColor: '#fbbf24',
+                        color: '#fbbf24',
+                        boxShadow: '0 0 10px rgba(251, 191, 36, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
                       }}
                     >
-                      {/* Security scan effect */}
-                      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-2000 ease-in-out">
-                        <div className="h-full w-6 bg-gradient-to-r from-transparent via-bristol-gold/20 to-transparent skew-x-12" />
-                      </div>
-                      
-                      <div className="relative flex items-center gap-2">
-                        <div className="relative">
-                          <Shield className="h-4 w-4 text-bristol-gold animate-pulse" />
-                          <div className="absolute -inset-1 border border-bristol-gold/30 rounded animate-pulse" />
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-xs text-bristol-gold font-black uppercase tracking-wider leading-none">SECURE</span>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <div className="w-1 h-0.5 bg-bristol-gold rounded-full animate-pulse" />
-                            <div className="w-2 h-0.5 bg-bristol-gold rounded-full animate-pulse delay-150" />
-                            <div className="w-1 h-0.5 bg-bristol-gold rounded-full animate-pulse delay-300" />
-                          </div>
-                        </div>
+                      <div className="flex items-center gap-2">
+                        <Shield className="w-3 h-3" />
+                        SECURE
                       </div>
                     </div>
                   </div>
@@ -842,7 +811,7 @@ export default function BristolFloatingWidget({
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && !e.shiftKey ? handleSend() : null}
-                      placeholder={loading ? "Bristol Brain is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
+                      placeholder={loading ? "Bristol A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
                       disabled={loading}
                       className={cx(
                         "relative w-full text-sm font-medium transition-all duration-300 backdrop-blur-sm",
@@ -913,7 +882,7 @@ export default function BristolFloatingWidget({
   );
 }
 
-// Enhanced UI Components for Bristol Brain Boss Agent
+// Enhanced UI Components for Bristol A.I. Boss Agent
 
 function DataPane({ data }: { data: any }) {
   return (

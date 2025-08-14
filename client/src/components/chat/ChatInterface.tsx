@@ -70,7 +70,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
     }
   });
 
-  // State for messages - using local state since Bristol Brain Elite handles persistence 
+  // State for messages - using local state since Bristol A.I. Elite handles persistence 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentSessionId] = useState(() => 
     sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -85,7 +85,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
     },
   });
 
-  // Send message mutation using Bristol Brain Elite
+  // Send message mutation using Bristol A.I. Elite
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
       const response = await apiRequest('/api/bristol-brain-elite/chat', 'POST', {
@@ -134,7 +134,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
       });
     },
     onError: (error) => {
-      console.error('Bristol Brain Error:', error);
+      console.error('Bristol A.I. Error:', error);
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
         role: 'assistant',

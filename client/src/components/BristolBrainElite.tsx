@@ -313,7 +313,7 @@ export function BristolBrainElite({
           <div className="flex items-center gap-3">
             <Brain className="w-8 h-8 animate-pulse" />
             <div>
-              <CardTitle className="text-xl font-bold">Bristol Brain Elite</CardTitle>
+              <CardTitle className="text-xl font-bold">Bristol A.I. Elite</CardTitle>
               <p className="text-sm opacity-90">$200M+ Deal Intelligence System</p>
             </div>
           </div>

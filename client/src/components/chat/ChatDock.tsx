@@ -31,7 +31,7 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Send message mutation using Bristol Brain Elite
+  // Send message mutation using Bristol A.I. Elite
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
       const response = await apiRequest('/api/bristol-brain-elite/chat', 'POST', {
@@ -66,7 +66,7 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
       setIsThinking(false);
     },
     onError: (error) => {
-      console.error('Bristol Brain Error:', error);
+      console.error('Bristol A.I. Error:', error);
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
         role: 'assistant',
@@ -132,7 +132,7 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
             )}
           </div>
           <div>
-            <span className="font-bold text-sm">Bristol Brain Elite</span>
+            <span className="font-bold text-sm">Bristol A.I. Elite</span>
             <Badge variant="secondary" className="ml-2 bg-bristol-gold text-bristol-ink text-xs">
               GPT-5
             </Badge>
@@ -168,7 +168,7 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
                   <Brain className="h-16 w-16 text-bristol-maroon" />
                   <div className="absolute -top-2 -right-2 w-4 h-4 bg-bristol-gold rounded-full animate-pulse" />
                 </div>
-                <h4 className="font-bold text-bristol-ink mb-2">Bristol Brain Elite</h4>
+                <h4 className="font-bold text-bristol-ink mb-2">Bristol A.I. Elite</h4>
                 <p className="text-muted-foreground text-sm">
                   Your AI-powered real estate intelligence partner
                 </p>
@@ -208,7 +208,7 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
                     <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm">
                       <div className="flex items-center gap-2">
                         <Brain className="h-4 w-4 text-bristol-maroon animate-pulse" />
-                        <span className="text-sm text-gray-600">Bristol Brain is thinking...</span>
+                        <span className="text-sm text-gray-600">Bristol A.I. is thinking...</span>
                         <div className="flex gap-1">
                           <div className="w-1.5 h-1.5 bg-bristol-maroon rounded-full animate-bounce" />
                           <div className="w-1.5 h-1.5 bg-bristol-maroon rounded-full animate-bounce delay-100" />
@@ -230,7 +230,7 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Ask Bristol Brain about deals, markets, or properties..."
+                placeholder="Ask Bristol A.I. about deals, markets, or properties..."
                 disabled={sendMessageMutation.isPending}
                 className="flex-1 border-gray-200 focus:border-bristol-maroon"
               />
