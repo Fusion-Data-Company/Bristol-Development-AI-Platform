@@ -23,6 +23,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from '@/components/ui/hover-card';
 import { 
   ArrowUpDown,
   ArrowUp,
@@ -447,43 +452,78 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
         }
         
         return (
-          <div className="space-y-2 min-w-[300px]">
-            {/* Top Priority Amenities */}
-            <div className="flex flex-wrap gap-1">
-              {amenities.slice(0, 6).map((tag, i) => (
-                <Badge key={i} variant="secondary" className="text-xs bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
-                  {tag}
-                </Badge>
-              ))}
-            </div>
-            
-            {/* Secondary Amenities */}
-            {amenities.length > 6 && (
-              <div className="flex flex-wrap gap-1">
-                {amenities.slice(6, 12).map((tag, i) => (
-                  <Badge key={i + 6} variant="outline" className="text-xs text-bristol-stone border-bristol-stone/30">
-                    {tag}
-                  </Badge>
-                ))}
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <div className="cursor-pointer hover:bg-bristol-gold/10 p-2 rounded-lg transition-colors">
+                <div className="flex items-center gap-2">
+                  {/* Show first 2 amenities as badges */}
+                  {amenities.slice(0, 2).map((tag, i) => (
+                    <Badge key={i} variant="secondary" className="text-xs bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
+                      {tag}
+                    </Badge>
+                  ))}
+                  {/* Show count for remaining amenities */}
+                  {amenities.length > 2 && (
+                    <Badge variant="outline" className="text-xs text-bristol-stone border-bristol-stone/30">
+                      +{amenities.length - 2} more
+                    </Badge>
+                  )}
+                </div>
+                <div className="text-xs text-bristol-stone/60 mt-1">
+                  {amenities.length} total amenities
+                </div>
               </div>
-            )}
-            
-            {/* Additional Count */}
-            {amenities.length > 12 && (
-              <div className="text-xs text-bristol-maroon font-medium">
-                +{amenities.length - 12} additional amenities
+            </HoverCardTrigger>
+            <HoverCardContent className="w-96 bg-white/95 backdrop-blur border-bristol-gold/30 shadow-xl">
+              <div className="space-y-4">
+                <div className="border-b border-bristol-gold/20 pb-2">
+                  <h4 className="font-semibold text-bristol-maroon flex items-center gap-2">
+                    <Building2 className="h-4 w-4" />
+                    Property Amenities
+                  </h4>
+                  <p className="text-sm text-bristol-stone">
+                    {amenities.length} premium amenities available
+                  </p>
+                </div>
+                
+                {/* Premium Amenities */}
+                <div>
+                  <h5 className="text-sm font-medium text-bristol-maroon mb-2">Premium Features</h5>
+                  <div className="flex flex-wrap gap-1.5">
+                    {amenities.slice(0, 8).map((tag, i) => (
+                      <Badge key={i} variant="secondary" className="text-xs bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Additional Amenities */}
+                {amenities.length > 8 && (
+                  <div>
+                    <h5 className="text-sm font-medium text-bristol-stone mb-2">Additional Amenities</h5>
+                    <div className="flex flex-wrap gap-1.5">
+                      {amenities.slice(8).map((tag, i) => (
+                        <Badge key={i + 8} variant="outline" className="text-xs text-bristol-stone border-bristol-stone/30">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Summary */}
+                <div className="border-t border-bristol-gold/20 pt-2">
+                  <div className="text-xs text-bristol-stone/80">
+                    This property offers a comprehensive amenity package designed for luxury multifamily living.
+                  </div>
+                </div>
               </div>
-            )}
-            
-            {/* Total Count */}
-            <div className="text-xs text-bristol-stone/80 font-medium">
-              Total: {amenities.length} amenities
-            </div>
-          </div>
+            </HoverCardContent>
+          </HoverCard>
         );
       },
       enableSorting: false,
-      size: 350, // Make the column wider for amenities
     }),
     columnHelper.accessor('source', {
       header: 'Source',
