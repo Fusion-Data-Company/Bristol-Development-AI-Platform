@@ -36,6 +36,13 @@
       "env": {
         "DATABASE_URL": true
       }
+    },
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      }
     }
   },
   "lastUpdated": "2025-08-14T04:02:45.123Z",

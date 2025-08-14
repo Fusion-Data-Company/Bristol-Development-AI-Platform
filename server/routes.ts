@@ -110,6 +110,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bristol Comparables Annex routes
   const { registerCompsAnnexRoutes } = await import('./routes/comps-annex');
   registerCompsAnnexRoutes(app);
+  
+  // AI Scraping routes for Bristol AI agent integration
+  const aiScrapingRouter = (await import('./routes/ai-scraping')).default;
+  app.use('/api/ai-scraping', aiScrapingRouter);
 
   // OpenRouter models endpoint
   // OpenRouter models endpoint - fix authentication
