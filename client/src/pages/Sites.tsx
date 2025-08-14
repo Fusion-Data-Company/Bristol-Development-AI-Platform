@@ -422,18 +422,32 @@ export default function Sites() {
                 </div>
               </CardHeader>
               <CardContent className="p-0 h-full bg-gradient-to-br from-white to-bristol-cream/30">
-                <SitesTable 
-                  data={sites} 
-                  isLoading={isLoading && !error}
-                  onSelectSite={setSelectedSite}
-                  selectedSite={selectedSite}
-                  onRefresh={refetch}
-                />
-                {error && sites.length === 0 && (
+                {sites.length > 0 ? (
+                  <SitesTable 
+                    data={sites} 
+                    isLoading={isLoading && !error}
+                    onSelectSite={setSelectedSite}
+                    selectedSite={selectedSite}
+                    onRefresh={refetch}
+                  />
+                ) : (
                   <div className="p-8 text-center text-bristol-stone">
                     <Building className="h-12 w-12 mx-auto mb-4 text-bristol-maroon/40" />
-                    <p className="text-lg font-medium">Portfolio Data Loading</p>
-                    <p className="text-sm mt-2">Authentication required to display site details</p>
+                    <p className="text-lg font-medium">
+                      {isLoading ? 'Loading Portfolio Data...' : 'No Site Data Available'}
+                    </p>
+                    <p className="text-sm mt-2">
+                      {error ? 'Authentication required to display site details' : 'Add sites to view portfolio data'}
+                    </p>
+                    {!error && !isLoading && (
+                      <Button 
+                        onClick={() => setShowAddForm(true)}
+                        className="mt-4 bg-bristol-maroon text-white hover:bg-bristol-maroon/90"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Your First Site
+                      </Button>
+                    )}
                   </div>
                 )}
               </CardContent>

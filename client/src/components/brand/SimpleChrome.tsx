@@ -25,17 +25,17 @@ export default function Chrome({ children }: ChromeProps) {
   return (
     <div className="min-h-screen bg-bristol-ink">
       {/* Premium Bristol Header */}
-      <header className="bg-gradient-to-r from-bristol-ink via-bristol-maroon/10 to-bristol-ink shadow-2xl border-b-2 border-bristol-gold/50 relative overflow-hidden">
+      <header className="bg-gradient-to-r from-bristol-ink via-bristol-maroon/10 to-bristol-ink shadow-2xl border-b-2 border-cyan-400/50 relative overflow-hidden">
         {/* Sophisticated background layers */}
         <div className="absolute inset-0 bg-gradient-to-br from-bristol-ink/98 via-bristol-maroon/8 to-bristol-ink/98"></div>
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-bristol-gold/80 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-bristol-gold/40 to-transparent"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent"></div>
         </div>
         
         {/* Subtle animated glow */}
         <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bristol-gold/5 to-transparent animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent animate-pulse"></div>
         </div>
         
         <div className="px-6 lg:px-8 py-4 lg:py-6 relative">
@@ -43,7 +43,7 @@ export default function Chrome({ children }: ChromeProps) {
             {/* Left: Bristol Logo & Brand */}
             <div className="flex items-center space-x-4 lg:space-x-6">
               <div className="relative flex-shrink-0 group">
-                <div className="absolute inset-0 bg-bristol-gold/10 rounded-lg blur-sm group-hover:bg-bristol-gold/20 transition-all duration-300"></div>
+                <div className="absolute inset-0 bg-cyan-400/10 rounded-lg blur-sm group-hover:bg-cyan-400/20 transition-all duration-300"></div>
                 <img 
                   src={bristolLogoPath} 
                   alt="Bristol Development Group" 
@@ -55,12 +55,12 @@ export default function Chrome({ children }: ChromeProps) {
                   } as React.CSSProperties}
                 />
               </div>
-              <div className="border-l-2 border-bristol-gold/40 pl-4 lg:pl-6 hidden sm:block">
+              <div className="border-l-2 border-cyan-400/40 pl-4 lg:pl-6 hidden sm:block">
                 <div className="flex flex-col">
-                  <p className="text-bristol-gold text-xs lg:text-sm font-bold tracking-[0.15em] lg:tracking-[0.25em] uppercase drop-shadow-sm">
+                  <p className="text-cyan-400 text-xs lg:text-sm font-bold tracking-[0.15em] lg:tracking-[0.25em] uppercase drop-shadow-sm">
                     Site Intelligence Platform
                   </p>
-                  <div className="w-full h-px bg-gradient-to-r from-bristol-gold/60 to-transparent mt-1"></div>
+                  <div className="w-full h-px bg-gradient-to-r from-cyan-400/60 to-transparent mt-1"></div>
                 </div>
               </div>
             </div>
