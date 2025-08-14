@@ -870,39 +870,34 @@ export default function BristolFloatingWidget({
                 systemPrompt={systemPrompt} 
                 setSystemPrompt={setSystemPrompt}
                 onSave={async () => {
-                  try {
-                    // Save system prompt
-                    localStorage.setItem("bristol.systemPrompt", systemPrompt);
-                    
-                    // Save real-time data setting
-                    localStorage.setItem("bristol.realTimeData", realTimeData.toString());
-                    
-                    // Save MCP enabled setting
-                    localStorage.setItem("bristol.mcpEnabled", mcpEnabled.toString());
-                    
-                    // Save selected model
-                    localStorage.setItem("bristol.selectedModel", model);
-                    
-                    console.log("All admin settings saved to localStorage");
-                    
-                    // Show success notification
-                    alert("✓ All settings saved successfully!");
-                    
-                    // Optional: Call the parent's onSaveSystemPrompt if available
-                    await onSaveSystemPrompt?.(systemPrompt);
-                    
-                    // Send telemetry
-                    await sendTelemetry("admin_settings_saved", { 
-                      systemPromptLength: systemPrompt.length,
-                      realTimeData,
-                      mcpEnabled,
-                      model 
-                    });
-                  } catch (error) {
-                    console.error("Error saving admin settings:", error);
-                    alert("❌ Error saving settings. Please try again.");
-                  }
-                }}
+                  // Add delay to show loading animation
+                  await new Promise(resolve => setTimeout(resolve, 800));
+                  
+                  // Save system prompt
+                  localStorage.setItem("bristol.systemPrompt", systemPrompt);
+                  
+                  // Save real-time data setting
+                  localStorage.setItem("bristol.realTimeData", realTimeData.toString());
+                  
+                  // Save MCP enabled setting
+                  localStorage.setItem("bristol.mcpEnabled", mcpEnabled.toString());
+                  
+                  // Save selected model
+                  localStorage.setItem("bristol.selectedModel", model);
+                  
+                  console.log("All admin settings saved to localStorage");
+                  
+                  // Optional: Call the parent's onSaveSystemPrompt if available
+                  await onSaveSystemPrompt?.(systemPrompt);
+                  
+                  // Send telemetry
+                  await sendTelemetry("admin_settings_saved", { 
+                    systemPromptLength: systemPrompt.length,
+                    realTimeData,
+                    mcpEnabled,
+                    model 
+                  });
+                }
                 realTimeData={realTimeData}
                 setRealTimeData={setRealTimeData}
               />}
@@ -1510,6 +1505,8 @@ function AdminPane({
   const [mcpStatus, setMcpStatus] = useState<any>(null);
   const [loadingMcp, setLoadingMcp] = useState(false);
   const [showMcpConfig, setShowMcpConfig] = useState(false);
+  const [savingSettings, setSavingSettings] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   // Load existing MCP configuration and status
   useEffect(() => {
@@ -1696,11 +1693,55 @@ function AdminPane({
             </button>
             
             <button
-              onClick={onSave}
-              className="px-3 py-1.5 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold border border-bristol-gold/30 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2"
+              onClick={async () => {
+                setSavingSettings(true);
+                setSaveSuccess(false);
+                try {
+                  await onSave();
+                  setSaveSuccess(true);
+                  setTimeout(() => setSaveSuccess(false), 2000);
+                } catch (error) {
+                  console.error('Save failed:', error);
+                } finally {
+                  setSavingSettings(false);
+                }
+              }}
+              disabled={savingSettings}
+              className={`
+                px-3 py-1.5 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2 relative overflow-hidden
+                ${savingSettings 
+                  ? 'bg-bristol-gold/40 text-bristol-gold/70 cursor-not-allowed' 
+                  : saveSuccess
+                    ? 'bg-green-500/30 text-green-400 border-green-400/50'
+                    : 'bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold border border-bristol-gold/30 hover:scale-105 hover:shadow-lg hover:shadow-bristol-gold/20'
+                }
+              `}
             >
-              <Save className="h-3 w-3" />
-              Save Settings
+              <div className={`transition-transform duration-300 ${savingSettings ? 'animate-spin' : saveSuccess ? 'animate-bounce' : ''}`}>
+                {savingSettings ? (
+                  <div className="h-3 w-3 border-2 border-bristol-gold/30 border-t-bristol-gold rounded-full animate-spin" />
+                ) : saveSuccess ? (
+                  <div className="h-3 w-3 flex items-center justify-center">
+                    <div className="h-2 w-1 bg-green-400 rounded-full transform rotate-45 origin-bottom"></div>
+                    <div className="h-3 w-1 bg-green-400 rounded-full transform -rotate-45 origin-bottom -ml-0.5"></div>
+                  </div>
+                ) : (
+                  <Save className="h-3 w-3" />
+                )}
+              </div>
+              <span className="transition-all duration-300">
+                {savingSettings ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Settings'}
+              </span>
+              
+              {/* Shimmer effect on hover */}
+              {!savingSettings && !saveSuccess && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bristol-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -skew-x-12 animate-pulse"></div>
+              )}
+              
+              {/* Success ripple effect */}
+              {saveSuccess && (
+                <div className="absolute inset-0 bg-green-400/20 rounded-lg animate-ping"></div>
+              )}
             </button>
           </div>
         </div>
