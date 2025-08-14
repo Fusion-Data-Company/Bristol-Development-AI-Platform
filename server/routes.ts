@@ -107,6 +107,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const premiumModelsRouter = (await import('./routes/premium-models')).default;
   app.use('/api/premium-models', premiumModelsRouter);
 
+  // Bristol Comparables Annex routes
+  const { registerCompsAnnexRoutes } = await import('./routes/comps-annex');
+  registerCompsAnnexRoutes(app);
+
   // OpenRouter models endpoint
   // OpenRouter models endpoint - fix authentication
   app.get('/api/openrouter-models', async (req, res) => {

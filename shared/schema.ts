@@ -300,6 +300,58 @@ export const tools = pgTable("tools", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Bristol Comparables Annex tables
+export const compsAnnex = pgTable('comps_annex', {
+  id: varchar('id', { length: 64 }).primaryKey().default(sql`gen_random_uuid()`),
+  source: varchar('source', { length: 64 }).notNull(),
+  sourceUrl: varchar('source_url', { length: 2048 }),
+  name: varchar('name', { length: 256 }).notNull(),
+  address: varchar('address', { length: 512 }).notNull(),
+  city: varchar('city', { length: 128 }),
+  state: varchar('state', { length: 16 }),
+  zip: varchar('zip', { length: 16 }),
+  lat: real('lat'),
+  lng: real('lng'),
+  assetType: varchar('asset_type', { length: 64 }).notNull(),
+  subtype: varchar('subtype', { length: 64 }),
+  units: integer('units'),
+  yearBuilt: integer('year_built'),
+  rentPsf: real('rent_psf'),
+  rentPu: real('rent_pu'),
+  occupancyPct: real('occupancy_pct'),
+  concessionPct: real('concession_pct'),
+  amenityTags: jsonb('amenity_tags'),
+  notes: varchar('notes', { length: 2048 }),
+  canonicalAddress: varchar('canonical_address', { length: 512 }).notNull(),
+  unitPlan: varchar('unit_plan', { length: 64 }),
+  scrapedAt: timestamp('scraped_at', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+  jobId: varchar('job_id', { length: 64 }),
+  provenance: jsonb('provenance'),
+}, (t) => ({
+  addrIdx: index('comps_annex_addr_idx').on(t.canonicalAddress),
+  planIdx: index('comps_annex_plan_idx').on(t.unitPlan),
+}));
+
+export const scrapeJobsAnnex = pgTable('scrape_jobs_annex', {
+  id: varchar('id', { length: 64 }).primaryKey().default(sql`gen_random_uuid()`),
+  status: varchar('status', { length: 24 }).notNull(), // queued|running|done|error
+  query: jsonb('query').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  startedAt: timestamp('started_at', { withTimezone: true }),
+  finishedAt: timestamp('finished_at', { withTimezone: true }),
+  error: varchar('error', { length: 2048 }),
+});
+
+export const compEventsAnnex = pgTable('comp_events_annex', {
+  id: varchar('id').primaryKey().default(sql`gen_random_uuid()`),
+  compId: varchar('comp_id').notNull(),
+  type: varchar('type', { length: 32 }).notNull(), // create|update|edit|merge|dedupe
+  diff: jsonb('diff'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
 // Snapshots table for saving tool results
 export const snapshots = pgTable("snapshots", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -424,6 +476,22 @@ export const insertAgentDecisionSchema = createInsertSchema(agentDecisions).omit
   createdAt: true,
 });
 
+export const insertCompsAnnexSchema = createInsertSchema(compsAnnex).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertScrapeJobsAnnexSchema = createInsertSchema(scrapeJobsAnnex).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertCompEventsAnnexSchema = createInsertSchema(compEventsAnnex).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -488,3 +556,9 @@ export type AgentContext = typeof agentContext.$inferSelect;
 export type InsertAgentContext = z.infer<typeof insertAgentContextSchema>;
 export type AgentDecision = typeof agentDecisions.$inferSelect;
 export type InsertAgentDecision = z.infer<typeof insertAgentDecisionSchema>;
+export type CompsAnnex = typeof compsAnnex.$inferSelect;
+export type InsertCompsAnnex = z.infer<typeof insertCompsAnnexSchema>;
+export type ScrapeJobsAnnex = typeof scrapeJobsAnnex.$inferSelect;
+export type InsertScrapeJobsAnnex = z.infer<typeof insertScrapeJobsAnnexSchema>;
+export type CompEventsAnnex = typeof compEventsAnnex.$inferSelect;
+export type InsertCompEventsAnnex = z.infer<typeof insertCompEventsAnnexSchema>;

@@ -329,10 +329,7 @@ export class DatabaseStorage implements IStorage {
   async deleteExpiredMemoryShort(): Promise<void> {
     await db
       .delete(memoryShort)
-      .where(and(
-        memoryShort.expiresAt !== null,
-        sql`${memoryShort.expiresAt} < NOW()`
-      ));
+      .where(sql`${memoryShort.expiresAt} IS NOT NULL AND ${memoryShort.expiresAt} < NOW()`);
   }
 
   async createMemoryLong(memory: InsertMemoryLong): Promise<MemoryLong> {
@@ -436,10 +433,7 @@ export class DatabaseStorage implements IStorage {
   async deleteExpiredContext(): Promise<void> {
     await db
       .delete(agentContext)
-      .where(and(
-        agentContext.expiresAt !== null,
-        sql`${agentContext.expiresAt} < NOW()`
-      ));
+      .where(sql`${agentContext.expiresAt} IS NOT NULL AND ${agentContext.expiresAt} < NOW()`);
   }
 
   // Agent decisions

@@ -19,6 +19,7 @@ import ToolsConsole from "@/pages/ToolsConsole";
 import IntegrationsNew from "@/pages/IntegrationsNew";
 import Demographics from "@/pages/Demographics";
 import { Tools } from "@/pages/Tools";
+import ComparablesAnnex from "@/pages/ComparablesAnnex";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -38,6 +39,7 @@ function Router() {
           <Route path="/integrations" component={IntegrationsNew} />
           <Route path="/tools-console" component={ToolsConsole} />
           <Route path="/tools" component={Tools} />
+          <Route path="/comparables" component={ComparablesAnnex} />
         </>
       )}
       <Route component={NotFound} />

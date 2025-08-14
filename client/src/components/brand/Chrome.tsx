@@ -55,6 +55,11 @@ export default function Chrome({ children }: ChromeProps) {
                   Tools
                 </span>
               </Link>
+              <Link href="/comparables">
+                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
+                  Comparables
+                </span>
+              </Link>
             </nav>
           </div>
         </div>
