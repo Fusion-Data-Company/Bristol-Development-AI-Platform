@@ -39,8 +39,8 @@ export default function Chrome({ children }: ChromeProps) {
         </div>
         
         <div className="px-6 lg:px-8 py-4 lg:py-6 relative">
-          <div className="flex items-center justify-between max-w-7xl mx-auto">
-            {/* Left: Bristol Logo & Brand */}
+          <div className="flex items-center justify-start max-w-7xl mx-auto space-x-6 lg:space-x-8">
+            {/* Bristol Logo & Brand - Moved to far left */}
             <div className="flex items-center space-x-4 lg:space-x-6">
               <div className="relative flex-shrink-0 group">
                 <div className="absolute inset-0 bg-cyan-400/10 rounded-lg blur-sm group-hover:bg-cyan-400/20 transition-all duration-300"></div>
@@ -65,8 +65,8 @@ export default function Chrome({ children }: ChromeProps) {
               </div>
             </div>
             
-            {/* Right: Elite Navigation */}
-            <nav className="flex items-center space-x-1 lg:space-x-2">
+            {/* Elite Navigation */}
+            <nav className="flex items-center space-x-1 lg:space-x-2 ml-auto">
               {navItems.map(({ path, label, icon: Icon }) => (
                 <Link key={path} href={path}>
                   <button
