@@ -99,6 +99,33 @@ router.get('/:agentId', (req, res) => {
   }
 });
 
+// Test single agent execution 
+router.post('/test-single', async (req, res) => {
+  try {
+    const { agentId, propertyData } = req.body;
+    
+    // Execute single agent task directly
+    const task = await agentManager.executeTask(agentId, {
+      type: 'property_analysis',
+      data: propertyData,
+      priority: 'high'
+    });
+    
+    res.json({
+      ok: true,
+      agent: agentId,
+      result: task.result,
+      taskId: task.id
+    });
+  } catch (error) {
+    console.error('Single agent test failed:', error);
+    res.status(500).json({
+      ok: false,
+      error: 'Single agent execution failed'
+    });
+  }
+});
+
 // Create a new task for agents
 router.post('/task', (req, res) => {
   try {

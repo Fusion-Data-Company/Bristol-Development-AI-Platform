@@ -685,12 +685,13 @@ Begin your specialized analysis now.`;
     };
 
     console.log(`📡 Broadcasting task RESULT for ${agent?.name}: ${task.status}`);
+    console.log(`📊 Task result content:`, task.result ? task.result.substring(0, 100) + '...' : 'No result');
 
     this.wsConnections.forEach((ws, clientId) => {
       if (ws.readyState === WebSocket.OPEN) {
         try {
           ws.send(JSON.stringify(message));
-          console.log(`✅ Sent task result to client ${clientId}`);
+          console.log(`✅ Sent task result to client ${clientId} - Result length: ${task.result?.length || 0}`);
         } catch (error) {
           console.error(`❌ Failed to send task result to client ${clientId}:`, error);
           this.wsConnections.delete(clientId);
