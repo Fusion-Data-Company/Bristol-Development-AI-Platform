@@ -49,10 +49,7 @@ export default function Chrome({ children }: ChromeProps) {
                 />
               </div>
               <div className="border-l border-bristol-gold/30 pl-5 hidden sm:block">
-                <h1 className="text-2xl lg:text-3xl font-cinzel font-bold text-white tracking-wide drop-shadow-lg">
-                  BRISTOL
-                </h1>
-                <p className="text-bristol-gold text-xs font-semibold tracking-[0.2em] lg:tracking-[0.4em] uppercase mt-0.5">
+                <p className="text-bristol-gold text-sm font-semibold tracking-[0.2em] lg:tracking-[0.4em] uppercase">
                   Site Intelligence Platform
                 </p>
               </div>
