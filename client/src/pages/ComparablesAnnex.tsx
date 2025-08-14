@@ -14,6 +14,8 @@ import AIAnalyticsPanel from '@/components/comparables/AIAnalyticsPanel';
 import DataVisualization from '@/components/comparables/DataVisualization';
 import ExportTools from '@/components/comparables/ExportTools';
 import CompAnalysisWidget from '@/components/comparables/CompAnalysisWidget';
+import { ExportCompsTools } from '@/components/comparables/ExportCompsTools';
+import { CompsFilters } from '@/components/comparables/CompsFilters';
 import { 
   Search, 
   Download, 
@@ -71,24 +73,42 @@ interface ScrapeQuery {
 }
 
 interface FilterState {
-  assetType?: string;
-  subtype?: string;
-  minUnits?: number;
-  maxUnits?: number;
-  minRentPsf?: number;
-  maxRentPsf?: number;
-  minOccupancy?: number;
-  maxOccupancy?: number;
-  minYearBuilt?: number;
-  maxYearBuilt?: number;
-  amenities?: string[];
+  search: string;
+  assetType: string[];
+  subtype: string[];
+  source: string[];
+  city: string[];
+  minUnits: string;
+  maxUnits: string;
+  minRentPsf: string;
+  maxRentPsf: string;
+  minYearBuilt: string;
+  maxYearBuilt: string;
+  minOccupancy: string;
+  maxOccupancy: string;
+  amenities: string[];
 }
 
 export default function ComparablesAnnex() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState<FilterState>({});
+  const [filters, setFilters] = useState<FilterState>({
+    search: '',
+    assetType: [],
+    subtype: [],
+    source: [],
+    city: [],
+    minUnits: '',
+    maxUnits: '',
+    minRentPsf: '',
+    maxRentPsf: '',
+    minYearBuilt: '',
+    maxYearBuilt: '',
+    minOccupancy: '',
+    maxOccupancy: '',
+    amenities: [],
+  });
 
   const [scrapeDialogOpen, setScrapeDialogOpen] = useState(false);
   const [scrapeQuery, setScrapeQuery] = useState<ScrapeQuery>({
@@ -114,33 +134,73 @@ export default function ComparablesAnnex() {
   const rawComps: CompRecord[] = compsData?.rows || [];
   const total = compsData?.total || 0;
 
+  // Calculate available filter options from data
+  const availableOptions = useMemo(() => {
+    const assetTypes = [...new Set(rawComps.map(c => c.assetType).filter(Boolean))];
+    const subtypes = [...new Set(rawComps.map(c => c.subtype).filter(Boolean))];
+    const sources = [...new Set(rawComps.map(c => c.source).filter(Boolean))];
+    const cities = [...new Set(rawComps.map(c => c.city).filter(Boolean))];
+    const amenities = [...new Set(rawComps.flatMap(c => c.amenityTags || []))];
+    
+    return { assetTypes, subtypes, sources, cities, amenities };
+  }, [rawComps]);
+
   // Apply client-side filters
   const comps = useMemo(() => {
     return rawComps.filter(comp => {
+      // Search filter
+      if (filters.search) {
+        const searchLower = filters.search.toLowerCase();
+        const searchableText = [
+          comp.name,
+          comp.address,
+          comp.city,
+          comp.state,
+          comp.assetType,
+          comp.subtype
+        ].filter(Boolean).join(' ').toLowerCase();
+        
+        if (!searchableText.includes(searchLower)) return false;
+      }
+      
       // Asset type filter
-      if (filters.assetType && comp.assetType !== filters.assetType) return false;
+      if (filters.assetType.length > 0 && !filters.assetType.includes(comp.assetType)) return false;
       
       // Subtype filter
-      if (filters.subtype && comp.subtype !== filters.subtype) return false;
+      if (filters.subtype.length > 0 && comp.subtype && !filters.subtype.includes(comp.subtype)) return false;
+      
+      // Source filter
+      if (filters.source.length > 0 && !filters.source.includes(comp.source)) return false;
+      
+      // City filter
+      if (filters.city.length > 0 && comp.city && !filters.city.includes(comp.city)) return false;
       
       // Units range filter
-      if (filters.minUnits && (!comp.units || comp.units < filters.minUnits)) return false;
-      if (filters.maxUnits && (!comp.units || comp.units > filters.maxUnits)) return false;
+      const minUnits = filters.minUnits ? parseInt(filters.minUnits) : null;
+      const maxUnits = filters.maxUnits ? parseInt(filters.maxUnits) : null;
+      if (minUnits && (!comp.units || comp.units < minUnits)) return false;
+      if (maxUnits && (!comp.units || comp.units > maxUnits)) return false;
       
       // Rent PSF range filter
-      if (filters.minRentPsf && (!comp.rentPsf || comp.rentPsf < filters.minRentPsf)) return false;
-      if (filters.maxRentPsf && (!comp.rentPsf || comp.rentPsf > filters.maxRentPsf)) return false;
+      const minRentPsf = filters.minRentPsf ? parseFloat(filters.minRentPsf) : null;
+      const maxRentPsf = filters.maxRentPsf ? parseFloat(filters.maxRentPsf) : null;
+      if (minRentPsf && (!comp.rentPsf || comp.rentPsf < minRentPsf)) return false;
+      if (maxRentPsf && (!comp.rentPsf || comp.rentPsf > maxRentPsf)) return false;
       
       // Occupancy range filter
-      if (filters.minOccupancy && (!comp.occupancyPct || comp.occupancyPct < filters.minOccupancy)) return false;
-      if (filters.maxOccupancy && (!comp.occupancyPct || comp.occupancyPct > filters.maxOccupancy)) return false;
+      const minOccupancy = filters.minOccupancy ? parseFloat(filters.minOccupancy) : null;
+      const maxOccupancy = filters.maxOccupancy ? parseFloat(filters.maxOccupancy) : null;
+      if (minOccupancy && (!comp.occupancyPct || comp.occupancyPct < minOccupancy)) return false;
+      if (maxOccupancy && (!comp.occupancyPct || comp.occupancyPct > maxOccupancy)) return false;
       
       // Year built range filter
-      if (filters.minYearBuilt && (!comp.yearBuilt || comp.yearBuilt < filters.minYearBuilt)) return false;
-      if (filters.maxYearBuilt && (!comp.yearBuilt || comp.yearBuilt > filters.maxYearBuilt)) return false;
+      const minYearBuilt = filters.minYearBuilt ? parseInt(filters.minYearBuilt) : null;
+      const maxYearBuilt = filters.maxYearBuilt ? parseInt(filters.maxYearBuilt) : null;
+      if (minYearBuilt && (!comp.yearBuilt || comp.yearBuilt < minYearBuilt)) return false;
+      if (maxYearBuilt && (!comp.yearBuilt || comp.yearBuilt > maxYearBuilt)) return false;
       
       // Amenities filter
-      if (filters.amenities && filters.amenities.length > 0) {
+      if (filters.amenities.length > 0) {
         const compAmenities = comp.amenityTags || [];
         if (!filters.amenities.every(amenity => compAmenities.includes(amenity))) return false;
       }
@@ -280,20 +340,19 @@ export default function ComparablesAnnex() {
               </DialogContent>
             </Dialog>
 
-            <AdvancedFilters
-              filters={filters}
-              onFiltersChange={setFilters}
-              availableAssetTypes={Array.from(new Set(rawComps.map(c => c.assetType).filter(Boolean)))}
-              availableSubtypes={Array.from(new Set(rawComps.map(c => c.subtype).filter(Boolean)))}
-              availableAmenities={Array.from(new Set(rawComps.flatMap(c => c.amenityTags || [])))}
-            />
-
-                <BulkImport onImportComplete={() => queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] })} />
-
-                <ExportTools data={comps} />
+                <div className="flex items-center gap-4">
+                  <BulkImport onImportComplete={() => queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] })} />
+                  <ExportCompsTools data={comps} />
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Advanced Filters */}
+          <CompsFilters
+            onFiltersChange={setFilters}
+            availableOptions={availableOptions}
+          />
 
           {/* Quick Analytics Cards */}
           {comps.length > 0 && (

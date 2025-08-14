@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { 
   Dialog,
   DialogContent,
@@ -11,166 +9,102 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { 
-  Upload, 
-  FileText,
-  Database 
-} from 'lucide-react';
+import { Upload, FileSpreadsheet } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface BulkImportProps {
-  onImportComplete?: () => void;
+  onImportComplete: () => void;
 }
 
-export function BulkImport({ onImportComplete }: BulkImportProps) {
+export default function BulkImport({ onImportComplete }: BulkImportProps) {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const importMutation = useMutation({
-    mutationFn: async (file: File) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
       const formData = new FormData();
       formData.append('file', file);
-      
+
       const response = await fetch('/api/comps-annex/import', {
         method: 'POST',
         body: formData,
       });
+
+      if (!response.ok) throw new Error('Upload failed');
+
+      const result = await response.json();
       
-      if (!response.ok) throw new Error('Import failed');
-      return response.json();
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] });
-      toast({ 
-        title: 'Import successful', 
-        description: `Imported ${data.count || 0} records` 
+      toast({
+        title: "Import Successful",
+        description: `Imported ${result.count || 0} records`,
       });
+
+      onImportComplete();
       setIsOpen(false);
-      setSelectedFile(null);
-      onImportComplete?.();
-    },
-    onError: () => {
-      toast({ title: 'Import failed', variant: 'destructive' });
-    },
-  });
-
-  const seedMutation = useMutation({
-    mutationFn: async () => {
-      const response = await fetch('/api/comps-annex/seed', {
-        method: 'POST',
+      setFile(null);
+    } catch (error) {
+      toast({
+        title: "Import Failed",
+        description: "Unable to import file. Please check format and try again.",
+        variant: "destructive",
       });
-      
-      if (!response.ok) throw new Error('Seed failed');
-      return response.json();
-    },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] });
-      toast({ 
-        title: 'Sample data added', 
-        description: `Added ${data.count || 0} sample records` 
-      });
-      setIsOpen(false);
-      onImportComplete?.();
-    },
-    onError: () => {
-      toast({ title: 'Seed failed', variant: 'destructive' });
-    },
-  });
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setSelectedFile(file);
+    } finally {
+      setIsUploading(false);
     }
-  };
-
-  const handleImport = () => {
-    if (selectedFile) {
-      importMutation.mutate(selectedFile);
-    }
-  };
-
-  const handleSeed = () => {
-    seedMutation.mutate();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" size="sm">
           <Upload className="h-4 w-4 mr-2" />
-          Import Data
+          Import
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Import Comparables Data</DialogTitle>
+          <DialogTitle>Bulk Import Comparables</DialogTitle>
           <DialogDescription>
-            Upload a CSV file or populate with sample data to get started
+            Upload a CSV or Excel file to import multiple comparable properties
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="space-y-6">
-          {/* CSV Upload */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              <Label>Upload CSV File</Label>
-            </div>
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium">Select File</label>
             <Input
               type="file"
-              accept=".csv"
-              onChange={handleFileSelect}
-              disabled={importMutation.isPending}
+              accept=".csv,.xlsx,.xls"
+              onChange={handleFileChange}
+              className="mt-1"
             />
-            {selectedFile && (
-              <div className="text-sm text-gray-600">
-                Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(1)} KB)
-              </div>
-            )}
-            <Button
-              onClick={handleImport}
-              disabled={!selectedFile || importMutation.isPending}
-              className="w-full"
-            >
-              {importMutation.isPending ? 'Importing...' : 'Import CSV'}
-            </Button>
           </div>
-
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+          {file && (
+            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded">
+              <FileSpreadsheet className="h-4 w-4" />
+              <span className="text-sm">{file.name}</span>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or</span>
-            </div>
-          </div>
-
-          {/* Sample Data */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Database className="h-4 w-4" />
-              <Label>Sample Data</Label>
-            </div>
-            <p className="text-sm text-gray-600">
-              Add sample comparable properties to test the platform
-            </p>
-            <Button
-              onClick={handleSeed}
-              disabled={seedMutation.isPending}
-              variant="secondary"
-              className="w-full"
-            >
-              {seedMutation.isPending ? 'Adding Sample Data...' : 'Add Sample Data'}
-            </Button>
-          </div>
+          )}
+          <Button 
+            onClick={handleUpload}
+            disabled={!file || isUploading}
+            className="w-full"
+          >
+            {isUploading ? 'Uploading...' : 'Upload and Import'}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
   );
 }
-
-export default BulkImport;

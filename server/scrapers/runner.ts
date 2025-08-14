@@ -62,11 +62,29 @@ export async function runJobNow(id: string) {
 
   let insertedCount = 0;
   if (rows.length) {
-    // Upsert each record individually to handle conflicts properly
+    // Upsert each record individually with proper conflict handling
     for (const row of rows) {
       try {
-        // Simple insert without conflict handling for now
-        await db.insert(compsAnnex).values(row);
+        await db.insert(compsAnnex).values(row).onConflictDoUpdate({
+          target: [compsAnnex.canonicalAddress, compsAnnex.unitPlan],
+          set: {
+            name: sql`excluded.name`,
+            address: sql`excluded.address`,
+            city: sql`excluded.city`,
+            state: sql`excluded.state`,
+            zip: sql`excluded.zip`,
+            units: sql`excluded.units`,
+            rentPsf: sql`excluded.rent_psf`,
+            rentPu: sql`excluded.rent_pu`,
+            occupancyPct: sql`excluded.occupancy_pct`,
+            concessionPct: sql`excluded.concession_pct`,
+            amenityTags: sql`excluded.amenity_tags`,
+            notes: sql`excluded.notes`,
+            updatedAt: sql`now()`,
+            scrapedAt: sql`excluded.scraped_at`,
+            jobId: sql`excluded.job_id`
+          },
+        });
         insertedCount++;
       } catch (err) {
         console.warn('Error upserting individual record:', err);
@@ -76,10 +94,14 @@ export async function runJobNow(id: string) {
 
   // Update job status to done
   await db.update(scrapeJobsAnnex)
-    .set({ status: 'done', finishedAt: new Date() })
+    .set({ 
+      status: 'done', 
+      finishedAt: new Date(),
+      recordsInserted: insertedCount 
+    })
     .where(eq(scrapeJobsAnnex.id, id));
 
-  return insertedCount;
+  return { insertedCount, totalRecords: rows.length };
 }
 
 export async function runJobWithError(id: string, error: string) {
