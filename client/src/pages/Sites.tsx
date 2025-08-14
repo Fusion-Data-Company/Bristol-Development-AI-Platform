@@ -95,13 +95,7 @@ export default function Sites() {
     }
   });
 
-  console.log('Current metrics state:', { metrics, metricsLoading, metricsError });
-  console.log('Badge values:', {
-    totalSites: metrics?.totalSites,
-    fallback: metrics?.totalSites || 46,
-    totalUnits: metrics?.totalUnits,
-    unitsFormatted: metrics?.totalUnits?.toLocaleString() || '9,953'
-  });
+  // Debugging removed - using direct values
 
   const handleImportCSV = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -241,16 +235,18 @@ export default function Sites() {
             </div>
             <div className="flex items-center gap-4">
               <Badge 
+                key={`sites-${metrics?.totalSites || 'loading'}`}
                 variant="outline" 
                 className="px-6 py-3 text-bristol-ink border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white backdrop-blur-sm font-bold text-xl shadow-lg shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-300"
               >
-                {metrics?.totalSites ? `${metrics.totalSites} Properties` : '46 Properties'}
+                {metricsLoading ? 'Loading...' : `${metrics?.totalSites || 46} Properties`}
               </Badge>
               <Badge 
+                key={`units-${metrics?.totalUnits || 'loading'}`}
                 variant="outline" 
                 className="px-6 py-3 text-bristol-maroon border-bristol-gold/40 bg-gradient-to-r from-bristol-gold/10 to-bristol-cream backdrop-blur-sm font-medium text-lg shadow-lg shadow-bristol-gold/20"
               >
-                {metrics?.totalUnits ? `${metrics.totalUnits.toLocaleString()} Total Units` : '9,953 Total Units'}
+                {metricsLoading ? 'Loading...' : `${metrics?.totalUnits?.toLocaleString() || '9,953'} Total Units`}
               </Badge>
             </div>
           </div>
@@ -403,10 +399,11 @@ export default function Sites() {
                     Bristol Portfolio Database
                   </CardTitle>
                   <Badge 
+                    key={`table-sites-${metrics?.totalSites || 'loading'}`}
                     variant="outline" 
                     className="ml-auto px-4 py-2 text-bristol-maroon border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white font-bold shadow-lg shadow-bristol-maroon/20"
                   >
-                    {metrics?.totalSites ? `${metrics.totalSites} Properties` : '46 Properties'}
+                    {metricsLoading ? 'Loading...' : `${metrics?.totalSites || 46} Properties`}
                   </Badge>
                 </div>
               </CardHeader>
