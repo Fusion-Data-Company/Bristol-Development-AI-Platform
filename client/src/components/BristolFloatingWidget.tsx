@@ -1437,6 +1437,19 @@ function AgentsPane({
   });
   const [outputMessages, setOutputMessages] = useState<Record<string, Array<{ type: 'info' | 'success' | 'error' | 'progress', text: string, timestamp: number }>>>({});
 
+  // Auto-scroll to agent output when tasks start
+  useEffect(() => {
+    if (activeTasks.length > 0) {
+      // Scroll to the agent output section when tasks appear
+      setTimeout(() => {
+        const outputSection = document.getElementById('agent-output-section');
+        if (outputSection) {
+          outputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, [activeTasks.length]);
+
   // Simulate realistic output messages when tasks are running
   useEffect(() => {
     if (activeTasks.length > 0) {
@@ -1527,8 +1540,8 @@ function AgentsPane({
   };
 
   return (
-    <div className="flex-1 p-6">
-      <div className="space-y-6">
+    <div className="flex-1 overflow-y-auto cyberpunk-scrollbar">
+      <div className="p-6 space-y-6">
         {/* Multi-Agent System Header */}
         <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
@@ -1778,7 +1791,7 @@ function AgentsPane({
 
         {/* Real-time Agent Output Windows */}
         {activeTasks.length > 0 && (
-          <div className="bg-black/60 border border-bristol-cyan/30 rounded-2xl p-6">
+          <div className="bg-black/60 border border-bristol-cyan/30 rounded-2xl p-6" id="agent-output-section">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-8 h-8 bg-bristol-cyan/20 border border-bristol-cyan/40 rounded-lg flex items-center justify-center">
                 <Terminal className="h-4 w-4 text-bristol-cyan animate-pulse" />
