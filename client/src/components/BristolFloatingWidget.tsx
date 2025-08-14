@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle } from "lucide-react";
+import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle, ChevronDown } from "lucide-react";
 
 /**
  * BristolFloatingWidget.tsx — v1.0
@@ -427,15 +427,58 @@ export default function BristolFloatingWidget({
 
   return (
     <>
-      {/* Bristol Brain Launcher Button - Bottom Right */}
+      {/* Elite Bristol Brain Launcher - Enterprise Style */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="bristol-brain-button"
-          aria-label="Open Bristol Brain Intelligence"
+          className="fixed bottom-6 left-6 z-[9997] group"
+          aria-label="Launch Bristol Brain Elite Intelligence System"
         >
-          <Brain className="h-6 w-6" />
-          <span className="font-bold text-lg">Bristol Brain Intelligence</span>
+          {/* Glow effects */}
+          <div className="absolute -inset-3 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-bristol-gold/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
+          <div className="absolute -inset-1 bg-gradient-to-r from-bristol-cyan/40 to-bristol-electric/40 rounded-3xl blur opacity-75 group-hover:opacity-100 transition-all duration-300" />
+          
+          {/* Main button */}
+          <div 
+            className="relative flex items-center gap-4 px-6 py-4 rounded-3xl border backdrop-blur-sm transition-all duration-300 hover:scale-105"
+            style={{
+              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
+              borderColor: 'rgba(69, 214, 202, 0.6)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(69, 214, 202, 0.2)',
+            }}
+          >
+            {/* Elite brain icon */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-bristol-cyan blur-lg opacity-50 animate-pulse" />
+              <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-br from-bristol-cyan via-bristol-electric to-bristol-cyan flex items-center justify-center shadow-2xl">
+                <Brain className="w-5 h-5 text-white animate-pulse" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-bristol-gold rounded-full animate-pulse" />
+            </div>
+            
+            {/* Elite branding */}
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-black text-white bg-gradient-to-r from-bristol-cyan via-white to-bristol-electric bg-clip-text text-transparent">
+                  BRISTOL BRAIN
+                </span>
+                <div className="px-2 py-0.5 bg-gradient-to-r from-bristol-gold/30 to-bristol-electric/30 text-bristol-gold text-xs font-black rounded-md border border-bristol-gold/50 uppercase tracking-wider">
+                  ELITE
+                </div>
+              </div>
+              <span className="text-sm font-bold text-bristol-cyan/90">
+                AI Real Estate Intelligence
+              </span>
+            </div>
+            
+            {/* Status indicator */}
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
+              <span className="text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider">
+                READY
+              </span>
+            </div>
+          </div>
         </button>
       )}
 
@@ -508,13 +551,70 @@ export default function BristolFloatingWidget({
                 </button>
               </div>
               
-              {/* Welcome Greeting */}
-              <div className="px-6 py-4 bg-gradient-to-r from-bristol-ink/30 to-transparent border-b border-bristol-cyan/20">
-                <div className="flex items-center gap-3">
-                  <Sparkles className="h-4 w-4 text-bristol-gold animate-pulse" />
-                  <p className="text-sm text-bristol-cyan/90 font-medium">
-                    Welcome to Bristol Brain. Ask me about properties, market analysis, demographics, and investment opportunities.
-                  </p>
+              {/* Enterprise Welcome Banner */}
+              <div 
+                className="relative px-6 py-5 border-b border-bristol-cyan/30 overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.05) 25%, rgba(168, 85, 247, 0.03) 50%, rgba(69, 214, 202, 0.05) 75%, rgba(15, 23, 42, 0.8) 100%)',
+                  backdropFilter: 'blur(15px)',
+                }}
+              >
+                {/* Animated background effects */}
+                <div className="absolute -top-5 -left-10 w-32 h-32 bg-bristol-cyan/8 rounded-full blur-2xl animate-pulse" />
+                <div className="absolute -bottom-5 -right-10 w-24 h-24 bg-bristol-gold/8 rounded-full blur-xl animate-pulse delay-1000" />
+                <div className="absolute top-0 left-1/3 right-1/3 h-px bg-gradient-to-r from-transparent via-bristol-cyan/50 to-transparent" />
+                
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-bristol-gold blur-xl opacity-50 animate-pulse" />
+                      <div className="relative w-8 h-8 rounded-xl bg-gradient-to-r from-bristol-gold via-bristol-electric to-bristol-cyan flex items-center justify-center">
+                        <Sparkles className="h-4 w-4 text-white animate-pulse" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black text-white bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent">
+                        ENTERPRISE AI SYSTEM ACTIVE
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
+                        <span className="text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider">
+                          FORTUNE 500 INTELLIGENCE READY
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div 
+                    className="p-4 rounded-2xl border backdrop-blur-sm"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.1) 0%, rgba(168, 85, 247, 0.05) 50%, rgba(15, 23, 42, 0.3) 100%)',
+                      borderColor: 'rgba(69, 214, 202, 0.3)',
+                    }}
+                  >
+                    <p className="text-sm text-white font-medium leading-relaxed">
+                      <strong className="text-bristol-cyan">Welcome to Bristol Brain Elite v5.0.</strong> I provide institutional-grade real estate analysis including property valuations, market intelligence, demographic analytics, and investment opportunity assessments. Ask me about specific properties, portfolio performance, market trends, or complex deal structures.
+                    </p>
+                    
+                    <div className="grid grid-cols-2 gap-3 mt-4">
+                      <div className="flex items-center gap-2 text-xs text-bristol-cyan/90">
+                        <TrendingUp className="h-3 w-3" />
+                        <span className="font-medium">Market Analysis Ready</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-bristol-gold/90">
+                        <Database className="h-3 w-3" />
+                        <span className="font-medium">Portfolio Data Active</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-bristol-electric/90">
+                        <Building2 className="h-3 w-3" />
+                        <span className="font-medium">Property Intel Online</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-white/80">
+                        <Shield className="h-3 w-3" />
+                        <span className="font-medium">Enterprise Secure</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -547,29 +647,51 @@ export default function BristolFloatingWidget({
               
               <div className="flex flex-wrap items-center gap-6">
                 
-                {/* Compact Model Selector */}
-                <div className="flex-1">
-                  <div className="relative">
+                {/* Elite Model Selector - Fully Styled */}
+                <div className="flex-1 max-w-md">
+                  <label className="block text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <Brain className="h-3 w-3 animate-pulse" />
+                    AI Engine Selection
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-bristol-gold/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/5 to-bristol-electric/5 rounded-2xl" />
                     <select
-                      className="w-full text-sm font-medium transition-all duration-300 backdrop-blur-sm rounded-xl px-4 py-2 border text-bristol-cyan focus:outline-none focus:border-bristol-electric focus:ring-1 focus:ring-bristol-electric/30"
+                      className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-bristol-cyan hover:text-white focus:text-white focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/40 disabled:opacity-50"
                       style={{
-                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(69, 214, 202, 0.1) 50%, rgba(30, 41, 59, 0.8) 100%)',
-                        borderColor: 'rgba(69, 214, 202, 0.4)',
+                        background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
+                        borderColor: 'rgba(69, 214, 202, 0.6)',
+                        boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
                       }}
                       value={model}
                       onChange={(e) => setModel(e.target.value)}
                       disabled={modelList.length === 0}
                     >
                       {modelList.length === 0 ? (
-                        <option value="">Loading AI Models...</option>
+                        <option value="">⚡ Loading Elite AI Models...</option>
                       ) : (
                         modelList.map((m: ModelOption) => (
-                          <option key={m.id} value={m.id} className="bg-black text-white">
-                            {m.label}
+                          <option key={m.id} value={m.id} className="bg-bristol-ink text-bristol-cyan py-2 font-bold">
+                            🚀 {m.label}
                           </option>
                         ))
                       )}
                     </select>
+                    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                      <ChevronDown className="h-4 w-4 text-bristol-cyan" />
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Enterprise Status Indicators */}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-bristol-ink/60 border border-bristol-cyan/30">
+                    <div className="w-2 h-2 rounded-full bg-bristol-cyan animate-pulse" />
+                    <span className="text-xs text-bristol-cyan font-bold">ONLINE</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-bristol-ink/60 border border-bristol-gold/30">
+                    <Shield className="h-3 w-3 text-bristol-gold" />
+                    <span className="text-xs text-bristol-gold font-bold">SECURE</span>
                   </div>
                 </div>
 
