@@ -1574,8 +1574,8 @@ function AdminPane({
   };
 
   return (
-    <div className="flex-1 p-6">
-      <div className="space-y-6">
+    <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-shrink-0 p-6 pb-4">
         <div className="flex items-center justify-between">
           <h4 className="text-bristol-gold font-semibold flex items-center gap-2">
             <Settings className="h-4 w-4" />
@@ -1598,6 +1598,10 @@ function AdminPane({
             </button>
           </div>
         </div>
+      </div>
+      
+      <div className="flex-1 overflow-y-auto custom-scrollbar px-6 pb-6">
+        <div className="space-y-6">
         
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -1973,6 +1977,7 @@ function AdminPane({
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );
