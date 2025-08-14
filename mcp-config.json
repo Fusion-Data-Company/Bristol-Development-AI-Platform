@@ -4,8 +4,10 @@
       "command": "npx",
       "args": [
         "@modelcontextprotocol/server-filesystem",
-        "/Users/Robertyeager/Desktop",
-        "/Users/Robertyeager/downloads"
+        "/home/runner/workspace",
+        "/home/runner/workspace/attached_assets",
+        "/home/runner/workspace/client/src",
+        "/home/runner/workspace/server"
       ]
     },
     "memory": {
@@ -14,28 +16,10 @@
         "@modelcontextprotocol/server-memory"
       ]
     },
-    "fetch": {
-      "command": "npx",
-      "args": [
-        "@modelcontextprotocol/server-fetch"
-      ]
-    },
     "sequential-thinking": {
       "command": "npx",
       "args": [
         "@modelcontextprotocol/server-sequential-thinking"
-      ]
-    },
-    "everart": {
-      "command": "npx",
-      "args": [
-        "@modelcontextprotocol/server-everart"
-      ]
-    },
-    "time": {
-      "command": "npx",
-      "args": [
-        "@modelcontextprotocol/server-time"
       ]
     },
     "everything": {
@@ -43,8 +27,17 @@
       "args": [
         "@modelcontextprotocol/server-everything"
       ]
+    },
+    "postgres": {
+      "command": "node",
+      "args": [
+        "./server/mcp-postgres-server.cjs"
+      ],
+      "env": {
+        "DATABASE_URL": true
+      }
     }
   },
-  "lastUpdated": "2025-08-14T03:38:30.874Z",
-  "version": "1.0.0"
+  "lastUpdated": "2025-08-14T04:02:45.123Z",
+  "version": "1.1.0"
 }

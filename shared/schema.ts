@@ -457,6 +457,29 @@ export type Tool = typeof tools.$inferSelect;
 export type InsertTool = z.infer<typeof insertToolSchema>;
 export type Snapshot = typeof snapshots.$inferSelect;
 export type InsertSnapshot = z.infer<typeof insertSnapshotSchema>;
+
+// Bristol AI MCP Execution Logs
+export const mcpExecutions = pgTable("mcp_executions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  toolName: varchar("tool_name").notNull(),
+  serverName: varchar("server_name").notNull(),
+  parameters: jsonb("parameters"),
+  result: jsonb("result"),
+  success: boolean("success").notNull(),
+  errorMessage: text("error_message"),
+  executionTime: integer("execution_time"), // milliseconds
+  userId: varchar("user_id").references(() => users.id),
+  sessionId: varchar("session_id").references(() => chatSessions.id),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const insertMcpExecutionSchema = createInsertSchema(mcpExecutions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type McpExecution = typeof mcpExecutions.$inferSelect;
+export type InsertMcpExecution = z.infer<typeof insertMcpExecutionSchema>;
 export type AgentPrompt = typeof agentPrompts.$inferSelect;
 export type InsertAgentPrompt = z.infer<typeof insertAgentPromptSchema>;
 export type AgentAttachment = typeof agentAttachments.$inferSelect;
