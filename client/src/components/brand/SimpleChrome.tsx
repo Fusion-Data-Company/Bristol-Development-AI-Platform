@@ -77,21 +77,21 @@ export default function Chrome({ children }: ChromeProps) {
                     className={`
                       group flex items-center space-x-2 px-3 lg:px-4 py-2 lg:py-3 rounded-xl font-medium transition-all duration-300 relative overflow-hidden backdrop-blur-sm
                       ${location === path 
-                        ? 'bg-gradient-to-r from-bristol-gold to-bristol-gold/90 text-bristol-ink shadow-xl shadow-bristol-gold/40 font-bold border border-bristol-gold/50' 
-                        : 'text-bristol-fog hover:text-white hover:bg-white/8 border border-transparent hover:border-bristol-gold/20'
+                        ? 'bg-gradient-to-r from-cyan-400 to-cyan-500 text-bristol-ink shadow-xl shadow-cyan-400/40 font-bold border border-cyan-400/50' 
+                        : 'text-bristol-fog hover:text-white hover:bg-white/8 border border-transparent hover:border-cyan-400/20'
                       }
                     `}
                   >
                     {location === path && (
-                      <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/95 via-bristol-gold to-bristol-gold/95 animate-pulse"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/95 via-cyan-500 to-cyan-400/95 animate-pulse"></div>
                     )}
-                    <Icon className={`h-3.5 lg:h-4 w-3.5 lg:w-4 relative z-10 ${location === path ? 'text-bristol-ink drop-shadow-sm' : 'group-hover:text-bristol-gold'} transition-all duration-300`} />
+                    <Icon className={`h-3.5 lg:h-4 w-3.5 lg:w-4 relative z-10 ${location === path ? 'text-bristol-ink drop-shadow-sm' : 'group-hover:text-cyan-400'} transition-all duration-300`} />
                     <span className="text-xs lg:text-sm tracking-wide relative z-10 hidden sm:inline">{label}</span>
                     {location !== path && (
-                      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-bristol-gold/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-cyan-400/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     )}
                     {location !== path && (
-                      <div className="absolute inset-0 ring-1 ring-transparent group-hover:ring-bristol-gold/30 rounded-xl transition-all duration-300"></div>
+                      <div className="absolute inset-0 ring-1 ring-transparent group-hover:ring-cyan-400/30 rounded-xl transition-all duration-300"></div>
                     )}
                   </button>
                 </Link>
