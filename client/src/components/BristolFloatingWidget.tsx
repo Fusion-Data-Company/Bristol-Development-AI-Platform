@@ -2111,13 +2111,16 @@ function AgentsPane({
                         </div>
                       </div>
                       
-                      {/* Specialization Badge */}
-                      <div className={`bg-${colorClass}/10 border border-${colorClass}/20 rounded-lg px-3 py-2`}>
-                        <div className={`text-${colorClass} font-medium text-xs uppercase tracking-wider mb-1`}>
-                          {specialization.category}
-                        </div>
-                        <div className={`text-${colorClass}/80 text-xs`}>
-                          {specialization.description}
+                      {/* Agent Name with Emoji in Header */}
+                      <div className={`bg-black/40 border border-${colorClass}/30 rounded-lg px-4 py-3 flex items-center gap-3`}>
+                        <span className="text-2xl">{specialization.icon}</span>
+                        <div>
+                          <div className={`text-${colorClass} font-bold text-lg uppercase tracking-wide`}>
+                            {agent?.name || task.agentId}
+                          </div>
+                          <div className={`text-${colorClass}/80 text-sm`}>
+                            {specialization.description}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2137,6 +2140,60 @@ function AgentsPane({
                           → Processing {testProperty.units} units, {testProperty.sqft.toLocaleString()} sq ft
                         </div>
                         
+                        {/* Dynamic agent-specific messages */}
+                        {(() => {
+                          const getAgentMessages = (agentId: string) => {
+                            switch(agentId) {
+                              case 'master':
+                                return [
+                                  '→ Orchestrating multi-agent analysis',
+                                  '→ Coordinating data processing pipeline',
+                                  '→ Synthesizing cross-agent insights',
+                                  '→ Evaluating investment opportunities'
+                                ];
+                              case 'data-processing':
+                                return [
+                                  '→ Processing demographic datasets',
+                                  '→ Analyzing economic indicators',
+                                  '→ Calculating population metrics',
+                                  '→ Evaluating market fundamentals'
+                                ];
+                              case 'market-intelligence':
+                                return [
+                                  '→ Analyzing comparable properties',
+                                  '→ Evaluating market trends',
+                                  '→ Assessing competitive landscape',
+                                  '→ Forecasting demand drivers'
+                                ];
+                              case 'financial-analysis':
+                                return [
+                                  '→ Calculating IRR scenarios',
+                                  '→ Modeling cash flow projections',
+                                  '→ Computing cap rate analysis',
+                                  '→ Evaluating financing structures'
+                                ];
+                              case 'lead-management':
+                                return [
+                                  '→ Assessing investor profiles',
+                                  '→ Calculating conversion probabilities',
+                                  '→ Optimizing lead qualification',
+                                  '→ Preparing presentation materials'
+                                ];
+                              default:
+                                return ['→ Processing analysis...'];
+                            }
+                          };
+
+                          const messages = getAgentMessages(task.agentId);
+                          const displayCount = Math.min(Math.floor((progress / 100) * messages.length) + 1, messages.length);
+                          
+                          return messages.slice(0, displayCount).map((text, idx) => (
+                            <div key={idx} className={`text-gray-300 ml-4 animate-fade-in`}>
+                              {text}
+                            </div>
+                          ));
+                        })()}
+
                         {/* Dynamic real-time messages */}
                         {outputMessages[task.agentId]?.map((msg, idx) => (
                           <div key={idx} className={`flex items-center gap-2 animate-fade-in ${
