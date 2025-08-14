@@ -354,6 +354,7 @@ export const scrapeJobsAnnex = pgTable('scrape_jobs_annex', {
   id: varchar('id', { length: 64 }).primaryKey().default(sql`gen_random_uuid()`),
   status: varchar('status', { length: 24 }).notNull(), // queued|running|done|error
   query: jsonb('query').notNull(),
+  meta: jsonb('meta'), // progress and stage information
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   startedAt: timestamp('started_at', { withTimezone: true }),
   finishedAt: timestamp('finished_at', { withTimezone: true }),

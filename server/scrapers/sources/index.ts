@@ -1,7 +1,7 @@
-import { apartmentListAdapter } from './apartment-list';
-import { rentalsAdapter } from './rentals';
-import { loopNetAdapter } from './loopnet';
-import { craigslistAdapter } from './craigslist';
+import { apartmentListAdapter } from './apartment-list.js';
+import { rentalsAdapter } from './rentals.js';
+import { loopNetAdapter } from './loopnet.js';
+import { craigslistAdapter } from './craigslist.js';
 
 export interface ScrapingQuery {
   address: string;

@@ -27,7 +27,7 @@ export function registerCompsAnnexRoutes(app: Express) {
         .orderBy(desc(compsAnnex.updatedAt));
       
       const totalResult = await db.execute(sql`select count(*)::int as c from comps_annex`);
-      const total = totalResult.rows?.[0]?.c || totalResult[0]?.c || 0;
+      const total = (totalResult.rows as any)?.[0]?.c || (totalResult as any)[0]?.c || 0;
       
       res.json({ rows, total, limit, offset });
     } catch (error) {

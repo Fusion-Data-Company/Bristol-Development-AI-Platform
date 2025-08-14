@@ -2,7 +2,7 @@ import { randomUUID } from 'crypto';
 import { db } from '../db';
 import { scrapeJobsAnnex, compsAnnex } from '../../shared/schema';
 import { adapters } from './sources';
-import { sql, eq } from 'drizzle-orm';
+import { sql, eq, and } from 'drizzle-orm';
 import { runScrapeAgent, ScrapeQuery } from './agent';
 
 export async function newScrapeJob(query: any) {
@@ -157,7 +157,10 @@ export async function runJobNow(id: string) {
                 scrapedAt: row.scrapedAt,
                 jobId: row.jobId
               })
-              .where(sql`canonical_address = ${row.canonicalAddress} AND unit_plan = ${row.unitPlan}`);
+              .where(and(
+                eq(compsAnnex.canonicalAddress, row.canonicalAddress),
+                eq(compsAnnex.unitPlan, row.unitPlan || '')
+              ));
             insertedCount++;
           } catch (updateErr) {
             console.warn('Error updating existing record:', updateErr);
