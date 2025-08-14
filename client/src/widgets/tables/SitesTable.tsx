@@ -135,18 +135,37 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       size: 120,
       cell: ({ row }) => {
         const status = row.getValue('status') as string;
+        const statusLower = status?.toLowerCase() || 'active';
+        
+        const getStatusStyle = () => {
+          switch (statusLower) {
+            case 'completed':
+              return 'bg-gradient-to-r from-emerald-400/20 via-green-500/30 to-emerald-600/40 backdrop-blur-sm border border-emerald-400/50 text-emerald-800 shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/40 hover:scale-105';
+            case 'newest':
+              return 'bg-gradient-to-r from-violet-400/20 via-purple-500/30 to-violet-600/40 backdrop-blur-sm border border-violet-400/50 text-violet-800 shadow-xl shadow-violet-500/30 hover:shadow-violet-500/40 hover:scale-105';
+            case 'pipeline':
+              return 'bg-gradient-to-r from-blue-400/20 via-cyan-500/30 to-blue-600/40 backdrop-blur-sm border border-blue-400/50 text-blue-800 shadow-xl shadow-blue-500/30 hover:shadow-blue-500/40 hover:scale-105';
+            default:
+              return 'bg-gradient-to-r from-amber-400/20 via-orange-500/30 to-amber-600/40 backdrop-blur-sm border border-amber-400/50 text-amber-800 shadow-xl shadow-amber-500/30 hover:shadow-amber-500/40 hover:scale-105';
+          }
+        };
+
         return (
-          <Badge
-            variant="outline"
-            className={
-              status === 'active' ? 'bg-gradient-to-r from-green-500/20 to-green-600/30 text-green-800 border-green-500/40 font-bold shadow-lg shadow-green-500/20' :
-              status === 'pipeline' ? 'bg-gradient-to-r from-blue-500/20 to-blue-600/30 text-blue-800 border-blue-500/40 font-bold shadow-lg shadow-blue-500/20' :
-              status === 'completed' ? 'bg-gradient-to-r from-bristol-gold/20 to-bristol-maroon/30 text-bristol-maroon border-bristol-gold/40 font-bold shadow-lg shadow-bristol-gold/20' :
-              'bg-gradient-to-r from-bristol-stone/20 to-bristol-stone/30 text-bristol-stone border-bristol-stone/40 font-bold shadow-lg shadow-bristol-stone/20'
-            }
-          >
-            {status?.charAt(0).toUpperCase() + status?.slice(1) || 'Active'}
-          </Badge>
+          <div className="relative">
+            <Badge
+              variant="outline"
+              className={`
+                ${getStatusStyle()}
+                font-bold text-xs px-3 py-1 rounded-full transition-all duration-300 cursor-default
+                relative overflow-hidden
+              `}
+            >
+              <div className="absolute inset-0 bg-white/10 rounded-full"></div>
+              <span className="relative z-10 font-semibold tracking-wide">
+                {status?.charAt(0).toUpperCase() + status?.slice(1) || 'Active'}
+              </span>
+            </Badge>
+          </div>
         );
       },
     },
