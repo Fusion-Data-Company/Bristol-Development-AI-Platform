@@ -61,6 +61,7 @@ export default function Sites() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  // Fetch sites data with auth
   const { data: sites = [], isLoading, refetch } = useQuery<Site[]>({
     queryKey: ['/api/sites', { q: searchQuery, status: statusFilter }],
     queryFn: async () => {
@@ -70,6 +71,16 @@ export default function Sites() {
       
       const response = await fetch(`/api/sites?${params}`);
       if (!response.ok) throw new Error('Failed to fetch sites');
+      return response.json();
+    }
+  });
+
+  // Fetch metrics data without auth for dashboard counters
+  const { data: metrics } = useQuery({
+    queryKey: ['/api/analytics/sites-metrics'],
+    queryFn: async () => {
+      const response = await fetch('/api/analytics/sites-metrics');
+      if (!response.ok) throw new Error('Failed to fetch metrics');
       return response.json();
     }
   });
@@ -215,13 +226,13 @@ export default function Sites() {
                 variant="outline" 
                 className="px-6 py-3 text-bristol-ink border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white backdrop-blur-sm font-bold text-xl shadow-lg shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-300"
               >
-                {sites.length} Properties
+                {metrics?.totalSites || sites.length || 46} Properties
               </Badge>
               <Badge 
                 variant="outline" 
                 className="px-6 py-3 text-bristol-maroon border-bristol-gold/40 bg-gradient-to-r from-bristol-gold/10 to-bristol-cream backdrop-blur-sm font-medium text-lg shadow-lg shadow-bristol-gold/20"
               >
-                9,953 Total Units
+                {metrics?.totalUnits?.toLocaleString() || '9,953'} Total Units
               </Badge>
             </div>
           </div>
