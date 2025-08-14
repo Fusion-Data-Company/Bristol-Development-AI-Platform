@@ -1634,52 +1634,48 @@ function AdminPane({
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="flex-shrink-0 p-6 pb-4">
-        <div className="bg-gradient-to-r from-bristol-maroon via-bristol-maroon/90 to-bristol-maroon/80 border border-bristol-gold/30 rounded-xl p-4 mb-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-bristol-gold/20 border border-bristol-gold/40 rounded-lg flex items-center justify-center">
-                <Settings className="h-5 w-5 text-bristol-gold" />
-              </div>
-              <div>
-                <h4 className="text-bristol-gold font-bold text-lg tracking-wide">SYSTEM CONFIGURATION</h4>
-                <p className="text-bristol-gold/70 text-xs">Enterprise Admin Controls</p>
-              </div>
+      {/* System Configuration Navigation */}
+      <div className="flex-shrink-0 p-4 border-b border-bristol-gold/20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-bristol-gold/20 border border-bristol-gold/40 rounded-lg flex items-center justify-center">
+              <Settings className="h-4 w-4 text-bristol-gold" />
             </div>
+            <div>
+              <h4 className="text-bristol-gold font-bold text-lg tracking-wide">SYSTEM CONFIGURATION</h4>
+              <p className="text-bristol-gold/70 text-xs">Enterprise Admin Controls</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowMcpConfig(!showMcpConfig)}
+              className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
+                showMcpConfig 
+                  ? 'bg-bristol-cyan text-black border border-bristol-cyan/50' 
+                  : 'bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan border border-bristol-cyan/30'
+              }`}
+            >
+              <CircuitBoard className="h-3 w-3" />
+              MCP Config
+            </button>
             
-            <div className="flex items-center gap-3">
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setShowMcpConfig(!showMcpConfig)}
-                  className="group relative px-4 py-2.5 bg-bristol-cyan/90 hover:bg-bristol-cyan border border-bristol-cyan/30 text-black rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-bristol-cyan/30 hover:shadow-xl transform hover:scale-105"
-                >
-                  <CircuitBoard className="h-4 w-4 group-hover:animate-pulse" />
-                  <span>MCP Config</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
-                </button>
-                
-                <button
-                  onClick={testMcpServers}
-                  disabled={loadingMcp}
-                  className="group relative px-3 py-2.5 bg-emerald-600/90 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-white border border-emerald-500/30 rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-emerald-500/30 hover:shadow-xl transform hover:scale-105"
-                >
-                  <Cpu className={`h-4 w-4 ${loadingMcp ? 'animate-spin' : 'group-hover:animate-pulse'}`} />
-                  <span>{loadingMcp ? 'Testing...' : 'Test MCP'}</span>
-                  {!loadingMcp && (
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
-                  )}
-                </button>
-                
-                <button
-                  onClick={onSave}
-                  className="group relative px-4 py-2.5 bg-bristol-gold/90 hover:bg-bristol-gold border border-bristol-gold/30 text-black rounded-lg font-semibold transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-bristol-gold/30 hover:shadow-xl transform hover:scale-105"
-                >
-                  <Save className="h-4 w-4 group-hover:animate-pulse" />
-                  <span>Save Settings</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
-                </button>
-              </div>
-            </div>
+            <button
+              onClick={testMcpServers}
+              disabled={loadingMcp}
+              className="px-3 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 disabled:opacity-50 disabled:cursor-not-allowed text-emerald-400 border border-emerald-500/30 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2"
+            >
+              <Cpu className={`h-3 w-3 ${loadingMcp ? 'animate-spin' : ''}`} />
+              {loadingMcp ? 'Testing...' : 'Test MCP'}
+            </button>
+            
+            <button
+              onClick={onSave}
+              className="px-3 py-1.5 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold border border-bristol-gold/30 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2"
+            >
+              <Save className="h-3 w-3" />
+              Save Settings
+            </button>
           </div>
         </div>
       </div>
