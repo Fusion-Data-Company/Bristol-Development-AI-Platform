@@ -131,16 +131,21 @@ router.post('/restart', async (req, res) => {
     const configData = fs.readFileSync(MCP_CONFIG_PATH, 'utf8');
     const config = JSON.parse(configData);
     
-    console.log('Simulating MCP server restart...');
-    console.log('Configured servers:', Object.keys(config.mcpServers || {}));
+    console.log('MCP Configuration Updated - Servers Configured:');
+    Object.entries(config.mcpServers || {}).forEach(([name, serverConfig]: [string, any]) => {
+      console.log(`  - ${name}: ${serverConfig.command} ${serverConfig.args?.join(' ') || ''}`);
+    });
+    console.log('Note: In production, these would spawn as actual MCP server processes');
 
     // Simulate restart delay
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     res.json({
       ok: true,
-      message: 'MCP servers restarted successfully',
-      activeServers: Object.keys(config.mcpServers || {}),
+      message: 'MCP configuration updated successfully',
+      configuredServers: Object.keys(config.mcpServers || {}),
+      activeConnections: 0, // None actually running in this demo
+      note: 'Servers configured but not actively spawned in demo mode',
       restartedAt: new Date().toISOString()
     });
 

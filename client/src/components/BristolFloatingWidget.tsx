@@ -1786,40 +1786,45 @@ function AdminPane({
               <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-xl p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                     <span className="text-bristol-gold font-semibold text-sm">MCP System Status</span>
                   </div>
-                  <span className="text-green-400 text-sm font-bold">OPERATIONAL</span>
+                  <span className="text-yellow-500 text-sm font-bold">CONFIGURED</span>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-3 text-xs">
                   <div>
-                    <span className="text-bristol-gold/80">Active Servers:</span>
+                    <span className="text-bristol-gold/80">Configured Servers:</span>
                     <span className="text-white font-semibold ml-2">{Object.keys(mcpServers).length}</span>
                   </div>
                   <div>
-                    <span className="text-bristol-gold/80">Config Source:</span>
-                    <span className="text-white font-semibold ml-2">Claude Desktop Compatible</span>
+                    <span className="text-bristol-gold/80">Active Connections:</span>
+                    <span className="text-yellow-500 font-semibold ml-2">0</span>
                   </div>
                 </div>
               </div>
 
-              {/* Active MCP Servers */}
+              {/* Configured MCP Servers */}
               {Object.keys(mcpServers).length > 0 && (
                 <div className="bg-bristol-electric/10 border border-bristol-electric/30 rounded-xl p-4">
-                  <h5 className="text-bristol-electric font-semibold mb-3 text-sm">Active MCP Servers</h5>
+                  <h5 className="text-bristol-electric font-semibold mb-3 text-sm">Configured MCP Servers</h5>
                   <div className="grid gap-2">
                     {Object.entries(mcpServers).map(([name, config]: [string, any]) => (
                       <div key={name} className="flex items-center justify-between p-3 bg-black/40 border border-gray-700 rounded-lg">
                         <div className="flex items-center gap-3">
-                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                          <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
                           <div>
                             <div className="text-white font-medium text-sm">{name}</div>
                             <div className="text-xs text-gray-400">{config.command} {config.args?.join(' ')}</div>
                           </div>
                         </div>
-                        <span className="text-xs text-green-400 font-semibold">CONNECTED</span>
+                        <span className="text-xs text-gray-400 font-semibold">NOT STARTED</span>
                       </div>
                     ))}
+                  </div>
+                  <div className="mt-3 p-3 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
+                    <div className="text-xs text-yellow-400">
+                      ⚠️ <strong>Note:</strong> MCP servers are configured but not actively running. In a full implementation, these would spawn as separate processes and show real connection status.
+                    </div>
                   </div>
                 </div>
               )}
@@ -1957,10 +1962,10 @@ function AdminPane({
                           <tr key={serverName} className="border-b border-gray-700/30">
                             <td className="py-2 text-white">{serverName}</td>
                             <td className="py-2">
-                              <span className="text-green-400 text-xs">● CONNECTED</span>
+                              <span className="text-gray-400 text-xs">● NOT RUNNING</span>
                             </td>
-                            <td className="py-2 text-gray-300">2m 45s</td>
-                            <td className="py-2 text-gray-300">Active</td>
+                            <td className="py-2 text-gray-500">--</td>
+                            <td className="py-2 text-gray-500">Configured</td>
                           </tr>
                         )) : (
                           <tr>
