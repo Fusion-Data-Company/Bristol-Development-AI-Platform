@@ -442,22 +442,48 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
       header: 'Amenities',
       cell: ({ getValue }) => {
         const amenities = getValue() as string[] | undefined;
+        if (!amenities || amenities.length === 0) {
+          return <span className="text-gray-400 text-xs">No amenities listed</span>;
+        }
+        
         return (
-          <div className="flex flex-wrap gap-1">
-            {amenities?.slice(0, 2).map((tag, i) => (
-              <Badge key={i} variant="secondary" className="text-xs">
-                {tag}
-              </Badge>
-            ))}
-            {amenities && amenities.length > 2 && (
-              <Badge variant="secondary" className="text-xs">
-                +{amenities.length - 2}
-              </Badge>
+          <div className="space-y-2 min-w-[300px]">
+            {/* Top Priority Amenities */}
+            <div className="flex flex-wrap gap-1">
+              {amenities.slice(0, 6).map((tag, i) => (
+                <Badge key={i} variant="secondary" className="text-xs bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+            
+            {/* Secondary Amenities */}
+            {amenities.length > 6 && (
+              <div className="flex flex-wrap gap-1">
+                {amenities.slice(6, 12).map((tag, i) => (
+                  <Badge key={i + 6} variant="outline" className="text-xs text-bristol-stone border-bristol-stone/30">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
             )}
+            
+            {/* Additional Count */}
+            {amenities.length > 12 && (
+              <div className="text-xs text-bristol-maroon font-medium">
+                +{amenities.length - 12} additional amenities
+              </div>
+            )}
+            
+            {/* Total Count */}
+            <div className="text-xs text-bristol-stone/80 font-medium">
+              Total: {amenities.length} amenities
+            </div>
           </div>
         );
       },
       enableSorting: false,
+      size: 350, // Make the column wider for amenities
     }),
     columnHelper.accessor('source', {
       header: 'Source',
