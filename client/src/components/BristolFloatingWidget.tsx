@@ -2080,28 +2080,85 @@ function AgentsPane({
                 const agent = agents.find(a => a.id === task.agentId);
                 const colorClass = agentColors[task.agentId as keyof typeof agentColors] || 'bristol-cyan';
                 const progress = taskProgress[task.agentId] || 0;
+
+                // Get agent specialization info
+                const getAgentSpecialization = (agentId: string) => {
+                  switch(agentId) {
+                    case 'master':
+                      return {
+                        category: 'MASTER COORDINATION',
+                        description: 'Orchestrates analysis & synthesizes insights',
+                        icon: '🧠'
+                      };
+                    case 'data-processing':
+                      return {
+                        category: 'DATA INTELLIGENCE',
+                        description: 'Processes demographics & economic data',
+                        icon: '📊'
+                      };
+                    case 'market-intelligence':
+                      return {
+                        category: 'MARKET INTELLIGENCE',
+                        description: 'Analyzes market trends & comparables',
+                        icon: '📈'
+                      };
+                    case 'financial-analysis':
+                      return {
+                        category: 'FINANCIAL ANALYSIS',
+                        description: 'Calculates IRR/NPV/Cap rates',
+                        icon: '💰'
+                      };
+                    case 'lead-management':
+                      return {
+                        category: 'LEAD MANAGEMENT',
+                        description: 'Manages investor conversion strategies',
+                        icon: '🎯'
+                      };
+                    default:
+                      return {
+                        category: 'AGENT',
+                        description: 'Processing...',
+                        icon: '⚡'
+                      };
+                  }
+                };
+
+                const specialization = getAgentSpecialization(task.agentId);
                 
                 return (
                   <div key={task.id} className={`bg-black/40 border border-${colorClass}/30 rounded-xl p-4`}>
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-6 h-6 bg-${colorClass}/20 border border-${colorClass}/40 rounded-lg flex items-center justify-center`}>
-                          <div className={`w-2 h-2 bg-${colorClass} rounded-full animate-pulse`}></div>
+                    {/* Enhanced Agent Header with Specialization */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 bg-${colorClass}/20 border border-${colorClass}/40 rounded-lg flex items-center justify-center`}>
+                            <span className="text-lg">{specialization.icon}</span>
+                          </div>
+                          <div>
+                            <h5 className={`text-${colorClass} font-bold text-sm uppercase tracking-wide`}>
+                              {agent?.name || task.agentId}
+                            </h5>
+                            <p className="text-xs text-gray-400">{agent?.model}</p>
+                          </div>
                         </div>
-                        <div>
-                          <h5 className={`text-${colorClass} font-bold text-sm uppercase tracking-wide`}>
-                            {agent?.name || task.agentId}
-                          </h5>
-                          <p className="text-xs text-gray-400">{task.description}</p>
+                        <div className="text-right">
+                          <span className={`text-xs font-bold text-${colorClass}`}>{progress}%</span>
+                          <div className="w-12 bg-gray-700 rounded-full h-1 mt-1">
+                            <div 
+                              className={`bg-${colorClass} h-1 rounded-full transition-all duration-300`}
+                              style={{ width: `${progress}%` }}
+                            ></div>
+                          </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <span className={`text-xs font-bold text-${colorClass}`}>{progress}%</span>
-                        <div className="w-12 bg-gray-700 rounded-full h-1 mt-1">
-                          <div 
-                            className={`bg-${colorClass} h-1 rounded-full transition-all duration-300`}
-                            style={{ width: `${progress}%` }}
-                          ></div>
+                      
+                      {/* Specialization Badge */}
+                      <div className={`bg-${colorClass}/10 border border-${colorClass}/20 rounded-lg px-3 py-2`}>
+                        <div className={`text-${colorClass} font-medium text-xs uppercase tracking-wider mb-1`}>
+                          {specialization.category}
+                        </div>
+                        <div className={`text-${colorClass}/80 text-xs`}>
+                          {specialization.description}
                         </div>
                       </div>
                     </div>
