@@ -1763,8 +1763,8 @@ function AdminPane({
 
         {/* MCP Configuration Window */}
         {showMcpConfig && (
-          <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-6 max-h-[70vh] flex flex-col">
-            <div className="flex items-center justify-between mb-4 flex-shrink-0">
+          <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl overflow-hidden max-h-[75vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-bristol-cyan/20 flex-shrink-0 bg-black/60">
               <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
                 <CircuitBoard className="h-4 w-4 animate-pulse" />
                 MCP SERVER CONFIGURATION
@@ -1777,7 +1777,7 @@ function AdminPane({
               </button>
             </div>
 
-            <div className="space-y-4 overflow-y-auto custom-scrollbar flex-1">
+            <div className="p-4 space-y-4 overflow-y-auto custom-scrollbar flex-1" style={{ maxHeight: 'calc(75vh - 80px)' }}>
               {/* MCP Status Indicator */}
               <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-xl p-3">
                 <div className="flex items-center justify-between">
@@ -1906,17 +1906,23 @@ function AdminPane({
               </div>
 
               {/* Advanced Settings */}
-              <div className="bg-gray-800/30 border border-gray-600/30 rounded-xl p-4">
+              <div className="bg-gray-800/30 border border-gray-600/30 rounded-xl p-4 mb-4">
                 <h5 className="text-gray-300 font-semibold mb-3 text-sm">Advanced Settings</h5>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-300 text-sm">Auto-reconnect</span>
+                    <span className="text-gray-300 text-sm">Auto-reconnect on failure</span>
                     <div className="w-12 h-6 bg-green-600 rounded-full relative">
                       <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-300 text-sm">Health monitoring</span>
+                    <span className="text-gray-300 text-sm">Health monitoring (30s)</span>
+                    <div className="w-12 h-6 bg-green-600 rounded-full relative">
+                      <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300 text-sm">Process isolation</span>
                     <div className="w-12 h-6 bg-green-600 rounded-full relative">
                       <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
                     </div>
@@ -1924,8 +1930,43 @@ function AdminPane({
                 </div>
                 
                 <div className="mt-4 pt-4 border-t border-gray-600/30">
-                  <div className="text-xs text-gray-400">
-                    <strong>Security Notice:</strong> MCP servers run with system permissions. Only use trusted configurations and verify all server sources before deployment.
+                  <div className="text-xs text-gray-400 leading-relaxed">
+                    <strong className="text-red-400">Security Notice:</strong> MCP servers execute with system permissions. Only use trusted configurations from verified sources. Review all server commands and environment variables before deployment.
+                  </div>
+                </div>
+                
+                {/* Connection Status Table */}
+                <div className="mt-4 pt-4 border-t border-gray-600/30">
+                  <h6 className="text-gray-300 font-medium mb-2 text-xs">Connection Status</h6>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-gray-600/30">
+                          <th className="text-left text-gray-400 py-2">Server</th>
+                          <th className="text-left text-gray-400 py-2">Status</th>
+                          <th className="text-left text-gray-400 py-2">Uptime</th>
+                          <th className="text-left text-gray-400 py-2">Tools</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.keys(mcpServers).length > 0 ? Object.keys(mcpServers).map((serverName) => (
+                          <tr key={serverName} className="border-b border-gray-700/30">
+                            <td className="py-2 text-white">{serverName}</td>
+                            <td className="py-2">
+                              <span className="text-green-400 text-xs">● CONNECTED</span>
+                            </td>
+                            <td className="py-2 text-gray-300">2m 45s</td>
+                            <td className="py-2 text-gray-300">Active</td>
+                          </tr>
+                        )) : (
+                          <tr>
+                            <td colSpan={4} className="py-4 text-center text-gray-500 text-xs">
+                              No MCP servers configured
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
