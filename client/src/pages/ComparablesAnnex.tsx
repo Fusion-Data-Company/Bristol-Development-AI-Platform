@@ -10,6 +10,7 @@ import TanStackCompsTable from '@/components/comparables/TanStackCompsTable';
 import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
 import ScraperJobManager from '@/components/comparables/ScraperJobManager';
+import { EliteFirecrawlInterface } from '@/components/comparables/EliteFirecrawlInterface';
 import AIAnalyticsPanel from '@/components/comparables/AIAnalyticsPanel';
 import DataVisualization from '@/components/comparables/DataVisualization';
 import ExportTools from '@/components/comparables/ExportTools';
@@ -310,6 +311,11 @@ export default function ComparablesAnnex() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Elite Firecrawl Operations Interface - Hero Section */}
+        <div className="mb-8">
+          <EliteFirecrawlInterface />
         </div>
 
         {/* Production Metrics */}
