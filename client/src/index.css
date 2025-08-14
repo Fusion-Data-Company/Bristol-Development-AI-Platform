@@ -689,35 +689,44 @@ html {
   }
 }
 
-/* Bristol Brain Button Force Override */
+/* Bristol Brain Button Force Override - Bottom Right Floating */
 .bristol-brain-button {
   position: fixed !important;
-  top: 80px !important;
-  left: 0px !important;
-  right: auto !important;
-  bottom: auto !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  top: auto !important;
+  left: auto !important;
   z-index: 99999 !important;
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
-  padding: 16px 20px 16px 12px !important;
-  background: linear-gradient(to right, #8b1538f2, #2d303ef2, #00bfffd9) !important;
+  padding: 16px 24px !important;
+  background: linear-gradient(135deg, #8b1538 0%, #2d303e 50%, #00bfff 100%) !important;
   color: white !important;
-  border: 1px solid rgba(0, 191, 255, 0.4) !important;
-  border-radius: 0 24px 24px 0 !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 191, 255, 0.4) !important;
+  border: 2px solid rgba(0, 191, 255, 0.5) !important;
+  border-radius: 24px !important;
+  box-shadow: 
+    0 20px 40px -12px rgba(0, 0, 0, 0.6), 
+    0 0 30px rgba(0, 191, 255, 0.4),
+    0 0 60px rgba(139, 21, 56, 0.3) !important;
   backdrop-filter: blur(16px) !important;
-  transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
   transform: translateZ(0) !important;
   cursor: pointer !important;
   font-family: 'Cinzel', serif !important;
   overflow: hidden !important;
+  font-weight: 700 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
 }
 
 .bristol-brain-button:hover {
-  transform: scale(1.1) translateZ(0) !important;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 50px rgba(0, 191, 255, 0.6) !important;
-  background: linear-gradient(to right, #8b1538, #2d303e, #00bfff) !important;
+  transform: scale(1.05) translateY(-2px) translateZ(0) !important;
+  box-shadow: 
+    0 30px 60px -12px rgba(0, 0, 0, 0.8), 
+    0 0 50px rgba(0, 191, 255, 0.6),
+    0 0 80px rgba(139, 21, 56, 0.5) !important;
+  background: linear-gradient(135deg, #8b1538 0%, #00bfff 50%, #2d303e 100%) !important;
+  border-color: rgba(0, 191, 255, 0.8) !important;
 }
 
 .bristol-brain-button * {
