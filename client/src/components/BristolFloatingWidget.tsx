@@ -2111,15 +2111,25 @@ function AgentsPane({
                         </div>
                       </div>
                       
-                      {/* Agent Name with Emoji in Header */}
-                      <div className={`bg-black/40 border border-${colorClass}/30 rounded-lg px-4 py-3 flex items-center gap-3`}>
-                        <span className="text-2xl">{specialization.icon}</span>
-                        <div>
-                          <div className={`text-${colorClass} font-bold text-lg uppercase tracking-wide`}>
-                            {agent?.name || task.agentId}
+                      {/* Prominent Agent Name Header */}
+                      <div className={`bg-gradient-to-r from-${colorClass}/20 via-${colorClass}/30 to-${colorClass}/20 border border-${colorClass}/50 rounded-xl px-4 py-4`}>
+                        <div className="flex items-center gap-4">
+                          <div className={`w-12 h-12 bg-${colorClass}/30 border-2 border-${colorClass}/60 rounded-xl flex items-center justify-center`}>
+                            <span className="text-3xl">{specialization.icon}</span>
                           </div>
-                          <div className={`text-${colorClass}/80 text-sm`}>
-                            {specialization.description}
+                          <div className="flex-1">
+                            <div className={`text-${colorClass} font-bold text-xl uppercase tracking-wider mb-1`}>
+                              {specialization.category}
+                            </div>
+                            <div className={`text-${colorClass} font-semibold text-lg uppercase tracking-wide`}>
+                              {agent?.name || task.agentId}
+                            </div>
+                            <div className={`text-${colorClass}/80 text-sm mt-1`}>
+                              {specialization.description}
+                            </div>
+                          </div>
+                          <div className={`text-${colorClass} font-bold text-lg`}>
+                            {progress}%
                           </div>
                         </div>
                       </div>
