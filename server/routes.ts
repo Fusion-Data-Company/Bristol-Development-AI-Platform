@@ -46,13 +46,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const noaaRouter = (await import('./api/tools/noaa')).default;
   const snapshotsRouter = (await import('./api/tools/snapshots')).default;
   
+  // Enhanced API endpoints for MCP integration
+  const blsEmploymentRouter = (await import('./api/tools/bls-employment')).default;
+  const hudHousingRouter = (await import('./api/tools/hud-housing')).default;
+  const fbiCrimeRouter = (await import('./api/tools/fbi-crime')).default;
+  const noaaClimateRouter = (await import('./api/tools/noaa-climate')).default;
+  
   app.use('/api/tools/bls', blsRouter);
   app.use('/api/tools/bea', beaRouter);
   app.use('/api/tools/hud', hudRouter);
   app.use('/api/tools/foursquare', foursquareRouter);
   app.use('/api/tools/fbi', fbiRouter);
   app.use('/api/tools/noaa', noaaRouter);
+  
+  // Enhanced MCP data endpoints
+  app.use('/api/tools/bls-employment', blsEmploymentRouter);
+  app.use('/api/tools/hud-housing', hudHousingRouter);
+  app.use('/api/tools/fbi-crime', fbiCrimeRouter);
+  app.use('/api/tools/noaa-climate', noaaClimateRouter);
   app.use('/api/snapshots', snapshotsRouter);
+
+  // MCP Tools Service API
+  const mcpToolsRouter = (await import('./api/mcp-tools')).default;
+  app.use('/api/mcp-tools', mcpToolsRouter);
 
   // Bristol A.I. Enhanced API with MCP integration
   const bristolBrainRouter = (await import('./api/bristol-brain-enhanced')).default;

@@ -839,7 +839,6 @@ export default function BristolFloatingWidget({
               }}
             >
               {/* Tab Content */}
-              {console.log("Current activeTab:", activeTab)}
               {activeTab === "chat" && (
                 <div className="flex-1 overflow-hidden flex flex-col relative">
                   {/* Background tint overlay for chat area */}
@@ -992,40 +991,269 @@ export default function BristolFloatingWidget({
 // Enhanced UI Components for Bristol A.I. Boss Agent
 
 function DataPane({ data }: { data: any }) {
+  const [selectedTool, setSelectedTool] = useState<string>("overview");
+  const [toolResults, setToolResults] = useState<any>({});
+  const [loadingTool, setLoadingTool] = useState<string>("");
+
+  // Real-time data tools with actual API endpoints
+  const dataTools = {
+    overview: {
+      name: "Portfolio Overview",
+      icon: <Building2 className="h-4 w-4" />,
+      endpoint: "/api/analytics/overview",
+      description: "Complete portfolio analytics and metrics"
+    },
+    demographics: {
+      name: "Demographics API",
+      icon: <Users className="h-4 w-4" />,
+      endpoint: "/api/address-demographics",
+      description: "Real-time census and demographic data"
+    },
+    employment: {
+      name: "BLS Employment",
+      icon: <TrendingUp className="h-4 w-4" />,
+      endpoint: "/api/tools/bls-employment",
+      description: "Bureau of Labor Statistics employment data"
+    },
+    housing: {
+      name: "HUD Housing Data",
+      icon: <Building2 className="h-4 w-4" />,
+      endpoint: "/api/tools/hud-housing",
+      description: "HUD fair market rents and housing data"
+    },
+    crime: {
+      name: "FBI Crime Stats",
+      icon: <Shield className="h-4 w-4" />,
+      endpoint: "/api/tools/fbi-crime",
+      description: "FBI crime statistics and safety metrics"
+    },
+    climate: {
+      name: "NOAA Climate",
+      icon: <Activity className="h-4 w-4" />,
+      endpoint: "/api/tools/noaa-climate",
+      description: "National weather and climate data"
+    },
+    sites: {
+      name: "Property Sites",
+      icon: <MapPin className="h-4 w-4" />,
+      endpoint: "/api/sites",
+      description: "Complete property database access"
+    },
+    pipeline: {
+      name: "Deal Pipeline",
+      icon: <DollarSign className="h-4 w-4" />,
+      endpoint: "/api/analytics/pipeline",
+      description: "Investment pipeline and deal flow"
+    },
+    foursquare: {
+      name: "Foursquare POI",
+      icon: <MapPin className="h-4 w-4" />,
+      endpoint: "/api/tools/foursquare",
+      description: "Points of interest and location data"
+    },
+    snapshots: {
+      name: "Saved Results",
+      icon: <Save className="h-4 w-4" />,
+      endpoint: "/api/snapshots",
+      description: "Previously saved analysis results"
+    }
+  };
+
+  const executeTool = async (toolKey: string) => {
+    const tool = dataTools[toolKey as keyof typeof dataTools];
+    if (!tool) return;
+
+    setLoadingTool(toolKey);
+    try {
+      const response = await fetch(tool.endpoint);
+      const result = await response.json();
+      setToolResults((prev: any) => ({ ...prev, [toolKey]: result }));
+    } catch (error) {
+      console.error(`Error executing ${tool.name}:`, error);
+      setToolResults((prev: any) => ({ 
+        ...prev, 
+        [toolKey]: { error: `Failed to fetch ${tool.name} data` }
+      }));
+    } finally {
+      setLoadingTool("");
+    }
+  };
+
+  const currentResult = toolResults[selectedTool];
+
   return (
     <div className="flex-1 p-6">
       <div className="space-y-6">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-black/60 border border-bristol-gold/30 rounded-2xl p-4 cyberpunk-glow">
-            <div className="flex items-center gap-2 mb-2">
-              <Database className="h-4 w-4 text-bristol-gold" />
-              <span className="text-sm font-semibold text-bristol-gold">LIVE DATA SOURCES</span>
+        {/* MCP Server Status */}
+        <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-2xl p-4">
+          <h4 className="text-bristol-cyan font-semibold mb-3 flex items-center gap-2">
+            <Cpu className="h-4 w-4 animate-pulse" />
+            MCP Server Integration
+          </h4>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-bristol-cyan">PostgreSQL Server</span>
             </div>
-            <div className="text-2xl font-bold text-white mb-1">
-              {Object.keys(data || {}).length}
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-bristol-cyan">Web Search</span>
             </div>
-            <p className="text-xs text-gray-400">Active connections</p>
-          </div>
-          
-          <div className="bg-black/60 border border-purple-500/30 rounded-2xl p-4 cyberpunk-glow">
-            <div className="flex items-center gap-2 mb-2">
-              <Activity className="h-4 w-4 text-purple-400" />
-              <span className="text-sm font-semibold text-purple-400">SYSTEM STATUS</span>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-bristol-cyan">File System</span>
             </div>
-            <div className="text-2xl font-bold text-green-400 mb-1">ONLINE</div>
-            <p className="text-xs text-gray-400">All systems operational</p>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-bristol-cyan">Memory Store</span>
+            </div>
           </div>
         </div>
-        
+
+        {/* Data Tool Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {Object.entries(dataTools).map(([key, tool]) => (
+            <button
+              key={key}
+              onClick={() => {
+                setSelectedTool(key);
+                if (!toolResults[key]) {
+                  executeTool(key);
+                }
+              }}
+              className={`p-3 rounded-xl border transition-all duration-300 text-left ${
+                selectedTool === key
+                  ? 'bg-bristol-cyan/20 border-bristol-cyan/50 text-bristol-cyan'
+                  : 'bg-black/40 border-gray-700 text-white hover:border-bristol-cyan/30 hover:bg-bristol-cyan/10'
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                {tool.icon}
+                <span className="text-sm font-semibold">{tool.name}</span>
+                {loadingTool === key && (
+                  <div className="w-3 h-3 border border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin"></div>
+                )}
+              </div>
+              <p className="text-xs opacity-80">{tool.description}</p>
+            </button>
+          ))}
+        </div>
+
+        {/* Tool Results Display */}
         <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-4">
-          <h4 className="text-bristol-cyan font-semibold mb-4 flex items-center gap-2">
-            <Shield className="h-4 w-4" />
-            REAL-TIME DATA ACCESS
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
+              <Terminal className="h-4 w-4" />
+              {dataTools[selectedTool as keyof typeof dataTools]?.name || "Select Tool"}
+            </h4>
+            <button
+              onClick={() => executeTool(selectedTool)}
+              disabled={loadingTool === selectedTool}
+              className="px-3 py-1 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+            >
+              {loadingTool === selectedTool ? "Loading..." : "Refresh"}
+            </button>
+          </div>
+          
+          <div className="max-h-80 overflow-auto cyberpunk-scrollbar">
+            {currentResult ? (
+              <div className="space-y-3">
+                {currentResult.error ? (
+                  <div className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg p-3">
+                    {currentResult.error}
+                  </div>
+                ) : (
+                  <>
+                    {/* Summary Cards for Key Metrics */}
+                    {selectedTool === "overview" && currentResult.totalProperties && (
+                      <div className="grid grid-cols-3 gap-2 mb-4">
+                        <div className="bg-bristol-gold/10 border border-bristol-gold/20 rounded-lg p-2">
+                          <div className="text-lg font-bold text-bristol-gold">{currentResult.totalProperties}</div>
+                          <div className="text-xs text-bristol-gold/80">Properties</div>
+                        </div>
+                        <div className="bg-green-400/10 border border-green-400/20 rounded-lg p-2">
+                          <div className="text-lg font-bold text-green-400">${currentResult.totalValue?.toLocaleString() || "N/A"}</div>
+                          <div className="text-xs text-green-400/80">Total Value</div>
+                        </div>
+                        <div className="bg-purple-400/10 border border-purple-400/20 rounded-lg p-2">
+                          <div className="text-lg font-bold text-purple-400">{currentResult.avgOccupancy || "N/A"}%</div>
+                          <div className="text-xs text-purple-400/80">Occupancy</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Raw Data Display */}
+                    <pre className="text-xs text-gray-300 whitespace-pre-wrap bg-black/20 rounded-lg p-3 border border-gray-700">
+                      {JSON.stringify(currentResult, null, 2)}
+                    </pre>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="text-bristol-cyan/60 text-sm text-center py-8">
+                Select a data tool to view real-time information
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Live Data Context */}
+        <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-2xl p-4">
+          <h4 className="text-bristol-gold font-semibold mb-3 flex items-center gap-2">
+            <Activity className="h-4 w-4 animate-pulse" />
+            Live Data Context
           </h4>
-          <div className="max-h-64 overflow-auto cyberpunk-scrollbar">
-            <pre className="text-xs text-gray-300 whitespace-pre-wrap">
-              {JSON.stringify(data, null, 2)}
-            </pre>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-bristol-gold/80">Portfolio Properties:</span>
+              <span className="text-white font-semibold ml-2">{data?.sites?.length || 0}</span>
+            </div>
+            <div>
+              <span className="text-bristol-gold/80">Active Markets:</span>
+              <span className="text-white font-semibold ml-2">{Object.keys(data?.analytics?.stateDistribution || {}).length}</span>
+            </div>
+            <div>
+              <span className="text-bristol-gold/80">Total Units:</span>
+              <span className="text-white font-semibold ml-2">{data?.analytics?.totalUnits || 0}</span>
+            </div>
+            <div>
+              <span className="text-bristol-gold/80">Last Updated:</span>
+              <span className="text-white font-semibold ml-2">{new Date().toLocaleTimeString()}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-bristol-electric/10 border border-bristol-electric/30 rounded-2xl p-4">
+          <h4 className="text-bristol-electric font-semibold mb-3 flex items-center gap-2">
+            <Zap className="h-4 w-4 animate-pulse" />
+            Quick Actions
+          </h4>
+          <div className="grid grid-cols-2 gap-2">
+            <button 
+              onClick={() => executeTool("overview")}
+              className="p-2 bg-bristol-cyan/10 hover:bg-bristol-cyan/20 border border-bristol-cyan/30 rounded-lg text-xs text-bristol-cyan transition-colors"
+            >
+              Refresh Portfolio
+            </button>
+            <button 
+              onClick={() => executeTool("employment")}
+              className="p-2 bg-bristol-gold/10 hover:bg-bristol-gold/20 border border-bristol-gold/30 rounded-lg text-xs text-bristol-gold transition-colors"
+            >
+              Get Employment Data
+            </button>
+            <button 
+              onClick={() => executeTool("housing")}
+              className="p-2 bg-green-400/10 hover:bg-green-400/20 border border-green-400/30 rounded-lg text-xs text-green-400 transition-colors"
+            >
+              Check Housing Market
+            </button>
+            <button 
+              onClick={() => executeTool("crime")}
+              className="p-2 bg-purple-400/10 hover:bg-purple-400/20 border border-purple-400/30 rounded-lg text-xs text-purple-400 transition-colors"
+            >
+              Safety Analytics
+            </button>
           </div>
         </div>
       </div>
@@ -1038,13 +1266,56 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
   mcpEnabled: boolean; 
   setMcpEnabled: (enabled: boolean) => void; 
 }) {
-  const mcpTools = [
-    { name: 'n8n Workflows', status: 'active', description: 'Automation and data processing' },
-    { name: 'Apify Web Scraping', status: 'active', description: 'Real estate data collection' },
-    { name: 'Census Data API', status: 'active', description: 'Demographics and population data' },
-    { name: 'HUD Fair Market Rent', status: 'active', description: 'Rental market intelligence' },
-    { name: 'Metrics Storage', status: 'active', description: 'Performance data tracking' }
-  ];
+  const [mcpTools, setMcpTools] = useState<any[]>([]);
+  const [mcpStatus, setMcpStatus] = useState<any>(null);
+  const [loadingMcp, setLoadingMcp] = useState(false);
+
+  // Fetch MCP tools and status
+  useEffect(() => {
+    const fetchMcpData = async () => {
+      setLoadingMcp(true);
+      try {
+        const [toolsResponse, statusResponse] = await Promise.all([
+          fetch('/api/mcp-tools'),
+          fetch('/api/mcp-tools/status')
+        ]);
+        
+        if (toolsResponse.ok) {
+          const toolsData = await toolsResponse.json();
+          setMcpTools(toolsData.tools || []);
+        }
+        
+        if (statusResponse.ok) {
+          const statusData = await statusResponse.json();
+          setMcpStatus(statusData.status);
+        }
+      } catch (error) {
+        console.error('Error fetching MCP data:', error);
+      } finally {
+        setLoadingMcp(false);
+      }
+    };
+
+    fetchMcpData();
+  }, []);
+
+  const executeMcpTool = async (toolName: string) => {
+    try {
+      const response = await fetch(`/api/mcp-tools/execute/${toolName}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log(`MCP Tool ${toolName} executed:`, result);
+        // You could show a toast notification here
+      }
+    } catch (error) {
+      console.error(`Error executing MCP tool ${toolName}:`, error);
+    }
+  };
 
   return (
     <div className="flex-1 p-6">
@@ -1088,24 +1359,94 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
           </div>
         </div>
         
-        <div className="grid gap-3">
-          {mcpTools.map((tool, index) => (
-            <div key={index} className="bg-black/40 border border-gray-700 rounded-2xl p-4 hover:border-bristol-cyan/50 transition-all duration-300">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Cpu className="h-5 w-5 text-bristol-cyan" />
-                  <div>
-                    <div className="text-white font-medium">{tool.name}</div>
-                    <div className="text-xs text-gray-400">{tool.description}</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-xs text-green-400 font-semibold">READY</span>
+        {/* MCP Tool Categories */}
+        <div className="space-y-4">
+          {loadingMcp ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="w-6 h-6 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin"></div>
+              <span className="ml-3 text-bristol-cyan">Loading MCP Tools...</span>
+            </div>
+          ) : (
+            <>
+              {/* Data Tools */}
+              <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-2xl p-4">
+                <h5 className="text-bristol-cyan font-semibold mb-3 text-sm">Data Access Tools</h5>
+                <div className="grid gap-2">
+                  {mcpTools.filter(tool => tool.category === 'data').map((tool, index) => (
+                    <button
+                      key={index}
+                      onClick={() => executeMcpTool(tool.name)}
+                      className="flex items-center justify-between p-3 bg-black/40 hover:bg-bristol-cyan/10 border border-gray-700 hover:border-bristol-cyan/50 rounded-xl transition-all duration-300"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Database className="h-4 w-4 text-bristol-cyan" />
+                        <div className="text-left">
+                          <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
+                          <div className="text-xs text-gray-400">{tool.description}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse" />
+                        <span className="text-xs text-green-400 font-semibold">READY</span>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
-            </div>
-          ))}
+
+              {/* External API Tools */}
+              <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-2xl p-4">
+                <h5 className="text-bristol-gold font-semibold mb-3 text-sm">External API Tools</h5>
+                <div className="grid gap-2">
+                  {mcpTools.filter(tool => tool.category === 'external').map((tool, index) => (
+                    <button
+                      key={index}
+                      onClick={() => executeMcpTool(tool.name)}
+                      className="flex items-center justify-between p-3 bg-black/40 hover:bg-bristol-gold/10 border border-gray-700 hover:border-bristol-gold/50 rounded-xl transition-all duration-300"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Zap className="h-4 w-4 text-bristol-gold" />
+                        <div className="text-left">
+                          <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
+                          <div className="text-xs text-gray-400">{tool.description}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse" />
+                        <span className="text-xs text-green-400 font-semibold">READY</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Analysis Tools */}
+              <div className="bg-purple-400/10 border border-purple-400/30 rounded-2xl p-4">
+                <h5 className="text-purple-400 font-semibold mb-3 text-sm">Analysis Tools</h5>
+                <div className="grid gap-2">
+                  {mcpTools.filter(tool => tool.category === 'analysis').map((tool, index) => (
+                    <button
+                      key={index}
+                      onClick={() => executeMcpTool(tool.name)}
+                      className="flex items-center justify-between p-3 bg-black/40 hover:bg-purple-400/10 border border-gray-700 hover:border-purple-400/50 rounded-xl transition-all duration-300"
+                    >
+                      <div className="flex items-center gap-3">
+                        <BarChart3 className="h-4 w-4 text-purple-400" />
+                        <div className="text-left">
+                          <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
+                          <div className="text-xs text-gray-400">{tool.description}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse" />
+                        <span className="text-xs text-green-400 font-semibold">READY</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
         
         <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-4">
