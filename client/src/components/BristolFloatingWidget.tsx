@@ -602,12 +602,17 @@ export default function BristolFloatingWidget({
               </div>
               
               {/* Navigation Tabs */}
-              <div className="border-b border-bristol-cyan/30 bg-bristol-ink/20">
+              <div className="border-b border-bristol-cyan/30 bg-bristol-ink/20 relative z-20">
                 <div className="flex">
                   <button
-                    onClick={() => setActiveTab("chat")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Chat tab clicked");
+                      setActiveTab("chat");
+                    }}
                     className={cx(
-                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
+                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                       activeTab === "chat"
                         ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
                         : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
@@ -616,9 +621,14 @@ export default function BristolFloatingWidget({
                     AI Chat
                   </button>
                   <button
-                    onClick={() => setActiveTab("data")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Data tab clicked");
+                      setActiveTab("data");
+                    }}
                     className={cx(
-                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
+                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                       activeTab === "data"
                         ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
                         : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
@@ -627,9 +637,14 @@ export default function BristolFloatingWidget({
                     Data
                   </button>
                   <button
-                    onClick={() => setActiveTab("tools")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Tools tab clicked");
+                      setActiveTab("tools");
+                    }}
                     className={cx(
-                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
+                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                       activeTab === "tools"
                         ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
                         : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
@@ -638,9 +653,14 @@ export default function BristolFloatingWidget({
                     Tools
                   </button>
                   <button
-                    onClick={() => setActiveTab("admin")}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Admin tab clicked");
+                      setActiveTab("admin");
+                    }}
                     className={cx(
-                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
+                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                       activeTab === "admin"
                         ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
                         : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
