@@ -2,9 +2,7 @@ import { useState } from "react";
 import Chrome from "@/components/brand/Chrome";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3, TrendingUp, Home, MapPin, Shield, Cloud, MessageSquare, Target, Settings } from "lucide-react";
-import { Link } from "wouter";
-import { cn } from "@/lib/utils";
+import { BarChart3, TrendingUp, Home, MapPin, Shield, Cloud } from "lucide-react";
 import { BLSTool } from "../components/tools/BLSTool";
 import { BEATool } from "../components/tools/BEATool";
 import { HUDTool } from "../components/tools/HUDTool";
@@ -29,45 +27,6 @@ export function Tools() {
           }}
         ></div>
         <div className="absolute inset-0 bg-white/10"></div>
-        {/* Navigation Menu */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl mx-6 mb-6 p-4 shadow-lg border border-white/20 relative z-10 mt-6">
-          <div className="flex items-center justify-center space-x-4">
-            <Link href="/">
-              <button className={cn(
-                "px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300",
-                "text-bristol-maroon hover:bg-bristol-maroon/10"
-              )}>
-                <Home className="w-4 h-4 mr-1 inline" />
-                Dashboard
-              </button>
-            </Link>
-            <Link href="/sites">
-              <button className={cn(
-                "px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300",
-                "text-bristol-maroon hover:bg-bristol-maroon/10"
-              )}>
-                <MapPin className="w-4 h-4 mr-1 inline" />
-                Sites
-              </button>
-            </Link>
-            <Link href="/comparables">
-              <button className={cn(
-                "px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300",
-                "text-bristol-maroon hover:bg-bristol-maroon/10"
-              )}>
-                <Target className="w-4 h-4 mr-1 inline" />
-                Comparables
-              </button>
-            </Link>
-            <button className={cn(
-              "px-6 py-3 rounded-lg font-medium text-sm transition-all duration-300",
-              "bg-bristol-maroon text-white shadow-lg"
-            )}>
-              <Settings className="w-4 h-4 mr-1 inline" />
-              Tools
-            </button>
-          </div>
-        </div>
 
         <div className="container mx-auto px-4 py-8 relative z-10">
           {/* Enterprise Elite Header */}
