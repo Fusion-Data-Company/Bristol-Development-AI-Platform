@@ -1,6 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws";
 import type { Server } from "http";
 import { storage } from "../storage";
+import { realTimeSyncService } from "./realTimeSync";
 import type { IntegrationLog } from "@shared/schema";
 
 interface WebSocketClient {
@@ -11,9 +12,11 @@ interface WebSocketClient {
 }
 
 interface WebSocketMessage {
-  type: "ping" | "pong" | "subscribe" | "unsubscribe" | "tool_status" | "chat_typing" | "integration_update";
+  type: "ping" | "pong" | "subscribe" | "unsubscribe" | "tool_status" | "chat_typing" | "integration_update" | "bristol_sync" | "instance_register";
   data?: any;
   timestamp: number;
+  instance?: 'main' | 'floating';
+  sessionId?: string;
 }
 
 export class WebSocketService {
@@ -69,6 +72,29 @@ export class WebSocketService {
       if (!client) return;
 
       switch (message.type) {
+        case "instance_register":
+          // Register this client for Bristol AI sync
+          if (message.instance && (message.instance === 'main' || message.instance === 'floating')) {
+            realTimeSyncService.registerConnection(clientId, client.socket, message.instance);
+            this.sendToClient(clientId, {
+              type: "tool_status",
+              data: { status: "bristol_sync_registered", instance: message.instance },
+              timestamp: Date.now()
+            });
+          }
+          break;
+          
+        case "bristol_sync":
+          // Handle Bristol AI memory synchronization
+          if (message.sessionId && message.instance && message.data) {
+            realTimeSyncService.triggerCrossInstanceSync(
+              message.sessionId,
+              message.instance,
+              message.data
+            );
+          }
+          break;
+          
         case "ping":
           client.lastPing = Date.now();
           this.sendToClient(clientId, {

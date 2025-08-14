@@ -156,6 +156,7 @@ export default function Chat() {
           selectedModel: selectedModel,
           dataContext: appData,
           enableAdvancedReasoning: true,
+          sourceInstance: 'main', // Identify this as the main chat instance
           mcpTools: mcpEnabled ? [] : undefined, // Will be populated by backend
           enableMCPExecution: mcpEnabled,
           userAgent: "Bristol A.I. Elite Chat v1.0",

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { storage } from "../storage";
 import { bristolBrainService } from "../services/bristolBrainService";
+import { memorySyncService } from "../services/memorySyncService";
 import multer from "multer";
 import { z } from "zod";
 import type { AgentPrompt } from "@shared/schema";
@@ -38,19 +39,43 @@ const chatRequestSchema = z.object({
   enableAdvancedReasoning: z.boolean().optional(),
   dataContext: z.record(z.any()).optional(),
   selectedModel: z.string().optional(), // Premium model selection
+  sourceInstance: z.enum(['main', 'floating']).optional(), // Track which instance sent the message
 });
 
 // Elite chat endpoint with full Bristol A.I. capabilities
 router.post("/chat", async (req, res) => {
   try {
-    const { sessionId: providedSessionId, message, enableAdvancedReasoning, dataContext, selectedModel } = 
-      chatRequestSchema.parse(req.body);
+    const { 
+      sessionId: providedSessionId, 
+      message, 
+      enableAdvancedReasoning, 
+      dataContext, 
+      selectedModel,
+      sourceInstance = 'main'
+    } = chatRequestSchema.parse(req.body);
     
-    // Generate sessionId if not provided
-    const sessionId = providedSessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
-    // Get user from session (in production, this would come from auth)
+    // Generate or ensure session exists
+    let sessionId = providedSessionId;
     const userId = "demo-user"; // TODO: Get from auth context
+    
+    if (!sessionId) {
+      // Create new shared session between main and floating instances
+      const session = await memorySyncService.initializeSharedSession(userId, 
+        `Bristol A.I. Elite - ${new Date().toLocaleDateString()}`);
+      sessionId = session.id;
+    }
+    
+    // Handle cross-instance message synchronization
+    await memorySyncService.handleCrossInstanceMessage(
+      sessionId,
+      userId,
+      message,
+      'user',
+      sourceInstance
+    );
+    
+    // Get unified context that includes both instances' memory
+    const unifiedContext = await memorySyncService.getUnifiedContext(userId, sessionId);
     
     // Get active prompts for the user
     const systemPrompts = await storage.getAgentPrompts(userId, "system");
@@ -58,6 +83,14 @@ router.post("/chat", async (req, res) => {
     
     // Get session attachments
     const attachments = await storage.getSessionAttachments(sessionId);
+    
+    // Enhanced data context with unified memory
+    const enhancedDataContext = {
+      ...dataContext,
+      unifiedMemory: unifiedContext.contextSummary,
+      sourceInstance,
+      syncedInstances: ['main', 'floating']
+    };
     
     // Process message with Bristol A.I.
     const response = await bristolBrainService.processMessage({
@@ -67,10 +100,20 @@ router.post("/chat", async (req, res) => {
       systemPrompts,
       projectPrompts,
       attachments,
-      dataContext,
+      dataContext: enhancedDataContext,
       enableAdvancedReasoning,
       selectedModel,
     });
+    
+    // Sync AI response to other instance
+    await memorySyncService.handleCrossInstanceMessage(
+      sessionId,
+      userId,
+      response,
+      'assistant',
+      sourceInstance,
+      { selectedModel, reasoning: enableAdvancedReasoning }
+    );
     
     // Return in format expected by frontend
     res.json({
@@ -320,6 +363,56 @@ router.post("/analyze-deal", async (req, res) => {
   } catch (error) {
     console.error("Error analyzing deal:", error);
     res.status(500).json({ error: "Failed to analyze deal" });
+  }
+});
+
+// Memory synchronization endpoint for cross-instance communication
+router.get("/memory/sync/:sessionId", async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const userId = "demo-user"; // TODO: Get from auth context
+    
+    const unifiedContext = await memorySyncService.getUnifiedContext(userId, sessionId);
+    
+    res.json({
+      ok: true,
+      sessionId,
+      context: unifiedContext,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error("Memory sync error:", error);
+    res.status(500).json({
+      ok: false,
+      error: "Failed to sync memory",
+      message: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
+// Initialize shared session endpoint
+router.post("/memory/session", async (req, res) => {
+  try {
+    const { title } = req.body;
+    const userId = "demo-user"; // TODO: Get from auth context
+    
+    const session = await memorySyncService.initializeSharedSession(
+      userId, 
+      title || `Bristol A.I. Elite - ${new Date().toLocaleDateString()}`
+    );
+    
+    res.json({
+      ok: true,
+      session,
+      message: "Shared session initialized"
+    });
+  } catch (error) {
+    console.error("Session creation error:", error);
+    res.status(500).json({
+      ok: false,
+      error: "Failed to create shared session",
+      message: error instanceof Error ? error.message : "Unknown error"
+    });
   }
 });
 

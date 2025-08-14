@@ -584,7 +584,8 @@ export default function BristolFloatingWidget({
           systemStatus,
           sessionId: sessionId,
           userAgent: "Bristol A.I. Elite v1.0",
-          enableAdvancedReasoning: true
+          enableAdvancedReasoning: true,
+          sourceInstance: 'floating' // Identify this as the floating widget instance
         }),
       });
 

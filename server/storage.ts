@@ -91,6 +91,8 @@ export interface IStorage {
   createMemoryShort(memory: InsertMemoryShort): Promise<MemoryShort>;
   getMemoryShort(userId: string, sessionId?: string): Promise<MemoryShort[]>;
   deleteExpiredMemoryShort(): Promise<void>;
+  deleteMemoryShort(id: string): Promise<void>;
+  getExpiredShortTermMemory(): Promise<MemoryShort[]>;
   
   createMemoryLong(memory: InsertMemoryLong): Promise<MemoryLong>;
   getMemoryLong(userId: string, category?: string): Promise<MemoryLong[]>;
@@ -329,6 +331,17 @@ export class DatabaseStorage implements IStorage {
   async deleteExpiredMemoryShort(): Promise<void> {
     await db
       .delete(memoryShort)
+      .where(sql`${memoryShort.expiresAt} IS NOT NULL AND ${memoryShort.expiresAt} < NOW()`);
+  }
+
+  async deleteMemoryShort(id: string): Promise<void> {
+    await db.delete(memoryShort).where(eq(memoryShort.id, id));
+  }
+
+  async getExpiredShortTermMemory(): Promise<MemoryShort[]> {
+    return await db
+      .select()
+      .from(memoryShort)
       .where(sql`${memoryShort.expiresAt} IS NOT NULL AND ${memoryShort.expiresAt} < NOW()`);
   }
 
