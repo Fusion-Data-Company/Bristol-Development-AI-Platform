@@ -784,7 +784,6 @@ export default function BristolFloatingWidget({
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-bristol-cyan/20 rounded-2xl" />
                 <Brain className="w-6 h-6 text-bristol-cyan relative z-10 drop-shadow-lg animate-pulse" />
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-bristol-gold to-yellow-400 rounded-full animate-pulse border border-white/50" />
             </div>
             
             {/* A.I. branding with metallic text - positioned between icons */}
@@ -821,7 +820,6 @@ export default function BristolFloatingWidget({
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-bristol-cyan/20 rounded-xl" />
                 <Cpu className="w-6 h-6 text-bristol-cyan relative z-10 drop-shadow-lg animate-pulse" />
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-bristol-gold to-yellow-400 rounded-full animate-pulse border border-white/50" />
             </div>
           </div>
         </button>
