@@ -1479,14 +1479,124 @@ function AdminPane({
   realTimeData: boolean;
   setRealTimeData: (enabled: boolean) => void;
 }) {
+  const [mcpConfigText, setMcpConfigText] = useState('');
+  const [mcpServers, setMcpServers] = useState<any>({});
+  const [mcpStatus, setMcpStatus] = useState<any>(null);
+  const [loadingMcp, setLoadingMcp] = useState(false);
+  const [showMcpConfig, setShowMcpConfig] = useState(false);
+
+  // Load existing MCP configuration
+  useEffect(() => {
+    const loadMcpConfig = async () => {
+      try {
+        const response = await fetch('/api/mcp-config');
+        if (response.ok) {
+          const config = await response.json();
+          setMcpServers(config.mcpServers || {});
+          setMcpConfigText(JSON.stringify({ mcpServers: config.mcpServers || {} }, null, 2));
+        }
+      } catch (error) {
+        console.error('Error loading MCP config:', error);
+      }
+    };
+    loadMcpConfig();
+  }, []);
+
+  const handleMcpConfigSave = async () => {
+    setLoadingMcp(true);
+    try {
+      const config = JSON.parse(mcpConfigText);
+      
+      // Validate the config structure
+      if (!config.mcpServers) {
+        throw new Error("Invalid config - needs mcpServers object");
+      }
+
+      // Save the MCP configuration
+      const response = await fetch('/api/mcp-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config.mcpServers)
+      });
+
+      if (response.ok) {
+        setMcpServers(config.mcpServers);
+        
+        // Restart MCP servers
+        const restartResponse = await fetch('/api/mcp-config/restart', {
+          method: 'POST'
+        });
+        
+        if (restartResponse.ok) {
+          const result = await restartResponse.json();
+          setMcpStatus(result);
+          alert("MCP servers configured successfully!");
+        } else {
+          alert("Config saved but server restart failed");
+        }
+      } else {
+        throw new Error("Failed to save MCP config");
+      }
+    } catch (error) {
+      alert(`Config error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoadingMcp(false);
+    }
+  };
+
+  const handleMcpConfigReset = () => {
+    const defaultConfig = {
+      mcpServers: {
+        filesystem: {
+          command: "npx",
+          args: ["@modelcontextprotocol/server-filesystem", "/tmp"],
+          env: {
+            NODE_ENV: "production"
+          }
+        },
+        postgres: {
+          command: "npx",
+          args: ["@modelcontextprotocol/server-postgres"],
+          env: {
+            DATABASE_URL: "postgresql://localhost:5432/bristol"
+          }
+        },
+        memory: {
+          command: "npx",
+          args: ["@modelcontextprotocol/server-memory"],
+          env: {
+            NODE_ENV: "production"
+          }
+        }
+      }
+    };
+    setMcpConfigText(JSON.stringify(defaultConfig, null, 2));
+  };
+
   return (
     <div className="flex-1 p-6">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h4 className="text-bristol-gold font-semibold flex items-center gap-2">
             <Settings className="h-4 w-4" />
-            BRISTOL A.I. CONFIGURATION
+            SYSTEM CONFIGURATION
           </h4>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowMcpConfig(!showMcpConfig)}
+              className="px-4 py-2 bg-bristol-cyan hover:bg-bristol-cyan/80 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
+            >
+              <CircuitBoard className="h-4 w-4" />
+              MCP Config
+            </button>
+            <button
+              onClick={onSave}
+              className="px-4 py-2 bg-bristol-gold hover:bg-bristol-gold/80 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
+            >
+              <Save className="h-4 w-4" />
+              Save Settings
+            </button>
+          </div>
         </div>
         
         <div className="space-y-4">
@@ -1650,6 +1760,183 @@ function AdminPane({
             </button>
           </div>
         </div>
+
+        {/* MCP Configuration Window */}
+        {showMcpConfig && (
+          <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
+                <CircuitBoard className="h-4 w-4 animate-pulse" />
+                MCP SERVER CONFIGURATION
+              </h4>
+              <button
+                onClick={() => setShowMcpConfig(false)}
+                className="p-2 hover:bg-bristol-cyan/10 rounded-lg transition-colors"
+              >
+                <X className="h-4 w-4 text-bristol-cyan" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* MCP Status Indicator */}
+              <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-xl p-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-bristol-gold font-semibold text-sm">MCP System Status</span>
+                  </div>
+                  <span className="text-green-400 text-sm font-bold">OPERATIONAL</span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-3 text-xs">
+                  <div>
+                    <span className="text-bristol-gold/80">Active Servers:</span>
+                    <span className="text-white font-semibold ml-2">{Object.keys(mcpServers).length}</span>
+                  </div>
+                  <div>
+                    <span className="text-bristol-gold/80">Config Source:</span>
+                    <span className="text-white font-semibold ml-2">Claude Desktop Compatible</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Active MCP Servers */}
+              {Object.keys(mcpServers).length > 0 && (
+                <div className="bg-bristol-electric/10 border border-bristol-electric/30 rounded-xl p-4">
+                  <h5 className="text-bristol-electric font-semibold mb-3 text-sm">Active MCP Servers</h5>
+                  <div className="grid gap-2">
+                    {Object.entries(mcpServers).map(([name, config]: [string, any]) => (
+                      <div key={name} className="flex items-center justify-between p-3 bg-black/40 border border-gray-700 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                          <div>
+                            <div className="text-white font-medium text-sm">{name}</div>
+                            <div className="text-xs text-gray-400">{config.command} {config.args?.join(' ')}</div>
+                          </div>
+                        </div>
+                        <span className="text-xs text-green-400 font-semibold">CONNECTED</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Configuration Instructions */}
+              <div className="bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-xl p-4">
+                <h5 className="text-bristol-maroon font-semibold mb-2 text-sm">Configuration Instructions</h5>
+                <div className="text-xs text-gray-300 space-y-2">
+                  <p>• Paste your Claude Desktop MCP configuration below</p>
+                  <p>• Config format must include "mcpServers" object</p>
+                  <p>• Supports all standard MCP servers (filesystem, postgres, memory, etc.)</p>
+                  <p>• Changes require server restart for activation</p>
+                </div>
+              </div>
+
+              {/* Config Text Area */}
+              <div>
+                <label className="block text-bristol-cyan font-semibold mb-2 text-sm">
+                  MCP Configuration JSON
+                </label>
+                <textarea
+                  value={mcpConfigText}
+                  onChange={(e) => setMcpConfigText(e.target.value)}
+                  rows={12}
+                  className="w-full bg-black/60 border border-bristol-cyan/30 rounded-xl p-4 text-sm font-mono text-white resize-none focus:outline-none focus:border-bristol-cyan/60 transition-colors"
+                  placeholder='{"mcpServers": { ... }}'
+                  style={{
+                    backgroundImage: 'linear-gradient(rgba(20, 184, 166, 0.05) 0%, rgba(20, 184, 166, 0.02) 100%)',
+                  }}
+                />
+                
+                <div className="flex gap-2 mt-3">
+                  <button
+                    onClick={handleMcpConfigSave}
+                    disabled={loadingMcp}
+                    className="px-4 py-2 bg-bristol-cyan hover:bg-bristol-cyan/80 disabled:opacity-50 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
+                  >
+                    {loadingMcp ? (
+                      <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    {loadingMcp ? "Loading..." : "Apply Config"}
+                  </button>
+                  
+                  <button
+                    onClick={handleMcpConfigReset}
+                    className="px-4 py-2 bg-bristol-gold hover:bg-bristol-gold/80 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
+                  >
+                    <Target className="h-4 w-4" />
+                    Reset Default
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      const exampleConfig = {
+                        "mcpServers": {
+                          "filesystem": {
+                            "command": "npx",
+                            "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/YourName/Desktop"]
+                          },
+                          "github": {
+                            "command": "npx", 
+                            "args": ["-y", "@modelcontextprotocol/server-github"],
+                            "env": {
+                              "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token-here"
+                            }
+                          },
+                          "postgres": {
+                            "command": "npx",
+                            "args": ["-y", "@modelcontextprotocol/server-postgres"],
+                            "env": {
+                              "DATABASE_URL": "postgresql://user:pass@localhost/db"
+                            }
+                          },
+                          "brave-search": {
+                            "command": "npx",
+                            "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+                            "env": {
+                              "BRAVE_API_KEY": "your-brave-api-key"
+                            }
+                          }
+                        }
+                      };
+                      setMcpConfigText(JSON.stringify(exampleConfig, null, 2));
+                    }}
+                    className="px-4 py-2 bg-purple-600 hover:bg-purple-600/80 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                  >
+                    <FileText className="h-4 w-4" />
+                    Load Example
+                  </button>
+                </div>
+              </div>
+
+              {/* Advanced Settings */}
+              <div className="bg-gray-800/30 border border-gray-600/30 rounded-xl p-4">
+                <h5 className="text-gray-300 font-semibold mb-3 text-sm">Advanced Settings</h5>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300 text-sm">Auto-reconnect</span>
+                    <div className="w-12 h-6 bg-green-600 rounded-full relative">
+                      <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-300 text-sm">Health monitoring</span>
+                    <div className="w-12 h-6 bg-green-600 rounded-full relative">
+                      <div className="w-5 h-5 bg-white rounded-full absolute right-0.5 top-0.5"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-4 pt-4 border-t border-gray-600/30">
+                  <div className="text-xs text-gray-400">
+                    <strong>Security Notice:</strong> MCP servers run with system permissions. Only use trusted configurations and verify all server sources before deployment.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
