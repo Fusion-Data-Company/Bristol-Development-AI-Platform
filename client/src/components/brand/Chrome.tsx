@@ -1,11 +1,15 @@
 import { ReactNode } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 
 interface ChromeProps {
   children: ReactNode;
 }
 
 export default function Chrome({ children }: ChromeProps) {
+  const [location] = useLocation();
+
+  const isActive = (path: string) => location === path;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Bristol Header */}
@@ -31,32 +35,44 @@ export default function Chrome({ children }: ChromeProps) {
             {/* Navigation */}
             <nav className="flex space-x-8">
               <Link href="/">
-                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
+                <span className={`px-3 py-2 text-sm font-medium cursor-pointer rounded transition-colors ${
+                  isActive('/') ? 'bg-bristol-maroon text-white' : 'text-gray-700 hover:text-gray-900'
+                }`}>
                   Map
                 </span>
               </Link>
               <Link href="/sites">
-                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
+                <span className={`px-3 py-2 text-sm font-medium cursor-pointer rounded transition-colors ${
+                  isActive('/sites') ? 'bg-bristol-maroon text-white' : 'text-gray-700 hover:text-gray-900'
+                }`}>
                   Tables
                 </span>
               </Link>
               <Link href="/sandbox">
-                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
+                <span className={`px-3 py-2 text-sm font-medium cursor-pointer rounded transition-colors ${
+                  isActive('/sandbox') ? 'bg-bristol-maroon text-white' : 'text-gray-700 hover:text-gray-900'
+                }`}>
                   3D Sandbox
                 </span>
               </Link>
               <Link href="/integrations">
-                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
+                <span className={`px-3 py-2 text-sm font-medium cursor-pointer rounded transition-colors ${
+                  isActive('/integrations') ? 'bg-bristol-maroon text-white' : 'text-gray-700 hover:text-gray-900'
+                }`}>
                   Integrations
                 </span>
               </Link>
               <Link href="/tools">
-                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
+                <span className={`px-3 py-2 text-sm font-medium cursor-pointer rounded transition-colors ${
+                  isActive('/tools') ? 'bg-bristol-maroon text-white' : 'text-gray-700 hover:text-gray-900'
+                }`}>
                   Tools
                 </span>
               </Link>
               <Link href="/comparables">
-                <span className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium cursor-pointer">
+                <span className={`px-3 py-2 text-sm font-medium cursor-pointer rounded transition-colors ${
+                  isActive('/comparables') ? 'bg-bristol-maroon text-white' : 'text-gray-700 hover:text-gray-900'
+                }`}>
                   Comparables
                 </span>
               </Link>
