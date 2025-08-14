@@ -433,26 +433,36 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
   return (
     <div className="space-y-4">
       {/* Global Search */}
-      <div className="flex items-center space-x-2">
-        <Input
-          placeholder="Search all columns..."
-          value={globalFilter ?? ''}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="max-w-sm"
-        />
-        <div className="text-sm text-gray-500">
-          {table.getFilteredRowModel().rows.length} of {table.getCoreRowModel().rows.length} rows
+      <div className="flex items-center justify-between gap-4 p-4 bg-gradient-to-r from-bristol-cream/20 to-white border-b border-bristol-gold/20">
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Input
+              placeholder="Search all columns..."
+              value={globalFilter ?? ''}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              className="max-w-sm pl-8 border-bristol-gold/30"
+            />
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+              <Building2 className="h-4 w-4 text-bristol-maroon/50" />
+            </div>
+          </div>
+          <Badge variant="secondary" className="px-3 py-1 bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
+            {table.getFilteredRowModel().rows.length} of {table.getCoreRowModel().rows.length} records
+          </Badge>
+        </div>
+        <div className="text-sm text-bristol-maroon/60 font-medium">
+          Bristol Comparables Database
         </div>
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="rounded-lg border border-bristol-gold/30 overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="bg-gray-50">
+              <TableRow key={headerGroup.id} className="bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 border-b border-bristol-gold/30">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="font-semibold">
+                  <TableHead key={header.id} className="font-semibold text-bristol-maroon">
                     {header.isPlaceholder
                       ? null
                       : flexRender(

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import Chrome from '@/components/brand/Chrome';
+// import Chrome from '@/components/brand/SimpleChrome';
 import TanStackCompsTable from '@/components/comparables/TanStackCompsTable';
 import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
@@ -184,40 +184,66 @@ export default function ComparablesAnnex() {
 
 
   return (
-    <Chrome>
-      <div className="container mx-auto px-4 py-6">
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Comparables Annex</h1>
-              <p className="text-gray-600">Bristol Development Group's flagship comparables intelligence platform</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary" className="text-sm">
-                {total} Records
-              </Badge>
+    <div className="min-h-screen bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10">
+        {/* Bristol Mega Header */}
+        <div className="bg-gradient-to-r from-bristol-maroon via-bristol-maroon/90 to-bristol-maroon border-b-4 border-bristol-gold">
+          <div className="container mx-auto px-6 py-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-6">
+                <div className="p-4 bg-bristol-gold/10 rounded-2xl backdrop-blur border border-bristol-gold/30">
+                  <Building2 className="h-12 w-12 text-bristol-gold" />
+                </div>
+                <div>
+                  <h1 className="text-4xl font-cinzel font-bold text-white tracking-wide drop-shadow-lg">
+                    COMPARABLES ANNEX
+                  </h1>
+                  <p className="text-bristol-gold/90 text-lg font-medium mt-1">
+                    Bristol Development Group's Flagship Intelligence Platform
+                  </p>
+                  <p className="text-bristol-fog text-sm mt-2">
+                    Google Sheets-scale performance • AI-powered analytics • Real-time scraping
+                  </p>
+                </div>
+              </div>
+              
+              <div className="text-right">
+                <div className="bg-bristol-gold/20 rounded-xl p-4 backdrop-blur border border-bristol-gold/40">
+                  <div className="text-3xl font-bold text-bristol-gold">
+                    {total.toLocaleString()}
+                  </div>
+                  <div className="text-bristol-fog text-sm font-medium">
+                    Total Records
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Search and Actions Bar */}
-          <div className="flex items-center gap-4 mb-4">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Search by address..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+        <div className="container mx-auto px-6 py-8">
+          <div className="mb-8">
+            <div className="mb-6">
+
+            {/* Search and Actions Bar */}
+            <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-xl border border-bristol-gold/20">
+              <div className="flex items-center gap-4 flex-wrap">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-bristol-maroon/60 h-5 w-5" />
+                  <Input
+                    placeholder="Search by address..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-11 h-12 border-bristol-gold/30 focus:border-bristol-maroon focus:ring-bristol-maroon/20 text-lg"
+                  />
+                </div>
             
-            <Dialog open={scrapeDialogOpen} onOpenChange={setScrapeDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="bg-bristol-maroon hover:bg-bristol-maroon/90">
-                  <Play className="h-4 w-4 mr-2" />
-                  Launch Scrape
-                </Button>
-              </DialogTrigger>
+                <Dialog open={scrapeDialogOpen} onOpenChange={setScrapeDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-gradient-to-r from-bristol-maroon to-bristol-maroon/80 hover:from-bristol-maroon/90 hover:to-bristol-maroon/70 text-white h-12 px-6 rounded-xl shadow-lg border border-bristol-gold/30">
+                      <Play className="h-5 w-5 mr-2" />
+                      Launch Scrape
+                    </Button>
+                  </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Launch Comparables Scrape</DialogTitle>
@@ -268,102 +294,119 @@ export default function ComparablesAnnex() {
               availableAmenities={Array.from(new Set(rawComps.flatMap(c => c.amenityTags || [])))}
             />
 
-            <BulkImport onImportComplete={() => queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] })} />
+                <BulkImport onImportComplete={() => queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] })} />
 
-            <ExportTools data={comps} />
-          </div>
-        </div>
-
-        {/* Quick Analytics Cards */}
-        {comps.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2">
-                  <TrendingUp className="h-4 w-4 text-bristol-maroon" />
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">Avg Rent/SF</p>
-                    <p className="text-lg font-semibold">
-                      ${(comps.filter(c => c.rentPsf).reduce((sum, c) => sum + (c.rentPsf || 0), 0) / comps.filter(c => c.rentPsf).length || 0).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2">
-                  <Building2 className="h-4 w-4 text-bristol-maroon" />
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">Total Units</p>
-                    <p className="text-lg font-semibold">
-                      {comps.filter(c => c.units).reduce((sum, c) => sum + (c.units || 0), 0).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2">
-                  <BarChart3 className="h-4 w-4 text-bristol-maroon" />
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">Avg Occupancy</p>
-                    <p className="text-lg font-semibold">
-                      {(comps.filter(c => c.occupancyPct).reduce((sum, c) => sum + (c.occupancyPct || 0), 0) / comps.filter(c => c.occupancyPct).length || 0).toFixed(1)}%
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-2">
-                  <TrendingUp className="h-4 w-4 text-bristol-maroon" />
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">Avg Year Built</p>
-                    <p className="text-lg font-semibold">
-                      {Math.round(comps.filter(c => c.yearBuilt).reduce((sum, c) => sum + (c.yearBuilt || 0), 0) / comps.filter(c => c.yearBuilt).length || 0)}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Scraper Job Manager */}
-        <ScraperJobManager />
-
-        {/* Analytics Panels */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          <AIAnalyticsPanel data={comps} />
-          <DataVisualization data={comps} />
-          <CompAnalysisWidget data={comps} />
-        </div>
-
-        {/* Main Data Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Building2 className="h-5 w-5" />
-              Comparable Properties
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="text-gray-500">Loading comparables...</div>
+                <ExportTools data={comps} />
               </div>
-            ) : (
-              <TanStackCompsTable data={comps} isLoading={isLoading} />
-            )}
-          </CardContent>
-        </Card>
+            </div>
+          </div>
+
+          {/* Quick Analytics Cards */}
+          {comps.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-bristol-maroon/10 rounded-xl">
+                      <TrendingUp className="h-6 w-6 text-bristol-maroon" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-bristol-maroon/70">Avg Rent/SF</p>
+                      <p className="text-2xl font-bold text-bristol-maroon">
+                        ${(comps.filter(c => c.rentPsf).reduce((sum, c) => sum + (c.rentPsf || 0), 0) / comps.filter(c => c.rentPsf).length || 0).toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-bristol-maroon/10 rounded-xl">
+                      <Building2 className="h-6 w-6 text-bristol-maroon" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-bristol-maroon/70">Total Units</p>
+                      <p className="text-2xl font-bold text-bristol-maroon">
+                        {comps.filter(c => c.units).reduce((sum, c) => sum + (c.units || 0), 0).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-bristol-maroon/10 rounded-xl">
+                      <BarChart3 className="h-6 w-6 text-bristol-maroon" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-bristol-maroon/70">Avg Occupancy</p>
+                      <p className="text-2xl font-bold text-bristol-maroon">
+                        {(comps.filter(c => c.occupancyPct).reduce((sum, c) => sum + (c.occupancyPct || 0), 0) / comps.filter(c => c.occupancyPct).length || 0).toFixed(1)}%
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-lg">
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-bristol-maroon/10 rounded-xl">
+                      <TrendingUp className="h-6 w-6 text-bristol-maroon" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-bristol-maroon/70">Avg Year Built</p>
+                      <p className="text-2xl font-bold text-bristol-maroon">
+                        {Math.round(comps.filter(c => c.yearBuilt).reduce((sum, c) => sum + (c.yearBuilt || 0), 0) / comps.filter(c => c.yearBuilt).length || 0)}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {/* Scraper Job Manager */}
+          <div className="mb-8">
+            <ScraperJobManager />
+          </div>
+
+          {/* Analytics Panels */}
+          <div className="grid lg:grid-cols-3 gap-6 mb-8">
+            <AIAnalyticsPanel data={comps} />
+            <DataVisualization data={comps} />
+            <CompAnalysisWidget data={comps} />
+          </div>
+
+          {/* Main Data Table */}
+          <Card className="bg-white/90 backdrop-blur border-bristol-gold/30 shadow-2xl">
+            <CardHeader className="bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 border-b border-bristol-gold/20">
+              <CardTitle className="flex items-center gap-3 text-xl">
+                <div className="p-2 bg-bristol-maroon/10 rounded-lg">
+                  <Building2 className="h-6 w-6 text-bristol-maroon" />
+                </div>
+                <span className="text-bristol-maroon font-cinzel">Comparable Properties</span>
+                <Badge variant="secondary" className="ml-auto text-bristol-maroon bg-bristol-gold/20">
+                  {comps.length} filtered
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-bristol-maroon/60 text-lg">Loading comparables...</div>
+                </div>
+              ) : (
+                <TanStackCompsTable data={comps} isLoading={isLoading} />
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </Chrome>
+    </div>
   );
 }

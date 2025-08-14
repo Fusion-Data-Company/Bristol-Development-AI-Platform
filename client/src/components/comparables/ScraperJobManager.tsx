@@ -152,16 +152,21 @@ export function ScraperJobManager() {
   };
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-xl">
+      <CardHeader className="bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 border-b border-bristol-gold/20">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Scraper Job Manager
+          <CardTitle className="flex items-center gap-3 text-xl">
+            <div className="p-2 bg-bristol-maroon/10 rounded-lg">
+              <Settings className="h-6 w-6 text-bristol-maroon" />
+            </div>
+            <span className="text-bristol-maroon font-cinzel">Scraper Job Manager</span>
+            <Badge variant="secondary" className="ml-2 text-bristol-maroon bg-bristol-gold/20">
+              {jobs.length} jobs
+            </Badge>
           </CardTitle>
           <Dialog open={isLaunchDialogOpen} onOpenChange={setIsLaunchDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="bg-bristol-maroon hover:bg-bristol-maroon/90 text-white border-bristol-gold/20">
                 <Play className="h-4 w-4 mr-2" />
                 Launch Scrape
               </Button>

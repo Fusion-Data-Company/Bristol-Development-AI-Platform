@@ -254,7 +254,7 @@ export function CompAnalysisWidget({ data }: CompAnalysisWidgetProps) {
                     <div className="text-lg font-bold text-orange-800">
                       {analysis.occupancy.lowCount}
                     </div>
-                    <div className="text-xs text-orange-600">Challenged (<85%)</div>
+                    <div className="text-xs text-orange-600">Challenged (&lt;85%)</div>
                   </div>
                 </div>
               </div>

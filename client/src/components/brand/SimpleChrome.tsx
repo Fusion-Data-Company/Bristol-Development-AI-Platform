@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Building, Map, BarChart3, MessageSquare, Settings, Wrench, Users } from "lucide-react";
+import { Building, Map, BarChart3, MessageSquare, Settings, Wrench, Users, Building2 } from "lucide-react";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 
 interface ChromeProps {
@@ -16,6 +16,7 @@ export default function Chrome({ children }: ChromeProps) {
     { path: "/sites", label: "Sites", icon: Building },
     { path: "/analytics", label: "Analytics", icon: BarChart3 },
     { path: "/demographics", label: "Demographics", icon: Users },
+    { path: "/comparables", label: "Comparables", icon: Building2 },
     { path: "/chat", label: "Chat", icon: MessageSquare },
     { path: "/integrations", label: "Integrations", icon: Settings },
     { path: "/tools", label: "Tools", icon: Wrench },

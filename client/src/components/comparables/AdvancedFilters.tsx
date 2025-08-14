@@ -82,11 +82,11 @@ export function AdvancedFilters({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="relative">
+        <Button variant="outline" className="relative border-bristol-gold/30 text-bristol-maroon hover:bg-bristol-gold/10">
           <SlidersHorizontal className="h-4 w-4 mr-2" />
           Advanced Filters
           {activeFilterCount > 0 && (
-            <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs">
+            <Badge variant="secondary" className="ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs bg-bristol-maroon text-white">
               {activeFilterCount}
             </Badge>
           )}

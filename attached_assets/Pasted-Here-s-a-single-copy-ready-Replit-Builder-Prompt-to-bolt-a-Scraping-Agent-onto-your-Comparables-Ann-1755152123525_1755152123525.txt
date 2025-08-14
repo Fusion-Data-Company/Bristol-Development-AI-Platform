@@ -1,0 +1,229 @@
+Here’s a single, copy‑ready Replit Builder Prompt to bolt a Scraping Agent onto your Comparables Annex, integrate Firecrawl, Apify, and a free fallback (Cheerio + scrape‑it), and keep everything you already have. Paste this into Replit’s AI Builder and run.
+
+⸻
+
+BUILDER PROMPT — “Comparables Annex: Scraping Agent + Firecrawl + Apify + Free Fallback”
+
+Objective
+Augment the existing Comparables Annex with a Scraping Agent that can:
+	•	Take a subject address (ground zero), radius (mi), property type, and amenity filters
+	•	Launch scrapes via Firecrawl API, Apify SDK, and a free in‑project fallback (Cheerio + scrape‑it)
+	•	Normalize/clean results and upsert into the comps table
+	•	Display/inline‑edit the results in the TanStack table you already built
+	•	Preserve all current routes, UI, and behaviors
+
+Do not delete or replace existing files—augment in place.
+
+⸻
+
+0) Dependencies & Env
+
+0.1 Install
+
+npm i firecrawl @apify/ai-client apify cheerio scrape-it undici p-queue zod
+# (You already have @tanstack/react-table/react-virtual/react-query)
+
+0.2 Env variables (Replit Secrets)
+	•	FIRECRAWL_API_KEY=<your key>
+	•	APIFY_TOKEN=<your token> (optional; if missing, skip Apify at runtime)
+	•	SCRAPER_SEED_URLS (optional; comma‑separated allowlisted URLs)
+	•	SCRAPER_CONCURRENCY=2 (default 2)
+	•	SCRAPER_INTERVAL_MS=1000 (default 1000)
+	•	SCRAPER_INTERVAL_CAP=4 (default 4)
+
+Load dotenv in server boot if not already.
+
+⸻
+
+1) Backend: Scraping Agent Orchestrator
+
+1.1 Create server/scrapers/agent.ts
+	•	A single orchestrator that tries sources in order: Firecrawl → Apify → Fallback.
+	•	Accepts a query:
+
+type ScrapeQuery = {
+  address: string;               // ground zero
+  radius_mi?: number;            // default 5
+  asset_type?: string;           // Multifamily|Condo|Mixed-Use|Commercial
+  amenities?: string[];          // ["pool","fitness","ev",...]
+  keywords?: string[];           // ["special","renovated", ...]
+  city?: string; state?: string; zip?: string;
+};
+
+	•	Returns { records: CompRow[]; source: "firecrawl"|"apify"|"fallback"; caveats?: string[] }.
+
+Implementation notes
+	•	Firecrawl: use REST POST to /v1/scrape (or /crawl) with a targeted URL list you build from SCRAPER_SEED_URLS + any known directory pages; include keywords; respect per‑site limits.
+	•	Apify: use ApifyClient to call either:
+	•	a built‑in actor like “website-content-crawler” with startUrls, maxDepth: 0–2, include keyword pseudo‑filters; or
+	•	if APIFY_TOKEN missing, skip.
+	•	Fallback:
+	•	Use scrape-it and/or cheerio + undici on allowlisted URLs from SCRAPER_SEED_URLS.
+	•	Rate‑limit with p-queue and respect SCRAPER_CONCURRENCY/INTERVAL.
+	•	Normalize each raw hit to your comps schema fields:
+	•	name, address → create canonicalAddress (uppercase + trimmed)
+	•	units, rentPu, rentPsf, occupancyPct, concessionPct → numbers or null
+	•	amenityTags → array of strings; include matches from the amenity filter
+	•	unitPlan if detectable (e.g., “1x1‑750”)
+	•	assetType, subtype if derivable; else defaults
+	•	source, sourceUrl, provenance
+	•	Deduplicate per run by (canonicalAddress, unitPlan).
+
+1.2 Wire to runner
+	•	In server/scrapers/runner.ts, import and call runScrapeAgent(query) from agent.ts inside runJobNow.
+	•	For each normalized record, upsert into comps with (canonicalAddress, unitPlan); set jobId and scrapedAt.
+
+⸻
+
+2) Backend: New endpoints
+
+Update server/routes/comps.ts (augment only):
+
+2.1 Scraping Agent endpoint (new)
+
+POST /api/comps/agent/scrape
+body: { address, radius_mi?, asset_type?, amenities?, keywords?, city?, state?, zip? }
+→ { id, status: 'queued' }
+
+	•	Internally: same as your /api/comps/scrape job creation, but stores full query, including amenities & asset_type, for the agent.
+
+2.2 Agent presets (optional, nice UX)
+
+GET  /api/comps/agent/presets
+POST /api/comps/agent/presets   // save { name, query }
+
+Persist lightweight presets in your DB or a JSON file; not required for MVP, but helpful.
+
+(Keep existing routes: /api/comps, /api/comps/bulkUpsert, /api/comps/export.csv, /api/comps/jobs/:id.)
+
+⸻
+
+3) Scraper Integrations
+
+3.1 Firecrawl client server/scrapers/firecrawl.ts
+	•	If FIRECRAWL_API_KEY missing, export a no‑op that returns { records: [], caveats:["no_firecrawl_key"] }.
+	•	Implement a scrapeFirecrawl(query: ScrapeQuery) helper that:
+	•	Builds a small list of target URLs from SCRAPER_SEED_URLS and inferred directory pages for the city/state.
+	•	Posts to Firecrawl with those URLs and keyword hints, throttled by p‑queue.
+	•	Parses returned HTML/text to normalized records via your normalizer (reuse your existing helpers).
+	•	Returns { records, caveats }.
+
+3.2 Apify client server/scrapers/apify.ts
+	•	If APIFY_TOKEN missing, export a no‑op.
+	•	Implement scrapeApify(query) that:
+	•	Uses ApifyClient to call a generic crawler actor with startUrls: targetUrls, maxRequestsPerCrawl: 30–60, maxDepth: 1–2.
+	•	Pulls the dataset items, extracts candidate names/addresses/rent/amenities, and normalizes.
+	•	Returns { records, caveats }.
+
+3.3 Fallback server/scrapers/fallback.ts
+	•	Use scrape‑it or cheerio over undici on SCRAPER_SEED_URLS.
+	•	Provide simple selector maps; collect common amenity keywords (“pool”, “fitness”, “EV”, “package”, “dog”, “washer”, “walk‑in”, etc.).
+	•	Normalize and return { records, caveats }.
+
+3.4 Orchestrator server/scrapers/agent.ts
+	•	Export runScrapeAgent(query: ScrapeQuery):
+	1.	Try Firecrawl → if records found (or success), return
+	2.	Else try Apify → if found, return
+	3.	Else run Fallback → return results (maybe fewer fields)
+	•	Always include a source field indicating which backend produced data.
+	•	Respect rate limits via p-queue.
+
+⸻
+
+4) Frontend: Scraping Agent panel on /comparables
+
+Edit client/src/pages/Comparables.tsx:
+
+4.1 Add Agent Panel in the page toolbar
+	•	A small form with:
+	•	Address (text, required)
+	•	Radius (mi) (number, default 5)
+	•	Property Type (select: Multifamily/Condo/Mixed‑Use/Commercial)
+	•	Amenities (multi‑select chips: pool, fitness, coworking, EV, dog‑run, pkg‑mgmt, in‑unit‑W/D, parking, transit‑prox)
+	•	Keywords (comma‑sep)
+	•	Buttons:
+	•	Run Agent Scrape → POST /api/comps/agent/scrape with full query
+	•	Show job status pill polling /api/comps/jobs/:id every 2s until done|error; when done, refetch table.
+	•	Persist last inputs in localStorage to speed repeated runs.
+
+4.2 “Blank 200‑row sheet” remains
+	•	Keep your current placeholder logic: render 200 editable rows if DB empty.
+
+4.3 Inline color feedback
+	•	Dirty cells: yellow background
+	•	Saved success flash: green background 600ms
+	•	Failed save: red outline tooltip
+
+⸻
+
+5) Agent Tools (function calling)
+
+Add/merge these tool specs in your OpenRouter proxy tool list so the Bristol Agent can launch the scrape and fetch results:
+
+[
+  {
+    "name": "comps_agent_scrape",
+    "description": "Launch the Scraping Agent with address ground zero, radius, property type, amenities, and keywords.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "address": { "type": "string" },
+        "radius_mi": { "type": "number", "default": 5 },
+        "asset_type": { "type": "string", "default": "Multifamily" },
+        "amenities": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "keywords": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "city": { "type": "string" },
+        "state": { "type": "string" },
+        "zip": { "type": "string" }
+      },
+      "required": ["address"]
+    }
+  },
+  {
+    "name": "comps_status",
+    "description": "Check scrape job status by id.",
+    "parameters": {
+      "type": "object",
+      "properties": { "id": { "type": "string" } },
+      "required": ["id"]
+    }
+  },
+  {
+    "name": "comps_search",
+    "description": "Query saved comps by text filter and limit.",
+    "parameters": {
+      "type": "object",
+      "properties": { "q": { "type": "string" }, "limit": { "type": "number", "default": 2000 } }
+    }
+  }
+]
+
+Wire tools → endpoints
+	•	comps_agent_scrape → POST /api/comps/agent/scrape
+	•	comps_status → GET /api/comps/jobs/{id}
+	•	comps_search → GET /api/comps?q={q}&limit={limit}
+
+⸻
+
+6) Acceptance Tests (must pass before stopping)
+	1.	Panel: On /comparables, form shows Address/Radius/Type/Amenities/Keywords and “Run Agent Scrape”.
+	2.	Job: Running the agent returns a jobId; status updates queued → running → done; table refreshes with new rows, each with jobId, scrapedAt, and a source (“firecrawl”|“apify”|“fallback”).
+	3.	Free fallback: With no FIRECRAWL_API_KEY and no APIFY_TOKEN, the agent still runs fallback and upserts at least one normalized record when seed URLs are provided.
+	4.	Filters respected: Amenity filter changes the amenityTags on results and the normalized outputs include those tags.
+	5.	No regressions: 200‑row blank sheet still renders when DB empty; inline edits save via /api/comps/bulkUpsert; CSV export still works.
+	6.	Stability: Rate limits are enforced (p-queue), no unhandled exceptions; server port opens and stays up.
+
+Finish by printing
+Scraping Agent ADDED — Firecrawl + Apify + Fallback wired, panel live, data flowing to TanStack table. ✅
+
+⸻
+
+Notes & Guardrails
+	•	Respect robots.txt and site terms. Prefer allowlisted SCRAPER_SEED_URLS.
+	•	For Firecrawl/Apify, log cost/call counts in the job record’s query field under meta.
+	•	Keep selectors generic in fallback; we’ll add site‑specific adapters later.
+	•	Do not remove existing routes or UI; only augment.
+
+⸻
+
+That’s it—paste this prompt into the Replit AI Builder and let it run end‑to‑end. If you want, I can also hand you the actual firecrawl.ts / apify.ts stubs next so you can paste them directly.
