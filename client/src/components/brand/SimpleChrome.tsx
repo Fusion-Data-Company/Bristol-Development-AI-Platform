@@ -24,18 +24,37 @@ export default function Chrome({ children }: ChromeProps) {
 
   return (
     <div className="min-h-screen bg-bristol-ink">
-      {/* Premium Bristol Header */}
-      <header className="bg-gradient-to-r from-bristol-ink via-bristol-maroon/10 to-bristol-ink shadow-2xl border-b-2 border-cyan-400/50 relative overflow-hidden">
-        {/* Sophisticated background layers */}
-        <div className="absolute inset-0 bg-gradient-to-br from-bristol-ink/98 via-bristol-maroon/8 to-bristol-ink/98"></div>
+      {/* Premium Bristol Header with Stucco Texture */}
+      <header className="relative overflow-hidden shadow-2xl border-b-2 border-cyan-400/50" style={{
+        background: `
+          radial-gradient(circle at 20% 20%, rgba(100, 100, 100, 0.8) 0%, transparent 25%),
+          radial-gradient(circle at 80% 80%, rgba(120, 120, 120, 0.6) 0%, transparent 25%),
+          radial-gradient(circle at 40% 60%, rgba(90, 90, 90, 0.7) 0%, transparent 30%),
+          radial-gradient(circle at 60% 20%, rgba(110, 110, 110, 0.5) 0%, transparent 35%),
+          linear-gradient(135deg, #2d3748 0%, #4a5568 25%, #2d3748 50%, #4a5568 75%, #2d3748 100%)
+        `,
+        backgroundSize: '300px 300px, 250px 250px, 200px 200px, 350px 350px, 100% 100%'
+      }}>
+        {/* Stucco-like texture overlay */}
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            radial-gradient(circle at 25% 25%, transparent 2px, rgba(255,255,255,0.03) 2px, rgba(255,255,255,0.03) 3px, transparent 3px),
+            radial-gradient(circle at 75% 75%, transparent 1px, rgba(0,0,0,0.05) 1px, rgba(0,0,0,0.05) 2px, transparent 2px),
+            radial-gradient(circle at 50% 10%, transparent 1.5px, rgba(255,255,255,0.02) 1.5px, rgba(255,255,255,0.02) 2.5px, transparent 2.5px)
+          `,
+          backgroundSize: '15px 15px, 12px 12px, 18px 18px'
+        }}></div>
+        
+        {/* Enhanced gradient layers */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-700/60 via-slate-600/40 to-slate-700/60"></div>
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"></div>
           <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent"></div>
         </div>
         
         {/* Subtle animated glow */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/5 to-transparent animate-pulse"></div>
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/8 to-transparent animate-pulse"></div>
         </div>
         
         <div className="pl-0 pr-6 lg:pr-8 py-4 lg:py-6 relative">
