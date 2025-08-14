@@ -1600,21 +1600,9 @@ function AgentsPane({
           </div>
         </div>
 
-        {/* Agent Specialization Headers */}
-        <div className="grid gap-6">
+        {/* Agent Grid */}
+        <div className="grid gap-4">
           {/* Master Coordination Agent */}
-          <div className="space-y-4">
-            <div className="bg-gradient-to-r from-bristol-cyan/20 via-bristol-cyan/10 to-transparent border-l-4 border-bristol-cyan rounded-r-xl p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-bristol-cyan/20 border border-bristol-cyan/40 rounded-lg flex items-center justify-center">
-                  <Brain className="h-5 w-5 text-bristol-cyan" />
-                </div>
-                <div>
-                  <h3 className="text-bristol-cyan font-bold text-lg uppercase tracking-wide">MASTER COORDINATION</h3>
-                  <p className="text-bristol-cyan/80 text-sm">Orchestrates multi-agent analysis, synthesizes insights, and coordinates decision-making</p>
-                </div>
-              </div>
-            </div>
             {agents.filter(agent => agent.id === 'master').map((agent, index) => {
               const status = getAgentStatus(agent.id);
               const colorClass = 'bristol-cyan';
@@ -1690,22 +1678,9 @@ function AgentsPane({
                 </div>
               );
             })}
-          </div>
 
           {/* Data & Market Intelligence Agents */}
-          <div className="space-y-4">
-            <div className="bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/10 to-transparent border-l-4 border-bristol-gold rounded-r-xl p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-bristol-gold/20 border border-bristol-gold/40 rounded-lg flex items-center justify-center">
-                  <Database className="h-5 w-5 text-bristol-gold" />
-                </div>
-                <div>
-                  <h3 className="text-bristol-gold font-bold text-lg uppercase tracking-wide">DATA & MARKET INTELLIGENCE</h3>
-                  <p className="text-bristol-gold/80 text-sm">Processes demographics, economic data, and analyzes market trends & comparables</p>
-                </div>
-              </div>
-            </div>
-            {agents.filter(agent => agent.id === 'data-processing' || agent.id === 'market-intelligence').map((agent, index) => {
+          {agents.filter(agent => agent.id === 'data-processing' || agent.id === 'market-intelligence').map((agent, index) => {
               const status = getAgentStatus(agent.id);
               const colorClass = agent.id === 'data-processing' ? 'bristol-gold' : 'purple-400';
               const task = activeTasks.find(t => t.agentId === agent.id);
@@ -1780,22 +1755,9 @@ function AgentsPane({
                 </div>
               );
             })}
-          </div>
 
           {/* Financial & Lead Management Agents */}
-          <div className="space-y-4">
-            <div className="bg-gradient-to-r from-emerald-400/20 via-emerald-400/10 to-transparent border-l-4 border-emerald-400 rounded-r-xl p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-emerald-400/20 border border-emerald-400/40 rounded-lg flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-emerald-400" />
-                </div>
-                <div>
-                  <h3 className="text-emerald-400 font-bold text-lg uppercase tracking-wide">FINANCIAL & LEAD MANAGEMENT</h3>
-                  <p className="text-emerald-400/80 text-sm">Calculates IRR/NPV/Cap rates and manages investor lead conversion strategies</p>
-                </div>
-              </div>
-            </div>
-            {agents.filter(agent => agent.id === 'financial-analysis' || agent.id === 'lead-management').map((agent, index) => {
+          {agents.filter(agent => agent.id === 'financial-analysis' || agent.id === 'lead-management').map((agent, index) => {
               const status = getAgentStatus(agent.id);
               const colorClass = agent.id === 'financial-analysis' ? 'emerald-400' : 'pink-400';
               const task = activeTasks.find(t => t.agentId === agent.id);
@@ -1870,11 +1832,8 @@ function AgentsPane({
                 </div>
               );
             })}
-          </div>
-        </div>
 
-        {/* Legacy Agent Grid (fallback for any remaining agents) */}
-        <div className="grid gap-4">
+          {/* Legacy Agent Grid (fallback for any remaining agents) */}
           {agents.filter(agent => !['master', 'data-processing', 'market-intelligence', 'financial-analysis', 'lead-management'].includes(agent.id)).map((agent, index) => {
             const status = getAgentStatus(agent.id);
             const colorClass = agentColors[agent.id as keyof typeof agentColors] || 'bristol-cyan';
