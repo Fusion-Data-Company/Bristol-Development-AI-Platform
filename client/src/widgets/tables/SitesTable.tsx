@@ -156,7 +156,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 p-0 font-cinzel font-bold text-bristol-cream hover:text-white hover:bg-bristol-gold/20 transition-all duration-300"
+          className="h-8 p-0 font-cinzel font-bold text-white hover:text-bristol-gold hover:bg-bristol-gold/20 transition-all duration-300"
         >
           PROPERTY NAME
           <ArrowUpDown className="ml-2 h-4 w-4 text-bristol-gold" />
@@ -387,10 +387,19 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       size: 200,
       cell: ({ row }) => {
         const notes = row.getValue('notes') as string;
-        return (
-          <div className="text-sm text-bristol-ink max-w-[200px] truncate" title={notes}>
-            {notes || '—'}
+        return notes ? (
+          <div className="relative group">
+            <div className="text-sm text-bristol-ink max-w-[200px] truncate cursor-help">
+              {notes}
+            </div>
+            <div className="absolute bottom-full left-0 mb-2 p-3 bg-white border-2 border-bristol-gold shadow-xl rounded-lg text-sm text-bristol-ink max-w-xs z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-normal">
+              <div className="font-medium text-bristol-maroon mb-1">Notes:</div>
+              {notes}
+              <div className="absolute top-full left-4 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-bristol-gold"></div>
+            </div>
           </div>
+        ) : (
+          <div className="text-center text-bristol-stone">—</div>
         );
       },
     },
@@ -496,13 +505,13 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       <div className="rounded-lg border-2 border-bristol-maroon/20 bg-gradient-to-br from-white via-bristol-cream/20 to-white flex-1 shadow-2xl shadow-bristol-maroon/15 flex flex-col min-h-0">
         <div className="flex-1 overflow-auto">
           <Table className="w-full relative">
-            <TableHeader className="sticky top-0 bg-gradient-to-r from-bristol-maroon via-bristol-maroon/95 to-bristol-maroon z-10 shadow-lg shadow-bristol-maroon/30">
+            <TableHeader className="sticky top-0 bg-gradient-to-r from-bristol-ink via-slate-800 to-bristol-ink z-10 shadow-lg shadow-bristol-ink/30">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-bristol-gold/30">
+                <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-bristol-gold/50">
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id} 
-                      className="font-cinzel text-bristol-cream font-bold whitespace-nowrap px-6 py-4 text-sm tracking-wider"
+                      className="font-cinzel text-white font-bold whitespace-nowrap px-6 py-4 text-sm tracking-wider bg-gradient-to-b from-transparent to-black/20"
                       style={{ width: header.getSize() }}
                     >
                       {header.isPlaceholder
