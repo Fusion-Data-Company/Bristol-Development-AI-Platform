@@ -230,6 +230,64 @@ export const memoryLong = pgTable("memory_long", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Agent system prompts and configurations
+export const agentPrompts = pgTable("agent_prompts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => users.id),
+  name: varchar("name").notNull(),
+  type: varchar("type").notNull(), // system, project, context, persona
+  content: text("content").notNull(),
+  active: boolean("active").default(true),
+  priority: integer("priority").default(0), // Higher priority prompts get injected first
+  metadata: jsonb("metadata"), // Additional configuration
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Agent file attachments
+export const agentAttachments = pgTable("agent_attachments", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: varchar("session_id").references(() => chatSessions.id),
+  userId: varchar("user_id").references(() => users.id),
+  fileName: varchar("file_name").notNull(),
+  fileType: varchar("file_type").notNull(),
+  fileSize: integer("file_size"),
+  url: text("url"),
+  content: text("content"), // Extracted text content for context
+  metadata: jsonb("metadata"), // Parsed structured data
+  processedAt: timestamp("processed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Agent conversation context
+export const agentContext = pgTable("agent_context", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: varchar("session_id").references(() => chatSessions.id),
+  userId: varchar("user_id").references(() => users.id),
+  type: varchar("type").notNull(), // deal, property, market, competitor, strategy
+  entityId: varchar("entity_id"), // Reference to specific deal/property/etc
+  context: jsonb("context").notNull(),
+  relevance: real("relevance"), // 0-1 score
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Agent decision logs for audit trail
+export const agentDecisions = pgTable("agent_decisions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  sessionId: varchar("session_id").references(() => chatSessions.id),
+  userId: varchar("user_id").references(() => users.id),
+  decisionType: varchar("decision_type").notNull(), // investment, risk, recommendation
+  entityId: varchar("entity_id"), // Reference to deal/property
+  decision: jsonb("decision").notNull(), // Structured decision data
+  reasoning: text("reasoning").notNull(),
+  confidence: real("confidence"), // 0-1 score
+  outcome: varchar("outcome"), // approved, rejected, pending
+  impactValue: real("impact_value"), // Estimated $ impact
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Tools registry for external integrations
 export const tools = pgTable("tools", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -344,6 +402,28 @@ export const insertSnapshotSchema = createInsertSchema(snapshots).omit({
   createdAt: true,
 });
 
+export const insertAgentPromptSchema = createInsertSchema(agentPrompts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAgentAttachmentSchema = createInsertSchema(agentAttachments).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertAgentContextSchema = createInsertSchema(agentContext).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAgentDecisionSchema = createInsertSchema(agentDecisions).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -377,3 +457,11 @@ export type Tool = typeof tools.$inferSelect;
 export type InsertTool = z.infer<typeof insertToolSchema>;
 export type Snapshot = typeof snapshots.$inferSelect;
 export type InsertSnapshot = z.infer<typeof insertSnapshotSchema>;
+export type AgentPrompt = typeof agentPrompts.$inferSelect;
+export type InsertAgentPrompt = z.infer<typeof insertAgentPromptSchema>;
+export type AgentAttachment = typeof agentAttachments.$inferSelect;
+export type InsertAgentAttachment = z.infer<typeof insertAgentAttachmentSchema>;
+export type AgentContext = typeof agentContext.$inferSelect;
+export type InsertAgentContext = z.infer<typeof insertAgentContextSchema>;
+export type AgentDecision = typeof agentDecisions.$inferSelect;
+export type InsertAgentDecision = z.infer<typeof insertAgentDecisionSchema>;

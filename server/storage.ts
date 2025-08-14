@@ -7,6 +7,12 @@ import {
   integrationLogs,
   mcpTools,
   snapshots,
+  memoryShort,
+  memoryLong,
+  agentPrompts,
+  agentAttachments,
+  agentContext,
+  agentDecisions,
   type User,
   type UpsertUser,
   type Site,
@@ -23,9 +29,21 @@ import {
   type InsertMcpTool,
   type Snapshot,
   type InsertSnapshot,
+  type MemoryShort,
+  type InsertMemoryShort,
+  type MemoryLong,
+  type InsertMemoryLong,
+  type AgentPrompt,
+  type InsertAgentPrompt,
+  type AgentAttachment,
+  type InsertAgentAttachment,
+  type AgentContext,
+  type InsertAgentContext,
+  type AgentDecision,
+  type InsertAgentDecision,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User operations (required for Replit Auth)
@@ -68,6 +86,37 @@ export interface IStorage {
   createSnapshot(snapshot: InsertSnapshot): Promise<Snapshot>;
   getUserSnapshots(userId: string, tool?: string): Promise<Snapshot[]>;
   deleteSnapshot(id: string, userId: string): Promise<void>;
+  
+  // Memory operations
+  createMemoryShort(memory: InsertMemoryShort): Promise<MemoryShort>;
+  getMemoryShort(userId: string, sessionId?: string): Promise<MemoryShort[]>;
+  deleteExpiredMemoryShort(): Promise<void>;
+  
+  createMemoryLong(memory: InsertMemoryLong): Promise<MemoryLong>;
+  getMemoryLong(userId: string, category?: string): Promise<MemoryLong[]>;
+  updateMemoryLong(id: string, updates: Partial<InsertMemoryLong>): Promise<MemoryLong>;
+  
+  // Agent prompts
+  createAgentPrompt(prompt: InsertAgentPrompt): Promise<AgentPrompt>;
+  getAgentPrompts(userId?: string, type?: string): Promise<AgentPrompt[]>;
+  updateAgentPrompt(id: string, updates: Partial<InsertAgentPrompt>): Promise<AgentPrompt>;
+  deleteAgentPrompt(id: string): Promise<void>;
+  
+  // Agent attachments
+  createAgentAttachment(attachment: InsertAgentAttachment): Promise<AgentAttachment>;
+  getSessionAttachments(sessionId: string): Promise<AgentAttachment[]>;
+  deleteAgentAttachment(id: string): Promise<void>;
+  
+  // Agent context
+  createAgentContext(context: InsertAgentContext): Promise<AgentContext>;
+  getSessionContext(sessionId: string): Promise<AgentContext[]>;
+  updateAgentContext(id: string, updates: Partial<InsertAgentContext>): Promise<AgentContext>;
+  deleteExpiredContext(): Promise<void>;
+  
+  // Agent decisions
+  createAgentDecision(decision: InsertAgentDecision): Promise<AgentDecision>;
+  getSessionDecisions(sessionId: string): Promise<AgentDecision[]>;
+  getUserDecisions(userId: string, limit?: number): Promise<AgentDecision[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -258,6 +307,162 @@ export class DatabaseStorage implements IStorage {
     await db
       .delete(snapshots)
       .where(and(eq(snapshots.id, id), eq(snapshots.userId, userId)));
+  }
+
+  // Memory operations
+  async createMemoryShort(memory: InsertMemoryShort): Promise<MemoryShort> {
+    const [newMemory] = await db.insert(memoryShort).values(memory).returning();
+    return newMemory;
+  }
+
+  async getMemoryShort(userId: string, sessionId?: string): Promise<MemoryShort[]> {
+    const conditions = [eq(memoryShort.userId, userId)];
+    if (sessionId) conditions.push(eq(memoryShort.sessionId, sessionId));
+    
+    return await db
+      .select()
+      .from(memoryShort)
+      .where(conditions.length > 1 ? and(...conditions) : conditions[0])
+      .orderBy(desc(memoryShort.createdAt));
+  }
+
+  async deleteExpiredMemoryShort(): Promise<void> {
+    await db
+      .delete(memoryShort)
+      .where(and(
+        memoryShort.expiresAt !== null,
+        sql`${memoryShort.expiresAt} < NOW()`
+      ));
+  }
+
+  async createMemoryLong(memory: InsertMemoryLong): Promise<MemoryLong> {
+    const [newMemory] = await db.insert(memoryLong).values(memory).returning();
+    return newMemory;
+  }
+
+  async getMemoryLong(userId: string, category?: string): Promise<MemoryLong[]> {
+    const conditions = [eq(memoryLong.userId, userId)];
+    if (category) conditions.push(eq(memoryLong.category, category));
+    
+    return await db
+      .select()
+      .from(memoryLong)
+      .where(conditions.length > 1 ? and(...conditions) : conditions[0])
+      .orderBy(desc(memoryLong.confidence), desc(memoryLong.lastUsed));
+  }
+
+  async updateMemoryLong(id: string, updates: Partial<InsertMemoryLong>): Promise<MemoryLong> {
+    const [updated] = await db
+      .update(memoryLong)
+      .set({ ...updates, updatedAt: new Date(), lastUsed: new Date() })
+      .where(eq(memoryLong.id, id))
+      .returning();
+    return updated;
+  }
+
+  // Agent prompts
+  async createAgentPrompt(prompt: InsertAgentPrompt): Promise<AgentPrompt> {
+    const [newPrompt] = await db.insert(agentPrompts).values(prompt).returning();
+    return newPrompt;
+  }
+
+  async getAgentPrompts(userId?: string, type?: string): Promise<AgentPrompt[]> {
+    const conditions = [];
+    if (userId) conditions.push(eq(agentPrompts.userId, userId));
+    if (type) conditions.push(eq(agentPrompts.type, type));
+    conditions.push(eq(agentPrompts.active, true));
+    
+    return await db
+      .select()
+      .from(agentPrompts)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(agentPrompts.priority), agentPrompts.createdAt);
+  }
+
+  async updateAgentPrompt(id: string, updates: Partial<InsertAgentPrompt>): Promise<AgentPrompt> {
+    const [updated] = await db
+      .update(agentPrompts)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(agentPrompts.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteAgentPrompt(id: string): Promise<void> {
+    await db.delete(agentPrompts).where(eq(agentPrompts.id, id));
+  }
+
+  // Agent attachments
+  async createAgentAttachment(attachment: InsertAgentAttachment): Promise<AgentAttachment> {
+    const [newAttachment] = await db.insert(agentAttachments).values(attachment).returning();
+    return newAttachment;
+  }
+
+  async getSessionAttachments(sessionId: string): Promise<AgentAttachment[]> {
+    return await db
+      .select()
+      .from(agentAttachments)
+      .where(eq(agentAttachments.sessionId, sessionId))
+      .orderBy(desc(agentAttachments.createdAt));
+  }
+
+  async deleteAgentAttachment(id: string): Promise<void> {
+    await db.delete(agentAttachments).where(eq(agentAttachments.id, id));
+  }
+
+  // Agent context
+  async createAgentContext(context: InsertAgentContext): Promise<AgentContext> {
+    const [newContext] = await db.insert(agentContext).values(context).returning();
+    return newContext;
+  }
+
+  async getSessionContext(sessionId: string): Promise<AgentContext[]> {
+    return await db
+      .select()
+      .from(agentContext)
+      .where(eq(agentContext.sessionId, sessionId))
+      .orderBy(desc(agentContext.relevance), desc(agentContext.createdAt));
+  }
+
+  async updateAgentContext(id: string, updates: Partial<InsertAgentContext>): Promise<AgentContext> {
+    const [updated] = await db
+      .update(agentContext)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(agentContext.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteExpiredContext(): Promise<void> {
+    await db
+      .delete(agentContext)
+      .where(and(
+        agentContext.expiresAt !== null,
+        sql`${agentContext.expiresAt} < NOW()`
+      ));
+  }
+
+  // Agent decisions
+  async createAgentDecision(decision: InsertAgentDecision): Promise<AgentDecision> {
+    const [newDecision] = await db.insert(agentDecisions).values(decision).returning();
+    return newDecision;
+  }
+
+  async getSessionDecisions(sessionId: string): Promise<AgentDecision[]> {
+    return await db
+      .select()
+      .from(agentDecisions)
+      .where(eq(agentDecisions.sessionId, sessionId))
+      .orderBy(desc(agentDecisions.createdAt));
+  }
+
+  async getUserDecisions(userId: string, limit: number = 100): Promise<AgentDecision[]> {
+    return await db
+      .select()
+      .from(agentDecisions)
+      .where(eq(agentDecisions.userId, userId))
+      .orderBy(desc(agentDecisions.createdAt))
+      .limit(limit);
   }
 }
 

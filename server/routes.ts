@@ -57,6 +57,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bristol Brain Enhanced API with MCP integration
   const bristolBrainRouter = (await import('./api/bristol-brain-enhanced')).default;
   app.use('/api/bristol-brain', bristolBrainRouter);
+  
+  // Bristol Brain Elite API with advanced memory and attachments
+  const bristolBrainEliteRouter = (await import('./api/bristol-brain-elite')).default;
+  app.use('/api/bristol-brain-elite', bristolBrainEliteRouter);
 
   // OpenRouter models endpoint
   // OpenRouter models endpoint - fix authentication

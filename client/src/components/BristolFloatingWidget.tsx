@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal } from "lucide-react";
+import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target } from "lucide-react";
+import { BristolBrainElite } from "./BristolBrainElite";
 
 /**
  * BristolFloatingWidget.tsx — v1.0
@@ -144,6 +145,8 @@ export default function BristolFloatingWidget({
   const [wsConnected, setWsConnected] = useState(false);
   const [mcpEnabled, setMcpEnabled] = useState(true);
   const [realTimeData, setRealTimeData] = useState(true);
+  const [eliteMode, setEliteMode] = useState(false);
+  const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -431,8 +434,8 @@ export default function BristolFloatingWidget({
         </button>
       )}
 
-      {/* Slideout Panel */}
-      {open && (
+      {/* Slideout Panel - Standard Mode */}
+      {open && !eliteMode && (
         <div className="fixed inset-0 z-[9998]">
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
@@ -530,11 +533,39 @@ export default function BristolFloatingWidget({
               )}
               
               <div className="flex flex-wrap items-center gap-6">
+                {/* Elite Mode Toggle */}
+                <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-bristol-gold/40 backdrop-blur-sm"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%)',
+                  }}>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={eliteMode}
+                      onChange={(e) => setEliteMode(e.target.checked)}
+                      className="sr-only"
+                    />
+                    <div className={cx(
+                      "relative w-12 h-6 rounded-full transition-colors duration-300",
+                      eliteMode ? "bg-bristol-gold" : "bg-gray-600"
+                    )}>
+                      <div className={cx(
+                        "absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform duration-300",
+                        eliteMode ? "translate-x-6" : "translate-x-0"
+                      )} />
+                    </div>
+                    <span className="text-xs font-semibold text-bristol-gold uppercase tracking-wider flex items-center gap-2">
+                      <Target className="h-4 w-4" />
+                      Elite Mode {eliteMode ? "ON" : "OFF"}
+                    </span>
+                  </label>
+                </div>
+                
                 {/* Glass Elite Model Selector */}
                 <div className="flex-1 min-w-[240px]">
                   <label className="block text-xs text-bristol-cyan font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
                     <Brain className="h-3 w-3" />
-                    Elite AI Model
+                    {eliteMode ? "$200M+ Deal AI" : "Elite AI Model"}
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
@@ -736,6 +767,23 @@ export default function BristolFloatingWidget({
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      
+      {/* Render Elite Mode Component */}
+      {open && eliteMode && (
+        <div className="fixed inset-0 z-[999]">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} />
+          <div className="absolute inset-4 md:inset-8 lg:inset-12">
+            <BristolBrainElite 
+              sessionId={sessionId}
+              dataContext={appData}
+              onClose={() => {
+                setEliteMode(false);
+                setOpen(false);
+              }}
+            />
           </div>
         </div>
       )}
