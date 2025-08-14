@@ -284,6 +284,15 @@ export default function BristolFloatingWidget({
           )
         );
         
+        // Display individual agent result in chat
+        if (data.task.result) {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: `**${data.task.agentName || data.task.agent} Analysis Complete** ✅\n\n${data.task.result}`,
+            createdAt: nowISO()
+          }]);
+        }
+        
         console.log(`✅ Task completed: ${data.task.agentName} - ${data.task.status}`);
         break;
         
@@ -569,17 +578,46 @@ export default function BristolFloatingWidget({
       
       if (response.ok) {
         const result = await response.json();
-        setActiveTasks(result.taskIds.map((id: string) => ({ id, status: 'pending' })));
+        console.log('Multi-agent analysis started:', result);
+        
+        // Create initial task objects with proper structure
+        const initialTasks = result.taskIds.map((id: string, index: number) => ({
+          id,
+          agentId: result.agents[index].toLowerCase().replace(' ', '-'),
+          type: getTaskTypeForAgent(result.agents[index]),
+          status: 'processing' as const,
+          result: null,
+          agent: result.agents[index]
+        }));
+        
+        setActiveTasks(initialTasks);
+        
+        // Initialize progress for all agents
+        const initialProgress: Record<string, number> = {};
+        initialTasks.forEach(task => {
+          initialProgress[task.agentId] = 0;
+        });
+        setTaskProgress(initialProgress);
         
         // Add system message about multi-agent analysis
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: `🚀 **Multi-Agent Analysis Initiated**\n\nI've activated the Bristol A.I. Elite multi-agent system for comprehensive property analysis:\n\n${agents.map(agent => `• **${agent.name}**: ${agent.role}`).join('\n')}\n\nAll agents are now processing the property data in parallel. You'll see real-time updates as each agent completes their specialized analysis.`,
+          content: `🚀 **Multi-Agent Analysis Initiated**\n\nI've activated the Bristol A.I. Elite multi-agent system for comprehensive property analysis:\n\n${result.agents.map((agent: string) => `• **${agent}**: Processing specialized analysis`).join('\n')}\n\nAll agents are now processing the property data in parallel. You'll see real-time updates as each agent completes their specialized analysis.`,
           createdAt: nowISO()
         }]);
       }
     } catch (error) {
       console.error('Failed to start multi-agent analysis:', error);
+    }
+  };
+  
+  const getTaskTypeForAgent = (agentName: string) => {
+    switch(agentName.toLowerCase()) {
+      case 'data processor': return 'demographic_analysis';
+      case 'financial analyst': return 'financial_modeling';
+      case 'market intelligence': return 'competitive_analysis';
+      case 'lead manager': return 'lead_management';
+      default: return 'analysis';
     }
   };
 
