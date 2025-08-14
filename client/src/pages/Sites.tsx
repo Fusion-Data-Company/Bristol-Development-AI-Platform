@@ -12,6 +12,7 @@ import { SitesTable } from "../widgets/tables/SitesTable";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
 import { SiteDetails } from "../widgets/details/SiteDetails";
 import { SiteMapPreview } from "../widgets/maps/SiteMapPreview";
+import { BristolPortfolioAgent } from "@/components/agents/BristolPortfolioAgent";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import type { Site } from "@shared/schema";
@@ -460,23 +461,16 @@ export default function Sites() {
                 </CardContent>
               </Card>
 
-              {/* Map Preview Card */}
-              <Card className="bg-white/90 border-bristol-gold/30 backdrop-blur-md shadow-2xl shadow-bristol-gold/15 hover:shadow-bristol-gold/25 transition-all duration-300">
-                <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-gold/10 border-b-2 border-bristol-gold/30">
-                  <div className="flex items-center space-x-3">
-                    <div className="relative group">
-                      <Map className="h-5 w-5 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
-                      <div className="absolute -inset-2 bg-bristol-gold/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
-                    </div>
-                    <CardTitle className="font-cinzel text-bristol-ink text-lg bg-gradient-to-r from-bristol-maroon to-bristol-gold bg-clip-text text-transparent">
-                      Location Intelligence
-                    </CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="bg-gradient-to-br from-white to-bristol-gold/10">
-                  <SiteMapPreview site={selectedSite as any} />
-                </CardContent>
-              </Card>
+              {/* Bristol Portfolio Analysis Agent */}
+              <div className="h-[600px]">
+                <BristolPortfolioAgent 
+                  selectedSite={selectedSite}
+                  portfolioData={portfolioData}
+                  onAnalysisUpdate={(results) => {
+                    console.log('Portfolio analysis updated:', results);
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

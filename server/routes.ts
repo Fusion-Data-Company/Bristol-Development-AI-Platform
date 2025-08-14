@@ -73,6 +73,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // MCP Configuration API
   const mcpConfigRouter = (await import('./api/mcp-config')).default;
   app.use('/api/mcp-config', mcpConfigRouter);
+
+  // Bristol Portfolio Analysis Agent API
+  const bristolAgentRouter = (await import('./api/bristol-agent')).default;
+  app.use('/api/bristol-agent', bristolAgentRouter);
   
   // Multi-Agent System API - bypass auth for testing
   const agentsRouter = (await import('./api/agents')).default;
