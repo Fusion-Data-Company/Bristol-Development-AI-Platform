@@ -1008,14 +1008,29 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
             <button
               onClick={() => setMcpEnabled(!mcpEnabled)}
               className={`
-                w-12 h-6 rounded-full transition-all duration-300 relative
-                ${mcpEnabled ? 'bg-bristol-maroon' : 'bg-gray-600'}
+                w-14 h-7 rounded-full transition-all duration-300 relative border-2 shadow-lg
+                ${mcpEnabled 
+                  ? 'bg-gradient-to-r from-bristol-maroon to-bristol-gold border-bristol-gold shadow-bristol-gold/50' 
+                  : 'bg-gradient-to-r from-gray-700 to-gray-600 border-gray-500 shadow-gray-500/30'
+                }
               `}
+              style={{
+                boxShadow: mcpEnabled 
+                  ? '0 0 20px rgba(251, 191, 36, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                  : '0 0 10px rgba(107, 114, 128, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              }}
             >
               <div className={`
-                w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300
-                ${mcpEnabled ? 'left-6' : 'left-0.5'}
-              `} />
+                w-5 h-5 rounded-full absolute top-0.5 transition-all duration-300 border border-white/30 shadow-md
+                ${mcpEnabled 
+                  ? 'left-7 bg-gradient-to-br from-white to-bristol-gold/20' 
+                  : 'left-0.5 bg-gradient-to-br from-white to-gray-300'
+                }
+              `} 
+              style={{
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+              }}
+              />
             </button>
           </div>
         </div>
@@ -1092,14 +1107,29 @@ function AdminPane({
             <button
               onClick={() => setRealTimeData(!realTimeData)}
               className={`
-                w-12 h-6 rounded-full transition-all duration-300 relative
-                ${realTimeData ? 'bg-bristol-maroon' : 'bg-gray-600'}
+                w-14 h-7 rounded-full transition-all duration-300 relative border-2 shadow-lg
+                ${realTimeData 
+                  ? 'bg-gradient-to-r from-bristol-cyan to-bristol-electric border-bristol-cyan shadow-bristol-cyan/50' 
+                  : 'bg-gradient-to-r from-gray-700 to-gray-600 border-gray-500 shadow-gray-500/30'
+                }
               `}
+              style={{
+                boxShadow: realTimeData 
+                  ? '0 0 20px rgba(69, 214, 202, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
+                  : '0 0 10px rgba(107, 114, 128, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              }}
             >
               <div className={`
-                w-5 h-5 bg-white rounded-full absolute top-0.5 transition-all duration-300
-                ${realTimeData ? 'left-6' : 'left-0.5'}
-              `} />
+                w-5 h-5 rounded-full absolute top-0.5 transition-all duration-300 border border-white/30 shadow-md
+                ${realTimeData 
+                  ? 'left-7 bg-gradient-to-br from-white to-bristol-cyan/20' 
+                  : 'left-0.5 bg-gradient-to-br from-white to-gray-300'
+                }
+              `}
+              style={{
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+              }}
+              />
             </button>
           </div>
         </div>
