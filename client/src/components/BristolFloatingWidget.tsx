@@ -285,12 +285,15 @@ export default function BristolFloatingWidget({
         );
         
         // Display individual agent result in chat
-        if (data.task.result) {
+        if (data.task && data.task.result) {
+          console.log(`🎯 Adding agent result to chat: ${data.task.agentName}`, data.task.result);
           setMessages(prev => [...prev, {
             role: 'assistant',
             content: `**${data.task.agentName || data.task.agent} Analysis Complete** ✅\n\n${data.task.result}`,
             createdAt: nowISO()
           }]);
+        } else {
+          console.log('❌ No task result found in completed message:', data);
         }
         
         console.log(`✅ Task completed: ${data.task.agentName} - ${data.task.status}`);

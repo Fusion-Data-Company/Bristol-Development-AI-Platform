@@ -3,6 +3,7 @@ import { WebSocket } from 'ws';
 import { db } from '../db';
 import { chatSessions, chatMessages, mcpExecutions } from '../../shared/schema';
 import OpenAI from 'openai';
+import { webSocketService } from '../services/websocketService';
 
 export interface AgentConfig {
   id: string;

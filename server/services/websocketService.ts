@@ -174,6 +174,23 @@ export class WebSocketService {
     });
   }
 
+  // Agent task broadcasting methods
+  public broadcastTaskStarted(task: any) {
+    this.broadcastToAll({
+      type: "task_started",
+      data: { task },
+      timestamp: Date.now()
+    });
+  }
+
+  public broadcastTaskCompleted(task: any) {
+    this.broadcastToAll({
+      type: "task_completed", 
+      data: { task },
+      timestamp: Date.now()
+    });
+  }
+
   public broadcastChatUpdate(sessionId: string, message: any) {
     this.broadcastToTopic(`chat:${sessionId}`, {
       type: "chat_typing",
