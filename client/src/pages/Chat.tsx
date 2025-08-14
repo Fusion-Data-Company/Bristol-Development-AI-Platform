@@ -251,7 +251,7 @@ export default function Chat() {
       <div className="grid gap-6 lg:grid-cols-4 h-full">
         {/* Sessions Sidebar */}
         <div className="lg:col-span-1">
-          <Card className="h-full border-bristol-cyan/20 bg-gradient-to-b from-slate-900/40 to-slate-800/40 backdrop-blur-md">
+          <Card className="h-full chrome-metallic-panel">
             <CardHeader>
               <CardTitle className="flex items-center justify-between text-bristol-cyan">
                 <span className="flex items-center gap-2">
@@ -313,7 +313,7 @@ export default function Chat() {
 
         {/* Elite Bristol AI Chat Area */}
         <div className="lg:col-span-3">
-          <Card className="h-full flex flex-col border-bristol-cyan/20 bg-gradient-to-b from-slate-900/40 to-slate-800/40 backdrop-blur-md">
+          <Card className="h-full flex flex-col chrome-metallic-panel">
             <CardHeader className="border-b border-bristol-cyan/20">
               <CardTitle className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -485,13 +485,13 @@ export default function Chat() {
                           onKeyPress={handleKeyPress}
                           placeholder={isThinking ? "Bristol A.I. is analyzing..." : "Ask about properties, markets, demographics, investments..."}
                           disabled={sendMessageMutation.isPending || isThinking}
-                          className="bg-slate-800/50 border-bristol-cyan/20 text-white placeholder-bristol-cyan/50 focus:border-bristol-cyan focus:ring-bristol-cyan/30"
+                          className="chrome-input text-white placeholder-bristol-cyan/50"
                         />
                       </div>
                       <Button
                         onClick={handleSend}
                         disabled={!message.trim() || sendMessageMutation.isPending || isThinking}
-                        className="bg-gradient-to-r from-bristol-cyan to-bristol-electric hover:from-bristol-cyan/80 hover:to-bristol-electric/80 text-slate-900 font-bold min-w-[100px]"
+                        className="chrome-metallic-button min-w-[100px]"
                       >
                         {sendMessageMutation.isPending || isThinking ? (
                           <Loader2 className="h-4 w-4 animate-spin" />

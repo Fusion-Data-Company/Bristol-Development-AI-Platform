@@ -834,18 +834,14 @@ export default function BristolFloatingWidget({
 
           {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout */}
           <div 
-            className="absolute inset-y-0 left-0 w-[92vw] sm:w-[620px] h-screen text-neutral-100 shadow-2xl flex flex-col cyberpunk-elite-panel font-cinzel"
+            className="absolute inset-y-0 left-0 w-[92vw] sm:w-[620px] h-screen text-neutral-100 shadow-2xl flex flex-col chrome-metallic-panel font-cinzel"
             style={{
-              background: 'linear-gradient(135deg, rgba(5, 10, 20, 0.98) 0%, rgba(15, 25, 45, 0.95) 25%, rgba(69, 214, 202, 0.08) 50%, rgba(212, 175, 55, 0.06) 75%, rgba(10, 15, 30, 0.98) 100%)',
-              backdropFilter: 'blur(30px) saturate(200%) brightness(1.1)',
-              border: '1px solid transparent',
-              borderImage: 'linear-gradient(135deg, #45d6ca 0%, #d4af37 50%, #45d6ca 100%) 1',
+              background: 'linear-gradient(135deg, rgba(5, 10, 20, 0.95) 0%, rgba(69, 214, 202, 0.1) 25%, rgba(255, 255, 255, 0.05) 50%, rgba(69, 214, 202, 0.1) 75%, rgba(5, 10, 20, 0.95) 100%)',
+              backdropFilter: 'blur(20px) saturate(150%)',
+              border: '1px solid rgba(69, 214, 202, 0.3)',
               boxShadow: `
-                0 0 100px rgba(69, 214, 202, 0.4),
-                0 0 200px rgba(212, 175, 55, 0.2),
-                inset 0 0 60px rgba(69, 214, 202, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                0 0 2px 2px rgba(69, 214, 202, 0.3)
+                0 0 30px rgba(69, 214, 202, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
               `,
             }}
           >
@@ -1242,17 +1238,7 @@ export default function BristolFloatingWidget({
                       onKeyDown={(e) => e.key === "Enter" && !e.shiftKey ? handleSend() : null}
                       placeholder={loading ? "Bristol A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
                       disabled={loading}
-                      className={cx(
-                        "relative w-full text-sm font-medium transition-all duration-300 backdrop-blur-sm",
-                        "rounded-3xl px-6 py-4 pr-12 border focus:outline-none",
-                        "text-white placeholder-bristol-cyan/60 disabled:opacity-60",
-                        "hover:shadow-lg hover:shadow-bristol-cyan/10",
-                        "focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/30"
-                      )}
-                      style={{
-                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(69, 214, 202, 0.08) 50%, rgba(30, 41, 59, 0.6) 100%)',
-                        borderColor: 'rgba(69, 214, 202, 0.4)',
-                      }}
+                      className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-bristol-cyan/60 disabled:opacity-60"
                     />
                     {loading && (
                       <div className="absolute right-5 top-1/2 transform -translate-y-1/2">
@@ -1266,19 +1252,9 @@ export default function BristolFloatingWidget({
                     onClick={handleSend}
                     disabled={loading || !input.trim()}
                     className={cx(
-                      "relative inline-flex items-center gap-3 px-6 py-4 rounded-3xl font-bold text-sm transition-all duration-300 group overflow-hidden",
-                      "backdrop-blur-sm border shadow-lg hover:shadow-bristol-cyan/25",
-                      "disabled:opacity-50 disabled:cursor-not-allowed",
-                      "transform hover:scale-105 active:scale-95",
-                      loading || !input.trim() 
-                        ? "border-bristol-cyan/20" 
-                        : "border-bristol-cyan/50 hover:border-bristol-electric/60"
+                      "chrome-metallic-button relative inline-flex items-center gap-3 px-6 py-4 rounded-3xl font-bold text-sm",
+                      "disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden"
                     )}
-                    style={{
-                      background: loading || !input.trim() 
-                        ? 'linear-gradient(135deg, rgba(69, 214, 202, 0.1) 0%, rgba(168, 85, 247, 0.05) 100%)'
-                        : 'linear-gradient(135deg, rgba(69, 214, 202, 0.2) 0%, rgba(168, 85, 247, 0.15) 50%, rgba(239, 68, 68, 0.1) 100%)',
-                    }}
                   >
                     {/* Glass shimmer effect */}
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
