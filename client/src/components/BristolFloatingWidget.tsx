@@ -438,17 +438,18 @@ export default function BristolFloatingWidget({
           className="fixed bottom-6 left-6 z-[9997] group"
           aria-label="Launch Bristol Brain Elite Intelligence System"
         >
-          {/* Glow effects */}
-          <div className="absolute -inset-3 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-bristol-gold/30 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
-          <div className="absolute -inset-1 bg-gradient-to-r from-bristol-cyan/40 to-bristol-electric/40 rounded-3xl blur opacity-75 group-hover:opacity-100 transition-all duration-300" />
+          {/* Enhanced glow effects - always visible */}
+          <div className="absolute -inset-3 bg-gradient-to-r from-bristol-cyan/50 via-bristol-electric/30 to-bristol-gold/40 rounded-3xl blur-xl opacity-60 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
+          <div className="absolute -inset-1 bg-gradient-to-r from-bristol-cyan/60 to-bristol-electric/60 rounded-3xl blur opacity-90 group-hover:opacity-100 transition-all duration-300" />
+          <div className="absolute -inset-2 bg-bristol-cyan/20 rounded-3xl blur-lg opacity-80" />
           
-          {/* Main button - Enhanced visibility and styling */}
+          {/* Main button - Highly visible and solid */}
           <div 
-            className="relative flex items-center gap-4 px-6 py-4 rounded-3xl border backdrop-blur-sm transition-all duration-300 hover:scale-105"
+            className="relative flex items-center gap-4 px-6 py-4 rounded-3xl border backdrop-blur-md transition-all duration-300 hover:scale-105"
             style={{
-              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(69, 214, 202, 0.25) 30%, rgba(30, 41, 59, 0.95) 100%)',
-              borderColor: 'rgba(69, 214, 202, 0.8)',
-              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 8px 32px rgba(69, 214, 202, 0.4), 0 0 0 1px rgba(69, 214, 202, 0.3)',
+              background: 'linear-gradient(135deg, rgba(15, 23, 42, 1) 0%, rgba(69, 214, 202, 0.4) 30%, rgba(30, 41, 59, 1) 100%)',
+              borderColor: 'rgba(69, 214, 202, 1)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 12px 40px rgba(69, 214, 202, 0.6), 0 0 0 2px rgba(69, 214, 202, 0.5), 0 4px 16px rgba(0, 0, 0, 0.4)',
             }}
           >
             {/* Elite brain icon */}
