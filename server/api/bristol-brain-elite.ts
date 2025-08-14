@@ -40,7 +40,7 @@ const chatRequestSchema = z.object({
   selectedModel: z.string().optional(), // Premium model selection
 });
 
-// Elite chat endpoint with full Bristol Brain capabilities
+// Elite chat endpoint with full Bristol A.I. capabilities
 router.post("/chat", async (req, res) => {
   try {
     const { sessionId: providedSessionId, message, enableAdvancedReasoning, dataContext, selectedModel } = 
@@ -59,7 +59,7 @@ router.post("/chat", async (req, res) => {
     // Get session attachments
     const attachments = await storage.getSessionAttachments(sessionId);
     
-    // Process message with Bristol Brain
+    // Process message with Bristol A.I.
     const response = await bristolBrainService.processMessage({
       sessionId,
       userId,
@@ -82,7 +82,7 @@ router.post("/chat", async (req, res) => {
       metadata: response.metadata,
     });
   } catch (error) {
-    console.error("Bristol Brain Elite Error:", error);
+    console.error("Bristol A.I. Elite Error:", error);
     res.status(500).json({
       error: "Failed to process message",
       details: error instanceof Error ? error.message : "Unknown error",
@@ -300,7 +300,7 @@ router.get("/memory", async (req, res) => {
   }
 });
 
-// Analyze a deal with Bristol Brain
+// Analyze a deal with Bristol A.I.
 router.post("/analyze-deal", async (req, res) => {
   try {
     const { sessionId, dealData } = req.body;

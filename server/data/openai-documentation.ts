@@ -1,4 +1,4 @@
-// OpenAI API Documentation for Bristol Brain Elite
+// OpenAI API Documentation for Bristol A.I. Elite
 // This documentation is referenced by the AI to understand OpenAI capabilities
 
 export const OPENAI_DOCUMENTATION = {

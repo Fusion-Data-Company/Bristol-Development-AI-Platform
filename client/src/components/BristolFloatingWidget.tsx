@@ -183,7 +183,7 @@ export default function BristolFloatingWidget({
       
       wsRef.current.onopen = () => {
         setWsConnected(true);
-        console.log("Bristol Brain WebSocket connected");
+        console.log("Bristol A.I. WebSocket connected");
       };
       
       wsRef.current.onmessage = (event) => {
@@ -197,7 +197,7 @@ export default function BristolFloatingWidget({
       
       wsRef.current.onclose = () => {
         setWsConnected(false);
-        console.log("Bristol Brain WebSocket disconnected");
+        console.log("Bristol A.I. WebSocket disconnected");
       };
       
       wsRef.current.onerror = (error) => {
@@ -348,7 +348,7 @@ export default function BristolFloatingWidget({
           ...mcpContext,
           systemStatus,
           sessionId: sessionId,
-          userAgent: "Bristol Brain Elite v1.0",
+          userAgent: "Bristol A.I. Elite v1.0",
           enableAdvancedReasoning: true
         }),
       });
@@ -395,8 +395,8 @@ export default function BristolFloatingWidget({
         mcpToolsUsed: mcpResults.length 
       });
     } catch (err: any) {
-      console.error("Bristol Brain error:", err);
-      let errorMessage = "Bristol Brain Boss Agent encountered an error.";
+      console.error("Bristol A.I. error:", err);
+      let errorMessage = "Bristol A.I. Boss Agent encountered an error.";
       
       if (err?.message?.includes("401") || err?.message?.includes("Unauthorized")) {
         errorMessage = "Authentication required for Boss Agent access.";
@@ -431,12 +431,12 @@ export default function BristolFloatingWidget({
 
   return (
     <>
-      {/* Elite Bristol Brain Launcher - Enterprise Style */}
+      {/* Elite Bristol A.I. Launcher - Enterprise Style */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
           className="fixed bottom-6 left-6 z-[9997] group"
-          aria-label="Launch Bristol Brain Elite Intelligence System"
+          aria-label="Launch Bristol A.I. Elite Intelligence System"
         >
           {/* Dramatic glow effects - always visible */}
           <div className="absolute -inset-4 bg-gradient-to-r from-bristol-cyan/80 via-bristol-electric/60 to-bristol-gold/70 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
@@ -1057,7 +1057,7 @@ function AdminPane({
             onChange={(e) => setSystemPrompt(e.target.value)}
             rows={12}
             className="cyberpunk-input w-full text-sm font-mono resize-none"
-            placeholder="Enter the Bristol Brain system prompt..."
+            placeholder="Enter the Bristol A.I. system prompt..."
           />
         </div>
       </div>
@@ -1065,7 +1065,7 @@ function AdminPane({
   );
 }
 
-// Enhanced UI Components for Bristol Brain Boss Agent
+// Enhanced UI Components for Bristol A.I. Boss Agent
 function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; label: string; active?: boolean; onClick: () => void }) {
   return (
     <button
@@ -1120,7 +1120,7 @@ function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boo
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">Bristol Brain Elite v5.0</h3>
+                <h3 className="text-lg font-bold text-white">Bristol A.I. Elite v5.0</h3>
                 <p className="text-xs text-bristol-cyan/80">Enterprise-Grade AI Intelligence Platform</p>
               </div>
             </div>
@@ -1197,7 +1197,7 @@ function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boo
                   : "bg-bristol-maroon/20 text-bristol-gold border border-bristol-maroon/30"
                 }
               `}>
-                {m.role === "assistant" ? "🤖 Bristol Brain" : "👤 You"}
+                {m.role === "assistant" ? "🤖 Bristol A.I." : "👤 You"}
               </span>
             </div>
             {m.createdAt && (
@@ -1270,7 +1270,7 @@ function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boo
               <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce" />
             </div>
             <span className="text-sm text-bristol-cyan/80">
-              Bristol Brain Boss Agent is analyzing your request...
+              Bristol A.I. Boss Agent is analyzing your request...
             </span>
           </div>
         </div>

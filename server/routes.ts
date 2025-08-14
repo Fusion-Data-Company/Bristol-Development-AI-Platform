@@ -54,15 +54,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/tools/noaa', noaaRouter);
   app.use('/api/snapshots', snapshotsRouter);
 
-  // Bristol Brain Enhanced API with MCP integration
+  // Bristol A.I. Enhanced API with MCP integration
   const bristolBrainRouter = (await import('./api/bristol-brain-enhanced')).default;
   app.use('/api/bristol-brain', bristolBrainRouter);
   
-  // Bristol Brain Elite API with advanced memory and attachments
+  // Bristol A.I. Elite API with advanced memory and attachments
   const bristolBrainEliteRouter = (await import('./api/bristol-brain-elite')).default;
   app.use('/api/bristol-brain-elite', bristolBrainEliteRouter);
   
-  // Premium Models API for Bristol Brain Elite
+  // Premium Models API for Bristol A.I. Elite
   const premiumModelsRouter = (await import('./routes/premium-models')).default;
   app.use('/api/premium-models', premiumModelsRouter);
 

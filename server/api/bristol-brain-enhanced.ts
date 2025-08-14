@@ -3,7 +3,7 @@ import OpenAI from "openai";
 
 const router = Router();
 
-// Enhanced Bristol Brain Boss Agent endpoint with MCP server integration
+// Enhanced Bristol A.I. Boss Agent endpoint with MCP server integration
 router.post("/enhanced-chat", async (req, res) => {
   try {
     const {
@@ -27,7 +27,7 @@ router.post("/enhanced-chat", async (req, res) => {
     }
 
     // Enhanced system prompt for Boss Agent
-    const bossAgentPrompt = `You are the Bristol Brain Boss Agent - the ultimate AI controller for Bristol Development Group's real estate intelligence platform.
+    const bossAgentPrompt = `You are the Bristol A.I. Boss Agent - the ultimate AI controller for Bristol Development Group's real estate intelligence platform.
 
 BOSS AGENT CAPABILITIES:
 - Access to live real estate data, demographics, market analytics
@@ -72,7 +72,7 @@ INSTRUCTIONS:
       stream: false
     });
 
-    const response = completion.choices[0]?.message?.content || "Bristol Brain Boss Agent response unavailable";
+    const response = completion.choices[0]?.message?.content || "Bristol A.I. Boss Agent response unavailable";
 
     // Simulate MCP tool execution results if enabled
     const mcpResults = enableMCPExecution && bossModeActive ? [
@@ -97,13 +97,13 @@ INSTRUCTIONS:
     });
 
   } catch (error: any) {
-    console.error("Bristol Brain Boss Agent error:", error);
+    console.error("Bristol A.I. Boss Agent error:", error);
     
     res.status(500).json({
-      error: "Bristol Brain Boss Agent encountered an error",
+      error: "Bristol A.I. Boss Agent encountered an error",
       details: error.message,
       fallback: true,
-      content: "Bristol Brain Boss Agent is temporarily unavailable. Please try again or contact support."
+      content: "Bristol A.I. Boss Agent is temporarily unavailable. Please try again or contact support."
     });
   }
 });
