@@ -340,10 +340,20 @@ export default function BristolFloatingWidget({
         const response = await fetch('/api/agents');
         if (response.ok) {
           const data = await response.json();
+          console.log('Loaded agents data:', data);
           setAgents(data.agents || []);
+        } else {
+          console.error('Failed to load agents - response not ok:', response.status);
         }
       } catch (error) {
         console.error('Failed to load agents:', error);
+        // Set default agents if API fails
+        setAgents([
+          { id: 'data-processor', name: 'Data Processing Agent', status: 'active' },
+          { id: 'financial-analyst', name: 'Financial Analysis Agent', status: 'active' },
+          { id: 'market-intelligence', name: 'Market Intelligence Agent', status: 'active' },
+          { id: 'lead-manager', name: 'Lead Management Agent', status: 'active' }
+        ]);
       }
     };
     

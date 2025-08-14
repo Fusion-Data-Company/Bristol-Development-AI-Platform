@@ -3,6 +3,37 @@ import { agentManager } from '../agents/AgentManager';
 
 const router = express.Router();
 
+// Get all agents (base route)
+router.get('/', (req, res) => {
+  try {
+    const agents = agentManager.getAgents();
+    const tasks = agentManager.getAllTasks();
+    
+    const agentData = agents.map(agent => ({
+      id: agent.id,
+      name: agent.name,
+      role: agent.role,
+      model: agent.model,
+      provider: agent.provider,
+      capabilities: agent.capabilities,
+      status: 'active'
+    }));
+
+    res.json({ 
+      ok: true, 
+      agents: agentData,
+      totalAgents: agents.length,
+      activeTasks: tasks.filter(t => t.status === 'processing').length
+    });
+  } catch (error) {
+    console.error('Error getting agents:', error);
+    res.status(500).json({ 
+      ok: false, 
+      error: 'Failed to get agents' 
+    });
+  }
+});
+
 // Get all agents status
 router.get('/status', (req, res) => {
   try {
