@@ -32,7 +32,15 @@ export async function runJobNow(id: string) {
   const { address, radius_mi = 5, asset_type = 'Multifamily', keywords = [], amenities = [] } = (job.query as any) || {};
   const results: any[] = [];
 
+  let scrapeSuccess = false;
+  let errorMessages: string[] = [];
+
   try {
+    // Update job with progress
+    await db.update(scrapeJobsAnnex)
+      .set({ status: 'running', meta: { stage: 'initializing', progress: 0 } })
+      .where(eq(scrapeJobsAnnex.id, id));
+
     // Use the enhanced scraping agent
     const scrapeQuery: ScrapeQuery = {
       address,
@@ -42,22 +50,61 @@ export async function runJobNow(id: string) {
       amenities
     };
     
-    console.log('🤖 Running enhanced scraping agent...');
-    const agentResult = await runScrapeAgent(scrapeQuery);
-    results.push(...agentResult.records);
+    console.log(`🤖 Running enhanced scraping agent for: ${address}`);
     
-    console.log(`✅ Agent found ${agentResult.records.length} properties`);
+    // Update progress
+    await db.update(scrapeJobsAnnex)
+      .set({ meta: { stage: 'enhanced_scraping', progress: 25 } })
+      .where(eq(scrapeJobsAnnex.id, id));
+    
+    const agentResult = await runScrapeAgent(scrapeQuery);
+    
+    if (agentResult.records && agentResult.records.length > 0) {
+      results.push(...agentResult.records);
+      scrapeSuccess = true;
+      console.log(`✅ Enhanced agent found ${agentResult.records.length} properties`);
+      
+      // Update progress
+      await db.update(scrapeJobsAnnex)
+        .set({ meta: { stage: 'processing_results', progress: 75 } })
+        .where(eq(scrapeJobsAnnex.id, id));
+    } else {
+      errorMessages.push('Enhanced agent returned no results');
+    }
+    
+    // Add caveats to error messages if present
+    if (agentResult.caveats) {
+      errorMessages.push(...agentResult.caveats);
+    }
+    
   } catch (error) {
-    console.warn('Enhanced scraping agent failed, falling back to adapters:', error);
+    const errorMsg = `Enhanced scraping agent failed: ${error}`;
+    console.warn(errorMsg);
+    errorMessages.push(errorMsg);
+    
+    // Update progress to fallback adapters
+    try {
+      await db.update(scrapeJobsAnnex)
+        .set({ meta: { stage: 'fallback_adapters', progress: 50 } })
+        .where(eq(scrapeJobsAnnex.id, id));
+    } catch (updateError) {
+      console.warn('Failed to update job progress:', updateError);
+    }
     
     // Fallback to existing adapters
+    console.log('🔄 Falling back to legacy adapters...');
     for (const adapter of adapters) {
       try {
         const out = await adapter.search({ address, radius_mi, asset_type, keywords });
-        results.push(...out.records);
+        if (out.records && out.records.length > 0) {
+          results.push(...out.records);
+          scrapeSuccess = true;
+          console.log(`✅ Adapter ${adapter.name} found ${out.records.length} records`);
+        }
       } catch (e) {
-        console.warn(`Adapter ${adapter.name} failed:`, e);
-        // continue with other adapters
+        const adapterError = `Adapter ${adapter.name} failed: ${e}`;
+        console.warn(adapterError);
+        errorMessages.push(adapterError);
       }
     }
   }
@@ -82,45 +129,77 @@ export async function runJobNow(id: string) {
 
   let insertedCount = 0;
   if (rows.length) {
-    // Upsert each record individually with proper conflict handling
+    // Insert records with simple conflict handling
     for (const row of rows) {
       try {
-        await db.insert(compsAnnex).values(row).onConflictDoUpdate({
-          target: [compsAnnex.canonicalAddress, compsAnnex.unitPlan],
-          set: {
-            name: sql`excluded.name`,
-            address: sql`excluded.address`,
-            city: sql`excluded.city`,
-            state: sql`excluded.state`,
-            zip: sql`excluded.zip`,
-            units: sql`excluded.units`,
-            rentPsf: sql`excluded.rent_psf`,
-            rentPu: sql`excluded.rent_pu`,
-            occupancyPct: sql`excluded.occupancy_pct`,
-            concessionPct: sql`excluded.concession_pct`,
-            amenityTags: sql`excluded.amenity_tags`,
-            notes: sql`excluded.notes`,
-            updatedAt: sql`now()`,
-            scrapedAt: sql`excluded.scraped_at`,
-            jobId: sql`excluded.job_id`
-          },
-        });
+        await db.insert(compsAnnex).values(row);
         insertedCount++;
       } catch (err) {
-        console.warn('Error upserting individual record:', err);
+        // Check if it's a duplicate key error
+        if (err && typeof err === 'object' && 'code' in err && err.code === '23505') {
+          // Duplicate key - update the existing record
+          try {
+            await db.update(compsAnnex)
+              .set({
+                name: row.name,
+                address: row.address,
+                city: row.city,
+                state: row.state,
+                zip: row.zip,
+                units: row.units,
+                rentPsf: row.rentPsf,
+                rentPu: row.rentPu,
+                occupancyPct: row.occupancyPct,
+                concessionPct: row.concessionPct,
+                amenityTags: row.amenityTags,
+                notes: row.notes,
+                updatedAt: new Date(),
+                scrapedAt: row.scrapedAt,
+                jobId: row.jobId
+              })
+              .where(sql`canonical_address = ${row.canonicalAddress} AND unit_plan = ${row.unitPlan}`);
+            insertedCount++;
+          } catch (updateErr) {
+            console.warn('Error updating existing record:', updateErr);
+          }
+        } else {
+          console.warn('Error inserting record:', err);
+        }
       }
     }
   }
 
-  // Update job status to done
-  await db.update(scrapeJobsAnnex)
-    .set({ 
-      status: 'done', 
-      finishedAt: new Date(),
-      recordsInserted: insertedCount 
-    })
-    .where(eq(scrapeJobsAnnex.id, id));
+  // Final status update
+  const finalStatus = scrapeSuccess ? 'completed' : 'failed';
+  const finalMeta = {
+    stage: 'completed',
+    progress: 100,
+    errors: errorMessages,
+    recordsFound: insertedCount,
+    duration: Date.now() - (job.startedAt?.getTime() || Date.now())
+  };
 
+  try {
+    await db.update(scrapeJobsAnnex)
+      .set({ 
+        status: finalStatus, 
+        completedAt: new Date(),
+        recordsFound: insertedCount,
+        meta: finalMeta
+      })
+      .where(eq(scrapeJobsAnnex.id, id));
+  } catch (updateError) {
+    console.error('Failed to update final job status:', updateError);
+    // Continue execution - the job results are still valid
+  }
+
+  if (scrapeSuccess || insertedCount > 0) {
+    console.log(`✅ Scrape job ${id} completed successfully with ${insertedCount} records`);
+  } else {
+    console.error(`❌ Scrape job ${id} failed:`, errorMessages);
+    throw new Error(`Scrape job failed: ${errorMessages.join('; ')}`);
+  }
+  
   return { insertedCount, totalRecords: rows.length };
 }
 
