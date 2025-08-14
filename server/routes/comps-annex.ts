@@ -157,6 +157,17 @@ export function registerCompsAnnexRoutes(app: Express) {
     }
   });
 
+  // Get all scrape jobs
+  app.get('/api/comps-annex/jobs', async (req, res) => {
+    try {
+      const jobs = await db.select().from(scrapeJobsAnnex).orderBy(sql`created_at DESC`).limit(50);
+      res.json({ rows: jobs, total: jobs.length });
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      res.status(500).json({ error: 'Failed to fetch jobs' });
+    }
+  });
+
   // Get scrape job status
   app.get('/api/comps-annex/jobs/:id', async (req, res) => {
     try {

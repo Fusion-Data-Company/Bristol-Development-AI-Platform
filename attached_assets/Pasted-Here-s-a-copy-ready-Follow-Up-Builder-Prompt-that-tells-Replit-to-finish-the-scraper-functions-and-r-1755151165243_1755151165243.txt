@@ -1,0 +1,173 @@
+Here’s a copy‑ready Follow‑Up Builder Prompt that tells Replit to finish the scraper functions and render a blank, scrollable, 200‑row, fully‑editable TanStack table when the DB is empty. It includes step‑by‑step tasks + sub‑steps, tool/function endpoints, and acceptance tests. Paste this into Replit AI Builder and run.
+
+⸻
+
+FOLLOW‑UP BUILDER PROMPT — “Finish Comparables Annex: Scraper + 200‑Row Blank Sheet + Full Editing”
+
+Context: The project is Express + TypeScript + Vite + React 18 + wouter + Drizzle (Neon). We already created /comparables but it’s missing the scraper functions and the table currently renders no rows when the DB is empty. You must complete the scraper pipeline and ensure the page always renders a blank 200‑row sheet with full TanStack editing/virtualization/styling.
+
+Rules (do not skip):
+	•	Keep building until all acceptance tests at the bottom pass.
+	•	Merge non‑destructively with existing code.
+	•	If a file already exists, augment it rather than replacing unless told.
+	•	If anything type‑errors or fails to start, fix it before moving on.
+
+⸻
+
+A) FRONTEND — Comparables page must render a blank 200‑row sheet when DB is empty
+
+A1. Data hook with fallback rows
+	•	In client/src/pages/Comparables.tsx (or equivalent), update the data hook:
+	•	Fetch from /api/comps as before.
+	•	If the result is empty ((data?.rows ?? []).length === 0), synthesize 200 placeholder rows client‑side:
+	•	id: negative integers from ‑1 down to ‑200 (so they don’t collide with DB IDs)
+	•	name/address/city/state: empty strings
+	•	numeric fields: null
+	•	source: "manual"
+	•	scrapedAt: null
+	•	Render those 200 rows in the table so the user sees a scrollable sheet immediately.
+
+A2. TanStack Table “Google‑sheet‑style” editing
+	•	Ensure:
+	•	Virtualized rows (tanstack/react‑virtual) so 10k+ works smoothly.
+	•	Inline cell editing (text + numeric), onBlur → call batch save.
+	•	Column resizing, pinning, reordering, visibility toggles.
+	•	Multi‑sort, filter row, and CSV import/export buttons.
+	•	Row highlight on edit and green flash on successful save (basic inline color styling).
+	•	Add a top toolbar with:
+	•	Search box (filters server request via q).
+	•	“New Scrape” button (opens a small form).
+	•	“Import CSV” (client parses and posts to /api/comps/bulkUpsert).
+	•	“Export CSV” link to /api/comps/export.csv.
+
+A3. Batch save API call
+	•	Maintain a local edit buffer (array of patches by ID).
+	•	On blur or when the user clicks “Save All”, send one POST to /api/comps/bulkUpsert with the edited rows (convert placeholder negative IDs to null for insert with canonicalAddress + unitPlan as upsert keys).
+	•	After save, refetch and clear the buffer.
+
+⸻
+
+B) BACKEND — Scraper functions & routes (free‑first)
+
+B1. Routes to add/confirm (Express)
+	•	/api/comps (GET): already exists with pagination; keep.
+	•	/api/comps/bulkUpsert (POST): already exists; keep; ensure it accepts new rows (no ID) by upserting on (canonicalAddress, unitPlan).
+	•	/api/comps/export.csv (GET): keep.
+	•	Add/confirm the following:
+	•	/api/comps/scrape (POST): { address, radius_mi=5, asset_type="Multifamily", keywords=[] } → create job via newScrapeJob, kick runJobNow, return { id, status }.
+	•	/api/comps/jobs/:id (GET): return scrape job row with status.
+	•	/api/comps/geo (GET): params: lat, lng, radius_mi; server filters by haversine on stored lat/lng (if available), else returns 400.
+	•	/api/comps/dedupe (POST): { strategy: "address|name", threshold: 0.9 } → returns groups of suspected duplicates (don’t auto‑merge yet).
+
+B2. Scraper runner (free‑first) — verify it exists and finishes
+	•	File: server/scrapers/runner.ts
+	•	newScrapeJob(query), getJob(id), runJobNow(id) as orchestrator.
+	•	runJobNow iterates adapters under server/scrapers/sources.ts.
+	•	Normalize and upsert results into comps using (canonicalAddress, unitPlan); set jobId and scrapedAt.
+	•	File: server/scrapers/sources.ts
+	•	Keep a generic HTML adapter using fetch + cheerio.
+	•	Leave urls: string[] = [] by default for compliance, but make it easy for us to seed (read from SCRAPER_SEED_URLS env: comma‑separated list).
+	•	Provide a utility to parse rent strings to numbers; collect obvious amenity tags.
+
+B3. Allow manual “seed add”
+	•	Add /api/comps/seed (POST): accepts an array of minimal comp rows from the client (e.g., pasted CSV). Upsert using canonicalAddress + unitPlan.
+
+⸻
+
+C) AI TOOLS — the agent must be able to scrape & query
+
+C1. Tool/function specs (add to OpenRouter proxy tool list)
+
+[
+  {
+    "name": "comps_search",
+    "description": "Query comparables with filters and return rows for analysis.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "q": { "type": "string" },
+        "limit": { "type": "number", "default": 2000 }
+      }
+    }
+  },
+  {
+    "name": "comps_scrape",
+    "description": "Launch a tactical scrape around an address with radius and keywords.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "address": { "type": "string" },
+        "radius_mi": { "type": "number", "default": 5 },
+        "asset_type": { "type": "string", "default": "Multifamily" },
+        "keywords": { "type": "array", "items": { "type": "string" }, "default": ["special","renovated"] }
+      },
+      "required": ["address"]
+    }
+  },
+  {
+    "name": "comps_status",
+    "description": "Return the status of a scrape job by id.",
+    "parameters": {
+      "type": "object",
+      "properties": { "id": { "type": "string" } },
+      "required": ["id"]
+    }
+  },
+  {
+    "name": "comps_export",
+    "description": "Export current comps to CSV and return a URL.",
+    "parameters": { "type": "object", "properties": {} }
+  }
+]
+
+C2. Wire tools → endpoints
+	•	comps_search → GET /api/comps?q={q}&limit={limit}
+	•	comps_scrape → POST /api/comps/scrape
+	•	comps_status → GET /api/comps/jobs/{id}
+	•	comps_export → GET /api/comps/export.csv
+
+⸻
+
+D) UI — Scrape launcher + status + color styling
+
+D1. Scrape launcher form (top toolbar)
+	•	Inputs: address (text), radius_mi (number), keywords (comma‑sep).
+	•	POST to /api/comps/scrape; store jobId.
+	•	Show a status pill that polls /api/comps/jobs/{jobId} every 2s until done|error, then auto‑refresh the table.
+
+D2. Color/styling in table
+	•	When a cell is edited (dirty), highlight background pale yellow.
+	•	On successful save, briefly flash pale green.
+	•	Negative numbers (if any) display red text.
+	•	Sticky header row with drop shadows, zebra stripe rows.
+
+⸻
+
+E) CSV import (client‑side)
+	•	Button: “Import CSV”
+	•	Parse in browser (use native split or a tiny lib, your choice).
+	•	Map header names → fields, then send rows to /api/comps/bulkUpsert.
+
+⸻
+
+F) ENV & Dependencies
+	•	Ensure installed: @tanstack/react-table @tanstack/react-virtual @tanstack/react-query cheerio undici
+	•	Optional: playwright (dev dep) gated by SCRAPER_USE_PLAYWRIGHT=1.
+	•	Add SCRAPER_SEED_URLS (comma‑separated) handling in generic adapter.
+
+⸻
+
+G) ACCEPTANCE TESTS (must pass before you stop)
+	1.	Blank sheet present: With an empty DB, load /comparables and see 200 rows (IDs ‑1..‑200), scrollable (70–75vh), inline editable, TanStack features working (resize, sort, filter, hide/show columns).
+	2.	Inline edits persist: Edit 5 cells across different rows; click “Save All”; reload page → edits persist (upsert created new rows in DB for any negative‑ID placeholders).
+	3.	CSV import: Import a CSV with 10 rows → table shows the new rows; export CSV returns those rows.
+	4.	Scrape job: Launch a scrape; see job status advance to done; new rows appear with jobId and scrapedAt.
+	5.	Tool access: From the AI agent, call comps_scrape then comps_status then comps_search successfully (model tools wired to endpoints).
+	6.	No crashes: Dev server opens port and remains healthy; no unhandled exceptions in server logs.
+
+Finish by printing:
+/comparables READY — blank sheet, editor, scraping, CSV import/export, tools wired. ✅
+
+⸻
+
+If any step fails, fix it and rerun until all Acceptance Tests succeed.

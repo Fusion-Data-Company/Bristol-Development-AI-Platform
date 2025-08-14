@@ -6,9 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import Chrome from '@/components/brand/Chrome';
-import CompsTable from '@/components/comparables/CompsTable';
+import TanStackCompsTable from '@/components/comparables/TanStackCompsTable';
 import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
+import ScraperJobManager from '@/components/comparables/ScraperJobManager';
+import AIAnalyticsPanel from '@/components/comparables/AIAnalyticsPanel';
 import { 
   Search, 
   Download, 
@@ -333,6 +335,12 @@ export default function ComparablesAnnex() {
           </div>
         )}
 
+        {/* Scraper Job Manager */}
+        <ScraperJobManager />
+
+        {/* AI Analytics Panel */}
+        <AIAnalyticsPanel data={comps} />
+
         {/* Main Data Table */}
         <Card>
           <CardHeader>
@@ -347,7 +355,7 @@ export default function ComparablesAnnex() {
                 <div className="text-gray-500">Loading comparables...</div>
               </div>
             ) : (
-              <CompsTable comps={comps} isLoading={isLoading} />
+              <TanStackCompsTable data={comps} isLoading={isLoading} />
             )}
           </CardContent>
         </Card>

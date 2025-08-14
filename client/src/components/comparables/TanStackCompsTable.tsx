@@ -1,0 +1,567 @@
+import React, { useState, useMemo } from 'react';
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+  getFilteredRowModel,
+  useReactTable,
+  type SortingState,
+  type PaginationState,
+  type ColumnFiltersState,
+} from '@tanstack/react-table';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { 
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Trash2,
+  Edit3,
+  Save,
+  X,
+  Building2,
+  MapPin,
+  DollarSign,
+  Calendar,
+  Users
+} from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+interface CompRecord {
+  id: string;
+  source: string;
+  sourceUrl?: string;
+  name: string;
+  address: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  lat?: number;
+  lng?: number;
+  assetType: string;
+  subtype?: string;
+  units?: number;
+  yearBuilt?: number;
+  rentPsf?: number;
+  rentPu?: number;
+  occupancyPct?: number;
+  concessionPct?: number;
+  amenityTags?: string[];
+  notes?: string;
+  canonicalAddress: string;
+  unitPlan?: string;
+  scrapedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+  jobId?: string;
+}
+
+interface TanStackCompsTableProps {
+  data: CompRecord[];
+  isLoading?: boolean;
+}
+
+const columnHelper = createColumnHelper<CompRecord>();
+
+export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps) {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 25,
+  });
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [editingCell, setEditingCell] = useState<{ rowId: string; columnId: string } | null>(null);
+  const [editValue, setEditValue] = useState('');
+
+  // Mutations
+  const updateCompMutation = useMutation({
+    mutationFn: async ({ id, field, value }: { id: string; field: string; value: any }) => {
+      const response = await fetch(`/api/comps-annex/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [field]: value }),
+      });
+      if (!response.ok) throw new Error('Update failed');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] });
+      toast({ title: 'Updated successfully' });
+    },
+    onError: () => {
+      toast({ title: 'Update failed', variant: 'destructive' });
+    },
+  });
+
+  const deleteCompMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/comps-annex/${id}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Delete failed');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] });
+      toast({ title: 'Deleted successfully' });
+    },
+    onError: () => {
+      toast({ title: 'Delete failed', variant: 'destructive' });
+    },
+  });
+
+  // Editable cell component
+  const EditableCell = ({ getValue, row, column, table }: any) => {
+    const initialValue = getValue();
+    const cellId = `${row.id}-${column.id}`;
+    const isEditing = editingCell?.rowId === row.id && editingCell?.columnId === column.id;
+
+    const handleEdit = () => {
+      setEditingCell({ rowId: row.id, columnId: column.id });
+      setEditValue(String(initialValue || ''));
+    };
+
+    const handleSave = () => {
+      let value: any = editValue;
+      
+      // Parse numeric fields
+      if (['units', 'yearBuilt', 'rentPsf', 'rentPu', 'occupancyPct', 'concessionPct', 'lat', 'lng'].includes(column.id)) {
+        value = editValue ? Number(editValue) : null;
+      }
+      
+      updateCompMutation.mutate({ 
+        id: row.original.id, 
+        field: column.id, 
+        value 
+      });
+      
+      setEditingCell(null);
+    };
+
+    const handleCancel = () => {
+      setEditingCell(null);
+      setEditValue('');
+    };
+
+    if (isEditing) {
+      return (
+        <div className="flex items-center gap-1">
+          <Input
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            className="h-6 text-xs"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleSave();
+              if (e.key === 'Escape') handleCancel();
+            }}
+            autoFocus
+          />
+          <Button size="sm" variant="ghost" onClick={handleSave} className="h-6 w-6 p-0">
+            <Save className="h-3 w-3" />
+          </Button>
+          <Button size="sm" variant="ghost" onClick={handleCancel} className="h-6 w-6 p-0">
+            <X className="h-3 w-3" />
+          </Button>
+        </div>
+      );
+    }
+
+    return (
+      <div 
+        className="cursor-pointer hover:bg-muted p-1 rounded text-xs min-h-[20px] transition-colors"
+        onClick={handleEdit}
+        title="Click to edit"
+      >
+        {initialValue || '-'}
+      </div>
+    );
+  };
+
+  // Column definitions
+  const columns = useMemo(() => [
+    columnHelper.accessor('name', {
+      header: ({ column }) => (
+        <div className="flex items-center gap-2">
+          <Building2 className="h-4 w-4" />
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="h-auto p-0 font-semibold"
+          >
+            Property
+            {column.getIsSorted() === 'asc' ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === 'desc' ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      ),
+      cell: ({ getValue, row, column, table }) => (
+        <div className="space-y-1">
+          <EditableCell getValue={getValue} row={row} column={column} table={table} />
+          <div className="text-xs text-gray-500">
+            <Badge variant="outline" className="text-xs">
+              {row.original.assetType}
+            </Badge>
+            {row.original.subtype && (
+              <span className="ml-1 text-gray-400">• {row.original.subtype}</span>
+            )}
+          </div>
+        </div>
+      ),
+    }),
+    columnHelper.accessor('address', {
+      header: ({ column }) => (
+        <div className="flex items-center gap-2">
+          <MapPin className="h-4 w-4" />
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="h-auto p-0 font-semibold"
+          >
+            Address
+            {column.getIsSorted() === 'asc' ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === 'desc' ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      ),
+      cell: ({ getValue, row, column, table }) => (
+        <div className="space-y-1">
+          <EditableCell getValue={getValue} row={row} column={column} table={table} />
+          <div className="text-xs text-gray-500">
+            {row.original.city}, {row.original.state} {row.original.zip}
+          </div>
+        </div>
+      ),
+    }),
+    columnHelper.accessor('units', {
+      header: ({ column }) => (
+        <div className="flex items-center gap-2">
+          <Users className="h-4 w-4" />
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="h-auto p-0 font-semibold"
+          >
+            Units
+            {column.getIsSorted() === 'asc' ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === 'desc' ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      ),
+      cell: EditableCell,
+    }),
+    columnHelper.accessor('yearBuilt', {
+      header: ({ column }) => (
+        <div className="flex items-center gap-2">
+          <Calendar className="h-4 w-4" />
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="h-auto p-0 font-semibold"
+          >
+            Year
+            {column.getIsSorted() === 'asc' ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === 'desc' ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      ),
+      cell: EditableCell,
+    }),
+    columnHelper.accessor('rentPsf', {
+      header: ({ column }) => (
+        <div className="flex items-center gap-2">
+          <DollarSign className="h-4 w-4" />
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+            className="h-auto p-0 font-semibold"
+          >
+            Rent/SF
+            {column.getIsSorted() === 'asc' ? (
+              <ArrowUp className="ml-2 h-4 w-4" />
+            ) : column.getIsSorted() === 'desc' ? (
+              <ArrowDown className="ml-2 h-4 w-4" />
+            ) : (
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            )}
+          </Button>
+        </div>
+      ),
+      cell: ({ getValue, row, column, table }) => (
+        <EditableCell 
+          getValue={() => getValue() ? `$${Number(getValue()).toFixed(2)}` : null} 
+          row={row} 
+          column={column} 
+          table={table} 
+        />
+      ),
+    }),
+    columnHelper.accessor('rentPu', {
+      header: 'Rent/Unit',
+      cell: ({ getValue, row, column, table }) => (
+        <EditableCell 
+          getValue={() => getValue() ? `$${Number(getValue()).toLocaleString()}` : null} 
+          row={row} 
+          column={column} 
+          table={table} 
+        />
+      ),
+    }),
+    columnHelper.accessor('occupancyPct', {
+      header: 'Occ%',
+      cell: ({ getValue, row, column, table }) => (
+        <EditableCell 
+          getValue={() => getValue() ? `${Number(getValue())}%` : null} 
+          row={row} 
+          column={column} 
+          table={table} 
+        />
+      ),
+    }),
+    columnHelper.accessor('amenityTags', {
+      header: 'Amenities',
+      cell: ({ getValue }) => {
+        const amenities = getValue() as string[] | undefined;
+        return (
+          <div className="flex flex-wrap gap-1">
+            {amenities?.slice(0, 2).map((tag, i) => (
+              <Badge key={i} variant="secondary" className="text-xs">
+                {tag}
+              </Badge>
+            ))}
+            {amenities && amenities.length > 2 && (
+              <Badge variant="secondary" className="text-xs">
+                +{amenities.length - 2}
+              </Badge>
+            )}
+          </div>
+        );
+      },
+      enableSorting: false,
+    }),
+    columnHelper.accessor('source', {
+      header: 'Source',
+      cell: ({ getValue }) => (
+        <Badge 
+          variant={getValue() === 'sample-data' ? 'secondary' : 'default'} 
+          className="text-xs"
+        >
+          {getValue()}
+        </Badge>
+      ),
+    }),
+    columnHelper.display({
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => deleteCompMutation.mutate(row.original.id)}
+          className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+          title="Delete record"
+        >
+          <Trash2 className="h-3 w-3" />
+        </Button>
+      ),
+    }),
+  ], [editingCell, editValue, updateCompMutation, deleteCompMutation]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    onPaginationChange: setPagination,
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    state: {
+      sorting,
+      pagination,
+      columnFilters,
+      globalFilter,
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="text-gray-500">Loading comparables...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Global Search */}
+      <div className="flex items-center space-x-2">
+        <Input
+          placeholder="Search all columns..."
+          value={globalFilter ?? ''}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          className="max-w-sm"
+        />
+        <div className="text-sm text-gray-500">
+          {table.getFilteredRowModel().rows.length} of {table.getCoreRowModel().rows.length} rows
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="bg-gray-50">
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="font-semibold">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  className="hover:bg-gray-50/50 transition-colors"
+                  data-state={row.getIsSelected() && 'selected'}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  <div className="text-center py-8 text-gray-500">
+                    <Building2 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p>No comparable properties found</p>
+                    <p className="text-sm">Try launching a scrape job to populate data</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex items-center justify-between space-x-2 py-4">
+        <div className="flex items-center space-x-2">
+          <p className="text-sm font-medium">Rows per page</p>
+          <select
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
+            }}
+            className="h-8 w-[70px] rounded border border-input px-2 text-sm"
+          >
+            {[10, 25, 50, 100].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center space-x-6 lg:space-x-8">
+          <div className="flex w-[120px] items-center justify-center text-sm font-medium">
+            Page {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => table.setPageIndex(0)}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <ChevronsLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+              disabled={!table.getCanNextPage()}
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default TanStackCompsTable;

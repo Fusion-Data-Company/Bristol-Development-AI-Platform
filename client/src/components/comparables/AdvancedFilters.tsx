@@ -11,10 +11,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { 
   Filter, 
   X,
@@ -78,8 +80,8 @@ export function AdvancedFilters({
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
         <Button variant="outline" className="relative">
           <SlidersHorizontal className="h-4 w-4 mr-2" />
           Advanced Filters
@@ -89,11 +91,13 @@ export function AdvancedFilters({
             </Badge>
           )}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-96 p-4" align="start">
+      </DialogTrigger>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Advanced Filters</DialogTitle>
+        </DialogHeader>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-semibold">Advanced Filters</h4>
             {activeFilterCount > 0 && (
               <Button variant="ghost" size="sm" onClick={clearFilters}>
                 Clear All
@@ -256,8 +260,8 @@ export function AdvancedFilters({
             </Select>
           </div>
         </div>
-      </PopoverContent>
-    </Popover>
+      </DialogContent>
+    </Dialog>
   );
 }
 
