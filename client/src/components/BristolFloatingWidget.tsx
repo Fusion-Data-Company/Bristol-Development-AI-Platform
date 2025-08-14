@@ -869,12 +869,38 @@ export default function BristolFloatingWidget({
               {activeTab === "admin" && <AdminPane 
                 systemPrompt={systemPrompt} 
                 setSystemPrompt={setSystemPrompt}
-                onSave={() => {
+                onSave={async () => {
                   try {
+                    // Save system prompt
                     localStorage.setItem("bristol.systemPrompt", systemPrompt);
-                    console.log("System prompt saved to localStorage");
+                    
+                    // Save real-time data setting
+                    localStorage.setItem("bristol.realTimeData", realTimeData.toString());
+                    
+                    // Save MCP enabled setting
+                    localStorage.setItem("bristol.mcpEnabled", mcpEnabled.toString());
+                    
+                    // Save selected model
+                    localStorage.setItem("bristol.selectedModel", model);
+                    
+                    console.log("All admin settings saved to localStorage");
+                    
+                    // Show success notification
+                    alert("✓ All settings saved successfully!");
+                    
+                    // Optional: Call the parent's onSaveSystemPrompt if available
+                    await onSaveSystemPrompt?.(systemPrompt);
+                    
+                    // Send telemetry
+                    await sendTelemetry("admin_settings_saved", { 
+                      systemPromptLength: systemPrompt.length,
+                      realTimeData,
+                      mcpEnabled,
+                      model 
+                    });
                   } catch (error) {
-                    console.error("Error saving system prompt:", error);
+                    console.error("Error saving admin settings:", error);
+                    alert("❌ Error saving settings. Please try again.");
                   }
                 }}
                 realTimeData={realTimeData}
