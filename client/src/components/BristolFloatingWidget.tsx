@@ -1763,8 +1763,8 @@ function AdminPane({
 
         {/* MCP Configuration Window */}
         {showMcpConfig && (
-          <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-6">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-6 max-h-[70vh] flex flex-col">
+            <div className="flex items-center justify-between mb-4 flex-shrink-0">
               <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
                 <CircuitBoard className="h-4 w-4 animate-pulse" />
                 MCP SERVER CONFIGURATION
@@ -1777,7 +1777,7 @@ function AdminPane({
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto custom-scrollbar flex-1">
               {/* MCP Status Indicator */}
               <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-xl p-3">
                 <div className="flex items-center justify-between">
@@ -1839,34 +1839,36 @@ function AdminPane({
                 <textarea
                   value={mcpConfigText}
                   onChange={(e) => setMcpConfigText(e.target.value)}
-                  rows={12}
+                  rows={8}
                   className="w-full bg-black/60 border border-bristol-cyan/30 rounded-xl p-4 text-sm font-mono text-white resize-none focus:outline-none focus:border-bristol-cyan/60 transition-colors"
                   placeholder='{"mcpServers": { ... }}'
                   style={{
                     backgroundImage: 'linear-gradient(rgba(20, 184, 166, 0.05) 0%, rgba(20, 184, 166, 0.02) 100%)',
+                    minHeight: '200px',
+                    maxHeight: '300px'
                   }}
                 />
                 
-                <div className="flex gap-2 mt-3">
+                <div className="flex flex-wrap gap-2 mt-3">
                   <button
                     onClick={handleMcpConfigSave}
                     disabled={loadingMcp}
-                    className="px-4 py-2 bg-bristol-cyan hover:bg-bristol-cyan/80 disabled:opacity-50 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
+                    className="px-3 py-2 bg-bristol-cyan hover:bg-bristol-cyan/80 disabled:opacity-50 text-black rounded-lg font-medium transition-colors flex items-center gap-2 text-sm"
                   >
                     {loadingMcp ? (
                       <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
                     ) : (
-                      <Save className="h-4 w-4" />
+                      <Save className="h-3 w-3" />
                     )}
-                    {loadingMcp ? "Loading..." : "Apply Config"}
+                    {loadingMcp ? "Loading..." : "Apply"}
                   </button>
                   
                   <button
                     onClick={handleMcpConfigReset}
-                    className="px-4 py-2 bg-bristol-gold hover:bg-bristol-gold/80 text-black rounded-lg font-medium transition-colors flex items-center gap-2"
+                    className="px-3 py-2 bg-bristol-gold hover:bg-bristol-gold/80 text-black rounded-lg font-medium transition-colors flex items-center gap-2 text-sm"
                   >
-                    <Target className="h-4 w-4" />
-                    Reset Default
+                    <Target className="h-3 w-3" />
+                    Reset
                   </button>
                   
                   <button
@@ -1890,22 +1892,15 @@ function AdminPane({
                             "env": {
                               "DATABASE_URL": "postgresql://user:pass@localhost/db"
                             }
-                          },
-                          "brave-search": {
-                            "command": "npx",
-                            "args": ["-y", "@modelcontextprotocol/server-brave-search"],
-                            "env": {
-                              "BRAVE_API_KEY": "your-brave-api-key"
-                            }
                           }
                         }
                       };
                       setMcpConfigText(JSON.stringify(exampleConfig, null, 2));
                     }}
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-600/80 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                    className="px-3 py-2 bg-purple-600 hover:bg-purple-600/80 text-white rounded-lg font-medium transition-colors flex items-center gap-2 text-sm"
                   >
-                    <FileText className="h-4 w-4" />
-                    Load Example
+                    <FileText className="h-3 w-3" />
+                    Example
                   </button>
                 </div>
               </div>
