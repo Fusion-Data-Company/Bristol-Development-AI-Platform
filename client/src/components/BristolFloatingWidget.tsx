@@ -125,7 +125,7 @@ export default function BristolFloatingWidget({
   className,
 }: BristolWidgetProps) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"chat" | "data" | "admin" | "tools" | "prompts" | "files">("chat");
+  // Single chat-focused interface - no tabs needed
   const [model, setModel] = useState(defaultModel || "");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [systemPrompt, setSystemPrompt] = useState<string>(defaultSystemPrompt || DEFAULT_MEGA_PROMPT);
@@ -519,9 +519,9 @@ export default function BristolFloatingWidget({
               </div>
             </div>
 
-            {/* Glass Controls Panel */}
+            {/* Compact Model Selector */}
             <div 
-              className="px-6 py-5 border-b border-bristol-cyan/30 relative"
+              className="px-6 py-3 border-b border-bristol-cyan/30 relative"
               style={{
                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(69, 214, 202, 0.05) 50%, rgba(168, 85, 247, 0.02) 100%)',
                 backdropFilter: 'blur(12px)',
@@ -546,44 +546,12 @@ export default function BristolFloatingWidget({
               )}
               
               <div className="flex flex-wrap items-center gap-6">
-                {/* Elite AI Status - Always Active */}
-                <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-bristol-gold/40 backdrop-blur-sm cyberpunk-glow"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(69, 214, 202, 0.1) 100%)',
-                    boxShadow: '0 0 30px rgba(212, 175, 55, 0.3), inset 0 0 20px rgba(69, 214, 202, 0.1)',
-                  }}>
-                  <div className="flex items-center gap-2">
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-bristol-gold rounded-full blur-sm animate-pulse" />
-                      <Brain className="relative h-5 w-5 text-bristol-gold animate-float" />
-                    </div>
-                    <span className="text-xs font-bold text-bristol-gold uppercase tracking-wider">
-                      ELITE AI • ALWAYS ACTIVE
-                    </span>
-                    <div className="flex gap-1">
-                      <div className="w-1.5 h-1.5 bg-bristol-cyan rounded-full animate-pulse" />
-                      <div className="w-1.5 h-1.5 bg-bristol-cyan rounded-full animate-pulse delay-75" />
-                      <div className="w-1.5 h-1.5 bg-bristol-cyan rounded-full animate-pulse delay-150" />
-                    </div>
-                  </div>
-                </div>
                 
-                {/* Glass Elite Model Selector */}
-                <div className="flex-1 min-w-[240px]">
-                  <label className="block text-xs text-bristol-cyan font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <Brain className="h-3 w-3" />
-                    Elite AI Engine
-                  </label>
-                  <div className="relative group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
+                {/* Compact Model Selector */}
+                <div className="flex-1">
+                  <div className="relative">
                     <select
-                      className={cx(
-                        "relative w-full text-sm font-medium transition-all duration-300 backdrop-blur-sm",
-                        "rounded-2xl px-5 py-4 border focus:outline-none",
-                        "text-bristol-cyan hover:text-white focus:text-white",
-                        "disabled:opacity-50 hover:shadow-lg hover:shadow-bristol-cyan/10",
-                        "focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/30"
-                      )}
+                      className="w-full text-sm font-medium transition-all duration-300 backdrop-blur-sm rounded-xl px-4 py-2 border text-bristol-cyan focus:outline-none focus:border-bristol-electric focus:ring-1 focus:ring-bristol-electric/30"
                       style={{
                         background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(69, 214, 202, 0.1) 50%, rgba(30, 41, 59, 0.8) 100%)',
                         borderColor: 'rgba(69, 214, 202, 0.4)',
@@ -593,11 +561,11 @@ export default function BristolFloatingWidget({
                       disabled={modelList.length === 0}
                     >
                       {modelList.length === 0 ? (
-                        <option value="">🧠 Loading Elite Models...</option>
+                        <option value="">Loading AI Models...</option>
                       ) : (
                         modelList.map((m: ModelOption) => (
-                          <option key={m.id} value={m.id} className="bg-bristol-ink text-white py-2">
-                            🚀 {m.label}
+                          <option key={m.id} value={m.id} className="bg-black text-white">
+                            {m.label}
                           </option>
                         ))
                       )}
@@ -605,82 +573,11 @@ export default function BristolFloatingWidget({
                   </div>
                 </div>
 
-                {/* Glass Data Context Badge */}
-                <div className="flex flex-col items-center gap-2">
-                  <span className="text-xs text-bristol-cyan font-semibold uppercase tracking-wider">
-                    Live Intelligence
-                  </span>
-                  <div 
-                    className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-bristol-cyan/40 backdrop-blur-sm hover:shadow-lg hover:shadow-bristol-cyan/20 transition-all duration-300"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.15) 0%, rgba(168, 85, 247, 0.1) 100%)',
-                    }}
-                  >
-                    <Database className="h-5 w-5 text-bristol-cyan animate-pulse" />
-                    <div className="text-center">
-                      <div className="text-lg font-bold text-white">
-                        {Object.keys(appData || {}).length}
-                      </div>
-                      <div className="text-xs text-bristol-cyan/80 font-medium">
-                        datasets
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
               </div>
             </div>
 
-            {/* Glass Tab Navigation */}
-            <div 
-              className="px-6 py-4 border-b border-bristol-cyan/20"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(30, 41, 59, 0.3) 100%)',
-              }}
-            >
-              <div className="flex items-center gap-2">
-                <TabButton 
-                  icon={<MessageSquare className="h-4 w-4" />} 
-                  active={activeTab === "chat"} 
-                  label="Chat" 
-                  onClick={() => setActiveTab("chat")} 
-                />
-                {/* Always show elite tabs */}
-                {true && (
-                  <>
-                    <TabButton 
-                      icon={<FileText className="h-4 w-4" />} 
-                      active={activeTab === "prompts"} 
-                      label="Prompts" 
-                      onClick={() => setActiveTab("prompts")} 
-                    />
-                    <TabButton 
-                      icon={<Paperclip className="h-4 w-4" />} 
-                      active={activeTab === "files"} 
-                      label="Files" 
-                      onClick={() => setActiveTab("files")} 
-                    />
-                  </>
-                )}
-                <TabButton 
-                  icon={<Database className="h-4 w-4" />} 
-                  active={activeTab === "data"} 
-                  label="Data" 
-                  onClick={() => setActiveTab("data")} 
-                />
-                <TabButton 
-                  icon={<Zap className="h-4 w-4" />} 
-                  active={activeTab === "tools"} 
-                  label="Tools" 
-                  onClick={() => setActiveTab("tools")} 
-                />
-                <TabButton 
-                  icon={<Settings className="h-4 w-4" />} 
-                  active={activeTab === "admin"} 
-                  label="Config" 
-                  onClick={() => setActiveTab("admin")} 
-                />
-              </div>
-            </div>
+
 
             {/* Glass Body Container - Full Height with Fixed Layout */}
             <div 
@@ -689,53 +586,18 @@ export default function BristolFloatingWidget({
                 background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.2) 50%, rgba(15, 23, 42, 0.4) 100%)',
               }}
             >
-              {/* Chat Content Area - Scrollable */}
-              {activeTab === "chat" ? (
-                <div className="flex-1 overflow-hidden flex flex-col">
-                  {/* Subtle ambient glow */}
-                  <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
-                  <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
-                  
-                  <ChatPane messages={messages} loading={loading} />
-                </div>
-              ) : activeTab === "prompts" ? (
-                <div className="flex flex-col h-full p-6 overflow-y-auto">
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-bristol-gold" />
-                    AI Prompts Management
-                  </h3>
-                  <div className="text-center py-8 text-bristol-cyan/60">
-                    Manage system and project prompts for enhanced AI intelligence.
-                  </div>
-                </div>
-              ) : activeTab === "files" ? (
-                <div className="flex flex-col h-full p-6 overflow-y-auto">
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <Paperclip className="h-5 w-5 text-bristol-gold" />
-                    Document Attachments
-                  </h3>
-                  <div className="text-center py-8 text-bristol-cyan/60">
-                    Upload documents for AI analysis and context enhancement.
-                  </div>
-                </div>
-              ) : activeTab === "data" ? (
-                <DataPane data={dataContext} />
-              ) : activeTab === "tools" ? (
-                <ToolsPane systemStatus={systemStatus} mcpEnabled={mcpEnabled} setMcpEnabled={setMcpEnabled} />
-              ) : activeTab === "admin" ? (
-                <AdminPane
-                  systemPrompt={systemPrompt}
-                  setSystemPrompt={setSystemPrompt}
-                  onSave={saveSystemPrompt}
-                  realTimeData={realTimeData}
-                  setRealTimeData={setRealTimeData}
-                />
-              ) : null}
+              {/* Chat Content Area - Full Screen */}
+              <div className="flex-1 overflow-hidden flex flex-col">
+                {/* Subtle ambient glow */}
+                <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
+                <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
+                
+                <ChatPane messages={messages} loading={loading} />
+              </div>
             </div>
 
             {/* Glass Chat Composer - Fixed at Bottom */}
-            {activeTab === "chat" && (
-              <div 
+            <div 
                 className="border-t border-bristol-cyan/40 relative flex-shrink-0"
                 style={{
                   background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.95) 100%)',
@@ -816,7 +678,6 @@ export default function BristolFloatingWidget({
                   </button>
                 </div>
               </div>
-            )}
           </div>
         </div>
       )}
@@ -1065,13 +926,13 @@ function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boo
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">Bristol Brain Elite v5.0</h3>
-                <p className="text-xs text-bristol-cyan/80">Fortune 500 Real Estate Intelligence</p>
+                <p className="text-xs text-bristol-cyan/80">Enterprise-Grade AI Intelligence Platform</p>
               </div>
             </div>
             
             <div className="space-y-3 text-sm text-white/90">
               <p className="leading-relaxed">
-                🚀 <strong>Bristol Brain Elite v5.0 ACTIVATED</strong> - Fortune 500-grade AI system online with full property intelligence capabilities.
+                <strong>BRISTOL BRAIN ELITE v5.0 ACTIVATED</strong> - Enterprise-grade AI system operational with comprehensive property intelligence capabilities.
               </p>
               
               <div className="grid grid-cols-2 gap-2 mt-4">
@@ -1101,7 +962,7 @@ function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boo
                   SYSTEM STATUS: FULLY OPERATIONAL
                 </p>
                 <p className="text-xs text-white/80">
-                  All systems active. Access to complete portfolio data, real-time market intelligence, demographic analytics, and MCP server integration. Ready for enterprise-level property evaluation and deal analysis.
+                  Complete operational readiness. Portfolio database accessible, real-time market intelligence active, demographic analytics online, and MCP server integration established. Ready for institutional-grade property evaluation and investment analysis.
                 </p>
               </div>
               
