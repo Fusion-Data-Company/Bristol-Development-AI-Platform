@@ -49,66 +49,80 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
     }
   });
 
-  // Fetch messages for the session
-  const { data: messages = [], isLoading: messagesLoading } = useQuery({
-    queryKey: ["/api/chat/sessions", sessionId, "messages"],
-    enabled: !!sessionId,
-  });
+  // State for messages - using local state since Bristol Brain Elite handles persistence 
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [currentSessionId] = useState(() => 
+    sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  );
 
-  // Send message mutation
+  // Send message mutation using Bristol Brain Elite
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
-      if (!sessionId) {
-        throw new Error("No active session");
-      }
-      const response = await apiRequest("POST", `/api/chat/sessions/${sessionId}/messages`, {
-        content,
+      const response = await apiRequest('/api/bristol-brain-elite/chat', 'POST', {
+        sessionId: currentSessionId,
+        message: content,
+        enableAdvancedReasoning: true,
+        dataContext: {} // Could include current app context here
       });
-      return response.json();
+      return response;
     },
-    onMutate: () => {
+    onMutate: async (content: string) => {
+      // Add user message immediately
+      const userMessage: ChatMessage = {
+        id: `user_${Date.now()}`,
+        role: 'user',
+        content,
+        createdAt: new Date().toISOString()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      setMessage('');
       setIsThinking(true);
+      
       // Send typing indicator via WebSocket
-      if (sessionId) {
-        sendWsMessage({
-          type: "chat_typing",
-          data: { sessionId, typing: true }
-        });
-      }
+      sendWsMessage({
+        type: "chat_typing", 
+        data: { sessionId: currentSessionId, typing: true }
+      });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/chat/sessions", sessionId, "messages"] });
-      setMessage("");
+    onSuccess: (response: any) => {
+      // Add AI response
+      const aiMessage: ChatMessage = {
+        id: `ai_${Date.now()}`,
+        role: 'assistant',
+        content: response?.content || response?.text || response?.message || 'I apologize, but I was unable to generate a response.',
+        createdAt: response?.createdAt || new Date().toISOString(),
+        metadata: response?.metadata
+      };
+      setMessages(prev => [...prev, aiMessage]);
       setIsThinking(false);
+      
+      // Send typing stop indicator
+      sendWsMessage({
+        type: "chat_typing",
+        data: { sessionId: currentSessionId, typing: false }
+      });
     },
     onError: (error) => {
-      console.error("Failed to send message:", error);
+      console.error('Bristol Brain Error:', error);
+      const errorMessage: ChatMessage = {
+        id: `error_${Date.now()}`,
+        role: 'assistant',
+        content: 'I apologize, but I encountered an error. Please try again.',
+        createdAt: new Date().toISOString()
+      };
+      setMessages(prev => [...prev, errorMessage]);
       setIsThinking(false);
-    },
-  });
-
-  // Create session mutation
-  const createSessionMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/chat/sessions", {
-        title: "New Chat Session",
+      
+      sendWsMessage({
+        type: "chat_typing",
+        data: { sessionId: currentSessionId, typing: false }
       });
-      return response.json();
-    },
-    onSuccess: (newSession) => {
-      onSessionCreate?.(newSession);
-    },
+    }
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim()) return;
-
-    if (!sessionId) {
-      // Create a new session first
-      await createSessionMutation.mutateAsync();
-      return;
-    }
+    if (!message.trim() || sendMessageMutation.isPending) return;
 
     sendMessageMutation.mutate(message.trim());
   };
@@ -160,25 +174,23 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
       {/* Messages Area */}
       <CardContent className="flex-1 p-0">
         <ScrollArea className="h-full px-6 py-4">
-          {messagesLoading ? (
-            <div className="flex items-center justify-center h-32">
-              <ThinkingIndicator isThinking={true} />
-            </div>
-          ) : (messages as any[]).length === 0 ? (
+          {messages.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-bristol-maroon/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MapPin className="w-8 h-8 text-bristol-maroon" />
+              <div className="relative mb-4">
+                <Brain className="h-16 w-16 text-bristol-maroon mx-auto" />
+                <div className="absolute -top-2 -right-2 w-4 h-4 bg-bristol-gold rounded-full animate-pulse" />
               </div>
-              <h4 className="font-serif text-lg font-semibold text-bristol-ink mb-2">
-                Welcome to Bristol Site Intelligence
-              </h4>
-              <p className="text-bristol-stone max-w-md mx-auto">
-                Ask me about site feasibility, market comparables, demographic analysis, or development metrics for your multifamily projects.
+              <h4 className="font-bold text-bristol-ink mb-2">Bristol Brain Elite</h4>
+              <p className="text-muted-foreground text-sm mb-2">
+                Your AI-powered real estate intelligence partner
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Ask about deals, market analysis, site feasibility, or development insights
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {(messages as ChatMessage[]).map((msg: ChatMessage) => (
+              {messages.map((msg: ChatMessage) => (
                 <div
                   key={msg.id}
                   className={cn(
@@ -292,7 +304,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Ask about site feasibility, market comps, or development metrics..."
                 className="pr-4 py-3 text-lg border-bristol-sky focus:ring-bristol-maroon focus:border-bristol-maroon"
-                disabled={sendMessageMutation.isPending || !sessionId}
+                disabled={sendMessageMutation.isPending}
               />
             </div>
             
@@ -317,7 +329,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
               
               <Button
                 type="submit"
-                disabled={!message.trim() || sendMessageMutation.isPending || !sessionId}
+                disabled={!message.trim() || sendMessageMutation.isPending}
                 className="w-12 h-12 bg-bristol-maroon text-white rounded-full hover:bg-bristol-maroon/90 disabled:opacity-50"
               >
                 <Send className="w-5 h-5" />

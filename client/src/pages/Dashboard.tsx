@@ -788,7 +788,7 @@ export default function Dashboard() {
                   Bristol Site Intelligence Assistant
                 </h2>
                 <p className="text-bristol-stone">
-                  Powered by GPT-5 for advanced site analysis, market research, and development insights.
+                  Powered by GPT-4 Turbo via OpenRouter for advanced site analysis, market research, and development insights.
                 </p>
               </div>
               

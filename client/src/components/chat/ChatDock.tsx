@@ -1,13 +1,20 @@
 import { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Minimize2, Maximize2 } from 'lucide-react';
+import { MessageCircle, X, Send, Minimize2, Maximize2, Brain, Settings } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { queryClient, apiRequest } from '@/lib/queryClient';
-import { type ChatMessage, type ChatSession } from '@shared/schema';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+
+interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  createdAt?: string;
+}
 
 interface ChatDockProps {
   className?: string;
@@ -18,63 +25,58 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [isMinimized, setIsMinimized] = useState(false);
   const [message, setMessage] = useState('');
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+  const [isThinking, setIsThinking] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Get or create chat session
-  const { data: sessions } = useQuery<ChatSession[]>({
-    queryKey: ['/api/chat/sessions'],
-    enabled: isOpen
-  });
-
-  // Get messages for current session
-  const { data: messages = [], isLoading: messagesLoading } = useQuery<ChatMessage[]>({
-    queryKey: [`/api/chat/sessions/${sessionId}/messages`],
-    enabled: !!sessionId
-  });
-
-  // Create new session mutation
-  const createSessionMutation = useMutation({
-    mutationFn: async () => {
-      return apiRequest('/api/chat/sessions', {
-        method: 'POST',
-        body: { title: 'Quick Chat' }
-      });
-    },
-    onSuccess: (newSession) => {
-      setSessionId(newSession.id);
-      queryClient.invalidateQueries({ queryKey: ['/api/chat/sessions'] });
-    }
-  });
-
-  // Send message mutation
+  // Send message mutation using Bristol Brain Elite
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
-      if (!sessionId) throw new Error('No session');
-      return apiRequest(`/api/chat/sessions/${sessionId}/messages`, {
-        method: 'POST',
-        body: { content }
+      const response = await apiRequest('/api/bristol-brain-elite/chat', 'POST', {
+        sessionId,
+        message: content,
+        enableAdvancedReasoning: true,
+        dataContext: {} // Could include current app context here
       });
+      return response;
     },
-    onSuccess: () => {
+    onMutate: async (content: string) => {
+      // Add user message immediately
+      const userMessage: ChatMessage = {
+        id: `user_${Date.now()}`,
+        role: 'user',
+        content,
+        createdAt: new Date().toISOString()
+      };
+      setMessages(prev => [...prev, userMessage]);
       setMessage('');
-      queryClient.invalidateQueries({ 
-        queryKey: [`/api/chat/sessions/${sessionId}/messages`] 
-      });
+      setIsThinking(true);
+    },
+    onSuccess: (response: any) => {
+      // Add AI response
+      const aiMessage: ChatMessage = {
+        id: `ai_${Date.now()}`,
+        role: 'assistant',
+        content: response?.content || response?.text || response?.message || 'I apologize, but I was unable to generate a response.',
+        createdAt: response?.createdAt || new Date().toISOString()
+      };
+      setMessages(prev => [...prev, aiMessage]);
+      setIsThinking(false);
+    },
+    onError: (error) => {
+      console.error('Bristol Brain Error:', error);
+      const errorMessage: ChatMessage = {
+        id: `error_${Date.now()}`,
+        role: 'assistant',
+        content: 'I apologize, but I encountered an error. Please try again.',
+        createdAt: new Date().toISOString()
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      setIsThinking(false);
     }
   });
-
-  // Initialize session when dock opens
-  useEffect(() => {
-    if (isOpen && !sessionId && sessions) {
-      if (sessions.length > 0) {
-        setSessionId(sessions[0].id);
-      } else {
-        createSessionMutation.mutate();
-      }
-    }
-  }, [isOpen, sessionId, sessions]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -121,10 +123,20 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
       className
     )}>
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b bg-bristol-maroon text-white rounded-t-lg">
+      <div className="flex items-center justify-between p-3 border-b bg-gradient-to-r from-bristol-ink to-bristol-maroon text-white rounded-t-lg">
         <div className="flex items-center gap-2">
-          <MessageCircle className="h-5 w-5" />
-          <span className="font-semibold">Bristol AI Assistant</span>
+          <div className="relative">
+            <Brain className="h-5 w-5" />
+            {isThinking && (
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-bristol-gold rounded-full animate-pulse" />
+            )}
+          </div>
+          <div>
+            <span className="font-bold text-sm">Bristol Brain Elite</span>
+            <Badge variant="secondary" className="ml-2 bg-bristol-gold text-bristol-ink text-xs">
+              GPT-4o
+            </Badge>
+          </div>
         </div>
         <div className="flex items-center gap-1">
           <Button
@@ -150,18 +162,18 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
         <>
           {/* Messages */}
           <ScrollArea ref={scrollAreaRef} className="flex-1 p-4 h-[380px]">
-            {messagesLoading ? (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                Loading conversation...
-              </div>
-            ) : messages.length === 0 ? (
+            {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <MessageCircle className="h-12 w-12 text-muted-foreground mb-3" />
-                <p className="text-muted-foreground">
-                  Hi! I'm your Bristol AI assistant.
+                <div className="relative mb-4">
+                  <Brain className="h-16 w-16 text-bristol-maroon" />
+                  <div className="absolute -top-2 -right-2 w-4 h-4 bg-bristol-gold rounded-full animate-pulse" />
+                </div>
+                <h4 className="font-bold text-bristol-ink mb-2">Bristol Brain Elite</h4>
+                <p className="text-muted-foreground text-sm">
+                  Your AI-powered real estate intelligence partner
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  How can I help you today?
+                <p className="text-xs text-muted-foreground mt-1">
+                  Ask about deals, market analysis, or property insights
                 </p>
               </div>
             ) : (
@@ -176,23 +188,32 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
                   >
                     <div
                       className={cn(
-                        "max-w-[80%] rounded-lg px-3 py-2",
+                        "max-w-[80%] rounded-xl px-4 py-3 shadow-sm",
                         msg.role === 'user'
-                          ? 'bg-bristol-maroon text-white'
-                          : 'bg-gray-100 text-gray-900'
+                          ? 'bg-gradient-to-r from-bristol-maroon to-bristol-ink text-white'
+                          : 'bg-white border border-gray-200 text-gray-900'
                       )}
                     >
-                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                      <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+                      {msg.createdAt && (
+                        <p className="text-xs opacity-70 mt-2">
+                          {new Date(msg.createdAt).toLocaleTimeString()}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
-                {sendMessageMutation.isPending && (
+                {isThinking && (
                   <div className="flex justify-start">
-                    <div className="bg-gray-100 text-gray-900 rounded-lg px-3 py-2">
+                    <div className="bg-white border border-gray-200 rounded-xl px-4 py-3 shadow-sm">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
-                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
+                        <Brain className="h-4 w-4 text-bristol-maroon animate-pulse" />
+                        <span className="text-sm text-gray-600">Bristol Brain is thinking...</span>
+                        <div className="flex gap-1">
+                          <div className="w-1.5 h-1.5 bg-bristol-maroon rounded-full animate-bounce" />
+                          <div className="w-1.5 h-1.5 bg-bristol-maroon rounded-full animate-bounce delay-100" />
+                          <div className="w-1.5 h-1.5 bg-bristol-maroon rounded-full animate-bounce delay-200" />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -202,22 +223,22 @@ export function ChatDock({ className, defaultOpen = false }: ChatDockProps) {
           </ScrollArea>
 
           {/* Input */}
-          <div className="p-3 border-t">
+          <div className="p-3 border-t bg-gray-50/50">
             <div className="flex gap-2">
               <Input
                 ref={inputRef}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder="Type your message..."
-                disabled={sendMessageMutation.isPending || !sessionId}
-                className="flex-1"
+                placeholder="Ask Bristol Brain about deals, markets, or properties..."
+                disabled={sendMessageMutation.isPending}
+                className="flex-1 border-gray-200 focus:border-bristol-maroon"
               />
               <Button
                 onClick={handleSend}
-                disabled={!message.trim() || sendMessageMutation.isPending || !sessionId}
+                disabled={!message.trim() || sendMessageMutation.isPending}
                 size="icon"
-                className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+                className="bg-gradient-to-r from-bristol-maroon to-bristol-ink hover:from-bristol-maroon/90 hover:to-bristol-ink/90 shadow-md"
               >
                 <Send className="h-4 w-4" />
               </Button>
