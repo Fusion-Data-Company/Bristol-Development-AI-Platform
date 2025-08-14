@@ -1093,12 +1093,6 @@ function AdminPane({
             <Settings className="h-4 w-4" />
             BRISTOL A.I. CONFIGURATION
           </h4>
-          <button
-            onClick={onSave}
-            className="bg-gradient-to-r from-bristol-maroon to-purple-700 hover:from-bristol-maroon/90 hover:to-purple-700/90 border border-bristol-gold/50 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300"
-          >
-            Save Config
-          </button>
         </div>
         
         <div className="space-y-4">
@@ -1151,18 +1145,44 @@ function AdminPane({
               onClick={() => {
                 try {
                   localStorage.setItem("bristol.systemPrompt", systemPrompt);
-                  console.log("System prompt saved successfully");
+                  // Also call the onSave function to ensure parent component is notified
+                  onSave();
+                  console.log("System prompt saved successfully to localStorage");
+                  
+                  // Visual feedback
+                  const btn = document.activeElement as HTMLButtonElement;
+                  if (btn) {
+                    const originalText = btn.textContent;
+                    btn.textContent = "✓ Saved!";
+                    btn.classList.add("bg-green-600/30", "border-green-500/50", "text-green-400");
+                    setTimeout(() => {
+                      btn.textContent = originalText;
+                      btn.classList.remove("bg-green-600/30", "border-green-500/50", "text-green-400");
+                    }, 2000);
+                  }
                 } catch (error) {
                   console.error("Error saving system prompt:", error);
+                  
+                  // Error feedback
+                  const btn = document.activeElement as HTMLButtonElement;
+                  if (btn) {
+                    const originalText = btn.textContent;
+                    btn.textContent = "✗ Error";
+                    btn.classList.add("bg-red-600/30", "border-red-500/50", "text-red-400");
+                    setTimeout(() => {
+                      btn.textContent = originalText;
+                      btn.classList.remove("bg-red-600/30", "border-red-500/50", "text-red-400");
+                    }, 2000);
+                  }
                 }
               }}
-              className="px-4 py-2 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 border border-bristol-cyan/40 rounded-lg text-bristol-cyan font-semibold text-sm transition-all duration-200"
+              className="px-4 py-2 bg-bristol-maroon/20 hover:bg-bristol-maroon/30 border border-bristol-maroon/40 rounded-lg text-bristol-maroon font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-bristol-maroon/20"
             >
               Save Prompt
             </button>
             <button
               onClick={() => setSystemPrompt(DEFAULT_MEGA_PROMPT)}
-              className="px-4 py-2 bg-bristol-gold/20 hover:bg-bristol-gold/30 border border-bristol-gold/40 rounded-lg text-bristol-gold font-semibold text-sm transition-all duration-200"
+              className="px-4 py-2 bg-bristol-gold/20 hover:bg-bristol-gold/30 border border-bristol-gold/40 rounded-lg text-bristol-gold font-semibold text-sm transition-all duration-200 hover:shadow-lg hover:shadow-bristol-gold/20"
             >
               Reset to Default
             </button>
