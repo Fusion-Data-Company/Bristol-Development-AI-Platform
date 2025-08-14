@@ -438,53 +438,106 @@ export default function BristolFloatingWidget({
           className="fixed bottom-6 left-6 z-[9997] group"
           aria-label="Launch Bristol Brain Elite Intelligence System"
         >
-          {/* Enhanced glow effects - always visible */}
-          <div className="absolute -inset-3 bg-gradient-to-r from-bristol-cyan/50 via-bristol-electric/30 to-bristol-gold/40 rounded-3xl blur-xl opacity-60 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
-          <div className="absolute -inset-1 bg-gradient-to-r from-bristol-cyan/60 to-bristol-electric/60 rounded-3xl blur opacity-90 group-hover:opacity-100 transition-all duration-300" />
-          <div className="absolute -inset-2 bg-bristol-cyan/20 rounded-3xl blur-lg opacity-80" />
+          {/* Dramatic glow effects - always visible */}
+          <div className="absolute -inset-4 bg-gradient-to-r from-bristol-cyan/80 via-bristol-electric/60 to-bristol-gold/70 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
+          <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/90 to-bristol-electric/90 rounded-3xl blur-lg opacity-100 group-hover:opacity-100 transition-all duration-300" />
+          <div className="absolute -inset-1 bg-bristol-cyan/40 rounded-3xl blur-md opacity-100 animate-pulse" />
           
-          {/* Main button - Highly visible and solid */}
+          {/* Metallic glass button - completely solid */}
           <div 
-            className="relative flex items-center gap-4 px-6 py-4 rounded-3xl border backdrop-blur-md transition-all duration-300 hover:scale-105"
+            className="relative flex items-center gap-4 px-6 py-4 rounded-3xl border-2 transition-all duration-300 hover:scale-105 overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, rgba(15, 23, 42, 1) 0%, rgba(69, 214, 202, 0.4) 30%, rgba(30, 41, 59, 1) 100%)',
-              borderColor: 'rgba(69, 214, 202, 1)',
-              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 12px 40px rgba(69, 214, 202, 0.6), 0 0 0 2px rgba(69, 214, 202, 0.5), 0 4px 16px rgba(0, 0, 0, 0.4)',
+              background: 'linear-gradient(135deg, #1e293b 0%, #334155 25%, #475569 50%, #64748b 75%, #475569 100%)',
+              borderColor: '#45d6ca',
+              boxShadow: `
+                inset 0 2px 4px rgba(255, 255, 255, 0.4),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(69, 214, 202, 0.8),
+                0 8px 32px rgba(69, 214, 202, 0.4),
+                0 0 0 3px rgba(69, 214, 202, 0.3)
+              `,
             }}
           >
-            {/* Elite brain icon */}
-            <div className="relative">
-              <div className="absolute inset-0 bg-bristol-cyan blur-lg opacity-50 animate-pulse" />
-              <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-br from-bristol-cyan via-bristol-electric to-bristol-cyan flex items-center justify-center shadow-2xl">
-                <Brain className="w-5 h-5 text-white animate-pulse" />
+            {/* Glass surface overlay */}
+            <div 
+              className="absolute inset-0 rounded-3xl"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 25%, transparent 50%, rgba(69, 214, 202, 0.1) 75%, rgba(255, 255, 255, 0.15) 100%)',
+              }}
+            />
+            
+            {/* Animated shimmer effect */}
+            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out">
+              <div className="h-full w-8 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12" />
+            </div>
+            {/* Elite brain icon with metallic finish */}
+            <div className="relative z-10">
+              <div className="absolute inset-0 bg-bristol-cyan blur-lg opacity-80 animate-pulse" />
+              <div 
+                className="relative w-10 h-10 rounded-2xl border-2 flex items-center justify-center shadow-2xl overflow-hidden"
+                style={{
+                  background: 'linear-gradient(135deg, #64748b 0%, #94a3b8 25%, #cbd5e1 50%, #94a3b8 75%, #64748b 100%)',
+                  borderColor: '#45d6ca',
+                  boxShadow: 'inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2), 0 0 15px rgba(69, 214, 202, 0.6)',
+                }}
+              >
+                {/* Glass overlay on icon */}
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-bristol-cyan/20 rounded-2xl" />
+                <Brain className="w-5 h-5 text-bristol-cyan relative z-10 drop-shadow-lg animate-pulse" />
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-bristol-gold rounded-full animate-pulse" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-br from-bristol-gold to-yellow-400 rounded-full animate-pulse border border-white/50" />
             </div>
             
-            {/* Elite branding */}
-            <div className="flex flex-col">
+            {/* Elite branding with metallic text */}
+            <div className="flex flex-col relative z-10">
               <div className="flex items-center gap-2">
-                <span className="text-lg font-black text-white bg-gradient-to-r from-bristol-cyan via-white to-bristol-electric bg-clip-text text-transparent">
+                <span 
+                  className="text-lg font-black drop-shadow-lg"
+                  style={{
+                    background: 'linear-gradient(135deg, #45d6ca 0%, #ffffff 50%, #a8d5f2 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    textShadow: '0 0 10px rgba(69, 214, 202, 0.5)',
+                  }}
+                >
                   BRISTOL BRAIN
                 </span>
-                <div className="px-2 py-0.5 bg-gradient-to-r from-bristol-gold/30 to-bristol-electric/30 text-bristol-gold text-xs font-black rounded-md border border-bristol-gold/50 uppercase tracking-wider">
+                <div 
+                  className="px-2 py-0.5 text-xs font-black rounded-md border uppercase tracking-wider"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.8) 0%, rgba(255, 215, 0, 0.6) 100%)',
+                    borderColor: '#d4af37',
+                    color: '#1e293b',
+                    textShadow: '0 1px 2px rgba(255, 255, 255, 0.8)',
+                  }}
+                >
                   ELITE
                 </div>
               </div>
-              <span className="text-sm font-bold text-bristol-cyan/90">
+              <span className="text-sm font-bold text-bristol-cyan drop-shadow-md">
                 AI Real Estate Intelligence
               </span>
             </div>
             
-            {/* Circuit icon and status indicator */}
-            <div className="flex items-center gap-3">
+            {/* CPU chip icon and status indicator */}
+            <div className="flex items-center gap-3 relative z-10">
               <div className="relative">
-                <CircuitBoard className="w-5 h-5 text-bristol-electric animate-pulse" />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-bristol-gold rounded-full animate-pulse" />
+                <div 
+                  className="w-6 h-6 rounded border-2 flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(135deg, #64748b 0%, #94a3b8 50%, #64748b 100%)',
+                    borderColor: '#45d6ca',
+                    boxShadow: 'inset 0 1px 2px rgba(255, 255, 255, 0.3), 0 0 8px rgba(69, 214, 202, 0.4)',
+                  }}
+                >
+                  <Cpu className="w-3 h-3 text-bristol-cyan animate-pulse" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-gradient-to-br from-bristol-gold to-yellow-400 rounded-full animate-pulse border border-white/50" />
               </div>
               <div className="flex flex-col items-end">
-                <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
-                <span className="text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mt-1">
+                <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse shadow-lg shadow-bristol-cyan/50" />
+                <span className="text-xs text-bristol-cyan font-bold uppercase tracking-wider mt-1 drop-shadow-md">
                   READY
                 </span>
               </div>
