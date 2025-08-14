@@ -454,23 +454,18 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
         return (
           <HoverCard>
             <HoverCardTrigger asChild>
-              <div className="cursor-pointer hover:bg-bristol-gold/10 p-2 rounded-lg transition-colors">
-                <div className="flex items-center gap-2">
-                  {/* Show first 2 amenities as badges */}
-                  {amenities.slice(0, 2).map((tag, i) => (
-                    <Badge key={i} variant="secondary" className="text-xs bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
-                      {tag}
-                    </Badge>
-                  ))}
-                  {/* Show count for remaining amenities */}
-                  {amenities.length > 2 && (
-                    <Badge variant="outline" className="text-xs text-bristol-stone border-bristol-stone/30">
-                      +{amenities.length - 2} more
-                    </Badge>
-                  )}
+              <div className="cursor-pointer hover:bg-bristol-gold/10 p-2 rounded-lg transition-colors text-center">
+                <div className="flex items-center justify-center gap-2">
+                  {/* Simple amenity count badge */}
+                  <Badge variant="secondary" className="bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
+                    {amenities.length}
+                  </Badge>
+                  <span className="text-sm text-bristol-stone font-medium">
+                    Amenities
+                  </span>
                 </div>
                 <div className="text-xs text-bristol-stone/60 mt-1">
-                  {amenities.length} total amenities
+                  Hover for details
                 </div>
               </div>
             </HoverCardTrigger>
