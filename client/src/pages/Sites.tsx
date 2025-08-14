@@ -8,12 +8,13 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Building, Map } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
-import { SitesTable } from "../widgets/tables/SitesTableNew";
+import { SitesTable } from "../widgets/tables/SitesTable";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
 import { SiteDetails } from "../widgets/details/SiteDetails";
 import { SiteMapPreview } from "../widgets/maps/SiteMapPreview";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
+import type { Site } from "@shared/schema";
 // Bristol seed data
 const bristolSeedData = `status,name,addr_line1,addr_line2,city,state,postal_code,country,latitude,longitude,acreage,units_total,units_1b,units_2b,units_3b,avg_sf,completion_year,parking_spaces,source_url,notes
 "Completed","Vista Germantown","515 Madison St","","Nashville","TN","37208","USA","","","","242","","","","834","2012","316","https://www.bristoldevelopment.com/vista-germantown",""
@@ -25,31 +26,7 @@ const bristolSeedData = `status,name,addr_line1,addr_line2,city,state,postal_cod
 "Pipeline","Telegraph Road","","","","","","USA","","","","","","","","","","","https://www.bristoldevelopment.com/new",""
 "Newest","The Drake on The Square","","","","","","USA","","","","","","","","","","","https://www.bristoldevelopment.com/new",""`;
 
-interface Site {
-  id: string;
-  status: string;
-  name: string;
-  addrLine1?: string;
-  addrLine2?: string;
-  city?: string;
-  state?: string;
-  postalCode?: string;
-  country?: string;
-  latitude?: number;
-  longitude?: number;
-  acreage?: number;
-  unitsTotal?: number;
-  units1b?: number;
-  units2b?: number;
-  units3b?: number;
-  avgSf?: number;
-  completionYear?: number;
-  parkingSpaces?: number;
-  sourceUrl?: string;
-  notes?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+// Using Site type from shared schema
 
 export default function Sites() {
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
