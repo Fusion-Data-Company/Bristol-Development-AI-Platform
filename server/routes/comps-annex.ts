@@ -113,11 +113,15 @@ export function registerCompsAnnexRoutes(app: Express) {
   // Start a scrape job
   app.post('/api/comps-annex/scrape', async (req, res) => {
     try {
+      const { newScrapeJob, runJobNow, runJobWithError } = await import('../scrapers/runner');
       const id = await newScrapeJob(req.body);
+      
       // Run job asynchronously
       runJobNow(id).catch((err) => {
         console.error('Scrape job failed:', err);
+        runJobWithError(id, String(err)).catch(console.error);
       });
+      
       res.json({ id, status: 'queued' });
     } catch (error) {
       console.error('Error starting scrape job:', error);
@@ -139,6 +143,7 @@ export function registerCompsAnnexRoutes(app: Express) {
   // Seed with sample data
   app.post('/api/comps-annex/seed', async (req, res) => {
     try {
+      const { newScrapeJob, runJobNow } = await import('../scrapers/runner');
       // Trigger a scrape job to populate with sample data
       const jobId = await newScrapeJob({
         address: 'Atlanta, GA',
@@ -171,6 +176,7 @@ export function registerCompsAnnexRoutes(app: Express) {
   // Get scrape job status
   app.get('/api/comps-annex/jobs/:id', async (req, res) => {
     try {
+      const { getJob } = await import('../scrapers/runner');
       const job = await getJob(req.params.id);
       if (!job) {
         return res.status(404).json({ error: 'Job not found' });
@@ -179,6 +185,17 @@ export function registerCompsAnnexRoutes(app: Express) {
     } catch (error) {
       console.error('Error fetching job status:', error);
       res.status(500).json({ error: 'Failed to fetch job status' });
+    }
+  });
+
+  // Delete scrape job
+  app.delete('/api/comps-annex/jobs/:id', async (req, res) => {
+    try {
+      await db.delete(scrapeJobsAnnex).where(eq(scrapeJobsAnnex.id, req.params.id));
+      res.json({ ok: true });
+    } catch (error) {
+      console.error('Error deleting job:', error);
+      res.status(500).json({ error: 'Failed to delete job' });
     }
   });
 

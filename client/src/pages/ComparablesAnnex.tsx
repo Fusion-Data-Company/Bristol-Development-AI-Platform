@@ -11,6 +11,9 @@ import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
 import ScraperJobManager from '@/components/comparables/ScraperJobManager';
 import AIAnalyticsPanel from '@/components/comparables/AIAnalyticsPanel';
+import DataVisualization from '@/components/comparables/DataVisualization';
+import ExportTools from '@/components/comparables/ExportTools';
+import CompAnalysisWidget from '@/components/comparables/CompAnalysisWidget';
 import { 
   Search, 
   Download, 
@@ -267,10 +270,7 @@ export default function ComparablesAnnex() {
 
             <BulkImport onImportComplete={() => queryClient.invalidateQueries({ queryKey: ['/api/comps-annex'] })} />
 
-            <Button variant="outline" onClick={handleExport}>
-              <Download className="h-4 w-4 mr-2" />
-              Export CSV
-            </Button>
+            <ExportTools data={comps} />
           </div>
         </div>
 
@@ -338,8 +338,12 @@ export default function ComparablesAnnex() {
         {/* Scraper Job Manager */}
         <ScraperJobManager />
 
-        {/* AI Analytics Panel */}
-        <AIAnalyticsPanel data={comps} />
+        {/* Analytics Panels */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          <AIAnalyticsPanel data={comps} />
+          <DataVisualization data={comps} />
+          <CompAnalysisWidget data={comps} />
+        </div>
 
         {/* Main Data Table */}
         <Card>
