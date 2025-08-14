@@ -3,7 +3,8 @@ import type { Express, Request, Response } from 'express';
 import { db } from '../db';
 import { compsAnnex, scrapeJobsAnnex } from '@shared/schema';
 import { sql, eq, ilike, desc } from 'drizzle-orm';
-import { newScrapeJob, getJob, runJobNow } from '../scrapers/runner';
+import { newScrapeJob, getJob } from '../scrapers/runner';
+import { runJobNow } from '../scrapers/runner-fixed';
 
 export function registerCompsAnnexRoutes(app: Express) {
   // Get comparables with pagination and search

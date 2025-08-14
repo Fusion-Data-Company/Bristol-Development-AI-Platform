@@ -183,9 +183,8 @@ export async function runJobNow(id: string) {
     await db.update(scrapeJobsAnnex)
       .set({ 
         status: finalStatus, 
-        completedAt: new Date(),
-        recordsFound: insertedCount,
-        meta: finalMeta
+        finishedAt: new Date(),
+        error: errorMessages.length > 0 ? errorMessages.join('; ') : null
       })
       .where(eq(scrapeJobsAnnex.id, id));
   } catch (updateError) {
