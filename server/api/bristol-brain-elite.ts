@@ -33,7 +33,7 @@ const upload = multer({
 
 // Schema for chat request
 const chatRequestSchema = z.object({
-  sessionId: z.string(),
+  sessionId: z.string().optional(), // Make sessionId optional - will auto-generate if not provided
   message: z.string(),
   enableAdvancedReasoning: z.boolean().optional(),
   dataContext: z.record(z.any()).optional(),
@@ -42,8 +42,11 @@ const chatRequestSchema = z.object({
 // Elite chat endpoint with full Bristol Brain capabilities
 router.post("/chat", async (req, res) => {
   try {
-    const { sessionId, message, enableAdvancedReasoning, dataContext } = 
+    const { sessionId: providedSessionId, message, enableAdvancedReasoning, dataContext } = 
       chatRequestSchema.parse(req.body);
+    
+    // Generate sessionId if not provided
+    const sessionId = providedSessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
     // Get user from session (in production, this would come from auth)
     const userId = "demo-user"; // TODO: Get from auth context

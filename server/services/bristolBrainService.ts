@@ -313,28 +313,43 @@ Remember: You're not providing general advice. You're making real-time decisions
   async processMessage(context: BristolBrainContext): Promise<ChatMessage> {
     try {
       // Ensure session exists or create it
-      const existingSessions = await storage.getChatSessions(context.userId);
-      const sessionExists = existingSessions.some(s => s.id === context.sessionId);
+      let sessionId = context.sessionId;
       
-      if (!sessionExists) {
-        await storage.createChatSession({
-          id: context.sessionId,
+      // Ensure user exists first
+      try {
+        // Try to get user, if not found, the API will create a default user
+        const existingUser = await storage.getUser(context.userId);
+        if (!existingUser) {
+          console.log("User not found, will create default session");
+        }
+      } catch (userError) {
+        console.log("User lookup failed, continuing with session creation");
+      }
+      
+      // Always create a new session for each conversation to ensure proper DB constraints
+      try {
+        const newSession = await storage.createChatSession({
           userId: context.userId,
           title: "Bristol Brain Elite Session",
         });
+        sessionId = newSession.id; // Use the database-generated UUID
+      } catch (sessionError) {
+        console.error("Session creation failed:", sessionError);
+        // Use provided sessionId as fallback
+        sessionId = context.sessionId;
       }
       
       // Store user message
       const userMessage: InsertChatMessage = {
-        sessionId: context.sessionId,
+        sessionId: sessionId, // Use the correct session ID
         role: "user",
         content: context.userMessage,
       };
       await storage.createChatMessage(userMessage);
       
       // Build conversation history
-      const messages = await storage.getSessionMessages(context.sessionId);
-      const enhancedContext = await this.buildEnhancedContext(context);
+      const messages = await storage.getSessionMessages(sessionId);
+      const enhancedContext = await this.buildEnhancedContext({...context, sessionId});
       
       // Construct messages for AI
       const aiMessages: BristolBrainMessage[] = [];
@@ -406,10 +421,10 @@ Remember: You're not providing general advice. You're making real-time decisions
         "I need to analyze this further. Please provide additional context.";
       
       // Analyze for decisions
-      const decision = await this.analyzeDecision(aiResponse, context.sessionId, context.userId);
+      const decision = await this.analyzeDecision(aiResponse, sessionId, context.userId);
       if (decision) {
         await storage.createAgentDecision({
-          sessionId: context.sessionId,
+          sessionId: sessionId,
           userId: context.userId,
           decisionType: decision.type,
           decision: decision.decision,
@@ -420,11 +435,11 @@ Remember: You're not providing general advice. You're making real-time decisions
       }
       
       // Update learning
-      await this.updateLearning(context.userId, context.sessionId, context.userMessage, aiResponse);
+      await this.updateLearning(context.userId, sessionId, context.userMessage, aiResponse);
       
       // Store AI response
       const assistantMessage: InsertChatMessage = {
-        sessionId: context.sessionId,
+        sessionId: sessionId,
         role: "assistant",
         content: aiResponse,
         metadata: decision ? { decision } : undefined,
@@ -435,15 +450,15 @@ Remember: You're not providing general advice. You're making real-time decisions
     } catch (error) {
       console.error("Bristol Brain Error:", error);
       
-      // Store error response
-      const errorMessage: InsertChatMessage = {
+      // Return error response without storing to database if there are DB issues
+      return {
+        id: `error_${Date.now()}`,
         sessionId: context.sessionId,
-        role: "assistant",
-        content: "I encountered an issue analyzing this request. Let me recalibrate and try a different approach. Please rephrase your question or provide additional context.",
+        role: "assistant" as const,
+        content: "I encountered an issue analyzing this request. The system is being calibrated. Please try again in a moment.",
         metadata: { error: error instanceof Error ? error.message : "Unknown error" },
+        createdAt: new Date(),
       };
-      
-      return await storage.createChatMessage(errorMessage);
     }
   }
   
