@@ -29,16 +29,16 @@ export function ThinkingIndicator({ isThinking, size = "md", className }: Thinki
           isThinking ? "opacity-100" : "opacity-0"
         )}
         style={{
-          background: "conic-gradient(from 0deg, transparent, #8B1538, transparent)",
-          animation: isThinking ? "spin 2s linear infinite" : "none"
+          background: "linear-gradient(135deg, #8B1538, #6B1229)",
+          animation: "none"
         }}
       />
       
       {/* Inner Logo/Icon */}
       <div className={cn(
-        "absolute inset-1 bg-gradient-to-br from-bristol-maroon to-orange-500 rounded-full flex items-center justify-center shadow-lg transition-transform duration-300",
+        "absolute inset-1 bg-gradient-to-br from-bristol-maroon to-bristol-maroon rounded-full flex items-center justify-center shadow-lg transition-transform duration-300",
         innerSizeClasses[size],
-        isThinking ? "animate-pulse scale-110" : "scale-100"
+        "scale-100"
       )}>
         <span className={cn(
           "text-white font-serif font-bold",
@@ -48,15 +48,15 @@ export function ThinkingIndicator({ isThinking, size = "md", className }: Thinki
         </span>
       </div>
 
-      {/* Orange metallic details on the button face */}
+      {/* Bristol gold metallic details on the button face */}
       <div className="absolute inset-2 rounded-full">
         {/* Metallic ridges and details */}
-        <div className="absolute top-1 left-1/2 w-3 h-0.5 bg-gradient-to-r from-transparent via-orange-400/60 to-transparent rounded-full transform -translate-x-1/2"></div>
-        <div className="absolute bottom-1 left-1/2 w-3 h-0.5 bg-gradient-to-r from-transparent via-orange-500/60 to-transparent rounded-full transform -translate-x-1/2"></div>
-        <div className="absolute left-1 top-1/2 w-0.5 h-3 bg-gradient-to-b from-transparent via-orange-400/60 to-transparent rounded-full transform -translate-y-1/2"></div>
-        <div className="absolute right-1 top-1/2 w-0.5 h-3 bg-gradient-to-b from-transparent via-orange-500/60 to-transparent rounded-full transform -translate-y-1/2"></div>
+        <div className="absolute top-1 left-1/2 w-3 h-0.5 bg-gradient-to-r from-transparent via-bristol-gold/60 to-transparent rounded-full transform -translate-x-1/2"></div>
+        <div className="absolute bottom-1 left-1/2 w-3 h-0.5 bg-gradient-to-r from-transparent via-bristol-gold/60 to-transparent rounded-full transform -translate-x-1/2"></div>
+        <div className="absolute left-1 top-1/2 w-0.5 h-3 bg-gradient-to-b from-transparent via-bristol-gold/60 to-transparent rounded-full transform -translate-y-1/2"></div>
+        <div className="absolute right-1 top-1/2 w-0.5 h-3 bg-gradient-to-b from-transparent via-bristol-gold/60 to-transparent rounded-full transform -translate-y-1/2"></div>
         {/* Central metallic highlight */}
-        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-300/20 via-transparent to-orange-600/20"></div>
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-bristol-gold/20 via-transparent to-bristol-gold/20"></div>
       </div>
     </div>
   );

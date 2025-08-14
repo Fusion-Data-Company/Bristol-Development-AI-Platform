@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowUpDown, Edit, Trash2, MapPin, ExternalLink, Loader2 } from "lucide-react";
+import { ArrowUpDown, Edit, Trash2, MapPin, ExternalLink, Loader2, Building } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Site } from '@shared/schema';
@@ -236,6 +236,160 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                 {age} years old
               </div>
             )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'postalCode',
+      header: 'ZIP CODE',
+      size: 100,
+      cell: ({ row }) => (
+        <div className="text-center font-medium text-bristol-ink">
+          {row.getValue('postalCode') || '—'}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'latitude',
+      header: 'LATITUDE',
+      size: 120,
+      cell: ({ row }) => {
+        const lat = row.getValue('latitude') as number;
+        return (
+          <div className="text-center text-sm font-mono text-bristol-ink">
+            {lat ? lat.toFixed(6) : '—'}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'longitude',
+      header: 'LONGITUDE',
+      size: 120,
+      cell: ({ row }) => {
+        const lng = row.getValue('longitude') as number;
+        return (
+          <div className="text-center text-sm font-mono text-bristol-ink">
+            {lng ? lng.toFixed(6) : '—'}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'acreage',
+      header: 'ACREAGE',
+      size: 100,
+      cell: ({ row }) => {
+        const acreage = row.getValue('acreage') as number;
+        return (
+          <div className="text-center">
+            <div className="font-bold text-bristol-maroon">
+              {acreage ? `${acreage.toFixed(1)}` : '—'}
+            </div>
+            {acreage && (
+              <div className="text-xs text-bristol-stone">acres</div>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'units1b',
+      header: '1BR UNITS',
+      size: 100,
+      cell: ({ row }) => (
+        <div className="text-center font-medium text-bristol-ink">
+          {row.getValue('units1b') || '—'}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'units2b',
+      header: '2BR UNITS',
+      size: 100,
+      cell: ({ row }) => (
+        <div className="text-center font-medium text-bristol-ink">
+          {row.getValue('units2b') || '—'}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'units3b',
+      header: '3BR UNITS',
+      size: 100,
+      cell: ({ row }) => (
+        <div className="text-center font-medium text-bristol-ink">
+          {row.getValue('units3b') || '—'}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'avgSf',
+      header: 'AVG SQ FT',
+      size: 120,
+      cell: ({ row }) => {
+        const avgSf = row.getValue('avgSf') as number;
+        return (
+          <div className="text-center">
+            <div className="font-bold text-bristol-maroon">
+              {avgSf ? avgSf.toLocaleString() : '—'}
+            </div>
+            {avgSf && (
+              <div className="text-xs text-bristol-stone">sq ft</div>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'parkingSpaces',
+      header: 'PARKING',
+      size: 100,
+      cell: ({ row }) => {
+        const parking = row.getValue('parkingSpaces') as number;
+        return (
+          <div className="text-center">
+            <div className="font-medium text-bristol-ink">
+              {parking || '—'}
+            </div>
+            {parking && (
+              <div className="text-xs text-bristol-stone">spaces</div>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: 'sourceUrl',
+      header: 'SOURCE',
+      size: 100,
+      cell: ({ row }) => {
+        const url = row.getValue('sourceUrl') as string;
+        return url ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => window.open(url, '_blank')}
+            className="h-8 w-8 p-0 text-bristol-gold hover:text-white hover:bg-bristol-gold/80 transition-all duration-300"
+            title="View Source URL"
+          >
+            <ExternalLink className="h-4 w-4" />
+          </Button>
+        ) : (
+          <div className="text-center text-bristol-stone">—</div>
+        );
+      },
+    },
+    {
+      accessorKey: 'notes',
+      header: 'NOTES',
+      size: 200,
+      cell: ({ row }) => {
+        const notes = row.getValue('notes') as string;
+        return (
+          <div className="text-sm text-bristol-ink max-w-[200px] truncate" title={notes}>
+            {notes || '—'}
           </div>
         );
       },
