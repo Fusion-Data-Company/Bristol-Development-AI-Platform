@@ -5,6 +5,7 @@ import { compsAnnex, scrapeJobsAnnex } from '@shared/schema';
 import { sql, eq, ilike, desc } from 'drizzle-orm';
 import { newScrapeJob, getJob } from '../scrapers/runner';
 import { runJobNow } from '../scrapers/runner-fixed';
+import { createRealScrapingJob, processAllPendingJobs } from '../scrapers/firecrawl-real-scraper';
 
 export function registerCompsAnnexRoutes(app: Express) {
   // Get comparables with pagination and search
@@ -111,22 +112,33 @@ export function registerCompsAnnexRoutes(app: Express) {
     }
   });
 
-  // Start a scrape job
+  // Start a REAL scrape job (replaces placeholder functionality)
   app.post('/api/comps-annex/scrape', async (req, res) => {
     try {
-      const { newScrapeJob, runJobNow, runJobWithError } = await import('../scrapers/runner');
-      const id = await newScrapeJob(req.body);
+      console.log('🔥 Starting REAL Firecrawl scraping job...');
+      const jobId = await createRealScrapingJob(req.body);
       
-      // Run job asynchronously
-      runJobNow(id).catch((err) => {
-        console.error('Scrape job failed:', err);
-        runJobWithError(id, String(err)).catch(console.error);
+      res.json({ 
+        id: jobId, 
+        status: 'running',
+        message: 'Real Firecrawl scraping started',
+        type: 'firecrawl_real'
       });
-      
-      res.json({ id, status: 'queued' });
     } catch (error) {
-      console.error('Error starting scrape job:', error);
-      res.status(500).json({ error: 'Failed to start scrape job' });
+      console.error('Error starting real scrape job:', error);
+      res.status(500).json({ error: 'Failed to start real scrape job' });
+    }
+  });
+
+  // Process all pending jobs endpoint
+  app.post('/api/comps-annex/process-pending', async (req, res) => {
+    try {
+      console.log('🔄 Processing all pending scraping jobs...');
+      await processAllPendingJobs();
+      res.json({ success: true, message: 'All pending jobs processed' });
+    } catch (error) {
+      console.error('Error processing pending jobs:', error);
+      res.status(500).json({ error: 'Failed to process pending jobs' });
     }
   });
 

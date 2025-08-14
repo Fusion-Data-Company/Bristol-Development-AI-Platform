@@ -4,6 +4,8 @@ import { compsAnnex } from '../../shared/schema';
 import { normalizeRecord } from '../scrapers/normalizer';
 import { randomUUID } from 'crypto';
 import { sql, desc } from 'drizzle-orm';
+import { eliteExtractionEngine } from '../scrapers/elite-extraction-engine';
+import { deepCrawlAnalyzer } from '../scrapers/deep-crawl-analyzer';
 
 const router = Router();
 
@@ -123,66 +125,43 @@ router.post('/elite-search', async (req, res) => {
   }
 });
 
-// Elite Property Crawl
+// Elite Property Crawl - REAL IMPLEMENTATION  
 router.post('/elite-crawl', async (req, res) => {
   try {
-    const { url, maxDepth = 3, maxUrls = 100, sessionId, userId } = req.body as EliteCrawlRequest;
+    const { url, maxDepth = 3, maxUrls = 25, sessionId, userId } = req.body as EliteCrawlRequest;
     
     if (!url) {
       return res.status(400).json({ error: 'URL is required' });
     }
 
-    console.log(`🕷️ Elite property crawl: ${url} (depth: ${maxDepth}, maxUrls: ${maxUrls})`);
+    console.log(`🕷️ REAL Elite property crawl: ${url} (depth: ${maxDepth}, maxUrls: ${maxUrls})`);
     
-    const jobId = randomUUID();
-    const FIRECRAWL_API_KEY = process.env.FIRECRAWL_API_KEY;
-    
-    if (!FIRECRAWL_API_KEY) {
-      return res.status(500).json({ error: 'Firecrawl API key not configured' });
-    }
-
-    const crawlConfig = {
-      ...ELITE_CRAWL_CONFIG,
-      maxDepth: Math.min(maxDepth, 5),
-      limit: Math.min(maxUrls, 500)
-    };
-
-    const response = await fetch('https://api.firecrawl.dev/v1/crawl', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${FIRECRAWL_API_KEY}`
-      },
-      body: JSON.stringify({
-        url,
-        ...crawlConfig
-      })
+    // Use the real deep crawl analyzer
+    const result = await deepCrawlAnalyzer.performDeepCrawl({
+      startUrls: [url],
+      crawlDepth: Math.min(maxDepth, 4),
+      propertyTypes: ['Multifamily', 'Apartment'],
+      marketFocus: 'sunbelt',
+      analysisType: 'market_survey'
     });
-
-    if (!response.ok) {
-      throw new Error(`Firecrawl crawl failed: ${response.status} ${response.statusText}`);
-    }
-
-    const result = await response.json();
     
-    // Return crawl ID for status checking
+    console.log(`✅ REAL Elite crawl completed: ${result.propertiesFound} properties discovered`);
+    
     res.json({
-      success: true,
-      jobId,
-      crawlId: result.id,
-      status: 'crawling',
-      message: `Elite crawl initiated for ${url}. Use crawl ID ${result.id} to check status.`,
+      success: result.success,
+      jobId: result.jobId,
+      urlsCrawled: result.urlsCrawled,
+      propertiesFound: result.propertiesFound,
+      results: result.results,
       metadata: {
-        source: 'bristol_elite_crawl',
-        url,
-        maxDepth,
-        maxUrls,
-        timestamp: new Date().toISOString()
+        ...result.metadata,
+        source: 'bristol_elite_crawl_real',
+        engineType: 'deep_crawl_analyzer'
       }
     });
     
   } catch (error) {
-    console.error('Elite crawl failed:', error);
+    console.error('REAL Elite crawl failed:', error);
     res.status(500).json({ 
       success: false,
       error: 'Elite crawl failed',
@@ -191,67 +170,43 @@ router.post('/elite-crawl', async (req, res) => {
   }
 });
 
-// Elite Property Extract
+// Elite Property Extract - REAL IMPLEMENTATION
 router.post('/elite-extract', async (req, res) => {
   try {
-    const { urls, extractionFocus = 'comprehensive', propertyClass, sessionId, userId } = req.body as EliteExtractRequest;
+    const { urls, extractionFocus = 'financial', propertyClass = 'A', sessionId, userId } = req.body as EliteExtractRequest;
     
     if (!urls || !Array.isArray(urls) || urls.length === 0) {
       return res.status(400).json({ error: 'URLs array is required' });
     }
 
-    console.log(`🎯 Elite property extract: ${urls.length} URLs (focus: ${extractionFocus})`);
+    console.log(`🎯 REAL Elite property extract: ${urls.length} URLs (focus: ${extractionFocus})`);
     
-    const jobId = randomUUID();
-    const FIRECRAWL_API_KEY = process.env.FIRECRAWL_API_KEY;
-    
-    if (!FIRECRAWL_API_KEY) {
-      return res.status(500).json({ error: 'Firecrawl API key not configured' });
-    }
-
-    // Customize extraction based on focus
-    const extractConfig = {
-      ...ELITE_EXTRACT_CONFIG,
-      prompt: customizeExtractionPrompt(extractionFocus, propertyClass)
-    };
-
-    const response = await fetch('https://api.firecrawl.dev/v1/extract', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${FIRECRAWL_API_KEY}`
-      },
-      body: JSON.stringify({
-        urls: urls.slice(0, 20), // Limit to 20 URLs
-        ...extractConfig
-      })
+    // Use the real elite extraction engine
+    const result = await eliteExtractionEngine.extractPropertiesFromUrls({
+      urls: urls.slice(0, 15), // Limit for performance
+      extractionFocus: extractionFocus as any,
+      propertyClass: propertyClass as any,
+      sessionId,
+      userId
     });
-
-    if (!response.ok) {
-      throw new Error(`Firecrawl extract failed: ${response.status} ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    const properties = await processExtractResults(result, jobId);
     
-    console.log(`✅ Elite extract completed: ${properties.length} properties processed`);
+    console.log(`✅ REAL Elite extract completed: ${result.propertiesExtracted} properties stored`);
     
     res.json({
-      success: true,
-      jobId,
-      propertiesFound: properties.length,
-      properties,
+      success: result.success,
+      jobId: result.jobId,
+      propertiesFound: result.propertiesExtracted,
+      properties: result.properties,
       metadata: {
-        source: 'bristol_elite_extract',
-        extractionFocus,
-        propertyClass,
-        urlsProcessed: urls.slice(0, 20).length,
-        timestamp: new Date().toISOString()
+        ...result.metadata,
+        source: 'bristol_elite_extract_real',
+        urlsProcessed: urls.slice(0, 15).length,
+        engineType: 'elite_extraction_engine'
       }
     });
     
   } catch (error) {
-    console.error('Elite extract failed:', error);
+    console.error('REAL Elite extract failed:', error);
     res.status(500).json({ 
       success: false,
       error: 'Elite extract failed',
