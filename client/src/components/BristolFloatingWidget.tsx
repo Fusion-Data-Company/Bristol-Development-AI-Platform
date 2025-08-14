@@ -1435,6 +1435,79 @@ function AgentsPane({
     units: 250,
     sqft: 280000
   });
+  const [outputMessages, setOutputMessages] = useState<Record<string, Array<{ type: 'info' | 'success' | 'error' | 'progress', text: string, timestamp: number }>>>({});
+
+  // Simulate realistic output messages when tasks are running
+  useEffect(() => {
+    if (activeTasks.length > 0) {
+      const interval = setInterval(() => {
+        activeTasks.forEach(task => {
+          const progress = taskProgress[task.agentId] || 0;
+          const agent = agents.find(a => a.id === task.agentId);
+          
+          // Generate realistic messages based on progress and agent type
+          if (Math.random() > 0.7) { // Random chance for new message
+            const newMessage = {
+              type: 'info' as const,
+              text: generateRealisticMessage(agent, progress),
+              timestamp: Date.now()
+            };
+            
+            setOutputMessages(prev => ({
+              ...prev,
+              [task.agentId]: [...(prev[task.agentId] || []).slice(-10), newMessage]
+            }));
+          }
+        });
+      }, 2000 + Math.random() * 3000); // Random interval between 2-5 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [activeTasks, taskProgress, agents]);
+
+  const generateRealisticMessage = (agent: any, progress: number) => {
+    const messages = {
+      'master': [
+        'Orchestrating multi-agent analysis pipeline...',
+        'Coordinating data flows between specialized agents...',
+        'Synthesizing cross-domain insights...',
+        'Validating inter-agent communication protocols...',
+        'Finalizing consolidated investment recommendation...'
+      ],
+      'data-processing': [
+        'Ingesting demographic datasets from Census API...',
+        'Processing employment statistics from BLS...',
+        'Analyzing economic indicators and trends...',
+        'Geocoding property location and market boundaries...',
+        'Computing neighborhood scoring algorithms...'
+      ],
+      'financial-analysis': [
+        'Building DCF model with 10-year projections...',
+        'Calculating risk-adjusted IRR scenarios...',
+        'Running Monte Carlo simulations for NPV...',
+        'Analyzing cap rate compression trends...',
+        'Evaluating optimal LP/GP waterfall structures...'
+      ],
+      'market-intelligence': [
+        'Scraping comparable property transactions...',
+        'Analyzing rental growth trajectories...',
+        'Processing market absorption rates...',
+        'Evaluating competitive landscape dynamics...',
+        'Forecasting demand drivers and constraints...'
+      ],
+      'lead-management': [
+        'Assessing investor profile compatibility...',
+        'Calculating lead conversion probabilities...',
+        'Analyzing deal packaging requirements...',
+        'Evaluating financing structure preferences...',
+        'Preparing investor presentation materials...'
+      ]
+    };
+
+    const agentMessages = messages[agent?.id as keyof typeof messages] || messages['master'];
+    const index = Math.floor((progress / 100) * agentMessages.length);
+    return agentMessages[Math.min(index, agentMessages.length - 1)];
+  };
 
   // Agent status colors and icons
   const getAgentStatus = (agentId: string) => {
@@ -1650,12 +1723,185 @@ function AgentsPane({
           <button
             onClick={() => onAnalyzeProperty(testProperty)}
             disabled={activeTasks.length > 0}
-            className="w-full px-6 py-3 bg-bristol-electric hover:bg-bristol-electric/80 disabled:opacity-50 disabled:cursor-not-allowed text-black font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2"
+            className="w-full px-6 py-4 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            style={{
+              background: activeTasks.length > 0 
+                ? 'linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(251, 191, 36, 0.2) 50%, rgba(251, 191, 36, 0.3) 100%)'
+                : 'linear-gradient(135deg, rgba(20, 184, 166, 0.95) 0%, rgba(6, 182, 212, 0.9) 25%, rgba(14, 165, 233, 0.9) 50%, rgba(59, 130, 246, 0.9) 75%, rgba(99, 102, 241, 0.95) 100%)',
+              backdropFilter: 'blur(20px) saturate(1.8)',
+              border: activeTasks.length > 0 
+                ? '2px solid rgba(251, 191, 36, 0.4)'
+                : '2px solid rgba(20, 184, 166, 0.6)',
+              boxShadow: activeTasks.length > 0
+                ? '0 8px 32px rgba(251, 191, 36, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                : '0 8px 32px rgba(20, 184, 166, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 60px rgba(20, 184, 166, 0.3)',
+              color: activeTasks.length > 0 ? '#fbbf24' : '#000000'
+            }}
+            onMouseEnter={(e) => {
+              if (activeTasks.length === 0) {
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(20, 184, 166, 1) 0%, rgba(6, 182, 212, 0.95) 25%, rgba(14, 165, 233, 0.95) 50%, rgba(59, 130, 246, 0.95) 75%, rgba(99, 102, 241, 1) 100%)';
+                e.currentTarget.style.boxShadow = '0 12px 40px rgba(20, 184, 166, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 80px rgba(20, 184, 166, 0.5)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTasks.length === 0) {
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(20, 184, 166, 0.95) 0%, rgba(6, 182, 212, 0.9) 25%, rgba(14, 165, 233, 0.9) 50%, rgba(59, 130, 246, 0.9) 75%, rgba(99, 102, 241, 0.95) 100%)';
+                e.currentTarget.style.boxShadow = '0 8px 32px rgba(20, 184, 166, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 60px rgba(20, 184, 166, 0.3)';
+              }
+            }}
           >
-            <Zap className="h-4 w-4" />
-            {activeTasks.length > 0 ? 'AGENTS ANALYZING...' : 'START COORDINATED ANALYSIS'}
+            {/* Animated background gradient for active state */}
+            {activeTasks.length > 0 && (
+              <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/30 to-bristol-gold/20 animate-pulse" />
+            )}
+            
+            {/* Glass shimmer effect */}
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-700" />
+            </div>
+            
+            <div className="relative z-10 flex items-center justify-center gap-3">
+              {activeTasks.length > 0 ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-bristol-gold/40 border-t-bristol-gold rounded-full animate-spin" />
+                  <span className="font-bold tracking-wide">AGENTS ANALYZING...</span>
+                </>
+              ) : (
+                <>
+                  <Zap className="h-5 w-5" />
+                  <span className="font-bold tracking-wide">START COORDINATED ANALYSIS</span>
+                </>
+              )}
+            </div>
           </button>
         </div>
+
+        {/* Real-time Agent Output Windows */}
+        {activeTasks.length > 0 && (
+          <div className="bg-black/60 border border-bristol-cyan/30 rounded-2xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-8 h-8 bg-bristol-cyan/20 border border-bristol-cyan/40 rounded-lg flex items-center justify-center">
+                <Terminal className="h-4 w-4 text-bristol-cyan animate-pulse" />
+              </div>
+              <div>
+                <h4 className="text-bristol-cyan font-bold text-lg">LIVE AGENT OUTPUT</h4>
+                <p className="text-bristol-cyan/70 text-sm">Real-time analysis streams from all active agents</p>
+              </div>
+            </div>
+            
+            <div className="grid gap-4">
+              {activeTasks.map((task, index) => {
+                const agent = agents.find(a => a.id === task.agentId);
+                const colorClass = agentColors[task.agentId as keyof typeof agentColors] || 'bristol-cyan';
+                const progress = taskProgress[task.agentId] || 0;
+                
+                return (
+                  <div key={task.id} className={`bg-black/40 border border-${colorClass}/30 rounded-xl p-4`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-6 h-6 bg-${colorClass}/20 border border-${colorClass}/40 rounded-lg flex items-center justify-center`}>
+                          <div className={`w-2 h-2 bg-${colorClass} rounded-full animate-pulse`}></div>
+                        </div>
+                        <div>
+                          <h5 className={`text-${colorClass} font-bold text-sm uppercase tracking-wide`}>
+                            {agent?.name || task.agentId}
+                          </h5>
+                          <p className="text-xs text-gray-400">{task.description}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <span className={`text-xs font-bold text-${colorClass}`}>{progress}%</span>
+                        <div className="w-12 bg-gray-700 rounded-full h-1 mt-1">
+                          <div 
+                            className={`bg-${colorClass} h-1 rounded-full transition-all duration-300`}
+                            style={{ width: `${progress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Live Output Stream */}
+                    <div className={`bg-black/60 border border-${colorClass}/20 rounded-lg p-3 max-h-48 overflow-y-auto cyberpunk-scrollbar`}>
+                      <div className="space-y-1 text-sm font-mono">
+                        {/* Static initialization messages */}
+                        <div className={`text-${colorClass} flex items-center gap-2`}>
+                          <span className={`w-1.5 h-1.5 bg-${colorClass} rounded-full animate-pulse`}></span>
+                          <span>Initializing {agent?.name}...</span>
+                        </div>
+                        <div className="text-gray-300 ml-4">
+                          → Loading property data: {testProperty.name}
+                        </div>
+                        <div className="text-gray-300 ml-4">
+                          → Processing {testProperty.units} units, {testProperty.sqft.toLocaleString()} sq ft
+                        </div>
+                        
+                        {/* Dynamic real-time messages */}
+                        {outputMessages[task.agentId]?.map((msg, idx) => (
+                          <div key={idx} className={`flex items-center gap-2 animate-fade-in ${
+                            msg.type === 'success' ? 'text-green-400' :
+                            msg.type === 'error' ? 'text-red-400' :
+                            msg.type === 'progress' ? `text-${colorClass}` :
+                            'text-gray-300'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              msg.type === 'success' ? 'bg-green-400' :
+                              msg.type === 'error' ? 'bg-red-400' :
+                              msg.type === 'progress' ? `bg-${colorClass} animate-pulse` :
+                              'bg-gray-500'
+                            }`}></span>
+                            <span className="ml-2">→ {msg.text}</span>
+                          </div>
+                        ))}
+                        
+                        {task.status === 'running' && (
+                          <div className={`text-${colorClass} flex items-center gap-2 animate-pulse`}>
+                            <span className={`w-1.5 h-1.5 bg-${colorClass} rounded-full animate-ping`}></span>
+                            <span>Analysis in progress... {progress}% complete</span>
+                          </div>
+                        )}
+                        
+                        {task.status === 'completed' && (
+                          <div className="text-green-400 flex items-center gap-2 animate-fade-in">
+                            <span className="w-1.5 h-1.5 bg-green-400 rounded-full"></span>
+                            <span>✓ Analysis completed successfully</span>
+                          </div>
+                        )}
+                        
+                        {task.status === 'error' && (
+                          <div className="text-red-400 flex items-center gap-2 animate-fade-in">
+                            <span className="w-1.5 h-1.5 bg-red-400 rounded-full"></span>
+                            <span>✗ Analysis failed - API connection error</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            
+            {/* Overall Progress */}
+            <div className="mt-4 p-4 bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-xl">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-bristol-maroon font-semibold text-sm">OVERALL PROGRESS</span>
+                <span className="text-bristol-maroon text-sm">
+                  {Math.round(Object.values(taskProgress).reduce((a: number, b: number) => a + b, 0) / Object.keys(taskProgress).length || 0)}%
+                </span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-bristol-maroon to-bristol-gold h-2 rounded-full transition-all duration-500"
+                  style={{ 
+                    width: `${Math.round(Object.values(taskProgress).reduce((a: number, b: number) => a + b, 0) / Object.keys(taskProgress).length || 0)}%` 
+                  }}
+                ></div>
+              </div>
+              <div className="mt-2 text-xs text-gray-400">
+                {activeTasks.filter(t => t.status === 'completed').length} of {activeTasks.length} agents completed
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Agent Communication Log */}
         {agentCommunication.length > 0 && (
