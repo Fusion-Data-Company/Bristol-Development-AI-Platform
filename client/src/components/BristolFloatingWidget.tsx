@@ -897,7 +897,7 @@ export default function BristolFloatingWidget({
                     mcpEnabled,
                     model 
                   });
-                }
+                }}
                 realTimeData={realTimeData}
                 setRealTimeData={setRealTimeData}
               />}
@@ -1665,7 +1665,7 @@ function AdminPane({
               <Settings className="h-4 w-4 text-bristol-gold" />
             </div>
             <div>
-              <h4 className="text-bristol-gold font-bold text-lg tracking-wide">SYSTEM CONFIGURATION</h4>
+              <h4 className="text-bristol-gold font-bold text-lg tracking-wide">SYSTEM CONFIG</h4>
               <p className="text-bristol-gold/70 text-xs">Enterprise Admin Controls</p>
             </div>
           </div>
