@@ -586,10 +586,10 @@ export default function Dashboard() {
         </div>
         
         {activeTab === "mapping" && (
-          <div className="fixed inset-0 z-40 h-screen bg-bristol-cream flex flex-col">
-            {/* Top Info Panel */}
-            <div className="bg-white/95 backdrop-blur-sm border-b border-bristol-stone p-4 z-20 relative">
-              <div className="flex items-center justify-between">
+          <div className="fixed inset-0 z-40 h-screen bg-bristol-cream flex flex-col m-0 p-0">
+            {/* Top Info Panel - Full Width */}
+            <div className="bg-white/95 backdrop-blur-sm border-b border-bristol-stone p-4 z-20 relative w-full m-0">
+              <div className="flex items-center justify-between max-w-none w-full px-4">
                 <div className="flex items-center gap-4">
                   <img src={bristolLogoPath} alt="Bristol Development Group" className="h-8 w-auto" />
                   <div>
@@ -631,8 +631,8 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Interactive Map Dashboard - Full Width Container */}
-            <div className="flex-1 flex relative w-full h-full">
+            {/* Interactive Map Dashboard - Override All Margins */}
+            <div className="flex-1 flex relative w-full h-full m-0 p-0 max-w-none overflow-hidden">
               <InteractiveMapDashboard />
             </div>
           </div>

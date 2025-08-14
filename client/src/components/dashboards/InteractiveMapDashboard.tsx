@@ -216,7 +216,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
   };
 
   return (
-    <div className="h-full w-full flex bg-bristol-ink">
+    <div className="h-full w-full flex bg-bristol-ink m-0 p-0 max-w-none overflow-hidden">
       {/* Main Map Area - Expanded */}
       <div className="flex-1 relative">
         <InteractiveMap
@@ -229,45 +229,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
           showControls={true}
         />
         
-        {/* Enhanced Map Layers Panel */}
-        <div className="absolute top-4 left-4 z-10">
-          <Card className="bg-gradient-to-br from-bristol-maroon/95 via-bristol-maroon/90 to-bristol-ink/95 backdrop-blur-md shadow-2xl border-2 border-bristol-gold/30 w-72 hover:shadow-bristol-gold/20 hover:shadow-2xl transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/10 via-transparent to-cyan-400/5 rounded-lg"></div>
-            <CardHeader className="pb-3 relative z-10">
-              <CardTitle className="text-sm font-bold text-bristol-gold flex items-center gap-2">
-                <div className="w-6 h-6 rounded-md bg-bristol-gold/20 flex items-center justify-center">
-                  <MapPin className="h-3 w-3 text-bristol-gold" />
-                </div>
-                Bristol Map Layers
-              </CardTitle>
-              <div className="w-full h-px bg-gradient-to-r from-bristol-gold/60 via-bristol-gold/30 to-transparent"></div>
-            </CardHeader>
-            <CardContent className="space-y-3 pt-0 relative z-10">
-              <div className="space-y-3">
-                <label className="flex items-center gap-3 text-sm hover:bg-bristol-gold/10 rounded-lg p-2 transition-all duration-200 cursor-pointer group">
-                  <input type="checkbox" defaultChecked className="rounded border-bristol-gold/50 bg-bristol-ink/50 text-bristol-gold focus:ring-bristol-gold/30" />
-                  <Building className="h-4 w-4 text-bristol-gold group-hover:scale-110 transition-transform duration-200" />
-                  <span className="text-bristol-fog group-hover:text-bristol-gold font-medium">PARLAY Projects</span>
-                </label>
-                <label className="flex items-center gap-3 text-sm hover:bg-cyan-400/10 rounded-lg p-2 transition-all duration-200 cursor-pointer group">
-                  <input type="checkbox" defaultChecked className="rounded border-cyan-400/50 bg-bristol-ink/50 text-cyan-400 focus:ring-cyan-400/30" />
-                  <MapPin className="h-4 w-4 text-cyan-400 group-hover:scale-110 transition-transform duration-200" />
-                  <span className="text-bristol-fog group-hover:text-cyan-400 font-medium">Market Heat Map</span>
-                </label>
-                <label className="flex items-center gap-3 text-sm hover:bg-green-400/10 rounded-lg p-2 transition-all duration-200 cursor-pointer group">
-                  <input type="checkbox" defaultChecked className="rounded border-green-400/50 bg-bristol-ink/50 text-green-400 focus:ring-green-400/30" />
-                  <Users className="h-4 w-4 text-green-400 group-hover:scale-110 transition-transform duration-200" />
-                  <span className="text-bristol-fog group-hover:text-green-400 font-medium">Demographics (ArcGIS)</span>
-                </label>
-                <label className="flex items-center gap-3 text-sm hover:bg-purple-400/10 rounded-lg p-2 transition-all duration-200 cursor-pointer group">
-                  <input type="checkbox" className="rounded border-purple-400/50 bg-bristol-ink/50 text-purple-400 focus:ring-purple-400/30" />
-                  <Home className="h-4 w-4 text-purple-400 group-hover:scale-110 transition-transform duration-200" />
-                  <span className="text-bristol-fog group-hover:text-purple-400 font-medium">Housing Density</span>
-                </label>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+
       </div>
 
       {/* Right Info Panel - Real Data Bristol Market Intelligence - Maximized Width */}
