@@ -658,6 +658,9 @@ Begin your specialized analysis now.`;
         }
       }
     });
+    
+    // Also emit for EventEmitter listeners
+    this.emit('taskStarted', message);
   }
 
   private broadcastTaskResult(task: AgentTask) {
@@ -701,6 +704,7 @@ Begin your specialized analysis now.`;
 
     // Also emit via EventEmitter for local listeners
     this.emit('taskCompleted', message);
+    this.emit('taskStarted', message);
   }
 
   private sendAgentStatus(clientId: string) {
@@ -722,6 +726,10 @@ Begin your specialized analysis now.`;
       agents: agentStatuses,
       timestamp: new Date()
     }));
+  }
+
+  getTask(taskId: string): AgentTask | undefined {
+    return this.tasks.get(taskId);
   }
 
   // Database Operations

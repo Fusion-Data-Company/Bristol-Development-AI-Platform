@@ -99,6 +99,39 @@ router.get('/:agentId', (req, res) => {
   }
 });
 
+// Get live task results for frontend
+router.get('/task-results/:taskId', async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const task = agentManager.getTask(taskId);
+    
+    if (!task) {
+      return res.status(404).json({
+        ok: false,
+        error: 'Task not found'
+      });
+    }
+
+    res.json({
+      ok: true,
+      task: {
+        id: task.id,
+        status: task.status,
+        result: task.result,
+        agentName: task.assignedAgent,
+        completedAt: task.completedAt,
+        error: task.error
+      }
+    });
+  } catch (error) {
+    console.error('Failed to get task result:', error);
+    res.status(500).json({
+      ok: false,
+      error: 'Failed to get task result'
+    });
+  }
+});
+
 // Test single agent execution 
 router.post('/test-single', async (req, res) => {
   try {

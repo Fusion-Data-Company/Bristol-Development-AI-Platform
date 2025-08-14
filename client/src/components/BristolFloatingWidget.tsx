@@ -288,8 +288,10 @@ export default function BristolFloatingWidget({
           [data.task.agentId]: 10
         }));
         
-        // Simulate progress for better UX
+        // Simulate progress for better UX and poll for results
         const agentId = data.task.agentId;
+        const taskId = data.task.id;
+        
         const progressInterval = setInterval(() => {
           setTaskProgress(currentProgress => {
             const current = currentProgress[agentId] || 10;
@@ -303,6 +305,43 @@ export default function BristolFloatingWidget({
             };
           });
         }, 2000);
+
+        // Poll for task results every 3 seconds
+        const pollInterval = setInterval(async () => {
+          try {
+            const response = await fetch(`/api/agents/task-results/${taskId}`);
+            if (response.ok) {
+              const data = await response.json();
+              if (data.ok && data.task.status === 'completed' && data.task.result) {
+                clearInterval(pollInterval);
+                clearInterval(progressInterval);
+                
+                // Update progress to 100%
+                setTaskProgress(prev => ({
+                  ...prev,
+                  [agentId]: 100
+                }));
+                
+                // Display the actual result in chat
+                setMessages(prev => [...prev, {
+                  role: 'assistant',
+                  content: `**${data.task.agentName} Analysis Complete** ✅\n\n${data.task.result}`,
+                  createdAt: nowISO()
+                }]);
+                
+                console.log(`🎯 Received live agent result: ${data.task.agentName}`);
+              }
+            }
+          } catch (error) {
+            console.error('Failed to poll task result:', error);
+          }
+        }, 3000);
+        
+        // Clean up polling after 3 minutes
+        setTimeout(() => {
+          clearInterval(pollInterval);
+          clearInterval(progressInterval);
+        }, 180000);
         break;
         
       case 'task_completed':
