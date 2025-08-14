@@ -7,6 +7,7 @@ The Bristol Site Intelligence Platform is an enterprise-grade, AI-powered real e
 Preferred communication style: Simple, everyday language.
 **CRITICAL BRANDING PREFERENCE:** Dark Bristol header/nav with gold logo in top right corner must NEVER be changed - user has requested this multiple times and styling should remain consistent.
 **THEME PREFERENCE:** All pages created should use light theme by default, not dark themes. Only the header/navigation should remain dark with Bristol branding.
+**AI AGENT IDENTITY:** Bristol Brain Elite now uses updated professional identity: "I'm the Bristol Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor."
 
 ## System Architecture
 
@@ -23,7 +24,7 @@ Preferred communication style: Simple, everyday language.
 - **Runtime**: Node.js with Express.
 - **Database**: PostgreSQL with Neon serverless hosting via Drizzle ORM.
 - **Authentication**: Replit Auth with OpenID Connect.
-- **AI Integration**: OpenRouter API for conversational AI, supporting models like GPT-5, GPT-5 Vision, GPT-5 Reasoning, Claude 4 Opus, Gemini 2.0 Ultra, and Grok 4. The Bristol Brain Elite v5.0 AI agent is permanently in elite mode with advanced persistent memory management, full-screen cyberpunk/glassomorphic popout widget with fixed input bar at bottom, comprehensive PostgreSQL database schema (tables for agents, conversations, memories, files, prompts, context, decisions), and enhanced property analysis visualization with special formatting for IRR/NPV/Cap Rate metrics and risk assessments.
+- **AI Integration**: OpenRouter API + Direct OpenAI BYOK integration for conversational AI, supporting models like GPT-5 (default with BYOK), Grok 4, Claude 4 Opus, Gemini 2.5 Pro, and Perplexity Sonar. The Bristol Brain Elite v5.0 AI agent features GPT-5 as flagship model using OPENAI_API_KEY2 BYOK setup, advanced persistent memory management, full-screen cyberpunk/glassomorphic popout widget with fixed input bar at bottom, comprehensive PostgreSQL database schema (tables for agents, conversations, memories, files, prompts, context, decisions), and enhanced property analysis visualization with special formatting for IRR/NPV/Cap Rate metrics and risk assessments.
 - **File Storage**: Google Cloud Storage.
 - **Real-time Features**: WebSocket server for live updates, chat, and tool execution status.
 - **System Design Choices**: The Bristol Brain acts as a central AI controller with full website API access and MCP (Model Context Protocol) server integration, allowing real-time data injection and tool execution. API tools are designed with a uniform response format `{ ok, params, rows, meta }` and robust error handling. A memory-based caching system is implemented for API responses.

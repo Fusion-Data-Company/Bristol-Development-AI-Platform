@@ -433,14 +433,25 @@ Remember: You're not providing general advice. You're making real-time decisions
         const client = useDirectOpenAI ? this.openaiDirect : this.openai;
         const modelName = useDirectOpenAI ? "gpt-5" : selectedModel;
         
-        completion = await client.chat.completions.create({
+        const requestParams: any = {
           model: modelName,
           messages: aiMessages as any,
-          temperature: 0.2, // Lower temperature for more consistent, professional responses
-          max_tokens: isGPT5 ? 4000 : 2000, // GPT-5 supports higher output tokens
-          presence_penalty: 0.1,
-          frequency_penalty: 0.1,
-        });
+        };
+
+        // GPT-5 has specific parameter requirements
+        if (useDirectOpenAI && isGPT5) {
+          requestParams.max_completion_tokens = 4000;
+          // GPT-5 only supports default temperature (1.0)
+          // Omit temperature, presence_penalty, frequency_penalty for GPT-5
+        } else {
+          requestParams.temperature = 0.2; // Lower temperature for more consistent responses
+          requestParams.presence_penalty = 0.1;
+          requestParams.frequency_penalty = 0.1;
+          requestParams.max_tokens = 2000;
+        }
+
+        console.log(`Bristol Brain Request Params:`, JSON.stringify(requestParams, null, 2));
+        completion = await client.chat.completions.create(requestParams);
       } catch (error: any) {
         console.error(`Bristol Brain API Error for model ${selectedModel}:`, error);
         
