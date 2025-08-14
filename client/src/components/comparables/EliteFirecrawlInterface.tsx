@@ -45,7 +45,18 @@ interface EliteSearchConfig {
   query: string;
   location: string;
   propertyType: string;
-  priceRange: string;
+  priceRange: {
+    min: number;
+    max: number;
+  };
+  unitRange: {
+    min: number;
+    max: number;
+  };
+  yearBuiltRange: {
+    min: number;
+    max: number;
+  };
   amenities: string[];
   limit: number;
 }
@@ -100,7 +111,18 @@ export function EliteFirecrawlInterface() {
     query: 'luxury multifamily apartments',
     location: 'Austin, TX',
     propertyType: 'Multifamily',
-    priceRange: '$1500-$3000',
+    priceRange: {
+      min: 1500,
+      max: 3000
+    },
+    unitRange: {
+      min: 50,
+      max: 500
+    },
+    yearBuiltRange: {
+      min: 2000,
+      max: 2024
+    },
     amenities: [],
     limit: 20
   });
@@ -142,7 +164,9 @@ export function EliteFirecrawlInterface() {
           query: `${config.query} ${config.location} ${config.propertyType}`,
           location: config.location,
           propertyType: config.propertyType,
-          priceRange: config.priceRange,
+          priceRange: `$${config.priceRange.min}-$${config.priceRange.max}`,
+          unitRange: `${config.unitRange.min}-${config.unitRange.max}`,
+          yearBuiltRange: `${config.yearBuiltRange.min}-${config.yearBuiltRange.max}`,
           amenities: config.amenities,
           limit: config.limit
         }),
@@ -360,13 +384,120 @@ export function EliteFirecrawlInterface() {
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="price-range">Price Range</Label>
-                  <Input
-                    id="price-range"
-                    value={searchConfig.priceRange}
-                    onChange={(e) => setSearchConfig(prev => ({ ...prev, priceRange: e.target.value }))}
-                    placeholder="$1500-$3000"
-                  />
+                  <Label>Price Range</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="price-min" className="text-xs text-gray-500">Min Rent</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <Input
+                          id="price-min"
+                          type="number"
+                          value={searchConfig.priceRange.min}
+                          onChange={(e) => setSearchConfig(prev => ({ 
+                            ...prev, 
+                            priceRange: { ...prev.priceRange, min: parseInt(e.target.value) || 0 }
+                          }))}
+                          placeholder="1500"
+                          className="pl-7"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="price-max" className="text-xs text-gray-500">Max Rent</Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                        <Input
+                          id="price-max"
+                          type="number"
+                          value={searchConfig.priceRange.max}
+                          onChange={(e) => setSearchConfig(prev => ({ 
+                            ...prev, 
+                            priceRange: { ...prev.priceRange, max: parseInt(e.target.value) || 0 }
+                          }))}
+                          placeholder="3000"
+                          className="pl-7"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    Range: ${searchConfig.priceRange.min.toLocaleString()} - ${searchConfig.priceRange.max.toLocaleString()}
+                  </div>
+                </div>
+                
+                <div>
+                  <Label>Unit Count Range</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="units-min" className="text-xs text-gray-500">Min Units</Label>
+                      <Input
+                        id="units-min"
+                        type="number"
+                        value={searchConfig.unitRange.min}
+                        onChange={(e) => setSearchConfig(prev => ({ 
+                          ...prev, 
+                          unitRange: { ...prev.unitRange, min: parseInt(e.target.value) || 0 }
+                        }))}
+                        placeholder="50"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="units-max" className="text-xs text-gray-500">Max Units</Label>
+                      <Input
+                        id="units-max"
+                        type="number"
+                        value={searchConfig.unitRange.max}
+                        onChange={(e) => setSearchConfig(prev => ({ 
+                          ...prev, 
+                          unitRange: { ...prev.unitRange, max: parseInt(e.target.value) || 0 }
+                        }))}
+                        placeholder="500"
+                      />
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    Range: {searchConfig.unitRange.min.toLocaleString()} - {searchConfig.unitRange.max.toLocaleString()} units
+                  </div>
+                </div>
+                
+                <div>
+                  <Label>Year Built Range</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <Label htmlFor="year-min" className="text-xs text-gray-500">From Year</Label>
+                      <Input
+                        id="year-min"
+                        type="number"
+                        value={searchConfig.yearBuiltRange.min}
+                        onChange={(e) => setSearchConfig(prev => ({ 
+                          ...prev, 
+                          yearBuiltRange: { ...prev.yearBuiltRange, min: parseInt(e.target.value) || 1990 }
+                        }))}
+                        placeholder="2000"
+                        min="1980"
+                        max="2024"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="year-max" className="text-xs text-gray-500">To Year</Label>
+                      <Input
+                        id="year-max"
+                        type="number"
+                        value={searchConfig.yearBuiltRange.max}
+                        onChange={(e) => setSearchConfig(prev => ({ 
+                          ...prev, 
+                          yearBuiltRange: { ...prev.yearBuiltRange, max: parseInt(e.target.value) || 2024 }
+                        }))}
+                        placeholder="2024"
+                        min="1980"
+                        max="2024"
+                      />
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-1">
+                    Range: {searchConfig.yearBuiltRange.min} - {searchConfig.yearBuiltRange.max}
+                  </div>
                 </div>
               </div>
               
@@ -388,14 +519,32 @@ export function EliteFirecrawlInterface() {
                 </div>
                 <div>
                   <Label htmlFor="search-limit">Results Limit</Label>
-                  <Input
-                    id="search-limit"
-                    type="number"
-                    value={searchConfig.limit}
-                    onChange={(e) => setSearchConfig(prev => ({ ...prev, limit: parseInt(e.target.value) || 20 }))}
-                    min="5"
-                    max="100"
-                  />
+                  <div className="space-y-2">
+                    <Input
+                      id="search-limit"
+                      type="number"
+                      value={searchConfig.limit}
+                      onChange={(e) => setSearchConfig(prev => ({ ...prev, limit: parseInt(e.target.value) || 20 }))}
+                      min="5"
+                      max="100"
+                    />
+                    <div className="grid grid-cols-4 gap-1">
+                      {[10, 25, 50, 100].map(num => (
+                        <Button
+                          key={num}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSearchConfig(prev => ({ ...prev, limit: num }))}
+                          className={searchConfig.limit === num ? 'bg-bristol-maroon text-white' : ''}
+                        >
+                          {num}
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      Expected results: {searchConfig.limit} properties
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -426,25 +575,56 @@ export function EliteFirecrawlInterface() {
                 </div>
                 <div>
                   <Label htmlFor="crawl-depth">Maximum Crawl Depth</Label>
-                  <Input
-                    id="crawl-depth"
-                    type="number"
-                    value={crawlConfig.maxDepth}
-                    onChange={(e) => setCrawlConfig(prev => ({ ...prev, maxDepth: parseInt(e.target.value) || 3 }))}
-                    min="1"
-                    max="5"
-                  />
+                  <Select value={crawlConfig.maxDepth.toString()} onValueChange={(value) => setCrawlConfig(prev => ({ ...prev, maxDepth: parseInt(value) }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1 - Surface Level</SelectItem>
+                      <SelectItem value="2">2 - Property Pages</SelectItem>
+                      <SelectItem value="3">3 - Detailed Analysis</SelectItem>
+                      <SelectItem value="4">4 - Deep Investigation</SelectItem>
+                      <SelectItem value="5">5 - Comprehensive Survey</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="text-xs text-gray-500 mt-1">
+                    Depth {crawlConfig.maxDepth}: {
+                      crawlConfig.maxDepth === 1 ? 'Quick surface scan' :
+                      crawlConfig.maxDepth === 2 ? 'Property details and listings' :
+                      crawlConfig.maxDepth === 3 ? 'Full property analysis' :
+                      crawlConfig.maxDepth === 4 ? 'Deep market investigation' :
+                      'Comprehensive competitive analysis'
+                    }
+                  </div>
                 </div>
                 <div>
-                  <Label htmlFor="crawl-urls">Maximum URLs</Label>
-                  <Input
-                    id="crawl-urls"
-                    type="number"
-                    value={crawlConfig.maxUrls}
-                    onChange={(e) => setCrawlConfig(prev => ({ ...prev, maxUrls: parseInt(e.target.value) || 50 }))}
-                    min="10"
-                    max="500"
-                  />
+                  <Label htmlFor="crawl-urls">Maximum URLs to Process</Label>
+                  <div className="space-y-2">
+                    <Input
+                      id="crawl-urls"
+                      type="number"
+                      value={crawlConfig.maxUrls}
+                      onChange={(e) => setCrawlConfig(prev => ({ ...prev, maxUrls: parseInt(e.target.value) || 50 }))}
+                      min="10"
+                      max="500"
+                    />
+                    <div className="grid grid-cols-4 gap-1">
+                      {[25, 50, 100, 250].map(num => (
+                        <Button
+                          key={num}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setCrawlConfig(prev => ({ ...prev, maxUrls: num }))}
+                          className={crawlConfig.maxUrls === num ? 'bg-bristol-maroon text-white' : ''}
+                        >
+                          {num}
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      Estimated time: {Math.ceil(crawlConfig.maxUrls / 10)} minutes
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <SimpleCheckbox
@@ -608,15 +788,33 @@ export function EliteFirecrawlInterface() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="map-radius">Search Radius (miles)</Label>
-                  <Input
-                    id="map-radius"
-                    type="number"
-                    value={mapConfig.radius}
-                    onChange={(e) => setMapConfig(prev => ({ ...prev, radius: parseInt(e.target.value) || 10 }))}
-                    min="1"
-                    max="50"
-                  />
+                  <Label htmlFor="map-radius">Search Radius</Label>
+                  <div className="space-y-2">
+                    <Input
+                      id="map-radius"
+                      type="number"
+                      value={mapConfig.radius}
+                      onChange={(e) => setMapConfig(prev => ({ ...prev, radius: parseInt(e.target.value) || 10 }))}
+                      min="1"
+                      max="50"
+                    />
+                    <div className="grid grid-cols-5 gap-1">
+                      {[5, 10, 15, 25, 50].map(miles => (
+                        <Button
+                          key={miles}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setMapConfig(prev => ({ ...prev, radius: miles }))}
+                          className={mapConfig.radius === miles ? 'bg-bristol-maroon text-white' : ''}
+                        >
+                          {miles}mi
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {mapConfig.radius} mile radius covers ~{Math.round(Math.PI * mapConfig.radius * mapConfig.radius)} sq mi
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <Label htmlFor="map-type">Analysis Type</Label>
