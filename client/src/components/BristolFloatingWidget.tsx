@@ -1566,6 +1566,43 @@ function AdminPane({
     }
   };
 
+  const testMcpServers = async () => {
+    setLoadingMcp(true);
+    try {
+      const response = await fetch('/api/mcp-test/test-servers', {
+        method: 'POST'
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        const tests = result.testResults;
+        
+        let message = `MCP Server Test Results:\n\n`;
+        message += `Overall Status: ${tests.overallStatus.toUpperCase()}\n`;
+        message += `Running Servers: ${tests.totalRunning}/${tests.totalConfigured}\n\n`;
+        
+        tests.tests.forEach((test: any) => {
+          const status = test.testPassed ? '✅' : '❌';
+          message += `${status} ${test.serverName}: ${test.testDetails}\n`;
+          if (test.actualData) {
+            message += `   Data: ${JSON.stringify(test.actualData, null, 2)}\n`;
+          }
+          if (test.error) {
+            message += `   Error: ${test.error}\n`;
+          }
+        });
+        
+        alert(message);
+      } else {
+        alert("Failed to test MCP servers");
+      }
+    } catch (error) {
+      alert(`Test error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoadingMcp(false);
+    }
+  };
+
   const handleMcpConfigReset = () => {
     const defaultConfig = {
       mcpServers: {
@@ -1610,6 +1647,14 @@ function AdminPane({
             >
               <CircuitBoard className="h-4 w-4" />
               MCP Config
+            </button>
+            <button
+              onClick={testMcpServers}
+              disabled={loadingMcp}
+              className="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+            >
+              <Cpu className="h-4 w-4" />
+              {loadingMcp ? 'Testing...' : 'Test MCP'}
             </button>
             <button
               onClick={onSave}

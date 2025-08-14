@@ -73,6 +73,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // MCP Configuration API
   const mcpConfigRouter = (await import('./api/mcp-config')).default;
   app.use('/api/mcp-config', mcpConfigRouter);
+  
+  // MCP Testing API
+  const mcpTestRouter = (await import('./api/mcp-test')).default;
+  app.use('/api/mcp-test', mcpTestRouter);
 
   // Bristol A.I. Enhanced API with MCP integration
   const bristolBrainRouter = (await import('./api/bristol-brain-enhanced')).default;
