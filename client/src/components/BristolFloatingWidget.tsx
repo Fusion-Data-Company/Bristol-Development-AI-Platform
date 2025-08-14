@@ -2084,12 +2084,6 @@ function AgentsPane({
 
                 const specialization = getAgentSpecialization(task.agentId);
                 
-                // Debug logging
-                console.log('Debug: Task agentId:', task.agentId);
-                console.log('Debug: Agent found:', agent);
-                console.log('Debug: Specialization:', specialization);
-                console.log('Debug: Color class:', colorClass);
-                
                 return (
                   <div key={task.id} className={`bg-black/40 border border-${colorClass}/30 rounded-xl p-4`}>
                     {/* Enhanced Agent Header with Specialization */}
@@ -2100,10 +2094,10 @@ function AgentsPane({
                             <span className="text-lg">{specialization.icon}</span>
                           </div>
                           <div>
-                            <h5 className={`text-${colorClass} font-bold text-sm uppercase tracking-wide`}>
-                              {agent?.name || task.agentId}
+                            <h5 className={`text-${colorClass} font-bold text-base uppercase tracking-wide`}>
+                              {specialization.icon} {agent?.name || task.agentId}
                             </h5>
-                            <p className="text-xs text-gray-400">{agent?.model}</p>
+                            <p className={`text-xs text-${colorClass}/60 font-medium`}>{specialization.category}</p>
                           </div>
                         </div>
                         <div className="text-right">

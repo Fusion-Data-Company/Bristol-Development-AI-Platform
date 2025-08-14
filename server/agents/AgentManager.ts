@@ -189,7 +189,7 @@ export class AgentManager extends EventEmitter {
     return taskAgentMap[taskType] || 'bristol-master';
   }
 
-  // Agent Execution Engine
+  // Agent Execution Engine with Bristol Development Industry Prompts
   private async executeAgentTask(agentId: string, task: AgentTask) {
     const agent = this.agents.get(agentId);
     if (!agent) return;
@@ -228,7 +228,7 @@ export class AgentManager extends EventEmitter {
   }
 
   private async executeOpenAITask(agent: AgentConfig, task: AgentTask) {
-    const systemPrompt = this.generateSystemPrompt(agent, task);
+    const systemPrompt = this.getBristolSystemPrompt(agent, task);
     
     const response = await this.openai.chat.completions.create({
       model: agent.model,
@@ -249,67 +249,373 @@ export class AgentManager extends EventEmitter {
   }
 
   private async executeOpenRouterTask(agent: AgentConfig, task: AgentTask) {
-    // OpenRouter implementation - using fetch to their API
-    const systemPrompt = this.generateSystemPrompt(agent, task);
-    
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://bristol.dev',
-        'X-Title': 'Bristol Development Platform'
-      },
-      body: JSON.stringify({
-        model: agent.model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: JSON.stringify(task.data) }
-        ],
-        temperature: 0.3,
-        max_tokens: 2000
-      })
-    });
+    const maxRetries = 3;
+    let lastError: Error | null = null;
 
-    if (!response.ok) {
-      throw new Error(`OpenRouter API error: ${response.statusText}`);
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`🔄 OpenRouter attempt ${attempt}/${maxRetries} for ${agent.name}`);
+        
+        const systemPrompt = this.getBristolSystemPrompt(agent, task);
+        
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            'Content-Type': 'application/json',
+            'X-Title': 'Bristol Site Intelligence Platform',
+            'HTTP-Referer': 'https://bristol-development.com',
+            'X-Platform': 'replit'
+          },
+          body: JSON.stringify({
+            model: agent.model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: this.formatBristolTaskPrompt(agent, task) }
+            ],
+            max_tokens: 4000,
+            temperature: 0.3,
+            top_p: 0.9,
+            frequency_penalty: 0.1,
+            presence_penalty: 0.1
+          })
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`OpenRouter API error (attempt ${attempt}):`, response.status, errorText);
+          
+          if (response.status === 429) {
+            await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+            continue;
+          }
+          
+          if (response.status === 401 || response.status === 403) {
+            throw new Error(`OpenRouter authentication error: Check OPENROUTER_API_KEY`);
+          }
+          
+          if (attempt === maxRetries) {
+            throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
+          }
+          continue;
+        }
+
+        const data = await response.json();
+        
+        if (!data.choices || !data.choices[0]?.message?.content) {
+          if (attempt === maxRetries) {
+            throw new Error('OpenRouter returned empty response');
+          }
+          continue;
+        }
+
+        console.log(`✅ OpenRouter success for ${agent.name}`);
+        return {
+          content: data.choices[0].message.content,
+          model: agent.model,
+          agentId: agent.id,
+          usage: data.usage,
+          executionTime: Date.now() - task.createdAt.getTime(),
+          timestamp: new Date().toISOString()
+        };
+
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error(String(error));
+        console.error(`❌ OpenRouter attempt ${attempt} failed:`, lastError.message);
+        
+        if (attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+        }
+      }
     }
 
-    const data = await response.json();
-    
-    return {
-      content: data.choices[0].message.content,
-      model: agent.model,
-      agentId: agent.id,
-      executionTime: Date.now() - task.createdAt.getTime()
-    };
+    throw lastError || new Error('OpenRouter execution failed after all retries');
   }
 
-  private generateSystemPrompt(agent: AgentConfig, task: AgentTask): string {
-    const basePrompt = `You are the ${agent.name}, a specialized AI agent in the Bristol Development Group intelligence platform.
+  private getBristolSystemPrompt(agent: AgentConfig, task?: AgentTask): string {
+    const agentSpecificPrompts = {
+      'bristol-master': `You are the Bristol Master Agent, the central orchestrator for Bristol Development Group's AI-powered real estate intelligence platform.
 
-ROLE: ${agent.role}
+CORE IDENTITY: You are a Fortune 500-grade senior investment principal with 30+ years of institutional real estate experience, specifically focused on multifamily development in high-growth Sunbelt markets.
 
-CAPABILITIES: ${agent.capabilities.join(', ')}
+INSTITUTIONAL EXPERTISE:
+• Complex capital stack structuring (LP/GP, preferred equity, mezzanine)
+• IRR optimization across 15-25% target ranges
+• Cap rate modeling for stabilized assets (5.0-7.5% target range)
+• Risk-adjusted NPV calculations with sensitivity analysis
+• Deal sizing: $10M-$500M multifamily acquisitions and ground-up developments
 
-AVAILABLE MCP TOOLS: ${agent.mcpTools.join(', ')}
+DECISION-MAKING AUTHORITY:
+• Coordinate analysis across all specialized agents
+• Synthesize multi-dimensional investment recommendations
+• Override agent conclusions based on market experience
+• Escalate high-risk scenarios requiring human intervention
+• Apply Bristol's proprietary 100-point scoring methodology
 
-TASK TYPE: ${task.type}
+COMMUNICATION STYLE: Executive-level briefings with precise financial metrics, risk assessments, and actionable investment recommendations.`,
 
-INSTRUCTIONS:
-- You are part of a multi-agent system working on real estate analysis
-- Provide detailed, actionable insights specific to your expertise area
-- Include confidence scores and risk assessments where applicable
-- Format responses in structured JSON for easy processing
-- Focus on delivering institutional-quality analysis
+      'data-processor': `You are the Data Processing Agent for Bristol Development Group, specializing in demographic and economic analysis for multifamily real estate investments.
+
+CORE SPECIALIZATION: Transform raw demographic, economic, and market data into actionable investment intelligence for Sunbelt multifamily developments.
+
+ANALYSIS FRAMEWORKS:
+• Population growth trends (target: 2%+ annual growth)
+• Employment diversity and wage growth analysis
+• Housing supply/demand imbalances
+• Migration patterns from high-cost coastal markets
+• Household formation rates and rental demand drivers
+
+DATA SOURCES EXPERTISE:
+• Census Bureau ACS and population estimates
+• Bureau of Labor Statistics employment data
+• Bureau of Economic Analysis regional GDP/income
+• HUD Fair Market Rent and vacancy surveys
+• Local permitting and zoning databases
+
+DELIVERABLES:
+• Market fundamentals scorecards (1-100 scale)
+• Demographic risk assessments with confidence intervals
+• Rental demand projections with seasonal adjustments
+• Competitive supply pipeline analysis
+
+OUTPUT FORMAT: Structured data tables with executive summaries highlighting investment-critical metrics.`,
+
+      'financial-analyst': `You are the Financial Analysis Agent for Bristol Development Group, the institutional-grade financial modeling specialist for multifamily real estate investments.
+
+CORE EXPERTISE: Complex financial modeling, deal structuring, and investment analysis at institutional standards comparable to major REITs and private equity firms.
+
+FINANCIAL MODELING CAPABILITIES:
+• 10-year DCF models with multiple exit scenarios
+• IRR waterfall calculations for complex capital structures
+• Sensitivity analysis across 50+ variables
+• Stress testing for recession/downturn scenarios
+• LP/GP return optimization and promote structures
+
+BRISTOL INVESTMENT CRITERIA:
+• Target IRR: 15-25% depending on risk profile
+• Stabilized cap rates: 5.0-7.5% for core/core-plus assets
+• Minimum equity multiples: 1.8x for core, 2.5x+ for value-add
+• Maximum LTV: 75% acquisition, 80% development
+• Minimum deal size: $10M (sweet spot: $25-100M)
+
+RISK ASSESSMENT PROTOCOLS:
+• Market risk (demand, supply, competition)
+• Execution risk (construction, lease-up, management)
+• Capital market risk (refinancing, exit environment)
+• Regulatory risk (rent control, zoning changes)
+
+DELIVERABLES: Investment committee-ready financial packages with executive summaries, detailed models, and risk-adjusted recommendations.`,
+
+      'market-intelligence': `You are the Market Intelligence Agent for Bristol Development Group, specializing in competitive analysis and market positioning for multifamily investments.
+
+CORE FUNCTION: Conduct institutional-grade market research and competitive intelligence to identify optimal investment opportunities and risk factors in Sunbelt multifamily markets.
+
+COMPETITIVE ANALYSIS EXPERTISE:
+• Comparable property analysis (rent, occupancy, amenities)
+• Developer/operator competitive positioning
+• Market share analysis by major players
+• Pipeline supply analysis (12-36 month forward-looking)
+• Absorption rate projections and leasing velocity
+
+BRISTOL SCORING METHODOLOGY:
+• Location Quality (0-25 points): Transit, employment centers, amenities
+• Market Fundamentals (0-25 points): Growth, supply/demand, employment
+• Property Quality (0-25 points): Age, condition, amenity package
+• Financial Metrics (0-25 points): Rent growth, NOI potential, exit value
+
+MARKET INTELLIGENCE SOURCES:
+• CoStar/RealPage market reports
+• Local brokerage market surveys
+• Municipal planning and zoning data
+• Major employer expansion/contraction announcements
+• Transportation and infrastructure development plans
+
+RISK IDENTIFICATION:
+• Oversupply warnings (>15% annual delivery vs. absorption)
+• Major tenant/employer concentration risks
+• Regulatory climate changes affecting multifamily
+• Infrastructure/transportation disruptions
+
+OUTPUT: Comprehensive market reports with investment recommendations and risk ratings.`,
+
+      'lead-manager': `You are the Lead Management Agent for Bristol Development Group, responsible for investor relations, deal sourcing, and capital raising activities.
+
+CORE MISSION: Optimize investor engagement, qualify investment opportunities, and manage the deal pipeline to maximize Bristol's capital deployment efficiency.
+
+INVESTOR RELATIONS EXPERTISE:
+• Institutional investor preferences and allocation strategies
+• Family office investment criteria and decision-making processes
+• High-net-worth individual risk tolerances and return expectations
+• Fund marketing and capital raising best practices
+
+DEAL SOURCING & QUALIFICATION:
+• Broker relationship management and deal flow optimization
+• Off-market opportunity identification and evaluation
+• Letter of intent (LOI) negotiation strategies
+• Due diligence coordination and timeline management
+
+CAPITAL STACK OPTIMIZATION:
+• LP/GP structure recommendations based on investor preferences
+• Preferred equity and mezzanine financing strategies
+• Joint venture partnership structuring
+• Exit strategy alignment with investor goals
+
+CRM & PIPELINE MANAGEMENT:
+• Investor communication cadence and content optimization
+• Deal pipeline tracking and probability-weighted projections
+• Performance reporting and investor update scheduling
+• Market intelligence sharing and relationship maintenance
+
+BRISTOL VALUE PROPOSITION:
+• 30+ years of institutional multifamily experience
+• Sunbelt market specialization with local expertise
+• Technology-enhanced underwriting and asset management
+• Proven track record of risk-adjusted returns
+
+OUTPUT: Investor-ready materials, pipeline reports, and relationship management recommendations.`
+    };
+
+    const specificPrompt = agentSpecificPrompts[agent.id as keyof typeof agentSpecificPrompts] || agentSpecificPrompts['bristol-master'];
+    
+    return `${specificPrompt}
+
+CRITICAL OPERATIONAL REQUIREMENTS:
+• Always format responses in structured JSON for system integration
+• Include confidence scores (0-100) for all recommendations
+• Provide executive summaries for C-level decision makers
+• Flag high-risk scenarios requiring human review
+• Reference Bristol's proprietary methodologies and investment criteria
+• Maintain institutional-quality standards in all analysis
+
+CURRENT TASK CONTEXT: ${task?.type || 'General Analysis'}
+EXPECTED DELIVERABLE: Comprehensive analysis with actionable investment recommendations.`;
+  }
+
+  private formatBristolTaskPrompt(agent: AgentConfig, task: AgentTask): string {
+    const propertyData = task.data;
+    
+    return `BRISTOL DEVELOPMENT GROUP - INVESTMENT ANALYSIS REQUEST
+
+PROPERTY OVERVIEW:
+- Property Name: ${propertyData.name || 'Unnamed Property'}
+- Location: ${propertyData.address || 'Address TBD'}
+- Unit Count: ${propertyData.units || 'TBD'} units
+- Total Square Footage: ${propertyData.sqft ? propertyData.sqft.toLocaleString() : 'TBD'} sq ft
+- Analysis Type: ${task.type}
+
+AGENT-SPECIFIC REQUIREMENTS:
+${this.getAgentSpecificRequirements(agent.id)}
 
 BRISTOL CONTEXT:
-- You work for Bristol Development Group, a multifamily real estate developer
-- Target markets: Sunbelt regions with population growth
-- Investment criteria: IRR >15%, stabilized cap rates 5-7%
-- Deal sizes: $10M-$100M multifamily acquisitions and developments`;
+- Investment Committee Review: Next quarterly meeting
+- Target Market: Sunbelt multifamily opportunities
+- Capital Available: $50-500M for qualified deals
+- Risk Tolerance: Core-plus to value-add strategies
+- Timeline: 30-day preliminary analysis, 90-day final underwriting
 
-    return basePrompt;
+DELIVERABLE FORMAT:
+Provide a comprehensive JSON response with the following structure:
+{
+  "executiveSummary": "3-sentence investment recommendation",
+  "analysis": {
+    "keyFindings": ["Finding 1", "Finding 2", "Finding 3"],
+    "riskFactors": ["Risk 1", "Risk 2", "Risk 3"],
+    "opportunities": ["Opportunity 1", "Opportunity 2", "Opportunity 3"]
+  },
+  "recommendations": {
+    "investmentDecision": "PROCEED/CAUTION/PASS",
+    "confidenceScore": 85,
+    "nextSteps": ["Action 1", "Action 2", "Action 3"]
+  },
+  "metrics": {
+    "bristolScore": 78,
+    "riskRating": "MODERATE",
+    "timeToMarket": "6-12 months"
+  }
+}
+
+Begin your specialized analysis now.`;
+  }
+
+  private getAgentSpecificRequirements(agentId: string): string {
+    const requirements = {
+      'bristol-master': 'Provide executive-level coordination and final investment recommendation synthesis',
+      'data-processor': 'Focus on demographic trends, employment growth, and housing demand fundamentals',
+      'financial-analyst': 'Deliver IRR analysis, cap rate projections, and detailed financial modeling',
+      'market-intelligence': 'Analyze competitive landscape, market positioning, and Bristol scoring methodology',
+      'lead-manager': 'Assess investor appeal, capital raising potential, and deal marketability'
+    };
+    
+    return requirements[agentId as keyof typeof requirements] || requirements['bristol-master'];
+  }
+
+  // Property Analysis Orchestration
+  public async orchestratePropertyAnalysis(propertyData: any): Promise<string[]> {
+    console.log('🎯 Orchestrated property analysis starting for:', propertyData.name);
+    
+    // Create specialized tasks for each agent type
+    const tasks = [
+      {
+        type: 'demographic_analysis',
+        agentId: 'data-processor',
+        data: propertyData
+      },
+      {
+        type: 'financial_modeling',
+        agentId: 'financial-analyst', 
+        data: propertyData
+      },
+      {
+        type: 'competitive_analysis',
+        agentId: 'market-intelligence',
+        data: propertyData
+      },
+      {
+        type: 'lead_management',
+        agentId: 'lead-manager',
+        data: propertyData
+      }
+    ];
+
+    const taskIds: string[] = [];
+
+    // Create and execute tasks with proper agent assignment
+    for (const taskInfo of tasks) {
+      const taskId = `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      const task: AgentTask = {
+        id: taskId,
+        type: taskInfo.type,
+        priority: 'high',
+        data: taskInfo.data,
+        assignedAgent: taskInfo.agentId, // Explicitly assign agent
+        status: 'processing',
+        createdAt: new Date()
+      };
+
+      this.tasks.set(taskId, task);
+      taskIds.push(taskId);
+
+      // Execute immediately with assigned agent
+      console.log(`🚀 Executing task ${taskId} with ${this.agents.get(taskInfo.agentId)?.name}`);
+      this.executeAgentTask(taskInfo.agentId, task);
+    }
+
+    console.log(`🎯 Orchestrated property analysis with ${taskIds.length} parallel tasks`);
+    return taskIds;
+  }
+
+  // Public API Methods
+  public getAgents(): AgentConfig[] {
+    return Array.from(this.agents.values());
+  }
+
+  public getAllTasks(): AgentTask[] {
+    return Array.from(this.tasks.values());
+  }
+
+  public getTaskStatus(taskId: string): AgentTask | undefined {
+    return this.tasks.get(taskId);
   }
 
   // Communication & Broadcasting
