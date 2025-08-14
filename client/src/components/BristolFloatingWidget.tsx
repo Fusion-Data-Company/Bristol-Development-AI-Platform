@@ -1600,9 +1600,282 @@ function AgentsPane({
           </div>
         </div>
 
-        {/* Agent Grid */}
+        {/* Agent Specialization Headers */}
+        <div className="grid gap-6">
+          {/* Master Coordination Agent */}
+          <div className="space-y-4">
+            <div className="bg-gradient-to-r from-bristol-cyan/20 via-bristol-cyan/10 to-transparent border-l-4 border-bristol-cyan rounded-r-xl p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-bristol-cyan/20 border border-bristol-cyan/40 rounded-lg flex items-center justify-center">
+                  <Brain className="h-5 w-5 text-bristol-cyan" />
+                </div>
+                <div>
+                  <h3 className="text-bristol-cyan font-bold text-lg uppercase tracking-wide">MASTER COORDINATION</h3>
+                  <p className="text-bristol-cyan/80 text-sm">Orchestrates multi-agent analysis, synthesizes insights, and coordinates decision-making</p>
+                </div>
+              </div>
+            </div>
+            {agents.filter(agent => agent.id === 'master').map((agent, index) => {
+              const status = getAgentStatus(agent.id);
+              const colorClass = 'bristol-cyan';
+              const task = activeTasks.find(t => t.agentId === agent.id);
+              const progress = taskProgress[agent.id] || 0;
+
+              return (
+                <div 
+                  key={agent.id}
+                  className={`bg-black/40 border rounded-2xl p-4 transition-all duration-300 cursor-pointer hover:border-${colorClass}/50 ${
+                    selectedAgent === agent.id ? `border-${colorClass}/60 bg-${colorClass}/5` : 'border-gray-700'
+                  }`}
+                  onClick={() => setSelectedAgent(selectedAgent === agent.id ? null : agent.id)}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 bg-${colorClass}/20 border border-${colorClass}/40 rounded-lg flex items-center justify-center`}>
+                        <span className="text-lg">{status.icon}</span>
+                      </div>
+                      <div>
+                        <h5 className={`text-${colorClass} font-bold text-sm uppercase tracking-wide`}>
+                          {agent.name}
+                        </h5>
+                        <p className="text-xs text-gray-400">{agent.model}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-bold text-${colorClass}`}>{status.text}</span>
+                      <div className={`w-2 h-2 rounded-full ${status.color} ${status.text === 'ACTIVE' ? 'animate-pulse' : ''}`}></div>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-300 text-sm mb-3">{agent.description}</p>
+
+                  {task && (
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-gray-400">Current Task</span>
+                        <span className="text-xs text-gray-400">{progress}%</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-1.5">
+                        <div 
+                          className={`bg-${colorClass} h-1.5 rounded-full transition-all duration-300`}
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">{task.description}</p>
+                    </div>
+                  )}
+
+                  {selectedAgent === agent.id && agentCommunication.filter(msg => msg.from === agent.id || msg.to === agent.id).length > 0 && (
+                    <div className="mt-4 pt-3 border-t border-gray-700">
+                      <h6 className="text-xs font-semibold text-gray-300 mb-2">RECENT COMMUNICATION</h6>
+                      <div className="space-y-2 max-h-32 overflow-y-auto">
+                        {agentCommunication
+                          .filter(msg => msg.from === agent.id || msg.to === agent.id)
+                          .slice(-3)
+                          .map((msg, idx) => (
+                            <div key={idx} className="text-xs p-2 bg-gray-800/50 rounded border border-gray-600">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-gray-400">{msg.from}</span>
+                                <span className="text-gray-500">→</span>
+                                <span className="text-gray-400">{msg.to}</span>
+                                <span className="text-gray-500 ml-auto">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                              </div>
+                              <p className="text-gray-300">{msg.message}</p>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Data & Market Intelligence Agents */}
+          <div className="space-y-4">
+            <div className="bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/10 to-transparent border-l-4 border-bristol-gold rounded-r-xl p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-bristol-gold/20 border border-bristol-gold/40 rounded-lg flex items-center justify-center">
+                  <Database className="h-5 w-5 text-bristol-gold" />
+                </div>
+                <div>
+                  <h3 className="text-bristol-gold font-bold text-lg uppercase tracking-wide">DATA & MARKET INTELLIGENCE</h3>
+                  <p className="text-bristol-gold/80 text-sm">Processes demographics, economic data, and analyzes market trends & comparables</p>
+                </div>
+              </div>
+            </div>
+            {agents.filter(agent => agent.id === 'data-processing' || agent.id === 'market-intelligence').map((agent, index) => {
+              const status = getAgentStatus(agent.id);
+              const colorClass = agent.id === 'data-processing' ? 'bristol-gold' : 'purple-400';
+              const task = activeTasks.find(t => t.agentId === agent.id);
+              const progress = taskProgress[agent.id] || 0;
+
+              return (
+                <div 
+                  key={agent.id}
+                  className={`bg-black/40 border rounded-2xl p-4 transition-all duration-300 cursor-pointer hover:border-${colorClass}/50 ${
+                    selectedAgent === agent.id ? `border-${colorClass}/60 bg-${colorClass}/5` : 'border-gray-700'
+                  }`}
+                  onClick={() => setSelectedAgent(selectedAgent === agent.id ? null : agent.id)}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 bg-${colorClass}/20 border border-${colorClass}/40 rounded-lg flex items-center justify-center`}>
+                        <span className="text-lg">{status.icon}</span>
+                      </div>
+                      <div>
+                        <h5 className={`text-${colorClass} font-bold text-sm uppercase tracking-wide`}>
+                          {agent.name}
+                        </h5>
+                        <p className="text-xs text-gray-400">{agent.model}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-bold text-${colorClass}`}>{status.text}</span>
+                      <div className={`w-2 h-2 rounded-full ${status.color} ${status.text === 'ACTIVE' ? 'animate-pulse' : ''}`}></div>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-300 text-sm mb-3">{agent.description}</p>
+
+                  {task && (
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-gray-400">Current Task</span>
+                        <span className="text-xs text-gray-400">{progress}%</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-1.5">
+                        <div 
+                          className={`bg-${colorClass} h-1.5 rounded-full transition-all duration-300`}
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">{task.description}</p>
+                    </div>
+                  )}
+
+                  {selectedAgent === agent.id && agentCommunication.filter(msg => msg.from === agent.id || msg.to === agent.id).length > 0 && (
+                    <div className="mt-4 pt-3 border-t border-gray-700">
+                      <h6 className="text-xs font-semibold text-gray-300 mb-2">RECENT COMMUNICATION</h6>
+                      <div className="space-y-2 max-h-32 overflow-y-auto">
+                        {agentCommunication
+                          .filter(msg => msg.from === agent.id || msg.to === agent.id)
+                          .slice(-3)
+                          .map((msg, idx) => (
+                            <div key={idx} className="text-xs p-2 bg-gray-800/50 rounded border border-gray-600">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-gray-400">{msg.from}</span>
+                                <span className="text-gray-500">→</span>
+                                <span className="text-gray-400">{msg.to}</span>
+                                <span className="text-gray-500 ml-auto">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                              </div>
+                              <p className="text-gray-300">{msg.message}</p>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Financial & Lead Management Agents */}
+          <div className="space-y-4">
+            <div className="bg-gradient-to-r from-emerald-400/20 via-emerald-400/10 to-transparent border-l-4 border-emerald-400 rounded-r-xl p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-emerald-400/20 border border-emerald-400/40 rounded-lg flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-emerald-400" />
+                </div>
+                <div>
+                  <h3 className="text-emerald-400 font-bold text-lg uppercase tracking-wide">FINANCIAL & LEAD MANAGEMENT</h3>
+                  <p className="text-emerald-400/80 text-sm">Calculates IRR/NPV/Cap rates and manages investor lead conversion strategies</p>
+                </div>
+              </div>
+            </div>
+            {agents.filter(agent => agent.id === 'financial-analysis' || agent.id === 'lead-management').map((agent, index) => {
+              const status = getAgentStatus(agent.id);
+              const colorClass = agent.id === 'financial-analysis' ? 'emerald-400' : 'pink-400';
+              const task = activeTasks.find(t => t.agentId === agent.id);
+              const progress = taskProgress[agent.id] || 0;
+
+              return (
+                <div 
+                  key={agent.id}
+                  className={`bg-black/40 border rounded-2xl p-4 transition-all duration-300 cursor-pointer hover:border-${colorClass}/50 ${
+                    selectedAgent === agent.id ? `border-${colorClass}/60 bg-${colorClass}/5` : 'border-gray-700'
+                  }`}
+                  onClick={() => setSelectedAgent(selectedAgent === agent.id ? null : agent.id)}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 bg-${colorClass}/20 border border-${colorClass}/40 rounded-lg flex items-center justify-center`}>
+                        <span className="text-lg">{status.icon}</span>
+                      </div>
+                      <div>
+                        <h5 className={`text-${colorClass} font-bold text-sm uppercase tracking-wide`}>
+                          {agent.name}
+                        </h5>
+                        <p className="text-xs text-gray-400">{agent.model}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <span className={`text-xs font-bold text-${colorClass}`}>{status.text}</span>
+                      <div className={`w-2 h-2 rounded-full ${status.color} ${status.text === 'ACTIVE' ? 'animate-pulse' : ''}`}></div>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-300 text-sm mb-3">{agent.description}</p>
+
+                  {task && (
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-gray-400">Current Task</span>
+                        <span className="text-xs text-gray-400">{progress}%</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-1.5">
+                        <div 
+                          className={`bg-${colorClass} h-1.5 rounded-full transition-all duration-300`}
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">{task.description}</p>
+                    </div>
+                  )}
+
+                  {selectedAgent === agent.id && agentCommunication.filter(msg => msg.from === agent.id || msg.to === agent.id).length > 0 && (
+                    <div className="mt-4 pt-3 border-t border-gray-700">
+                      <h6 className="text-xs font-semibold text-gray-300 mb-2">RECENT COMMUNICATION</h6>
+                      <div className="space-y-2 max-h-32 overflow-y-auto">
+                        {agentCommunication
+                          .filter(msg => msg.from === agent.id || msg.to === agent.id)
+                          .slice(-3)
+                          .map((msg, idx) => (
+                            <div key={idx} className="text-xs p-2 bg-gray-800/50 rounded border border-gray-600">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-gray-400">{msg.from}</span>
+                                <span className="text-gray-500">→</span>
+                                <span className="text-gray-400">{msg.to}</span>
+                                <span className="text-gray-500 ml-auto">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                              </div>
+                              <p className="text-gray-300">{msg.message}</p>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Legacy Agent Grid (fallback for any remaining agents) */}
         <div className="grid gap-4">
-          {agents.map((agent, index) => {
+          {agents.filter(agent => !['master', 'data-processing', 'market-intelligence', 'financial-analysis', 'lead-management'].includes(agent.id)).map((agent, index) => {
             const status = getAgentStatus(agent.id);
             const colorClass = agentColors[agent.id as keyof typeof agentColors] || 'bristol-cyan';
             const task = activeTasks.find(t => t.agentId === agent.id);
