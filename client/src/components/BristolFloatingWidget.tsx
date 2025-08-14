@@ -1180,25 +1180,81 @@ function AdminPane({
                   }
                 }
               }}
-              className="px-6 py-3 bg-bristol-maroon hover:bg-bristol-maroon/90 border-2 border-bristol-maroon rounded-xl text-white font-bold text-sm transition-all duration-200 hover:shadow-xl hover:shadow-bristol-maroon/60 hover:scale-105"
+              className="px-6 py-3 rounded-xl text-white font-bold text-sm transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden group"
               style={{
-                backgroundColor: '#8B1538',
-                borderColor: '#8B1538',
-                boxShadow: '0 4px 12px rgba(139, 21, 56, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                background: 'linear-gradient(135deg, rgba(139, 21, 56, 0.9) 0%, rgba(139, 21, 56, 0.8) 50%, rgba(139, 21, 56, 0.9) 100%)',
+                backdropFilter: 'blur(20px) saturate(1.8)',
+                border: '1px solid rgba(139, 21, 56, 0.6)',
+                boxShadow: `
+                  0 8px 32px rgba(139, 21, 56, 0.4),
+                  0 0 0 1px rgba(255, 255, 255, 0.1),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                  inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                `,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(139, 21, 56, 1) 0%, rgba(159, 31, 66, 0.95) 50%, rgba(139, 21, 56, 1) 100%)';
+                e.currentTarget.style.boxShadow = `
+                  0 12px 40px rgba(139, 21, 56, 0.6),
+                  0 0 0 1px rgba(255, 255, 255, 0.2),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                  inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                `;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(139, 21, 56, 0.9) 0%, rgba(139, 21, 56, 0.8) 50%, rgba(139, 21, 56, 0.9) 100%)';
+                e.currentTarget.style.boxShadow = `
+                  0 8px 32px rgba(139, 21, 56, 0.4),
+                  0 0 0 1px rgba(255, 255, 255, 0.1),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                  inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                `;
               }}
             >
-              Save Prompt
+              {/* Glass shimmer effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-700" />
+              </div>
+              <span className="relative z-10">Save Prompt</span>
             </button>
             <button
               onClick={() => setSystemPrompt(DEFAULT_MEGA_PROMPT)}
-              className="px-6 py-3 bg-bristol-gold hover:bg-bristol-gold/90 border-2 border-bristol-gold rounded-xl text-black font-bold text-sm transition-all duration-200 hover:shadow-xl hover:shadow-bristol-gold/60 hover:scale-105"
+              className="px-6 py-3 rounded-xl text-black font-bold text-sm transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden group"
               style={{
-                backgroundColor: '#fbbf24',
-                borderColor: '#fbbf24',
-                boxShadow: '0 4px 12px rgba(251, 191, 36, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+                background: 'linear-gradient(135deg, rgba(251, 191, 36, 0.95) 0%, rgba(251, 191, 36, 0.85) 50%, rgba(251, 191, 36, 0.95) 100%)',
+                backdropFilter: 'blur(20px) saturate(1.8)',
+                border: '1px solid rgba(251, 191, 36, 0.8)',
+                boxShadow: `
+                  0 8px 32px rgba(251, 191, 36, 0.4),
+                  0 0 0 1px rgba(255, 255, 255, 0.2),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                  inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                `,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(251, 191, 36, 1) 0%, rgba(255, 211, 56, 0.95) 50%, rgba(251, 191, 36, 1) 100%)';
+                e.currentTarget.style.boxShadow = `
+                  0 12px 40px rgba(251, 191, 36, 0.6),
+                  0 0 0 1px rgba(255, 255, 255, 0.3),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                  inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                `;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'linear-gradient(135deg, rgba(251, 191, 36, 0.95) 0%, rgba(251, 191, 36, 0.85) 50%, rgba(251, 191, 36, 0.95) 100%)';
+                e.currentTarget.style.boxShadow = `
+                  0 8px 32px rgba(251, 191, 36, 0.4),
+                  0 0 0 1px rgba(255, 255, 255, 0.2),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                  inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                `;
               }}
             >
-              Reset to Default
+              {/* Glass shimmer effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[200%] transition-transform duration-700" />
+              </div>
+              <span className="relative z-10">Reset to Default</span>
             </button>
           </div>
         </div>
