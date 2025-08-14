@@ -125,12 +125,16 @@ export default function BristolFloatingWidget({
   className,
 }: BristolWidgetProps) {
   const [open, setOpen] = useState(false);
-  // Single chat-focused interface - no tabs needed
+  const [activeTab, setActiveTab] = useState("chat");
   const [model, setModel] = useState(defaultModel || "");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [systemPrompt, setSystemPrompt] = useState<string>(defaultSystemPrompt || DEFAULT_MEGA_PROMPT);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: "system", content: systemPrompt, createdAt: nowISO() },
+    {
+      role: "assistant",
+      content: "Welcome to Bristol Brain Elite v5.0. I provide institutional-grade real estate analysis including property valuations, market intelligence, demographic analytics, and investment opportunity assessments. Ask me about specific properties, portfolio performance, market trends, or complex deal structures.",
+      createdAt: nowISO(),
+    }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -529,10 +533,10 @@ export default function BristolFloatingWidget({
                     </div>
                   </div>
                   <div>
-                    <h1 className="font-serif font-bold text-xl bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">
+                    <h1 className="font-serif font-bold text-2xl bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">
                       BRISTOL BRAIN
                     </h1>
-                    <p className="text-xs text-bristol-cyan/90 font-semibold tracking-wider uppercase mt-1">
+                    <p className="text-lg text-bristol-cyan font-bold tracking-wide uppercase mt-1 drop-shadow-lg">
                       AI Real Estate Intelligence
                     </p>
                   </div>
@@ -551,70 +555,42 @@ export default function BristolFloatingWidget({
                 </button>
               </div>
               
-              {/* Enterprise Welcome Banner */}
-              <div 
-                className="relative px-6 py-5 border-b border-bristol-cyan/30 overflow-hidden"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.05) 25%, rgba(168, 85, 247, 0.03) 50%, rgba(69, 214, 202, 0.05) 75%, rgba(15, 23, 42, 0.8) 100%)',
-                  backdropFilter: 'blur(15px)',
-                }}
-              >
-                {/* Animated background effects */}
-                <div className="absolute -top-5 -left-10 w-32 h-32 bg-bristol-cyan/8 rounded-full blur-2xl animate-pulse" />
-                <div className="absolute -bottom-5 -right-10 w-24 h-24 bg-bristol-gold/8 rounded-full blur-xl animate-pulse delay-1000" />
-                <div className="absolute top-0 left-1/3 right-1/3 h-px bg-gradient-to-r from-transparent via-bristol-cyan/50 to-transparent" />
-                
-                <div className="relative z-10">
-                  <div className="flex items-center gap-4 mb-3">
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-bristol-gold blur-xl opacity-50 animate-pulse" />
-                      <div className="relative w-8 h-8 rounded-xl bg-gradient-to-r from-bristol-gold via-bristol-electric to-bristol-cyan flex items-center justify-center">
-                        <Sparkles className="h-4 w-4 text-white animate-pulse" />
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-black text-white bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent">
-                        ENTERPRISE AI SYSTEM ACTIVE
-                      </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
-                        <span className="text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider">
-                          FORTUNE 500 INTELLIGENCE READY
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div 
-                    className="p-4 rounded-2xl border backdrop-blur-sm"
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.1) 0%, rgba(168, 85, 247, 0.05) 50%, rgba(15, 23, 42, 0.3) 100%)',
-                      borderColor: 'rgba(69, 214, 202, 0.3)',
-                    }}
+              {/* Navigation Tabs */}
+              <div className="border-b border-bristol-cyan/30 bg-bristol-ink/20">
+                <div className="flex">
+                  <button
+                    onClick={() => setActiveTab("chat")}
+                    className={cx(
+                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
+                      activeTab === "chat"
+                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                    )}
                   >
-                    <p className="text-sm text-white font-medium leading-relaxed">
-                      <strong className="text-bristol-cyan">Welcome to Bristol Brain Elite v5.0.</strong> I provide institutional-grade real estate analysis including property valuations, market intelligence, demographic analytics, and investment opportunity assessments. Ask me about specific properties, portfolio performance, market trends, or complex deal structures.
-                    </p>
-                    
-                    <div className="grid grid-cols-2 gap-3 mt-4">
-                      <div className="flex items-center gap-2 text-xs text-bristol-cyan/90">
-                        <TrendingUp className="h-3 w-3" />
-                        <span className="font-medium">Market Analysis Ready</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-bristol-gold/90">
-                        <Database className="h-3 w-3" />
-                        <span className="font-medium">Portfolio Data Active</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-bristol-electric/90">
-                        <Building2 className="h-3 w-3" />
-                        <span className="font-medium">Property Intel Online</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-white/80">
-                        <Shield className="h-3 w-3" />
-                        <span className="font-medium">Enterprise Secure</span>
-                      </div>
-                    </div>
-                  </div>
+                    AI Chat
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("tools")}
+                    className={cx(
+                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
+                      activeTab === "tools"
+                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                    )}
+                  >
+                    Tools
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("settings")}
+                    className={cx(
+                      "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300",
+                      activeTab === "settings"
+                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                    )}
+                  >
+                    Settings
+                  </button>
                 </div>
               </div>
             </div>
@@ -701,24 +677,54 @@ export default function BristolFloatingWidget({
 
 
 
-            {/* Glass Body Container - Full Height with Fixed Layout */}
+            {/* Tabbed Content Area */}
             <div 
               className="flex-1 min-h-0 relative flex flex-col overflow-hidden"
               style={{
                 background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.2) 50%, rgba(15, 23, 42, 0.4) 100%)',
               }}
             >
-              {/* Chat Content Area - Full Screen */}
-              <div className="flex-1 overflow-hidden flex flex-col">
-                {/* Subtle ambient glow */}
-                <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
-                <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
-                
-                <ChatPane messages={messages} loading={loading} />
-              </div>
+              {/* Tab Content */}
+              {activeTab === "chat" && (
+                <div className="flex-1 overflow-hidden flex flex-col">
+                  <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
+                  <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
+                  <ChatPane messages={messages} loading={loading} />
+                </div>
+              )}
+
+              {activeTab === "tools" && (
+                <div className="flex-1 overflow-y-auto p-6">
+                  <h3 className="text-xl font-bold text-bristol-cyan mb-4">MCP Tools & APIs</h3>
+                  <div className="grid gap-4">
+                    <div className="p-4 rounded-xl border border-bristol-cyan/30 bg-bristol-ink/20">
+                      <h4 className="text-lg font-bold text-white mb-2">Available Tools</h4>
+                      <p className="text-sm text-bristol-cyan/80">Real estate analysis tools, demographic APIs, and market intelligence systems are available through the chat interface.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "settings" && (
+                <div className="flex-1 overflow-y-auto p-6">
+                  <h3 className="text-xl font-bold text-bristol-cyan mb-4">System Settings</h3>
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-xl border border-bristol-cyan/30 bg-bristol-ink/20">
+                      <label className="block text-sm font-bold text-white mb-2">System Prompt</label>
+                      <textarea
+                        className="w-full h-32 p-3 rounded-xl bg-bristol-ink/40 border border-bristol-cyan/30 text-white text-sm"
+                        value={systemPrompt}
+                        onChange={(e) => setSystemPrompt(e.target.value)}
+                        placeholder="Configure the AI system prompt..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Glass Chat Composer - Fixed at Bottom */}
+            {/* Glass Chat Composer - Fixed at Bottom - Only show on chat tab */}
+            {activeTab === "chat" && (
             <div 
                 className="border-t border-bristol-cyan/40 relative flex-shrink-0"
                 style={{
@@ -800,10 +806,10 @@ export default function BristolFloatingWidget({
                   </button>
                 </div>
               </div>
+            )}
           </div>
         </div>
       )}
-      
 
     </>
   );
