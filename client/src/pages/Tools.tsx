@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Chrome from "@/components/brand/Chrome";
+import Chrome from "@/components/brand/SimpleChrome";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, TrendingUp, Home, MapPin, Shield, Cloud } from "lucide-react";
