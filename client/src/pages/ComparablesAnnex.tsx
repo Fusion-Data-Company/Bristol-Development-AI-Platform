@@ -556,25 +556,8 @@ export default function ComparablesAnnex() {
             </div>
           )}
 
-          {/* Scraper Job Manager */}
-          <div className="mb-8">
-            <ScraperJobManager />
-          </div>
-
-          {/* Analytics Panels */}
-          <div className="grid lg:grid-cols-3 gap-6 mb-8">
-            <AIAnalyticsPanel data={comps} />
-            <DataVisualization data={comps} />
-            <CompAnalysisWidget data={comps} />
-          </div>
-
-          {/* Production Validation */}
-          <div className="mb-8">
-            <ProductionValidation />
-          </div>
-
-          {/* Main Data Table */}
-          <Card className="bg-white/90 backdrop-blur border-bristol-gold/30 shadow-2xl">
+          {/* Main Data Table - Moved to Top Priority */}
+          <Card className="bg-white/90 backdrop-blur border-bristol-gold/30 shadow-2xl mb-8">
             <CardHeader className="bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 border-b border-bristol-gold/20">
               <CardTitle className="flex items-center gap-3 text-xl">
                 <div className="p-2 bg-bristol-maroon/10 rounded-lg">
@@ -596,6 +579,23 @@ export default function ComparablesAnnex() {
               )}
             </CardContent>
           </Card>
+
+          {/* Scraper Job Manager */}
+          <div className="mb-8">
+            <ScraperJobManager />
+          </div>
+
+          {/* Analytics Panels */}
+          <div className="grid lg:grid-cols-3 gap-6 mb-8">
+            <AIAnalyticsPanel data={comps} />
+            <DataVisualization data={comps} />
+            <CompAnalysisWidget data={comps} />
+          </div>
+
+          {/* Production Validation */}
+          <div className="mb-8">
+            <ProductionValidation />
+          </div>
         </div>
       </div>
     </Chrome>
