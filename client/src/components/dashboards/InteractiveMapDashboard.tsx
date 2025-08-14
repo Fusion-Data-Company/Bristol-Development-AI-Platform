@@ -216,8 +216,8 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
   };
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex bg-bristol-ink">
-      {/* Main Map Area */}
+    <div className="h-screen w-full flex bg-bristol-ink">
+      {/* Main Map Area - Now takes remaining space after larger sidebar */}
       <div className="flex-1 relative">
         <InteractiveMap
           sites={sites}
@@ -263,8 +263,8 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
         </div>
       </div>
 
-      {/* Right Info Panel - Real Data Bristol Market Intelligence */}
-      <div className="w-80 bg-white/95 backdrop-blur-sm border-l border-bristol-stone p-4 overflow-y-auto">
+      {/* Right Info Panel - Real Data Bristol Market Intelligence - Expanded Width */}
+      <div className="w-96 bg-white/95 backdrop-blur-sm border-l border-bristol-stone p-4 overflow-y-auto">
         <div className="space-y-4">
           <div>
             <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2 flex items-center gap-2">
