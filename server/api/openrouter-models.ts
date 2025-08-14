@@ -3,34 +3,46 @@ import { Router } from 'express';
 const router = Router();
 
 const ELITE_MODELS = new Set<string>([
-  "openai/gpt-5",
   "openai/gpt-5-chat",
+  "openai/gpt-5-vision",
+  "openai/gpt-5-reasoning",
+  "anthropic/claude-4-opus",
+  "google/gemini-2.0-ultra",
+  "x-ai/grok-4",
   "anthropic/claude-opus-4",
   "anthropic/claude-opus-4.1",
   "anthropic/claude-sonnet-4",
-  "x-ai/grok-4",
   "google/gemini-2.5-pro",
   "google/gemini-2.5-flash",
   "perplexity/sonar-deep-research",
   "perplexity/sonar-reasoning",
   "perplexity/sonar-pro",
-  "perplexity/sonar-reasoning-pro"
+  "perplexity/sonar-reasoning-pro",
+  "openai/gpt-4o-2024-11-20",
+  "google/gemini-pro-1.5",
+  "perplexity/llama-3.2-online"
 ]);
 
 function getModelLabel(slug: string): string {
   const labelMap: Record<string, string> = {
-    "openai/gpt-5": "GPT-5",
     "openai/gpt-5-chat": "GPT-5 Chat",
+    "openai/gpt-5-vision": "GPT-5 Vision",
+    "openai/gpt-5-reasoning": "GPT-5 Reasoning",
+    "anthropic/claude-4-opus": "Claude 4 Opus",
+    "google/gemini-2.0-ultra": "Gemini 2.0 Ultra",
+    "x-ai/grok-4": "xAI: Grok 4",
     "anthropic/claude-opus-4": "Claude Opus 4",
     "anthropic/claude-opus-4.1": "Claude Opus 4.1",
     "anthropic/claude-sonnet-4": "Claude Sonnet 4",
-    "x-ai/grok-4": "Grok 4",
     "google/gemini-2.5-pro": "Gemini 2.5 Pro",
     "google/gemini-2.5-flash": "Gemini 2.5 Flash",
     "perplexity/sonar-deep-research": "Sonar Deep Research",
     "perplexity/sonar-reasoning": "Sonar Reasoning",
     "perplexity/sonar-pro": "Sonar Pro",
-    "perplexity/sonar-reasoning-pro": "Sonar Reasoning Pro"
+    "perplexity/sonar-reasoning-pro": "Sonar Reasoning Pro",
+    "openai/gpt-4o-2024-11-20": "GPT-4o (2024-11-20)",
+    "google/gemini-pro-1.5": "Gemini Pro 1.5",
+    "perplexity/llama-3.2-online": "Llama 3.2 Online"
   };
   return labelMap[slug] || slug;
 }
@@ -70,7 +82,7 @@ router.get('/', async (req, res) => {
 
     // Prefer GPT-5 Chat as the default model
     filtered.sort((a: any, b: any) => {
-      const preferred = ["openai/gpt-5-chat", "openai/gpt-5", "anthropic/claude-opus-4.1", "google/gemini-2.5-pro"];
+      const preferred = ["openai/gpt-5-chat", "openai/gpt-5-vision", "openai/gpt-5-reasoning", "anthropic/claude-4-opus", "google/gemini-2.0-ultra", "x-ai/grok-4"];
       const aIndex = preferred.indexOf(a.id);
       const bIndex = preferred.indexOf(b.id);
       if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;

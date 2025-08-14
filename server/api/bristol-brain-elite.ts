@@ -67,7 +67,15 @@ router.post("/chat", async (req, res) => {
       enableAdvancedReasoning,
     });
     
-    res.json(response);
+    // Return in format expected by frontend
+    res.json({
+      text: response.content,
+      message: response.content,
+      content: response.content,
+      role: response.role,
+      createdAt: response.createdAt,
+      metadata: response.metadata,
+    });
   } catch (error) {
     console.error("Bristol Brain Elite Error:", error);
     res.status(500).json({

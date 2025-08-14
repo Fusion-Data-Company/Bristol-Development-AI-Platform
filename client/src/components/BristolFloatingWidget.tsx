@@ -337,11 +337,15 @@ export default function BristolFloatingWidget({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...enhancedPayload,
+          message: trimmed, // Elite endpoint expects single message
+          messages: enhancedPayload.messages,
+          model: enhancedPayload.model,
+          dataContext: enhancedPayload.dataContext,
           ...mcpContext,
           systemStatus,
           sessionId: sessionId,
-          userAgent: "Bristol Brain Elite v1.0"
+          userAgent: "Bristol Brain Elite v1.0",
+          enableAdvancedReasoning: true
         }),
       });
 
@@ -554,7 +558,7 @@ export default function BristolFloatingWidget({
                       <Brain className="relative h-5 w-5 text-bristol-gold animate-float" />
                     </div>
                     <span className="text-xs font-bold text-bristol-gold uppercase tracking-wider">
-                      $200M+ ELITE AI • ALWAYS ACTIVE
+                      ELITE AI • ALWAYS ACTIVE
                     </span>
                     <div className="flex gap-1">
                       <div className="w-1.5 h-1.5 bg-bristol-cyan rounded-full animate-pulse" />
@@ -568,7 +572,7 @@ export default function BristolFloatingWidget({
                 <div className="flex-1 min-w-[240px]">
                   <label className="block text-xs text-bristol-cyan font-semibold uppercase tracking-wider mb-3 flex items-center gap-2">
                     <Brain className="h-3 w-3" />
-                    $200M+ Deal AI Engine
+                    Elite AI Engine
                   </label>
                   <div className="relative group">
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-300" />
@@ -678,11 +682,12 @@ export default function BristolFloatingWidget({
               </div>
             </div>
 
-            {/* Glass Body Container */}
+            {/* Glass Body Container - Tall for chat */}
             <div 
-              className="flex-1 min-h-0 relative"
+              className="flex-1 min-h-0 relative overflow-hidden"
               style={{
                 background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.2) 50%, rgba(15, 23, 42, 0.4) 100%)',
+                minHeight: '60vh'
               }}
             >
               {/* Subtle ambient glow */}
@@ -1023,7 +1028,7 @@ function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; la
 // Missing ChatPane function
 function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boolean }) {
   return (
-    <div className="h-full overflow-y-auto px-6 py-4 space-y-4 bg-gradient-to-b from-transparent to-bristol-ink/20">
+    <div className="h-full overflow-y-auto px-6 py-4 space-y-4 bg-gradient-to-b from-transparent to-bristol-ink/20" style={{ maxHeight: 'calc(60vh - 120px)' }}>
       {messages.filter(m => m.role !== "system").map((m, i) => (
         <div 
           key={i} 

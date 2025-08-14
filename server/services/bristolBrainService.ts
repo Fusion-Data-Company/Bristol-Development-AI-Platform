@@ -304,7 +304,7 @@ Remember: You're not providing general advice. You're making real-time decisions
       }
     });
     
-    return [...new Set(topics)];
+    return Array.from(new Set(topics));
   }
 
   /**

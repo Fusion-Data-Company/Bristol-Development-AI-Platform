@@ -1,101 +1,9 @@
 # Bristol Site Intelligence Platform
 
 ## Overview
-
-Bristol Site Intelligence Platform is a comprehensive enterprise-grade AI-powered real estate development analysis tool designed for multifamily development opportunities across Sunbelt markets. The platform features a sophisticated React frontend with advanced Bristol-branded design system, comprehensive site analytics including interactive MapBox mapping, proprietary 100-point Bristol scoring methodology, real-time market intelligence, and GPT-5 powered AI assistant. Built with modern web technologies including TypeScript, Tailwind CSS, and enterprise-grade animations, the platform provides institutional-quality real estate analysis capabilities.
-
-## Recent Changes
-
-**January 2025 - Bristol Brain Elite Always-On Integration**
-- ✓ **MAJOR: Bristol Brain Elite Fully Integrated as Always-Elite Agent** - Single powerful AI agent with no toggles or modes
-  - Removed all elite mode toggles - agent is always elite with $200M+ deal intelligence
-  - Enhanced with full cyberpunk glassomorphic styling with neon glows and animations
-  - Implemented comprehensive PostgreSQL database schema with persistent memory across sessions
-  - Created tables for agents, conversations, memories (short/long term), files, prompts, context, and decisions
-  - Built BristolBrainService with elite-level AI capabilities and persistent memory management
-  - Developed advanced API routes with file upload functionality (PDF, Excel, CSV, JSON) and conversation management
-  - Fully integrated elite features into existing BristolFloatingWidget popout:
-    - Always uses elite endpoint for $200M+ deal analysis
-    - Prompts and Files tabs always visible for document and context management
-    - Shared session ID enables conversation continuity across sessions
-    - Cyberpunk UI with animated gradients, neon borders, and holographic effects
-  - AI always thinks like senior partner with 30+ years experience handling IRR, NPV, cap rates, waterfalls, LP/GP structures
-  - System maintains memory of user preferences, past decisions, and deal analysis patterns
-  - Always provides comprehensive deal analysis with confidence scores and impact values
-  - File attachment system processes documents for context-aware analysis
-  - Decision tracking logs all investment recommendations with reasoning and confidence levels
-
-**August 2025**
-- ✓ **MAJOR: Bristol Brain Boss Agent Complete** - Transformed Bristol Brain Intelligence into elite cyberpunk "boss agent" with MCP server connectivity
-  - Moved Brain button to bottom-right corner as independent element that hides when popup is open
-  - Added comprehensive 4-tab interface: Chat, Data, MCP Tools, Brain Config with cyberpunk Fortune 500 enterprise styling
-  - Created bristol-brain-enhanced.ts API endpoint with boss agent capabilities and MCP tool execution
-  - Built WebSocket integration for real-time status updates and live data monitoring
-  - Added cyberpunk futuristic UI styling with glass effects, ambient glows, and animated status indicators
-  - Enhanced input system with status indicators showing LIVE/OFFLINE, MCP ACTIVE/DISABLED, and data source counts
-  - Implemented boss mode with real-time data injection, MCP tool execution permissions, and comprehensive system monitoring
-  - Created elite model selection with GPT-5, Claude 4, Grok 4 filtering and automatic fallback to OpenRouter API
-  - Added Tools pane showing n8n Workflows, Apify Web Scraping, Census Data API, HUD Fair Market Rent, and Metrics Storage
-  - Built comprehensive error handling with fallback mode when enhanced endpoint is unavailable
-  - Bristol Brain now serves as central AI controller with full website API access and MCP server integration
-- ✓ **COMPLETED: Tools Page Styling Overhaul** - Achieved complete enterprise styling consistency across all 6 API tools
-  - Applied premium Bristol enterprise styling to all form inputs using bristol-form-enhanced class
-  - Standardized "Run Analysis" buttons with Bristol-maroon gradients, gold borders, and Cpu icons
-  - Added high-resolution glowing digital globe background without overlays or filters
-  - Enhanced mega headers with Bristol branding, gradient backgrounds, and professional animations
-  - All tools (BLS, BEA, HUD, Foursquare, FBI, NOAA) now feature identical premium styling
-- ✓ **Bristol Floating AI Analyst Widget** - Completed production-ready floating analyst widget with OpenRouter AI integration
-  - Slide-out panel from left edge with Chat/Data/Admin tabs
-  - Dynamic model fetching from OpenRouter API filtering to elite models only (GPT-5, Claude 4, Grok 4, Perplexity)
-  - Model switcher with automatic default selection preferring GPT-5 Chat
-  - Admin tab for customizing Bristol mega-prompt with localStorage persistence
-  - Data inspector showing all available app context (properties, demographics, analytics)
-  - Secure OpenRouter proxy endpoint at /api/openrouter using OPENROUTER_API_KEY2
-  - Automatic data context injection into each AI request for grounded analysis
-  - Optional n8n webhook integration for telemetry and logging
-  - Bristol-branded UI with gradient styling matching platform design system
-  - Fixed all TypeScript compilation errors preventing app startup
-
-**August 2025 (Previous)**
-- ✓ **CRITICAL: Fixed API Tools Compatibility** - Successfully implemented compatibility layer that returns both new format `{ ok, rows, meta }` and legacy format `{ hasData, data }` for frontend
-- ✓ **Verified Working APIs** - BLS and BEA APIs now fully functional and returning real data through the tools interface
-- ✓ **Authentication Integration** - Fixed API authentication issues with Foursquare (Bearer token) and FBI (API_KEY parameter) formats
-- ✓ **MAJOR: Complete API Tools Overhaul** - Rewrote all 6 API tools (BLS, BEA, HUD, Foursquare, FBI, NOAA) with uniform response format and proper error handling
-- ✓ **New Unified Response Structure** - All tools now return consistent `{ ok: true/false, params: {...}, rows: [...], meta: {...} }` format
-- ✓ **Enhanced API Endpoints** - Fixed endpoint URLs, parameter handling, and data processing for all external APIs
-- ✓ **Improved Error Reporting** - Added detailed error logging with upstream API response text for debugging
-- ✓ **Updated Cache Strategy** - Optimized cache keys and TTL values for each tool type (10min-24hr based on data volatility)
-- ✓ **Fixed Route Structure** - Corrected HUD routing to support mode/zip/lookback and FBI routing for geo/state/offense/from/to patterns
-- ✓ **Implemented Economic Intelligence Tools** - Added comprehensive BLS, BEA, and HUD API integration for live economic data analysis at /tools
-- ✓ **Created Tools database schema** - Added snapshots table for saving tool results with user-specific data persistence
-- ✓ **Built live API integration** - Three API routes (BLS employment, BEA GDP/income, HUD vacancy) with caching and error handling
-- ✓ **Developed Tools UI components** - Interactive React components with real-time charts, data export, and snapshot saving
-- ✓ **Integrated Chart.js visualization** - Professional data visualization with Bristol gold branding and responsive charts
-- ✓ **Added caching system** - Memory-based caching for API responses to avoid rate limits and improve performance
-- ✓ **CRITICAL: Restored dark Bristol branding** - Fixed header/nav styling with gold logo in top right corner (user requested this remain unchanged)
-- ✓ **Completed geocoding system** - Enhanced with 3 fallback strategies, 100% of 46 properties now have coordinates
-- ✓ **Upgraded Sites Intelligence page** - Premium dark Bristol styling with gold/ink theme throughout
-- ✓ **Enhanced search and filters** - Bristol-branded search bar and status filters with premium styling
-- ✓ **Upgraded content cards** - Database table and details sidebar with sophisticated dark Bristol theme
-- ✓ **Fixed critical API calls** - Resolved incorrect apiRequest function usage causing geocoding failures
-- ✓ **Premium modal styling** - Add Site form with matching Bristol dark branding
-- ✓ **Resolved import errors** - Fixed missing Building/Map icon imports causing application crashes
-- ✓ **Implemented dual map architecture** - Added Portfolio Map (current KML/KMZ layers) and Interactive Map with sophisticated right sidebar analytics as requested by user
-- ✓ **Created InteractiveMapDashboard component** - Recreated original map functionality with Market Overview, Site Analysis, Demographics, Market Conditions, and Bristol Scoring panels in right sidebar
-
-**December 2024**
-- ✓ Completed comprehensive Bristol Site Intelligence Dashboard implementation
-- ✓ Built advanced InteractiveMap component with MapBox GL integration and geocoding
-- ✓ Implemented Bristol 100-point scoring methodology in SiteScoring component  
-- ✓ Created MarketAnalytics component with real-time data visualization and charts
-- ✓ Enhanced enterprise-grade Bristol branding with sophisticated animations and parallax backgrounds
-- ✓ Fixed react-map-gl package compatibility issues for stable mapping functionality
-- ✓ Integrated GPT-5 AI assistant via OpenRouter API for advanced site analysis
-- ✓ Added comprehensive navigation system with Overview, Interactive Map, Site Scoring, Market Analytics, and AI Assistant tabs
-- ✓ Implemented real-time WebSocket connections for live data updates and integration status
+The Bristol Site Intelligence Platform is an enterprise-grade, AI-powered real estate development analysis tool. It is designed for multifamily development opportunities within Sunbelt markets. The platform provides comprehensive site analytics, interactive mapping, a proprietary 100-point Bristol scoring methodology, and real-time market intelligence. A key feature is the integrated AI assistant, Bristol Brain, which functions as an always-on "boss agent" for advanced deal analysis. The platform aims to provide institutional-quality real estate analysis capabilities, supporting decisions related to IRR, NPV, cap rates, and LP/GP structures.
 
 ## User Preferences
-
 Preferred communication style: Simple, everyday language.
 **CRITICAL BRANDING PREFERENCE:** Dark Bristol header/nav with gold logo in top right corner must NEVER be changed - user has requested this multiple times and styling should remain consistent.
 **THEME PREFERENCE:** All pages created should use light theme by default, not dark themes. Only the header/navigation should remain dark with Bristol branding.
@@ -103,72 +11,67 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### Frontend Architecture
-- **Framework**: React 18 with TypeScript and Vite for fast development and building
-- **Styling**: Tailwind CSS with custom Bristol brand design system using Cinzel serif font and branded color palette
-- **UI Components**: Shadcn/ui component library with Radix UI primitives for accessibility and consistency
-- **State Management**: TanStack Query for server state management and caching
-- **Routing**: Wouter for lightweight client-side routing
-- **Real-time Communication**: WebSocket integration for live updates and chat functionality
+- **Framework**: React 18 with TypeScript and Vite.
+- **Styling**: Tailwind CSS with a custom Bristol brand design system (Cinzel serif font, branded color palette), featuring professional cyberpunk glassomorphic styling with neon cyan/gold glows and animated gradients for the AI interface.
+- **UI Components**: Shadcn/ui leveraging Radix UI primitives.
+- **State Management**: TanStack Query.
+- **Routing**: Wouter.
+- **Real-time Communication**: WebSocket integration.
+- **UI/UX Decisions**: All API tools feature consistent premium Bristol enterprise styling with Bristol-maroon gradients, gold borders, and Cpu icons. A high-resolution glowing digital globe background is used without overlays or filters. Mega headers feature Bristol branding and gradient backgrounds. The platform supports a dual map architecture with a Portfolio Map and an Interactive Map with a sophisticated right sidebar for analytics.
 
 ### Backend Architecture
-- **Runtime**: Node.js with Express server framework
-- **Database**: PostgreSQL with Neon serverless hosting via Drizzle ORM
-- **Authentication**: Replit Auth with OpenID Connect for secure user authentication
-- **AI Integration**: OpenRouter API for conversational AI capabilities using Claude 3.5 Sonnet
-- **File Storage**: Google Cloud Storage for file uploads and asset management
-- **Real-time Features**: WebSocket server for live chat, tool execution status, and integration updates
+- **Runtime**: Node.js with Express.
+- **Database**: PostgreSQL with Neon serverless hosting via Drizzle ORM.
+- **Authentication**: Replit Auth with OpenID Connect.
+- **AI Integration**: OpenRouter API for conversational AI, supporting models like GPT-5, GPT-5 Vision, GPT-5 Reasoning, Claude 4 Opus, Gemini 2.0 Ultra, and Grok 4. The Bristol Brain AI agent is integrated with advanced persistent memory management and comprehensive PostgreSQL database schema (tables for agents, conversations, memories, files, prompts, context, decisions).
+- **File Storage**: Google Cloud Storage.
+- **Real-time Features**: WebSocket server for live updates, chat, and tool execution status.
+- **System Design Choices**: The Bristol Brain acts as a central AI controller with full website API access and MCP (Model Context Protocol) server integration, allowing real-time data injection and tool execution. API tools are designed with a uniform response format `{ ok, params, rows, meta }` and robust error handling. A memory-based caching system is implemented for API responses.
 
 ### Data Storage Solutions
-- **Primary Database**: PostgreSQL hosted on Neon with connection pooling
-- **ORM**: Drizzle for type-safe database operations and schema management
-- **Session Storage**: PostgreSQL-backed session store for authentication
-- **Schema Structure**: 
-  - User management (users, sessions)
-  - Site intelligence (sites, site_metrics)
-  - Chat system (chat_sessions, chat_messages)
-  - Integration tracking (integration_logs, mcp_tools)
+- **Primary Database**: PostgreSQL on Neon, accessed via Drizzle ORM for type-safe operations.
+- **Session Storage**: PostgreSQL-backed session store for authentication.
+- **Schema Structure**: Includes user management, site intelligence (sites, site_metrics), chat system (chat_sessions, chat_messages), and integration tracking (integration_logs, mcp_tools). A `snapshots` table exists for saving tool results.
 
 ### Authentication and Authorization
-- **Provider**: Replit Auth with OpenID Connect protocol
-- **Session Management**: Express-session with PostgreSQL backing store
-- **Security**: Secure HTTP-only cookies with CSRF protection
-- **User Context**: Full user profile management with profile images and metadata
-
-### External Service Integrations
-- **AI Services**: OpenRouter API for conversational AI with multiple model support
-- **Cloud Storage**: Google Cloud Storage for file handling and asset management
-- **Economic Data APIs**: Live integration with BLS (unemployment), BEA (GDP/income), and HUD (vacancy rates)
-- **Real Estate Data**: Placeholder architecture for MLS, Census, and market data APIs
-- **Automation Tools**: MCP (Model Context Protocol) framework for tool execution and workflow automation
-- **File Processing**: Support for KML/KMZ geospatial file uploads and processing
-- **Microsoft 365**: Integration foundation for OneDrive and Outlook connectivity
+- **Provider**: Replit Auth using OpenID Connect.
+- **Session Management**: Express-session with PostgreSQL backing.
+- **Security**: Secure HTTP-only cookies with CSRF protection.
 
 ## External Dependencies
 
 ### Core Dependencies
-- **@neondatabase/serverless**: PostgreSQL database connectivity for Neon hosting
-- **drizzle-orm**: Type-safe ORM for database operations
-- **@tanstack/react-query**: Server state management and caching
-- **@google-cloud/storage**: Cloud file storage and asset management
+- `@neondatabase/serverless`: PostgreSQL database connectivity.
+- `drizzle-orm`: Type-safe ORM.
+- `@tanstack/react-query`: Server state management.
+- `@google-cloud/storage`: Cloud file storage.
 
 ### UI and Styling
-- **@radix-ui/***: Comprehensive accessible UI component primitives
-- **tailwindcss**: Utility-first CSS framework
-- **lucide-react**: Icon library for consistent iconography
-- **framer-motion**: Animation library for enhanced user experience
+- `@radix-ui/*`: Accessible UI component primitives.
+- `tailwindcss`: Utility-first CSS framework.
+- `lucide-react`: Icon library.
+- `framer-motion`: Animation library.
 
 ### Development and Build
-- **vite**: Fast development server and build tool
-- **typescript**: Type safety and enhanced developer experience
-- **esbuild**: Fast JavaScript bundler for production builds
+- `vite`: Development server and build tool.
+- `typescript`: Type safety.
+- `esbuild`: Fast JavaScript bundler.
 
 ### Authentication and Security
-- **openid-client**: OpenID Connect authentication
-- **passport**: Authentication middleware
-- **express-session**: Session management
-- **connect-pg-simple**: PostgreSQL session store
+- `openid-client`: OpenID Connect authentication.
+- `passport`: Authentication middleware.
+- `express-session`: Session management.
+- `connect-pg-simple`: PostgreSQL session store.
 
 ### File Processing and Utilities
-- **@uppy/***: File upload components and utilities
-- **ws**: WebSocket implementation for real-time features
-- **zod**: Runtime type validation and schema parsing
+- `@uppy/*`: File upload components.
+- `ws`: WebSocket implementation.
+- `zod`: Runtime type validation.
+
+### Integrated Services
+- **AI Services**: OpenRouter API (for models like GPT-5, Claude 4, Grok 4, Perplexity).
+- **Economic Data APIs**: BLS (employment), BEA (GDP/income), HUD (vacancy rates).
+- **Other Data APIs**: Foursquare, FBI, NOAA.
+- **Automation Tools**: n8n Workflows, Apify Web Scraping, Census Data API, HUD Fair Market Rent, Metrics Storage.
+- **Mapping**: MapBox GL.
+- **Microsoft 365**: Integration foundation for OneDrive and Outlook connectivity.
