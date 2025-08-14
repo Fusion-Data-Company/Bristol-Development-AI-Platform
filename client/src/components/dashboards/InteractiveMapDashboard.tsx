@@ -216,9 +216,46 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
   };
 
   return (
-    <div className="h-full w-full flex bg-bristol-ink">
-      {/* Main Map Area */}
-      <div className="flex-1 relative">
+    <div className="h-screen w-screen flex bg-bristol-ink m-0 p-0 fixed inset-0 z-50 overflow-hidden">
+      {/* Bristol Intelligence Header Overlay */}
+      <div className="absolute top-0 left-0 right-0 z-30 bg-bristol-ink/95 backdrop-blur-sm border-b border-bristol-gold/30 shadow-2xl">
+        <div className="flex items-center justify-between px-6 py-3">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-bristol-maroon/80 flex items-center justify-center">
+                <MapPin className="w-4 h-4 text-bristol-gold" />
+              </div>
+              <div>
+                <h1 className="text-lg font-serif font-bold text-bristol-gold">Bristol Site Intelligence</h1>
+                <p className="text-xs text-bristol-fog">Geographic Data & Market Analysis</p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="flex gap-4 text-xs">
+              <div className="text-center">
+                <div className="font-bold text-bristol-gold">{sites?.length || 46}</div>
+                <div className="text-bristol-fog">Sites</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-bristol-gold">9,953</div>
+                <div className="text-bristol-fog">Units</div>
+              </div>
+              <div className="text-center">
+                <div className="font-bold text-bristol-gold">84.2</div>
+                <div className="text-bristol-fog">Avg Score</div>
+              </div>
+            </div>
+            <Badge variant="outline" className="text-bristol-gold border-bristol-gold/50">
+              <Activity className="w-3 h-3 mr-1" />
+              Live
+            </Badge>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Map Area - Takes remaining space after sidebar */}
+      <div className="flex-1 relative mt-16">
         <InteractiveMap
           sites={sites}
           selectedSiteId={selectedSite?.id}
@@ -229,8 +266,8 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
           showControls={true}
         />
         
-        {/* Enhanced Map Layers Panel */}
-        <div className="absolute top-4 left-4 z-10">
+        {/* Enhanced Map Layers Panel - Positioned below header */}
+        <div className="absolute top-20 left-4 z-10">
           <Card className="bg-gradient-to-br from-bristol-maroon/95 via-bristol-maroon/90 to-bristol-ink/95 backdrop-blur-md shadow-2xl border-2 border-bristol-gold/30 w-72 hover:shadow-bristol-gold/20 hover:shadow-2xl transition-all duration-300">
             <div className="absolute inset-0 bg-gradient-to-br from-bristol-gold/10 via-transparent to-cyan-400/5 rounded-lg"></div>
             <CardHeader className="pb-3 relative z-10">
@@ -271,7 +308,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
       </div>
 
       {/* Right Info Panel - Real Data Bristol Market Intelligence - Maximized Width */}
-      <div className="w-[28rem] bg-white/98 backdrop-blur-sm border-l-2 border-bristol-gold/20 p-6 overflow-y-auto h-full shadow-xl">
+      <div className="w-[30rem] bg-white/98 backdrop-blur-sm border-l-2 border-bristol-gold/20 p-6 overflow-y-auto h-full shadow-xl mt-16">
         <div className="space-y-4">
           <div>
             <h3 className="font-serif text-lg font-semibold text-bristol-ink mb-2 flex items-center gap-2">
