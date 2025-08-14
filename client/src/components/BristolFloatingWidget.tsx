@@ -699,11 +699,24 @@ export default function BristolFloatingWidget({
                       {modelList.length === 0 ? (
                         <option value="">⚡ Loading Elite AI Models...</option>
                       ) : (
-                        modelList.map((m: ModelOption) => (
-                          <option key={m.id} value={m.id} className="bg-bristol-ink text-bristol-cyan py-2 font-bold">
-                            🚀 {m.label}
-                          </option>
-                        ))
+                        modelList.map((m: ModelOption) => {
+                          // Get company-specific emoji based on model provider
+                          const getProviderEmoji = (modelId: string) => {
+                            if (modelId.includes('gpt') || modelId.includes('openai')) return '🟢'; // OpenAI - green circle
+                            if (modelId.includes('claude') || modelId.includes('anthropic')) return '🔶'; // Anthropic - orange diamond
+                            if (modelId.includes('grok') || modelId.includes('x-ai')) return '⚡'; // xAI - lightning bolt
+                            if (modelId.includes('gemini') || modelId.includes('google')) return '🔷'; // Google - blue diamond
+                            if (modelId.includes('perplexity') || modelId.includes('sonar')) return '🔍'; // Perplexity - magnifying glass
+                            if (modelId.includes('meta') || modelId.includes('llama')) return '🦙'; // Meta - llama
+                            return '🤖'; // Default AI robot
+                          };
+                          
+                          return (
+                            <option key={m.id} value={m.id} className="bg-bristol-ink text-bristol-cyan py-2 font-bold">
+                              {getProviderEmoji(m.id)} {m.label}
+                            </option>
+                          );
+                        })
                       )}
                     </select>
                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
@@ -766,10 +779,20 @@ export default function BristolFloatingWidget({
             >
               {/* Tab Content */}
               {activeTab === "chat" && (
-                <div className="flex-1 overflow-hidden flex flex-col">
+                <div className="flex-1 overflow-hidden flex flex-col relative">
+                  {/* Background tint overlay for chat area */}
+                  <div 
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(30, 41, 59, 0.3) 50%, rgba(15, 23, 42, 0.5) 100%)',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  />
                   <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
                   <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
-                  <ChatPane messages={messages} loading={loading} />
+                  <div className="relative z-10 flex-1 overflow-hidden flex flex-col">
+                    <ChatPane messages={messages} loading={loading} />
+                  </div>
                 </div>
               )}
 
@@ -1127,7 +1150,7 @@ function ChatPane({ messages, loading }: { messages: ChatMessage[]; loading: boo
             
             <div className="space-y-3 text-sm text-white/90">
               <p className="leading-relaxed">
-                <strong>BRISTOL BRAIN ELITE v5.0 ACTIVATED</strong> - Enterprise-grade AI system operational with comprehensive property intelligence capabilities.
+                <strong>BRISTOL A.I. ELITE v5.0 ACTIVATED</strong> - Enterprise-grade AI system operational with comprehensive property intelligence capabilities.
               </p>
               
               <div className="grid grid-cols-2 gap-2 mt-4">
