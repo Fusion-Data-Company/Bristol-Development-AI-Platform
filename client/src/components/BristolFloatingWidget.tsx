@@ -1008,27 +1008,29 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
             <button
               onClick={() => setMcpEnabled(!mcpEnabled)}
               className={`
-                w-14 h-7 rounded-full transition-all duration-300 relative border-2 shadow-lg
+                w-16 h-8 rounded-full transition-all duration-500 relative border-2 shadow-xl transform hover:scale-105
                 ${mcpEnabled 
-                  ? 'bg-gradient-to-r from-green-500 to-green-400 border-green-400 shadow-green-500/50' 
-                  : 'bg-gradient-to-r from-red-600 to-red-500 border-red-500 shadow-red-500/30'
+                  ? 'bg-gradient-to-r from-green-600 via-green-500 to-green-400 border-green-300 shadow-green-500/60' 
+                  : 'bg-gradient-to-r from-red-700 via-red-600 to-red-500 border-red-400 shadow-red-500/40'
                 }
               `}
               style={{
                 boxShadow: mcpEnabled 
-                  ? '0 0 20px rgba(34, 197, 94, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
-                  : '0 0 15px rgba(239, 68, 68, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  ? '0 0 25px rgba(34, 197, 94, 0.8), 0 0 50px rgba(34, 197, 94, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.1)' 
+                  : '0 0 20px rgba(239, 68, 68, 0.6), 0 0 40px rgba(239, 68, 68, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.2), inset 0 -2px 0 rgba(0, 0, 0, 0.15)'
               }}
             >
               <div className={`
-                w-5 h-5 rounded-full absolute top-0.5 transition-all duration-300 border border-white/30 shadow-md
+                w-6 h-6 rounded-full absolute top-0.5 transition-all duration-500 border-2 border-white/50 shadow-lg
                 ${mcpEnabled 
-                  ? 'left-7 bg-gradient-to-br from-white to-green-100' 
-                  : 'left-0.5 bg-gradient-to-br from-white to-red-100'
+                  ? 'left-8 bg-gradient-to-br from-white via-green-50 to-green-100 transform scale-110' 
+                  : 'left-0.5 bg-gradient-to-br from-white via-red-50 to-red-100'
                 }
               `} 
               style={{
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+                boxShadow: mcpEnabled 
+                  ? '0 4px 8px rgba(0, 0, 0, 0.25), inset 0 2px 0 rgba(255, 255, 255, 0.9), 0 0 15px rgba(34, 197, 94, 0.5)'
+                  : '0 3px 6px rgba(0, 0, 0, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 0 10px rgba(239, 68, 68, 0.3)'
               }}
               />
             </button>
@@ -1101,27 +1103,29 @@ function AdminPane({
             <button
               onClick={() => setRealTimeData(!realTimeData)}
               className={`
-                w-14 h-7 rounded-full transition-all duration-300 relative border-2 shadow-lg
+                w-16 h-8 rounded-full transition-all duration-500 relative border-2 shadow-xl transform hover:scale-105
                 ${realTimeData 
-                  ? 'bg-gradient-to-r from-green-500 to-green-400 border-green-400 shadow-green-500/50' 
-                  : 'bg-gradient-to-r from-red-600 to-red-500 border-red-500 shadow-red-500/30'
+                  ? 'bg-gradient-to-r from-green-600 via-green-500 to-green-400 border-green-300 shadow-green-500/60' 
+                  : 'bg-gradient-to-r from-red-700 via-red-600 to-red-500 border-red-400 shadow-red-500/40'
                 }
               `}
               style={{
                 boxShadow: realTimeData 
-                  ? '0 0 20px rgba(34, 197, 94, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2)' 
-                  : '0 0 15px rgba(239, 68, 68, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                  ? '0 0 25px rgba(34, 197, 94, 0.8), 0 0 50px rgba(34, 197, 94, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 0 rgba(0, 0, 0, 0.1)' 
+                  : '0 0 20px rgba(239, 68, 68, 0.6), 0 0 40px rgba(239, 68, 68, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.2), inset 0 -2px 0 rgba(0, 0, 0, 0.15)'
               }}
             >
               <div className={`
-                w-5 h-5 rounded-full absolute top-0.5 transition-all duration-300 border border-white/30 shadow-md
+                w-6 h-6 rounded-full absolute top-0.5 transition-all duration-500 border-2 border-white/50 shadow-lg
                 ${realTimeData 
-                  ? 'left-7 bg-gradient-to-br from-white to-green-100' 
-                  : 'left-0.5 bg-gradient-to-br from-white to-red-100'
+                  ? 'left-8 bg-gradient-to-br from-white via-green-50 to-green-100 transform scale-110' 
+                  : 'left-0.5 bg-gradient-to-br from-white via-red-50 to-red-100'
                 }
               `}
               style={{
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.8)'
+                boxShadow: realTimeData 
+                  ? '0 4px 8px rgba(0, 0, 0, 0.25), inset 0 2px 0 rgba(255, 255, 255, 0.9), 0 0 15px rgba(34, 197, 94, 0.5)'
+                  : '0 3px 6px rgba(0, 0, 0, 0.2), inset 0 2px 0 rgba(255, 255, 255, 0.8), 0 0 10px rgba(239, 68, 68, 0.3)'
               }}
               />
             </button>
