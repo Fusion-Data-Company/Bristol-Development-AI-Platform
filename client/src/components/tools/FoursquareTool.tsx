@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, Download, Save, MapPin, Star, Cpu } from "lucide-react";
+import { Loader2, Download, Save, MapPin, Star, Brain, Cpu } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -340,19 +340,22 @@ export function FoursquareTool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading || isGeocoding}
-          className="group relative bg-gradient-to-r from-bristol-maroon via-red-800 to-bristol-maroon text-white border-4 border-bristol-gold/60 shadow-2xl font-black text-xl px-16 py-6 rounded-3xl transition-all duration-500 hover:scale-110 hover:border-bristol-gold/90 hover:from-bristol-maroon/90 hover:to-red-700 active:scale-95 overflow-hidden before:absolute before:-inset-3 before:bg-bristol-gold/30 before:blur-2xl before:-z-10 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-700 after:absolute after:inset-0 after:bg-gradient-to-r after:from-white/12 after:via-transparent after:to-transparent after:rounded-3xl after:pointer-events-none bristol-enterprise-card"
+          className="bristol-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
         >
-          <div className="relative flex items-center justify-center gap-4 z-10">
+          <div className="flex items-center gap-3">
             {(isLoading || isGeocoding) ? (
-              <Loader2 className="h-6 w-6 animate-spin text-bristol-gold drop-shadow-lg" />
+              <Loader2 className="h-6 w-6 animate-spin text-cyan-400" />
             ) : (
-              <div className="p-2 rounded-xl bg-gradient-to-br from-bristol-gold/30 to-amber-400/20 shadow-inner group-hover:animate-pulse">
-                <Cpu className="h-6 w-6 text-bristol-gold drop-shadow-lg animate-pulse" />
+              <div className="relative">
+                <Brain className="h-6 w-6 text-cyan-400 drop-shadow-lg" />
+                <div className="absolute inset-0 animate-pulse opacity-50">
+                  <Brain className="h-6 w-6 text-cyan-300" />
+                </div>
               </div>
             )}
-            <div className="text-center">
-              <div className="font-black text-xl tracking-wide drop-shadow-lg">
-                {isGeocoding ? 'FINDING LOCATION...' : isLoading ? 'ANALYZING...' : 'RUN ANALYSIS'}
+            <div>
+              <div className="text-cyan-400 font-black tracking-wide">
+                RUN ANALYSIS
               </div>
               <div className="text-xs text-amber-300 font-medium -mt-1">
                 Bristol Intelligence
