@@ -177,8 +177,8 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       header: 'LOCATION',
       size: 180,
       cell: ({ row }) => {
-        const city = row.getValue('city') as string;
-        const state = row.getValue('state') as string;
+        const city = row.original.city as string;
+        const state = row.original.state as string;
         return (
           <div className="font-medium text-bristol-ink">
             <div className="font-bold">{city || 'Unknown City'}</div>
@@ -192,8 +192,8 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       header: 'ADDRESS',
       size: 200,
       cell: ({ row }) => {
-        const addr1 = row.getValue('addrLine1') as string;
-        const addr2 = row.getValue('addrLine2') as string;
+        const addr1 = row.original.addrLine1 as string;
+        const addr2 = row.original.addrLine2 as string;
         return (
           <div className="font-medium text-bristol-ink text-sm">
             <div>{addr1 || 'Address Not Available'}</div>
@@ -320,9 +320,9 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
   }
 
   return (
-    <div className="space-y-6 h-full flex flex-col">
+    <div className="h-full flex flex-col">
       {/* Premium Search & Filter Bar */}
-      <div className="px-6 pt-6">
+      <div className="px-6 pt-6 pb-4 flex-shrink-0">
         <div className="relative">
           <Input
             placeholder="Search properties by name, location, or status..."
@@ -339,9 +339,9 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         </div>
       </div>
 
-      <div className="rounded-lg border-2 border-bristol-maroon/20 bg-gradient-to-br from-white via-bristol-cream/20 to-white flex-1 overflow-hidden shadow-2xl shadow-bristol-maroon/15">
-        <div className="min-w-max">
-          <Table className="w-full">
+      <div className="rounded-lg border-2 border-bristol-maroon/20 bg-gradient-to-br from-white via-bristol-cream/20 to-white flex-1 shadow-2xl shadow-bristol-maroon/15 flex flex-col min-h-0">
+        <div className="flex-1 overflow-auto">
+          <Table className="w-full relative">
             <TableHeader className="sticky top-0 bg-gradient-to-r from-bristol-maroon via-bristol-maroon/95 to-bristol-maroon z-10 shadow-lg shadow-bristol-maroon/30">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-bristol-gold/30">
