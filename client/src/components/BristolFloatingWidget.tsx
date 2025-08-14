@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target } from "lucide-react";
-import { BristolBrainElite } from "./BristolBrainElite";
+import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File } from "lucide-react";
 
 /**
  * BristolFloatingWidget.tsx — v1.0
@@ -126,7 +125,7 @@ export default function BristolFloatingWidget({
   className,
 }: BristolWidgetProps) {
   const [open, setOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"chat" | "data" | "admin" | "tools">("chat");
+  const [activeTab, setActiveTab] = useState<"chat" | "data" | "admin" | "tools" | "prompts" | "files">("chat");
   const [model, setModel] = useState(defaultModel || "");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [systemPrompt, setSystemPrompt] = useState<string>(defaultSystemPrompt || DEFAULT_MEGA_PROMPT);
@@ -332,15 +331,17 @@ export default function BristolFloatingWidget({
     }
 
     try {
-      // Enhanced Boss Agent API call with MCP capabilities
-      const res = await fetch("/api/bristol-brain/enhanced-chat", {
+      // Use elite endpoint when elite mode is on, otherwise use enhanced endpoint
+      const endpoint = eliteMode ? "/api/bristol-brain-elite/chat" : "/api/bristol-brain/enhanced-chat";
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...enhancedPayload,
           ...mcpContext,
           systemStatus,
-          userAgent: "Bristol Brain Boss Agent v2.0"
+          sessionId: eliteMode ? sessionId : undefined,
+          userAgent: eliteMode ? "Bristol Brain Elite v1.0" : "Bristol Brain Boss Agent v2.0"
         }),
       });
 
@@ -434,8 +435,8 @@ export default function BristolFloatingWidget({
         </button>
       )}
 
-      {/* Slideout Panel - Standard Mode */}
-      {open && !eliteMode && (
+      {/* Slideout Panel */}
+      {open && (
         <div className="fixed inset-0 z-[9998]">
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
@@ -634,25 +635,41 @@ export default function BristolFloatingWidget({
                 <TabButton 
                   icon={<MessageSquare className="h-4 w-4" />} 
                   active={activeTab === "chat"} 
-                  label="AI Chat" 
+                  label="Chat" 
                   onClick={() => setActiveTab("chat")} 
                 />
+                {eliteMode && (
+                  <>
+                    <TabButton 
+                      icon={<FileText className="h-4 w-4" />} 
+                      active={activeTab === "prompts"} 
+                      label="Prompts" 
+                      onClick={() => setActiveTab("prompts")} 
+                    />
+                    <TabButton 
+                      icon={<Paperclip className="h-4 w-4" />} 
+                      active={activeTab === "files"} 
+                      label="Files" 
+                      onClick={() => setActiveTab("files")} 
+                    />
+                  </>
+                )}
                 <TabButton 
                   icon={<Database className="h-4 w-4" />} 
                   active={activeTab === "data"} 
-                  label="Live Data" 
+                  label="Data" 
                   onClick={() => setActiveTab("data")} 
                 />
                 <TabButton 
                   icon={<Zap className="h-4 w-4" />} 
                   active={activeTab === "tools"} 
-                  label="MCP Tools" 
+                  label="Tools" 
                   onClick={() => setActiveTab("tools")} 
                 />
                 <TabButton 
                   icon={<Settings className="h-4 w-4" />} 
                   active={activeTab === "admin"} 
-                  label="Brain Config" 
+                  label="Config" 
                   onClick={() => setActiveTab("admin")} 
                 />
               </div>
@@ -670,6 +687,28 @@ export default function BristolFloatingWidget({
               <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
               
               {activeTab === "chat" && <ChatPane messages={messages} loading={loading} />}
+              {activeTab === "prompts" && (
+                <div className="flex flex-col h-full p-6 overflow-y-auto">
+                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-bristol-gold" />
+                    AI Prompts Management
+                  </h3>
+                  <div className="text-center py-8 text-bristol-cyan/60">
+                    Manage system and project prompts for enhanced AI intelligence.
+                  </div>
+                </div>
+              )}
+              {activeTab === "files" && (
+                <div className="flex flex-col h-full p-6 overflow-y-auto">
+                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <Paperclip className="h-5 w-5 text-bristol-gold" />
+                    Document Attachments
+                  </h3>
+                  <div className="text-center py-8 text-bristol-cyan/60">
+                    Upload documents for AI analysis and context enhancement.
+                  </div>
+                </div>
+              )}
               {activeTab === "data" && <DataPane data={dataContext} />}
               {activeTab === "tools" && <ToolsPane systemStatus={systemStatus} mcpEnabled={mcpEnabled} setMcpEnabled={setMcpEnabled} />}
               {activeTab === "admin" && (
