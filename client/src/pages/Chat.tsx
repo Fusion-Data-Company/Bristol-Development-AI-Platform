@@ -1521,7 +1521,7 @@ What property development project, market analysis, or investment opportunity ca
             
             <div className="px-6 py-5 flex items-end gap-4">
               <div className="flex-1 relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-3xl blur opacity-0 group-focus-within:opacity-100 transition duration-300" />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-3xl blur opacity-0 group-focus-within:opacity-100 transition duration-300 pointer-events-none" />
                 <input
                   ref={eliteInputRef}
                   value={eliteInput}
@@ -1529,11 +1529,12 @@ What property development project, market analysis, or investment opportunity ca
                   onKeyDown={handleEliteKeyPress}
                   placeholder={eliteLoading ? "Bristol A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
                   disabled={eliteLoading}
-                  className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-bristol-cyan/60 disabled:opacity-60"
+                  className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-bristol-cyan/60 disabled:opacity-60 relative z-10"
                   style={{
                     background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
                     border: '1px solid rgba(69, 214, 202, 0.6)',
                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
+                    pointerEvents: 'auto'
                   }}
                 />
                 {eliteLoading && (
