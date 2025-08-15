@@ -18,6 +18,7 @@ import {
   MessageCircle, 
   Brain,
   Loader2,
+  Building,
   Building2,
   TrendingUp,
   DollarSign,
@@ -46,7 +47,8 @@ import {
   AlertCircle,
   FileText,
   Save,
-  Trash2
+  Trash2,
+  Map
 } from 'lucide-react';
 import { type ChatSession, type ChatMessage } from '@shared/schema';
 import { format } from 'date-fns';
@@ -56,6 +58,7 @@ import { OnboardingGuide } from '@/components/chat/OnboardingGuide';
 import { ChatBackground } from "../components/EnterpriseBackgrounds";
 import { Link, useLocation } from "wouter";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
+import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
 
 interface PremiumModel {
@@ -1281,7 +1284,16 @@ What property development project, market analysis, or investment opportunity ca
       </header>
       
       {/* Main Content - Chat Interface */}
-      <ChatBackground>
+      <div 
+        className="min-h-screen bg-cover bg-center bg-no-repeat relative"
+        style={{
+          backgroundImage: `url(${chatBackgroundImg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        {/* Dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
         <div className="h-screen w-screen flex">
         {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout - EXACT REPLICA OF FLOATING WIDGET */}
         <div 
@@ -1824,7 +1836,7 @@ What property development project, market analysis, or investment opportunity ca
         />
         </div>
       </div>
-    </ChatBackground>
+      </div>
     </div>
   );
 };
