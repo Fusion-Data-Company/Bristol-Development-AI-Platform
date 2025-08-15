@@ -157,6 +157,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const unifiedChatRouter = (await import('./api/unified-chat')).default;
   app.use('/api/unified-chat', unifiedChatRouter);
 
+  // Ultra-Bulletproof Chat API - GUARANTEED responses under any conditions
+  const ultraBulletproofChatRouter = (await import('./api/ultra-bulletproof-chat')).default;
+  app.use('/api/ultra-bulletproof-chat', ultraBulletproofChatRouter);
+
   // Test endpoint for unified chat system verification
   const testUnifiedChatRouter = (await import('./api/test-unified-chat')).default;
   app.use('/api/test-unified-chat', testUnifiedChatRouter);

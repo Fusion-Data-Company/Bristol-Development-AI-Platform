@@ -969,6 +969,7 @@ What property or investment can I analyze for you today?`,
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+              message: userMessage,  // CRITICAL FIX: Add the actual message!
               model: model,
               messages: apiMessages,
               temperature: 0.7,
@@ -977,6 +978,21 @@ What property or investment can I analyze for you today?`,
               mcpEnabled: mcpEnabled,
               realTimeData: realTimeData,
               sourceInstance: 'main'
+            })
+          });
+        }
+
+        // Ultimate fallback to ultra-bulletproof endpoint - GUARANTEED RESPONSE
+        if (!response.ok) {
+          console.warn("All chat endpoints failed, using ULTRA-BULLETPROOF fallback");
+          response = await fetch("/api/ultra-bulletproof-chat/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message: userMessage,
+              sessionId: sessionId,
+              model: model,
+              userId: 'demo-user'
             })
           });
         }
@@ -1066,6 +1082,7 @@ What property or investment can I analyze for you today?`,
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
+                message: userMessage,  // CRITICAL FIX: Add the actual message!
                 model: model,
                 messages: apiMessages,
                 temperature: 0.7,
