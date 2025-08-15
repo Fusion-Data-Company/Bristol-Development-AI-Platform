@@ -694,18 +694,20 @@ export default function Chat() {
           allModels.push(...(premiumData.models || []));
         }
         
-        // Load elite models
+        // Load elite models (only available ones)
         if (eliteResponse.ok) {
           const eliteData = await eliteResponse.json();
-          const eliteModels = eliteData.models.map((m: any) => ({
-            id: m.id,
-            label: `${m.name} ${m.available ? '✅' : '❌'}`,
-            context: m.contextLength,
-            provider: m.provider,
-            tier: m.tier,
-            features: m.features,
-            available: m.available
-          }));
+          const eliteModels = eliteData.models
+            .filter((m: any) => m.available !== false)  // Filter out unavailable models
+            .map((m: any) => ({
+              id: m.id,
+              label: `${m.name} ✅`,  // All shown models are available
+              context: m.contextLength,
+              provider: m.provider,
+              tier: m.tier,
+              features: m.features,
+              available: m.available
+            }));
           allModels.push(...eliteModels);
         }
         
