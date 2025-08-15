@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Terminal, Play, Wifi, WifiOff } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
-import { BristolFooter } from "@/components/ui/BristolFooter";
 import { apiRequest } from "@/lib/queryClient";
 
 interface Tool {
@@ -270,7 +269,6 @@ export default function ToolsConsole() {
           </CardContent>
         </Card>
         
-        <BristolFooter />
       </div>
     </Chrome>
   );

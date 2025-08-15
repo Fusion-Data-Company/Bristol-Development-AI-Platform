@@ -35,7 +35,6 @@ import {
   Eye
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
-import { BristolFooter } from "@/components/ui/BristolFooter";
 
 interface PortfolioMetrics {
   totalProperties: number;
@@ -639,7 +638,6 @@ export function AnalyticsOld() {
             </TabsContent>
           </Tabs>
 
-          <BristolFooter />
         </div>
       </div>
     </SimpleChrome>

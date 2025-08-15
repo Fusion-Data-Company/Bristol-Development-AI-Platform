@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Chrome from "@/components/brand/SimpleChrome";
-import { BristolFooter } from "@/components/ui/BristolFooter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, TrendingUp, Home, MapPin, Shield, Cloud } from "lucide-react";
@@ -185,7 +184,6 @@ export function Tools() {
           </Tabs>
         </div>
         
-        <BristolFooter />
       </div>
     </Chrome>
   );

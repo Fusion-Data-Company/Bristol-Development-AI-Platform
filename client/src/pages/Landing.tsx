@@ -15,7 +15,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { BristolFooter } from "@/components/ui/BristolFooter";
+import SimpleChrome from "@/components/brand/SimpleChrome";
 
 export default function Landing() {
   const handleLogin = () => {
@@ -23,7 +23,8 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-bristol-fog font-sans relative overflow-x-hidden">
+    <SimpleChrome>
+      <div className="min-h-screen bg-bristol-fog font-sans relative overflow-x-hidden">
       {/* Parallax Background */}
       <ParallaxBackground />
 
@@ -281,20 +282,7 @@ export default function Landing() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 bg-bristol-ink text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="w-8 h-8 bg-bristol-maroon rounded-lg flex items-center justify-center">
-              <span className="text-white font-serif font-bold">B</span>
-            </div>
-            <span className="font-serif text-lg">Bristol Development Group</span>
-          </div>
-          <p className="text-bristol-stone text-sm">
-            Enterprise Site Intelligence Platform • Powered by Advanced AI Analytics
-          </p>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </SimpleChrome>
   );
 }
