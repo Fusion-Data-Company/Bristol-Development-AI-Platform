@@ -1,0 +1,125 @@
+CRITICAL INSTRUCTIONS - DO NOT START OVER
+You are completing an 80% finished chat application. DO NOT rebuild from scratch. DO NOT create new file structures. DO NOT change the core architecture. The app has crashed twice from complete rebuilds. You will ONLY enhance, fix, and complete what exists.
+YOUR MISSION:
+Take the existing chat functionality that is currently 80% complete and finish the remaining 20% by fixing bugs, optimizing performance, and enhancing features WITHOUT breaking what already works.
+CURRENT STATE THAT MUST BE PRESERVED:
+
+The chat interface is functional and displaying
+Basic message sending works
+UI components are in place
+OpenRouter connection exists
+Model dropdown is present
+
+WHAT NEEDS COMPLETION:
+
+Fix Model Selection Integration:
+
+The dropdown menu exists but isn't properly connected to OpenRouter
+When a user selects a model, make it actually route to that specific model
+Ensure the selected model persists through the conversation
+Add ChatGPT-5 with BYOK support using the existing API key configuration
+
+
+System Prompt Backend Injection:
+
+Find where messages are being sent to the API
+Add system prompt injection at that point WITHOUT disrupting the message flow
+The system prompt should be: "You are an elite real estate assistant with deep knowledge of market analysis, property valuation, lead generation, client relationship management, and closing strategies. You speak with confidence and provide actionable insights."
+This must be invisible to the user but included in every API call
+
+
+Fix Memory and Optimization Issues:
+
+Identify and fix any memory leaks in the conversation history
+Implement proper cleanup for old messages
+Add conversation truncation after 50 messages to prevent memory overflow
+Optimize the streaming response handler to prevent buffer overflows
+
+
+Complete the Artifacts Panel:
+
+The panel structure exists but needs to be fully functional
+Make it detect when the AI generates code blocks, tables, or structured data
+Display these in the pop-out panel exactly like Claude Desktop does
+Ensure artifacts are editable and can be copied with one click
+Add syntax highlighting for code artifacts
+
+
+Enhance Conversation Persistence:
+
+Fix the conversation history so it properly maintains context
+Ensure messages are being stored correctly in the existing state management
+Add auto-save functionality every 5 messages
+Implement conversation export feature using existing UI buttons
+
+
+Real Estate Assistant Specialization:
+
+Add quick action buttons for common real estate queries:
+
+"Analyze this property"
+"Generate listing description"
+"Create follow-up sequence"
+"Market analysis"
+
+
+These should inject pre-formatted prompts into the chat
+
+
+Fix These Specific Broken Features:
+
+Streaming responses that cut off mid-sentence
+Error handling that currently shows raw error messages
+The "New Chat" button that doesn't properly clear conversation
+Response timing issues causing double messages
+
+
+
+TESTING REQUIREMENTS:
+After each change, test that:
+
+Existing chat functionality still works
+Messages still send and receive
+UI doesn't break or freeze
+No console errors appear
+Memory usage stays stable
+
+APPROACH METHODOLOGY:
+
+First, run the existing app and identify what works
+Locate the specific functions handling model selection
+Trace the message flow from input to API call
+Find where responses are rendered
+Make surgical changes only where needed
+Test after each small change
+Do not refactor working code
+
+FORBIDDEN ACTIONS:
+
+Do NOT delete existing files
+Do NOT restructure the project
+Do NOT change working API endpoints
+Do NOT modify the UI layout significantly
+Do NOT implement new libraries without checking if they're already installed
+Do NOT create new component structures
+
+SUCCESS CRITERIA:
+The chat must:
+
+Connect to real OpenRouter models successfully
+Inject system prompts invisibly
+Display artifacts in a working panel
+Maintain conversation context properly
+Handle memory efficiently
+Respond as a world-class real estate assistant
+Stream responses smoothly without cutting off
+
+DEBUGGING PRIORITY:
+
+Fix model selection connection first
+Then fix system prompt injection
+Then fix memory/streaming issues
+Then complete artifacts panel
+Finally add real estate enhancements
+
+Remember: You are COMPLETING existing work, not starting fresh. Every change should be minimal and surgical. If something is working, leave it alone. Only fix what's broken and add what's missing.
