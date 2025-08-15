@@ -53,6 +53,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { DataVisualizationPanel } from '@/components/chat/DataVisualizationPanel';
 import { OnboardingGuide } from '@/components/chat/OnboardingGuide';
+import { ChatBackground } from "../components/EnterpriseBackgrounds";
 
 interface PremiumModel {
   id: string;
@@ -1005,7 +1006,8 @@ What property development project, market analysis, or investment opportunity ca
   };
 
   return (
-    <div className="h-screen w-screen flex">
+    <ChatBackground>
+      <div className="h-screen w-screen flex">
       {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout - EXACT REPLICA OF FLOATING WIDGET */}
       <div 
         className="w-full h-screen text-neutral-100 shadow-2xl flex flex-col chrome-metallic-panel font-cinzel"
@@ -1517,24 +1519,25 @@ What property development project, market analysis, or investment opportunity ca
             </div>
           </div>
         )}
-      </div>
 
-      {/* Data Visualization Panel - Exact from floating widget */}
-      {showDataViz && (
-        <DataVisualizationPanel 
+        {/* Data Visualization Panel - Exact from floating widget */}
+        {showDataViz && (
+          <DataVisualizationPanel 
+            appData={appData}
+            isOpen={showDataViz}
+            onClose={() => setShowDataViz(false)}
+          />
+        )}
+
+        {/* Onboarding Guide */}
+        <OnboardingGuide 
+          isOpen={showOnboarding} 
+          onClose={() => setShowOnboarding(false)}
           appData={appData}
-          isOpen={showDataViz}
-          onClose={() => setShowDataViz(false)}
         />
-      )}
-
-      {/* Onboarding Guide */}
-      <OnboardingGuide 
-        isOpen={showOnboarding} 
-        onClose={() => setShowOnboarding(false)}
-        appData={appData}
-      />
-    </div>
+        </div>
+      </div>
+    </ChatBackground>
   );
 };
 
@@ -1941,5 +1944,6 @@ function AdminPane({
         </div>
       </div>
     </div>
+    </ChatBackground>
   );
-}
+};

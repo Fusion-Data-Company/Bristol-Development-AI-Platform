@@ -16,6 +16,7 @@ import { InteractiveMapDashboard } from "@/components/dashboards/InteractiveMapD
 import { SiteScoring } from "@/components/analytics/SiteScoring";
 import { MarketAnalytics } from "@/components/analytics/MarketAnalytics";
 import { ParallaxBackground, ParallaxHero } from "@/components/ParallaxBackground";
+import { DashboardBackground } from "../components/EnterpriseBackgrounds";
 import { ThinkingIndicator } from "@/components/chat/ThinkingIndicator";
 import { 
   MessageSquare, 
@@ -188,10 +189,11 @@ export default function Dashboard() {
   }
 
   return (
-    <Chrome>
-      <div className="relative min-h-screen">
-        {/* Parallax Background */}
-        <ParallaxBackground />
+    <DashboardBackground>
+      <Chrome>
+        <div className="relative min-h-screen">
+          {/* Parallax Background */}
+          <ParallaxBackground />
         {/* Dashboard Tabs Navigation */}
         <div className="bg-white/90 backdrop-blur-sm rounded-xl mx-6 mb-6 p-4 shadow-lg border border-white/20">
           <div className="flex items-center justify-center space-x-4">
@@ -777,5 +779,6 @@ export default function Dashboard() {
         </div>
       </div>
     </Chrome>
+    </DashboardBackground>
   );
 }

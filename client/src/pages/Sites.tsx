@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Building, Map } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
+import { DataBackground } from "../components/EnterpriseBackgrounds";
 import { SitesTable } from "../widgets/tables/SitesTable";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
 import { SiteDetails } from "../widgets/details/SiteDetails";
@@ -197,7 +198,8 @@ export default function Sites() {
   const statusOptions = ["Newest", "Completed", "Pipeline", "Other"];
 
   return (
-    <Chrome>
+    <DataBackground>
+      <Chrome>
       <div className="h-screen flex flex-col bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10">
         {/* Premium Sites Intelligence Header with Light Theme */}
         <div className="p-8 border-b-2 border-bristol-maroon/20 bg-white/90 backdrop-blur-sm relative overflow-hidden shadow-xl">
@@ -505,5 +507,6 @@ export default function Sites() {
         </Sheet>
       </div>
     </Chrome>
+    </DataBackground>
   );
 }

@@ -31,6 +31,7 @@ import {
   Target
 } from 'lucide-react';
 import Chrome from '@/components/brand/SimpleChrome';
+import { ToolsBackground } from "../components/EnterpriseBackgrounds";
 
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
@@ -68,8 +69,9 @@ export default function Analytics() {
   const COLORS = ['#9e1b32', '#d4a574', '#3b4d61', '#87ceeb'];
 
   return (
-    <Chrome>
-      <div className="container mx-auto p-6 space-y-6">
+    <ToolsBackground>
+      <Chrome>
+        <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -370,5 +372,6 @@ export default function Analytics() {
       </Tabs>
       </div>
     </Chrome>
+    </ToolsBackground>
   );
 }
