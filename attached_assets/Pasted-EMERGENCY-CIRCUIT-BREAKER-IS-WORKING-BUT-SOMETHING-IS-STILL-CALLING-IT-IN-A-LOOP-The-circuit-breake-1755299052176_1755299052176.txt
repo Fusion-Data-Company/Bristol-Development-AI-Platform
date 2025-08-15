@@ -1,0 +1,88 @@
+EMERGENCY: CIRCUIT BREAKER IS WORKING BUT SOMETHING IS STILL CALLING IT IN A LOOP
+The circuit breaker is correctly blocking requests, BUT something is repeatedly trying to call the demographics API even though it's disabled!
+FIND AND KILL THE LOOP IMMEDIATELY:
+
+SEARCH FOR THE CULPRIT:
+Look for these patterns that would cause repeated calls:
+javascript// BAD: useEffect without dependencies
+useEffect(() => {
+  fetchDemographics();
+}); // <-- This runs on EVERY render!
+
+// BAD: setInterval without cleanup
+setInterval(() => {
+  fetchDemographics();
+}, 1000);
+
+// BAD: Component re-rendering constantly
+
+CHECK THESE SPECIFIC PLACES:
+
+Any useEffect calling demographics without proper dependencies
+Any setInterval or setTimeout in a loop
+WebSocket message handlers triggering demographics fetch
+Property analysis functions calling demographics repeatedly
+Data visualization panels with auto-refresh
+
+
+ADD THIS DEBUG CODE TO FIND THE CALLER:
+javascript// In your ArcGIS API function, add stack trace
+console.trace('ArcGIS called from:');
+This will show you EXACTLY what's calling it repeatedly
+LIKELY CULPRITS:
+
+PropertyCard components - might fetch demographics on every render
+Map components - might fetch for every property marker
+Analytics dashboard - might have auto-refresh
+Agent system - agents might be triggering demographic fetches
+WebSocket handlers - might trigger on every message
+
+
+FIX PATTERNS:
+javascript// GOOD: useEffect with proper dependencies
+useEffect(() => {
+  if (propertyId && !demographicsData[propertyId]) {
+    fetchDemographics(propertyId);
+  }
+}, [propertyId]); // Only runs when propertyId changes
+
+// GOOD: Cleanup intervals
+useEffect(() => {
+  const interval = setInterval(() => {
+    // code
+  }, 60000); // Every minute, not every second
+  
+  return () => clearInterval(interval); // CLEANUP!
+}, []);
+
+// GOOD: Check before fetching
+if (!isLoadingDemographics && !demographicsError) {
+  fetchDemographics();
+}
+
+ADD RATE LIMITING:
+javascriptconst lastFetchTime = useRef(0);
+const MIN_FETCH_INTERVAL = 5000; // 5 seconds minimum
+
+const fetchDemographics = () => {
+  const now = Date.now();
+  if (now - lastFetchTime.current < MIN_FETCH_INTERVAL) {
+    console.log('Rate limited - too soon');
+    return;
+  }
+  lastFetchTime.current = now;
+  // ... actual fetch
+};
+
+
+IMMEDIATE ACTION:
+
+Add console.trace() to find what's calling it
+Check the browser DevTools Network tab - see what's triggering requests
+Look for components that render frequently
+Check for missing useEffect dependencies
+Look for intervals without cleanup
+
+THE CIRCUIT BREAKER MESSAGE SHOULD ONLY APPEAR 1-2 TIMES, NOT CONTINUOUSLY!
+If it's appearing constantly, something is calling the API in a tight loop. This is killing your performance and memory.
+DO NOT PROCEED WITH OTHER FIXES UNTIL THIS LOOP IS FOUND AND KILLED

@@ -37,8 +37,12 @@ export function ArcGISLayer({
     if (!visible) return;
     
     const fetchArcGISDataWithRetry = async (retryCount = 0) => {
+      // DEBUG: Add stack trace to find what's calling this repeatedly
+      console.trace('🔍 ArcGIS fetchArcGISDataWithRetry called from:');
+      
       // Check circuit breaker
       if (isCircuitBreakerOpen()) {
+        console.log('🚫 ArcGIS blocked by circuit breaker');
         setError('ArcGIS service temporarily disabled due to repeated failures');
         setLoading(false);
         return;
@@ -112,7 +116,12 @@ export function ArcGISLayer({
           console.log(`Retrying ArcGIS layer request in ${delay}ms...`);
           
           setTimeout(() => {
-            fetchArcGISDataWithRetry(retryCount + 1).catch(console.error);
+            fetchArcGISDataWithRetry(retryCount + 1).catch((retryErr) => {
+              console.error('ArcGIS layer retry error (handled):', retryErr);
+              recordFailure();
+              setError('ArcGIS layer failed during retry');
+              setLoading(false);
+            });
           }, delay);
         } else {
           // Final failure - record it and set error state
@@ -123,13 +132,19 @@ export function ArcGISLayer({
       }
     };
 
-    // Start the fetch with retry logic
-    fetchArcGISDataWithRetry().catch((err) => {
-      console.error('Unhandled error in ArcGIS layer fetch:', err);
-      recordFailure();
-      setError('ArcGIS layer fetch failed with unhandled error');
+    // Start the fetch with retry logic - prevent unhandled rejections
+    try {
+      fetchArcGISDataWithRetry().catch((err) => {
+        console.error('ArcGIS layer error (handled):', err);
+        recordFailure();
+        setError('ArcGIS layer temporarily unavailable');
+        setLoading(false);
+      });
+    } catch (syncErr) {
+      console.error('ArcGIS layer sync error (handled):', syncErr);
+      setError('ArcGIS layer failed to initialize');
       setLoading(false);
-    });
+    }
   }, [serviceUrl, layerId, visible]);
 
   if (!visible || !geoJsonData) {
@@ -220,8 +235,12 @@ export function useArcGISDemographics(bbox?: [number, number, number, number]) {
     if (!bbox) return;
 
     const fetchDemographicsWithRetry = async (retryCount = 0): Promise<void> => {
+      // DEBUG: Add stack trace to find what's calling this repeatedly
+      console.trace('🔍 ArcGIS Demographics fetchDemographicsWithRetry called from:');
+      
       // Check circuit breaker BEFORE making any request
       if (isCircuitBreakerOpen()) {
+        console.log('🚫 ArcGIS Demographics blocked by circuit breaker');
         setError('ArcGIS service temporarily disabled due to repeated failures');
         setData([]);
         setLoading(false);
@@ -310,7 +329,13 @@ export function useArcGISDemographics(bbox?: [number, number, number, number]) {
           console.log(`Retrying ArcGIS request in ${delay}ms...`);
           
           setTimeout(() => {
-            fetchDemographicsWithRetry(retryCount + 1).catch(console.error);
+            fetchDemographicsWithRetry(retryCount + 1).catch((retryErr) => {
+              console.error('ArcGIS demographics retry error (handled):', retryErr);
+              recordFailure();
+              setError('ArcGIS demographics failed during retry');
+              setData([]);
+              setLoading(false);
+            });
           }, delay);
         } else {
           // Final failure - record it and set error state
@@ -322,14 +347,21 @@ export function useArcGISDemographics(bbox?: [number, number, number, number]) {
       }
     };
 
-    // Start the fetch with retry logic
-    fetchDemographicsWithRetry().catch((err) => {
-      console.error('Unhandled error in ArcGIS fetch:', err);
-      recordFailure();
-      setError('ArcGIS fetch failed with unhandled error');
+    // Start the fetch with retry logic - prevent unhandled rejections
+    try {
+      fetchDemographicsWithRetry().catch((err) => {
+        console.error('ArcGIS demographics error (handled):', err);
+        recordFailure();
+        setError('ArcGIS demographics temporarily unavailable');
+        setData([]);
+        setLoading(false);
+      });
+    } catch (syncErr) {
+      console.error('ArcGIS demographics sync error (handled):', syncErr);
+      setError('ArcGIS demographics failed to initialize');
       setData([]);
       setLoading(false);
-    });
+    }
   }, [bbox]);
 
   return { data, loading, error };

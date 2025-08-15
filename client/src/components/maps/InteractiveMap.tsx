@@ -263,20 +263,20 @@ export function InteractiveMap({
     }
   }, [onMapClick]);
 
-  // Calculate bounding box for ArcGIS queries
-  const bbox: [number, number, number, number] = [
-    viewport.longitude - 1, // west
-    viewport.latitude - 1,  // south  
-    viewport.longitude + 1, // east
-    viewport.latitude + 1   // north
-  ];
-
-  const { data: demographicsData, loading: demographicsLoading, error: demographicsError } = useArcGISDemographics(bbox);
-
-  // Log demographics errors but don't block the UI
-  if (demographicsError) {
-    console.warn('Demographics data temporarily unavailable:', demographicsError);
-  }
+  // REMOVED: Automatic ArcGIS demographics fetching on every map move
+  // This was causing infinite loops - demographics should only be fetched when explicitly requested
+  // const bbox: [number, number, number, number] = [
+  //   viewport.longitude - 1, // west
+  //   viewport.latitude - 1,  // south  
+  //   viewport.longitude + 1, // east
+  //   viewport.latitude + 1   // north
+  // ];
+  // const { data: demographicsData, loading: demographicsLoading, error: demographicsError } = useArcGISDemographics(bbox);
+  
+  // Demographics will now only be fetched on demand (map clicks, explicit user actions)
+  const demographicsData = null;
+  const demographicsLoading = false;
+  const demographicsError = null;
 
   if (fullScreen) {
     return (
