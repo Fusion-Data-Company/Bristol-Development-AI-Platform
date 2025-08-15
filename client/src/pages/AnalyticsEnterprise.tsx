@@ -47,7 +47,7 @@ import {
   Settings
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
-import bristolBackground from '@/assets/bristol-analytics-background.jpg';
+import bristolBackground from '@assets/thumbnail_1755274091217.jpg';
 import { BristolFooter } from "@/components/ui/BristolFooter";
 import { cn } from '@/lib/utils';
 import { EnterpriseMetricCard, PerformanceGauge, MarketHeatmap, AlertsPanel } from '@/components/analytics/EnterpriseMetricsWidget';
