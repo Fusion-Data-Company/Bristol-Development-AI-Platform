@@ -2084,14 +2084,11 @@ What property or investment can I analyze for you today?`,
                   boxShadow: 'inset 0 2px 0 rgb(255, 255, 255), 0 6px 25px rgb(69, 214, 202)',
                 }}
               >
-                {/* Glass shimmer effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                
                 {/* Button content */}
                 <div className="relative z-10 flex items-center gap-2">
                   <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
                   <span className="text-white group-hover:text-bristol-cyan transition-colors duration-300 font-bold">
-                    🧠 ANALYZE PROPERTY
+                    ANALYZE PROPERTY
                   </span>
                 </div>
               </button>
