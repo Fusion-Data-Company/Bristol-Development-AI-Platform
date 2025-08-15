@@ -47,6 +47,7 @@ import {
   Settings
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
+import bristolBackground from '@/assets/bristol-analytics-background.jpg';
 import { BristolFooter } from "@/components/ui/BristolFooter";
 import { cn } from '@/lib/utils';
 import { EnterpriseMetricCard, PerformanceGauge, MarketHeatmap, AlertsPanel } from '@/components/analytics/EnterpriseMetricsWidget';
@@ -219,23 +220,12 @@ export default function AnalyticsEnterprise() {
 
   return (
     <SimpleChrome>
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900 relative overflow-hidden">
-        {/* Dynamic Background Effects */}
-        <div className="absolute inset-0">
-          {/* Dynamic Background Pattern */}
-          <div className="absolute inset-0 opacity-20" style={{backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iNCIvPjwvZz48L2c+PC9zdmc+')", backgroundSize: '60px 60px'}} />
-          
-          {/* Enhanced gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/[0.1] via-transparent to-bristol-gold/[0.1]" />
-          
-          {/* Animated Glow Effects */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-radial from-blue-500/20 to-transparent rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-radial from-amber-500/15 to-transparent rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}} />
-          
-          {/* Dynamic accent elements */}
-          <div className="absolute top-20 right-40 w-2 h-32 bg-gradient-to-b from-bristol-cyan/40 to-transparent blur-sm" />
-          <div className="absolute bottom-40 left-20 w-32 h-2 bg-gradient-to-r from-bristol-gold/40 to-transparent blur-sm" />
-        </div>
+      <div className="min-h-screen relative overflow-hidden" style={{backgroundImage: `url(${bristolBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
+        {/* Professional overlay for content readability */}
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
+        
+        {/* Subtle brand accent overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/[0.05] via-transparent to-bristol-gold/[0.05]" />
         
         <div className="relative z-10 container mx-auto max-w-7xl space-y-8 px-6 py-8">
           
