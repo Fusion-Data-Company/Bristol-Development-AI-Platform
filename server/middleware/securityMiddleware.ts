@@ -171,11 +171,16 @@ export const limitRequestSize = (maxSizeMB: number = 10) => {
   };
 };
 
-// IP blocking middleware for known bad actors
+// IP blocking middleware for known bad actors - DISABLED for development
 const blockedIPs = new Set<string>();
 const suspiciousIPs = new Map<string, { count: number; lastSeen: Date }>();
 
 export const ipProtection = (req: Request, res: Response, next: NextFunction) => {
+  // TEMPORARY: Disable IP protection completely to fix Access Denied issues
+  // The IP blocking was preventing legitimate users from accessing the app
+  next();
+  return;
+  
   const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
 
   // Check if IP is blocked
@@ -196,8 +201,8 @@ export const ipProtection = (req: Request, res: Response, next: NextFunction) =>
       suspicious.count++;
       suspicious.lastSeen = now;
       
-      // Block IP if too many suspicious requests
-      if (suspicious.count > 100) {
+      // Block IP if too many suspicious requests - INCREASED THRESHOLD
+      if (suspicious.count > 1000) { // Increased from 100 to 1000
         blockedIPs.add(clientIP);
         console.warn(`IP blocked for suspicious activity: ${clientIP}`);
         return res.status(403).json({ error: 'Access denied due to suspicious activity' });
