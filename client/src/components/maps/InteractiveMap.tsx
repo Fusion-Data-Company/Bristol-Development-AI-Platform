@@ -25,7 +25,6 @@ interface InteractiveMapProps {
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_PUBLIC_KEY2;
 
 // Check MapBox token
-console.log('🔍 Checking VITE_MAPBOX_PUBLIC_KEY2:', MAPBOX_TOKEN ? 'Found' : 'Missing');
 if (!MAPBOX_TOKEN) {
   console.error('MapBox access token is missing! Map will not render.');
 }
