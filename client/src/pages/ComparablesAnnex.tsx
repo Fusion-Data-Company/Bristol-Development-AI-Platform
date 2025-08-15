@@ -312,30 +312,33 @@ export default function ComparablesAnnex() {
         
         {/* Content Container */}
         <div className="relative z-10 container mx-auto px-6 py-8">
-        {/* Page Header */}
-        <div className="mb-8">
+        {/* Premium Hero Header */}
+        <div className="mb-12">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="p-3 bg-bristol-maroon/10 rounded-xl">
-                <Building2 className="h-8 w-8 text-bristol-maroon" />
+            <div className="flex items-center space-x-6">
+              <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl">
+                <Building2 className="h-10 w-10 text-bristol-gold" />
               </div>
               <div>
-                <h1 className="text-3xl font-cinzel font-bold text-bristol-maroon">
+                <h1 className="text-5xl font-cinzel font-bold text-white drop-shadow-2xl">
                   Comparables Annex
                 </h1>
-                <p className="text-bristol-stone text-lg">
-                  Bristol Development Group's Intelligence Platform
+                <p className="text-white/90 text-xl font-medium mt-2 drop-shadow-lg">
+                  Bristol Development Group's Elite Intelligence Platform
                 </p>
               </div>
             </div>
             
             <div className="text-right">
-              <div className="bg-bristol-maroon/5 rounded-xl p-4 border border-bristol-maroon/10">
-                <div className="text-2xl font-bold text-bristol-maroon">
+              <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-2xl hover:bg-white/20 transition-all duration-300">
+                <div className="text-4xl font-bold text-bristol-gold drop-shadow-lg mb-2">
                   {total.toLocaleString()}
                 </div>
-                <div className="text-bristol-stone text-sm font-medium">
-                  Total Records
+                <div className="text-white/90 text-sm font-medium uppercase tracking-wider">
+                  Total Properties
+                </div>
+                <div className="w-full h-1 bg-bristol-gold/30 rounded-full mt-3">
+                  <div className="w-3/4 h-full bg-bristol-gold rounded-full shadow-lg" />
                 </div>
               </div>
             </div>
