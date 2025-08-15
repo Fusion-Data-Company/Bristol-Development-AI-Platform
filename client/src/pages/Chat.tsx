@@ -1330,7 +1330,7 @@ What property development project, market analysis, or investment opportunity ca
                       />
                       <button
                         onClick={() => setShowOnboarding(true)}
-                        className="mt-4 px-6 py-3 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan border border-bristol-cyan/40 rounded-2xl transition-all duration-300 font-bold text-sm backdrop-blur-sm"
+                        className="mt-4 px-6 py-3 bg-gradient-to-r from-bristol-cyan/20 to-bristol-cyan/10 hover:from-bristol-cyan/30 hover:to-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/50 rounded-2xl transition-all duration-300 font-bold text-sm backdrop-blur-sm shadow-bristol-cyan/20 shadow-lg hover:shadow-bristol-cyan/30 hover:shadow-xl"
                       >
                         <HelpCircle className="h-4 w-4 mr-2 inline" />
                         Show Getting Started Guide
@@ -1346,8 +1346,8 @@ What property development project, market analysis, or investment opportunity ca
                       <div className={cx(
                         "max-w-[85%] rounded-2xl px-4 py-3 backdrop-blur-sm border relative",
                         msg.role === "user" 
-                          ? "bg-bristol-cyan/20 border-bristol-cyan/40 text-bristol-cyan"
-                          : "bg-white/10 border-white/20 text-white"
+                          ? "bg-gradient-to-br from-bristol-cyan/20 to-bristol-cyan/10 border-bristol-cyan/50 text-bristol-cyan shadow-bristol-cyan/20 shadow-lg"
+                          : "bg-gradient-to-br from-slate-800/80 to-slate-700/60 border-bristol-cyan/30 text-white shadow-slate-900/50 shadow-lg"
                       )}>
                         {/* Streaming indicator for assistant messages */}
                         {msg.role === "assistant" && (msg as any).metadata?.streaming && (
@@ -1381,7 +1381,7 @@ What property development project, market analysis, or investment opportunity ca
                                 </span>
                               )}
                               {(msg as any).metadata.provider && (
-                                <span className="text-xs text-white/70 bg-white/10 px-1.5 py-0.5 rounded-full">
+                                <span className="text-xs text-bristol-cyan bg-bristol-cyan/20 border border-bristol-cyan/30 px-2 py-1 rounded-full font-bold">
                                   {(msg as any).metadata.provider.toUpperCase()}
                                 </span>
                               )}
@@ -1394,12 +1394,12 @@ What property development project, market analysis, or investment opportunity ca
                   
                   {eliteLoading && (
                     <div className="flex justify-start">
-                      <div className="bg-white/10 border border-white/20 rounded-2xl px-4 py-3 backdrop-blur-sm">
+                      <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border border-bristol-cyan/40 rounded-2xl px-4 py-3 backdrop-blur-sm shadow-lg">
                         <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
-                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse delay-150" />
-                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse delay-300" />
-                          <span className="text-bristol-cyan text-sm font-medium ml-2">Bristol A.I. is analyzing...</span>
+                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse shadow-bristol-cyan/50 shadow-sm" />
+                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse delay-150 shadow-bristol-cyan/50 shadow-sm" />
+                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse delay-300 shadow-bristol-cyan/50 shadow-sm" />
+                          <span className="text-bristol-cyan text-sm font-bold ml-2">Bristol A.I. is analyzing...</span>
                         </div>
                       </div>
                     </div>
@@ -2142,6 +2142,7 @@ function AdminPane({
             </button>
           </div>
         </div>
+      </div>
       </div>
     </ChatBackground>
   );
