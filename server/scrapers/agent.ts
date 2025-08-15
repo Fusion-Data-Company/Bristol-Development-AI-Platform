@@ -1,227 +1,375 @@
-import { normalizeRecord } from './normalizer';
+import { promises as fs } from 'fs';
+import path from 'path';
+import cheerio from 'cheerio';
+import scrapeIt from 'scrape-it';
+import PQueue from 'p-queue';
 
-export interface ScrapeQuery {
+interface ScrapeQuery {
   address: string;
-  radius_mi?: number;
-  asset_type?: string;
+  radius_mi: number;
+  asset_type: string;
   amenities?: string[];
   keywords?: string[];
+}
+
+interface ScrapeResult {
+  source: string;
+  sourceUrl: string;
+  name: string;
+  address: string;
   city?: string;
   state?: string;
   zip?: string;
+  assetType: string;
+  units?: number;
+  yearBuilt?: number;
+  rentPsf?: number;
+  rentPu?: number;
+  occupancyPct?: number;
+  concessionPct?: number;
+  amenityTags?: string[];
+  notes?: string;
+  canonicalAddress: string;
+  unitPlan?: string;
 }
 
-export interface ScrapeResult {
-  records: any[];
-  source: 'firecrawl' | 'apify' | 'fallback';
-  caveats?: string[];
-  meta?: {
-    requests_used?: number;
-    cost?: number;
-    duration_ms?: number;
-  };
+interface AgentResponse {
+  records: ScrapeResult[];
+  source: string;
+  caveats: string[];
 }
 
-export async function runScrapeAgent(query: ScrapeQuery): Promise<ScrapeResult> {
-  const startTime = Date.now();
+const queue = new PQueue({ 
+  concurrency: parseInt(process.env.SCRAPER_CONCURRENCY || '2'), 
+  interval: parseInt(process.env.SCRAPER_INTERVAL_MS || '1000'), 
+  intervalCap: parseInt(process.env.SCRAPER_INTERVAL_CAP || '4') 
+});
+
+export async function runScrapeAgent(query: ScrapeQuery): Promise<AgentResponse> {
+  console.log('Starting scrape agent with query:', query);
   
-  console.log(`🤖 Running Scraping Agent for: ${query.address}`);
-  console.log(`📍 Radius: ${query.radius_mi || 5}mi, Type: ${query.asset_type || 'Multifamily'}`);
-  console.log(`🎯 Amenities: ${(query.amenities || []).join(', ')}`);
-  console.log(`🔍 Keywords: ${(query.keywords || []).join(', ')}`);
+  const caveats: string[] = [];
+  let records: ScrapeResult[] = [];
+  let source = 'fallback';
 
-  let result: ScrapeResult;
+  // Try Firecrawl first (premium scraping)
+  if (process.env.FIRECRAWL_API_KEY) {
+    try {
+      console.log('Attempting Firecrawl scraping...');
+      const firecrawlResults = await runFirecrawlScrape(query);
+      if (firecrawlResults.length > 0) {
+        records = firecrawlResults;
+        source = 'firecrawl';
+        console.log(`Firecrawl found ${records.length} records`);
+      }
+    } catch (error: any) {
+      console.warn('Firecrawl failed:', error.message);
+      caveats.push('Firecrawl API failed: ' + error.message);
+    }
+  } else {
+    caveats.push('Firecrawl API key not configured');
+  }
+
+  // Try Apify if Firecrawl failed
+  if (records.length === 0 && process.env.APIFY_TOKEN) {
+    try {
+      console.log('Attempting Apify scraping...');
+      const apifyResults = await runApifyScrape(query);
+      if (apifyResults.length > 0) {
+        records = apifyResults;
+        source = 'apify';
+        console.log(`Apify found ${records.length} records`);
+      }
+    } catch (error: any) {
+      console.warn('Apify failed:', error.message);
+      caveats.push('Apify API failed: ' + error.message);
+    }
+  } else if (records.length === 0) {
+    caveats.push('Apify token not configured');
+  }
+
+  // Fallback to ScrapeIt + Cheerio
+  if (records.length === 0) {
+    try {
+      console.log('Using fallback scraping...');
+      const fallbackResults = await runFallbackScrape(query);
+      records = fallbackResults;
+      source = 'fallback';
+      console.log(`Fallback found ${records.length} records`);
+    } catch (error: any) {
+      console.warn('Fallback scraping failed:', error.message);
+      caveats.push('Fallback scraping failed: ' + error.message);
+    }
+  }
+
+  // Process and enhance records
+  records = records.map(record => ({
+    ...record,
+    canonicalAddress: canonicalizeAddress(record.address),
+    amenityTags: extractAmenities(record.notes || '', query.amenities),
+    unitPlan: generateUnitPlan(record)
+  }));
+
+  return { records, source, caveats };
+}
+
+async function runFirecrawlScrape(query: ScrapeQuery): Promise<ScrapeResult[]> {
+  // Firecrawl integration - requires API key
+  const firecrawlEndpoint = 'https://api.firecrawl.dev/v0/scrape';
+  
+  const searchUrls = generateSearchUrls(query);
+  const results: ScrapeResult[] = [];
+
+  for (const url of searchUrls) {
+    try {
+      const response = await fetch(firecrawlEndpoint, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.FIRECRAWL_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          url,
+          extractorOptions: {
+            mode: 'llm-extraction',
+            extractionPrompt: `Extract real estate property data from this page. Focus on:
+            - Property name and address
+            - Asset type (apartment, condo, office, retail)
+            - Number of units
+            - Year built
+            - Rent per square foot and per unit
+            - Occupancy percentage
+            - Amenities (pool, fitness, parking, etc.)
+            Return data in JSON format.`
+          }
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const extracted = parseFirecrawlResponse(data, url);
+        results.push(...extracted);
+      }
+    } catch (error) {
+      console.warn(`Firecrawl failed for ${url}:`, error);
+    }
+  }
+
+  return results;
+}
+
+async function runApifyScrape(query: ScrapeQuery): Promise<ScrapeResult[]> {
+  // Apify integration - requires token
+  const { ApifyApi } = await import('apify');
+  const apifyClient = new ApifyApi({ token: process.env.APIFY_TOKEN });
+
+  const input = {
+    searchTerms: [
+      `${query.asset_type} properties near ${query.address}`,
+      `apartments for rent ${query.address}`,
+      `real estate ${query.address} ${query.radius_mi} miles`
+    ],
+    maxResults: 50,
+    includeMetadata: true
+  };
 
   try {
-    // For now, use the enhanced fallback scraping
-    console.log('🤖 Starting enhanced property scraping...');
-    result = await runEnhancedScraping(query);
+    const run = await apifyClient.actor('dhrumil/real-estate-scraper').call(input);
+    const { items } = await apifyClient.dataset(run.defaultDatasetId).listItems();
     
-    console.log(`✅ Enhanced scraping complete: ${result.records.length} records`);
-    result.meta = { ...result.meta, duration_ms: Date.now() - startTime };
-    return result;
+    return items.map((item: any) => parseApifyItem(item)).filter(Boolean);
   } catch (error) {
-    console.log(`❌ Scraping failed: ${error}`);
-    
-    // Fallback to demo data for production testing
-    console.log('🔄 Using demo data for testing...');
+    console.error('Apify scraping failed:', error);
+    return [];
+  }
+}
+
+async function runFallbackScrape(query: ScrapeQuery): Promise<ScrapeResult[]> {
+  const seedUrls = (process.env.SCRAPER_SEED_URLS || '').split(',').filter(Boolean);
+  const results: ScrapeResult[] = [];
+
+  if (seedUrls.length === 0) {
+    console.warn('No seed URLs configured for fallback scraping');
+    return [];
+  }
+
+  for (const baseUrl of seedUrls) {
     try {
-      const { generateDemoData } = await import('./demo-data');
-      const demoRecords = generateDemoData(query.address, query.radius_mi);
+      const searchUrl = `${baseUrl}/search?q=${encodeURIComponent(query.address)}&type=${query.asset_type}`;
       
-      return {
-        records: demoRecords,
-        source: 'fallback',
-        caveats: [
-          'Using demo data for testing purposes',
-          'Demo data represents realistic market conditions',
-          `Generated ${demoRecords.length} properties for analysis`
-        ],
-        meta: { duration_ms: Date.now() - startTime }
-      };
-    } catch (demoError) {
-      return {
-        records: [],
-        source: 'fallback',
-        caveats: ['Scraping failed', String(error), 'Demo fallback failed'],
-        meta: { duration_ms: Date.now() - startTime }
-      };
-    }
-  }
-}
+      const scraped = await scrapeIt(searchUrl, {
+        properties: {
+          listItem: '.property-listing, .listing-item, .property-card',
+          data: {
+            name: '.property-name, .listing-title, h3, h4',
+            address: '.property-address, .address, .location',
+            price: '.price, .rent, .rental-price',
+            units: '.units, .bedrooms, .unit-count',
+            amenities: '.amenities, .features',
+            url: {
+              attr: 'href',
+              selector: 'a'
+            }
+          }
+        }
+      });
 
-// Utility to deduplicate records by canonical address and unit plan
-export function deduplicateRecords(records: any[]): any[] {
-  const seen = new Set<string>();
-  return records.filter(record => {
-    const key = `${record.canonicalAddress}-${record.unitPlan || 'default'}`;
-    if (seen.has(key)) {
-      return false;
-    }
-    seen.add(key);
-    return true;
-  });
-}
-
-// Enhanced scraping implementation using multiple strategies
-async function runEnhancedScraping(query: ScrapeQuery): Promise<ScrapeResult> {
-  const results: any[] = [];
-  
-  // Strategy 1: Generate sample realistic properties for the area
-  const sampleProperties = generateRealisticProperties(query);
-  results.push(...sampleProperties);
-  
-  // Strategy 2: Try basic web search for the area (fallback)
-  if (process.env.SCRAPER_SEED_URLS) {
-    try {
-      const webResults = await performBasicWebScraping(query);
-      results.push(...webResults);
+      for (const prop of scraped.data.properties || []) {
+        const result = parseFallbackProperty(prop, baseUrl);
+        if (result) {
+          results.push(result);
+        }
+      }
     } catch (error) {
-      console.warn('Web scraping failed:', error);
+      console.warn(`Fallback scraping failed for ${baseUrl}:`, error);
     }
   }
-  
-  // Normalize and process results
-  const normalized = results.map(record => normalizeRecord(record));
-  const enriched = enrichRecords(normalized, query, 'enhanced');
-  const deduplicated = deduplicateRecords(enriched);
-  
-  return {
-    records: deduplicated,
-    source: 'fallback',
-    meta: {
-      requests_used: 1,
-      cost: 0,
-    },
-    caveats: deduplicated.length === 0 ? ['No properties found'] : undefined
-  };
+
+  return results;
 }
 
-// Generate realistic sample properties based on query
-function generateRealisticProperties(query: ScrapeQuery): any[] {
-  const { city, state } = parseAddress(query.address);
-  const assetType = query.asset_type || 'Multifamily';
-  const radius = query.radius_mi || 5;
-  
-  const properties = [
-    {
-      name: `${city} Garden Apartments`,
-      address: `123 Main St, ${city}, ${state}`,
-      units: 150,
-      rentPu: assetType === 'Multifamily' ? 1800 : 2200,
-      yearBuilt: 2018,
-      amenityTags: ['pool', 'fitness', 'parking', 'pet friendly'],
-      assetType,
-      occupancyPct: 95,
-    },
-    {
-      name: `${city} Heights`,
-      address: `456 Oak Ave, ${city}, ${state}`,
-      units: 200,
-      rentPu: assetType === 'Multifamily' ? 2100 : 2800,
-      yearBuilt: 2020,
-      amenityTags: ['rooftop deck', 'concierge', 'ev charging', 'fitness'],
-      assetType,
-      occupancyPct: 92,
-    },
-    {
-      name: `The Boulevard ${city}`,
-      address: `789 Park Blvd, ${city}, ${state}`,
-      units: 120,
-      rentPu: assetType === 'Multifamily' ? 1950 : 2500,
-      yearBuilt: 2019,
-      amenityTags: ['pool', 'dog park', 'package service', 'storage'],
-      assetType,
-      occupancyPct: 88,
-    }
+function generateSearchUrls(query: ScrapeQuery): string[] {
+  const baseUrls = [
+    'https://www.apartments.com',
+    'https://www.rentals.com',
+    'https://www.realtor.com'
   ];
-  
-  // Filter based on amenities if specified
-  if (query.amenities && query.amenities.length > 0) {
-    return properties.filter(prop => 
-      query.amenities!.some(amenity => 
-        prop.amenityTags.some(tag => 
-          tag.toLowerCase().includes(amenity.toLowerCase())
-        )
-      )
-    );
-  }
-  
-  return properties;
+
+  return baseUrls.map(base => 
+    `${base}/search?location=${encodeURIComponent(query.address)}&radius=${query.radius_mi}&type=${query.asset_type}`
+  );
 }
 
-// Basic web scraping implementation
-async function performBasicWebScraping(query: ScrapeQuery): Promise<any[]> {
-  const properties: any[] = [];
-  
-  // This would implement basic web scraping if SCRAPER_SEED_URLS is provided
-  // For now, return empty to maintain enterprise quality
-  
-  return properties;
-}
-
-// Parse address helper
-function parseAddress(address: string): { city?: string; state?: string } {
-  const parts = address.split(',').map(part => part.trim());
-  
-  if (parts.length >= 2) {
-    const lastPart = parts[parts.length - 1];
-    const secondLastPart = parts[parts.length - 2];
-    
-    if (lastPart.length === 2) {
-      return {
-        state: lastPart.toUpperCase(),
-        city: secondLastPart
-      };
+function parseFirecrawlResponse(data: any, sourceUrl: string): ScrapeResult[] {
+  try {
+    const extracted = data.llm_extraction || data.extractedData || {};
+    if (extracted.properties && Array.isArray(extracted.properties)) {
+      return extracted.properties.map((prop: any) => ({
+        source: 'firecrawl',
+        sourceUrl,
+        name: prop.name || 'Property',
+        address: prop.address || '',
+        city: prop.city,
+        state: prop.state,
+        zip: prop.zip,
+        assetType: prop.assetType || 'apartment',
+        units: parseInt(prop.units) || undefined,
+        yearBuilt: parseInt(prop.yearBuilt) || undefined,
+        rentPsf: parseFloat(prop.rentPsf) || undefined,
+        rentPu: parseFloat(prop.rentPu) || undefined,
+        occupancyPct: parseFloat(prop.occupancy) || undefined,
+        amenityTags: prop.amenities || [],
+        notes: prop.description || '',
+        canonicalAddress: '',
+        unitPlan: ''
+      }));
     }
-    
-    const stateZipMatch = lastPart.match(/([A-Z]{2})\s+\d{5}/);
-    if (stateZipMatch) {
-      return {
-        state: stateZipMatch[1],
-        city: secondLastPart
-      };
-    }
+  } catch (error) {
+    console.warn('Failed to parse Firecrawl response:', error);
   }
-  
-  return { city: 'Bristol', state: 'TN' }; // Default fallback
+  return [];
 }
 
-// Utility to enrich records with query context
-export function enrichRecords(records: any[], query: ScrapeQuery, source: string): any[] {
-  return records.map(record => ({
-    ...record,
-    source,
-    queryAddress: query.address,
-    queryRadius: query.radius_mi || 5,
-    queryAssetType: query.asset_type || 'Multifamily',
-    scrapedAt: new Date().toISOString(),
-    // Enhance amenity tags based on query filters
-    amenityTags: [
-      ...(record.amenityTags || []),
-      ...(query.amenities || []).filter(amenity => 
-        JSON.stringify(record).toLowerCase().includes(amenity.toLowerCase())
-      )
-    ].filter((tag, index, arr) => arr.indexOf(tag) === index) // dedupe
-  }));
+function parseApifyItem(item: any): ScrapeResult | null {
+  try {
+    return {
+      source: 'apify',
+      sourceUrl: item.url || '',
+      name: item.title || item.name || 'Property',
+      address: item.address || '',
+      city: item.city,
+      state: item.state,
+      zip: item.zipCode,
+      assetType: item.propertyType || 'apartment',
+      units: parseInt(item.units) || undefined,
+      yearBuilt: parseInt(item.yearBuilt) || undefined,
+      rentPsf: parseFloat(item.pricePerSqft) || undefined,
+      rentPu: parseFloat(item.rent) || undefined,
+      occupancyPct: parseFloat(item.occupancy) || undefined,
+      amenityTags: item.amenities || [],
+      notes: item.description || '',
+      canonicalAddress: '',
+      unitPlan: ''
+    };
+  } catch (error) {
+    console.warn('Failed to parse Apify item:', error);
+    return null;
+  }
+}
+
+function parseFallbackProperty(prop: any, baseUrl: string): ScrapeResult | null {
+  try {
+    const rentMatch = (prop.price || '').match(/\$?([\d,]+)/);
+    const unitsMatch = (prop.units || '').match(/(\d+)/);
+
+    return {
+      source: 'fallback',
+      sourceUrl: prop.url ? new URL(prop.url, baseUrl).href : baseUrl,
+      name: prop.name || 'Property',
+      address: prop.address || '',
+      assetType: 'apartment',
+      units: unitsMatch ? parseInt(unitsMatch[1]) : undefined,
+      rentPu: rentMatch ? parseInt(rentMatch[1].replace(/,/g, '')) : undefined,
+      amenityTags: extractAmenitiesFromText(prop.amenities || ''),
+      notes: prop.amenities || '',
+      canonicalAddress: '',
+      unitPlan: ''
+    };
+  } catch (error) {
+    console.warn('Failed to parse fallback property:', error);
+    return null;
+  }
+}
+
+function canonicalizeAddress(address: string): string {
+  return address
+    .toLowerCase()
+    .replace(/\b(street|st|avenue|ave|road|rd|drive|dr|boulevard|blvd)\b/g, (match) => {
+      const abbrevs: Record<string, string> = {
+        'street': 'st', 'avenue': 'ave', 'road': 'rd', 
+        'drive': 'dr', 'boulevard': 'blvd'
+      };
+      return abbrevs[match] || match;
+    })
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function extractAmenities(text: string, targetAmenities?: string[]): string[] {
+  const amenityKeywords = [
+    'pool', 'fitness', 'gym', 'parking', 'garage', 'balcony', 'deck',
+    'dishwasher', 'laundry', 'ac', 'heating', 'pet friendly', 'elevator',
+    'concierge', 'doorman', 'rooftop', 'garden', 'clubhouse'
+  ];
+
+  const found = amenityKeywords.filter(keyword => 
+    text.toLowerCase().includes(keyword)
+  );
+
+  if (targetAmenities) {
+    found.push(...targetAmenities.filter(amenity =>
+      text.toLowerCase().includes(amenity.toLowerCase())
+    ));
+  }
+
+  return [...new Set(found)];
+}
+
+function extractAmenitiesFromText(text: string): string[] {
+  const amenityPatterns = [
+    /pool/i, /fitness|gym/i, /parking|garage/i, /balcony/i,
+    /laundry/i, /pet.friendly/i, /elevator/i, /ac|air.conditioning/i
+  ];
+
+  return amenityPatterns
+    .map(pattern => pattern.test(text) ? pattern.source.replace(/[\/\\gi]/g, '') : null)
+    .filter(Boolean) as string[];
+}
+
+function generateUnitPlan(record: ScrapeResult): string {
+  const parts = [];
+  if (record.units) parts.push(`${record.units}u`);
+  if (record.rentPsf) parts.push(`$${record.rentPsf}psf`);
+  if (record.rentPu) parts.push(`$${record.rentPu}pu`);
+  return parts.join('|');
 }

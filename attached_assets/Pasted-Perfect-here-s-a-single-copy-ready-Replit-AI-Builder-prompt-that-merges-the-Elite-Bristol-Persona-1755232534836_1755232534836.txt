@@ -1,0 +1,285 @@
+Perfect — here’s a single, copy‑ready Replit AI Builder prompt that merges the Elite Bristol Persona and the Scraping Agent into your Comparables Annex. It preserves everything you have, wires the system prompt, exposes the tools (Firecrawl / Apify / Fallback), and lets the agent both scrape and analyze comps on command.
+
+⸻
+
+BUILDER PROMPT — “Bristol Elite Persona + Scraping Agent (Unified, Tool-Calling, Production Mode)”
+
+Do not remove or break existing features.
+Augment in place. Continue building until all Acceptance Tests pass.
+
+0) Context (current state)
+	•	Comparables page exists with TanStack Table (virtualized, inline edit, 200‑row blank sheet when empty).
+	•	Scraper pipeline + job runner exist; Firecrawl/Apify available via env; fallback uses Cheerio/scrape‑it + allow‑listed seed URLs.
+	•	AI chat/proxy is present (OpenRouter) and already lists target models.
+
+1) Dependencies & Env (augment only)
+
+Install if missing:
+
+npm i zod p-queue firecrawl @apify/client apify cheerio scrape-it undici
+
+Environment (Replit Secrets):
+	•	FIRECRAWL_API_KEY (Firecrawl)
+	•	APIFY_TOKEN (Apify)
+	•	SCRAPER_SEED_URLS (comma‑separated allow‑listed URLs)
+	•	SCRAPER_CONCURRENCY=2
+	•	SCRAPER_INTERVAL_MS=1000
+	•	SCRAPER_INTERVAL_CAP=4
+	•	SCRAPER_DEMO_MODE=0
+	•	(already) OPENROUTER_API_KEY
+
+Load dotenv in server boot if not already.
+
+⸻
+
+2) Elite Bristol Persona — System Prompt (new file)
+
+Create server/agent/bristol_system_prompt.ts:
+
+// server/agent/bristol_system_prompt.ts
+export const BRISTOL_SYSTEM_PROMPT = `
+You are Bristol Development Group’s Elite Deal Intelligence Officer — a hybrid of senior acquisitions analyst, investment banker, and market strategist. Speak as an internal team member (“we/our”). Your job is to both PULL data (via tools) and INTERPRET it into an investment thesis that is board‑ready.
+
+NORTH STAR
+- Maximize risk‑adjusted returns through disciplined site selection, underwriting, and execution.
+
+OPERATING MODES
+- Screen (fast go/no‑go), Underwrite (deep comps + sensitivities), IC Memo, Lender Pack, Broker Note, City Pitch.
+
+DATA SOURCES & PRIORITY
+- Prefer live dataContext and saved comparables in our DB.
+- Use scraping tools when asked or when data is stale/missing.
+- Respect scraping allowlists and terms.
+
+DISCIPLINES (ALWAYS DO)
+1) Comps: select by type, vintage ±10y, size ±25%, radius (urban 2–3mi; suburban 5–10mi). Compute rent/PSF, rent/unit, occupancy, concessions, renovation premium.
+2) Amenity Parity: score subject vs comp median; identify gaps and priority upgrades with rent‑lift hypothesis.
+3) Underwriting Readiness: EGI, OpEx, NOI (TTM & Pro Forma), price/unit, price/SF, cap (in‑place/forward), DSCR, sensitivities (rates, exit cap).
+4) Market Structure: absorption, pipeline (24–36m), pop/HH growth, income, jobs mix, regulation/flood/ESG.
+5) Decision Narrative: Executive Summary → Thesis → Evidence → Risks/Mitigants → Actions.
+
+HOUSE RULES
+- Never invent addresses/units. Use USD, SF, units, %, ISO dates. Show units on numbers. Prefer medians for skew.
+- If uncertain, return ranges + caveats and suggest the fastest data source to close gaps.
+
+OUTPUT SHAPES (DEFAULT)
+Return one of:
+- deal_memo.v1 (executive_summary[], thesis, metrics{}, amenity_parity{}, risks[], actions[], data_caveats[])
+- comp_table.v1 (subject, filters{}, rows[], subject_vs_comps{})
+- underwrite.v1 (assumptions{}, derived{}, sensitivities[], debt_frames[], notes)
+
+MODEL ADAPTATION
+- GPT‑5 / Claude / Grok / Perplexity: keep Bristol tone; favor structured outputs and tool use.
+
+SCRAPE INTENT
+- When the user asks for comps or “pull data near <address>”, call the scraping tool with: address (ground zero), radius_mi, asset_type, amenities[], keywords[].
+- After scraping, fetch saved comps and proceed with analysis.
+`;
+
+
+⸻
+
+3) Tool Specs (function calling) — add to your OpenRouter proxy
+
+Create/augment server/agent/tools.ts and export the JSON tool schema list:
+
+// server/agent/tools.ts
+export const BRISTOL_TOOLS = [
+  {
+    name: "comps_agent_scrape",
+    description: "Launch the Scraping Agent with address ground zero, radius, property type, amenities, and keywords.",
+    parameters: {
+      type: "object",
+      properties: {
+        address: { type: "string" },
+        radius_mi: { type: "number", default: 5 },
+        asset_type: { type: "string", default: "Multifamily" },
+        amenities: { type: "array", items: { type: "string" }, default: [] },
+        keywords:  { type: "array", items: { type: "string" }, default: [] },
+        city: { type: "string" }, state: { type: "string" }, zip: { type: "string" }
+      },
+      required: ["address"]
+    }
+  },
+  {
+    name: "comps_status",
+    description: "Check scrape job status by id.",
+    parameters: {
+      type: "object",
+      properties: { id: { type: "string" } },
+      required: ["id"]
+    }
+  },
+  {
+    name: "comps_search",
+    description: "Query saved comparables (DB) by filter string and limit.",
+    parameters: {
+      type: "object",
+      properties: { q: { type: "string" }, limit: { type: "number", default: 2000 } }
+    }
+  }
+];
+
+
+⸻
+
+4) Wire the system prompt + tools into the OpenRouter chat proxy
+
+Augment your chat route (e.g., server/routes/openrouter.ts or wherever you call OpenRouter):
+
+// server/routes/ai-chat.ts (new or augment existing chat proxy)
+import type { Request, Response } from "express";
+import { BRISTOL_SYSTEM_PROMPT } from "../agent/bristol_system_prompt";
+import { BRISTOL_TOOLS } from "../agent/tools";
+
+export function registerAIAgentRoute(app: import("express").Express){
+  app.post("/api/ai/bristol-chat", async (req: Request, res: Response) => {
+    try {
+      const key = process.env.OPENROUTER_API_KEY!;
+      const { model, messages, stream = false } = req.body || {};
+      if (!key) return res.status(500).json({ error: "missing_openrouter_key" });
+
+      // Prepend Bristol system prompt
+      const fullMessages = [
+        { role: "system", content: BRISTOL_SYSTEM_PROMPT },
+        ...(Array.isArray(messages) ? messages : [])
+      ];
+
+      const body: any = {
+        model,
+        messages: fullMessages,
+        tools: BRISTOL_TOOLS,
+        tool_choice: "auto",
+        temperature: 0.2
+      };
+
+      const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${key}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": process.env.SITE_URL || "http://localhost:5000",
+          "X-Title": "Bristol Elite Agent"
+        },
+        body: JSON.stringify(body)
+      });
+
+      const text = await r.text();
+      if (!r.ok) return res.status(r.status).send(text);
+      res.type("application/json").send(text);
+    } catch (e: any) {
+      res.status(500).json({ error: String(e?.message || e) });
+    }
+  });
+}
+
+Register it in your route registrar:
+
+// server/routes/index.ts
+import { registerAIAgentRoute } from "./ai-chat";
+export function registerRoutes(app: import("express").Express, state?: any){
+  // ...existing
+  registerAIAgentRoute(app);
+}
+
+
+⸻
+
+5) Tool Invocation Handlers (server-side glue)
+
+If your proxy already handles tool calls, ensure these handlers exist; otherwise add a simple dispatcher:
+
+// server/routes/ai-tools.ts (new)
+import type { Request, Response } from "express";
+import { db } from "../db/conn";
+import { comps } from "../db/schema.comps";
+import { sql } from "drizzle-orm";
+import { newScrapeJob, runJobNow, getJob } from "../scrapers/runner";
+
+export function registerAIToolRoutes(app: import("express").Express){
+  // Tool: comps_agent_scrape
+  app.post("/api/tools/comps_agent_scrape", async (req: Request, res: Response) => {
+    const id = await newScrapeJob(req.body); // body contains address, radius_mi, etc.
+    runJobNow(id).catch(()=>{});
+    res.json({ id, status: "queued" });
+  });
+
+  // Tool: comps_status
+  app.get("/api/tools/comps_status/:id", async (req: Request, res: Response) => {
+    const job = await getJob(req.params.id);
+    res.json(job || { error: "not_found" });
+  });
+
+  // Tool: comps_search (simple filter)
+  app.get("/api/tools/comps_search", async (req: Request, res: Response) => {
+    const q = String(req.query.q || "");
+    const limit = Math.min(Number(req.query.limit || 2000), 10000);
+    const rows = await db.execute(sql`
+      select * from comps 
+      where canonical_address ilike ${"%" + q + "%"} 
+         or name ilike ${"%" + q + "%"}
+      order by updated_at desc
+      limit ${limit}
+    `);
+    res.json({ rows });
+  });
+}
+
+Register it:
+
+// server/routes/index.ts
+import { registerAIToolRoutes } from "./ai-tools";
+export function registerRoutes(app: import("express").Express, state?: any){
+  // ...existing
+  registerAIToolRoutes(app);
+}
+
+If you already expose similar endpoints, re-use them and just keep the above for missing pieces.
+
+⸻
+
+6) Frontend Chat Hook (if needed)
+
+If your chat page already posts to /api/openrouter, add a Bristol tab or model selector that posts to /api/ai/bristol-chat. Ensure it passes the user message array; the system prompt will be injected server-side.
+
+⸻
+
+7) Agent Behavior Guardrails
+	•	When the user asks for comps or “pull data near ”, the assistant should:
+	1.	Call comps_agent_scrape with { address, radius_mi, asset_type, amenities, keywords }.
+	2.	Poll comps_status until done.
+	3.	Call comps_search with the address (or city) to get saved comps.
+	4.	Produce a deal_memo.v1 or comp_table.v1 with Bristol tone.
+
+No narrative fluff until data is pulled. Always include ACTIONS and DATA CAVEATS.
+
+⸻
+
+8) Acceptance Tests (must pass before you stop)
+	1.	Persona Injection: A chat request to /api/ai/bristol-chat shows the Bristol voice, structure, and the ability to propose a scrape when data is missing.
+	2.	Tool Use: When the user says “Scrape comps near 123 Main St, Nashville; multifamily; amenities pool, EV”, the model triggers comps_agent_scrape → status queued→running→done → then comps_search → returns rows.
+	3.	Real Data Path(s):
+	•	With valid FIRECRAWL_API_KEY, at least one normalized record is inserted with source='firecrawl'.
+	•	With valid APIFY_TOKEN and no Firecrawl key, records insert with source='apify'.
+	•	With neither key but SCRAPER_SEED_URLS provided, records insert with source='fallback'.
+	4.	No SQL Errors: Upsert succeeds using mapped column names (no syntax errors).
+	5.	UI Unchanged (Better): Comparables page still renders 200‑row blank sheet when empty; inline edit saves; CSV export works; analytics update with new scraped comps.
+	6.	Rate Limits & Stability: Respect SCRAPER_* env settings; no unhandled rejections; server port remains healthy.
+
+Finish by printing:
+Bristol Elite Persona + Scraping Agent READY — system prompt wired, tools live, data flows into comps & analysis. ✅
+
+⸻
+
+Notes
+	•	Respect robots.txt and terms. Only crawl allow‑listed domains in SCRAPER_SEED_URLS.
+	•	Keep demo mode behind SCRAPER_DEMO_MODE=1 for safe testing.
+	•	Do not remove existing code; merge and fix type errors immediately.
+
+⸻
+
+Paste this into Replit’s AI Builder and run it. Once it’s done, set your FIRECRAWL_API_KEY / APIFY_TOKEN, add a few domains to SCRAPER_SEED_URLS, and try:
+
+“Scrape comps near 150 4th Ave N, Nashville, TN; radius 5mi; Multifamily; amenities pool, fitness, EV; keywords renovated, special.”
+
+The agent will scrape, upsert into comps, and return a deal_memo.v1 or comp_table.v1 with Bristol‑grade analysis.

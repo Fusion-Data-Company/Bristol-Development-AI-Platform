@@ -85,6 +85,98 @@ export class AIService {
       };
       await storage.createChatMessage(userChatMessage);
 
+      // Check for scrape intent first
+      const { parseScrapeIntent, formatScrapeResults } = await import('../utils/scrapeIntentParser');
+      const scrapeIntent = parseScrapeIntent(userMessage);
+
+      if (scrapeIntent) {
+        try {
+          console.log('Detected scrape intent:', scrapeIntent);
+          
+          // Execute scraper
+          const { runScrapeAgent } = await import('../scrapers/agent');
+          const scrapeResult = await runScrapeAgent(scrapeIntent);
+          
+          // Insert results into database
+          const { randomUUID } = await import('crypto');
+          const rows = (scrapeResult.records || []).map(r => ({
+            ...r,
+            id: randomUUID(),
+            jobId: randomUUID(),
+            scrapedAt: new Date().toISOString(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }));
+
+          if (rows.length > 0) {
+            const { compsAnnex } = await import('../../shared/schema');
+            const { db } = await import('../db');
+            const { sql } = await import('drizzle-orm');
+
+            // Map scraper results to compsAnnex schema
+            const mappedRows = rows.map(r => ({
+              id: r.id,
+              source: r.source,
+              sourceUrl: r.sourceUrl,
+              name: r.name,
+              address: r.address,
+              city: r.city,
+              state: r.state,
+              zip: r.zip,
+              assetType: r.assetType,
+              units: r.units,
+              yearBuilt: r.yearBuilt,
+              rentPsf: r.rentPsf,
+              rentPu: r.rentPu,
+              occupancyPct: r.occupancyPct,
+              concessionPct: r.concessionPct,
+              amenityTags: r.amenityTags,
+              notes: r.notes,
+              canonicalAddress: r.canonicalAddress,
+              unitPlan: r.unitPlan,
+              scrapedAt: new Date(r.scrapedAt),
+              jobId: r.jobId,
+              createdAt: new Date(r.createdAt),
+              updatedAt: new Date(r.updatedAt)
+            }));
+
+            await db.insert(compsAnnex).values(mappedRows).onConflictDoUpdate({
+              target: [compsAnnex.canonicalAddress, compsAnnex.unitPlan],
+              set: {
+                rentPsf: sql`excluded.rent_psf`,
+                rentPu: sql`excluded.rent_pu`,
+                occupancyPct: sql`excluded.occupancy_pct`,
+                concessionPct: sql`excluded.concession_pct`,
+                amenityTags: sql`coalesce(excluded.amenity_tags, comps_annex.amenity_tags)`,
+                source: sql`coalesce(excluded.source, comps_annex.source)`,
+                sourceUrl: sql`coalesce(excluded.source_url, comps_annex.source_url)`,
+                scrapedAt: sql`excluded.scraped_at`,
+                jobId: sql`excluded.job_id`,
+                updatedAt: sql`now()`
+              }
+            });
+          }
+
+          const formattedResponse = formatScrapeResults({
+            ...scrapeResult,
+            inserted: rows.length,
+            records: rows.slice(0, 5)
+          });
+
+          // Store AI response
+          const aiChatMessage: InsertChatMessage = {
+            sessionId,
+            role: "assistant",
+            content: formattedResponse,
+          };
+          
+          return await storage.createChatMessage(aiChatMessage);
+        } catch (scrapeError) {
+          console.error('Scrape execution failed:', scrapeError);
+          // Fall through to normal AI response with error context
+        }
+      }
+
       // Get conversation history
       const messages = await storage.getSessionMessages(sessionId);
       

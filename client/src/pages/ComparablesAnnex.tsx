@@ -10,6 +10,7 @@ import TanStackCompsTable from '@/components/comparables/TanStackCompsTable';
 import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
 import ScraperJobManager from '@/components/comparables/ScraperJobManager';
+import ScraperControlPanel from '@/components/comparables/ScraperControlPanel';
 import { EliteFirecrawlInterface } from '@/components/comparables/EliteFirecrawlInterface';
 import AIAnalyticsPanel from '@/components/comparables/AIAnalyticsPanel';
 import DataVisualization from '@/components/comparables/DataVisualization';
@@ -312,6 +313,16 @@ export default function ComparablesAnnex() {
             </div>
           </div>
         </div>
+
+        {/* Scraper Control Panel */}
+        <ScraperControlPanel 
+          onScrapeComplete={(data) => {
+            toast({
+              title: "Scraping Complete",
+              description: `Successfully scraped ${data.inserted || 0} properties from ${data.source}`,
+            });
+          }}
+        />
 
         {/* Elite Firecrawl Operations Interface - Hero Section */}
         <div className="mb-8">

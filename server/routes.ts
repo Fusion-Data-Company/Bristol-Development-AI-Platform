@@ -8,6 +8,7 @@ import { integrationService } from "./services/integrationService";
 import { initializeWebSocketService } from "./services/websocketService";
 import { insertSiteSchema, insertChatSessionSchema } from "@shared/schema";
 import { z } from "zod";
+import { randomUUID } from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
@@ -603,6 +604,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching dashboard analytics:", error);
       res.status(500).json({ message: "Failed to fetch dashboard data" });
+    }
+  });
+
+  // Scraper Agent API Route
+  app.post('/api/scraper/run', async (req, res) => {
+    try {
+      const { runScrapeAgent } = await import('./scrapers/agent');
+      const jobQuery = req.body; // address, radius_mi, asset_type, amenities[], keywords[]
+      
+      const { records, source, caveats } = await runScrapeAgent(jobQuery);
+      
+      // Transform and insert records
+      const rows = (records || []).map(r => ({
+        ...r,
+        id: randomUUID(),
+        jobId: randomUUID(),
+        scrapedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }));
+
+      // Import compsAnnex table schema
+      const { compsAnnex } = await import('../shared/schema');
+      const { db } = await import('./db');
+      const { sql } = await import('drizzle-orm');
+
+      if (rows.length > 0) {
+        // Map to compsAnnex schema
+        const mappedRows = rows.map(r => ({
+          id: r.id,
+          source: r.source,
+          sourceUrl: r.sourceUrl,
+          name: r.name,
+          address: r.address,
+          city: r.city,
+          state: r.state,
+          zip: r.zip,
+          assetType: r.assetType,
+          units: r.units,
+          yearBuilt: r.yearBuilt,
+          rentPsf: r.rentPsf,
+          rentPu: r.rentPu,
+          occupancyPct: r.occupancyPct,
+          concessionPct: r.concessionPct,
+          amenityTags: r.amenityTags,
+          notes: r.notes,
+          canonicalAddress: r.canonicalAddress,
+          unitPlan: r.unitPlan,
+          scrapedAt: new Date(r.scrapedAt),
+          jobId: r.jobId,
+          createdAt: new Date(r.createdAt),
+          updatedAt: new Date(r.updatedAt)
+        }));
+
+        await db.insert(compsAnnex).values(mappedRows).onConflictDoUpdate({
+          target: [compsAnnex.canonicalAddress, compsAnnex.unitPlan],
+          set: {
+            rentPsf: sql`excluded.rent_psf`,
+            rentPu: sql`excluded.rent_pu`,
+            occupancyPct: sql`excluded.occupancy_pct`,
+            concessionPct: sql`excluded.concession_pct`,
+            amenityTags: sql`coalesce(excluded.amenity_tags, comps_annex.amenity_tags)`,
+            source: sql`coalesce(excluded.source, comps_annex.source)`,
+            sourceUrl: sql`coalesce(excluded.source_url, comps_annex.source_url)`,
+            scrapedAt: sql`excluded.scraped_at`,
+            jobId: sql`excluded.job_id`,
+            updatedAt: sql`now()`
+          }
+        });
+      }
+
+      res.json({ 
+        inserted: rows.length, 
+        source, 
+        caveats,
+        records: rows.slice(0, 5) // Return first 5 for preview
+      });
+    } catch (e: any) {
+      console.error('Scraper API error:', e);
+      res.status(500).json({ error: e.message });
     }
   });
 

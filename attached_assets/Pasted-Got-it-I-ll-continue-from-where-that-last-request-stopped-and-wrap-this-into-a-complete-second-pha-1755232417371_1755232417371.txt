@@ -1,0 +1,144 @@
+Got it — I’ll continue from where that last request stopped and wrap this into a complete second-phase follow-up so your scraper page isn’t just “enabled” but tactically armed for Bristol Development Group’s real estate & finance due-diligence use case.
+
+This follow-up prompt will tell the Replit Builder to:
+	•	Keep everything from the last operational-enablement prompt
+	•	Add Firecrawl, Apify, ScrapeIt, and a local Cheerio-based fallback
+	•	Integrate filters for address, radius, property type, amenities
+	•	Bind scraper results directly into your TanStack 200-row scrollable sheet
+	•	Preserve existing table features and analytics
+	•	Enable on-command scraping via the AI agent so Bristol persona can say “scrape comps near 123 Main” and data goes straight into the DB/table
+
+⸻
+
+REPLIT BUILDER PROMPT — “Comparables Annex Tactical Upgrade”
+
+KEEP all existing Comparables page, table, analytics, and backend from the last instructions.
+
+⸻
+
+1. Objectives
+	1.	Preserve the current Comparables Annex (TanStack table, analytics, DB schema, CRUD).
+	2.	Add fully operational scraping capability with:
+	•	Firecrawl (API key required)
+	•	Apify (API token required)
+	•	ScrapeIt + Cheerio for free HTML parsing when no keys are available
+	3.	Allow the user (or AI agent) to initiate scrapes from:
+	•	UI filter form with: address, radius_mi, asset_type, amenities[], keywords[]
+	•	AI agent command (“scrape comps for Nashville multifamily with pool and EV chargers”)
+	4.	Push scraped results directly into comps DB and reflect live in the TanStack table.
+	5.	Keep the table always showing a 200-row scrollable view (blank placeholders if DB empty).
+	6.	Maintain all analytics and visualizations so new scraped data updates them in real-time.
+	7.	Prevent breaking changes to working features.
+
+⸻
+
+2. Dependencies
+
+npm i @apify/client apify firecrawl scrape-it cheerio undici p-queue zod
+
+
+⸻
+
+3. Environment Variables
+
+In Replit Secrets:
+	•	FIRECRAWL_API_KEY
+	•	APIFY_TOKEN
+	•	SCRAPER_SEED_URLS (comma-separated allow-listed URLs)
+	•	SCRAPER_CONCURRENCY=2
+	•	SCRAPER_INTERVAL_MS=1000
+	•	SCRAPER_INTERVAL_CAP=4
+	•	SCRAPER_DEMO_MODE=0
+
+⸻
+
+4. UI Updates
+
+On Comparables page:
+	•	Add scraper control panel above the TanStack table with:
+	•	Text input for address (string)
+	•	Number input for radius_mi (integer)
+	•	Multi-select for asset_type (Multifamily, Condo, Office, Retail…)
+	•	Multi-select for amenities[] (pool, fitness, EV, dog park…)
+	•	Keywords text input (comma-separated)
+	•	Button “Run Scrape” → triggers /api/scraper/run POST with JSON payload
+	•	Keep table full-width, min-height for 200 rows scrollable, inline editing enabled.
+
+⸻
+
+5. Backend Additions
+
+Route: /api/scraper/run
+
+import { runScrapeAgent } from '../scrapers/agent';
+
+app.post('/api/scraper/run', async (req,res)=>{
+  try {
+    const jobQuery = req.body; // address, radius_mi, asset_type, amenities[], keywords[]
+    const { records, source, caveats } = await runScrapeAgent(jobQuery);
+    const rows = (records || []).map(r=>({
+      ...r,
+      jobId: crypto.randomUUID(),
+      scrapedAt: new Date()
+    }));
+    await db.insert(comps).values(rows).onConflictDoUpdate({
+      target: [comps.canonicalAddress, comps.unitPlan],
+      set: {
+        rentPsf: sql`excluded.rent_psf`,
+        rentPu: sql`excluded.rent_pu`,
+        occupancyPct: sql`excluded.occupancy_pct`,
+        concessionPct: sql`excluded.concession_pct`,
+        amenityTags: sql`coalesce(excluded.amenity_tags, comps.amenity_tags)`,
+        source: sql`coalesce(excluded.source, comps.source)`,
+        sourceUrl: sql`coalesce(excluded.source_url, comps.source_url)`,
+        scrapedAt: sql`excluded.scraped_at`,
+        jobId: sql`excluded.job_id`,
+        updatedAt: sql`now()`
+      }
+    });
+    res.json({ inserted: rows.length, source, caveats });
+  } catch (e:any) {
+    console.error(e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+
+⸻
+
+6. Scraping Logic
+
+In scrapers/agent.ts:
+	•	Keep Firecrawl, Apify, fallback logic from last build.
+	•	Add scrape-it for smaller HTML grabs (if Firecrawl + Apify fail).
+	•	Implement amenity extraction, rent parsing, and address canonicalization as before.
+	•	Accept filters (address, radius, asset_type, amenities, keywords) and pass them to all scraper modules.
+
+⸻
+
+7. AI Agent Hook
+
+When user chats with Bristol persona agent:
+	•	If text matches a scrape intent (regex: scrape|pull comps|get data for), parse filters from message.
+	•	Call /api/scraper/run with parsed filters.
+	•	When job completes, agent responds with top 5 new comps + summary analytics.
+
+⸻
+
+8. Acceptance Criteria
+	1.	Clicking “Run Scrape” with keys set:
+	•	Firecrawl path: returns real property data
+	•	Apify path: returns real property data
+	•	Fallback: scrapes allowed URLs from SCRAPER_SEED_URLS
+	2.	Data appears instantly in TanStack table without page reload.
+	3.	Analytics update live with new scraped comps.
+	4.	Agent can trigger scrapes and summarize results.
+	5.	200-row table always visible; blank placeholders if no data.
+
+⸻
+
+If you paste this follow-up into the Replit AI Builder right after the previous operational-enablement prompt, it will finish the scraper page so it’s tactical, real-time, and AI-integrated for Bristol’s due-diligence work.
+
+⸻
+
+Do you want me to now also merge this with a full Bristol Development Group persona system prompt so the AI agent both scrapes and interprets the comps like a top-tier analyst? That would let the agent pull and evaluate in one workflow.
