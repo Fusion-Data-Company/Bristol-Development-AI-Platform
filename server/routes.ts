@@ -6,6 +6,7 @@ import { aiService } from "./services/aiService";
 import { mcpService } from "./services/mcpService";
 import { integrationService } from "./services/integrationService";
 import { initializeWebSocketService } from "./services/websocketService";
+import { performanceMonitoringService } from "./services/performanceMonitoringService";
 import { insertSiteSchema, insertChatSessionSchema } from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
@@ -16,6 +17,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Create HTTP server
   const httpServer = createServer(app);
+
+  // Add performance monitoring middleware
+  app.use(performanceMonitoringService.trackApiPerformance());
 
   // Initialize WebSocket service
   initializeWebSocketService(httpServer);
@@ -34,7 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const sitesRouter = (await import('./api/sites')).default;
   app.use('/api/sites', sitesRouter);
 
-  // Import analytics API - temporarily bypass auth for real data testing
+  // Import analytics API - enterprise-grade analytics with performance monitoring
   const analyticsRouter = (await import('./api/analytics')).default;
   app.use('/api/analytics', analyticsRouter);
 

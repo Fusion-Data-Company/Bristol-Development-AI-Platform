@@ -84,6 +84,17 @@ export function GlobalHeader() {
                 </a>
               </Link>
               
+              <Link href="/enterprise">
+                <a className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                  location === '/enterprise' 
+                    ? 'bg-blue-600/20 text-blue-400 shadow-lg shadow-blue-500/20' 
+                    : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                }`}>
+                  <Settings className="h-4 w-4" />
+                  <span className="text-sm font-medium">Enterprise</span>
+                </a>
+              </Link>
+              
               <Link href="/demographics">
                 <a className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
                   location === '/demographics' 
