@@ -1318,10 +1318,10 @@ What property or investment can I analyze for you today?`,
                 </div>
               </div>
               <div>
-                <h1 className="font-serif font-bold text-3xl bg-gradient-to-r from-bristol-gold via-white to-bristol-cyan bg-clip-text text-transparent drop-shadow-xl">
+                <h1 className="font-serif font-bold text-3xl text-bristol-cyan drop-shadow-xl">
                   Bristol Development Group
                 </h1>
-                <p className="text-lg text-bristol-gold font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
+                <p className="text-lg text-orange-500 font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   Dynamic AI Analytics Platform
                   <div className="relative px-4 py-2 ml-2 group">
@@ -1532,7 +1532,7 @@ What property or investment can I analyze for you today?`,
                 AI Model
               </label>
               <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-bristol-gold/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-orange-500/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/5 to-bristol-electric/5 rounded-2xl" />
                 <select
                   className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-bristol-cyan hover:text-white focus:text-white focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/40 disabled:opacity-50"
@@ -1581,7 +1581,7 @@ What property or investment can I analyze for you today?`,
                   className={cx(
                     "px-2 py-1 rounded-full text-xs font-bold transition-all duration-300",
                     showArtifacts
-                      ? "bg-bristol-gold/20 text-bristol-gold border border-bristol-gold/40"
+                      ? "bg-orange-500/20 text-orange-500 border border-orange-500/40"
                       : "bg-white/10 text-white/50 border border-white/20"
                   )}
                 >
@@ -1721,8 +1721,8 @@ What property or investment can I analyze for you today?`,
                                 }}
                                 className="flex flex-col items-center gap-2 p-4 bg-gradient-to-r from-bristol-cyan/30 to-bristol-cyan/20 hover:from-bristol-cyan/40 hover:to-bristol-cyan/30 border border-bristol-cyan/50 hover:border-bristol-cyan/70 rounded-xl transition-all duration-300 group shadow-lg backdrop-blur-sm"
                               >
-                                <Icon className="h-8 w-8 text-bristol-cyan group-hover:text-bristol-gold transition-colors" />
-                                <span className="text-sm font-bold text-white group-hover:text-bristol-gold">{action.label}</span>
+                                <Icon className="h-8 w-8 text-bristol-cyan group-hover:text-orange-500 transition-colors" />
+                                <span className="text-sm font-bold text-white group-hover:text-orange-500">{action.label}</span>
                               </button>
                             );
                           })}
@@ -1746,7 +1746,7 @@ What property or investment can I analyze for you today?`,
                     )}>
                       <div 
                         className={cx(
-                          "max-w-[85%] rounded-2xl px-4 py-3 border relative",
+                          "max-w-[65%] rounded-2xl px-4 py-3 border relative",
                           msg.role === "user" 
                             ? "text-bristol-cyan"
                             : "text-white"
@@ -1914,8 +1914,8 @@ What property or investment can I analyze for you today?`,
               >
                 {/* Button content */}
                 <div className="relative z-[10000] flex items-center gap-2">
-                  <Brain className="h-5 w-5 text-white group-hover:text-bristol-gold transition-colors duration-300" />
-                  <span className="text-white group-hover:text-bristol-gold transition-colors duration-300 font-bold">
+                  <Brain className="h-5 w-5 text-white group-hover:text-orange-500 transition-colors duration-300" />
+                  <span className="text-white group-hover:text-orange-500 transition-colors duration-300 font-bold">
                     ANALYZE PROPERTY
                   </span>
                 </div>
@@ -2073,7 +2073,7 @@ function DataPane({ data }: { data: any }) {
                   onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(currentResult, null, 2));
                   }}
-                  className="px-3 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold rounded-lg text-xs font-medium transition-colors"
+                  className="px-3 py-1 bg-orange-500/20 hover:bg-orange-500/30 text-orange-500 rounded-lg text-xs font-medium transition-colors"
                 >
                   COPY JSON
                 </button>
@@ -2105,9 +2105,9 @@ function DataPane({ data }: { data: any }) {
                           <div className="text-bristol-cyan font-bold text-lg">{currentResult.totalSites}</div>
                           <div className="text-bristol-cyan/80 text-xs">Total Sites</div>
                         </div>
-                        <div className="bg-bristol-gold/10 border border-bristol-gold/20 rounded-lg p-2">
-                          <div className="text-bristol-gold font-bold text-lg">{currentResult.totalUnits}</div>
-                          <div className="text-bristol-gold/80 text-xs">Total Units</div>
+                        <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-2">
+                          <div className="text-orange-500 font-bold text-lg">{currentResult.totalUnits}</div>
+                          <div className="text-orange-500/80 text-xs">Total Units</div>
                         </div>
                         <div className="bg-green-400/10 border border-green-400/20 rounded-lg p-2">
                           <div className="text-green-400 font-bold text-lg">${(currentResult.totalValue / 1000000).toFixed(1)}M</div>
@@ -2144,8 +2144,8 @@ function DataPane({ data }: { data: any }) {
         </div>
         
         {/* Real-time Data Feeds */}
-        <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-4">
-          <h4 className="text-bristol-gold font-semibold mb-3 flex items-center gap-2">
+        <div className="bg-bristol-maroon/10 border border-orange-500/30 rounded-2xl p-4">
+          <h4 className="text-orange-500 font-semibold mb-3 flex items-center gap-2">
             <Activity className="h-4 w-4 animate-pulse" />
             Live Market Data
           </h4>
@@ -2154,9 +2154,9 @@ function DataPane({ data }: { data: any }) {
               <div className="text-bristol-cyan text-sm font-medium">Market Status</div>
               <div className="text-xs text-bristol-cyan/70 mt-1">Real-time feeds active</div>
             </div>
-            <div className="bg-black/40 border border-bristol-gold/30 rounded-lg p-3">
-              <div className="text-bristol-gold text-sm font-medium">API Health</div>
-              <div className="text-xs text-bristol-gold/70 mt-1">All systems operational</div>
+            <div className="bg-black/40 border border-orange-500/30 rounded-lg p-3">
+              <div className="text-orange-500 text-sm font-medium">API Health</div>
+              <div className="text-xs text-orange-500/70 mt-1">All systems operational</div>
             </div>
           </div>
         </div>
@@ -2174,7 +2174,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
     <div className="flex-1 p-6">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h4 className="text-bristol-gold font-semibold flex items-center gap-2">
+          <h4 className="text-orange-500 font-semibold flex items-center gap-2">
             <Zap className="h-4 w-4" />
             MCP BOSS AGENT TOOLS
           </h4>
