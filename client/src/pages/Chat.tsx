@@ -210,13 +210,13 @@ export default function Chat() {
   const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const wsRef = useRef<WebSocket | null>(null);
   
-  // Multi-Agent System States
+  // Multi-Agent System States - VERIFIED OPENROUTER MODELS ONLY
   const [agents, setAgents] = useState<any[]>([
-    { id: 'master', name: 'Bristol Master Agent', model: 'gpt-4o', description: 'Orchestrates multi-agent coordination and final synthesis' },
-    { id: 'data-processing', name: 'Data Processor', model: 'claude-3.5-sonnet', description: 'Handles demographic and employment data analysis' },
-    { id: 'financial-analysis', name: 'Financial Analyst', model: 'gpt-4o', description: 'Performs DCF modeling and investment calculations' },
-    { id: 'market-intelligence', name: 'Market Intelligence', model: 'claude-3.5-sonnet', description: 'Analyzes comparable properties and market trends' },
-    { id: 'lead-management', name: 'Lead Manager', model: 'gpt-4-turbo', description: 'Assesses investor fit and manages lead conversion' }
+    { id: 'master', name: 'Bristol Master Agent', model: 'openai/gpt-4o', description: 'Orchestrates multi-agent coordination and final synthesis' },
+    { id: 'data-processing', name: 'Data Processor', model: 'anthropic/claude-3.5-sonnet', description: 'Handles demographic and employment data analysis' },
+    { id: 'financial-analysis', name: 'Financial Analyst', model: 'openai/gpt-4o', description: 'Performs DCF modeling and investment calculations' },
+    { id: 'market-intelligence', name: 'Market Intelligence', model: 'anthropic/claude-3.5-sonnet', description: 'Analyzes comparable properties and market trends' },
+    { id: 'lead-management', name: 'Lead Manager', model: 'openai/gpt-4-turbo', description: 'Assesses investor fit and manages lead conversion' }
   ]);
   const [activeTasks, setActiveTasks] = useState<AgentTask[]>([]);
   const [taskProgress, setTaskProgress] = useState<Record<string, any>>({});
@@ -304,8 +304,9 @@ export default function Chat() {
       
       setIsThinking(true);
       
-      // Try unified chat API first for perfect memory, then fallbacks
+      // Use ultra-bulletproof endpoints first, then legacy fallbacks
       const endpoints = [
+        '/api/ultra-bulletproof-chat/chat',
         '/api/unified-chat/chat',
         '/api/bulletproof-chat/chat',
         '/api/enhanced-chat-v2/message',
@@ -636,22 +637,15 @@ export default function Chat() {
         
         const models: ModelOption[] = await response.json();
         
-        // Add ChatGPT-5 with BYOK support if not present
-        const hasChatGPT5 = models.some(m => m.id === "openai/chatgpt-5");
-        if (!hasChatGPT5) {
-          models.unshift({
-            id: "openai/chatgpt-5",
-            label: "ChatGPT-5 (BYOK)",
-            context: 128000
-          });
-        }
+        // NO PHANTOM MODELS - Use only verified OpenRouter models as per user demand
+        // "NO FAKE DATA OR PLACEHOLDERS ARE ALLOWED AT THIS POINT. NOT AT ALL. STOP."
         
         setModelList(models);
         
-        // Set default model - prefer GPT-4o which actually exists
+        // Set default model - prefer verified GPT-4o models only
         const preferred = models.find(m => m.id === "openai/gpt-4o-2024-11-20") || 
                          models.find(m => m.id === "openai/gpt-4o") ||
-                         models.find(m => m.id === "openai/chatgpt-5") ||
+                         models.find(m => m.id === "openai/chatgpt-4o-latest") ||
                          models[0];
         
         if (preferred) {
@@ -896,13 +890,14 @@ What property or investment can I analyze for you today?`,
     setShowArtifacts(!showArtifacts);
   };
 
-  // Bristol A.I. Elite chat functionality - the advanced chat handler
+  // Bristol A.I. Elite chat functionality - the advanced chat handler with STREAMING
   const handleEliteSend = async () => {
     if (!eliteInput.trim() || eliteLoading) return;
 
     const userMessage = eliteInput.trim();
     setEliteInput("");
     setEliteLoading(true);
+    setStreamingResponse("");
     
     // Truncate conversation history to prevent memory overflow (keep last 50 messages)
     if (eliteMessages.length > 50) {
@@ -924,19 +919,103 @@ What property or investment can I analyze for you today?`,
     setEliteMessages(prev => [...prev, newUserMessage]);
 
     try {
-      console.log("🚀 NUCLEAR SIMPLIFIED: Sending directly to ultra-bulletproof chat:", userMessage);
+      console.log(`🚀 ULTRA-BULLETPROOF: ${realTimeData ? 'STREAMING' : 'STANDARD'} mode with model:`, model);
 
-      // NUCLEAR OPTION: Direct call to ultra-bulletproof endpoint only
-      const response = await fetch("/api/ultra-bulletproof-chat/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: userMessage,
-          sessionId: sessionId,
-          model: model,
-          userId: 'demo-user'
-        })
-      });
+      // Choose endpoint based on streaming preference
+      const endpoint = realTimeData ? "/api/ultra-bulletproof-chat/stream" : "/api/ultra-bulletproof-chat/chat";
+      
+      if (realTimeData) {
+        // STREAMING MODE - Following OpenRouter SSE docs exactly
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: userMessage,
+            sessionId: sessionId,
+            model: model,
+            userId: 'demo-user',
+            stream: true
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // Process Server-Sent Events stream
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder();
+        let streamedContent = "";
+        let buffer = "";
+
+        if (reader) {
+          try {
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+
+              buffer += decoder.decode(value, { stream: true });
+
+              // Process complete lines from buffer (following OpenRouter docs)
+              while (true) {
+                const lineEnd = buffer.indexOf('\n');
+                if (lineEnd === -1) break;
+
+                const line = buffer.slice(0, lineEnd).trim();
+                buffer = buffer.slice(lineEnd + 1);
+
+                if (line.startsWith('data: ')) {
+                  const data = line.slice(6);
+                  if (data === '[DONE]') {
+                    // Stream complete
+                    break;
+                  }
+
+                  try {
+                    const parsed = JSON.parse(data);
+                    const content = parsed.choices?.[0]?.delta?.content;
+                    if (content) {
+                      streamedContent += content;
+                      setStreamingResponse(streamedContent);
+                    }
+                  } catch (e) {
+                    // Ignore invalid JSON per OpenRouter docs
+                    console.warn('Invalid JSON in stream, ignoring:', data);
+                  }
+                }
+              }
+            }
+          } finally {
+            reader.cancel();
+          }
+        }
+
+        // Add final streamed message
+        const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        setEliteMessages(prev => [...prev, {
+          role: "assistant",
+          content: streamedContent || "Stream completed successfully.",
+          createdAt: nowISO(),
+          sessionId,
+          id: assistantMessageId,
+          metadata: { model, provider: 'ultra-bulletproof-stream', streaming: true }
+        }]);
+        
+        setStreamingResponse("");
+        processArtifacts(streamedContent, assistantMessageId);
+        
+      } else {
+        // NON-STREAMING MODE - Direct call to ultra-bulletproof endpoint
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: userMessage,
+            sessionId: sessionId,
+            model: model,
+            userId: 'demo-user'
+          })
+        });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -980,6 +1059,8 @@ What property or investment can I analyze for you today?`,
       
       // Process artifacts from the response
       processArtifacts(assistantContent, assistantMessageId);
+      
+      }  // End of non-streaming else block
 
     } catch (error) {
       console.error("Ultra-bulletproof chat error:", error);

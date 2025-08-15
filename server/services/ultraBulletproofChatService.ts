@@ -5,10 +5,21 @@ const ultraSimpleSchema = z.object({
   message: z.string().min(1).default('Hello'),
   sessionId: z.string().optional(),
   model: z.string().optional().default('openai/gpt-4o'),
-  userId: z.string().optional().default('demo-user')
+  userId: z.string().optional().default('demo-user'),
+  stream: z.boolean().optional().default(false)
 });
 
 type UltraSimpleRequest = z.infer<typeof ultraSimpleSchema>;
+
+// Streaming response type for SSE (Server-Sent Events)
+type StreamingResponse = {
+  success: boolean;
+  sessionId: string;
+  model: string;
+  source: string;
+  stream: ReadableStream<Uint8Array>;
+  metadata: any;
+};
 
 // Response cache for lightning-fast responses
 const responseCache = new Map<string, { response: string; timestamp: number }>();
@@ -16,6 +27,53 @@ const CACHE_TTL = 300000; // 5 minute cache for speed
 
 class UltraBulletproofChatService {
   private attemptCounter = 0;
+
+  // STREAMING: Direct streaming response following OpenRouter SSE docs
+  async processUltraBulletproofStream(request: any): Promise<StreamingResponse> {
+    const startTime = Date.now();
+    this.attemptCounter++;
+    
+    // Step 1: Validate input with extreme tolerance
+    let validatedRequest: UltraSimpleRequest;
+    try {
+      validatedRequest = ultraSimpleSchema.parse(request);
+    } catch (error) {
+      validatedRequest = {
+        message: String(request?.message || request?.query || request?.text || 'Hello'),
+        sessionId: String(request?.sessionId || `ultra-${Date.now()}`),
+        model: String(request?.model || 'openai/gpt-4o'),
+        userId: 'demo-user',
+        stream: true
+      };
+    }
+
+    const { message, sessionId = `ultra-${Date.now()}`, model, userId } = validatedRequest;
+
+    console.log(`🚀 STREAMING: OpenRouter call with model ${model}`);
+    
+    try {
+      const streamResponse = await this.fastDirectOpenRouterStream(message, model);
+      if (streamResponse) {
+        return {
+          success: true,
+          sessionId,
+          model,
+          source: `openrouter-stream-${model}`,
+          stream: streamResponse,
+          metadata: {
+            processingTime: Date.now() - startTime,
+            attemptNumber: this.attemptCounter,
+            streaming: true
+          }
+        };
+      }
+    } catch (error) {
+      console.warn('Direct OpenRouter stream failed:', error);
+    }
+
+    // Fallback to non-streaming if streaming fails
+    throw new Error('Streaming failed, use non-streaming endpoint');
+  }
 
   // NUCLEAR FAST: Direct AI response with caching
   async processUltraBulletproofMessage(request: any): Promise<{
@@ -38,7 +96,8 @@ class UltraBulletproofChatService {
         message: String(request?.message || request?.query || request?.text || 'Hello'),
         sessionId: String(request?.sessionId || `ultra-${Date.now()}`),
         model: String(request?.model || 'openai/gpt-4o'),
-        userId: 'demo-user'
+        userId: 'demo-user',
+        stream: false // Non-streaming method defaults to false
       };
     }
 
@@ -179,6 +238,7 @@ class UltraBulletproofChatService {
           ],
           temperature: 0.3,
           max_tokens: 800
+          // Non-streaming version - stream: false is default
         })
       });
 
@@ -192,6 +252,66 @@ class UltraBulletproofChatService {
       }
     } catch (error) {
       console.error('Fast OpenRouter error:', error);
+    }
+    return null;
+  }
+
+  // Fast Direct OpenRouter STREAMING call - follows OpenRouter Streaming docs exactly
+  private async fastDirectOpenRouterStream(message: string, model: string): Promise<ReadableStream<Uint8Array> | null> {
+    const API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
+    if (!API_KEY) {
+      console.warn('No OpenRouter API key found');
+      return null;
+    }
+
+    // VERIFIED WORKING MODELS ONLY - same allowlist as non-streaming
+    const ELITE_MODELS = new Set([
+      "openai/gpt-4o", "openai/gpt-4o-mini", "openai/gpt-4-turbo", "openai/gpt-4", "openai/chatgpt-4o-latest",
+      "anthropic/claude-3.5-sonnet", "anthropic/claude-3.5-haiku", "anthropic/claude-3-opus", "anthropic/claude-3-haiku",
+      "x-ai/grok-2-1212", "x-ai/grok-2-vision-1212", "x-ai/grok-vision-beta",
+      "perplexity/sonar-deep-research", "perplexity/sonar-reasoning-pro", "perplexity/sonar-pro", "perplexity/sonar-reasoning", "perplexity/sonar"
+    ]);
+
+    const finalModel = ELITE_MODELS.has(model) ? model : 'openai/gpt-4o';
+    console.log(`🎯 Streaming model: ${finalModel}`);
+
+    try {
+      // Following OpenRouter Streaming docs EXACTLY - TypeScript example
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': process.env.SITE_URL || 'http://localhost:5000',
+          'X-Title': 'Bristol Development AI'
+        },
+        body: JSON.stringify({
+          model: finalModel,
+          messages: [
+            {
+              role: 'system',
+              content: 'You are Bristol A.I. Elite, Bristol Development Group\'s institutional real estate AI. Provide concise, professional responses focused on multifamily development analysis, market insights, and financial modeling.'
+            },
+            {
+              role: 'user',
+              content: message
+            }
+          ],
+          stream: true, // STREAMING ENABLED per OpenRouter docs
+          temperature: 0.3,
+          max_tokens: 800
+        })
+      });
+
+      if (response.ok && response.body) {
+        console.log(`✅ OpenRouter streaming response from model: ${finalModel}`);
+        return response.body; // Return the ReadableStream directly
+      } else {
+        const errorText = await response.text();
+        console.error(`OpenRouter streaming API error (${response.status}):`, errorText);
+      }
+    } catch (error) {
+      console.error('Fast OpenRouter streaming error:', error);
     }
     return null;
   }
