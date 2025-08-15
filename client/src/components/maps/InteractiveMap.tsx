@@ -22,13 +22,27 @@ interface InteractiveMapProps {
   fullScreen?: boolean;
 }
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtYXBueWtucDAwb2Eya3BtMWU5aTI2d2oifQ.iTxE5naWMw04PtIEXgxNnw';
 
-// Check MapBox token
+// Check MapBox token and validate
 if (!MAPBOX_TOKEN) {
   console.error('MapBox access token is missing! Map will not render.');
 } else {
   console.log('MapBox token loaded:', MAPBOX_TOKEN.substring(0, 20) + '...');
+  console.log('Token type:', MAPBOX_TOKEN.startsWith('pk.') ? 'Public Key' : 'Invalid format');
+  
+  // Test token validity
+  fetch(`https://api.mapbox.com/styles/v1/mapbox/streets-v11?access_token=${MAPBOX_TOKEN}`)
+    .then(response => {
+      if (response.ok) {
+        console.log('✅ Mapbox token is valid');
+      } else {
+        console.error('❌ Mapbox token validation failed:', response.status);
+      }
+    })
+    .catch(error => {
+      console.error('❌ Mapbox token test failed:', error);
+    });
 }
 
 // Real verified data sources for map layers
@@ -94,7 +108,7 @@ export function InteractiveMap({
 }: InteractiveMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v12');
+  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v11');
   const [activeLayers, setActiveLayers] = useState<Set<string>>(new Set(['heatmap']));
   const [showKML, setShowKML] = useState(!!kmlData);
   const [layerData, setLayerData] = useState<{[key: string]: any}>({});
@@ -299,13 +313,15 @@ export function InteractiveMap({
     }
     
     return (
-      <div className={cn("h-screen w-full relative bg-bristol-cream", className)}>
+      <div className={cn("h-screen w-full relative bg-bristol-cream", className)} style={{ minHeight: '500px' }}>
         <Map
           ref={mapRef}
-          {...viewport}
+          longitude={viewport.longitude}
+          latitude={viewport.latitude}
+          zoom={viewport.zoom}
           onMove={evt => setViewport(evt.viewState)}
           mapboxAccessToken={MAPBOX_TOKEN}
-          style={{ width: '100%', height: '100%' }}
+          style={{ width: '100%', height: '100%', minHeight: '500px' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}
           onLoad={() => {
@@ -316,8 +332,13 @@ export function InteractiveMap({
             console.error('Map error:', error);
             console.error('Map token being used:', MAPBOX_TOKEN?.substring(0, 20) + '...');
             console.error('Map style:', mapStyle);
+            // Try fallback style
+            if (mapStyle !== 'mapbox://styles/mapbox/streets-v9') {
+              console.log('Trying fallback map style...');
+              setMapStyle('mapbox://styles/mapbox/streets-v9');
+            }
           }}
-          interactiveLayerIds={['market-heat', 'kml-polygons', 'kml-polygon-outlines', 'kml-lines', 'kml-points']}
+          interactiveLayerIds={['market-heat']}
           projection={{ name: 'mercator' }}
         >
           {/* Enhanced Heat Map Layer */}
