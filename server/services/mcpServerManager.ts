@@ -124,12 +124,15 @@ export class MCPServerManager extends EventEmitter {
 
   async loadAndStartServers(): Promise<void> {
     try {
-      if (!fs.existsSync(this.configPath)) {
-        console.log('No MCP configuration file found');
+      // Use the elite config file path
+      const eliteConfigPath = path.join(process.cwd(), 'server/config/elite-mcp-servers.json');
+      
+      if (!fs.existsSync(eliteConfigPath)) {
+        console.log('No elite MCP configuration file found');
         return;
       }
 
-      const configData = fs.readFileSync(this.configPath, 'utf8');
+      const configData = fs.readFileSync(eliteConfigPath, 'utf8');
       const config = JSON.parse(configData);
       
       if (!config.mcpServers) {
@@ -137,16 +140,34 @@ export class MCPServerManager extends EventEmitter {
         return;
       }
 
-      console.log('📋 Loading MCP server configuration...');
+      console.log('📋 Loading Elite MCP server configuration...');
       
       for (const [name, serverConfig] of Object.entries(config.mcpServers)) {
-        await this.startServer(name, serverConfig as MCPServerConfig);
+        const config = serverConfig as any;
+        
+        // Interpolate environment variables in env object
+        if (config.env) {
+          const processedEnv: Record<string, string> = {};
+          for (const [key, value] of Object.entries(config.env)) {
+            if (typeof value === 'string' && value.startsWith('${') && value.endsWith('}')) {
+              const envVar = value.slice(2, -1);
+              processedEnv[key] = process.env[envVar] || '';
+              console.log(`🔧 Interpolated ${key}: ${envVar} -> ${processedEnv[key] ? 'SET' : 'NOT_SET'}`);
+            } else {
+              processedEnv[key] = value as string;
+            }
+          }
+          config.env = processedEnv;
+        }
+        
+        console.log(`🚀 Starting Elite MCP server: ${name}`);
+        await this.startServer(name, config as MCPServerConfig);
         // Small delay between server starts
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
       }
 
     } catch (error) {
-      console.error('Error loading MCP configuration:', error);
+      console.error('Error loading Elite MCP configuration:', error);
     }
   }
 

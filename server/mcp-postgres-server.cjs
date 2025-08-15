@@ -5,6 +5,15 @@
 
 const { Pool } = require('pg');
 
+// Debug environment variables
+console.log('DATABASE_URL available:', process.env.DATABASE_URL ? 'Yes' : 'No');
+if (process.env.DATABASE_URL) {
+  const url = new URL(process.env.DATABASE_URL);
+  console.log('Database host:', url.hostname);
+} else {
+  console.error('❌ DATABASE_URL environment variable not found');
+}
+
 // Initialize PostgreSQL connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -14,9 +23,25 @@ const pool = new Pool({
   connectionTimeoutMillis: 10000,
 });
 
+// Test database connection on startup
+async function testConnection() {
+  try {
+    const client = await pool.connect();
+    console.log('✅ PostgreSQL MCP Server connected to database');
+    client.release();
+    return true;
+  } catch (error) {
+    console.error('❌ PostgreSQL MCP Server connection failed:', error.message);
+    console.error('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+    return false;
+  }
+}
+
 // MCP Server Implementation
 class PostgresMCPServer {
   constructor() {
+    // Test connection on startup
+    testConnection();
     this.name = "postgres";
     this.version = "1.0.0";
     this.tools = [

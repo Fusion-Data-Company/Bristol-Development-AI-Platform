@@ -266,6 +266,9 @@
       "name": "Elite Database Intelligence Server",
       "command": "node ./server/mcp-postgres-server.cjs",
       "args": [],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}"
+      },
       "intelligenceLevel": 8,
       "adaptabilityScore": 7,
       "collaborationIndex": 8,

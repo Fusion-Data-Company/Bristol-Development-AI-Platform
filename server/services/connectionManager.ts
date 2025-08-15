@@ -22,8 +22,8 @@ class ConnectionManager {
   
   private limits: ConnectionLimits = {
     maxConnectionsGlobal: 1000,
-    maxConnectionsPerIP: 5,
-    connectionRateLimit: 2000, // 2 seconds between connections from same IP
+    maxConnectionsPerIP: 20, // Temporarily increased to handle frontend connection issues
+    connectionRateLimit: 500, // Reduced to 500ms to allow faster reconnection
     maxIdleTime: 300000 // 5 minutes
   };
 
