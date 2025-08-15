@@ -24,15 +24,9 @@ interface InteractiveMapProps {
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-// Debug: Check MapBox token
-console.log('🗺️ MapBox token loaded:', MAPBOX_TOKEN ? '✅ Token present' : '❌ Token missing');
-console.log('🗺️ Token length:', MAPBOX_TOKEN?.length);
-console.log('🗺️ Environment variables:', Object.keys(import.meta.env).filter(k => k.includes('MAPBOX')));
-
+// Check MapBox token
 if (!MAPBOX_TOKEN) {
-  console.error('🚨 CRITICAL: MapBox access token is missing! Map will not render.');
-} else {
-  console.log('🗺️ Token preview:', MAPBOX_TOKEN.substring(0, 30) + '...');
+  console.error('MapBox access token is missing! Map will not render.');
 }
 
 // Real verified data sources for map layers
@@ -107,7 +101,7 @@ export function InteractiveMap({
   const [showDemographics, setShowDemographics] = useState(false);
   const [showHousing, setShowHousing] = useState(false);
   const [demographicPopup, setDemographicPopup] = useState<{lat: number, lng: number, loading: boolean, data?: any} | null>(null);
-  const [dataLayersCollapsed, setDataLayersCollapsed] = useState(false);
+  const [dataLayersCollapsed, setDataLayersCollapsed] = useState(true);
   const [viewport, setViewport] = useState({
     longitude: -82.4572, // Atlanta/Sunbelt center
     latitude: 33.7490,
@@ -290,11 +284,6 @@ export function InteractiveMap({
   const demographicsError = null;
 
   if (fullScreen) {
-    console.log('🗺️ Rendering fullScreen map with token:', MAPBOX_TOKEN ? 'Present' : 'Missing');
-    console.log('🗺️ Token starts with:', MAPBOX_TOKEN?.substring(0, 20) + '...');
-    console.log('🗺️ Viewport:', viewport);
-    console.log('🗺️ Map style:', mapStyle);
-    
     // If no token, show error
     if (!MAPBOX_TOKEN) {
       return (
@@ -317,8 +306,8 @@ export function InteractiveMap({
           style={{ width: '100%', height: '100%' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}
-          onLoad={() => console.log('🎉 Map loaded successfully!')}
-          onError={(error) => console.error('🚨 Map error:', error)}
+          onLoad={() => console.log('Map loaded successfully')}
+          onError={(error) => console.error('Map error:', error)}
           interactiveLayerIds={['market-heat', 'kml-polygons', 'kml-polygon-outlines', 'kml-lines', 'kml-points']}
           projection={{ name: 'mercator' }}
         >
