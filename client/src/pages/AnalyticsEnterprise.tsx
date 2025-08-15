@@ -53,6 +53,8 @@ import { EnterpriseMetricCard, PerformanceGauge, MarketHeatmap, AlertsPanel } fr
 import { EliteTrendChart } from '@/components/analytics/EliteTrendChart';
 import { AIAnalyticsEngine, ModelPerformanceDashboard } from '@/components/analytics/EliteAnalyticsDashboard';
 import { EliteInsightsDashboard } from '@/components/analytics/EliteInsightsDashboard';
+import { FinancialModelingDashboard } from '@/components/analytics/FinancialModelingDashboard';
+import { PropertyMetricsDashboard } from '@/components/analytics/PropertyMetricsDashboard';
 
 interface EnterpriseMetrics {
   totalProperties: number;
@@ -160,6 +162,13 @@ export default function AnalyticsEnterprise() {
     staleTime: 60000
   });
 
+  // Advanced Metrics
+  const { data: advancedMetrics, isLoading: advancedLoading } = useQuery({
+    queryKey: ['/api/analytics/advanced/metrics'],
+    refetchInterval: 180000, // 3 minutes
+    staleTime: 120000
+  });
+
   // Handle AI Agent Queries with MCP integration
   const handleAgentQuery = async () => {
     if (!agentQuery.trim()) return;
@@ -265,13 +274,27 @@ export default function AnalyticsEnterprise() {
 
           {/* Enterprise Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="grid grid-cols-5 w-full bg-bristol-ink/40 border border-bristol-cyan/20 backdrop-blur-xl">
+            <TabsList className="grid grid-cols-6 w-full bg-bristol-ink/40 border border-bristol-cyan/20 backdrop-blur-xl">
               <TabsTrigger 
                 value="portfolio" 
                 className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-bristol-stone"
               >
                 <Building2 className="w-4 h-4 mr-2" />
                 Portfolio
+              </TabsTrigger>
+              <TabsTrigger 
+                value="insights" 
+                className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-bristol-stone"
+              >
+                <Brain className="w-4 h-4 mr-2" />
+                Elite Insights
+              </TabsTrigger>
+              <TabsTrigger 
+                value="financial" 
+                className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-bristol-stone"
+              >
+                <Calculator className="w-4 h-4 mr-2" />
+                Financial Models
               </TabsTrigger>
               <TabsTrigger 
                 value="markets" 
@@ -291,15 +314,8 @@ export default function AnalyticsEnterprise() {
                 value="predictions" 
                 className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-bristol-stone"
               >
-                <Brain className="w-4 h-4 mr-2" />
+                <Activity className="w-4 h-4 mr-2" />
                 Predictions
-              </TabsTrigger>
-              <TabsTrigger 
-                value="insights" 
-                className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-bristol-stone"
-              >
-                <Brain className="w-4 h-4 mr-2" />
-                Elite Insights
               </TabsTrigger>
             </TabsList>
 
@@ -1143,6 +1159,19 @@ export default function AnalyticsEnterprise() {
                     <p className="text-bristol-stone">Elite insights unavailable</p>
                   </CardContent>
                 </Card>
+              )}
+            </TabsContent>
+
+            {/* Financial Modeling Dashboard */}
+            <TabsContent value="financial" className="space-y-6">
+              <FinancialModelingDashboard />
+              
+              {/* Property Metrics Integration */}
+              {advancedMetrics?.property_metrics && (
+                <PropertyMetricsDashboard 
+                  properties={advancedMetrics.property_metrics} 
+                  loading={advancedLoading}
+                />
               )}
             </TabsContent>
           </Tabs>
