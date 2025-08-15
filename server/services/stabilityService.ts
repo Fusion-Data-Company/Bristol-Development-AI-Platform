@@ -178,13 +178,47 @@ export class StabilityService {
           break;
           
         case 'agents':
-          // Restart failed agents
-          const failedAgents = await db.select().from(agents).where(eq(agents.status, 'error'));
-          for (const agent of failedAgents) {
-            await db.update(agents)
-              .set({ status: 'active', updatedAt: new Date() })
-              .where(eq(agents.id, agent.id));
+          // Initialize default agents if none exist
+          const existingAgents = await db.select().from(agents);
+          if (existingAgents.length === 0) {
+            // Initialize agents through the API
+            try {
+              const response = await fetch('http://localhost:5000/api/enhanced-agents/initialize', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+              });
+              console.log('✅ Default agents initialized during recovery');
+            } catch (error) {
+              console.log('Agent initialization will be handled by next system request');
+            }
+          } else {
+            // Restart failed agents
+            const failedAgents = await db.select().from(agents).where(eq(agents.status, 'error'));
+            for (const agent of failedAgents) {
+              await db.update(agents)
+                .set({ status: 'active', updatedAt: new Date() })
+                .where(eq(agents.id, agent.id));
+            }
           }
+          break;
+          
+        case 'memory':
+          // Memory optimization
+          if (global.gc) {
+            global.gc();
+            console.log('✅ Manual garbage collection performed');
+          }
+          // Clear old cached data
+          this.clearOldHealthChecks();
+          
+          // Clear Node.js require cache for non-essential modules
+          Object.keys(require.cache).forEach(key => {
+            if (key.includes('node_modules') && !key.includes('express') && !key.includes('drizzle')) {
+              delete require.cache[key];
+            }
+          });
+          
+          console.log('✅ Memory optimization completed');
           break;
           
         default:
@@ -198,6 +232,16 @@ export class StabilityService {
       console.error(`❌ Auto-recovery failed for service: ${serviceName}`, error);
       return false;
     }
+  }
+
+  // Clear old health check data to free memory
+  private clearOldHealthChecks() {
+    const cutoffTime = Date.now() - (5 * 60 * 1000); // 5 minutes ago
+    this.healthChecks.forEach((check, key) => {
+      if (check.lastCheck.getTime() < cutoffTime) {
+        this.healthChecks.delete(key);
+      }
+    });
   }
 
   // Performance optimization recommendations
@@ -256,13 +300,13 @@ export class StabilityService {
   // Get system status summary
   getSystemStatus() {
     const services: Record<string, any> = {};
-    for (const [name, check] of this.healthChecks.entries()) {
+    this.healthChecks.forEach((check, name) => {
       services[name] = {
         status: check.status,
         lastCheck: check.lastCheck,
         details: check.details
       };
-    }
+    });
 
     return {
       services,

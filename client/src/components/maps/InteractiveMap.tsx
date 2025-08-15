@@ -92,6 +92,9 @@ export function InteractiveMap({
   const [showKML, setShowKML] = useState(!!kmlData);
   const [layerData, setLayerData] = useState<{[key: string]: any}>({});
   const [loading, setLoading] = useState<{[key: string]: boolean}>({});
+  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [showDemographics, setShowDemographics] = useState(false);
+  const [showHousing, setShowHousing] = useState(false);
   const [demographicPopup, setDemographicPopup] = useState<{lat: number, lng: number, loading: boolean, data?: any} | null>(null);
   const [viewport, setViewport] = useState({
     longitude: -82.4572, // Atlanta/Sunbelt center
@@ -150,8 +153,8 @@ export function InteractiveMap({
     features: activeSites.map(site => ({
       type: 'Feature' as const,
       properties: {
-        score: site.bristolScore || 75,
-        density: Math.max(50, (site.bristolScore || 75) * 1.2) // Enhanced density for visibility
+        score: (site as any).bristolScore || 75,
+        density: Math.max(50, ((site as any).bristolScore || 75) * 1.2) // Enhanced density for visibility
       },
       geometry: {
         type: 'Point' as const,

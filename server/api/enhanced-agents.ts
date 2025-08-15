@@ -1,6 +1,6 @@
 import express from 'express';
 import { db } from '../db';
-import { agents, agentTasks, agentConversations, agentMetrics } from '@shared/schema';
+import { agents, agentTasks, agentCommunications } from '@shared/schema';
 import { eq, desc, and } from 'drizzle-orm';
 import { errorHandlingService } from '../services/errorHandlingService';
 import { z } from 'zod';
@@ -347,7 +347,7 @@ router.get('/:agentId', async (req, res) => {
       .orderBy(desc(agentTasks.createdAt))
       .limit(20);
 
-    const prompts = []; // Placeholder for prompt history
+    const prompts: any[] = []; // Placeholder for prompt history
 
     res.json({
       agent: agent[0],
@@ -398,13 +398,10 @@ router.post('/:agentId/tasks', async (req, res) => {
     }
 
     const task = await db.insert(agentTasks).values({
-      id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       agentId,
       taskType,
-      input: JSON.stringify(input),
-      status: 'pending',
-      createdAt: new Date(),
-      updatedAt: new Date()
+      input: input,
+      status: 'pending'
     }).returning();
 
     res.json({ 
@@ -438,12 +435,16 @@ router.get('/models', async (req, res) => {
 // Get performance metrics
 router.get('/performance', async (req, res) => {
   try {
-    const metrics = await db.select().from(agentMetrics)
-      .orderBy(desc(agentMetrics.timestamp))
-      .limit(100);
+    const agentPerformance = await db.select().from(agents)
+      .orderBy(desc(agents.lastActive));
+
+    const recentTasks = await db.select().from(agentTasks)
+      .orderBy(desc(agentTasks.createdAt))
+      .limit(50);
 
     res.json({
-      metrics,
+      agents: agentPerformance,
+      recentTasks,
       summary: {
         totalAgents: await db.select().from(agents).then(r => r.length),
         activeAgents: await db.select().from(agents).where(eq(agents.status, 'active')).then(r => r.length),

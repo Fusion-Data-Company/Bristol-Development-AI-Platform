@@ -165,13 +165,24 @@ export class WebSocketService {
     setInterval(() => {
       const now = Date.now();
       this.clients.forEach((client, clientId) => {
-        if (now - client.lastPing > 60000) { // 60 seconds timeout
+        if (now - client.lastPing > 90000) { // 90 seconds timeout (increased for stability)
           console.log(`Client ${clientId} timed out`);
           client.socket.terminate();
           this.handleDisconnect(clientId);
+        } else if (now - client.lastPing > 30000) {
+          // Send ping if client hasn't sent anything in 30 seconds
+          try {
+            this.sendToClient(clientId, {
+              type: "ping",
+              timestamp: now
+            });
+          } catch (error) {
+            console.error(`Failed to ping client ${clientId}:`, error);
+            this.handleDisconnect(clientId);
+          }
         }
       });
-    }, 30000); // Check every 30 seconds
+    }, 20000); // Check every 20 seconds
   }
 
   private generateClientId(): string {
