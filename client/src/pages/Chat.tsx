@@ -168,8 +168,11 @@ export default function Chat() {
     }
   ]);
   const [input, setInput] = useState("");
+  const [eliteInput, setEliteInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [eliteLoading, setEliteLoading] = useState(false);
   const [modelError, setModelError] = useState<string>("");
+  const eliteInputRef = useRef<HTMLInputElement>(null);
   const [systemStatus, setSystemStatus] = useState<SystemStatus>({
     mcpTools: [],
     apis: [],
@@ -696,729 +699,503 @@ export default function Chat() {
   };
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 overflow-hidden flex">
-      {/* Bristol A.I. Elite Main Interface */}
-      <div className="flex-1 h-full flex flex-col">
-        {/* Header - Bristol Branding */}
-        <div className="h-16 bg-gradient-to-r from-bristol-maroon via-bristol-maroon/95 to-bristol-maroon border-b border-bristol-gold/20 flex items-center justify-between px-6">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-bristol-gold to-yellow-400 rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-bristol-maroon font-serif font-bold text-lg">B</span>
+    <div className="h-screen w-screen flex">
+      {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout - EXACT REPLICA OF FLOATING WIDGET */}
+      <div 
+        className="w-full h-screen text-neutral-100 shadow-2xl flex flex-col chrome-metallic-panel font-cinzel"
+        style={{
+          background: 'linear-gradient(135deg, rgba(5, 10, 20, 0.95) 0%, rgba(69, 214, 202, 0.1) 25%, rgba(255, 255, 255, 0.05) 50%, rgba(69, 214, 202, 0.1) 75%, rgba(5, 10, 20, 0.95) 100%)',
+          backdropFilter: 'blur(20px) saturate(150%)',
+          border: '1px solid rgba(69, 214, 202, 0.3)',
+          boxShadow: `
+            0 0 30px rgba(69, 214, 202, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1)
+          `,
+        }}
+      >
+        {/* Premium Glass Header */}
+        <div className="relative overflow-hidden">
+          {/* Ambient glow effects */}
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-bristol-cyan/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -top-5 -right-10 w-32 h-32 bg-bristol-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
+          
+          {/* Glass header background */}
+          <div 
+            className="absolute inset-0" 
+            style={{
+              background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.15) 0%, rgba(168, 85, 247, 0.1) 50%, rgba(239, 68, 68, 0.08) 100%)',
+            }}
+          />
+          
+          {/* Header content */}
+          <div className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-bristol-cyan/30">
+            <div className="flex items-center gap-4">
+              <div className="relative group">
+                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-full blur-sm opacity-75 group-hover:opacity-100 animate-pulse" />
+                <div className="relative bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 p-2 rounded-full border border-bristol-cyan/30">
+                  <Brain className="h-7 w-7 text-bristol-cyan" />
+                </div>
               </div>
               <div>
-                <h1 className="text-white font-cinzel font-bold text-xl">Bristol A.I. Elite</h1>
-                <p className="text-bristol-gold/80 text-xs">Site Intelligence Platform v5.0</p>
+                <h1 className="font-serif font-bold text-2xl bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">
+                  BRISTOL A.I.
+                </h1>
+                <p className="text-lg text-bristol-cyan font-bold tracking-wide uppercase mt-1 drop-shadow-lg">
+                  AI Real Estate Intelligence
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Data Visualization Toggle */}
+              <button 
+                onClick={() => setShowDataViz(!showDataViz)} 
+                className={cx(
+                  "p-2 rounded-xl transition-all duration-300 group relative",
+                  "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
+                  "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
+                  "hover:shadow-lg hover:shadow-bristol-cyan/20",
+                  showDataViz && "bg-bristol-cyan/20 border-bristol-cyan/60"
+                )}
+                aria-label="Toggle Data Visualization"
+                title="View Live Data Context"
+              >
+                <BarChart3 className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+              </button>
+
+              {/* Onboarding Guide Toggle */}
+              <button 
+                onClick={() => setShowOnboarding(true)} 
+                className={cx(
+                  "p-2 rounded-xl transition-all duration-300 group relative",
+                  "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
+                  "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
+                  "hover:shadow-lg hover:shadow-bristol-cyan/20"
+                )}
+                aria-label="Open AI Guide"
+                title="Learn How to Use Bristol A.I."
+              >
+                <HelpCircle className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs - Exact from floating widget */}
+        <div className="border-b border-bristol-cyan/30 bg-bristol-ink/20 relative z-20">
+          <div className="flex">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Chat tab clicked");
+                setActiveTab("chat");
+              }}
+              className={cx(
+                "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
+                activeTab === "chat"
+                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+              )}
+            >
+              AI Chat
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Data tab clicked");
+                setActiveTab("data");
+              }}
+              className={cx(
+                "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
+                activeTab === "data"
+                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+              )}
+            >
+              Data
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Tools tab clicked");
+                setActiveTab("tools");
+              }}
+              className={cx(
+                "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
+                activeTab === "tools"
+                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+              )}
+            >
+              Tools
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Agents tab clicked");
+                setActiveTab("agents");
+              }}
+              className={cx(
+                "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
+                activeTab === "agents"
+                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+              )}
+            >
+              🤖 Agents
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Admin tab clicked");
+                setActiveTab("admin");
+              }}
+              className={cx(
+                "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
+                activeTab === "admin"
+                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+              )}
+            >
+              Admin
+            </button>
+          </div>
+        </div>
+
+        {/* Compact Model Selector - Exact from floating widget */}
+        <div 
+          className="px-6 py-3 border-b border-bristol-cyan/30 relative"
+          style={{
+            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(69, 214, 202, 0.05) 50%, rgba(168, 85, 247, 0.02) 100%)',
+            backdropFilter: 'blur(12px)',
+          }}
+        >
+          {/* Ambient glow */}
+          <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-bristol-cyan/10 rounded-full blur-2xl" />
+          
+          {modelError && (
+            <div 
+              className="mb-4 text-xs text-red-300 rounded-2xl px-4 py-3 backdrop-blur-md border border-red-400/40"
+              style={{
+                background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%)',
+                boxShadow: '0 4px 20px rgba(239, 68, 68, 0.1)',
+              }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                {modelError}
+              </div>
+            </div>
+          )}
+          
+          <div className="flex flex-wrap items-center gap-6">
+            
+            {/* Elite Model Selector - Fully Styled */}
+            <div className="flex-1 max-w-md">
+              <label className="block text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Brain className="h-3 w-3 animate-pulse" />
+                AI Engine Selection
+              </label>
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-bristol-gold/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/5 to-bristol-electric/5 rounded-2xl" />
+                <select
+                  className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-bristol-cyan hover:text-white focus:text-white focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/40 disabled:opacity-50"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
+                    borderColor: 'rgba(69, 214, 202, 0.6)',
+                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
+                  }}
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  disabled={modelList.length === 0}
+                >
+                  {modelList.length === 0 ? (
+                    <option value="">⚡ Loading Elite AI Models...</option>
+                  ) : (
+                    modelList.map((m: ModelOption) => {
+                      // Get company-specific emoji based on model provider
+                      const getProviderEmoji = (modelId: string) => {
+                        if (modelId.includes('gpt') || modelId.includes('openai')) return '🟢'; // OpenAI - green circle
+                        if (modelId.includes('claude') || modelId.includes('anthropic')) return '🔶'; // Anthropic - orange diamond
+                        if (modelId.includes('grok') || modelId.includes('x-ai')) return '⚡'; // xAI - lightning bolt
+                        if (modelId.includes('gemini') || modelId.includes('google')) return '🔷'; // Google - blue diamond
+                        if (modelId.includes('perplexity') || modelId.includes('sonar')) return '🔍'; // Perplexity - magnifying glass
+                        if (modelId.includes('meta') || modelId.includes('llama')) return '🦙'; // Meta - llama
+                        return '🤖'; // Default AI robot
+                      };
+
+                      return (
+                        <option key={m.id} value={m.id}>
+                          {getProviderEmoji(m.id)} {m.label}
+                        </option>
+                      );
+                    })
+                  )}
+                </select>
+              </div>
+            </div>
+
+            {/* WebSocket Status */}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 text-xs">
+                {wsConnected ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
+                    <span className="text-bristol-cyan font-bold">LIVE</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
+                    <span className="text-red-400 font-bold">OFFLINE</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-          
-          {/* Connection Status */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              {wsConnected ? (
-                <Wifi className="h-4 w-4 text-bristol-gold" />
-              ) : (
-                <WifiOff className="h-4 w-4 text-red-400" />
-              )}
-              <span className="text-white text-sm">
-                {wsConnected ? 'Connected' : 'Disconnected'}
-              </span>
-            </div>
-            
-            {/* Model Indicator */}
-            <div className="flex items-center gap-2 bg-bristol-gold/10 rounded-lg px-3 py-1">
-              <Brain className="h-4 w-4 text-bristol-gold" />
-              <span className="text-bristol-gold text-sm font-medium">
-                {modelList.find(m => m.id === model)?.label || model}
-              </span>
-            </div>
-          </div>
         </div>
 
-        {/* Main Content Area with Tabs */}
-        <div className="flex-1 flex flex-col bg-white/95 backdrop-blur-sm">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            {/* Tab Navigation */}
-            <div className="border-b border-slate-200 bg-white/80 backdrop-blur-sm">
-              <TabsList className="h-12 bg-transparent border-none rounded-none w-full justify-start px-6">
-                <TabsTrigger 
-                  value="chat" 
-                  className="data-[state=active]:bg-bristol-maroon data-[state=active]:text-white px-6 py-2 flex items-center gap-2"
-                >
-                  <MessageCircle className="h-4 w-4" />
-                  Chat
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="admin" 
-                  className="data-[state=active]:bg-bristol-maroon data-[state=active]:text-white px-6 py-2 flex items-center gap-2"
-                >
-                  <Settings className="h-4 w-4" />
-                  Admin
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="data" 
-                  className="data-[state=active]:bg-bristol-maroon data-[state=active]:text-white px-6 py-2 flex items-center gap-2"
-                >
-                  <Database className="h-4 w-4" />
-                  Data
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="agents" 
-                  className="data-[state=active]:bg-bristol-maroon data-[state=active]:text-white px-6 py-2 flex items-center gap-2"
-                >
-                  <CircuitBoard className="h-4 w-4" />
-                  Agents
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
-            {/* Tab Content */}
-            <div className="flex-1 overflow-hidden">
-              {/* Chat Tab - Main Chat Interface */}
-              <TabsContent value="chat" className="h-full flex flex-col m-0 p-0">
-                <div className="flex-1 flex">
-                  {/* Chat Messages Area */}
-                  <div className="flex-1 flex flex-col">
-                    {/* Messages */}
-                    <ScrollArea className="flex-1 p-6">
-                      <div className="space-y-4 max-w-4xl mx-auto">
-                        {eliteMessages.length === 0 && (
-                          <div className="text-center py-12">
-                            <OnboardingGuide 
-                              isOpen={showOnboarding} 
-                              onClose={() => setShowOnboarding(false)}
-                              appData={appData}
-                            />
-                            <Button
-                              onClick={() => setShowOnboarding(true)}
-                              variant="outline"
-                              className="mt-4"
-                            >
-                              <HelpCircle className="h-4 w-4 mr-2" />
-                              Show Getting Started Guide
-                            </Button>
-                          </div>
-                        )}
-                        
-                        {eliteMessages.map((msg, index) => (
-                          <div key={index} className={cx(
-                            "flex gap-4",
-                            msg.role === "user" ? "justify-end" : "justify-start"
-                          )}>
-                            {msg.role === "assistant" && (
-                              <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-bristol-maroon to-bristol-maroon/80 rounded-full flex items-center justify-center shadow-lg">
-                                <Brain className="h-5 w-5 text-white" />
-                              </div>
-                            )}
-                            
-                            <div className={cx(
-                              "max-w-3xl rounded-2xl px-6 py-4 shadow-sm",
-                              msg.role === "user" 
-                                ? "bg-gradient-to-r from-bristol-gold/10 to-yellow-50 text-slate-800 border border-bristol-gold/20" 
-                                : "bg-white border border-slate-200 text-slate-800"
-                            )}>
-                              <div className="prose prose-sm prose-slate max-w-none">
-                                {msg.content.split('\n').map((line, i) => (
-                                  <p key={i} className="mb-2 last:mb-0">{line}</p>
-                                ))}
-                              </div>
-                              {msg.createdAt && (
-                                <div className="text-xs text-slate-500 mt-2">
-                                  {format(new Date(msg.createdAt), 'HH:mm:ss')}
-                                </div>
-                              )}
-                            </div>
-                            
-                            {msg.role === "user" && (
-                              <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                                <Users className="h-5 w-5 text-white" />
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                        
-                        {loading && (
-                          <div className="flex gap-4 justify-start">
-                            <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-bristol-maroon to-bristol-maroon/80 rounded-full flex items-center justify-center shadow-lg">
-                              <Loader2 className="h-5 w-5 text-white animate-spin" />
-                            </div>
-                            <div className="bg-white border border-slate-200 rounded-2xl px-6 py-4 shadow-sm">
-                              <div className="flex items-center gap-2 text-bristol-maroon">
-                                <span className="font-medium">Bristol A.I. Elite is analyzing...</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Active Agent Tasks */}
-                        {activeTasks.length > 0 && (
-                          <div className="bg-bristol-maroon/5 rounded-xl p-4 border border-bristol-maroon/20">
-                            <h4 className="font-semibold text-bristol-maroon mb-3 flex items-center gap-2">
-                              <Activity className="h-4 w-4" />
-                              Active Agent Tasks ({activeTasks.length})
-                            </h4>
-                            <div className="space-y-2">
-                              {activeTasks.map((task) => (
-                                <div key={task.id} className="bg-white rounded-lg p-3 border border-slate-200">
-                                  <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                      <div className={cx(
-                                        "w-2 h-2 rounded-full",
-                                        task.status === 'completed' ? 'bg-green-500' :
-                                        task.status === 'processing' ? 'bg-yellow-500 animate-pulse' :
-                                        task.status === 'failed' ? 'bg-red-500' : 'bg-gray-400'
-                                      )} />
-                                      <span className="font-medium text-sm">{task.agent?.name || task.agentId}</span>
-                                      <Badge variant="outline" className="text-xs">{task.type}</Badge>
-                                    </div>
-                                    <span className="text-xs text-slate-500">
-                                      {task.status === 'completed' && task.completedAt ? 
-                                        format(new Date(task.completedAt), 'HH:mm:ss') : 
-                                        task.status
-                                      }
-                                    </span>
-                                  </div>
-                                  {task.result && (
-                                    <div className="mt-2 text-xs text-slate-600 bg-slate-50 rounded p-2">
-                                      {typeof task.result === 'string' ? task.result : JSON.stringify(task.result, null, 2)}
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </ScrollArea>
-
-                    {/* Input Area */}
-                    <div className="border-t border-slate-200 bg-white/95 backdrop-blur-sm p-6">
-                      <div className="max-w-4xl mx-auto">
-                        {/* Model and Settings Bar */}
-                        <div className="flex items-center gap-4 mb-4">
-                          <Select value={model} onValueChange={setModel}>
-                            <SelectTrigger className="w-64">
-                              <SelectValue placeholder="Select model" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {modelList.map((m) => (
-                                <SelectItem key={m.id} value={m.id}>{m.label}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2">
-                              <Switch checked={mcpEnabled} onCheckedChange={setMcpEnabled} />
-                              <Label className="text-sm">MCP Tools</Label>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Switch checked={realTimeData} onCheckedChange={setRealTimeData} />
-                              <Label className="text-sm">Real-time Data</Label>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Switch checked={multiAgentMode} onCheckedChange={setMultiAgentMode} />
-                              <Label className="text-sm">Multi-Agent</Label>
-                            </div>
-                          </div>
-
-                          <div className="flex-1" />
-                          
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowDataViz(true)}
-                            className="flex items-center gap-2"
-                          >
-                            <BarChart3 className="h-4 w-4" />
-                            Data Viz
-                          </Button>
+        {/* Tabbed Content Area - Exact from floating widget */}
+        <div 
+          className="flex-1 min-h-0 relative flex flex-col overflow-hidden"
+          style={{
+            background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.2) 50%, rgba(15, 23, 42, 0.4) 100%)',
+          }}
+        >
+          {/* Chat Tab Content */}
+          {activeTab === "chat" && (
+            <div className="flex-1 overflow-hidden flex flex-col relative">
+              {/* Background tint overlay for chat area */}
+              <div 
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(30, 41, 59, 0.3) 50%, rgba(15, 23, 42, 0.5) 100%)',
+                  backdropFilter: 'blur(8px)',
+                }}
+              />
+              <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
+              <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
+              
+              {/* Chat Messages Area */}
+              <div className="relative z-10 flex-1 overflow-hidden flex flex-col">
+                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                  {eliteMessages.length === 0 && (
+                    <div className="text-center py-12">
+                      <OnboardingGuide 
+                        isOpen={showOnboarding} 
+                        onClose={() => setShowOnboarding(false)}
+                        appData={appData}
+                      />
+                      <button
+                        onClick={() => setShowOnboarding(true)}
+                        className="mt-4 px-6 py-3 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan border border-bristol-cyan/40 rounded-2xl transition-all duration-300 font-bold text-sm backdrop-blur-sm"
+                      >
+                        <HelpCircle className="h-4 w-4 mr-2 inline" />
+                        Show Getting Started Guide
+                      </button>
+                    </div>
+                  )}
+                  
+                  {eliteMessages.map((msg, index) => (
+                    <div key={index} className={cx(
+                      "flex w-full",
+                      msg.role === "user" ? "justify-end" : "justify-start"
+                    )}>
+                      <div className={cx(
+                        "max-w-[85%] rounded-2xl px-4 py-3 backdrop-blur-sm border",
+                        msg.role === "user" 
+                          ? "bg-bristol-cyan/20 border-bristol-cyan/40 text-bristol-cyan"
+                          : "bg-white/10 border-white/20 text-white"
+                      )}>
+                        <div className="text-sm whitespace-pre-wrap font-medium">
+                          {msg.content}
                         </div>
-
-                        {/* Chat Input */}
-                        <div className="flex gap-3">
-                          <Input
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            onKeyDown={handleEliteKeyPress}
-                            placeholder="Ask Bristol A.I. Elite about property analysis, market intelligence, or development strategies..."
-                            className="flex-1 h-12 text-base"
-                            disabled={loading}
-                          />
-                          <Button
-                            onClick={handleEliteSend}
-                            disabled={!input.trim() || loading}
-                            className="h-12 px-6 bg-bristol-maroon hover:bg-bristol-maroon/90 text-white"
-                          >
-                            {loading ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <Send className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </div>
-
-                        {modelError && (
-                          <div className="mt-2 text-sm text-red-600 bg-red-50 rounded-lg p-2 flex items-center gap-2">
-                            <AlertCircle className="h-4 w-4" />
-                            {modelError}
+                        {msg.createdAt && (
+                          <div className="text-xs opacity-60 mt-1">
+                            {new Date(msg.createdAt).toLocaleTimeString()}
                           </div>
                         )}
                       </div>
                     </div>
-                  </div>
+                  ))}
+                  
+                  {eliteLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-white/10 border border-white/20 rounded-2xl px-4 py-3 backdrop-blur-sm">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
+                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse delay-150" />
+                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse delay-300" />
+                          <span className="text-bristol-cyan text-sm font-medium ml-2">Bristol A.I. is analyzing...</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </TabsContent>
+              </div>
+            </div>
+          )}
 
-              {/* Admin Tab - System Configuration */}
-              <TabsContent value="admin" className="h-full flex flex-col m-0 p-6">
-                <div className="max-w-4xl mx-auto space-y-6">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Settings className="h-6 w-6 text-bristol-maroon" />
-                    <h2 className="text-2xl font-bold text-slate-800">System Administration</h2>
-                  </div>
+          {/* Other Tab Contents */}
+          {activeTab === "data" && (
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-6">
+                <div className="border border-bristol-cyan/30 rounded-2xl p-6 bg-white/5 backdrop-blur-sm">
+                  <h3 className="text-bristol-cyan font-bold text-lg mb-4 flex items-center gap-2">
+                    <Database className="h-5 w-5" />
+                    Live Data Context
+                  </h3>
+                  <DataVisualizationPanel data={appData} />
+                </div>
+              </div>
+            </div>
+          )}
 
-                  {/* System Prompt Editor */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Brain className="h-5 w-5" />
-                        Bristol A.I. Elite System Prompt
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <Textarea
+          {activeTab === "tools" && (
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="text-center py-12">
+                <Settings className="h-12 w-12 text-bristol-cyan/60 mx-auto mb-4" />
+                <h3 className="text-bristol-cyan font-bold text-lg mb-2">MCP Tools Panel</h3>
+                <p className="text-bristol-cyan/70">Advanced tools and integrations coming soon...</p>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "agents" && (
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="text-center py-12">
+                <CircuitBoard className="h-12 w-12 text-bristol-cyan/60 mx-auto mb-4" />
+                <h3 className="text-bristol-cyan font-bold text-lg mb-2">Multi-Agent System</h3>
+                <p className="text-bristol-cyan/70">Agent orchestration panel coming soon...</p>
+              </div>
+            </div>
+          )}
+
+          {activeTab === "admin" && (
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-6">
+                <div className="border border-bristol-cyan/30 rounded-2xl p-6 bg-white/5 backdrop-blur-sm">
+                  <h3 className="text-bristol-cyan font-bold text-lg mb-4 flex items-center gap-2">
+                    <Settings className="h-5 w-5" />
+                    System Configuration
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-bristol-cyan mb-2">System Prompt</label>
+                      <textarea
                         value={systemPrompt}
                         onChange={(e) => setSystemPrompt(e.target.value)}
-                        className="min-h-[300px] font-mono text-sm"
-                        placeholder="Enter the system prompt for Bristol A.I. Elite..."
+                        className="w-full h-32 px-4 py-3 bg-black/30 border border-bristol-cyan/30 rounded-xl text-white text-sm resize-none backdrop-blur-sm focus:border-bristol-cyan focus:outline-none"
+                        placeholder="Enter system prompt..."
                       />
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm text-slate-600">
-                          Characters: {systemPrompt.length}
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            onClick={() => setSystemPrompt(DEFAULT_BRISTOL_PROMPT)}
-                          >
-                            Reset to Default
-                          </Button>
-                          <Button
-                            onClick={() => saveSystemPrompt(systemPrompt)}
-                            className="bg-bristol-maroon hover:bg-bristol-maroon/90"
-                          >
-                            <Save className="h-4 w-4 mr-2" />
-                            Save Prompt
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Model Configuration */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Cpu className="h-5 w-5" />
-                        Model Configuration
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-medium">Primary Model</Label>
-                          <Select value={model} onValueChange={setModel}>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {modelList.map((m) => (
-                                <SelectItem key={m.id} value={m.id}>{m.label}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-sm font-medium">System Features</Label>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <Label className="text-sm">MCP Tools Integration</Label>
-                              <Switch checked={mcpEnabled} onCheckedChange={setMcpEnabled} />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <Label className="text-sm">Real-time Data Access</Label>
-                              <Switch checked={realTimeData} onCheckedChange={setRealTimeData} />
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <Label className="text-sm">Multi-Agent Orchestration</Label>
-                              <Switch checked={multiAgentMode} onCheckedChange={setMultiAgentMode} />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {modelError && (
-                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                          <div className="flex items-center gap-2 text-red-700">
-                            <AlertCircle className="h-4 w-4" />
-                            <span className="font-medium">Model Error</span>
-                          </div>
-                          <p className="text-red-600 text-sm mt-1">{modelError}</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-
-                  {/* System Status */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Activity className="h-5 w-5" />
-                        System Status
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-2 gap-6">
-                        <div>
-                          <h4 className="font-medium mb-3">Core Services</h4>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">WebSocket Connection</span>
-                              <div className="flex items-center gap-2">
-                                {wsConnected ? (
-                                  <div className="w-2 h-2 bg-green-500 rounded-full" />
-                                ) : (
-                                  <div className="w-2 h-2 bg-red-500 rounded-full" />
-                                )}
-                                <span className="text-sm text-slate-600">
-                                  {wsConnected ? 'Connected' : 'Disconnected'}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">Database</span>
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 bg-green-500 rounded-full" />
-                                <span className="text-sm text-slate-600">Connected</span>
-                              </div>
-                            </div>
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm">MCP Server</span>
-                              <div className="flex items-center gap-2">
-                                <div className="w-2 h-2 bg-green-500 rounded-full" />
-                                <span className="text-sm text-slate-600">Active</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="font-medium mb-3">API Integrations</h4>
-                          <div className="space-y-2">
-                            {systemStatus.apis.length > 0 ? (
-                              systemStatus.apis.map((api, index) => (
-                                <div key={index} className="flex items-center justify-between">
-                                  <span className="text-sm">{api.name}</span>
-                                  <div className="flex items-center gap-2">
-                                    <div className={cx(
-                                      "w-2 h-2 rounded-full",
-                                      api.status === 'operational' ? 'bg-green-500' : 'bg-red-500'
-                                    )} />
-                                    <span className="text-sm text-slate-600 capitalize">{api.status}</span>
-                                  </div>
-                                </div>
-                              ))
-                            ) : (
-                              <div className="text-sm text-slate-500">No API status available</div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </TabsContent>
-
-              {/* Data Tab - Live Data Inspector */}
-              <TabsContent value="data" className="h-full flex flex-col m-0 p-6">
-                <div className="max-w-6xl mx-auto space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Database className="h-6 w-6 text-bristol-maroon" />
-                      <h2 className="text-2xl font-bold text-slate-800">Live Data Context</h2>
                     </div>
-                    <Button
-                      onClick={() => setShowDataViz(true)}
-                      variant="outline"
-                      className="flex items-center gap-2"
+                    <button
+                      onClick={() => saveSystemPrompt(systemPrompt)}
+                      className="px-6 py-3 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan border border-bristol-cyan/40 rounded-xl transition-all duration-300 font-bold text-sm backdrop-blur-sm"
                     >
-                      <BarChart3 className="h-4 w-4" />
-                      Open Data Visualization
-                    </Button>
+                      Save Configuration
+                    </button>
                   </div>
-
-                  {/* Portfolio Overview */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-3">
-                          <Building2 className="h-8 w-8 text-bristol-maroon" />
-                          <div>
-                            <p className="text-2xl font-bold text-slate-800">
-                              {appData.sites?.length || 0}
-                            </p>
-                            <p className="text-sm text-slate-600">Total Properties</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-3">
-                          <TrendingUp className="h-8 w-8 text-bristol-gold" />
-                          <div>
-                            <p className="text-2xl font-bold text-slate-800">
-                              {appData.analytics?.avgBristolScore || 'N/A'}
-                            </p>
-                            <p className="text-sm text-slate-600">Avg Bristol Score</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardContent className="p-6">
-                        <div className="flex items-center gap-3">
-                          <MapPin className="h-8 w-8 text-blue-600" />
-                          <div>
-                            <p className="text-2xl font-bold text-slate-800">
-                              {Object.keys(appData.analytics?.stateDistribution || {}).length}
-                            </p>
-                            <p className="text-sm text-slate-600">Markets</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-
-                  {/* Raw Data Inspector */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <FileText className="h-5 w-5" />
-                        Data Context Inspector
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ScrollArea className="h-96">
-                        <pre className="text-xs font-mono bg-slate-50 p-4 rounded overflow-auto">
-                          {safeStringify(dataContext, 2)}
-                        </pre>
-                      </ScrollArea>
-                    </CardContent>
-                  </Card>
-
-                  {/* Recent API Activity */}
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Activity className="h-5 w-5" />
-                        MCP Tools Status
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {systemStatus.mcpTools.length > 0 ? (
-                        <div className="space-y-3">
-                          {systemStatus.mcpTools.map((tool, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <div className={cx(
-                                  "w-3 h-3 rounded-full",
-                                  tool.status === 'active' ? 'bg-green-500' :
-                                  tool.status === 'error' ? 'bg-red-500' : 'bg-gray-400'
-                                )} />
-                                <div>
-                                  <div className="font-medium text-sm">{tool.name}</div>
-                                  <div className="text-xs text-slate-600">{tool.description}</div>
-                                </div>
-                              </div>
-                              <div className="text-xs text-slate-500">
-                                {tool.lastExecution && format(new Date(tool.lastExecution), 'HH:mm:ss')}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="text-center py-8 text-slate-500">
-                          <Terminal className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                          <p>No MCP tools detected</p>
-                          <p className="text-sm">Enable MCP Tools in Admin tab to see tool status</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
                 </div>
-              </TabsContent>
-
-              {/* Agents Tab - Multi-Agent System */}
-              <TabsContent value="agents" className="h-full flex flex-col m-0 p-6">
-                <div className="max-w-6xl mx-auto space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <CircuitBoard className="h-6 w-6 text-bristol-maroon" />
-                      <h2 className="text-2xl font-bold text-slate-800">Agent Orchestration</h2>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Switch checked={multiAgentMode} onCheckedChange={setMultiAgentMode} />
-                      <Label className="font-medium">Multi-Agent Mode</Label>
-                    </div>
-                  </div>
-
-                  {/* Agent Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {agents.map((agent) => (
-                      <Card key={agent.id} className="relative">
-                        <CardContent className="p-4">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className={cx(
-                              "w-3 h-3 rounded-full",
-                              agent.status === 'active' ? 'bg-green-500' :
-                              agent.status === 'error' ? 'bg-red-500' : 'bg-gray-400'
-                            )} />
-                            <h3 className="font-medium text-sm">{agent.name}</h3>
-                          </div>
-                          <p className="text-xs text-slate-600 mb-2">{agent.description || 'Specialized Bristol analysis agent'}</p>
-                          <div className="text-xs text-slate-500">
-                            Status: <span className="capitalize">{agent.status}</span>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-
-                  {/* Active Tasks */}
-                  {activeTasks.length > 0 && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Zap className="h-5 w-5" />
-                          Active Tasks ({activeTasks.length})
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-4">
-                          {activeTasks.map((task) => (
-                            <div key={task.id} className="border border-slate-200 rounded-lg p-4">
-                              <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-3">
-                                  <div className={cx(
-                                    "w-3 h-3 rounded-full",
-                                    task.status === 'completed' ? 'bg-green-500' :
-                                    task.status === 'processing' ? 'bg-yellow-500 animate-pulse' :
-                                    task.status === 'failed' ? 'bg-red-500' : 'bg-gray-400'
-                                  )} />
-                                  <h4 className="font-medium">{task.agent?.name || task.agentId}</h4>
-                                  <Badge variant="outline">{task.type}</Badge>
-                                </div>
-                                <span className="text-sm text-slate-500 capitalize">{task.status}</span>
-                              </div>
-                              
-                              {/* Progress Bar */}
-                              {task.status === 'processing' && (
-                                <div className="w-full bg-slate-200 rounded-full h-2 mb-3">
-                                  <div 
-                                    className="bg-bristol-maroon h-2 rounded-full transition-all duration-500"
-                                    style={{ width: `${taskProgress[task.agentId] || 0}%` }}
-                                  />
-                                </div>
-                              )}
-                              
-                              {task.result && (
-                                <div className="mt-3 p-3 bg-slate-50 rounded text-sm text-slate-700">
-                                  <strong>Result:</strong>
-                                  <div className="mt-1 whitespace-pre-wrap">
-                                    {typeof task.result === 'string' ? task.result : JSON.stringify(task.result, null, 2)}
-                                  </div>
-                                </div>
-                              )}
-                              
-                              {task.completedAt && (
-                                <div className="mt-2 text-xs text-slate-500">
-                                  Completed: {format(new Date(task.completedAt), 'HH:mm:ss')}
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Agent Communication Log */}
-                  {agentCommunication.length > 0 && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <MessageCircle className="h-5 w-5" />
-                          Agent Communication
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ScrollArea className="h-64">
-                          <div className="space-y-2">
-                            {agentCommunication.map((comm, index) => (
-                              <div key={index} className="text-sm p-2 bg-slate-50 rounded">
-                                <span className="font-medium">{comm.from}</span> → <span className="font-medium">{comm.to}</span>
-                                <div className="text-slate-600 mt-1">{comm.message}</div>
-                              </div>
-                            ))}
-                          </div>
-                        </ScrollArea>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Agent System Info */}
-                  {!multiAgentMode && (
-                    <Card>
-                      <CardContent className="p-6 text-center">
-                        <CircuitBoard className="h-12 w-12 mx-auto mb-4 text-slate-400" />
-                        <h3 className="font-medium mb-2">Multi-Agent Mode Disabled</h3>
-                        <p className="text-sm text-slate-600 mb-4">
-                          Enable multi-agent mode to orchestrate specialized agents for complex analysis tasks.
-                        </p>
-                        <Button
-                          onClick={() => setMultiAgentMode(true)}
-                          className="bg-bristol-maroon hover:bg-bristol-maroon/90"
-                        >
-                          Enable Multi-Agent System
-                        </Button>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </TabsContent>
+              </div>
             </div>
-          </Tabs>
+          )}
         </div>
+
+        {/* Glass Chat Composer - Fixed at Bottom - Only show on chat tab - EXACT FROM FLOATING WIDGET */}
+        {activeTab === "chat" && (
+          <div 
+            className="border-t border-bristol-cyan/40 relative flex-shrink-0"
+            style={{
+              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.95) 100%)',
+              backdropFilter: 'blur(20px) saturate(1.2)',
+              boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.05)',
+            }}
+          >
+            {/* Ambient glow */}
+            <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-40 h-6 bg-bristol-cyan/10 rounded-full blur-2xl" />
+            
+            <div className="px-6 py-5 flex items-end gap-4">
+              <div className="flex-1 relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-3xl blur opacity-0 group-focus-within:opacity-100 transition duration-300" />
+                <input
+                  ref={eliteInputRef}
+                  value={eliteInput}
+                  onChange={(e) => setEliteInput(e.target.value)}
+                  onKeyDown={handleEliteKeyPress}
+                  placeholder={eliteLoading ? "Bristol A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
+                  disabled={eliteLoading}
+                  className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-bristol-cyan/60 disabled:opacity-60"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
+                    border: '1px solid rgba(69, 214, 202, 0.6)',
+                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
+                  }}
+                />
+                {eliteLoading && (
+                  <div className="absolute right-5 top-1/2 transform -translate-y-1/2">
+                    <div className="w-5 h-5 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin" />
+                  </div>
+                )}
+              </div>
+              
+              {/* Glass Send Button */}
+              <button
+                onClick={handleEliteSend}
+                disabled={eliteLoading || !eliteInput.trim()}
+                className={cx(
+                  "chrome-metallic-button relative inline-flex items-center gap-3 px-6 py-4 rounded-3xl font-bold text-sm",
+                  "disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden"
+                )}
+                style={{
+                  background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.15) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(69, 214, 202, 0.1) 100%)',
+                  border: '1px solid rgba(69, 214, 202, 0.6)',
+                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(69, 214, 202, 0.1)',
+                }}
+              >
+                {/* Glass shimmer effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                
+                {/* Button content */}
+                <div className="relative z-10 flex items-center gap-2">
+                  {eliteLoading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin" />
+                      <span className="text-bristol-cyan/80 font-bold">Processing</span>
+                    </>
+                  ) : (
+                    <>
+                      <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
+                      <span className="text-bristol-cyan group-hover:text-white transition-colors duration-300 font-bold">
+                        ANALYZE
+                      </span>
+                    </>
+                  )}
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Data Visualization Panel Overlay */}
-      <DataVisualizationPanel
-        appData={appData}
-        isOpen={showDataViz}
-        onClose={() => setShowDataViz(false)}
-        className="fixed top-4 right-4 z-50"
-      />
+      {/* Data Visualization Panel - Exact from floating widget */}
+      {showDataViz && (
+        <DataVisualizationPanel 
+          data={appData}
+          onClose={() => setShowDataViz(false)}
+        />
+      )}
 
-      {/* Onboarding Guide Overlay */}
-      <OnboardingGuide
-        isOpen={showOnboarding}
+      {/* Onboarding Guide */}
+      <OnboardingGuide 
+        isOpen={showOnboarding} 
         onClose={() => setShowOnboarding(false)}
         appData={appData}
       />
     </div>
   );
-}
+};
