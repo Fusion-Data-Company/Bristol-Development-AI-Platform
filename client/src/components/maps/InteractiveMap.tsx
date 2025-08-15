@@ -24,25 +24,9 @@ interface InteractiveMapProps {
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtYXBueWtucDAwb2Eya3BtMWU5aTI2d2oifQ.iTxE5naWMw04PtIEXgxNnw';
 
-// Check MapBox token and validate
+// Simple token check without API validation
 if (!MAPBOX_TOKEN) {
   console.error('MapBox access token is missing! Map will not render.');
-} else {
-  console.log('MapBox token loaded:', MAPBOX_TOKEN.substring(0, 20) + '...');
-  console.log('Token type:', MAPBOX_TOKEN.startsWith('pk.') ? 'Public Key' : 'Invalid format');
-  
-  // Test token validity
-  fetch(`https://api.mapbox.com/styles/v1/mapbox/streets-v11?access_token=${MAPBOX_TOKEN}`)
-    .then(response => {
-      if (response.ok) {
-        console.log('✅ Mapbox token is valid');
-      } else {
-        console.error('❌ Mapbox token validation failed:', response.status);
-      }
-    })
-    .catch(error => {
-      console.error('❌ Mapbox token test failed:', error);
-    });
 }
 
 // Real verified data sources for map layers
@@ -108,7 +92,7 @@ export function InteractiveMap({
 }: InteractiveMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v11');
+  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v9');
   const [activeLayers, setActiveLayers] = useState<Set<string>>(new Set(['heatmap']));
   const [showKML, setShowKML] = useState(!!kmlData);
   const [layerData, setLayerData] = useState<{[key: string]: any}>({});
@@ -329,14 +313,7 @@ export function InteractiveMap({
             console.log('Map style:', mapStyle);
           }}
           onError={(error) => {
-            console.error('Map error:', error);
-            console.error('Map token being used:', MAPBOX_TOKEN?.substring(0, 20) + '...');
-            console.error('Map style:', mapStyle);
-            // Try fallback style
-            if (mapStyle !== 'mapbox://styles/mapbox/streets-v9') {
-              console.log('Trying fallback map style...');
-              setMapStyle('mapbox://styles/mapbox/streets-v9');
-            }
+            console.error('Map loading error - using basic style');
           }}
           interactiveLayerIds={['market-heat']}
           projection={{ name: 'mercator' }}
