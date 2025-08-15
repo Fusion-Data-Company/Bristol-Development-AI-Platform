@@ -159,7 +159,7 @@ export default function Chat() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [model, setModel] = useState("openai/gpt-4o");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
-  const [systemPrompt, setSystemPrompt] = useState<string>(DEFAULT_BRISTOL_PROMPT);
+  const [systemPrompt, setSystemPrompt] = useState<string>("");
   const [eliteMessages, setEliteMessages] = useState<any[]>([
     {
       role: "assistant",

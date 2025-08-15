@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -12,7 +12,7 @@ import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
 import Sites from "@/pages/Sites";
 import Analytics from "@/pages/Analytics";
-import Chat from "@/pages/Chat";
+import Chat from "@/pages/ChatNew";
 import Integrations from "@/pages/Integrations";
 import MainApp from "@/pages/App";
 import ToolsConsole from "@/pages/ToolsConsole";
@@ -50,6 +50,7 @@ function Router() {
 
 function AppContent() {
   const { isAuthenticated } = useAuth();
+  const [location] = useLocation();
   
   // Aggregate app data for Bristol Floating Widget
   const { data: sites } = useQuery({
@@ -73,7 +74,8 @@ function AppContent() {
   return (
     <>
       <Router />
-      {isAuthenticated && (
+      {/* Hide Bristol Floating Widget on chat page */}
+      {isAuthenticated && location !== '/chat' && (
         <BristolFloatingWidget 
             appData={appData}
             webhookUrl={import.meta.env.VITE_N8N_WEBHOOK_URL}
