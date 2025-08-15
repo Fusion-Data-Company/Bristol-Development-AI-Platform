@@ -25,6 +25,7 @@ interface InteractiveMapProps {
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_PUBLIC_KEY2;
 
 // Check MapBox token
+console.log('🔍 Checking VITE_MAPBOX_PUBLIC_KEY2:', MAPBOX_TOKEN ? 'Found' : 'Missing');
 if (!MAPBOX_TOKEN) {
   console.error('MapBox access token is missing! Map will not render.');
 }
@@ -290,7 +291,7 @@ export function InteractiveMap({
         <div className={cn("h-screen w-full relative bg-red-100 flex items-center justify-center", className)}>
           <div className="text-center p-8">
             <h2 className="text-2xl font-bold text-red-600 mb-4">MapBox Token Missing</h2>
-            <p className="text-red-500">VITE_MAPBOX_ACCESS_TOKEN environment variable is not set</p>
+            <p className="text-red-500">VITE_MAPBOX_PUBLIC_KEY2 environment variable is not set</p>
           </div>
         </div>
       );
