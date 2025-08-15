@@ -1652,15 +1652,17 @@ What property or investment can I analyze for you today?`,
               </div>
               
               <div className="flex items-center gap-2 text-xs">
-                {wsConnected ? (
+                {modelsUsed.size > 0 ? (
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
-                    <span className="text-bristol-cyan font-bold">LIVE</span>
+                    <span className="text-bristol-cyan font-bold">
+                      {Array.from(modelsUsed).map(model => model.split('/').pop()).join(', ')}
+                    </span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse" />
-                    <span className="text-red-400 font-bold">OFFLINE</span>
+                    <div className="w-2 h-2 bg-slate-400 rounded-full" />
+                    <span className="text-slate-400 font-medium">Ready</span>
                   </div>
                 )}
               </div>
@@ -2698,10 +2700,10 @@ function EnterpriseControlPanel({
                 <div className="text-xs text-slate-400">Active Agents</div>
               </div>
               <div className="bg-slate-800/50 border border-slate-600/30 rounded-lg p-3">
-                <div className={`text-sm font-bold ${wsConnected ? 'text-emerald-300' : 'text-red-300'}`}>
-                  {wsConnected ? 'ONLINE' : 'OFFLINE'}
+                <div className="text-sm font-bold text-bristol-cyan">
+                  {activeTasks.length}
                 </div>
-                <div className="text-xs text-slate-400">WebSocket</div>
+                <div className="text-xs text-slate-400">Active Tasks</div>
               </div>
               <div className="bg-slate-800/50 border border-slate-600/30 rounded-lg p-3">
                 <div className="text-sm font-bold text-blue-300">{systemStatus?.mcpTools?.length || 0}</div>
