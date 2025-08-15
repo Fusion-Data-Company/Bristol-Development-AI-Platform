@@ -90,6 +90,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const streamingChatRouter = (await import('./api/streaming-chat')).default;
   app.use('/api/streaming-chat', streamingChatRouter);
 
+  // OpenRouter premium models API
+  const openRouterPremiumRouter = (await import('./api/openrouter-premium')).default;
+  app.use('/api/openrouter-premium', openRouterPremiumRouter);
+
   // Bristol Portfolio Analysis Agent API
   const bristolAgentRouter = (await import('./api/bristol-agent')).default;
   app.use('/api/bristol-agent', bristolAgentRouter);

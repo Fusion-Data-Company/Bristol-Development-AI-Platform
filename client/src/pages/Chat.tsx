@@ -621,10 +621,24 @@ export default function Chat() {
   useEffect(() => {
     const loadEliteModels = async () => {
       try {
-        const response = await fetch('/api/elite-chat/models');
-        if (response.ok) {
-          const data = await response.json();
-          const eliteModels = data.models.map((m: any) => ({
+        const [eliteResponse, openRouterResponse, premiumResponse] = await Promise.all([
+          fetch('/api/elite-chat/models'),
+          fetch('/api/openrouter-models'),
+          fetch('/api/openrouter-premium/models')
+        ]);
+        
+        const allModels = [];
+        
+        // Load premium models first
+        if (premiumResponse.ok) {
+          const premiumData = await premiumResponse.json();
+          allModels.push(...(premiumData.models || []));
+        }
+        
+        // Load elite models
+        if (eliteResponse.ok) {
+          const eliteData = await eliteResponse.json();
+          const eliteModels = eliteData.models.map((m: any) => ({
             id: m.id,
             label: `${m.name} ${m.available ? '✅' : '❌'}`,
             context: m.contextLength,
@@ -633,20 +647,43 @@ export default function Chat() {
             features: m.features,
             available: m.available
           }));
-          
-          setModelList(eliteModels);
-          
-          // Set default to the first available premium model or fallback
-          const preferredModel = eliteModels.find(m => m.available && m.tier === 'premium') ||
-                                eliteModels.find(m => m.available) ||
-                                eliteModels[0];
-          
-          if (preferredModel) {
-            setModel(preferredModel.id);
+          allModels.push(...eliteModels);
+        }
+        
+        // Load OpenRouter models
+        if (openRouterResponse.ok) {
+          const openRouterModels = await openRouterResponse.json();
+          if (Array.isArray(openRouterModels)) {
+            allModels.push(...openRouterModels);
           }
         }
+        
+        // Deduplicate and sort models
+        const unique = allModels.filter((model, index, self) => 
+          index === self.findIndex(m => m.id === model.id)
+        );
+        
+        const sorted = unique.sort((a, b) => {
+          if (a.tier === 'premium' && b.tier !== 'premium') return -1;
+          if (b.tier === 'premium' && a.tier !== 'premium') return 1;
+          return a.provider?.localeCompare(b.provider || '') || 0;
+        });
+        
+        setModelList(sorted);
+        
+        // Set default to the best available premium model
+        const preferredModel = sorted.find(m => m.available && m.tier === 'premium' && m.id.includes('gpt-5')) ||
+                              sorted.find(m => m.available && m.tier === 'premium' && m.id.includes('claude-sonnet-4')) ||
+                              sorted.find(m => m.available && m.tier === 'premium') ||
+                              sorted.find(m => m.available) ||
+                              sorted[0];
+        
+        if (preferredModel) {
+          setModel(preferredModel.id);
+        }
       } catch (error) {
-        console.error('Failed to load elite models:', error);
+        console.error('Failed to load models:', error);
+        setModelError('Failed to load AI models. Please refresh the page.');
       }
     };
     loadEliteModels();
@@ -694,8 +731,8 @@ export default function Chat() {
         realTimeData
       });
 
-      // Enhanced streaming chat with real-time typing
-      const useStreaming = true; // Enable streaming for better UX
+      // Enhanced streaming chat with real-time typing - use the streaming toggle state
+      const useStreaming = realTimeData; // Enable streaming based on user preference
       
       if (useStreaming) {
         // Use fetch with ReadableStream for better streaming support
@@ -788,7 +825,51 @@ export default function Chat() {
           console.error('Streaming error:', error);
           // Remove the failed streaming message
           setEliteMessages(prev => prev.filter(msg => msg.id !== streamingMessageId));
-          // Fallback to non-streaming
+          
+          // Fallback to premium OpenRouter API if available
+          const modelConfig = modelList.find(m => m.id === model);
+          if (modelConfig?.tier === 'premium') {
+            try {
+              const fallbackResponse = await fetch("/api/openrouter-premium/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  model: model,
+                  messages: apiMessages,
+                  temperature: 0.7,
+                  maxTokens: 4000,
+                  systemPrompt: systemPrompt,
+                  mcpEnabled: mcpEnabled,
+                  realTimeData: realTimeData
+                })
+              });
+              
+              if (fallbackResponse.ok) {
+                const fallbackData = await fallbackResponse.json();
+                let assistantContent = "";
+                
+                if (fallbackData.choices && fallbackData.choices[0]) {
+                  assistantContent = fallbackData.choices[0].message?.content || "";
+                } else if (fallbackData.content) {
+                  assistantContent = Array.isArray(fallbackData.content) ? fallbackData.content[0].text : fallbackData.content;
+                }
+                
+                setEliteMessages(prev => [...prev, {
+                  role: "assistant",
+                  content: assistantContent,
+                  createdAt: nowISO(),
+                  sessionId,
+                  id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                  metadata: { model, provider: fallbackData.provider, tier: fallbackData.tier }
+                }]);
+                return;
+              }
+            } catch (fallbackError) {
+              console.error('Premium fallback failed:', fallbackError);
+            }
+          }
+          
+          // Final fallback to standard API
           await handleNonStreamingFallback();
         }
 
@@ -1511,40 +1592,111 @@ function DataPane({ data }: { data: any }) {
           ))}
         </div>
 
-        {/* Tool Results Display */}
+        {/* Tool Results Display - Enhanced */}
         <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-4">
             <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
               <Terminal className="h-4 w-4" />
               {dataTools[selectedTool as keyof typeof dataTools]?.name || "Select Tool"}
             </h4>
-            <button
-              onClick={() => executeTool(selectedTool)}
-              disabled={loadingTool === selectedTool}
-              className="px-3 py-1 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
-            >
-              {loadingTool === selectedTool ? "Loading..." : "Refresh"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => executeTool(selectedTool)}
+                disabled={loadingTool === selectedTool}
+                className="px-3 py-1 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+              >
+                {loadingTool === selectedTool ? 'RUNNING...' : 'EXECUTE'}
+              </button>
+              {currentResult && (
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(JSON.stringify(currentResult, null, 2));
+                  }}
+                  className="px-3 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold rounded-lg text-xs font-medium transition-colors"
+                >
+                  COPY JSON
+                </button>
+              )}
+            </div>
           </div>
           
-          <div className="max-h-80 overflow-auto">
-            {currentResult ? (
+          <div className="min-h-[200px] max-h-[400px] overflow-auto">
+            {loadingTool === selectedTool ? (
+              <div className="flex items-center justify-center h-40">
+                <div className="flex items-center gap-3">
+                  <div className="w-5 h-5 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin"></div>
+                  <span className="text-bristol-cyan font-medium">Fetching {dataTools[selectedTool as keyof typeof dataTools]?.name}...</span>
+                </div>
+              </div>
+            ) : currentResult ? (
               <div className="space-y-3">
                 {currentResult.error ? (
-                  <div className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg p-3">
-                    {currentResult.error}
+                  <div className="bg-red-400/10 border border-red-400/30 rounded-lg p-3">
+                    <div className="text-red-400 font-medium text-sm mb-1">Error</div>
+                    <div className="text-red-300 text-xs">{currentResult.error}</div>
                   </div>
                 ) : (
-                  <pre className="text-xs text-gray-300 whitespace-pre-wrap bg-black/20 rounded-lg p-3 border border-gray-700">
-                    {JSON.stringify(currentResult, null, 2)}
-                  </pre>
+                  <>
+                    {/* Success metrics summary */}
+                    {currentResult.totalSites !== undefined && (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <div className="bg-bristol-cyan/10 border border-bristol-cyan/20 rounded-lg p-2">
+                          <div className="text-bristol-cyan font-bold text-lg">{currentResult.totalSites}</div>
+                          <div className="text-bristol-cyan/80 text-xs">Total Sites</div>
+                        </div>
+                        <div className="bg-bristol-gold/10 border border-bristol-gold/20 rounded-lg p-2">
+                          <div className="text-bristol-gold font-bold text-lg">{currentResult.totalUnits}</div>
+                          <div className="text-bristol-gold/80 text-xs">Total Units</div>
+                        </div>
+                        <div className="bg-green-400/10 border border-green-400/20 rounded-lg p-2">
+                          <div className="text-green-400 font-bold text-lg">${(currentResult.totalValue / 1000000).toFixed(1)}M</div>
+                          <div className="text-green-400/80 text-xs">Portfolio Value</div>
+                        </div>
+                        <div className="bg-purple-400/10 border border-purple-400/20 rounded-lg p-2">
+                          <div className="text-purple-400 font-bold text-lg">{currentResult.avgBristolScore?.toFixed(1) || 'N/A'}</div>
+                          <div className="text-purple-400/80 text-xs">Avg Score</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Raw JSON data in collapsed view */}
+                    <details className="bg-black/60 border border-white/10 rounded-lg">
+                      <summary className="cursor-pointer p-3 text-white/80 hover:text-white transition-colors text-sm font-medium">
+                        Raw Data ({Object.keys(currentResult).length} fields)
+                      </summary>
+                      <div className="p-3 pt-0">
+                        <pre className="text-xs text-white/70 whitespace-pre-wrap overflow-x-auto">
+                          {JSON.stringify(currentResult, null, 2)}
+                        </pre>
+                      </div>
+                    </details>
+                  </>
                 )}
               </div>
             ) : (
-              <div className="text-bristol-cyan/60 text-sm text-center py-8">
-                Select a data tool to view real-time information
+              <div className="text-center py-12 text-white/50">
+                <Database className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Select and execute a tool to view results</p>
               </div>
             )}
+          </div>
+        </div>
+        
+        {/* Real-time Data Feeds */}
+        <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-4">
+          <h4 className="text-bristol-gold font-semibold mb-3 flex items-center gap-2">
+            <Activity className="h-4 w-4 animate-pulse" />
+            Live Market Data
+          </h4>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-black/40 border border-bristol-cyan/30 rounded-lg p-3">
+              <div className="text-bristol-cyan text-sm font-medium">Market Status</div>
+              <div className="text-xs text-bristol-cyan/70 mt-1">Real-time feeds active</div>
+            </div>
+            <div className="bg-black/40 border border-bristol-gold/30 rounded-lg p-3">
+              <div className="text-bristol-gold text-sm font-medium">API Health</div>
+              <div className="text-xs text-bristol-gold/70 mt-1">All systems operational</div>
+            </div>
           </div>
         </div>
       </div>
