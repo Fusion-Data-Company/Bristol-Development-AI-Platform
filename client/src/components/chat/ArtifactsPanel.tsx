@@ -95,25 +95,25 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
   const ArtifactContent = ({ artifact }: { artifact: Artifact }) => (
     <div className="h-full flex flex-col">
       {/* Artifact Header */}
-      <div className="flex-shrink-0 border-b border-bristol-cyan/20 px-6 py-4 bg-gradient-to-r from-slate-900/40 via-slate-800/50 to-slate-900/40 backdrop-blur-md">
+      <div className="flex-shrink-0 border-b border-bristol-cyan/20 px-8 py-6 bg-gradient-to-r from-slate-900/40 via-slate-800/50 to-slate-900/40 backdrop-blur-md">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={cn("p-2 rounded-lg backdrop-blur-sm", artifactColors[artifact.type])}>
+          <div className="flex items-center gap-4">
+            <div className={cn("p-3 rounded-xl backdrop-blur-sm shadow-lg", artifactColors[artifact.type])}>
               {artifactIcons[artifact.type]}
             </div>
             <div>
-              <h3 className="font-semibold text-white">{artifact.title}</h3>
-              <div className="flex items-center gap-2 text-sm text-slate-300">
-                <Badge variant="secondary" className="text-xs bg-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/40 shadow-sm shadow-bristol-cyan/20">
+              <h3 className="font-semibold text-white text-lg">{artifact.title}</h3>
+              <div className="flex items-center gap-3 text-sm text-slate-300 mt-2">
+                <Badge variant="secondary" className="text-sm bg-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/20 px-3 py-1">
                   {artifact.type.toUpperCase()}
                 </Badge>
                 {artifact.language && (
-                  <Badge variant="outline" className="text-xs bg-slate-200/10 text-slate-300 border-slate-300/30">
+                  <Badge variant="outline" className="text-sm bg-slate-200/10 text-slate-300 border-slate-300/30 px-3 py-1">
                     {artifact.language}
                   </Badge>
                 )}
                 {artifact.modelUsed && (
-                  <Badge variant="outline" className="text-xs bg-green-500/20 text-green-400 border-green-400/30">
+                  <Badge variant="outline" className="text-sm bg-green-500/20 text-green-400 border-green-400/30 px-3 py-1">
                     {artifact.modelUsed.split('/').pop()}
                   </Badge>
                 )}
@@ -121,32 +121,32 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
-              size="sm"
+              size="default"
               variant="outline"
               onClick={() => handleCopy(artifact.content)}
-              className="gap-2 border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-lg hover:shadow-bristol-cyan/20 transition-all duration-300"
+              className="gap-2 border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
             >
               <Copy className="h-4 w-4" />
               Copy
             </Button>
             {onDownload && (
               <Button
-                size="sm"
+                size="default"
                 variant="outline"
                 onClick={() => onDownload(artifact)}
-                className="gap-2 border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-lg hover:shadow-bristol-cyan/20 transition-all duration-300"
+                className="gap-2 border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
               >
                 <Download className="h-4 w-4" />
                 Download
               </Button>
             )}
             <Button
-              size="sm"
+              size="default"
               variant="outline"
               onClick={() => setFullscreen(!fullscreen)}
-              className="border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-lg hover:shadow-bristol-cyan/20 transition-all duration-300"
+              className="border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
             >
               <Maximize2 className="h-4 w-4" />
             </Button>
@@ -157,9 +157,9 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
       {/* Artifact Content */}
       <div className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
-          <div className="p-6">
+          <div className="p-8">
             {artifact.type === 'code' ? (
-              <pre className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-bristol-cyan p-6 rounded-lg overflow-x-auto text-sm font-mono whitespace-pre-wrap border border-bristol-cyan/30 shadow-xl shadow-bristol-cyan/10 backdrop-blur-sm">
+              <pre className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-bristol-cyan p-8 rounded-xl overflow-x-auto text-base font-mono whitespace-pre-wrap border border-bristol-cyan/30 shadow-2xl shadow-bristol-cyan/20 backdrop-blur-sm">
                 <code>{artifact.content}</code>
               </pre>
             ) : artifact.type === 'image' ? (
@@ -167,12 +167,12 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
                 <img 
                   src={artifact.content} 
                   alt={artifact.title}
-                  className="max-w-full h-auto rounded-lg shadow-xl border border-bristol-cyan/20"
+                  className="max-w-full h-auto rounded-xl shadow-2xl border border-bristol-cyan/20"
                 />
               </div>
             ) : (
               <div className="prose prose-slate max-w-none">
-                <div className="whitespace-pre-wrap text-sm leading-relaxed text-slate-800 bg-gradient-to-br from-white via-slate-50/90 to-white/95 p-6 rounded-lg border border-bristol-cyan/20 shadow-xl backdrop-blur-sm">
+                <div className="whitespace-pre-wrap text-base leading-loose text-slate-800 bg-gradient-to-br from-white via-slate-50/90 to-white/95 p-8 rounded-xl border border-bristol-cyan/20 shadow-2xl backdrop-blur-sm">
                   {artifact.content}
                 </div>
               </div>
@@ -187,17 +187,17 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
     <>
       {/* Full-Width Artifacts Panel */}
       <div className={cn(
-        "flex flex-col bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl border border-bristol-cyan/20 shadow-2xl shadow-bristol-cyan/10",
-        fullscreen ? "fixed inset-0 z-50" : "h-full",
+        "flex flex-col bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl border border-bristol-cyan/20 shadow-2xl shadow-bristol-cyan/10 m-4 rounded-xl",
+        fullscreen ? "fixed inset-4 z-50" : "h-full min-w-0 flex-1",
         className
       )}>
         {/* Panel Header with Navigation Tabs */}
-        <div className="flex-shrink-0 border-b border-bristol-cyan/30 backdrop-blur-sm">
-          <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-slate-900/60 via-slate-800/70 to-slate-900/60">
-            <div className="flex items-center gap-3">
-              <FileText className="h-6 w-6 text-bristol-cyan" />
-              <h2 className="font-semibold text-bristol-cyan text-lg">Artifacts</h2>
-              <Badge variant="secondary" className="text-xs bg-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/20">
+        <div className="flex-shrink-0 border-b border-bristol-cyan/30 backdrop-blur-sm rounded-t-xl">
+          <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-slate-900/60 via-slate-800/70 to-slate-900/60 rounded-t-xl">
+            <div className="flex items-center gap-4">
+              <FileText className="h-7 w-7 text-bristol-cyan" />
+              <h2 className="font-semibold text-bristol-cyan text-xl">Artifacts</h2>
+              <Badge variant="secondary" className="text-sm bg-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/20 px-3 py-1">
                 {artifacts.length}
               </Badge>
             </div>
@@ -214,8 +214,8 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
           </div>
           
           {/* Navigation Tabs */}
-          <div className="px-6 pb-2">
-            <div className="flex gap-2 overflow-x-auto">
+          <div className="px-8 pb-4">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide">
               {artifacts.map((artifact) => {
                 const isSelected = selectedArtifact === artifact.id;
                 
@@ -224,22 +224,22 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
                     key={artifact.id}
                     onClick={() => setSelectedArtifact(artifact.id)}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 whitespace-nowrap",
-                      "border backdrop-blur-sm",
+                      "flex items-center gap-3 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap min-w-fit",
+                      "border backdrop-blur-sm shadow-lg",
                       isSelected 
-                        ? "bg-gradient-to-r from-bristol-cyan/20 via-bristol-cyan/15 to-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/20" 
-                        : "bg-slate-800/50 text-slate-300 border-slate-600/30 hover:bg-slate-700/60 hover:text-white hover:border-bristol-cyan/30 hover:shadow-md hover:shadow-bristol-cyan/10"
+                        ? "bg-gradient-to-r from-bristol-cyan/25 via-bristol-cyan/20 to-bristol-cyan/25 text-bristol-cyan border-bristol-cyan/50 shadow-xl shadow-bristol-cyan/30" 
+                        : "bg-slate-800/60 text-slate-300 border-slate-600/40 hover:bg-slate-700/70 hover:text-white hover:border-bristol-cyan/40 hover:shadow-xl hover:shadow-bristol-cyan/20 hover:scale-105"
                     )}
                   >
-                    <div className={cn("p-1 rounded-md", artifactColors[artifact.type])}>
+                    <div className={cn("p-2 rounded-lg", artifactColors[artifact.type])}>
                       {artifactIcons[artifact.type]}
                     </div>
-                    <span className="truncate max-w-32">{artifact.title}</span>
-                    <Badge variant="outline" className="text-xs bg-transparent border-current/30">
+                    <span className="truncate max-w-40 font-medium">{artifact.title}</span>
+                    <Badge variant="outline" className="text-xs bg-transparent border-current/40 px-2 py-1">
                       {artifact.type.toUpperCase()}
                     </Badge>
                     {artifact.modelUsed && (
-                      <Badge variant="outline" className="text-xs bg-green-500/20 text-green-400 border-green-400/30">
+                      <Badge variant="outline" className="text-xs bg-green-500/20 text-green-400 border-green-400/40 px-2 py-1">
                         {artifact.modelUsed.split('/').pop()}
                       </Badge>
                     )}
@@ -255,11 +255,11 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
           {selectedArtifactData ? (
             <ArtifactContent artifact={selectedArtifactData} />
           ) : (
-            <div className="h-full flex items-center justify-center text-slate-400 bg-gradient-to-br from-slate-900/40 via-slate-800/50 to-slate-900/40 backdrop-blur-sm">
-              <div className="text-center">
-                <FileText className="h-16 w-16 text-bristol-cyan/50 mx-auto mb-6" />
-                <p className="text-slate-300 text-lg font-medium">Select an artifact to view its content</p>
-                <p className="text-xs text-bristol-cyan/70 mt-3">Generated content will appear here with full-width display</p>
+            <div className="h-full flex items-center justify-center text-slate-400 bg-gradient-to-br from-slate-900/40 via-slate-800/50 to-slate-900/40 backdrop-blur-sm rounded-b-xl">
+              <div className="text-center p-12">
+                <FileText className="h-20 w-20 text-bristol-cyan/50 mx-auto mb-8" />
+                <p className="text-slate-300 text-xl font-medium mb-4">Select an artifact to view its content</p>
+                <p className="text-sm text-bristol-cyan/70 leading-relaxed">Generated content will appear here with full-width display for optimal readability</p>
               </div>
             </div>
           )}
