@@ -147,12 +147,12 @@ export function FinancialModelingDashboard() {
   return (
     <div className="space-y-6">
       {/* DCF Header */}
-      <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+      <Card className="bg-white border-bristol-cyan/30 shadow-lg">
         <CardHeader>
           <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
             <Calculator className="h-6 w-6 text-bristol-gold" />
             Elite Financial Modeling Suite
-            <Badge className="bg-bristol-maroon/50 text-bristol-gold border-bristol-gold">
+            <Badge className="bg-bristol-maroon text-white border-bristol-gold">
               <Zap className="h-3 w-3 mr-1" />
               Real-Time DCF
             </Badge>
@@ -162,7 +162,7 @@ export function FinancialModelingDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Parameters */}
-        <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+        <Card className="bg-white border-bristol-cyan/30 shadow-lg">
           <CardHeader>
             <CardTitle className="text-bristol-cyan flex items-center gap-3">
               <Building2 className="h-5 w-5 text-bristol-gold" />
@@ -177,7 +177,7 @@ export function FinancialModelingDashboard() {
                   type="number"
                   value={dcfInputs.propertyValue}
                   onChange={(e) => setDCFInputs({...dcfInputs, propertyValue: Number(e.target.value)})}
-                  className="bg-bristol-ink/60 border-bristol-cyan/30 text-white"
+                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
                 />
               </div>
               <div>
@@ -186,7 +186,7 @@ export function FinancialModelingDashboard() {
                   type="number"
                   value={dcfInputs.downPayment}
                   onChange={(e) => setDCFInputs({...dcfInputs, downPayment: Number(e.target.value)})}
-                  className="bg-bristol-ink/60 border-bristol-cyan/30 text-white"
+                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
                 />
               </div>
               <div>
@@ -196,7 +196,7 @@ export function FinancialModelingDashboard() {
                   step="0.1"
                   value={dcfInputs.interestRate}
                   onChange={(e) => setDCFInputs({...dcfInputs, interestRate: Number(e.target.value)})}
-                  className="bg-bristol-ink/60 border-bristol-cyan/30 text-white"
+                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
                 />
               </div>
               <div>
@@ -205,7 +205,7 @@ export function FinancialModelingDashboard() {
                   type="number"
                   value={dcfInputs.loanTerm}
                   onChange={(e) => setDCFInputs({...dcfInputs, loanTerm: Number(e.target.value)})}
-                  className="bg-bristol-ink/60 border-bristol-cyan/30 text-white"
+                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
                 />
               </div>
               <div>
@@ -214,7 +214,7 @@ export function FinancialModelingDashboard() {
                   type="number"
                   value={dcfInputs.currentRent}
                   onChange={(e) => setDCFInputs({...dcfInputs, currentRent: Number(e.target.value)})}
-                  className="bg-bristol-ink/60 border-bristol-cyan/30 text-white"
+                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
                 />
               </div>
               <div>
@@ -224,7 +224,7 @@ export function FinancialModelingDashboard() {
                   step="0.1"
                   value={dcfInputs.rentGrowth}
                   onChange={(e) => setDCFInputs({...dcfInputs, rentGrowth: Number(e.target.value)})}
-                  className="bg-bristol-ink/60 border-bristol-cyan/30 text-white"
+                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
                 />
               </div>
               <div>
@@ -233,7 +233,7 @@ export function FinancialModelingDashboard() {
                   type="number"
                   value={dcfInputs.expenses}
                   onChange={(e) => setDCFInputs({...dcfInputs, expenses: Number(e.target.value)})}
-                  className="bg-bristol-ink/60 border-bristol-cyan/30 text-white"
+                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
                 />
               </div>
               <div>
@@ -243,7 +243,7 @@ export function FinancialModelingDashboard() {
                   step="0.1"
                   value={dcfInputs.exitCapRate}
                   onChange={(e) => setDCFInputs({...dcfInputs, exitCapRate: Number(e.target.value)})}
-                  className="bg-bristol-ink/60 border-bristol-cyan/30 text-white"
+                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
                 />
               </div>
             </div>
@@ -260,7 +260,7 @@ export function FinancialModelingDashboard() {
 
         {/* Results Dashboard */}
         {results && (
-          <Card className="bg-bristol-ink/40 border-bristol-gold/30 backdrop-blur-xl">
+          <Card className="bg-white border-bristol-gold/30 shadow-lg">
             <CardHeader>
               <CardTitle className="text-bristol-gold flex items-center gap-3">
                 <Target className="h-5 w-5" />
@@ -269,7 +269,7 @@ export function FinancialModelingDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-bristol-ink/60 rounded-xl border border-bristol-cyan/20">
+                <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
                   <div className="text-2xl font-bold text-bristol-cyan mb-1">
                     {formatCurrency(results.netPresentValue)}
                   </div>
@@ -319,7 +319,7 @@ export function FinancialModelingDashboard() {
               </div>
               
               {/* Cash Flow Projection */}
-              <div className="mt-6 p-4 bg-bristol-ink/40 rounded-xl border border-bristol-cyan/20">
+              <div className="mt-6 p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
                 <div className="text-bristol-cyan font-medium mb-3">Annual Cash Flow Projection</div>
                 <div className="space-y-2">
                   {results.cashFlow.map((cf, index) => (
@@ -342,7 +342,7 @@ export function FinancialModelingDashboard() {
 
       {/* Investment Decision Matrix */}
       {results && (
-        <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+        <Card className="bg-white border-bristol-cyan/30 shadow-lg">
           <CardHeader>
             <CardTitle className="text-bristol-cyan flex items-center gap-3">
               <BarChart3 className="h-5 w-5 text-bristol-gold" />
@@ -353,15 +353,15 @@ export function FinancialModelingDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-4">
                 <div className="text-center">
-                  <h4 className="text-white font-medium">Profitability Assessment</h4>
+                  <h4 className="text-bristol-maroon font-medium">Profitability Assessment</h4>
                   <div className="mt-4">
                     <Badge className={cn(
                       "text-lg px-4 py-2",
                       results.netPresentValue > 0 && results.internalRateOfReturn > 15
-                        ? "bg-green-900/50 text-green-300 border-green-600"
+                        ? "bg-green-100 text-green-800 border-green-600"
                         : results.netPresentValue > 0
-                        ? "bg-yellow-900/50 text-yellow-300 border-yellow-600"
-                        : "bg-red-900/50 text-red-300 border-red-600"
+                        ? "bg-yellow-100 text-yellow-800 border-yellow-600"
+                        : "bg-red-100 text-red-800 border-red-600"
                     )}>
                       {results.netPresentValue > 0 && results.internalRateOfReturn > 15
                         ? "Strong Buy"
@@ -376,11 +376,11 @@ export function FinancialModelingDashboard() {
               
               <div className="space-y-3">
                 <div className="text-center">
-                  <h4 className="text-white font-medium mb-3">Key Metrics</h4>
+                  <h4 className="text-bristol-maroon font-medium mb-3">Key Metrics</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-bristol-stone">Monthly Payment:</span>
-                      <span className="text-white">{formatCurrency(results.monthlyPayment)}</span>
+                      <span className="text-bristol-maroon">{formatCurrency(results.monthlyPayment)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-bristol-stone">Profitability Index:</span>
@@ -396,9 +396,9 @@ export function FinancialModelingDashboard() {
               
               <div className="space-y-3">
                 <div className="text-center">
-                  <h4 className="text-white font-medium mb-3">Risk Assessment</h4>
+                  <h4 className="text-bristol-maroon font-medium mb-3">Risk Assessment</h4>
                   <div className="space-y-2">
-                    <div className="p-2 bg-bristol-ink/60 rounded-lg border-l-4 border-green-400">
+                    <div className="p-2 bg-gray-100 rounded-lg border-l-4 border-green-400">
                       <div className="text-xs text-green-300">Interest Rate: Favorable</div>
                     </div>
                     <div className="p-2 bg-bristol-ink/60 rounded-lg border-l-4 border-yellow-400">

@@ -64,10 +64,10 @@ export function EliteInsightsDashboard({
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'border-red-500 bg-red-900/20';
-      case 'medium': return 'border-yellow-500 bg-yellow-900/20';
-      case 'low': return 'border-blue-500 bg-blue-900/20';
-      default: return 'border-bristol-stone bg-bristol-stone/20';
+      case 'high': return 'border-red-500 bg-red-100';
+      case 'medium': return 'border-yellow-500 bg-yellow-100';
+      case 'low': return 'border-blue-500 bg-blue-100';
+      default: return 'border-bristol-stone bg-gray-100';
     }
   };
 
@@ -94,7 +94,7 @@ export function EliteInsightsDashboard({
   return (
     <div className="space-y-6">
       {/* AI Insights Header */}
-      <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+      <Card className="bg-white border-bristol-cyan/30 shadow-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
@@ -132,7 +132,7 @@ export function EliteInsightsDashboard({
           <Card 
             key={insight.id} 
             className={cn(
-              "bg-bristol-ink/40 border-2 backdrop-blur-xl relative overflow-hidden group hover:scale-[1.02] transition-all duration-300",
+              "bg-white border-2 shadow-lg relative overflow-hidden group hover:scale-[1.02] transition-all duration-300",
               getPriorityColor(insight.priority)
             )}
           >
@@ -144,7 +144,7 @@ export function EliteInsightsDashboard({
                 <div className="flex items-center gap-3">
                   {getInsightIcon(insight.type)}
                   <div>
-                    <CardTitle className="text-white text-lg">{insight.title}</CardTitle>
+                    <CardTitle className="text-bristol-maroon text-lg">{insight.title}</CardTitle>
                     <div className="flex items-center gap-2 mt-2">
                       <Badge className={cn("text-xs", getTypeColor(insight.type))}>
                         {insight.type.replace('_', ' ')}
@@ -190,7 +190,7 @@ export function EliteInsightsDashboard({
                 </div>
                 
                 {/* Recommendation */}
-                <div className="p-3 bg-bristol-ink/60 rounded-lg border border-bristol-gold/20">
+                <div className="p-3 bg-gray-100 rounded-lg border border-bristol-gold/20">
                   <div className="text-xs font-medium text-bristol-gold mb-1">Recommendation:</div>
                   <div className="text-xs text-bristol-stone leading-relaxed">
                     {insight.recommendation}
@@ -203,7 +203,7 @@ export function EliteInsightsDashboard({
                     <div className="text-xs text-bristol-stone">
                       Confidence: {(insight.confidence * 100).toFixed(0)}%
                     </div>
-                    <div className="w-16 bg-bristol-ink/60 rounded-full h-1">
+                    <div className="w-16 bg-gray-200 rounded-full h-1">
                       <div 
                         className="h-1 bg-bristol-gold rounded-full transition-all duration-500"
                         style={{ width: `${insight.confidence * 100}%` }}
@@ -222,7 +222,7 @@ export function EliteInsightsDashboard({
       </div>
 
       {/* Market Comparative Analysis */}
-      <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+      <Card className="bg-white border-bristol-cyan/30 shadow-lg">
         <CardHeader>
           <CardTitle className="text-bristol-cyan flex items-center gap-3">
             <BarChart3 className="h-5 w-5 text-bristol-gold" />
@@ -234,7 +234,7 @@ export function EliteInsightsDashboard({
             {marketComparatives.map((market, index) => (
               <div key={index} className="space-y-4">
                 <div className="text-center">
-                  <h4 className="text-white font-medium text-lg">{market.market}</h4>
+                  <h4 className="text-bristol-maroon font-medium text-lg">{market.market}</h4>
                   <div className="text-3xl font-bold text-bristol-gold mt-2">
                     +{market.competitive_advantage.toFixed(1)}%
                   </div>
@@ -242,7 +242,7 @@ export function EliteInsightsDashboard({
                 </div>
                 
                 <div className="space-y-3">
-                  <div className="p-3 bg-bristol-ink/60 rounded-lg">
+                  <div className="p-3 bg-gray-100 rounded-lg">
                     <div className="text-xs font-medium text-green-400 mb-2">Opportunities</div>
                     <div className="space-y-1">
                       {market.opportunities.map((opp, idx) => (
@@ -254,7 +254,7 @@ export function EliteInsightsDashboard({
                     </div>
                   </div>
                   
-                  <div className="p-3 bg-bristol-ink/60 rounded-lg">
+                  <div className="p-3 bg-gray-100 rounded-lg">
                     <div className="text-xs font-medium text-red-400 mb-2">Risk Factors</div>
                     <div className="space-y-1">
                       {market.risk_factors.map((risk, idx) => (

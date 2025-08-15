@@ -60,15 +60,15 @@ export function AIAnalyticsEngine({
 
   const getImpactBadge = (impact: string) => {
     switch (impact) {
-      case 'high': return 'bg-red-900/50 text-red-300 border-red-600';
-      case 'medium': return 'bg-yellow-900/50 text-yellow-300 border-yellow-600';
-      case 'low': return 'bg-blue-900/50 text-blue-300 border-blue-600';
-      default: return 'bg-bristol-stone/50 text-bristol-stone border-bristol-stone';
+      case 'high': return 'bg-red-100 text-red-800 border-red-600';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-600';
+      case 'low': return 'bg-blue-100 text-blue-800 border-blue-600';
+      default: return 'bg-gray-100 text-bristol-maroon border-bristol-stone';
     }
   };
 
   return (
-    <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
@@ -83,7 +83,7 @@ export function AIAnalyticsEngine({
           
           <div className="flex items-center gap-4">
             <div className="text-center">
-              <div className="text-lg font-bold text-white">{modelsActive}</div>
+              <div className="text-lg font-bold text-bristol-maroon">{modelsActive}</div>
               <div className="text-xs text-bristol-stone">Models Active</div>
             </div>
             <div className="text-center">
@@ -97,9 +97,9 @@ export function AIAnalyticsEngine({
             
             <Badge className={cn(
               "flex items-center gap-1",
-              processingStatus === 'active' ? 'bg-green-900/50 text-green-300 border-green-600' :
-              processingStatus === 'analyzing' ? 'bg-bristol-cyan/50 text-bristol-cyan border-bristol-cyan' :
-              'bg-bristol-stone/50 text-bristol-stone border-bristol-stone'
+              processingStatus === 'active' ? 'bg-green-100 text-green-800 border-green-600' :
+              processingStatus === 'analyzing' ? 'bg-cyan-100 text-bristol-maroon border-bristol-cyan' :
+              'bg-gray-100 text-bristol-maroon border-bristol-stone'
             )}>
               {processingStatus === 'analyzing' ? (
                 <Cpu className="h-3 w-3 animate-spin" />
@@ -120,13 +120,13 @@ export function AIAnalyticsEngine({
             insights.map((insight) => (
               <div
                 key={insight.id}
-                className="p-4 bg-bristol-ink/60 rounded-xl border border-bristol-cyan/20 hover:border-bristol-gold/40 transition-all duration-300"
+                className="p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20 hover:border-bristol-gold/40 transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     {getInsightIcon(insight.category)}
                     <div>
-                      <h4 className="text-white font-medium">{insight.title}</h4>
+                      <h4 className="text-bristol-maroon font-medium">{insight.title}</h4>
                       <div className="flex items-center gap-2 mt-1">
                         <Badge className={getImpactBadge(insight.impact)}>
                           {insight.impact} impact
@@ -207,7 +207,7 @@ export function ModelPerformanceDashboard({ models }: ModelPerformanceProps) {
   };
 
   return (
-    <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
       <CardHeader>
         <CardTitle className="text-bristol-cyan flex items-center gap-3">
           <Zap className="h-5 w-5 text-bristol-gold" />
@@ -220,11 +220,11 @@ export function ModelPerformanceDashboard({ models }: ModelPerformanceProps) {
           {models.map((model, index) => (
             <div
               key={index}
-              className="p-4 bg-bristol-ink/60 rounded-lg border border-bristol-cyan/20"
+              className="p-4 bg-gray-100 rounded-lg border border-bristol-cyan/20"
             >
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h4 className="text-white font-medium">{model.name}</h4>
+                  <h4 className="text-bristol-maroon font-medium">{model.name}</h4>
                   <p className="text-bristol-stone text-xs">{model.type}</p>
                 </div>
                 
@@ -251,7 +251,7 @@ export function ModelPerformanceDashboard({ models }: ModelPerformanceProps) {
                 
                 <div>
                   <div className="text-xs text-bristol-stone">Updated</div>
-                  <div className="text-xs text-white">{model.last_update}</div>
+                  <div className="text-xs text-bristol-maroon">{model.last_update}</div>
                 </div>
               </div>
             </div>
