@@ -30,8 +30,8 @@ export function MetricsTable({ siteId }: MetricsTableProps) {
 
   // Fetch metrics for selected site
   const { data: metrics = [], isLoading } = useQuery<SiteMetric[]>({
-    queryKey: ["/api/metrics"],
-    queryFn: () => apiRequest(`/api/metrics?site_id=${siteId}`),
+    queryKey: ["/api/sites/metrics", siteId],
+    queryFn: () => apiRequest(`/api/sites/metrics${siteId ? `?siteId=${siteId}` : ''}`),
     enabled: !!siteId,
     retry: false,
   });
@@ -42,7 +42,7 @@ export function MetricsTable({ siteId }: MetricsTableProps) {
       return apiRequest("/api/metrics", "POST", data);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/metrics"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/sites/metrics"] });
       setEditingId(null);
       setEditValues({});
       toast({ title: "Metric Updated" });

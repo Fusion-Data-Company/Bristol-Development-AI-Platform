@@ -57,8 +57,8 @@ export function CompsTable({ siteId }: CompsTableProps) {
 
   // Fetch comps for selected site
   const { data: comps = [], isLoading } = useQuery<Comp[]>({
-    queryKey: ["/api/comps"],
-    queryFn: () => apiRequest(`/api/comps?site_id=${siteId}`),
+    queryKey: ["/api/comps", siteId],
+    queryFn: () => apiRequest(`/api/comps/sites/${siteId}/comps`),
     enabled: !!siteId,
     retry: false,
   });

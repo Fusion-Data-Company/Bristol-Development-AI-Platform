@@ -44,6 +44,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const sitesRouter = (await import('./api/sites')).default;
   app.use('/api/sites', sitesRouter);
 
+  // Import comps API for comparable properties functionality  
+  const compsRouter = (await import('./api/comps')).default;
+  app.use('/api/comps', compsRouter);
+
   // Import analytics API - enterprise-grade analytics with performance monitoring
   const analyticsRouter = (await import('./api/analytics')).default;
   app.use('/api/analytics', analyticsRouter);

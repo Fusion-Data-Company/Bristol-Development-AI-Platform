@@ -22,7 +22,7 @@ interface InteractiveMapProps {
   fullScreen?: boolean;
 }
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_PUBLIC_KEY2;
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || import.meta.env.VITE_MAPBOX_PUBLIC_KEY2;
 
 // Check MapBox token
 if (!MAPBOX_TOKEN) {
