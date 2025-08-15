@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
 import { BristolFooter } from "@/components/ui/BristolFooter";
+import { SystemHealthIndicator } from '@/components/ui/SystemHealthIndicator';
+import { EnterpriseMetricsWidget } from '@/components/ui/EnterpriseMetricsWidget';
 
 interface DashboardMetrics {
   totalSites: number;

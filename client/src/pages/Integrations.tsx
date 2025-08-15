@@ -307,7 +307,7 @@ export default function Integrations() {
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-[400px]">
-                  {logs && logs.length > 0 ? (
+                  {logs && Array.isArray(logs) && logs.length > 0 ? (
                     <div className="space-y-2">
                       {logs.map((log: any, i: number) => (
                         <div key={i} className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50">

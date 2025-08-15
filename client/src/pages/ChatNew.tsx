@@ -159,7 +159,7 @@ export default function Chat() {
   ];
 
   return (
-    <SimpleChrome currentPath="/chat">
+    <SimpleChrome>
       <div className="flex flex-col h-screen bg-gray-50">
         {/* Chat Header */}
         <div className="bg-white border-b border-gray-200 px-6 py-4">
