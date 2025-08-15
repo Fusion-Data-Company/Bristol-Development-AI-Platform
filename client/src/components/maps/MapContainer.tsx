@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { type Site } from '@shared/schema';
 
 // Initialize Mapbox token
-mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
+mapboxgl.accessToken = 'pk.eyJ1IjoiYnJpc3RvbGRldiIsImEiOiJjbTIxdW9hdG0wMnBrMnRzZThwbXo5dzV4In0.Qwn5r6i6cFE0oBqUDXWuSA';
 
 interface MapContainerProps {
   sites: Site[];

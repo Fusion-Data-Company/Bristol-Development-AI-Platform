@@ -22,12 +22,11 @@ interface InteractiveMapProps {
   fullScreen?: boolean;
 }
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtYXBueWtucDAwb2Eya3BtMWU5aTI2d2oifQ.iTxE5naWMw04PtIEXgxNnw';
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiYnJpc3RvbGRldiIsImEiOiJjbTIxdW9hdG0wMnBrMnRzZThwbXo5dzV4In0.Qwn5r6i6cFE0oBqUDXWuSA';
 
-// Simple token check without API validation
-if (!MAPBOX_TOKEN) {
-  console.error('MapBox access token is missing! Map will not render.');
-}
+// Log token for debugging
+console.log('Using Mapbox token:', MAPBOX_TOKEN.substring(0, 20) + '...');
+console.log('Token starts with pk.:', MAPBOX_TOKEN.startsWith('pk.'));
 
 // Real verified data sources for map layers
 const DATA_SOURCES = {

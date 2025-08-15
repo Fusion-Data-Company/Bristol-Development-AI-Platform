@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from 'react-leaflet';
-import L from 'leaflet';
+import Map, { NavigationControl, GeolocateControl, Popup, Source, Layer } from 'react-map-gl';
+import type { MapRef } from 'react-map-gl';
 import { useQuery } from '@tanstack/react-query';
 import { quantile } from 'd3-array';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,15 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Building, TrendingUp, Users, DollarSign, RefreshCw, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import 'leaflet/dist/leaflet.css';
-
-// Fix default Leaflet icons
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface DemographicMapProps {
   className?: string;
@@ -54,7 +46,7 @@ interface SitesGeoJSON {
   features: GeoJSONFeature[];
 }
 
-// Using free OpenStreetMap tiles - no tokens needed
+const MAPBOX_TOKEN = 'pk.eyJ1IjoiYnJpc3RvbGRldiIsImEiOiJjbTIxdW9hdG0wMnBrMnRzZThwbXo5dzV4In0.Qwn5r6i6cFE0oBqUDXWuSA';
 
 // Quantile color stops for demographic visualization
 function quantileStops(fc: SitesGeoJSON, key: string) {
@@ -133,10 +125,16 @@ function upsertPinsLayer(map: MapRef, sourceId: string, layerId: string, fc: Sit
 }
 
 export function DemographicMap({ className, onEnrichComplete }: DemographicMapProps) {
+  const mapRef = useRef<MapRef>(null);
   const [selectedFeature, setSelectedFeature] = useState<GeoJSONFeature | null>(null);
-  const [popupInfo, setPopupInfo] = useState<GeoJSONFeature | null>(null);
+  const [popupInfo, setPopupInfo] = useState<{ longitude: number; latitude: number; feature: GeoJSONFeature } | null>(null);
   const [metric, setMetric] = useState<DemographicMetric>('median_income');
   const [isEnriching, setIsEnriching] = useState(false);
+  const [viewport, setViewport] = useState({
+    longitude: -82.4572, // Atlanta/Sunbelt center
+    latitude: 33.7490,
+    zoom: 6
+  });
 
   // Fetch sites with demographic data
   const { data: sitesData, isLoading, refetch } = useQuery<SitesGeoJSON>({
@@ -217,38 +215,15 @@ export function DemographicMap({ className, onEnrichComplete }: DemographicMapPr
     }
   };
 
-  // Get color for demographic value
-  const getMarkerColor = (feature: GeoJSONFeature, metric: DemographicMetric) => {
-    const value = feature.properties.acs_profile?.[metric];
-    if (!value) return '#9ca3af'; // gray if no data
-    
-    // Simple color scale
-    if (metric === 'median_income') {
-      if (value > 80000) return '#065f46'; // dark green
-      if (value > 60000) return '#047857'; // green  
-      if (value > 40000) return '#0891b2'; // blue
-      if (value > 20000) return '#dc2626'; // red
-      return '#991b1b'; // dark red
-    }
-    
-    if (metric === 'population') {
-      if (value > 50000) return '#065f46';
-      if (value > 20000) return '#047857';
-      if (value > 10000) return '#0891b2';
-      if (value > 5000) return '#dc2626';
-      return '#991b1b';
-    }
-    
-    if (metric === 'median_rent') {
-      if (value > 2000) return '#065f46';
-      if (value > 1500) return '#047857';
-      if (value > 1000) return '#0891b2';
-      if (value > 500) return '#dc2626';
-      return '#991b1b';
-    }
-    
-    return '#0891b2';
-  };
+  if (!MAPBOX_TOKEN) {
+    return (
+      <Card className={cn("flex items-center justify-center", className)}>
+        <CardContent className="text-center">
+          <p className="text-muted-foreground">Mapbox token not configured</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className={cn("relative", className)}>
@@ -311,72 +286,66 @@ export function DemographicMap({ className, onEnrichComplete }: DemographicMapPr
       </Card>
 
       {/* Map */}
-      <MapContainer 
-        center={[33.7490, -82.4572]} 
-        zoom={6} 
+      <Map
+        ref={mapRef}
+        {...viewport}
+        onMove={(evt) => setViewport(evt.viewState)}
+        mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: '100%', height: '100%' }}
-        className="z-0"
+        mapStyle="mapbox://styles/mapbox/streets-v9"
+        onClick={handleMapClick}
+        interactiveLayerIds={['sites-circles']}
       >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        />
-        
-        {/* Site markers */}
-        {sitesData?.features.map((feature) => (
-          <CircleMarker
-            key={feature.properties.id}
-            center={[feature.geometry.coordinates[1], feature.geometry.coordinates[0]]}
-            radius={8}
-            fillColor={getMarkerColor(feature, metric)}
-            color="#fff"
-            weight={2}
-            fillOpacity={0.8}
-            eventHandlers={{
-              click: () => setPopupInfo(feature)
-            }}
+        <NavigationControl position="top-right" />
+        <GeolocateControl position="top-right" />
+
+        {/* Popup */}
+        {popupInfo && (
+          <Popup
+            longitude={popupInfo.longitude}
+            latitude={popupInfo.latitude}
+            onClose={() => setPopupInfo(null)}
+            className="demographic-popup"
           >
-            <Popup>
-              <div style={{ minWidth: '220px' }} className="p-2">
-                <div className="font-semibold text-gray-900">
-                  {feature.properties.name}
+            <div style={{ minWidth: '220px' }} className="p-2">
+              <div className="font-semibold text-gray-900">
+                {popupInfo.feature.properties.name}
+              </div>
+              <div className="text-sm text-gray-600 mb-2">
+                {popupInfo.feature.properties.address}
+                <br />
+                {popupInfo.feature.properties.cityState}
+              </div>
+              
+              <hr className="my-2" />
+              
+              <div className="space-y-1 text-sm">
+                <div className="font-medium">
+                  ACS {popupInfo.feature.properties.acs_year || 'Data'}
                 </div>
-                <div className="text-sm text-gray-600 mb-2">
-                  {feature.properties.address}
-                  <br />
-                  {feature.properties.cityState}
+                <div>
+                  Population: {formatValue(
+                    popupInfo.feature.properties.acs_profile?.population, 
+                    'population'
+                  )}
                 </div>
-                
-                <hr className="my-2" />
-                
-                <div className="space-y-1 text-sm">
-                  <div className="font-medium">
-                    ACS {feature.properties.acs_year || 'Data'}
-                  </div>
-                  <div>
-                    Population: {formatValue(
-                      feature.properties.acs_profile?.population, 
-                      'population'
-                    )}
-                  </div>
-                  <div>
-                    Median Income: {formatValue(
-                      feature.properties.acs_profile?.median_income,
-                      'median_income'
-                    )}
-                  </div>
-                  <div>
-                    Median Rent: {formatValue(
-                      feature.properties.acs_profile?.median_rent,
-                      'median_rent'
-                    )}
-                  </div>
+                <div>
+                  Median Income: {formatValue(
+                    popupInfo.feature.properties.acs_profile?.median_income,
+                    'median_income'
+                  )}
+                </div>
+                <div>
+                  Median Rent: {formatValue(
+                    popupInfo.feature.properties.acs_profile?.median_rent,
+                    'median_rent'
+                  )}
                 </div>
               </div>
-            </Popup>
-          </CircleMarker>
-        ))}
-      </MapContainer>
+            </div>
+          </Popup>
+        )}
+      </Map>
     </div>
   );
 }
