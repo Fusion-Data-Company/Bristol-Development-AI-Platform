@@ -157,6 +157,9 @@ export default function Chat() {
   // Navigation state for header
   const [location] = useLocation();
   
+  // Debug: Log the image path
+  console.log('Chat background image path:', chatBackgroundImg);
+  
   // Core chat state (legacy compatibility)
   const [message, setMessage] = useState('');
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
@@ -1285,15 +1288,20 @@ What property development project, market analysis, or investment opportunity ca
       
       {/* Main Content - Chat Interface */}
       <div 
-        className="min-h-screen bg-cover bg-center bg-no-repeat relative"
+        className="min-h-screen relative"
         style={{
-          backgroundImage: `url(${chatBackgroundImg})`,
+          backgroundColor: '#1e293b', // fallback color
+          backgroundImage: chatBackgroundImg ? `url(${chatBackgroundImg})` : 'none',
           backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed',
+          minHeight: '100vh',
+          width: '100%'
         }}
       >
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"></div>
         <div className="h-screen w-screen flex">
         {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout - EXACT REPLICA OF FLOATING WIDGET */}
         <div 
@@ -1606,7 +1614,16 @@ What property development project, market analysis, or investment opportunity ca
               <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
               
               {/* Chat Messages Area */}
-              <div className="relative z-10 flex-1 overflow-hidden flex flex-col">
+              <div 
+                className="relative z-10 flex-1 overflow-hidden flex flex-col"
+                style={{
+                  backgroundImage: `url(${chatBackgroundImg})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundAttachment: 'fixed'
+                }}
+              >
                 <div className="flex-1 overflow-y-auto p-6 space-y-4">
                   {eliteMessages.length === 0 && (
                     <div className="text-center py-12">
