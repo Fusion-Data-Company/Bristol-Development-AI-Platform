@@ -27,9 +27,12 @@ const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 // Debug: Check MapBox token
 console.log('🗺️ MapBox token loaded:', MAPBOX_TOKEN ? '✅ Token present' : '❌ Token missing');
 console.log('🗺️ Token length:', MAPBOX_TOKEN?.length);
+console.log('🗺️ Environment variables:', Object.keys(import.meta.env).filter(k => k.includes('MAPBOX')));
 
 if (!MAPBOX_TOKEN) {
   console.error('🚨 CRITICAL: MapBox access token is missing! Map will not render.');
+} else {
+  console.log('🗺️ Token preview:', MAPBOX_TOKEN.substring(0, 30) + '...');
 }
 
 // Real verified data sources for map layers
@@ -288,8 +291,21 @@ export function InteractiveMap({
 
   if (fullScreen) {
     console.log('🗺️ Rendering fullScreen map with token:', MAPBOX_TOKEN ? 'Present' : 'Missing');
+    console.log('🗺️ Token starts with:', MAPBOX_TOKEN?.substring(0, 20) + '...');
     console.log('🗺️ Viewport:', viewport);
     console.log('🗺️ Map style:', mapStyle);
+    
+    // If no token, show error
+    if (!MAPBOX_TOKEN) {
+      return (
+        <div className={cn("h-screen w-full relative bg-red-100 flex items-center justify-center", className)}>
+          <div className="text-center p-8">
+            <h2 className="text-2xl font-bold text-red-600 mb-4">MapBox Token Missing</h2>
+            <p className="text-red-500">VITE_MAPBOX_ACCESS_TOKEN environment variable is not set</p>
+          </div>
+        </div>
+      );
+    }
     
     return (
       <div className={cn("h-screen w-full relative bg-bristol-cream", className)}>
