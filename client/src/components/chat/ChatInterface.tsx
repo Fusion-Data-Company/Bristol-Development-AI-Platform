@@ -367,15 +367,18 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
         </div>
 
         {/* Input Form */}
-        <form onSubmit={handleSubmit} className="px-6 py-4">
+        <form onSubmit={handleSubmit} className="px-6 py-4 relative z-50">
           <div className="flex items-center gap-3">
             <div className="flex-1 relative">
               <Input
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Ask about site feasibility, market comps, or development metrics..."
-                className="pr-4 py-3 text-lg border-bristol-sky focus:ring-bristol-maroon focus:border-bristol-maroon"
+                placeholder="Ask about properties, market trends, demographics, investment opportunities..."
+                className="pr-4 py-3 text-lg border-bristol-sky focus:ring-bristol-maroon focus:border-bristol-maroon bg-white text-bristol-ink cursor-text"
                 disabled={sendMessageMutation.isPending}
+                autoFocus
+                tabIndex={0}
+                style={{ pointerEvents: 'auto' }}
               />
             </div>
             
