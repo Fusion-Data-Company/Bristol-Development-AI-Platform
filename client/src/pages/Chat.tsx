@@ -2079,9 +2079,9 @@ What property or investment can I analyze for you today?`,
                   "disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden"
                 )}
                 style={{
-                  background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.15) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(69, 214, 202, 0.1) 100%)',
-                  border: '1px solid rgba(69, 214, 202, 0.4)',
-                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 20px rgba(69, 214, 202, 0.15)',
+                  background: 'linear-gradient(135deg, rgb(69, 214, 202) 0%, rgb(30, 58, 138) 50%, rgb(69, 214, 202) 100%)',
+                  border: '2px solid rgb(69, 214, 202)',
+                  boxShadow: 'inset 0 2px 0 rgb(255, 255, 255), 0 6px 25px rgb(69, 214, 202)',
                 }}
               >
                 {/* Glass shimmer effect */}
@@ -2090,8 +2090,8 @@ What property or investment can I analyze for you today?`,
                 {/* Button content */}
                 <div className="relative z-10 flex items-center gap-2">
                   <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
-                  <span className="text-bristol-cyan group-hover:text-white transition-colors duration-300 font-bold">
-                    ANALYZE
+                  <span className="text-white group-hover:text-bristol-cyan transition-colors duration-300 font-bold">
+                    🧠 ANALYZE PROPERTY
                   </span>
                 </div>
               </button>
