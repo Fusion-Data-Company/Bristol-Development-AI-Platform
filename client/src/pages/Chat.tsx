@@ -805,7 +805,7 @@ ${isPremium ? '💎 **PREMIUM MODE ACTIVATED** - Full Enterprise Features' : '�
 
 **🎯 System Status:** All enterprise engines online and optimized for institutional deployment.
 
-What property development project, market analysis, or investment opportunity can I evaluate for you today?`,
+What property or investment can I analyze for you today?`,
               createdAt: nowISO(),
               sessionId,
               id: `welcome-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -932,6 +932,7 @@ What property development project, market analysis, or investment opportunity ca
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            message: userMessage,  // Add the actual message!
             model: model,
             messages: apiMessages,
             temperature: 0.7,
@@ -1022,6 +1023,7 @@ What property development project, market analysis, or investment opportunity ca
           // Try unified chat streaming first for memory integration
           let streamingEndpoint = "/api/unified-chat/stream";
           let streamingBody = {
+            message: userMessage,  // Add the actual message!
             model: model,
             messages: apiMessages,
             temperature: 0.7,
