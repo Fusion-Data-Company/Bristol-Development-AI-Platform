@@ -160,20 +160,12 @@ export default function Chat() {
   const [model, setModel] = useState("openai/gpt-4o");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [systemPrompt, setSystemPrompt] = useState<string>("");
-  const [eliteMessages, setEliteMessages] = useState<any[]>([
-    {
-      role: "assistant",
-      content: "Hello! I'm your AI assistant. How can I help you today?",
-      createdAt: nowISO(),
-      sessionId: '',
-      id: `msg-${Date.now()}`,
-      metadata: {}
-    }
-  ]);
+  const [eliteMessages, setEliteMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
   const [eliteInput, setEliteInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [eliteLoading, setEliteLoading] = useState(false);
+  const [streamingResponse, setStreamingResponse] = useState("");
   const [modelError, setModelError] = useState<string>("");
   const eliteInputRef = useRef<HTMLInputElement>(null);
   const [systemStatus, setSystemStatus] = useState<SystemStatus>({
@@ -681,6 +673,52 @@ export default function Chat() {
         if (preferredModel) {
           setModel(preferredModel.id);
         }
+        
+        // Enhanced welcome message system - triggers after successful model loading
+        setTimeout(() => {
+          if (eliteMessages.length === 0 && sorted.length > 0) {
+            const currentModel = sorted.find(m => m.id === preferredModel?.id) || sorted[0];
+            const isPremium = currentModel?.tier === 'premium';
+            
+            const welcomeMessage = {
+              role: "assistant" as const,
+              content: `🚀 **Bristol A.I. Elite v5.0** - *Proprietary Intelligence System*
+
+**Current Configuration:**
+• **Model:** ${currentModel?.label || 'Loading...'}${isPremium ? ' 💎 PREMIUM TIER' : ''}
+• **Provider:** ${currentModel?.provider?.toUpperCase() || 'OPENAI'}  
+• **Context:** ${currentModel?.context ? `${(currentModel.context/1000).toFixed(0)}K tokens` : 'Standard'}
+• **MCP Tools:** ${mcpEnabled ? '✅ ENABLED' : '❌ DISABLED'}  
+• **Streaming:** ${realTimeData ? '✅ REAL-TIME' : '❌ BATCH MODE'}
+
+**Elite Capabilities Ready:**
+${isPremium ? '💎 **PREMIUM MODE ACTIVATED**' : '🔧 **STANDARD MODE**'}
+• Advanced IRR/NPV financial modeling with DCF analysis
+• Live demographic & market intelligence feeds
+• Multi-agent deal coordination system with WebSocket
+• Direct PostgreSQL database access for property data  
+• Real-time property analysis & Bristol scoring algorithms
+• Enhanced streaming responses with premium model access
+
+**System Status:** All engines online and ready for property intelligence analysis.
+
+What development project or market analysis can I help you with today?`,
+              createdAt: nowISO(),
+              sessionId,
+              id: `welcome-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              metadata: { 
+                model: currentModel?.id, 
+                provider: currentModel?.provider, 
+                tier: currentModel?.tier,
+                welcomeMessage: true,
+                capabilities: currentModel?.features || [],
+                systemVersion: '5.0'
+              }
+            };
+            setEliteMessages([welcomeMessage]);
+            console.log('✅ Welcome message initialized with enhanced configuration');
+          }
+        }, 800);
       } catch (error) {
         console.error('Failed to load models:', error);
         setModelError('Failed to load AI models. Please refresh the page.');
