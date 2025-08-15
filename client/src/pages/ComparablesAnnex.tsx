@@ -656,38 +656,40 @@ export default function ComparablesAnnex() {
           </div>
         </div>
         
-        {/* Premium Glassmorphism Footer - Matches Header Exactly */}
-        <div className="fixed bottom-0 left-0 right-0 z-40 p-6">
-          <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-2xl mx-auto max-w-7xl">
+        {/* Footer - Matches Header Styling Exactly */}
+        <div className="mt-16 mb-8">
+          <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-2xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-6">
-                <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl">
-                  <Building2 className="h-6 w-6 text-bristol-gold" />
+                <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl">
+                  <Building2 className="h-10 w-10 text-bristol-gold" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-cinzel font-bold text-white drop-shadow-lg">
+                  <h3 className="text-5xl font-cinzel font-bold text-white drop-shadow-2xl">
                     Bristol Development Group
                   </h3>
-                  <p className="text-white/90 text-xs font-medium">
-                    Elite Intelligence Platform
+                  <p className="text-white/90 text-xl font-medium mt-2 drop-shadow-lg">
+                    Elite Intelligence Platform - Comparables Annex
                   </p>
                 </div>
               </div>
               
               <div className="text-right">
-                <div className="text-white/80 text-sm font-medium">
-                  © 2025 Bristol Development Group
-                </div>
-                <div className="text-white/60 text-xs mt-1">
-                  Enterprise Real Estate Intelligence
+                <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-2xl">
+                  <div className="text-white/90 text-sm font-medium uppercase tracking-wider mb-2">
+                    © 2025 Bristol Development Group
+                  </div>
+                  <div className="text-white/70 text-xs">
+                    Enterprise Real Estate Intelligence
+                  </div>
+                  <div className="w-full h-1 bg-bristol-gold/30 rounded-full mt-3">
+                    <div className="w-full h-full bg-bristol-gold rounded-full shadow-lg" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Spacer for fixed footer */}
-        <div className="h-24 mb-8"></div>
         </div>
       </div>
     </Chrome>
