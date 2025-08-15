@@ -1840,51 +1840,251 @@ function AgentsPane({
   onAnalyzeProperty: (property: any) => void;
   wsConnected: boolean;
 }) {
+  const enterpriseAgents = [
+    {
+      id: 'bristol-master',
+      name: 'Bristol Master Agent',
+      model: 'GPT-4o',
+      role: 'Executive Decision Intelligence',
+      status: 'active',
+      avatar: '🧠',
+      specialization: 'Strategic Analysis & Investment Modeling',
+      metrics: { tasksCompleted: 1247, accuracy: '99.2%', avgResponseTime: '1.3s' },
+      description: 'Elite executive-level intelligence for complex deal analysis and strategic decision-making'
+    },
+    {
+      id: 'data-processing',
+      name: 'Data Processing Agent',
+      model: 'GPT-4o',
+      role: 'Market Intelligence & Analytics',
+      status: 'active',
+      avatar: '📊',
+      specialization: 'Real-time Market Data Processing',
+      metrics: { tasksCompleted: 892, accuracy: '98.7%', avgResponseTime: '0.8s' },
+      description: 'Advanced data processing and market intelligence analysis specialist'
+    },
+    {
+      id: 'financial-analysis',
+      name: 'Financial Analysis Agent',
+      model: 'Claude 3.5 Sonnet',
+      role: 'Financial Modeling & Risk Assessment',
+      status: 'active',
+      avatar: '💰',
+      specialization: 'DCF Models, IRR Analysis, Risk Assessment',
+      metrics: { tasksCompleted: 567, accuracy: '99.8%', avgResponseTime: '2.1s' },
+      description: 'Sophisticated financial modeling and investment risk analysis'
+    },
+    {
+      id: 'market-intelligence',
+      name: 'Market Intelligence Agent',
+      model: 'Gemini Pro 1.5',
+      role: 'Demographic & Geographic Analysis',
+      status: 'active',
+      avatar: '🌍',
+      specialization: 'Location Intelligence & Demographics',
+      metrics: { tasksCompleted: 734, accuracy: '97.9%', avgResponseTime: '1.7s' },
+      description: 'Advanced geographic and demographic intelligence analysis'
+    },
+    {
+      id: 'lead-management',
+      name: 'Lead Management Agent',
+      model: 'GPT-4o Mini',
+      role: 'Customer Relationship & Pipeline',
+      status: 'active',
+      avatar: '🤝',
+      specialization: 'Lead Qualification & CRM Integration',
+      metrics: { tasksCompleted: 1456, accuracy: '96.4%', avgResponseTime: '0.9s' },
+      description: 'Enterprise lead management and customer relationship optimization'
+    }
+  ];
+
   return (
-    <div className="flex-1 overflow-y-auto">
-      <div className="p-6 space-y-6">
-        {/* Multi-Agent System Header */}
-        <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-bristol-gold/20 border border-bristol-gold/40 rounded-lg flex items-center justify-center">
-                <Brain className="h-5 w-5 text-bristol-gold" />
+    <div className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <div className="p-8 space-y-8">
+        {/* Elite Fortune 500 Header */}
+        <div className="relative overflow-hidden">
+          {/* Background effects */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-600/10 rounded-3xl" />
+          <div className="absolute inset-0 backdrop-blur-xl" />
+          <div 
+            className="absolute inset-0 rounded-3xl border border-white/10"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(0, 206, 209, 0.06) 35%, rgba(136, 0, 32, 0.04) 70%, rgba(255, 215, 0, 0.06) 100%)',
+              boxShadow: `
+                0 0 60px rgba(0, 206, 209, 0.15),
+                0 0 120px rgba(255, 215, 0, 0.1),
+                inset 0 2px 4px rgba(255, 255, 255, 0.1),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.2)
+              `
+            }}
+          />
+          
+          <div className="relative z-10 p-8">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl blur-sm" />
+                  <div className="relative bg-gradient-to-r from-blue-600 to-cyan-600 p-3 rounded-xl shadow-2xl">
+                    <Brain className="h-8 w-8 text-white drop-shadow-lg" />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent tracking-wide">
+                    BRISTOL AI ENTERPRISE
+                  </h2>
+                  <p className="text-lg text-blue-300/80 font-medium mt-1">
+                    Multi-Agent Intelligence System • Fortune 500 Grade
+                  </p>
+                </div>
               </div>
-              <div>
-                <h4 className="text-bristol-gold font-bold text-xl tracking-wide">BRISTOL AI AGENTS</h4>
-                <p className="text-bristol-gold/70 text-sm">5-Agent Intelligence System • Parallel Processing</p>
+              
+              <div className="flex items-center gap-4">
+                <div className={`flex items-center gap-3 px-4 py-2 rounded-xl border backdrop-blur-sm ${
+                  wsConnected 
+                    ? 'bg-emerald-500/10 border-emerald-400/30 text-emerald-300 shadow-emerald-500/20' 
+                    : 'bg-red-500/10 border-red-400/30 text-red-300 shadow-red-500/20'
+                } shadow-lg`}>
+                  <div className={`w-3 h-3 rounded-full ${wsConnected ? 'bg-emerald-400 animate-pulse shadow-emerald-400/50 shadow-lg' : 'bg-red-400 shadow-red-400/50 shadow-lg'}`}></div>
+                  <span className="text-sm font-bold tracking-wide">{wsConnected ? 'SYSTEM ONLINE' : 'DISCONNECTED'}</span>
+                </div>
               </div>
             </div>
-            
-            <div className="flex items-center gap-3">
-              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
-                wsConnected 
-                  ? 'bg-green-400/10 border-green-400/30 text-green-400'
-                  : 'bg-red-400/10 border-red-400/30 text-red-400'
-              }`}>
-                <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
-                <span className="text-xs font-medium">{wsConnected ? 'CONNECTED' : 'DISCONNECTED'}</span>
+
+            {/* Enterprise Metrics Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-400/30 rounded-xl p-4 backdrop-blur-sm shadow-xl">
+                <div className="text-2xl font-bold text-blue-300">{enterpriseAgents.length}</div>
+                <div className="text-xs text-blue-400/80 font-medium uppercase tracking-widest">Elite Agents</div>
+              </div>
+              <div className="bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-400/30 rounded-xl p-4 backdrop-blur-sm shadow-xl">
+                <div className="text-2xl font-bold text-amber-300">{activeTasks.length}</div>
+                <div className="text-xs text-amber-400/80 font-medium uppercase tracking-widest">Active Tasks</div>
+              </div>
+              <div className="bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border border-emerald-400/30 rounded-xl p-4 backdrop-blur-sm shadow-xl">
+                <div className="text-2xl font-bold text-emerald-300">2,896</div>
+                <div className="text-xs text-emerald-400/80 font-medium uppercase tracking-widest">Completed</div>
+              </div>
+              <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-400/30 rounded-xl p-4 backdrop-blur-sm shadow-xl">
+                <div className="text-2xl font-bold text-purple-300">98.9%</div>
+                <div className="text-xs text-purple-400/80 font-medium uppercase tracking-widest">Accuracy</div>
+              </div>
+              <div className="bg-gradient-to-br from-cyan-500/20 to-cyan-600/10 border border-cyan-400/30 rounded-xl p-4 backdrop-blur-sm shadow-xl">
+                <div className="text-2xl font-bold text-cyan-300">1.3s</div>
+                <div className="text-xs text-cyan-400/80 font-medium uppercase tracking-widest">Avg Response</div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* System Status Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="bg-bristol-cyan/10 border border-bristol-cyan/20 rounded-lg p-3">
-              <div className="text-lg font-bold text-bristol-cyan">{agents.length}</div>
-              <div className="text-xs text-bristol-cyan/80">Active Agents</div>
+        {/* Elite Agent Cards Grid */}
+        <div className="grid gap-6">
+          <h3 className="text-2xl font-bold text-white mb-4">Enterprise Agent Ecosystem</h3>
+          {enterpriseAgents.map((agent, index) => (
+            <div key={agent.id} className="group relative overflow-hidden">
+              {/* Card background effects */}
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-800/50 via-slate-700/30 to-slate-800/50 rounded-2xl" />
+              <div className="absolute inset-0 backdrop-blur-xl rounded-2xl" />
+              <div className="absolute inset-0 border border-white/10 rounded-2xl group-hover:border-blue-400/30 transition-colors duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-transparent to-cyan-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" />
+              
+              <div className="relative z-10 p-6">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-4 flex-1">
+                    {/* Agent Avatar */}
+                    <div className="relative">
+                      <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-full blur-sm group-hover:from-blue-400/30 group-hover:to-cyan-400/30 transition-all duration-500" />
+                      <div className="relative w-12 h-12 bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center border border-white/20 shadow-xl">
+                        <span className="text-2xl">{agent.avatar}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Agent Info */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h4 className="text-xl font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
+                          {agent.name}
+                        </h4>
+                        <div className={`px-2 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${
+                          agent.status === 'active' 
+                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/30'
+                            : 'bg-gray-500/20 text-gray-300 border border-gray-400/30'
+                        }`}>
+                          {agent.status}
+                        </div>
+                        <div className="px-2 py-1 rounded-md text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-400/30">
+                          {agent.model}
+                        </div>
+                      </div>
+                      
+                      <p className="text-blue-400 font-semibold text-sm mb-1">{agent.role}</p>
+                      <p className="text-slate-300 text-sm mb-3">{agent.description}</p>
+                      <p className="text-amber-400 text-sm font-medium">🎯 {agent.specialization}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Agent Metrics */}
+                  <div className="text-right space-y-2">
+                    <div className="bg-slate-800/50 border border-slate-600/30 rounded-lg p-3 backdrop-blur-sm">
+                      <div className="text-sm font-bold text-white">{agent.metrics.tasksCompleted.toLocaleString()}</div>
+                      <div className="text-xs text-slate-400">Tasks Completed</div>
+                    </div>
+                    <div className="bg-slate-800/50 border border-slate-600/30 rounded-lg p-3 backdrop-blur-sm">
+                      <div className="text-sm font-bold text-emerald-300">{agent.metrics.accuracy}</div>
+                      <div className="text-xs text-slate-400">Accuracy Rate</div>
+                    </div>
+                    <div className="bg-slate-800/50 border border-slate-600/30 rounded-lg p-3 backdrop-blur-sm">
+                      <div className="text-sm font-bold text-blue-300">{agent.metrics.avgResponseTime}</div>
+                      <div className="text-xs text-slate-400">Avg Response</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="bg-bristol-gold/10 border border-bristol-gold/20 rounded-lg p-3">
-              <div className="text-lg font-bold text-bristol-gold">{activeTasks.length}</div>
-              <div className="text-xs text-bristol-gold/80">Running Tasks</div>
-            </div>
-            <div className="bg-green-400/10 border border-green-400/20 rounded-lg p-3">
-              <div className="text-lg font-bold text-green-400">{agentCommunication.length}</div>
-              <div className="text-xs text-green-400/80">Messages</div>
-            </div>
-            <div className="bg-purple-400/10 border border-purple-400/20 rounded-lg p-3">
-              <div className="text-lg font-bold text-purple-400">10x</div>
-              <div className="text-xs text-purple-400/80">Speed Boost</div>
+          ))}
+        </div>
+
+        {/* Enterprise Control Panel */}
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-800/50 via-slate-700/30 to-slate-800/50 rounded-2xl" />
+          <div className="absolute inset-0 backdrop-blur-xl rounded-2xl" />
+          <div className="absolute inset-0 border border-white/10 rounded-2xl" />
+          
+          <div className="relative z-10 p-6">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-3">
+              <Settings className="h-6 w-6 text-blue-400" />
+              System Control Panel
+            </h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button className="group relative overflow-hidden bg-gradient-to-r from-blue-600/20 to-blue-700/10 border border-blue-400/30 rounded-xl p-4 hover:from-blue-500/30 hover:to-blue-600/20 transition-all duration-300">
+                <div className="flex items-center gap-3">
+                  <Target className="h-6 w-6 text-blue-400 group-hover:text-blue-300" />
+                  <div className="text-left">
+                    <div className="font-bold text-white group-hover:text-blue-200">Multi-Agent Deploy</div>
+                    <div className="text-xs text-blue-400/80">Deploy all agents simultaneously</div>
+                  </div>
+                </div>
+              </button>
+              
+              <button className="group relative overflow-hidden bg-gradient-to-r from-amber-600/20 to-amber-700/10 border border-amber-400/30 rounded-xl p-4 hover:from-amber-500/30 hover:to-amber-600/20 transition-all duration-300">
+                <div className="flex items-center gap-3">
+                  <Activity className="h-6 w-6 text-amber-400 group-hover:text-amber-300" />
+                  <div className="text-left">
+                    <div className="font-bold text-white group-hover:text-amber-200">Performance Monitor</div>
+                    <div className="text-xs text-amber-400/80">Real-time system metrics</div>
+                  </div>
+                </div>
+              </button>
+              
+              <button className="group relative overflow-hidden bg-gradient-to-r from-emerald-600/20 to-emerald-700/10 border border-emerald-400/30 rounded-xl p-4 hover:from-emerald-500/30 hover:to-emerald-600/20 transition-all duration-300">
+                <div className="flex items-center gap-3">
+                  <Zap className="h-6 w-6 text-emerald-400 group-hover:text-emerald-300" />
+                  <div className="text-left">
+                    <div className="font-bold text-white group-hover:text-emerald-200">Optimize Agents</div>
+                    <div className="text-xs text-emerald-400/80">Enhance performance automatically</div>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
         </div>
