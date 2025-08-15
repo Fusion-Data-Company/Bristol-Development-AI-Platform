@@ -196,6 +196,8 @@ export default function Chat() {
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
   const [showArtifacts, setShowArtifacts] = useState(false);
   const [modelsUsed, setModelsUsed] = useState<Set<string>>(new Set());
+  const [showQuickActions, setShowQuickActions] = useState(false);
+  const [savedMessages, setSavedMessages] = useState<any[]>([]);
   const eliteInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -1341,29 +1343,38 @@ What property or investment can I analyze for you today?`,
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {/* New Chat Button */}
+              {/* Quick Actions Toggle Button */}
               <button 
                 onClick={() => {
-                  // Clear all conversation state
-                  setEliteMessages([]);
-                  setArtifacts([]);
-                  setShowArtifacts(false);
-                  setStreamingResponse("");
-                  setEliteInput("");
-                  setInput("");
-                  setSessionId(`session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-                  console.log('New chat started - all state cleared');
+                  if (showQuickActions) {
+                    // Restore previous chat
+                    setEliteMessages(savedMessages);
+                    setShowQuickActions(false);
+                    console.log('Restored previous chat');
+                  } else {
+                    // Save current state and show Quick Actions
+                    setSavedMessages(eliteMessages);
+                    setEliteMessages([]);
+                    setShowQuickActions(true);
+                    setStreamingResponse("");
+                    console.log('Showing Quick Actions');
+                  }
                 }} 
                 className={cx(
                   "p-2 rounded-xl transition-all duration-300 group relative",
                   "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
                   "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
-                  "hover:shadow-lg hover:shadow-bristol-cyan/20"
+                  "hover:shadow-lg hover:shadow-bristol-cyan/20",
+                  showQuickActions && "bg-bristol-cyan/20 border-bristol-cyan/60"
                 )}
-                aria-label="New Chat"
-                title="Start a New Conversation"
+                aria-label="Toggle Quick Actions"
+                title={showQuickActions ? "Return to Chat" : "Show Quick Actions"}
               >
-                <Plus className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                {showQuickActions ? (
+                  <X className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                ) : (
+                  <Plus className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                )}
               </button>
               
               {/* Data Visualization Toggle */}
@@ -1708,7 +1719,7 @@ What property or investment can I analyze for you today?`,
                 }}
               >
                 <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-6 space-y-4" style={{ scrollBehavior: 'smooth' }}>
-                  {eliteMessages.length === 0 && (
+                  {(eliteMessages.length === 0 || showQuickActions) && (
                     <div className="text-center py-12">
                       <OnboardingGuide 
                         isOpen={showOnboarding} 
