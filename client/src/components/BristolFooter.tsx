@@ -12,11 +12,11 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
   const getFooterHeight = () => {
     switch (variant) {
       case 'thick':
-        return 'min-h-[200px] py-12';
+        return 'min-h-[400px] py-24';
       case 'enterprise':
-        return 'min-h-[250px] py-16';
+        return 'min-h-[500px] py-32';
       default:
-        return 'min-h-[120px] py-8';
+        return 'min-h-[240px] py-16';
     }
   };
 
