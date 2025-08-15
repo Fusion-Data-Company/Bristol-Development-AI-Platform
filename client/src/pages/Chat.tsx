@@ -687,6 +687,13 @@ export default function Chat() {
   useEffect(() => {
     scrollToBottom();
   }, [eliteMessages]);
+  
+  // Also scroll when loading state changes
+  useEffect(() => {
+    if (!eliteLoading) {
+      scrollToBottom();
+    }
+  }, [eliteLoading]);
 
   // Memoized merged data context for clean inspection
   const dataContext = useMemo(() => ({
@@ -1019,6 +1026,12 @@ What property or investment can I analyze for you today?`,
           assistantContent = data.response;
         } else if (data.content) {
           assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
+        }
+        
+        // CRITICAL FIX: Ensure we have actual content before adding message
+        if (!assistantContent || assistantContent.trim() === "") {
+          console.error("No content extracted from response:", data);
+          assistantContent = "I apologize, but I couldn't generate a response. Please try again.";
         }
         
         const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
