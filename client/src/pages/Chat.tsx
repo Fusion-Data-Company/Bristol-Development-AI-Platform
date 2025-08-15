@@ -61,6 +61,7 @@ import { Link, useLocation } from "wouter";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
+import { ModelSelector } from '@/components/ModelSelector';
 
 interface PremiumModel {
   id: string;
@@ -185,6 +186,10 @@ export default function Chat() {
   const [controlPanelExpanded, setControlPanelExpanded] = useState(false);
   const [model, setModel] = useState("openai/gpt-4o");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
+  const [pendingModel, setPendingModel] = useState<string | null>(null);
+  const [modelChangeConfirming, setModelChangeConfirming] = useState(false);
+  const [lastConfirmedModel, setLastConfirmedModel] = useState<string>("");
+  const [modelLoadingStream, setModelLoadingStream] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState<string>("");
   const [eliteMessages, setEliteMessages] = useState<any[]>([]);
   const [input, setInput] = useState("");
@@ -283,10 +288,12 @@ export default function Chat() {
     enabled: !!selectedSession
   });
 
-  // Get premium models (legacy compatibility)
-  const { data: premiumModels } = useQuery<PremiumModel[]>({
+  // Get premium models with real-time streaming from OpenRouter
+  const { data: premiumModels, isLoading: modelsLoading, error: modelsError, refetch: refetchModels } = useQuery<PremiumModel[]>({
     queryKey: ['/api/openrouter-models'],
-    select: (data: any) => data || []
+    select: (data: any) => data || [],
+    refetchInterval: 30000, // Refresh models every 30 seconds
+    staleTime: 10000 // Consider data stale after 10 seconds
   });
 
   // Create new session
@@ -1575,42 +1582,57 @@ What property or investment can I analyze for you today?`,
               </label>
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-orange-500/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/5 to-bristol-electric/5 rounded-2xl" />
-                <select
-                  className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-bristol-cyan hover:text-white focus:text-white focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/40 disabled:opacity-50"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
-                    borderColor: 'rgba(69, 214, 202, 0.6)',
-                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
-                  }}
+                <ModelSelector
                   value={model}
-                  onChange={(e) => setModel(e.target.value)}
-                  disabled={modelList.length === 0}
-                >
-                  {modelList.length === 0 ? (
-                    <option value="">Loading models...</option>
-                  ) : (
-                    modelList.map((m: ModelOption) => {
-                      const getEmoji = (modelId: string) => {
-                        if (modelId.includes('gpt') || modelId.includes('openai')) return '🟢';
-                        if (modelId.includes('claude') || modelId.includes('anthropic')) return '🔶';
-                        if (modelId.includes('grok') || modelId.includes('x-ai')) return '⚡';
-                        if (modelId.includes('gemini') || modelId.includes('google')) return '🔷';
-                        if (modelId.includes('perplexity') || modelId.includes('sonar')) return '🔍';
-                        return '🤖';
-                      };
+                  onChange={(newModel: string) => {
+                    console.log(`🎯 Chat Model Change: ${model} → ${newModel}`);
+                    setModel(newModel);
+                    setLastConfirmedModel(newModel);
+                    
+                    // Broadcast model change via WebSocket if connected
+                    if (wsConnected && wsRef.current) {
+                      wsRef.current.send(JSON.stringify({
+                        type: 'model_changed',
+                        data: { oldModel: model, newModel, timestamp: Date.now() }
+                      }));
+                    }
+                    
+                    // Show confirmation toast
+                    console.log(`✅ Model successfully changed to: ${newModel}`);
+                  }}
+                  onConfirmChange={async (oldModel: string, newModel: string) => {
+                    console.log(`🔄 Confirming model change: ${oldModel} → ${newModel}`);
+                    
+                    // Test model availability before confirming
+                    try {
+                      setModelLoadingStream(true);
+                      const response = await fetch('/api/openrouter-models');
+                      const models = await response.json();
+                      const targetModel = models.find((m: any) => m.id === newModel);
                       
-                      const cleanName = m.label.replace(/✅|❌|💎|\([^)]*\)/g, '').trim();
-                      const isAvailable = (m as any).available !== false;
-
-                      return (
-                        <option key={m.id} value={m.id} disabled={!isAvailable}>
-                          {getEmoji(m.id)} {cleanName}
-                        </option>
-                      );
-                    })
-                  )}
-                </select>
+                      if (!targetModel || targetModel.available === false) {
+                        console.warn(`⚠️ Model ${newModel} is not available`);
+                        return false;
+                      }
+                      
+                      console.log(`✅ Model ${newModel} confirmed available`);
+                      return true;
+                    } catch (error) {
+                      console.error('Model validation failed:', error);
+                      return false;
+                    } finally {
+                      setModelLoadingStream(false);
+                    }
+                  }}
+                  modelList={modelList}
+                  loading={modelLoadingStream || modelsLoading}
+                  error={modelError}
+                  onRefresh={() => {
+                    console.log('🔄 Refreshing models from OpenRouter...');
+                    refetchModels();
+                  }}
+                  showConfirmation={true}
+                />
               </div>
             </div>
 
