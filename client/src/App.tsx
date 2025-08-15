@@ -73,12 +73,9 @@ function AppContent() {
   };
   
   return (
-    <>
-      {/* Global Header - Always visible when authenticated */}
-      {isAuthenticated && location !== "/landing" && <GlobalHeader />}
-      
-      {/* Main content with header spacing */}
-      <div className={isAuthenticated && location !== "/landing" ? "pt-20" : ""}>
+    <>      
+      {/* Main content without global header - each page uses SimpleChrome */}
+      <div>
         <Router />
       </div>
       
