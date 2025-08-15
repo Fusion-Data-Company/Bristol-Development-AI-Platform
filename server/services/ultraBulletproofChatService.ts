@@ -1,24 +1,86 @@
 import { z } from 'zod';
 
-// Ultra simple schema - accepts almost anything
+// Enhanced schema with OpenRouter features
 const ultraSimpleSchema = z.object({
   message: z.string().min(1).default('Hello'),
   sessionId: z.string().optional(),
   model: z.string().optional().default('openai/gpt-4o'),
   userId: z.string().optional().default('demo-user'),
-  stream: z.boolean().optional().default(false)
+  stream: z.boolean().optional().default(false),
+  
+  // OpenRouter Advanced Parameters
+  temperature: z.number().min(0).max(2).optional(),
+  max_tokens: z.number().min(1).optional(),
+  top_p: z.number().min(0).max(1).optional(),
+  top_k: z.number().min(1).optional(),
+  frequency_penalty: z.number().min(-2).max(2).optional(),
+  presence_penalty: z.number().min(-2).max(2).optional(),
+  repetition_penalty: z.number().min(0).max(2).optional(),
+  seed: z.number().int().optional(),
+  
+  // OpenRouter-specific parameters
+  transforms: z.array(z.string()).optional(),
+  models: z.array(z.string()).optional(), // Fallback models
+  route: z.enum(['fallback']).optional(),
+  
+  // Response format control
+  response_format: z.object({ type: z.literal('json_object') }).optional(),
+  
+  // Assistant prefill for guided responses
+  assistant_prefill: z.string().optional(),
+  
+  // Enhanced error handling
+  require_verified_models: z.boolean().optional().default(true)
 });
 
 type UltraSimpleRequest = z.infer<typeof ultraSimpleSchema>;
 
-// Streaming response type for SSE (Server-Sent Events)
+// OpenRouter Error Response Type
+type OpenRouterError = {
+  code: number;
+  message: string;
+  metadata?: Record<string, unknown>;
+};
+
+// Enhanced Response Types
+type EnhancedResponse = {
+  success: boolean;
+  content: string;
+  sessionId: string;
+  model: string;
+  source: string;
+  metadata: {
+    processingTime: number;
+    attemptNumber: number;
+    finish_reason?: string;
+    native_finish_reason?: string;
+    usage?: {
+      prompt_tokens: number;
+      completion_tokens: number;
+      total_tokens: number;
+    };
+    generation_id?: string;
+    provider_used?: string;
+    fallback_used?: boolean;
+    error_details?: OpenRouterError;
+  };
+};
+
+// Enhanced Streaming response type for SSE (Server-Sent Events)
 type StreamingResponse = {
   success: boolean;
   sessionId: string;
   model: string;
   source: string;
   stream: ReadableStream<Uint8Array>;
-  metadata: any;
+  metadata: {
+    processingTime: number;
+    attemptNumber: number;
+    streaming: boolean;
+    model_fallbacks?: string[];
+    provider_route?: string;
+    generation_id?: string;
+  };
 };
 
 // Response cache for lightning-fast responses
@@ -52,38 +114,32 @@ class UltraBulletproofChatService {
     console.log(`🚀 STREAMING: OpenRouter call with model ${model}`);
     
     try {
-      const streamResponse = await this.fastDirectOpenRouterStream(message, model);
+      const { stream: streamResponse, metadata: streamMetadata } = await this.fastDirectOpenRouterStream(message, model, validatedRequest);
       if (streamResponse) {
         return {
           success: true,
           sessionId,
           model,
-          source: `openrouter-stream-${model}`,
+          source: `openrouter-stream-${streamMetadata.model_actually_used || model}`,
           stream: streamResponse,
           metadata: {
             processingTime: Date.now() - startTime,
             attemptNumber: this.attemptCounter,
-            streaming: true
+            streaming: true,
+            ...streamMetadata
           }
         };
       }
     } catch (error) {
-      console.warn('Direct OpenRouter stream failed:', error);
+      console.warn('Enhanced OpenRouter stream failed:', error);
     }
 
     // Fallback to non-streaming if streaming fails
     throw new Error('Streaming failed, use non-streaming endpoint');
   }
 
-  // NUCLEAR FAST: Direct AI response with caching
-  async processUltraBulletproofMessage(request: any): Promise<{
-    success: boolean;
-    content: string;
-    sessionId: string;
-    model: string;
-    source: string;
-    metadata: any;
-  }> {
+  // Enhanced bulletproof message processing with OpenRouter features
+  async processUltraBulletproofMessage(request: any): Promise<EnhancedResponse> {
     const startTime = Date.now();
     this.attemptCounter++;
     
@@ -122,11 +178,11 @@ class UltraBulletproofChatService {
       };
     }
 
-    // Step 3: NUCLEAR FAST - Direct OpenRouter call with selected model
-    console.log(`🚀 NUCLEAR FAST: OpenRouter call with model ${model}`);
+    // Step 3: Enhanced OpenRouter call with full parameter support
+    console.log(`🚀 ENHANCED: OpenRouter call with model ${model}`);
     
     try {
-      const directResponse = await this.fastDirectOpenRouter(message, model);
+      const { content: directResponse, metadata: callMetadata } = await this.fastDirectOpenRouter(message, model, validatedRequest);
       if (directResponse) {
         // Cache for future speed with model-specific key
         responseCache.set(cacheKey, {
@@ -139,15 +195,16 @@ class UltraBulletproofChatService {
           content: directResponse,
           sessionId,
           model,
-          source: `openrouter-${model}`,
+          source: `openrouter-${callMetadata.model_actually_used || model}`,
           metadata: {
             processingTime: Date.now() - startTime,
-            attemptNumber: this.attemptCounter
+            attemptNumber: this.attemptCounter,
+            ...callMetadata
           }
         };
       }
     } catch (error) {
-      console.warn('Direct OpenAI failed:', error);
+      console.warn('Enhanced OpenRouter call failed:', error);
     }
 
     // Step 4: Intelligent fallback (guaranteed response)
@@ -174,46 +231,80 @@ class UltraBulletproofChatService {
     };
   }
 
-  // Fast Direct OpenRouter call - respects model selection
-  private async fastDirectOpenRouter(message: string, model: string): Promise<string | null> {
+  // Enhanced OpenRouter call with full parameter support
+  private async fastDirectOpenRouter(message: string, model: string, options: Partial<UltraSimpleRequest> = {}): Promise<{ content: string | null; metadata: any }> {
     const API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
     if (!API_KEY) {
       console.warn('No OpenRouter API key found');
-      return null;
+      return { content: null, metadata: { error: 'No API key' } };
     }
 
     // VERIFIED WORKING MODELS ONLY - matches /api/openrouter-models endpoint
     const ELITE_MODELS = new Set([
-      // OpenAI models (working with OpenRouter)
-      "openai/gpt-4o",
-      "openai/gpt-4o-mini", 
-      "openai/gpt-4-turbo",
-      "openai/gpt-4",
-      "openai/chatgpt-4o-latest",
-      
-      // Anthropic models (working)
-      "anthropic/claude-3.5-sonnet",
-      "anthropic/claude-3.5-haiku",
-      "anthropic/claude-3-opus",
-      "anthropic/claude-3-haiku",
-      
-      // xAI models (REAL models, not phantom grok-4)
-      "x-ai/grok-2-1212",
-      "x-ai/grok-2-vision-1212",
-      "x-ai/grok-vision-beta",
-      
-      // Perplexity models (working)
-      "perplexity/sonar-deep-research",
-      "perplexity/sonar-reasoning-pro",
-      "perplexity/sonar-pro",
-      "perplexity/sonar-reasoning",
-      "perplexity/sonar"
+      "openai/gpt-4o", "openai/gpt-4o-mini", "openai/gpt-4-turbo", "openai/gpt-4", "openai/chatgpt-4o-latest",
+      "anthropic/claude-3.5-sonnet", "anthropic/claude-3.5-haiku", "anthropic/claude-3-opus", "anthropic/claude-3-haiku",
+      "x-ai/grok-2-1212", "x-ai/grok-2-vision-1212", "x-ai/grok-vision-beta",
+      "perplexity/sonar-deep-research", "perplexity/sonar-reasoning-pro", "perplexity/sonar-pro", "perplexity/sonar-reasoning", "perplexity/sonar"
     ]);
 
-    // Use the selected model if it's in the allowlist, otherwise fallback
-    const finalModel = ELITE_MODELS.has(model) ? model : 'openai/gpt-4o';
+    // Enhanced model routing with fallbacks
+    const primaryModel = ELITE_MODELS.has(model) ? model : 'openai/gpt-4o';
+    const fallbackModels = options.models || ['openai/gpt-4o', 'anthropic/claude-3.5-sonnet'];
     
-    console.log(`🎯 Using model: ${finalModel}`);
+    console.log(`🎯 Primary model: ${primaryModel}, Fallbacks: ${fallbackModels.join(', ')}`);
+
+    // Build enhanced messages with assistant prefill support
+    const messages: any[] = [
+      {
+        role: 'system',
+        content: 'You are Bristol A.I. Elite, Bristol Development Group\'s institutional real estate AI. Provide concise, professional responses focused on multifamily development analysis, market insights, and financial modeling.'
+      },
+      {
+        role: 'user',
+        content: message
+      }
+    ];
+    
+    // Add assistant prefill if provided
+    if (options.assistant_prefill) {
+      messages.push({
+        role: 'assistant',
+        content: options.assistant_prefill
+      });
+    }
+
+    // Enhanced request payload with OpenRouter parameters
+    const requestPayload: any = {
+      model: primaryModel,
+      messages,
+      
+      // Core parameters with defaults
+      temperature: options.temperature ?? 0.3,
+      max_tokens: options.max_tokens ?? 800,
+      
+      // Advanced parameters (only include if specified)
+      ...(options.top_p && { top_p: options.top_p }),
+      ...(options.top_k && { top_k: options.top_k }),
+      ...(options.frequency_penalty && { frequency_penalty: options.frequency_penalty }),
+      ...(options.presence_penalty && { presence_penalty: options.presence_penalty }),
+      ...(options.repetition_penalty && { repetition_penalty: options.repetition_penalty }),
+      ...(options.seed && { seed: options.seed }),
+      
+      // OpenRouter-specific parameters
+      ...(options.transforms && { transforms: options.transforms }),
+      ...(fallbackModels.length > 1 && { models: fallbackModels, route: 'fallback' }),
+      ...(options.response_format && { response_format: options.response_format }),
+      
+      // User identification for abuse prevention
+      user: options.userId || 'demo-user'
+    };
+
+    const metadata: any = {
+      model_requested: model,
+      model_used: primaryModel,
+      fallback_models: fallbackModels,
+      parameters_used: Object.keys(requestPayload)
+    };
 
     try {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -224,44 +315,65 @@ class UltraBulletproofChatService {
           'HTTP-Referer': process.env.SITE_URL || 'http://localhost:5000',
           'X-Title': 'Bristol Development AI'
         },
-        body: JSON.stringify({
-          model: finalModel, // USE THE SELECTED MODEL!
-          messages: [
-            {
-              role: 'system',
-              content: 'You are Bristol A.I. Elite, Bristol Development Group\'s institutional real estate AI. Provide concise, professional responses focused on multifamily development analysis, market insights, and financial modeling.'
-            },
-            {
-              role: 'user',
-              content: message
-            }
-          ],
-          temperature: 0.3,
-          max_tokens: 800
-          // Non-streaming version - stream: false is default
-        })
+        body: JSON.stringify(requestPayload)
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log(`✅ OpenRouter response received from model: ${finalModel}`);
-        return data.choices?.[0]?.message?.content || null;
+        console.log(`✅ OpenRouter response from ${data.model || primaryModel}`);
+        
+        // Extract enhanced metadata
+        const choice = data.choices?.[0];
+        metadata.finish_reason = choice?.finish_reason;
+        metadata.native_finish_reason = choice?.native_finish_reason;
+        metadata.usage = data.usage;
+        metadata.generation_id = data.id;
+        metadata.model_actually_used = data.model;
+        metadata.system_fingerprint = data.system_fingerprint;
+        
+        // Handle errors in choices
+        if (choice?.error) {
+          metadata.choice_error = choice.error;
+          console.warn('Choice error:', choice.error);
+        }
+        
+        return {
+          content: choice?.message?.content || null,
+          metadata
+        };
       } else {
-        const errorText = await response.text();
-        console.error(`OpenRouter API error (${response.status}):`, errorText);
+        // Enhanced error handling
+        let errorData: any = {};
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { message: await response.text() };
+        }
+        
+        const openRouterError: OpenRouterError = {
+          code: response.status,
+          message: errorData.error?.message || errorData.message || 'Unknown error',
+          metadata: errorData.error?.metadata || {}
+        };
+        
+        metadata.error = openRouterError;
+        console.error(`OpenRouter API error:`, openRouterError);
+        
+        return { content: null, metadata };
       }
     } catch (error) {
-      console.error('Fast OpenRouter error:', error);
+      metadata.network_error = error instanceof Error ? error.message : 'Unknown network error';
+      console.error('Network error:', error);
+      return { content: null, metadata };
     }
-    return null;
   }
 
-  // Fast Direct OpenRouter STREAMING call - follows OpenRouter Streaming docs exactly
-  private async fastDirectOpenRouterStream(message: string, model: string): Promise<ReadableStream<Uint8Array> | null> {
+  // Enhanced OpenRouter STREAMING call with full parameter support
+  private async fastDirectOpenRouterStream(message: string, model: string, options: Partial<UltraSimpleRequest> = {}): Promise<{ stream: ReadableStream<Uint8Array> | null; metadata: any }> {
     const API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
     if (!API_KEY) {
       console.warn('No OpenRouter API key found');
-      return null;
+      return { stream: null, metadata: { error: 'No API key' } };
     }
 
     // VERIFIED WORKING MODELS ONLY - same allowlist as non-streaming
@@ -272,11 +384,64 @@ class UltraBulletproofChatService {
       "perplexity/sonar-deep-research", "perplexity/sonar-reasoning-pro", "perplexity/sonar-pro", "perplexity/sonar-reasoning", "perplexity/sonar"
     ]);
 
-    const finalModel = ELITE_MODELS.has(model) ? model : 'openai/gpt-4o';
-    console.log(`🎯 Streaming model: ${finalModel}`);
+    const primaryModel = ELITE_MODELS.has(model) ? model : 'openai/gpt-4o';
+    const fallbackModels = options.models || ['openai/gpt-4o', 'anthropic/claude-3.5-sonnet'];
+    console.log(`🎯 Streaming model: ${primaryModel}`);
+
+    // Build enhanced messages with assistant prefill support
+    const messages: any[] = [
+      {
+        role: 'system',
+        content: 'You are Bristol A.I. Elite, Bristol Development Group\'s institutional real estate AI. Provide concise, professional responses focused on multifamily development analysis, market insights, and financial modeling.'
+      },
+      {
+        role: 'user',
+        content: message
+      }
+    ];
+    
+    if (options.assistant_prefill) {
+      messages.push({
+        role: 'assistant',
+        content: options.assistant_prefill
+      });
+    }
+
+    // Enhanced streaming payload
+    const requestPayload: any = {
+      model: primaryModel,
+      messages,
+      stream: true, // STREAMING ENABLED
+      
+      // Parameters with enhanced defaults for streaming
+      temperature: options.temperature ?? 0.3,
+      max_tokens: options.max_tokens ?? 800,
+      
+      // Advanced parameters
+      ...(options.top_p && { top_p: options.top_p }),
+      ...(options.top_k && { top_k: options.top_k }),
+      ...(options.frequency_penalty && { frequency_penalty: options.frequency_penalty }),
+      ...(options.presence_penalty && { presence_penalty: options.presence_penalty }),
+      ...(options.repetition_penalty && { repetition_penalty: options.repetition_penalty }),
+      ...(options.seed && { seed: options.seed }),
+      
+      // OpenRouter-specific for streaming
+      ...(options.transforms && { transforms: options.transforms }),
+      ...(fallbackModels.length > 1 && { models: fallbackModels, route: 'fallback' }),
+      ...(options.response_format && { response_format: options.response_format }),
+      
+      user: options.userId || 'demo-user'
+    };
+
+    const metadata: any = {
+      model_requested: model,
+      model_used: primaryModel,
+      fallback_models: fallbackModels,
+      streaming: true,
+      parameters_used: Object.keys(requestPayload)
+    };
 
     try {
-      // Following OpenRouter Streaming docs EXACTLY - TypeScript example
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -285,35 +450,41 @@ class UltraBulletproofChatService {
           'HTTP-Referer': process.env.SITE_URL || 'http://localhost:5000',
           'X-Title': 'Bristol Development AI'
         },
-        body: JSON.stringify({
-          model: finalModel,
-          messages: [
-            {
-              role: 'system',
-              content: 'You are Bristol A.I. Elite, Bristol Development Group\'s institutional real estate AI. Provide concise, professional responses focused on multifamily development analysis, market insights, and financial modeling.'
-            },
-            {
-              role: 'user',
-              content: message
-            }
-          ],
-          stream: true, // STREAMING ENABLED per OpenRouter docs
-          temperature: 0.3,
-          max_tokens: 800
-        })
+        body: JSON.stringify(requestPayload)
       });
 
       if (response.ok && response.body) {
-        console.log(`✅ OpenRouter streaming response from model: ${finalModel}`);
-        return response.body; // Return the ReadableStream directly
+        console.log(`✅ OpenRouter streaming response from model: ${primaryModel}`);
+        
+        // Enhanced metadata for streaming
+        metadata.response_headers = Object.fromEntries(response.headers.entries());
+        metadata.status = response.status;
+        
+        return { stream: response.body, metadata };
       } else {
-        const errorText = await response.text();
-        console.error(`OpenRouter streaming API error (${response.status}):`, errorText);
+        // Enhanced error handling for streaming
+        let errorData: any = {};
+        try {
+          errorData = await response.json();
+        } catch {
+          errorData = { message: await response.text() };
+        }
+        
+        const openRouterError: OpenRouterError = {
+          code: response.status,
+          message: errorData.error?.message || errorData.message || 'Streaming error',
+          metadata: errorData.error?.metadata || {}
+        };
+        
+        metadata.error = openRouterError;
+        console.error(`OpenRouter streaming error:`, openRouterError);
+        return { stream: null, metadata };
       }
     } catch (error) {
-      console.error('Fast OpenRouter streaming error:', error);
+      metadata.network_error = error instanceof Error ? error.message : 'Unknown streaming error';
+      console.error('Streaming network error:', error);
+      return { stream: null, metadata };
     }
-    return null;
   }
 
   // Smart fallback responses based on message context
