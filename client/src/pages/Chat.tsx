@@ -163,7 +163,7 @@ export default function Chat() {
   const [eliteMessages, setEliteMessages] = useState<any[]>([
     {
       role: "assistant",
-      content: "Hello! I'm Bristol A.I., your dedicated site intelligence assistant. I'm here to help with real estate analysis, market insights, and investment decisions. What can I assist you with today?",
+      content: "Hello! I'm your AI assistant. How can I help you today?",
       createdAt: nowISO(),
       sessionId: '',
       id: `msg-${Date.now()}`,
