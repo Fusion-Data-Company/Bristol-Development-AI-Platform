@@ -144,7 +144,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
       </main>
 
       {/* Footer - Exact Header Match */}
-      <footer className="relative overflow-hidden shadow-2xl bg-slate-800" style={{
+      <footer className="relative overflow-hidden shadow-2xl bg-slate-800 min-h-[400px]" style={{
         backgroundImage: `
           radial-gradient(circle at 12% 34%, #374151 0%, transparent 20%),
           radial-gradient(circle at 67% 23%, #475569 0%, transparent 18%),
@@ -192,7 +192,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"></div>
         </div>
         
-        <div className="pl-0 pr-6 lg:pr-8 py-4 lg:py-6 relative">
+        <div className="pl-0 pr-6 lg:pr-8 py-24 lg:py-32 relative h-full flex items-center">
           <div className="flex items-center justify-between w-full max-w-7xl mx-auto px-6">
             {/* Bristol Logo & Brand */}
             <div className="flex items-center space-x-4 lg:space-x-6">
