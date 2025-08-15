@@ -73,6 +73,11 @@ Preferred communication style: Simple, everyday language.
 
 ### Integrated Services
 - **AI Services**: OpenRouter API (for models like GPT-5, Claude 4, Grok 4, Perplexity).
+- **Enhanced Business Tools**: Four optimization-level services for Bristol Development workflow:
+  - **Property Analysis Service**: Automated underwriting with IRR/NPV calculations, market comparables, and risk assessment
+  - **Intelligent Search Service**: Natural language property search with memory-based personalization
+  - **Report Generation Service**: Automated PDF/Excel report creation with Bristol branding
+  - **Enhanced Tool Orchestration**: Smart tool chains with automated recommendations and execution
 - **Primary Web Scraping**: Firecrawl API (default scraper for property data extraction with LLM-ready markdown output and structured data extraction).
 - **Fallback Scrapers**: Enhanced scraping agent and legacy adapters (ApartmentList, Rentals.com, LoopNet, Craigslist) for backup data collection.
 - **Economic Data APIs**: BLS (employment), BEA (GDP/income), HUD (vacancy rates).

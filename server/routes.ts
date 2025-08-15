@@ -149,6 +149,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const testUnifiedChatRouter = (await import('./api/test-unified-chat')).default;
   app.use('/api/test-unified-chat', testUnifiedChatRouter);
 
+  // Optimized tools for Bristol workflow
+  const optimizedToolsRouter = (await import('./api/optimized-tools')).default;
+  app.use('/api/optimized-tools', optimizedToolsRouter);
+
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
   chatHealthMonitor.start();
