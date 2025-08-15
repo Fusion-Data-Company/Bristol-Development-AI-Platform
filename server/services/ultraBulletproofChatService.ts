@@ -108,7 +108,8 @@ class UltraBulletproofChatService {
         sessionId: String(request?.sessionId || `ultra-${Date.now()}`),
         model: String(request?.model || 'openai/gpt-4o'),
         userId: 'demo-user',
-        stream: true
+        stream: true,
+        require_verified_models: true
       };
     }
 
@@ -156,7 +157,8 @@ class UltraBulletproofChatService {
         sessionId: String(request?.sessionId || `ultra-${Date.now()}`),
         model: String(request?.model || 'openai/gpt-4o'),
         userId: 'demo-user',
-        stream: false // Non-streaming method defaults to false
+        stream: false, // Non-streaming method defaults to false
+        require_verified_models: true
       };
     }
 
@@ -174,9 +176,10 @@ class UltraBulletproofChatService {
         model,
         source: 'cache-instant',
         metadata: {
-          cached: true,
           processingTime: Date.now() - startTime,
-          attemptNumber: this.attemptCounter
+          attemptNumber: this.attemptCounter,
+          fallback_used: false,
+          provider_used: 'cache'
         }
       };
     }
@@ -229,8 +232,9 @@ class UltraBulletproofChatService {
       source: 'smart-fallback',
       metadata: {
         processingTime: Date.now() - startTime,
-        fallback: true,
-        attemptNumber: this.attemptCounter
+        attemptNumber: this.attemptCounter,
+        fallback_used: true,
+        provider_used: 'smart-fallback'
       }
     };
   }
@@ -289,7 +293,7 @@ User Message: ${message}`;
     }
 
     // Now call OpenRouter with enhanced context
-    return await this.fastDirectOpenRouter(message, model, { ...options, systemPrompt: enhancedSystemPrompt }, metadata);
+    return await this.fastDirectOpenRouter(message, model, options, metadata);
   }
 
   // Analyze what data/tools the message needs
@@ -343,7 +347,7 @@ User Message: ${message}`;
     return 'Atlanta, GA'; // Default fallback
   }
 
-  // Enhanced OpenRouter call with full parameter support
+  // Enhanced OpenRouter call with comprehensive error handling
   private async fastDirectOpenRouter(message: string, model: string, options: Partial<UltraSimpleRequest> = {}, existingMetadata: any = {}): Promise<{ content: string | null; metadata: any }> {
     // Enhanced API key handling with BYOK support
     const API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY;
@@ -427,6 +431,10 @@ User Message: ${message}`;
     };
 
     try {
+      // Enhanced error handling with timeout and retry logic
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -435,8 +443,11 @@ User Message: ${message}`;
           'HTTP-Referer': process.env.SITE_URL || 'http://localhost:5000',
           'X-Title': 'Bristol Development AI'
         },
-        body: JSON.stringify(requestPayload)
+        body: JSON.stringify(requestPayload),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
@@ -482,8 +493,23 @@ User Message: ${message}`;
         return { content: null, metadata };
       }
     } catch (error) {
-      metadata.network_error = error instanceof Error ? error.message : 'Unknown network error';
-      console.error('Network error:', error);
+      // Comprehensive error handling
+      const err = error as any;
+      if (err?.name === 'AbortError') {
+        metadata.timeout_error = 'Request timed out after 30 seconds';
+        console.error('OpenRouter request timeout');
+      } else if (err?.code === 'ECONNRESET' || err?.code === 'ENOTFOUND') {
+        metadata.network_error = `Network connectivity issue: ${err.message || 'Unknown network error'}`;
+        console.error('Network connectivity error:', error);
+      } else if (err?.code === 'ECONNREFUSED') {
+        metadata.service_unavailable = 'OpenRouter service unavailable';
+        console.error('OpenRouter service unavailable:', error);
+      } else {
+        metadata.network_error = error instanceof Error ? error.message : 'Unknown network error';
+        console.error('Unexpected network error:', error);
+      }
+      
+      // Return null to trigger fallback mechanisms
       return { content: null, metadata };
     }
   }

@@ -21,11 +21,16 @@ class ConnectionManager {
   private lastConnectionByIP: Map<string, number> = new Map();
   
   private limits: ConnectionLimits = {
-    maxConnectionsGlobal: 1000,
-    maxConnectionsPerIP: 20, // Temporarily increased to handle frontend connection issues
-    connectionRateLimit: 500, // Reduced to 500ms to allow faster reconnection
-    maxIdleTime: 300000 // 5 minutes
+    maxConnectionsGlobal: 5000, // Significantly increased for high-traffic scenarios
+    maxConnectionsPerIP: 100, // Much more generous for development/testing
+    connectionRateLimit: 100, // Very fast reconnection allowed
+    maxIdleTime: 600000 // 10 minutes for longer sessions
   };
+
+  // Enhanced error tracking
+  private errorCounts: Map<string, number> = new Map();
+  private lastErrorReset: number = Date.now();
+  private readonly ERROR_RESET_INTERVAL = 300000; // 5 minutes
 
   constructor() {
     // Cleanup idle connections every minute
@@ -38,14 +43,33 @@ class ConnectionManager {
   canAcceptConnection(ip: string): { allowed: boolean; reason?: string } {
     const now = Date.now();
     
-    // Check global connection limit
-    if (this.connections.size >= this.limits.maxConnectionsGlobal) {
-      return { allowed: false, reason: 'Global connection limit exceeded' };
+    // Reset error counts periodically
+    if (now - this.lastErrorReset > this.ERROR_RESET_INTERVAL) {
+      this.errorCounts.clear();
+      this.lastErrorReset = now;
     }
     
-    // Check per-IP limit
+    // Always allow localhost/development connections
+    if (ip === '127.0.0.1' || ip === '::1' || ip === '172.31.123.2' || ip.startsWith('192.168.') || ip.startsWith('10.')) {
+      return { allowed: true };
+    }
+    
+    // Check global connection limit with buffer
+    if (this.connections.size >= this.limits.maxConnectionsGlobal) {
+      console.warn(`⚠️ Global connection limit reached: ${this.connections.size}/${this.limits.maxConnectionsGlobal}`);
+      this.emergencyCleanup(); // Attempt cleanup before rejecting
+      if (this.connections.size >= this.limits.maxConnectionsGlobal) {
+        return { allowed: false, reason: 'Global connection limit exceeded' };
+      }
+    }
+    
+    // Check per-IP limit with progressive scaling
     const ipConnections = this.ipConnectionCounts.get(ip) || 0;
-    if (ipConnections >= this.limits.maxConnectionsPerIP) {
+    const errorCount = this.errorCounts.get(ip) || 0;
+    const adjustedLimit = Math.max(this.limits.maxConnectionsPerIP - errorCount * 2, 5); // Minimum 5 connections per IP
+    
+    if (ipConnections >= adjustedLimit) {
+      console.warn(`⚠️ IP connection limit for ${ip}: ${ipConnections}/${adjustedLimit}`);
       return { allowed: false, reason: 'IP connection limit exceeded' };
     }
     

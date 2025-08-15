@@ -20,10 +20,30 @@ interface WebSocketMessage {
   sessionId?: string;
 }
 
+// Enhanced error handling types
+interface CircuitBreaker {
+  failures: number;
+  lastFailureTime: number;
+  state: 'closed' | 'open' | 'half-open';
+}
+
+interface ErrorRecovery {
+  retryCount: number;
+  nextRetryTime: number;
+  backoffMultiplier: number;
+}
+
 export class WebSocketService {
   private wss: WebSocketServer;
   private clients: Map<string, WebSocketClient> = new Map();
   private subscriptions: Map<string, Set<string>> = new Map(); // topic -> client IDs
+  
+  // Enhanced error handling
+  private circuitBreakers: Map<string, CircuitBreaker> = new Map();
+  private errorRecovery: Map<string, ErrorRecovery> = new Map();
+  private readonly MAX_FAILURES = 5;
+  private readonly CIRCUIT_TIMEOUT = 60000; // 1 minute
+  private readonly BASE_RETRY_DELAY = 1000; // 1 second
 
   constructor(server: Server) {
     this.wss = new WebSocketServer({ server, path: '/ws' });
@@ -36,9 +56,26 @@ export class WebSocketService {
       const clientIP = request.socket.remoteAddress || 'unknown';
       const clientId = this.generateClientId();
       
-      // Use connection manager for rate limiting and connection management
+      // Enhanced connection validation with circuit breaker (temporarily disabled)
+      // const canConnect = this.checkCircuitBreaker(clientIP);
+      // if (!canConnect) {
+      //   console.warn(`⚠️ Circuit breaker OPEN for ${clientIP} - connection rejected`);
+      //   socket.close(1008, 'Service temporarily unavailable');
+      //   return;
+      // }
+      
+      // Use connection manager for rate limiting with graceful degradation
+      const connectionResult = connectionManager.canAcceptConnection(clientIP);
+      if (!connectionResult.allowed) {
+        console.warn(`⚠️ Connection rejected for ${clientIP}: ${connectionResult.reason}`);
+        // this.recordFailure(clientIP);
+        socket.close(1008, connectionResult.reason || 'Connection rejected');
+        return;
+      }
+      
       if (!connectionManager.addConnection(clientId, clientIP, socket)) {
-        socket.close(1008, 'Connection rejected');
+        // this.recordFailure(clientIP);
+        socket.close(1008, 'Connection management failed');
         return;
       }
       
@@ -79,6 +116,18 @@ export class WebSocketService {
 
       socket.on('error', (error) => {
         console.error(`WebSocket error for client ${clientId}:`, error.message || error);
+        // this.recordFailure(clientIP);
+        
+        // Graceful error handling based on error type
+        if (error.message?.includes('ECONNRESET') || error.message?.includes('EPIPE')) {
+          // Network errors - allow reconnection
+          console.log(`🔄 Network error for ${clientId}, allowing reconnection`);
+        } else if (error.message?.includes('EMFILE') || error.message?.includes('ENFILE')) {
+          // File descriptor exhaustion - trigger emergency cleanup
+          console.error(`🆘 File descriptor exhaustion detected, triggering emergency cleanup`);
+          // this.emergencyCleanup();
+        }
+        
         // Only disconnect if socket is in a bad state
         if (socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
           this.handleDisconnect(clientId);

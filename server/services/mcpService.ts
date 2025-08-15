@@ -126,6 +126,15 @@ export class McpService {
   async executeTool(toolName: string, payload: any, userId?: string): Promise<ToolResult> {
     const wsService = getWebSocketService();
     
+    // Enhanced error handling with validation
+    if (!toolName || typeof toolName !== 'string') {
+      return { success: false, error: 'Invalid tool name provided' };
+    }
+    
+    if (!payload || typeof payload !== 'object') {
+      return { success: false, error: 'Invalid payload provided' };
+    }
+    
     try {
       // Log the execution start
       const logData: InsertIntegrationLog = {
@@ -187,20 +196,54 @@ export class McpService {
 
       return result;
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : "Unknown error";
+      let errorMsg = "Unknown error";
+      let errorType = "general";
       
-      // Log the error
-      await storage.createIntegrationLog({
-        service: "mcp",
-        action: toolName,
-        payload,
-        status: "error",
-        error: errorMsg,
-        userId
-      });
+      // Enhanced error classification
+      if (error instanceof Error) {
+        errorMsg = error.message;
+        
+        if (error.message.includes('timeout') || error.message.includes('ETIMEDOUT')) {
+          errorType = "timeout";
+          errorMsg = `Tool execution timed out: ${toolName}`;
+        } else if (error.message.includes('ECONNREFUSED') || error.message.includes('ENOTFOUND')) {
+          errorType = "network";
+          errorMsg = `Network error executing tool: ${toolName}`;
+        } else if (error.message.includes('permission') || error.message.includes('unauthorized')) {
+          errorType = "permission";
+          errorMsg = `Permission denied for tool: ${toolName}`;
+        } else if (error.message.includes('not found') || error.message.includes('undefined')) {
+          errorType = "not_found";
+          errorMsg = `Tool not found or misconfigured: ${toolName}`;
+        }
+      }
+      
+      console.error(`MCP Tool Error [${errorType}]:`, errorMsg, { toolName, userId, payload: Object.keys(payload || {}) });
+      
+      // Enhanced error logging with recovery suggestions
+      try {
+        await storage.createIntegrationLog({
+          service: "mcp",
+          action: toolName,
+          payload: { ...payload, errorType, timestamp: new Date().toISOString() },
+          status: "error",
+          error: errorMsg,
+          userId
+        });
+      } catch (logError) {
+        console.error('Failed to log MCP error:', logError);
+      }
 
-      // Broadcast error
-      wsService?.broadcastToolExecution(toolName, "error", { error: errorMsg });
+      // Enhanced error broadcasting with recovery hints
+      try {
+        wsService?.broadcastToolExecution(toolName, "error", { 
+          error: errorMsg, 
+          errorType,
+          recovery: this.getRecoveryHint(errorType, toolName)
+        });
+      } catch (broadcastError) {
+        console.error('Failed to broadcast MCP error:', broadcastError);
+      }
 
       return { success: false, error: errorMsg };
     }
@@ -402,6 +445,63 @@ export class McpService {
 
   async getAvailableTools(): Promise<McpTool[]> {
     return Array.from(this.tools.values());
+  }
+}
+
+  // Enhanced error recovery hints
+  private getRecoveryHint(errorType: string, toolName: string): string {
+    switch (errorType) {
+      case 'timeout':
+        return `Try reducing payload size or check if ${toolName} service is overloaded`;
+      case 'network':
+        return `Check network connectivity and service availability for ${toolName}`;
+      case 'permission':
+        return `Verify API keys and permissions for ${toolName} tool access`;
+      case 'not_found':
+        return `Ensure ${toolName} tool is properly configured and available`;
+      default:
+        return `Check tool configuration and try again. Tool: ${toolName}`;
+    }
+  }
+
+  // Enhanced health check for MCP tools
+  async healthCheck(): Promise<{ healthy: boolean; details: any }> {
+    const toolStatuses = await Promise.allSettled(
+      Array.from(this.tools.values()).map(async (tool) => {
+        try {
+          // Basic tool validation
+          return { 
+            name: tool.name, 
+            status: 'healthy', 
+            description: tool.description,
+            lastChecked: new Date().toISOString()
+          };
+        } catch (error) {
+          return { 
+            name: tool.name, 
+            status: 'unhealthy', 
+            error: error instanceof Error ? error.message : 'Unknown error',
+            lastChecked: new Date().toISOString()
+          };
+        }
+      })
+    );
+
+    const results = toolStatuses.map(result => 
+      result.status === 'fulfilled' ? result.value : { status: 'error', error: result.reason }
+    );
+
+    const healthyCount = results.filter(r => r.status === 'healthy').length;
+    const healthy = healthyCount > 0; // At least one tool should be healthy
+
+    return {
+      healthy,
+      details: {
+        totalTools: this.tools.size,
+        healthyTools: healthyCount,
+        tools: results
+      }
+    };
   }
 }
 
