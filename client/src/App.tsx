@@ -12,7 +12,7 @@ import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
 import Sites from "@/pages/Sites";
 import Analytics from "@/pages/Analytics";
-import Chat from "@/pages/ChatNew";
+import Chat from "@/pages/Chat";
 import Integrations from "@/pages/Integrations";
 import MainApp from "@/pages/App";
 import ToolsConsole from "@/pages/ToolsConsole";

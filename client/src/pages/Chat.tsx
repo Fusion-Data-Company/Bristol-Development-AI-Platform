@@ -825,22 +825,7 @@ export default function Chat() {
             >
               🤖 Agents
             </button>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log("Admin tab clicked");
-                setActiveTab("admin");
-              }}
-              className={cx(
-                "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
-                activeTab === "admin"
-                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
-              )}
-            >
-              Admin
-            </button>
+
           </div>
         </div>
 
@@ -1053,35 +1038,7 @@ export default function Chat() {
             </div>
           )}
 
-          {activeTab === "admin" && (
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="space-y-6">
-                <div className="border border-bristol-cyan/30 rounded-2xl p-6 bg-white/5 backdrop-blur-sm">
-                  <h3 className="text-bristol-cyan font-bold text-lg mb-4 flex items-center gap-2">
-                    <Settings className="h-5 w-5" />
-                    System Configuration
-                  </h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-bristol-cyan mb-2">System Prompt</label>
-                      <textarea
-                        value={systemPrompt}
-                        onChange={(e) => setSystemPrompt(e.target.value)}
-                        className="w-full h-32 px-4 py-3 bg-black/30 border border-bristol-cyan/30 rounded-xl text-white text-sm resize-none backdrop-blur-sm focus:border-bristol-cyan focus:outline-none"
-                        placeholder="Enter system prompt..."
-                      />
-                    </div>
-                    <button
-                      onClick={() => saveSystemPrompt(systemPrompt)}
-                      className="px-6 py-3 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan border border-bristol-cyan/40 rounded-xl transition-all duration-300 font-bold text-sm backdrop-blur-sm"
-                    >
-                      Save Configuration
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+
         </div>
 
         {/* Glass Chat Composer - Fixed at Bottom - Only show on chat tab - EXACT FROM FLOATING WIDGET */}
