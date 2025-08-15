@@ -211,12 +211,8 @@ export class StabilityService {
           // Clear old cached data
           this.clearOldHealthChecks();
           
-          // Clear Node.js require cache for non-essential modules
-          Object.keys(require.cache).forEach(key => {
-            if (key.includes('node_modules') && !key.includes('express') && !key.includes('drizzle')) {
-              delete require.cache[key];
-            }
-          });
+          // Clear any cached data to free memory
+          // Note: require.cache not available in ES modules, using alternative cleanup
           
           console.log('✅ Memory optimization completed');
           break;

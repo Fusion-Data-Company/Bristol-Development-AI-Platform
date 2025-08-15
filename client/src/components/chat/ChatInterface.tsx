@@ -77,11 +77,11 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
   );
 
   // Fetch premium models
-  const { data: premiumModelsData } = useQuery({
+  const { data: premiumModelsData } = useQuery<PremiumModelsResponse>({
     queryKey: ['/api/premium-models'],
     queryFn: async () => {
       const response = await apiRequest('/api/premium-models', 'GET');
-      return response as PremiumModelsResponse;
+      return response as unknown as PremiumModelsResponse;
     },
   });
 

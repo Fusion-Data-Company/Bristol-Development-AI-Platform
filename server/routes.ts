@@ -112,6 +112,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { registerAgentsRoutes } = await import('./api/agents');
   registerAgentsRoutes(app);
   
+  // Add dedicated agents endpoint
+  const agentsRouter = (await import('./api/agents')).default;
+  app.use('/api/agents', agentsRouter);
+  
   // Enhanced Multi-Agent System API with full MCP integration
   const enhancedAgentsRouter = (await import('./api/enhanced-agents')).default;
   app.use('/api/enhanced-agents', enhancedAgentsRouter);

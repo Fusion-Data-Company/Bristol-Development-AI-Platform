@@ -178,3 +178,29 @@ Provide accurate, comprehensive property data with clear source attribution and 
     }
   });
 }
+
+// Create Express router for the agents API
+import express from 'express';
+const router = express.Router();
+
+// Get agents list
+router.get('/', async (req, res) => {
+  try {
+    // Return agents directly from database to avoid circular dependency
+    const { db } = await import('../db');
+    const { agents } = await import('@shared/schema');
+    
+    const agentsList = await db.select().from(agents);
+    
+    res.json({
+      ok: true,
+      agents: agentsList,
+      count: agentsList.length
+    });
+  } catch (error) {
+    console.error('Error fetching agents:', error);
+    res.status(500).json({ ok: false, error: 'Failed to fetch agents' });
+  }
+});
+
+export default router;
