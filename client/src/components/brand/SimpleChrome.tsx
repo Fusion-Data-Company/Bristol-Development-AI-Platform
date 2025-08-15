@@ -143,22 +143,38 @@ export default function SimpleChrome({ children }: ChromeProps) {
         {children}
       </main>
 
-      {/* Unified Footer */}
-      <footer className="bg-bristol-ink border-t border-bristol-gold/30">
-        <div className="px-8 py-6">
-          <div className="flex items-center justify-between max-w-7xl mx-auto">
-            <div className="flex items-center space-x-6">
-              <div className="text-bristol-fog text-sm">
-                © 2024 Bristol Development Group. All rights reserved.
+      {/* Glassmorphism Footer - Matches Header */}
+      <footer className="relative bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10 px-8 py-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-8 border border-white/30 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-6">
+                <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl">
+                  <Building2 className="h-10 w-10 text-bristol-gold" />
+                </div>
+                <div>
+                  <h3 className="text-5xl font-cinzel font-bold text-white drop-shadow-2xl">
+                    Bristol Development Group
+                  </h3>
+                  <p className="text-white/90 text-xl font-medium mt-2 drop-shadow-lg">
+                    Elite Intelligence Platform - Comparables Annex
+                  </p>
+                </div>
               </div>
-              <div className="text-bristol-gold text-xs font-semibold tracking-wider">
-                INSTITUTIONAL REAL ESTATE INTELLIGENCE
+              
+              <div className="text-right">
+                <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-2xl">
+                  <div className="text-white/90 text-sm font-medium uppercase tracking-wider mb-2">
+                    © 2025 Bristol Development Group
+                  </div>
+                  <div className="text-white/70 text-xs">
+                    Enterprise Real Estate Intelligence
+                  </div>
+                  <div className="w-full h-1 bg-bristol-gold/30 rounded-full mt-3">
+                    <div className="w-full h-full bg-bristol-gold rounded-full shadow-lg" />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center space-x-4 text-bristol-fog text-sm">
-              <span>v2.0.1</span>
-              <span className="text-bristol-gold">•</span>
-              <span>Enterprise Platform</span>
             </div>
           </div>
         </div>
