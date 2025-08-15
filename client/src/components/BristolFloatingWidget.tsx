@@ -696,7 +696,7 @@ export default function BristolFloatingWidget({
         
         // Initialize progress for all agents
         const initialProgress: Record<string, number> = {};
-        initialTasks.forEach(task => {
+        initialTasks.forEach((task: any) => {
           initialProgress[task.agentId] = 0;
         });
         setTaskProgress(initialProgress);
