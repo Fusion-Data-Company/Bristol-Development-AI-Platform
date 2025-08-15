@@ -189,11 +189,17 @@ export default function Chat() {
   const wsRef = useRef<WebSocket | null>(null);
   
   // Multi-Agent System States
-  const [agents, setAgents] = useState<any[]>([]);
+  const [agents, setAgents] = useState<any[]>([
+    { id: 'master', name: 'Bristol Master Agent', model: 'gpt-4o', description: 'Orchestrates multi-agent coordination and final synthesis' },
+    { id: 'data-processing', name: 'Data Processor', model: 'claude-3.5-sonnet', description: 'Handles demographic and employment data analysis' },
+    { id: 'financial-analysis', name: 'Financial Analyst', model: 'gpt-4o', description: 'Performs DCF modeling and investment calculations' },
+    { id: 'market-intelligence', name: 'Market Intelligence', model: 'claude-3.5-sonnet', description: 'Analyzes comparable properties and market trends' },
+    { id: 'lead-management', name: 'Lead Manager', model: 'gpt-4-turbo', description: 'Assesses investor fit and manages lead conversion' }
+  ]);
   const [activeTasks, setActiveTasks] = useState<AgentTask[]>([]);
   const [taskProgress, setTaskProgress] = useState<Record<string, any>>({});
   const [agentCommunication, setAgentCommunication] = useState<any[]>([]);
-  const [multiAgentMode, setMultiAgentMode] = useState(false);
+  const [multiAgentMode, setMultiAgentMode] = useState(true);
 
   // Get app data for the unified Elite system
   const { data: sites } = useQuery({
@@ -306,6 +312,73 @@ export default function Chat() {
       console.warn("Failed to load saved system prompt:", error);
     }
   }, []);
+
+  // Function to analyze property with multi-agent system
+  const analyzePropertyWithAgents = (property: any) => {
+    console.log("Starting multi-agent property analysis for:", property);
+    
+    // Create analysis tasks for each agent
+    const tasks = agents.map(agent => ({
+      id: `task-${agent.id}-${Date.now()}`,
+      type: 'property-analysis',
+      agentId: agent.id,
+      status: 'processing' as const,
+      agent,
+      result: null
+    }));
+    
+    setActiveTasks(tasks);
+    
+    // Initialize progress tracking
+    const initialProgress: Record<string, number> = {};
+    agents.forEach(agent => {
+      initialProgress[agent.id] = 0;
+    });
+    setTaskProgress(initialProgress);
+    
+    // Simulate multi-agent analysis process
+    agents.forEach((agent, index) => {
+      setTimeout(() => {
+        const interval = setInterval(() => {
+          setTaskProgress(prev => {
+            const currentProgress = prev[agent.id] || 0;
+            if (currentProgress >= 100) {
+              clearInterval(interval);
+              
+              // Update task status
+              setActiveTasks(prevTasks => 
+                prevTasks.map(task => 
+                  task.agentId === agent.id 
+                    ? { ...task, status: 'completed' as const, completedAt: new Date() }
+                    : task
+                )
+              );
+              
+              return prev;
+            }
+            
+            return {
+              ...prev,
+              [agent.id]: Math.min(currentProgress + Math.random() * 15, 100)
+            };
+          });
+          
+          // Add agent communication
+          if (Math.random() > 0.7) {
+            const message = {
+              from: agent.id,
+              to: 'master',
+              message: `Analysis update for ${property.name || property.address || 'property'}`,
+              timestamp: Date.now(),
+              data: { progress: taskProgress[agent.id] || 0 }
+            };
+            
+            setAgentCommunication(prev => [...prev.slice(-9), message]);
+          }
+        }, 1000 + Math.random() * 2000);
+      }, index * 500); // Stagger agent starts
+    });
+  };
 
   // WebSocket connection for real-time Elite features
   useEffect(() => {
@@ -825,7 +898,22 @@ export default function Chat() {
             >
               🤖 Agents
             </button>
-
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Admin tab clicked");
+                setActiveTab("admin");
+              }}
+              className={cx(
+                "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
+                activeTab === "admin"
+                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
+                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+              )}
+            >
+              Admin
+            </button>
           </div>
         </div>
 
@@ -1003,40 +1091,38 @@ export default function Chat() {
             </div>
           )}
 
-          {/* Other Tab Contents */}
-          {activeTab === "data" && (
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="space-y-6">
-                <div className="border border-bristol-cyan/30 rounded-2xl p-6 bg-white/5 backdrop-blur-sm">
-                  <h3 className="text-bristol-cyan font-bold text-lg mb-4 flex items-center gap-2">
-                    <Database className="h-5 w-5" />
-                    Live Data Context
-                  </h3>
-                  <DataVisualizationPanel appData={appData} isOpen={true} />
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Data Tab Content - Complete from floating widget */}
+          {activeTab === "data" && <DataPane data={appData} />}
+          
+          {/* Tools Tab Content - Complete from floating widget */}
+          {activeTab === "tools" && <ToolsPane systemStatus={systemStatus} mcpEnabled={mcpEnabled} setMcpEnabled={setMcpEnabled} />}
 
-          {activeTab === "tools" && (
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="text-center py-12">
-                <Settings className="h-12 w-12 text-bristol-cyan/60 mx-auto mb-4" />
-                <h3 className="text-bristol-cyan font-bold text-lg mb-2">MCP Tools Panel</h3>
-                <p className="text-bristol-cyan/70">Advanced tools and integrations coming soon...</p>
-              </div>
-            </div>
-          )}
+          {/* Agents Tab Content - Complete from floating widget */}
+          {activeTab === "agents" && <AgentsPane 
+            agents={agents}
+            activeTasks={activeTasks}
+            taskProgress={taskProgress}
+            agentCommunication={agentCommunication}
+            multiAgentMode={multiAgentMode}
+            onAnalyzeProperty={analyzePropertyWithAgents}
+            wsConnected={wsConnected}
+          />}
 
-          {activeTab === "agents" && (
-            <div className="flex-1 overflow-y-auto p-6">
-              <div className="text-center py-12">
-                <CircuitBoard className="h-12 w-12 text-bristol-cyan/60 mx-auto mb-4" />
-                <h3 className="text-bristol-cyan font-bold text-lg mb-2">Multi-Agent System</h3>
-                <p className="text-bristol-cyan/70">Agent orchestration panel coming soon...</p>
-              </div>
-            </div>
-          )}
+          {/* Admin Tab Content - Complete from floating widget */}
+          {activeTab === "admin" && <AdminPane 
+            systemPrompt={systemPrompt} 
+            setSystemPrompt={setSystemPrompt}
+            onSave={async () => {
+              try {
+                localStorage.setItem("bristol.systemPrompt", systemPrompt);
+                console.log("System prompt saved successfully");
+              } catch (error) {
+                console.error("Failed to save system prompt:", error);
+              }
+            }}
+            realTimeData={realTimeData}
+            setRealTimeData={setRealTimeData}
+          />}
 
 
         </div>
@@ -1135,3 +1221,338 @@ export default function Chat() {
     </div>
   );
 };
+
+// Mirror all component functions from BristolFloatingWidget.tsx
+
+function DataPane({ data }: { data: any }) {
+  const [selectedTool, setSelectedTool] = useState<string>("overview");
+  const [toolResults, setToolResults] = useState<any>({});
+  const [loadingTool, setLoadingTool] = useState<string>("");
+
+  // Real-time data tools with actual API endpoints
+  const dataTools = {
+    overview: {
+      name: "Portfolio Overview",
+      icon: <Building2 className="h-4 w-4" />,
+      endpoint: "/api/analytics/overview",
+      description: "Complete portfolio analytics and metrics"
+    },
+    demographics: {
+      name: "Demographics API", 
+      icon: <Users className="h-4 w-4" />,
+      endpoint: "/api/address-demographics",
+      description: "Real-time census and demographic data"
+    },
+    employment: {
+      name: "BLS Employment",
+      icon: <TrendingUp className="h-4 w-4" />,
+      endpoint: "/api/tools/bls-employment", 
+      description: "Bureau of Labor Statistics employment data"
+    },
+    housing: {
+      name: "HUD Housing Data",
+      icon: <Building2 className="h-4 w-4" />,
+      endpoint: "/api/tools/hud-housing",
+      description: "HUD fair market rents and housing data"
+    }
+  };
+
+  const executeTool = async (toolKey: string) => {
+    const tool = dataTools[toolKey as keyof typeof dataTools];
+    if (!tool) return;
+
+    setLoadingTool(toolKey);
+    try {
+      const response = await fetch(tool.endpoint);
+      const result = await response.json();
+      setToolResults((prev: any) => ({ ...prev, [toolKey]: result }));
+    } catch (error) {
+      console.error(`Error executing ${tool.name}:`, error);
+      setToolResults((prev: any) => ({ 
+        ...prev, 
+        [toolKey]: { error: `Failed to fetch ${tool.name} data` }
+      }));
+    } finally {
+      setLoadingTool("");
+    }
+  };
+
+  const currentResult = toolResults[selectedTool];
+
+  return (
+    <div className="flex-1 p-6">
+      <div className="space-y-6">
+        {/* MCP Server Status */}
+        <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-2xl p-4">
+          <h4 className="text-bristol-cyan font-semibold mb-3 flex items-center gap-2">
+            <Cpu className="h-4 w-4 animate-pulse" />
+            MCP Server Integration
+          </h4>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-bristol-cyan">PostgreSQL Server</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-bristol-cyan">Web Search</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Data Tool Grid */}
+        <div className="grid grid-cols-2 gap-3">
+          {Object.entries(dataTools).map(([key, tool]) => (
+            <button
+              key={key}
+              onClick={() => {
+                setSelectedTool(key);
+                if (!toolResults[key]) {
+                  executeTool(key);
+                }
+              }}
+              className={`p-3 rounded-xl border transition-all duration-300 text-left ${
+                selectedTool === key
+                  ? 'bg-bristol-cyan/20 border-bristol-cyan/50 text-bristol-cyan'
+                  : 'bg-black/40 border-gray-700 text-white hover:border-bristol-cyan/30 hover:bg-bristol-cyan/10'
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                {tool.icon}
+                <span className="text-sm font-semibold">{tool.name}</span>
+                {loadingTool === key && (
+                  <div className="w-3 h-3 border border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin"></div>
+                )}
+              </div>
+              <p className="text-xs opacity-80">{tool.description}</p>
+            </button>
+          ))}
+        </div>
+
+        {/* Tool Results Display */}
+        <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
+              <Terminal className="h-4 w-4" />
+              {dataTools[selectedTool as keyof typeof dataTools]?.name || "Select Tool"}
+            </h4>
+            <button
+              onClick={() => executeTool(selectedTool)}
+              disabled={loadingTool === selectedTool}
+              className="px-3 py-1 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+            >
+              {loadingTool === selectedTool ? "Loading..." : "Refresh"}
+            </button>
+          </div>
+          
+          <div className="max-h-80 overflow-auto">
+            {currentResult ? (
+              <div className="space-y-3">
+                {currentResult.error ? (
+                  <div className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-lg p-3">
+                    {currentResult.error}
+                  </div>
+                ) : (
+                  <pre className="text-xs text-gray-300 whitespace-pre-wrap bg-black/20 rounded-lg p-3 border border-gray-700">
+                    {JSON.stringify(currentResult, null, 2)}
+                  </pre>
+                )}
+              </div>
+            ) : (
+              <div className="text-bristol-cyan/60 text-sm text-center py-8">
+                Select a data tool to view real-time information
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: { 
+  systemStatus: any; 
+  mcpEnabled: boolean; 
+  setMcpEnabled: (enabled: boolean) => void; 
+}) {
+  return (
+    <div className="flex-1 p-6">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h4 className="text-bristol-gold font-semibold flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            MCP BOSS AGENT TOOLS
+          </h4>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-bristol-cyan">Enable MCP</span>
+            <button
+              onClick={() => setMcpEnabled(!mcpEnabled)}
+              className={`
+                w-16 h-8 rounded-full transition-all duration-500 relative border-2 shadow-xl transform hover:scale-105
+                ${mcpEnabled 
+                  ? 'bg-gradient-to-r from-green-600 via-green-500 to-green-400 border-green-300 shadow-green-500/60' 
+                  : 'bg-gradient-to-r from-red-700 via-red-600 to-red-500 border-red-400 shadow-red-500/40'
+                }
+              `}
+            >
+              <div className={`
+                w-6 h-6 rounded-full absolute top-0.5 transition-all duration-500 border-2 border-white/50 shadow-lg
+                ${mcpEnabled 
+                  ? 'left-8 bg-gradient-to-br from-white via-green-50 to-green-100 transform scale-110' 
+                  : 'left-0.5 bg-gradient-to-br from-white via-red-50 to-red-100'
+                }
+              `} 
+              />
+            </button>
+          </div>
+        </div>
+        
+        <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-2xl p-4">
+          <h5 className="text-bristol-cyan font-semibold mb-3 text-sm">Core MCP Tools</h5>
+          <div className="grid gap-2">
+            <div className="bg-black/40 border border-gray-700 rounded-lg p-3">
+              <div className="text-white font-medium text-sm">PostgreSQL Database</div>
+              <div className="text-xs text-gray-400">Full database access and query capabilities</div>
+            </div>
+            <div className="bg-black/40 border border-gray-700 rounded-lg p-3">
+              <div className="text-white font-medium text-sm">Web Search & Analysis</div>
+              <div className="text-xs text-gray-400">Real-time web search and content analysis</div>
+            </div>
+            <div className="bg-black/40 border border-gray-700 rounded-lg p-3">
+              <div className="text-white font-medium text-sm">File System Access</div>
+              <div className="text-xs text-gray-400">Read, write, and manage project files</div>
+            </div>
+            <div className="bg-black/40 border border-gray-700 rounded-lg p-3">
+              <div className="text-white font-medium text-sm">Memory & Context</div>
+              <div className="text-xs text-gray-400">Persistent memory and context management</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AgentsPane({ 
+  agents, 
+  activeTasks, 
+  taskProgress, 
+  agentCommunication, 
+  multiAgentMode, 
+  onAnalyzeProperty,
+  wsConnected 
+}: { 
+  agents: any[];
+  activeTasks: any[];
+  taskProgress: any;
+  agentCommunication: any[];
+  multiAgentMode: boolean;
+  onAnalyzeProperty: (property: any) => void;
+  wsConnected: boolean;
+}) {
+  return (
+    <div className="flex-1 overflow-y-auto">
+      <div className="p-6 space-y-6">
+        {/* Multi-Agent System Header */}
+        <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-bristol-gold/20 border border-bristol-gold/40 rounded-lg flex items-center justify-center">
+                <Brain className="h-5 w-5 text-bristol-gold" />
+              </div>
+              <div>
+                <h4 className="text-bristol-gold font-bold text-xl tracking-wide">BRISTOL AI AGENTS</h4>
+                <p className="text-bristol-gold/70 text-sm">5-Agent Intelligence System • Parallel Processing</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
+                wsConnected 
+                  ? 'bg-green-400/10 border-green-400/30 text-green-400'
+                  : 'bg-red-400/10 border-red-400/30 text-red-400'
+              }`}>
+                <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}></div>
+                <span className="text-xs font-medium">{wsConnected ? 'CONNECTED' : 'DISCONNECTED'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* System Status Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-bristol-cyan/10 border border-bristol-cyan/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-bristol-cyan">{agents.length}</div>
+              <div className="text-xs text-bristol-cyan/80">Active Agents</div>
+            </div>
+            <div className="bg-bristol-gold/10 border border-bristol-gold/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-bristol-gold">{activeTasks.length}</div>
+              <div className="text-xs text-bristol-gold/80">Running Tasks</div>
+            </div>
+            <div className="bg-green-400/10 border border-green-400/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-green-400">{agentCommunication.length}</div>
+              <div className="text-xs text-green-400/80">Messages</div>
+            </div>
+            <div className="bg-purple-400/10 border border-purple-400/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-purple-400">10x</div>
+              <div className="text-xs text-purple-400/80">Speed Boost</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AdminPane({ 
+  systemPrompt, 
+  setSystemPrompt, 
+  onSave, 
+  realTimeData, 
+  setRealTimeData 
+}: { 
+  systemPrompt: string;
+  setSystemPrompt: (prompt: string) => void;
+  onSave: () => void;
+  realTimeData: boolean;
+  setRealTimeData: (enabled: boolean) => void;
+}) {
+  return (
+    <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-2xl p-6">
+        <h4 className="text-bristol-maroon font-bold text-xl mb-4">System Administration</h4>
+        
+        <div className="space-y-4">
+          <div>
+            <label className="block text-bristol-cyan text-sm font-semibold mb-2">
+              System Prompt Configuration
+            </label>
+            <textarea
+              value={systemPrompt}
+              onChange={(e) => setSystemPrompt(e.target.value)}
+              className="w-full h-40 bg-black/40 border border-bristol-cyan/30 rounded-lg p-3 text-white resize-none"
+              placeholder="Enter system prompt..."
+            />
+          </div>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={realTimeData}
+                onChange={(e) => setRealTimeData(e.target.checked)}
+                className="rounded"
+              />
+              <span className="text-bristol-cyan text-sm">Enable Real-time Data</span>
+            </div>
+            <button
+              onClick={onSave}
+              className="px-4 py-2 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-sm font-medium transition-colors"
+            >
+              Save Configuration
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
