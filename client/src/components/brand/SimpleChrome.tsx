@@ -8,7 +8,7 @@ interface ChromeProps {
   children: ReactNode;
 }
 
-export default function Chrome({ children }: ChromeProps) {
+export default function SimpleChrome({ children }: ChromeProps) {
   const [location] = useLocation();
 
   const navItems = [
