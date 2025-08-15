@@ -144,6 +144,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chat system status and monitoring API
   const chatSystemStatusRouter = (await import('./api/chat-system-status')).default;
   app.use('/api/chat-system', chatSystemStatusRouter);
+
+  // Advanced conversation management with full context and tools
+  const advancedConversationRouter = (await import('./api/advanced-conversation')).default;
+  app.use('/api/conversation', advancedConversationRouter);
   
   // App Data Aggregation endpoint for AI context
   const { dataAggregationService } = await import('./services/dataAggregationService');

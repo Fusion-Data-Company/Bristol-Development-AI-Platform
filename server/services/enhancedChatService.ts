@@ -2,6 +2,8 @@ import { storage } from "../storage";
 import OpenAI from "openai";
 import { z } from "zod";
 import type { ChatMessage, InsertChatMessage } from "@shared/schema";
+import { mcpToolsIntegration } from "./mcpToolsIntegration";
+import { conversationMemory } from "./conversationMemory";
 
 // Comprehensive model configuration for all providers
 const MODEL_CONFIGS = {
@@ -91,7 +93,9 @@ const enhancedChatRequestSchema = z.object({
   dataContext: z.record(z.any()).optional(),
   enableAdvancedReasoning: z.boolean().default(false),
   sourceInstance: z.enum(['main', 'floating']).default('main'),
-  streaming: z.boolean().default(false)
+  streaming: z.boolean().default(false),
+  tools: z.array(z.string()).optional(),
+  toolResults: z.record(z.any()).optional()
 });
 
 type EnhancedChatRequest = z.infer<typeof enhancedChatRequestSchema>;
@@ -150,8 +154,18 @@ class EnhancedChatService {
 - Source: ${request.sourceInstance} interface
 
 ## Available Capabilities
-${request.mcpEnabled ? '- Execute real-time data queries via MCP tools\n- Access live market analytics and demographics\n- Perform automated web scraping for property data' : '- Provide expert analysis based on training data'}
+${request.mcpEnabled ? '- Execute real-time data queries via MCP tools\n- Access live market analytics and demographics\n- Perform automated web scraping for property data\n- Use Bristol-specific investment analysis tools' : '- Provide expert analysis based on training data'}
 ${request.realTimeData ? '- Stream real-time responses with live data integration' : '- Provide comprehensive responses based on available context'}
+
+## Available MCP Tools (USE THESE TOOLS ACTIVELY)
+${request.mcpEnabled ? `IMPORTANT: You have access to the following Bristol-specific tools. Use them whenever appropriate to provide accurate, real-time data instead of general guidance:
+
+${this.generateToolsList()}
+
+When a user asks for property searches, market data, financial calculations, or demographic analysis, IMMEDIATELY use the appropriate tools above. Don't provide general advice - execute the tools to give precise, data-driven answers.` : 'MCP tools are disabled for this session'}
+
+## Tool Results Context
+${request.toolResults ? 'Previous tool executions:\n' + JSON.stringify(request.toolResults, null, 2) : 'No previous tool results in this session'}
 
 ## Data Context Available
 ${request.dataContext ? JSON.stringify(request.dataContext, null, 2) : 'Standard Bristol knowledge base and training data'}
@@ -159,6 +173,12 @@ ${request.dataContext ? JSON.stringify(request.dataContext, null, 2) : 'Standard
 Please provide expert-level analysis and recommendations suited to institutional real estate investment decision-making.`;
 
     return enhancedPrompt;
+  }
+
+  // Generate list of available MCP tools
+  private generateToolsList(): string {
+    const tools = mcpToolsIntegration.getAvailableTools();
+    return tools.map(tool => `- ${tool.name}: ${tool.description}`).join('\n');
   }
 
   // Enhanced session management
@@ -238,16 +258,69 @@ Please provide expert-level analysis and recommendations suited to institutional
       const modelConfig = MODEL_CONFIGS[validatedRequest.model as keyof typeof MODEL_CONFIGS];
       const actualModel = modelConfig?.model || validatedRequest.model;
 
+      // Check if MCP tools should be included
+      let tools: any[] | undefined;
+      if (validatedRequest.mcpEnabled && modelConfig?.features?.includes('tools')) {
+        tools = this.generateOpenAIToolsSchema();
+      }
+
       // Make API call
       const completion = await client.chat.completions.create({
         model: actualModel,
         messages,
         temperature: validatedRequest.temperature,
         max_tokens: Math.min(validatedRequest.maxTokens, modelConfig?.maxTokens || 4000),
-        stream: false
+        stream: false,
+        tools: tools,
+        tool_choice: tools ? 'auto' : undefined
       });
 
-      const assistantMessage = completion.choices[0]?.message?.content || 'I apologize, but I was unable to generate a response. Please try again.';
+      let assistantMessage = completion.choices[0]?.message?.content || '';
+      const toolCalls = completion.choices[0]?.message?.tool_calls;
+      let toolResults: Record<string, any> = {};
+
+      // Handle tool calls if present
+      if (toolCalls && toolCalls.length > 0) {
+        const toolExecutionResults = await this.executeToolCalls(toolCalls, userId);
+        toolResults = toolExecutionResults;
+        
+        // If we have tool results, create a follow-up completion to incorporate the results
+        if (Object.keys(toolResults).length > 0) {
+          const followUpMessages = [...messages];
+          
+          // Add the assistant's tool calls
+          followUpMessages.push({
+            role: 'assistant',
+            content: assistantMessage || null,
+            tool_calls: toolCalls
+          });
+          
+          // Add tool results
+          toolCalls.forEach(toolCall => {
+            const result = toolResults[toolCall.function.name];
+            followUpMessages.push({
+              role: 'tool',
+              content: JSON.stringify(result),
+              tool_call_id: toolCall.id
+            });
+          });
+
+          // Get final response with tool results
+          const followUpCompletion = await client.chat.completions.create({
+            model: actualModel,
+            messages: followUpMessages,
+            temperature: validatedRequest.temperature,
+            max_tokens: Math.min(validatedRequest.maxTokens, modelConfig?.maxTokens || 4000),
+            stream: false
+          });
+
+          assistantMessage = followUpCompletion.choices[0]?.message?.content || assistantMessage;
+        }
+      }
+
+      if (!assistantMessage) {
+        assistantMessage = 'I apologize, but I was unable to generate a response. Please try again.';
+      }
 
       // Save user message to database
       try {
@@ -272,7 +345,9 @@ Please provide expert-level analysis and recommendations suited to institutional
             sourceInstance: validatedRequest.sourceInstance,
             timestamp: new Date().toISOString(),
             tokens: completion.usage?.total_tokens || 0,
-            temperature: validatedRequest.temperature
+            temperature: validatedRequest.temperature,
+            toolCalls: toolCalls || [],
+            toolResults: toolResults
           }
         });
       } catch (dbError) {
@@ -290,7 +365,9 @@ Please provide expert-level analysis and recommendations suited to institutional
           tier: modelConfig?.tier || 'standard',
           features: modelConfig?.features || ['text'],
           tokens: completion.usage?.total_tokens || 0,
-          sourceInstance: validatedRequest.sourceInstance
+          sourceInstance: validatedRequest.sourceInstance,
+          toolsExecuted: Object.keys(toolResults),
+          toolResults: toolResults
         },
         success: true
       };
@@ -311,6 +388,60 @@ Please provide expert-level analysis and recommendations suited to institutional
         success: false
       };
     }
+  }
+
+  // Generate OpenAI tools schema from MCP tools
+  private generateOpenAIToolsSchema(): any[] {
+    const mcpTools = mcpToolsIntegration.getAvailableTools();
+    
+    return mcpTools.map(tool => ({
+      type: 'function',
+      function: {
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.schema
+      }
+    }));
+  }
+
+  // Execute tool calls and return results
+  private async executeToolCalls(toolCalls: any[], userId: string): Promise<Record<string, any>> {
+    const results: Record<string, any> = {};
+
+    for (const toolCall of toolCalls) {
+      try {
+        const { name: toolName } = toolCall.function;
+        const parameters = JSON.parse(toolCall.function.arguments || '{}');
+
+        console.log(`🔧 Executing tool: ${toolName} with parameters:`, parameters);
+
+        const result = await mcpToolsIntegration.executeTool(toolName, parameters);
+        
+        // Log tool usage
+        await mcpToolsIntegration.logToolUsage(
+          {
+            tool: toolName,
+            parameters,
+            timestamp: new Date().toISOString()
+          },
+          result,
+          userId
+        );
+
+        results[toolName] = result;
+        
+        console.log(`✅ Tool ${toolName} executed successfully in ${result.executionTime}ms`);
+      } catch (error) {
+        console.error(`❌ Tool execution failed for ${toolCall.function.name}:`, error);
+        results[toolCall.function.name] = {
+          success: false,
+          error: error instanceof Error ? error.message : 'Tool execution failed',
+          executionTime: 0
+        };
+      }
+    }
+
+    return results;
   }
 
   // Streaming message processing
