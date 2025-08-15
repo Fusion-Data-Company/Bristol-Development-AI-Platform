@@ -53,6 +53,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const realTimeIntelligenceRouter = (await import('./api/analytics/real-time-intelligence')).default;
   app.use('/api/analytics/enterprise', enterpriseMetricsRouter);
   app.use('/api/analytics/intelligence', realTimeIntelligenceRouter);
+  
+  // Elite Portfolio Insights API
+  app.get('/api/analytics/elite/portfolio-insights', (await import('./api/analytics/elite-portfolio-insights')).getElitePortfolioInsights);
 
   // Tools API routes (BLS, BEA, HUD, Foursquare, FBI, NOAA) - temporarily bypass auth for development
   const blsRouter = (await import('./api/tools/bls')).default;
