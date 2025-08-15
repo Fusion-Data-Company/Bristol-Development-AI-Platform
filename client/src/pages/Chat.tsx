@@ -779,6 +779,46 @@ What property development project, market analysis, or investment opportunity ca
         realTimeData
       });
 
+      // Fallback function for non-streaming
+      const handleNonStreamingFallback = async () => {
+        const response = await fetch("/api/elite-chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: model,
+            messages: apiMessages,
+            temperature: 0.7,
+            maxTokens: 4000,
+            systemPrompt: systemPrompt,
+            mcpEnabled: mcpEnabled,
+            realTimeData: realTimeData
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        let assistantContent = "";
+        
+        // Handle different response formats from different providers
+        if (data.choices && data.choices[0]) {
+          assistantContent = data.choices[0].message?.content || "";
+        } else if (data.content) {
+          assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
+        }
+        
+        setEliteMessages(prev => [...prev, {
+          role: "assistant",
+          content: assistantContent,
+          createdAt: nowISO(),
+          sessionId,
+          id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          metadata: { model, provider: model.split('/')[0] }
+        }]);
+      };
+
       // Enhanced streaming chat with real-time typing - use the streaming toggle state
       const useStreaming = realTimeData; // Enable streaming based on user preference
       
@@ -876,7 +916,9 @@ What property development project, market analysis, or investment opportunity ca
           
           // Fallback to premium OpenRouter API if available
           const modelConfig = modelList.find(m => m.id === model);
-          if (modelConfig?.tier === 'premium') {
+          // Check if model is premium by checking if it contains "premium" in the id or label
+          const isPremiumModel = model.includes('premium') || model.includes('gpt-4') || model.includes('claude-3') || model.includes('gemini-pro');
+          if (isPremiumModel) {
             try {
               const fallbackResponse = await fetch("/api/openrouter-premium/chat", {
                 method: "POST",
@@ -924,46 +966,6 @@ What property development project, market analysis, or investment opportunity ca
         // Don't continue to non-streaming code
         return;
       }
-
-      // Fallback function for non-streaming
-      const handleNonStreamingFallback = async () => {
-        const response = await fetch("/api/elite-chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: model,
-            messages: apiMessages,
-            temperature: 0.7,
-            maxTokens: 4000,
-            systemPrompt: systemPrompt,
-            mcpEnabled: mcpEnabled,
-            realTimeData: realTimeData
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        let assistantContent = "";
-        
-        // Handle different response formats from different providers
-        if (data.choices && data.choices[0]) {
-          assistantContent = data.choices[0].message?.content || "";
-        } else if (data.content) {
-          assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
-        }
-        
-        setEliteMessages(prev => [...prev, {
-          role: "assistant",
-          content: assistantContent,
-          createdAt: nowISO(),
-          sessionId,
-          id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          metadata: { model, provider: model.split('/')[0] }
-        }]);
-      };
 
       // Execute fallback if not using streaming
       if (!useStreaming) {
@@ -2107,39 +2109,41 @@ function AdminPane({
   setRealTimeData: (enabled: boolean) => void;
 }) {
   return (
-    <div className="flex-1 overflow-y-auto p-6 space-y-6">
-      <div className="bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-2xl p-6">
-        <h4 className="text-bristol-maroon font-bold text-xl mb-4">System Administration</h4>
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block text-bristol-cyan text-sm font-semibold mb-2">
-              System Prompt Configuration
-            </label>
-            <textarea
-              value={systemPrompt}
-              onChange={(e) => setSystemPrompt(e.target.value)}
-              className="w-full h-40 bg-black/40 border border-bristol-cyan/30 rounded-lg p-3 text-white resize-none"
-              placeholder="Enter system prompt..."
-            />
-          </div>
+    <ChatBackground>
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-2xl p-6">
+          <h4 className="text-bristol-maroon font-bold text-xl mb-4">System Administration</h4>
           
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={realTimeData}
-                onChange={(e) => setRealTimeData(e.target.checked)}
-                className="rounded"
+          <div className="space-y-4">
+            <div>
+              <label className="block text-bristol-cyan text-sm font-semibold mb-2">
+                System Prompt Configuration
+              </label>
+              <textarea
+                value={systemPrompt}
+                onChange={(e) => setSystemPrompt(e.target.value)}
+                className="w-full h-40 bg-black/40 border border-bristol-cyan/30 rounded-lg p-3 text-white resize-none"
+                placeholder="Enter system prompt..."
               />
-              <span className="text-bristol-cyan text-sm">Enable Real-time Data</span>
             </div>
-            <button
-              onClick={onSave}
-              className="px-4 py-2 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-sm font-medium transition-colors"
-            >
-              Save Configuration
-            </button>
+            
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={realTimeData}
+                  onChange={(e) => setRealTimeData(e.target.checked)}
+                  className="rounded"
+                />
+                <span className="text-bristol-cyan text-sm">Enable Real-time Data</span>
+              </div>
+              <button
+                onClick={onSave}
+                className="px-4 py-2 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-sm font-medium transition-colors"
+              >
+                Save Configuration
+              </button>
+            </div>
           </div>
         </div>
       </div>
