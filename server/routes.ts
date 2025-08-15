@@ -181,6 +181,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const enhancedChatExperienceRouter = (await import('./api/enhanced-chat-experience')).default;
   app.use('/api/enhanced-chat', enhancedChatExperienceRouter);
 
+  // Conversation Analytics API for deep conversation insights and performance metrics
+  const conversationAnalyticsRouter = (await import('./api/conversation-analytics')).default;
+  app.use('/api/conversation-analytics', conversationAnalyticsRouter);
+
+  // Intelligent Recommendations API for next-level strategic guidance and actionable insights
+  const intelligentRecommendationsRouter = (await import('./api/intelligent-recommendations')).default;
+  app.use('/api/intelligent-recommendations', intelligentRecommendationsRouter);
+
+  // Conversation Intelligence API for advanced real-time insights and adaptive responses
+  const conversationIntelligenceRouter = (await import('./api/conversation-intelligence')).default;
+  app.use('/api/conversation-intelligence', conversationIntelligenceRouter);
+
 
 
   // Initialize chat health monitoring
