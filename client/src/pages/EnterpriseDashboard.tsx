@@ -64,7 +64,7 @@ export default function EnterpriseDashboard() {
 
   return (
     <SimpleChrome>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900 relative overflow-hidden">
         
         {/* Elite Background Effects */}
         <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/[0.1] via-transparent to-amber-500/[0.1]" />
@@ -74,7 +74,7 @@ export default function EnterpriseDashboard() {
         <div className="absolute inset-0 opacity-20" style={{backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iNCIvPjwvZz48L2c+PC9zdmc+')", backgroundSize: '60px 60px'}} />
         
         {/* Animated Glow Effects */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-radial from-purple-500/20 to-transparent rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-radial from-blue-500/20 to-transparent rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-radial from-amber-500/15 to-transparent rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}} />
         
         <div className="relative px-6 py-8">

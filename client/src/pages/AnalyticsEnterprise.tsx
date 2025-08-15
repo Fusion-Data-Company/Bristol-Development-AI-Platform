@@ -219,7 +219,7 @@ export default function AnalyticsEnterprise() {
 
   return (
     <SimpleChrome>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-zinc-900 relative overflow-hidden">
         {/* Dynamic Background Effects */}
         <div className="absolute inset-0">
           {/* Dynamic Background Pattern */}
@@ -229,7 +229,7 @@ export default function AnalyticsEnterprise() {
           <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/[0.1] via-transparent to-bristol-gold/[0.1]" />
           
           {/* Animated Glow Effects */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-radial from-purple-500/20 to-transparent rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-radial from-blue-500/20 to-transparent rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-radial from-amber-500/15 to-transparent rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}} />
           
           {/* Dynamic accent elements */}
