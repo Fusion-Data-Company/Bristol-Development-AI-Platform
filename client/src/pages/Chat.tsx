@@ -161,6 +161,16 @@ export default function Chat() {
   // Debug: Log the image path
   console.log('Chat background image path:', chatBackgroundImg);
   
+  // Real Estate Quick Action Buttons
+  const realEstateQuickActions = [
+    { icon: Building2, label: "Analyze Property", prompt: "I need help analyzing a property investment opportunity" },
+    { icon: TrendingUp, label: "Market Analysis", prompt: "Provide a comprehensive market analysis for [location]" },
+    { icon: DollarSign, label: "Financial Modeling", prompt: "Help me create a financial model with IRR/NPV calculations" },
+    { icon: Map, label: "Location Insights", prompt: "Give me demographic and economic insights for [address/area]" },
+    { icon: BarChart3, label: "Comps Analysis", prompt: "Find and analyze comparable properties in the area" },
+    { icon: Users, label: "Lead Generation", prompt: "Help me develop a lead generation strategy" }
+  ];
+  
   // Core chat state (legacy compatibility)
   const [message, setMessage] = useState('');
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
@@ -195,7 +205,7 @@ export default function Chat() {
   const [wsConnected, setWsConnected] = useState(false);
   const [mcpEnabled, setMcpEnabled] = useState(true);
   const [realTimeData, setRealTimeData] = useState(true);
-  const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const wsRef = useRef<WebSocket | null>(null);
   
   // Multi-Agent System States
@@ -623,11 +633,23 @@ export default function Chat() {
         if (!response.ok) throw new Error(`Failed to fetch models: ${response.status}`);
         
         const models: ModelOption[] = await response.json();
+        
+        // Add ChatGPT-5 with BYOK support if not present
+        const hasChatGPT5 = models.some(m => m.id === "openai/chatgpt-5");
+        if (!hasChatGPT5) {
+          models.unshift({
+            id: "openai/chatgpt-5",
+            label: "ChatGPT-5 (BYOK)",
+            context: 128000
+          });
+        }
+        
         setModelList(models);
         
-        // Set default model - prefer GPT-5 Chat, then GPT-5, then first available
-        const preferred = models.find(m => m.id === "openai/gpt-5-chat") || 
-                         models.find(m => m.id === "openai/gpt-5") ||
+        // Set default model - prefer GPT-4o which actually exists
+        const preferred = models.find(m => m.id === "openai/gpt-4o-2024-11-20") || 
+                         models.find(m => m.id === "openai/gpt-4o") ||
+                         models.find(m => m.id === "openai/chatgpt-5") ||
                          models[0];
         
         if (preferred) {
@@ -808,13 +830,44 @@ What property development project, market analysis, or investment opportunity ca
     loadEliteModels();
   }, []);
 
-  // Process artifacts from AI response
+  // Process artifacts from AI response - enhanced code block detection
   const processArtifacts = (content: string, messageId?: string) => {
+    // First try the built-in extractArtifacts function
     const newArtifacts = extractArtifacts(content, messageId);
-    if (newArtifacts.length > 0) {
-      setArtifacts(prev => [...prev, ...newArtifacts]);
+    
+    // Also detect code blocks that might be missed
+    const codeBlockRegex = /```([\w-]*)?\n([\s\S]*?)```/g;
+    let match;
+    let additionalArtifacts: Artifact[] = [];
+    
+    while ((match = codeBlockRegex.exec(content)) !== null) {
+      const language = match[1] || 'plaintext';
+      const code = match[2].trim();
+      
+      // Check if this code block was already extracted
+      const alreadyExtracted = newArtifacts.some(a => 
+        a.content === code && a.language === language
+      );
+      
+      if (!alreadyExtracted && code.length > 0) {
+        additionalArtifacts.push({
+          id: `${messageId || 'msg'}-code-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+          type: 'code',
+          language,
+          content: code,
+          title: `${language.charAt(0).toUpperCase() + language.slice(1)} Code`,
+          timestamp: new Date().toISOString(),
+          messageId
+        });
+      }
+    }
+    
+    const allArtifacts = [...newArtifacts, ...additionalArtifacts];
+    
+    if (allArtifacts.length > 0) {
+      setArtifacts(prev => [...prev, ...allArtifacts]);
       setShowArtifacts(true);
-      console.log('Extracted artifacts:', newArtifacts.length, 'new artifacts found');
+      console.log('Extracted artifacts:', allArtifacts.length, 'artifacts found');
     }
   };
 
@@ -830,6 +883,13 @@ What property development project, market analysis, or investment opportunity ca
     const userMessage = eliteInput.trim();
     setEliteInput("");
     setEliteLoading(true);
+    
+    // Truncate conversation history to prevent memory overflow (keep last 50 messages)
+    if (eliteMessages.length > 50) {
+      const truncatedMessages = eliteMessages.slice(-50);
+      setEliteMessages(truncatedMessages);
+      console.log('Conversation truncated to prevent memory overflow');
+    }
 
     // Add user message to Elite chat immediately
     const newUserMessage = {
@@ -1066,8 +1126,17 @@ What property development project, market analysis, or investment opportunity ca
           }
         } catch (error) {
           console.error('Streaming error:', error);
-          // Remove the failed streaming message
-          setEliteMessages(prev => prev.filter(msg => msg.id !== streamingMessageId));
+          
+          // Update the streaming message to show partial content or error instead of removing it
+          setEliteMessages(prev => prev.map(msg => 
+            msg.id === streamingMessageId 
+              ? { 
+                  ...msg, 
+                  content: streamingContent || "I encountered an issue while streaming the response. Retrying with standard mode...",
+                  metadata: { ...msg.metadata, streaming: false, error: true } 
+                }
+              : msg
+          ));
           
           // Fallback to premium OpenRouter API if available
           const modelConfig = modelList.find(m => m.id === model);
@@ -1402,6 +1471,31 @@ What property development project, market analysis, or investment opportunity ca
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {/* New Chat Button */}
+              <button 
+                onClick={() => {
+                  // Clear all conversation state
+                  setEliteMessages([]);
+                  setArtifacts([]);
+                  setShowArtifacts(false);
+                  setStreamingResponse("");
+                  setEliteInput("");
+                  setInput("");
+                  setSessionId(`session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+                  console.log('New chat started - all state cleared');
+                }} 
+                className={cx(
+                  "p-2 rounded-xl transition-all duration-300 group relative",
+                  "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
+                  "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
+                  "hover:shadow-lg hover:shadow-bristol-cyan/20"
+                )}
+                aria-label="New Chat"
+                title="Start a New Conversation"
+              >
+                <Plus className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+              </button>
+              
               {/* Data Visualization Toggle */}
               <button 
                 onClick={() => setShowDataViz(!showDataViz)} 
@@ -1715,6 +1809,30 @@ What property development project, market analysis, or investment opportunity ca
                         onClose={() => setShowOnboarding(false)}
                         appData={appData}
                       />
+                      
+                      {/* Real Estate Quick Action Buttons */}
+                      <div className="mb-8">
+                        <h3 className="text-xl font-bold text-bristol-cyan mb-6">Quick Actions</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+                          {realEstateQuickActions.map((action, index) => {
+                            const Icon = action.icon;
+                            return (
+                              <button
+                                key={index}
+                                onClick={() => {
+                                  setEliteInput(action.prompt);
+                                  eliteInputRef.current?.focus();
+                                }}
+                                className="flex flex-col items-center gap-2 p-4 bg-gradient-to-r from-bristol-cyan/10 to-bristol-cyan/5 hover:from-bristol-cyan/20 hover:to-bristol-cyan/10 border border-bristol-cyan/30 hover:border-bristol-cyan/50 rounded-xl transition-all duration-300 group"
+                              >
+                                <Icon className="h-8 w-8 text-bristol-cyan group-hover:text-bristol-gold transition-colors" />
+                                <span className="text-sm font-bold text-white/80 group-hover:text-white">{action.label}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      
                       <button
                         onClick={() => setShowOnboarding(true)}
                         className="mt-4 px-6 py-3 bg-gradient-to-r from-bristol-cyan/20 to-bristol-cyan/10 hover:from-bristol-cyan/30 hover:to-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/50 rounded-2xl transition-all duration-300 font-bold text-sm backdrop-blur-sm shadow-bristol-cyan/20 shadow-lg hover:shadow-bristol-cyan/30 hover:shadow-xl"
