@@ -47,7 +47,7 @@ const artifactIcons = {
 
 const artifactColors = {
   code: 'text-bristol-cyan bg-bristol-cyan/10 border-bristol-cyan/30',
-  document: 'text-slate-300 bg-slate-200/10 border-slate-300/30',
+  document: 'text-bristol-cyan bg-bristol-cyan/15 border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/20',
   image: 'text-purple-400 bg-purple-400/10 border-purple-400/30',
   data: 'text-orange-400 bg-orange-400/10 border-orange-400/30',
   chart: 'text-bristol-cyan bg-bristol-cyan/10 border-bristol-cyan/30',
@@ -235,7 +235,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
                       {artifactIcons[artifact.type]}
                     </div>
                     <span className="truncate max-w-40 font-medium">{artifact.title}</span>
-                    <Badge variant="outline" className="text-xs bg-transparent border-current/40 px-2 py-1">
+                    <Badge variant="outline" className="text-xs bg-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/50 shadow-md shadow-bristol-cyan/20 px-2 py-1">
                       {artifact.type.toUpperCase()}
                     </Badge>
                     {artifact.modelUsed && (
