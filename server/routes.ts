@@ -141,6 +141,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const bulletproofChatRouter = (await import('./api/bulletproof-chat')).default;
   app.use('/api/bulletproof-chat', bulletproofChatRouter);
 
+  // Unified Chat API with perfect memory and cross-session sharing
+  const unifiedChatRouter = (await import('./api/unified-chat')).default;
+  app.use('/api/unified-chat', unifiedChatRouter);
+
+  // Test endpoint for unified chat system verification
+  const testUnifiedChatRouter = (await import('./api/test-unified-chat')).default;
+  app.use('/api/test-unified-chat', testUnifiedChatRouter);
+
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
   chatHealthMonitor.start();

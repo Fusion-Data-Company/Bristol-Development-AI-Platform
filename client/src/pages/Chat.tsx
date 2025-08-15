@@ -280,8 +280,9 @@ export default function Chat() {
       
       setIsThinking(true);
       
-      // Try bulletproof chat API first, then fallbacks
+      // Try unified chat API first for perfect memory, then fallbacks
       const endpoints = [
+        '/api/unified-chat/chat',
         '/api/bulletproof-chat/chat',
         '/api/enhanced-chat-v2/message',
         '/api/bristol-brain-elite',
@@ -293,21 +294,36 @@ export default function Chat() {
 
       for (const endpoint of endpoints) {
         try {
+          const requestBody = {
+            message: content,
+            sessionId: selectedSession,
+            model: model,
+            mcpEnabled: true,
+            realTimeData: true,
+            sourceInstance: 'main'
+          };
+
+          // Add memory and context features for unified chat
+          if (endpoint === '/api/unified-chat/chat') {
+            Object.assign(requestBody, {
+              memoryEnabled: true,
+              crossSessionMemory: true,
+              toolSharing: true,
+              enableAdvancedReasoning: true,
+              temperature: 0.7,
+              maxTokens: 4000,
+              messages: [] // Could add conversation history here
+            });
+          }
+
           response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              message: content,
-              sessionId: selectedSession,
-              model: model,
-              mcpEnabled: true,
-              realTimeData: true,
-              sourceInstance: 'main'
-            })
+            body: JSON.stringify(requestBody)
           });
 
           if (response.ok) {
-            console.log(`✅ Chat success with endpoint: ${endpoint}`);
+            console.log(`✅ Chat success with endpoint: ${endpoint}${endpoint === '/api/unified-chat/chat' ? ' (with memory integration)' : ''}`);
             break;
           } else {
             throw new Error(`HTTP ${response.status}`);
@@ -820,9 +836,10 @@ What property development project, market analysis, or investment opportunity ca
         realTimeData
       });
 
-      // Enhanced non-streaming fallback using new v2 endpoint
+      // Enhanced non-streaming fallback using unified chat first, then v2 endpoint
       const handleNonStreamingFallback = async () => {
-        const response = await fetch("/api/enhanced-chat-v2/completions", {
+        // Try unified chat first for memory integration
+        let response = await fetch("/api/unified-chat/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -833,9 +850,34 @@ What property development project, market analysis, or investment opportunity ca
             systemPrompt: systemPrompt,
             mcpEnabled: mcpEnabled,
             realTimeData: realTimeData,
-            sourceInstance: 'main'
+            sourceInstance: 'main',
+            memoryEnabled: true,
+            crossSessionMemory: true,
+            toolSharing: true,
+            enableAdvancedReasoning: true,
+            sessionId: sessionId,
+            streaming: false
           })
         });
+
+        // Fallback to enhanced chat v2 if unified fails
+        if (!response.ok) {
+          console.warn("Unified chat failed, falling back to enhanced-chat-v2");
+          response = await fetch("/api/enhanced-chat-v2/completions", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: model,
+              messages: apiMessages,
+              temperature: 0.7,
+              maxTokens: 4000,
+              systemPrompt: systemPrompt,
+              mcpEnabled: mcpEnabled,
+              realTimeData: realTimeData,
+              sourceInstance: 'main'
+            })
+          });
+        }
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -880,20 +922,50 @@ What property development project, market analysis, or investment opportunity ca
         }]);
 
         try {
-          const response = await fetch("/api/enhanced-chat-v2/stream", {
+          // Try unified chat streaming first for memory integration
+          let streamingEndpoint = "/api/unified-chat/stream";
+          let streamingBody = {
+            model: model,
+            messages: apiMessages,
+            temperature: 0.7,
+            maxTokens: 4000,
+            systemPrompt: systemPrompt,
+            mcpEnabled: mcpEnabled,
+            realTimeData: realTimeData,
+            sourceInstance: 'main',
+            memoryEnabled: true,
+            crossSessionMemory: true,
+            toolSharing: true,
+            enableAdvancedReasoning: true,
+            sessionId: sessionId,
+            streaming: true
+          };
+
+          let response = await fetch(streamingEndpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              model: model,
-              messages: apiMessages,
-              temperature: 0.7,
-              maxTokens: 4000,
-              systemPrompt: systemPrompt,
-              mcpEnabled: mcpEnabled,
-              realTimeData: realTimeData,
-              sourceInstance: 'main'
-            })
+            body: JSON.stringify(streamingBody)
           });
+
+          // Fallback to enhanced chat v2 if unified fails
+          if (!response.ok) {
+            console.warn("Unified chat streaming failed, falling back to enhanced-chat-v2");
+            streamingEndpoint = "/api/enhanced-chat-v2/stream";
+            response = await fetch(streamingEndpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                model: model,
+                messages: apiMessages,
+                temperature: 0.7,
+                maxTokens: 4000,
+                systemPrompt: systemPrompt,
+                mcpEnabled: mcpEnabled,
+                realTimeData: realTimeData,
+                sourceInstance: 'main'
+              })
+            });
+          }
 
           if (!response.ok) {
             throw new Error(`Streaming failed: ${response.status}`);

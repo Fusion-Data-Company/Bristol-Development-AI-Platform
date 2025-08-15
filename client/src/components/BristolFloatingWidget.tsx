@@ -570,8 +570,8 @@ export default function BristolFloatingWidget({
     }
 
     try {
-      // Use enhanced chat v2 endpoint for better reliability
-      const endpoint = "/api/enhanced-chat-v2/message";
+      // Use unified chat endpoint for perfect memory and context sharing
+      const endpoint = "/api/unified-chat/chat";
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -585,32 +585,77 @@ export default function BristolFloatingWidget({
           dataContext: enhancedPayload.dataContext,
           enableAdvancedReasoning: true,
           sessionId: sessionId,
-          sourceInstance: 'floating'
+          sourceInstance: 'floating',
+          memoryEnabled: true,
+          crossSessionMemory: true,
+          toolSharing: true,
+          messages: messages.filter(m => m.role !== 'system').map(m => ({
+            role: m.role,
+            content: m.content,
+            metadata: { sourceInstance: 'floating' }
+          }))
         }),
       });
 
       if (!res.ok) {
-        // Fallback to bristol-brain-elite endpoint
-        const fallbackRes = await fetch("/api/bristol-brain-elite/chat", {
+        // Fallback to enhanced chat v2 endpoint
+        const fallbackRes = await fetch("/api/enhanced-chat-v2/message", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             message: trimmed,
-            sessionId: sessionId,
-            selectedModel: enhancedPayload.model,
+            model: enhancedPayload.model,
+            temperature: 0.7,
+            maxTokens: 4000,
+            mcpEnabled: true,
+            realTimeData: true,
+            dataContext: enhancedPayload.dataContext,
             enableAdvancedReasoning: true,
+            sessionId: sessionId,
             sourceInstance: 'floating'
           }),
         });
         
-        if (!fallbackRes.ok) throw new Error(`API error ${fallbackRes.status}`);
+        if (!fallbackRes.ok) {
+          // Final fallback to bristol-brain-elite endpoint
+          const finalFallbackRes = await fetch("/api/bristol-brain-elite/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message: trimmed,
+              sessionId: sessionId,
+              selectedModel: enhancedPayload.model,
+              enableAdvancedReasoning: true,
+              sourceInstance: 'floating'
+            }),
+          });
+          
+          if (!finalFallbackRes.ok) throw new Error(`API error ${finalFallbackRes.status}`);
+          
+          const fallbackData = await finalFallbackRes.json();
+          const assistantText: string = fallbackData?.text ?? fallbackData?.message ?? fallbackData?.content ?? "(No response)";
+          
+          const assistantMessage: ChatMessage = {
+            role: "assistant",
+            content: assistantText,
+            createdAt: nowISO(),
+          };
+          setMessages((prev) => [...prev, assistantMessage]);
+          return;
+        }
         
         const fallbackData = await fallbackRes.json();
         const assistantText: string = fallbackData?.text ?? fallbackData?.message ?? fallbackData?.content ?? "(No response)";
-        
+        const mcpResults = fallbackData?.mcpResults || [];
+
+        let responseContent = assistantText;
+        if (mcpResults.length > 0) {
+          responseContent += `\n\n🔧 MCP Tools Executed: ${mcpResults.map((r: any) => r.tool).join(', ')}`;
+        }
+
         const assistantMessage: ChatMessage = {
           role: "assistant",
-          content: assistantText,
+          content: responseContent,
           createdAt: nowISO(),
         };
         setMessages((prev) => [...prev, assistantMessage]);
@@ -619,11 +664,25 @@ export default function BristolFloatingWidget({
 
       const data = await res.json();
       const assistantText: string = data?.text ?? data?.message ?? data?.content ?? "(No response)";
-      const mcpResults = data?.mcpResults || [];
+      const mcpResults = data?.metadata?.toolsExecuted || [];
+      const memoryInfo = data?.memoryStored || {};
+      const contextInfo = data?.metadata?.contextUsed || {};
 
       let responseContent = assistantText;
+      
+      // Add memory integration indicator
+      if (data?.metadata?.memoryIntegrated) {
+        responseContent += `\n\n💭 **Memory Integration Active** - I'm using our conversation history and your preferences`;
+      }
+      
+      // Add context info
+      if (contextInfo.recentMessages || contextInfo.relevantMemories) {
+        responseContent += `\n📝 **Context Used**: ${contextInfo.recentMessages || 0} recent messages, ${contextInfo.relevantMemories || 0} relevant memories`;
+      }
+      
+      // Add tool execution info
       if (mcpResults.length > 0) {
-        responseContent += `\n\n🔧 MCP Tools Executed: ${mcpResults.map((r: any) => r.tool).join(', ')}`;
+        responseContent += `\n🔧 **Tools Executed**: ${mcpResults.join(', ')}`;
       }
 
       const assistantMessage: ChatMessage = {
@@ -632,22 +691,27 @@ export default function BristolFloatingWidget({
         createdAt: nowISO(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
-      await sendTelemetry("bristol_brain_response", { 
+      
+      await sendTelemetry("unified_chat_response", { 
         tokens: assistantText.length,
-        mcpToolsUsed: mcpResults.length 
+        mcpToolsUsed: mcpResults.length,
+        memoryIntegrated: data?.metadata?.memoryIntegrated || false,
+        contextUsed: contextInfo,
+        crossSessionMemory: true,
+        sourceInstance: 'floating'
       });
     } catch (err: any) {
       console.error("Bristol A.I. error:", err);
-      let errorMessage = "Bristol A.I. Boss Agent encountered an error.";
+      let errorMessage = "Bristol A.I. Elite encountered an error, but my memory systems remain operational.";
       
       if (err?.message?.includes("401") || err?.message?.includes("Unauthorized")) {
-        errorMessage = "Authentication required for Boss Agent access.";
+        errorMessage = "Authentication required for Bristol A.I. Elite access. Your conversation memory is preserved.";
       } else if (err?.message?.includes("400")) {
-        errorMessage = "Invalid request. The selected AI model may not support Boss Agent features.";
+        errorMessage = "Invalid request. The selected AI model may not support Elite features, but I'll remember this conversation.";
       } else if (err?.message?.includes("502")) {
-        errorMessage = "AI service temporarily unavailable. Retrying with fallback systems...";
+        errorMessage = "AI service temporarily unavailable. My memory systems are still active - please try again.";
       } else if (err?.message) {
-        errorMessage = `Boss Agent Error: ${err.message}`;
+        errorMessage = `Bristol A.I. Elite Error: ${err.message}. Don't worry, I'll remember our conversation context.`;
       }
       
       const assistantMessage: ChatMessage = {
