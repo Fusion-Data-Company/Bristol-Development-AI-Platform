@@ -1348,8 +1348,14 @@ What property development project, market analysis, or investment opportunity ca
                 <p className="text-lg text-bristol-gold font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   Dynamic AI Analytics Platform
-                  <div className="px-2 py-0.5 bg-gradient-to-r from-green-600 to-green-500 rounded-full text-xs font-bold text-white ml-2">
-                    PREMIUM
+                  <div className="relative px-3 py-1 ml-2 group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-600 rounded-full blur-sm opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full text-xs font-black text-white tracking-wider border border-emerald-400/50 shadow-lg shadow-emerald-500/25">
+                      <span className="flex items-center gap-1">
+                        <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
+                        PREMIUM
+                      </span>
+                    </div>
                   </div>
                 </p>
               </div>
@@ -1571,7 +1577,17 @@ What property development project, market analysis, or investment opportunity ca
                       : "bg-white/10 text-white/50 border border-white/20"
                   )}
                 >
-                  {realTimeData ? "🚀 STREAMING" : "📝 STANDARD"}
+                  {realTimeData ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse shadow-bristol-cyan/50 shadow-md"></div>
+                      <span className="font-black tracking-widest">STREAMING</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
+                      <span className="font-black tracking-widest">STANDARD</span>
+                    </div>
+                  )}
                 </button>
               </div>
               
@@ -1687,9 +1703,15 @@ What property development project, market analysis, or investment opportunity ca
                           {msg.role === "assistant" && (msg as any).metadata && (
                             <div className="flex items-center gap-1">
                               {(msg as any).metadata.streaming && (
-                                <span className="text-xs text-bristol-cyan bg-bristol-cyan/20 px-1.5 py-0.5 rounded-full animate-pulse">
-                                  STREAMING
-                                </span>
+                                <div className="relative group">
+                                  <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/40 to-bristol-electric/40 rounded-full blur-sm opacity-75 animate-pulse"></div>
+                                  <span className="relative text-xs font-black text-bristol-cyan bg-gradient-to-r from-bristol-cyan/25 to-bristol-electric/25 px-2 py-1 rounded-full border border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/25 tracking-wider">
+                                    <div className="flex items-center gap-1">
+                                      <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse"></div>
+                                      STREAMING
+                                    </div>
+                                  </span>
+                                </div>
                               )}
                               {(msg as any).metadata.provider && (
                                 <span className="text-xs text-bristol-cyan bg-bristol-cyan/20 border border-bristol-cyan/30 px-2 py-1 rounded-full font-bold">
