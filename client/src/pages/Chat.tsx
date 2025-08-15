@@ -152,19 +152,11 @@ export default function Chat() {
       <div className="w-80 h-full chrome-metallic-panel border-r border-slate-200 flex flex-col">
         {/* Header */}
         <div className="p-6 border-b border-slate-200">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4">
             <h2 className="text-slate-700 font-bold text-xl flex items-center gap-3">
               <MessageCircle className="h-6 w-6" />
               Conversations
             </h2>
-            <button
-              onClick={() => createSessionMutation.mutate('New Bristol AI Chat')}
-              className="chrome-metallic-button p-3 rounded-xl flex items-center gap-2 text-sm font-bold"
-              disabled={createSessionMutation.isPending}
-            >
-              <Plus className="h-4 w-4" />
-              New
-            </button>
           </div>
         </div>
         
@@ -268,7 +260,15 @@ export default function Chat() {
         </div>
         
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div 
+          className="flex-1 overflow-y-auto p-6 space-y-4"
+          style={{
+            backgroundImage: `url('/attached_assets/generated_images/Elite_enterprise_tech_background_5f20b14a.png')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
           {!selectedSession ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <div className="relative mb-6">
