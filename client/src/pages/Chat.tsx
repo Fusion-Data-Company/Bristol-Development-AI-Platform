@@ -1525,58 +1525,52 @@ What property or investment can I analyze for you today?`,
           
           <div className="flex flex-wrap items-center gap-6">
             
-            {/* Models Used Tracker - Replaces GPT-5 Selector */}
-            {modelsUsed.size > 0 ? (
-              <div className="flex-1 max-w-md">
-                <label className="block text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <Brain className="h-3 w-3 animate-pulse" />
-                  Active AI Models
-                </label>
-                <div className="flex items-center gap-2 text-xs">
-                  <div className="flex items-center gap-1 px-4 py-3 rounded-2xl bg-green-500/20 border border-green-400/30 backdrop-blur-sm" style={{
-                    background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.1) 50%, rgba(21, 128, 61, 0.15) 100%)',
-                    borderColor: 'rgba(74, 222, 128, 0.6)',
+            {/* Clean Model Selector */}
+            <div className="flex-1 max-w-md">
+              <label className="block text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Brain className="h-3 w-3 animate-pulse" />
+                AI Model
+              </label>
+              <div className="relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-bristol-gold/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/5 to-bristol-electric/5 rounded-2xl" />
+                <select
+                  className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-bristol-cyan hover:text-white focus:text-white focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/40 disabled:opacity-50"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
+                    borderColor: 'rgba(69, 214, 202, 0.6)',
                     boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
-                  }}>
-                    <Brain className="h-4 w-4 text-green-400" />
-                    <span className="text-green-400 font-bold tracking-wider">MODELS USED</span>
-                    <div className="flex gap-1 ml-2">
-                      {Array.from(modelsUsed).map((model, index) => {
-                        const modelName = model.split('/').pop()?.replace('-', ' ').toUpperCase() || model;
-                        const getProviderEmoji = (modelId: string) => {
-                          if (modelId.includes('gpt') || modelId.includes('openai')) return '🟢';
-                          if (modelId.includes('claude') || modelId.includes('anthropic')) return '🔶';
-                          if (modelId.includes('grok') || modelId.includes('x-ai')) return '⚡';
-                          if (modelId.includes('gemini') || modelId.includes('google')) return '🔷';
-                          if (modelId.includes('perplexity') || modelId.includes('sonar')) return '🔍';
-                          return '🤖';
-                        };
-                        return (
-                          <Badge 
-                            key={model} 
-                            variant="outline" 
-                            className="text-xs bg-green-500/20 text-green-300 border-green-400/50 px-2 py-1 h-6 font-bold"
-                          >
-                            {getProviderEmoji(model)} {modelName.slice(0, 10)}
-                          </Badge>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
+                  }}
+                  value={model}
+                  onChange={(e) => setModel(e.target.value)}
+                  disabled={modelList.length === 0}
+                >
+                  {modelList.length === 0 ? (
+                    <option value="">Loading models...</option>
+                  ) : (
+                    modelList.map((m: ModelOption) => {
+                      const getEmoji = (modelId: string) => {
+                        if (modelId.includes('gpt') || modelId.includes('openai')) return '🟢';
+                        if (modelId.includes('claude') || modelId.includes('anthropic')) return '🔶';
+                        if (modelId.includes('grok') || modelId.includes('x-ai')) return '⚡';
+                        if (modelId.includes('gemini') || modelId.includes('google')) return '🔷';
+                        if (modelId.includes('perplexity') || modelId.includes('sonar')) return '🔍';
+                        return '🤖';
+                      };
+                      
+                      const cleanName = m.label.replace(/✅|❌|💎|\([^)]*\)/g, '').trim();
+                      const isAvailable = (m as any).available !== false;
+
+                      return (
+                        <option key={m.id} value={m.id} disabled={!isAvailable}>
+                          {getEmoji(m.id)} {cleanName}
+                        </option>
+                      );
+                    })
+                  )}
+                </select>
               </div>
-            ) : (
-              <div className="flex-1 max-w-md">
-                <label className="block text-xs text-slate-400 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <Brain className="h-3 w-3" />
-                  AI Models Status
-                </label>
-                <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-slate-500/10 border border-slate-400/30 backdrop-blur-sm">
-                  <div className="w-2 h-2 bg-slate-400 rounded-full" />
-                  <span className="text-slate-400 font-medium">Ready for AI requests</span>
-                </div>
-              </div>
-            )}
+            </div>
 
             {/* Streaming Toggle, Artifacts Toggle & WebSocket Status */}
             <div className="flex items-center gap-4">
@@ -1604,7 +1598,7 @@ What property or investment can I analyze for you today?`,
               </div>
 
 
-              <div className="flex items-center gap-2 text-xs">
+              <div className="flex items-center gap-4 text-xs">
                 <button
                   onClick={() => {
                     const newStreaming = !realTimeData;
@@ -1630,23 +1624,38 @@ What property or investment can I analyze for you today?`,
                     </div>
                   )}
                 </button>
-              </div>
-              
-              <div className="flex items-center gap-2 text-xs">
-                {modelsUsed.size > 0 ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse" />
-                    <span className="text-bristol-cyan font-bold">
-                      {Array.from(modelsUsed).map(model => model.split('/').pop()).join(', ')}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-slate-400 rounded-full" />
-                    <span className="text-slate-400 font-medium">Ready</span>
+
+                {/* Models Used Badge */}
+                {modelsUsed.size > 0 && (
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-500/20 border border-green-400/30">
+                    <Brain className="h-3 w-3 text-green-400" />
+                    <span className="text-green-400 font-bold tracking-wider text-xs">MODELS USED</span>
+                    <div className="flex gap-1 ml-1">
+                      {Array.from(modelsUsed).map((model) => {
+                        const modelName = model.split('/').pop()?.replace('-', ' ').toUpperCase() || model;
+                        const getEmoji = (modelId: string) => {
+                          if (modelId.includes('gpt') || modelId.includes('openai')) return '🟢';
+                          if (modelId.includes('claude') || modelId.includes('anthropic')) return '🔶';
+                          if (modelId.includes('grok') || modelId.includes('x-ai')) return '⚡';
+                          if (modelId.includes('gemini') || modelId.includes('google')) return '🔷';
+                          if (modelId.includes('perplexity') || modelId.includes('sonar')) return '🔍';
+                          return '🤖';
+                        };
+                        return (
+                          <Badge 
+                            key={model} 
+                            variant="outline" 
+                            className="text-xs bg-green-500/10 text-green-300 border-green-400/40 px-1 py-0 h-4"
+                          >
+                            {getEmoji(model)} {modelName.slice(0, 8)}
+                          </Badge>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
+              
             </div>
           </div>
         </div>
