@@ -920,6 +920,10 @@ What property development project, market analysis, or investment opportunity ca
           assistantContent = data.choices[0].message?.content || "";
         } else if (data.content) {
           assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
+        } else if (data.message) {
+          assistantContent = data.message;
+        } else if (data.success && data.content) {
+          assistantContent = data.content;
         }
         
         const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
