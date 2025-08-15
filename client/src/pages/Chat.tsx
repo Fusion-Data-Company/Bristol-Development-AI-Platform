@@ -1655,7 +1655,7 @@ What property development project, market analysis, or investment opportunity ca
                             : "text-white"
                         )}
                         style={{
-                          background: 'linear-gradient(135deg, rgb(15, 23, 42) 0%, rgb(69, 214, 202) 30%, rgb(30, 41, 59) 100%)',
+                          background: 'linear-gradient(135deg, rgb(10, 16, 30) 0%, rgb(20, 40, 45) 30%, rgb(18, 24, 35) 100%)',
                           border: '1px solid rgba(69, 214, 202, 0.6)',
                           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
                         }}
