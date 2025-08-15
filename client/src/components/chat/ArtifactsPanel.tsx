@@ -126,7 +126,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
               size="default"
               variant="outline"
               onClick={() => handleCopy(artifact.content)}
-              className="gap-2 border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
+              className="gap-2 bg-slate-800/60 border-bristol-cyan/50 text-bristol-cyan hover:bg-bristol-cyan/15 hover:border-bristol-cyan/70 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
             >
               <Copy className="h-4 w-4" />
               Copy
@@ -136,7 +136,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
                 size="default"
                 variant="outline"
                 onClick={() => onDownload(artifact)}
-                className="gap-2 border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
+                className="gap-2 bg-slate-800/60 border-bristol-cyan/50 text-bristol-cyan hover:bg-bristol-cyan/15 hover:border-bristol-cyan/70 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
               >
                 <Download className="h-4 w-4" />
                 Download
@@ -146,7 +146,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
               size="default"
               variant="outline"
               onClick={() => setFullscreen(!fullscreen)}
-              className="border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
+              className="bg-slate-800/60 border-bristol-cyan/50 text-bristol-cyan hover:bg-bristol-cyan/15 hover:border-bristol-cyan/70 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
             >
               <Maximize2 className="h-4 w-4" />
             </Button>
