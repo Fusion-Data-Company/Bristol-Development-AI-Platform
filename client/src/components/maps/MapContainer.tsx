@@ -24,7 +24,7 @@ export function MapContainer({ sites, onSiteSelect, selectedSite, className }: M
     // Initialize map
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
+      style: 'mapbox://styles/mapbox/streets-v11',
       center: [-80.8431, 35.2271], // Charlotte, NC
       zoom: 10
     });
