@@ -2076,7 +2076,7 @@ What property or investment can I analyze for you today?`,
                 disabled={!eliteInput.trim()}
                 className={cx(
                   "relative inline-flex items-center gap-3 px-6 py-4 rounded-3xl font-bold text-sm",
-                  "disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden"
+                  "disabled:cursor-not-allowed group overflow-hidden"
                 )}
                 style={{
                   background: 'linear-gradient(135deg, rgb(69, 214, 202) 0%, rgb(30, 58, 138) 50%, rgb(69, 214, 202) 100%)',
