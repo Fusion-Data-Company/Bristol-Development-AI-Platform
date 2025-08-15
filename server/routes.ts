@@ -78,6 +78,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const chatRouter = (await import('./api/chat')).default;
   app.use('/api/chat', chatRouter);
 
+  // Elite Chat API with premium model integration
+  const eliteChatRouter = (await import('./api/elite-chat')).default;
+  app.use('/api/elite-chat', eliteChatRouter);
+
+  // Model health check API
+  const modelHealthRouter = (await import('./api/model-health')).default;
+  app.use('/api/model-health', modelHealthRouter);
+
+  // Streaming chat API for real-time responses
+  const streamingChatRouter = (await import('./api/streaming-chat')).default;
+  app.use('/api/streaming-chat', streamingChatRouter);
+
   // Bristol Portfolio Analysis Agent API
   const bristolAgentRouter = (await import('./api/bristol-agent')).default;
   app.use('/api/bristol-agent', bristolAgentRouter);

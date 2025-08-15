@@ -617,24 +617,39 @@ export default function Chat() {
     }
   };
 
-  // Load available models on component mount
+  // Load elite models on component mount
   useEffect(() => {
-    const loadModels = async () => {
+    const loadEliteModels = async () => {
       try {
-        const response = await fetch('/api/chat/models');
+        const response = await fetch('/api/elite-chat/models');
         if (response.ok) {
           const data = await response.json();
-          setModelList(data.models.map((m: any) => ({
+          const eliteModels = data.models.map((m: any) => ({
             id: m.id,
-            label: m.name,
-            context: m.contextLength
-          })));
+            label: `${m.name} ${m.available ? '✅' : '❌'}`,
+            context: m.contextLength,
+            provider: m.provider,
+            tier: m.tier,
+            features: m.features,
+            available: m.available
+          }));
+          
+          setModelList(eliteModels);
+          
+          // Set default to the first available premium model or fallback
+          const preferredModel = eliteModels.find(m => m.available && m.tier === 'premium') ||
+                                eliteModels.find(m => m.available) ||
+                                eliteModels[0];
+          
+          if (preferredModel) {
+            setModel(preferredModel.id);
+          }
         }
       } catch (error) {
-        console.error('Failed to load models:', error);
+        console.error('Failed to load elite models:', error);
       }
     };
-    loadModels();
+    loadEliteModels();
   }, []);
 
   // Bristol A.I. Elite chat functionality - the advanced chat handler
@@ -679,40 +694,152 @@ export default function Chat() {
         realTimeData
       });
 
-      // Call the enhanced chat API
-      const response = await fetch("/api/chat/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: model,
-          messages: apiMessages,
-          temperature: 0.7,
-          maxTokens: 4000
-        })
-      });
+      // Enhanced streaming chat with real-time typing
+      const useStreaming = true; // Enable streaming for better UX
+      
+      if (useStreaming) {
+        // Use fetch with ReadableStream for better streaming support
+        let streamingContent = "";
+        const streamingMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        // Add placeholder message for streaming
+        setEliteMessages(prev => [...prev, {
+          role: "assistant",
+          content: "",
+          createdAt: nowISO(),
+          sessionId,
+          id: streamingMessageId,
+          metadata: { model, provider: model.split('/')[0], streaming: true }
+        }]);
+
+        try {
+          const response = await fetch("/api/streaming-chat/stream", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              model: model,
+              messages: apiMessages,
+              temperature: 0.7,
+              maxTokens: 4000,
+              systemPrompt: systemPrompt,
+              mcpEnabled: mcpEnabled,
+              realTimeData: realTimeData
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`Streaming failed: ${response.status}`);
+          }
+
+          const reader = response.body?.getReader();
+          if (!reader) {
+            throw new Error("No response body reader available");
+          }
+
+          const decoder = new TextDecoder();
+          let buffer = "";
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || "";
+
+            for (const line of lines) {
+              if (line.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(line.slice(6));
+                  
+                  if (data.error) {
+                    throw new Error(data.error);
+                  }
+                  
+                  if (data.done) {
+                    // Streaming complete
+                    setEliteMessages(prev => 
+                      prev.map(msg => 
+                        msg.id === streamingMessageId 
+                          ? { ...msg, metadata: { ...msg.metadata, streaming: false, completed: true } }
+                          : msg
+                      )
+                    );
+                    return;
+                  }
+                  
+                  if (data.content) {
+                    streamingContent += data.content;
+                    setEliteMessages(prev => 
+                      prev.map(msg => 
+                        msg.id === streamingMessageId 
+                          ? { ...msg, content: streamingContent }
+                          : msg
+                      )
+                    );
+                  }
+                } catch (parseError) {
+                  console.error('Parse error:', parseError);
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Streaming error:', error);
+          // Remove the failed streaming message
+          setEliteMessages(prev => prev.filter(msg => msg.id !== streamingMessageId));
+          // Fallback to non-streaming
+          await handleNonStreamingFallback();
+        }
+
+        // Don't continue to non-streaming code
+        return;
       }
 
-      const data = await response.json();
-      let assistantContent = "";
-      
-      // Handle different response formats from different providers
-      if (data.choices && data.choices[0]) {
-        assistantContent = data.choices[0].message?.content || "";
-      } else if (data.content) {
-        assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
+      // Fallback function for non-streaming
+      const handleNonStreamingFallback = async () => {
+        const response = await fetch("/api/elite-chat/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: model,
+            messages: apiMessages,
+            temperature: 0.7,
+            maxTokens: 4000,
+            systemPrompt: systemPrompt,
+            mcpEnabled: mcpEnabled,
+            realTimeData: realTimeData
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        let assistantContent = "";
+        
+        // Handle different response formats from different providers
+        if (data.choices && data.choices[0]) {
+          assistantContent = data.choices[0].message?.content || "";
+        } else if (data.content) {
+          assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
+        }
+        
+        setEliteMessages(prev => [...prev, {
+          role: "assistant",
+          content: assistantContent,
+          createdAt: nowISO(),
+          sessionId,
+          id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          metadata: { model, provider: model.split('/')[0] }
+        }]);
+      };
+
+      // Execute fallback if not using streaming
+      if (!useStreaming) {
+        await handleNonStreamingFallback();
       }
-      
-      setEliteMessages(prev => [...prev, {
-        role: "assistant",
-        content: assistantContent,
-        createdAt: nowISO(),
-        sessionId,
-        id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        metadata: { model, provider: model.split('/')[0] }
-      }]);
 
     } catch (error) {
       console.error("Chat error:", error);
@@ -980,9 +1107,15 @@ export default function Chat() {
                         return '🤖'; // Default AI robot
                       };
 
+                      const isAvailable = (m as any).available !== false;
+                      const tier = (m as any).tier || '';
+                      const provider = (m as any).provider || '';
+                      const tierBadge = tier === 'premium' ? ' 💎' : '';
+                      const statusIcon = isAvailable ? '' : ' ❌';
+
                       return (
-                        <option key={m.id} value={m.id}>
-                          {getProviderEmoji(m.id)} {m.label}
+                        <option key={m.id} value={m.id} disabled={!isAvailable}>
+                          {getProviderEmoji(m.id)} {m.label.replace(/✅|❌/, '')}{tierBadge}{statusIcon} {provider ? `(${provider.toUpperCase()})` : ''}
                         </option>
                       );
                     })
@@ -991,8 +1124,26 @@ export default function Chat() {
               </div>
             </div>
 
-            {/* WebSocket Status */}
-            <div className="flex items-center gap-3">
+            {/* Streaming Toggle & WebSocket Status */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-xs">
+                <button
+                  onClick={() => {
+                    const newStreaming = !realTimeData;
+                    setRealTimeData(newStreaming);
+                    localStorage.setItem("bristol.streamingEnabled", String(newStreaming));
+                  }}
+                  className={cx(
+                    "px-2 py-1 rounded-full text-xs font-bold transition-all duration-300",
+                    realTimeData
+                      ? "bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/40"
+                      : "bg-white/10 text-white/50 border border-white/20"
+                  )}
+                >
+                  {realTimeData ? "🚀 STREAMING" : "📝 STANDARD"}
+                </button>
+              </div>
+              
               <div className="flex items-center gap-2 text-xs">
                 {wsConnected ? (
                   <div className="flex items-center gap-2">
@@ -1057,19 +1208,50 @@ export default function Chat() {
                       msg.role === "user" ? "justify-end" : "justify-start"
                     )}>
                       <div className={cx(
-                        "max-w-[85%] rounded-2xl px-4 py-3 backdrop-blur-sm border",
+                        "max-w-[85%] rounded-2xl px-4 py-3 backdrop-blur-sm border relative",
                         msg.role === "user" 
                           ? "bg-bristol-cyan/20 border-bristol-cyan/40 text-bristol-cyan"
                           : "bg-white/10 border-white/20 text-white"
                       )}>
-                        <div className="text-sm whitespace-pre-wrap font-medium">
-                          {msg.content}
-                        </div>
-                        {msg.createdAt && (
-                          <div className="text-xs opacity-60 mt-1">
-                            {new Date(msg.createdAt).toLocaleTimeString()}
-                          </div>
+                        {/* Streaming indicator for assistant messages */}
+                        {msg.role === "assistant" && (msg as any).metadata?.streaming && (
+                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-bristol-cyan rounded-full animate-pulse" />
                         )}
+                        
+                        <div className="text-sm whitespace-pre-wrap font-medium">
+                          {msg.content || (msg.role === "assistant" && (msg as any).metadata?.streaming ? (
+                            <div className="flex items-center gap-2 text-bristol-cyan/70">
+                              <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse" />
+                              <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse delay-150" />
+                              <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse delay-300" />
+                              <span className="ml-2 text-xs">Bristol A.I. is thinking...</span>
+                            </div>
+                          ) : msg.content)}
+                        </div>
+                        
+                        <div className="flex items-center justify-between mt-2">
+                          {msg.createdAt && (
+                            <div className="text-xs opacity-60">
+                              {new Date(msg.createdAt).toLocaleTimeString()}
+                            </div>
+                          )}
+                          
+                          {/* Model and provider badge for assistant messages */}
+                          {msg.role === "assistant" && (msg as any).metadata && (
+                            <div className="flex items-center gap-1">
+                              {(msg as any).metadata.streaming && (
+                                <span className="text-xs text-bristol-cyan bg-bristol-cyan/20 px-1.5 py-0.5 rounded-full animate-pulse">
+                                  STREAMING
+                                </span>
+                              )}
+                              {(msg as any).metadata.provider && (
+                                <span className="text-xs text-white/70 bg-white/10 px-1.5 py-0.5 rounded-full">
+                                  {(msg as any).metadata.provider.toUpperCase()}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
