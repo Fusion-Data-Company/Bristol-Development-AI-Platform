@@ -161,6 +161,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const enhancedChatFeaturesRouter = (await import('./api/enhanced-chat-features')).default;
   app.use('/api/chat-enhanced', enhancedChatFeaturesRouter);
 
+  // Enhanced MCP Networking API with advanced cross-agent data sharing
+  const enhancedMcpNetworkingRouter = (await import('./api/enhanced-mcp-networking')).default;
+  app.use('/api/mcp-networking', enhancedMcpNetworkingRouter);
+
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
   chatHealthMonitor.start();

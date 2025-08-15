@@ -2,6 +2,7 @@ import { eliteMemoryEnhancementService } from './eliteMemoryEnhancementService';
 import { advancedAgentOrchestrationService } from './advancedAgentOrchestrationService';
 import { advancedMemoryService } from './advancedMemoryService';
 import { unifiedChatService } from './unifiedChatService';
+import { mcpIntegrationService } from './mcpIntegrationService';
 
 interface EnhancedChatCapabilities {
   id: string;
@@ -129,13 +130,27 @@ export class EnhancedChatAgentService {
         chatContext
       );
       
-      // Execute enhanced processing pipeline
+      // Execute enhanced processing pipeline with network integration
       const processingResult = await this.executeEnhancedProcessing(
         message,
         selectedCapabilities,
         chatContext,
         context
       );
+
+      // Integrate MCP networking for enhanced capabilities
+      if (selectedCapabilities.some((cap: any) => cap.mcpIntegration)) {
+        const networkingResult = await this.integrateWithMCPNetworking(
+          message,
+          selectedCapabilities,
+          chatContext,
+          processingResult
+        );
+        
+        // Merge networking results with processing result
+        processingResult.networkingEnhanced = true;
+        processingResult.networkingResult = networkingResult;
+      }
       
       // Generate intelligent response
       const response = await this.generateIntelligentResponse(
@@ -903,6 +918,86 @@ export class EnhancedChatAgentService {
     // Keep only last 100 executions
     if (history.length > 100) {
       history.splice(0, history.length - 100);
+    }
+  }
+
+  // Enhanced MCP Networking Integration
+  private async integrateWithMCPNetworking(
+    message: string,
+    capabilities: any[],
+    chatContext: ChatContext,
+    processingResult: any
+  ): Promise<any> {
+    try {
+      const networkingResults = {
+        crossAgentDataSharing: null,
+        toolChainOrchestration: null,
+        networkOptimization: null,
+        realTimeSync: null
+      };
+
+      // Cross-agent data sharing for collaborative capabilities
+      const collaborativeCapabilities = capabilities.filter(cap => 
+        ['comprehensive-property-analysis', 'market-intelligence-synthesis'].includes(cap.id)
+      );
+
+      if (collaborativeCapabilities.length > 0) {
+        const shareResult = await mcpIntegrationService.shareDataAcrossAgents(
+          'enhanced-chat-agent',
+          ['financial-analyst-agent', 'market-intelligence-agent', 'strategic-advisor-agent'],
+          {
+            userMessage: message,
+            chatContext: chatContext,
+            processingResult: processingResult
+          },
+          'synchronized'
+        );
+        networkingResults.crossAgentDataSharing = shareResult;
+      }
+
+      // Tool chain orchestration for complex capabilities
+      const complexCapabilities = capabilities.filter(cap => cap.complexity > 7);
+      if (complexCapabilities.length > 0) {
+        const toolChain = complexCapabilities.flatMap(cap => cap.toolsRequired).slice(0, 3);
+        if (toolChain.length > 0) {
+          const orchestration = await mcpIntegrationService.orchestrateNetworkToolChain(
+            toolChain,
+            { userMessage: message, chatContext },
+            chatContext.userId,
+            chatContext.sessionId,
+            { priority: 'high', optimization: true }
+          );
+          networkingResults.toolChainOrchestration = orchestration;
+        }
+      }
+
+      // Network performance optimization
+      const optimization = await mcpIntegrationService.optimizeNetworkPerformance();
+      networkingResults.networkOptimization = optimization;
+
+      // Real-time network synchronization
+      const syncResult = await mcpIntegrationService.synchronizeNetworkState();
+      networkingResults.realTimeSync = syncResult;
+
+      return {
+        success: true,
+        networkingResults,
+        enhancedCapabilities: capabilities.filter(cap => cap.mcpIntegration),
+        networkingMetrics: {
+          dataShared: networkingResults.crossAgentDataSharing?.dataSize || 0,
+          toolsOrchestrated: networkingResults.toolChainOrchestration?.tools?.length || 0,
+          optimizationsApplied: optimization.optimizations?.length || 0,
+          nodessynchronized: syncResult.nodesSynced || 0
+        }
+      };
+
+    } catch (error) {
+      console.error('Error integrating with MCP networking:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown networking error',
+        fallback: true
+      };
     }
   }
 
