@@ -1343,11 +1343,11 @@ What property development project, market analysis, or investment opportunity ca
               </div>
               <div>
                 <h1 className="font-serif font-bold text-3xl bg-gradient-to-r from-bristol-gold via-white to-bristol-cyan bg-clip-text text-transparent drop-shadow-xl">
-                  BRISTOL A.I. ELITE
+                  Bristol Development Group
                 </h1>
                 <p className="text-lg text-bristol-gold font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                  Fortune 500 Intelligence Platform
+                  Dynamic AI Analytics Platform
                   <div className="px-2 py-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-xs font-bold text-white ml-2">
                     💎 v5.0
                   </div>
