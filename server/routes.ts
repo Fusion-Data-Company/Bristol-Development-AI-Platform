@@ -153,6 +153,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const optimizedToolsRouter = (await import('./api/optimized-tools')).default;
   app.use('/api/optimized-tools', optimizedToolsRouter);
 
+  // Elite production features for maximum Bristol workflow efficiency
+  const eliteProductionFeaturesRouter = (await import('./api/elite-production-features')).default;
+  app.use('/api/elite', eliteProductionFeaturesRouter);
+
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
   chatHealthMonitor.start();
