@@ -1350,13 +1350,19 @@ What property development project, market analysis, or investment opportunity ca
                 <p className="text-lg text-bristol-gold font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   Dynamic AI Analytics Platform
-                  <div className="relative px-3 py-1 ml-2 group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 via-green-500 to-emerald-600 rounded-full blur-sm opacity-75 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative px-3 py-1 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full text-xs font-black text-white tracking-wider border border-emerald-400/50 shadow-lg shadow-emerald-500/25">
-                      <span className="flex items-center gap-1">
-                        <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></div>
-                        PREMIUM
-                      </span>
+                  <div className="relative px-4 py-2 ml-2 group">
+                    <div className="absolute inset-0 rounded-full" style={{
+                      background: 'linear-gradient(45deg, #00ff88, #00cc6a, #004d26, #00ff88)',
+                      backgroundSize: '400% 400%',
+                      animation: 'gradient 3s ease infinite'
+                    }}></div>
+                    <div className="absolute inset-0.5 rounded-full" style={{
+                      background: 'linear-gradient(135deg, rgba(0, 255, 136, 0.9) 0%, rgba(0, 204, 106, 0.8) 25%, rgba(0, 77, 38, 0.9) 50%, rgba(0, 255, 136, 0.7) 75%, rgba(0, 255, 136, 0.9) 100%)',
+                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 255, 136, 0.5)'
+                    }}></div>
+                    <div className="relative text-xs font-black text-white tracking-widest text-shadow-lg flex items-center gap-1.5">
+                      <div className="w-2 h-2 bg-white rounded-full shadow-white/50 shadow-md animate-pulse"></div>
+                      <span style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.8)' }}>PREMIUM</span>
                     </div>
                   </div>
                 </p>
@@ -1581,12 +1587,12 @@ What property development project, market analysis, or investment opportunity ca
                 >
                   {realTimeData ? (
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse shadow-bristol-cyan/50 shadow-md"></div>
+                      <span className="text-lg">🚀</span>
                       <span className="font-black tracking-widest">STREAMING</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
+                      <span className="text-lg">📝</span>
                       <span className="font-black tracking-widest">STANDARD</span>
                     </div>
                   )}
