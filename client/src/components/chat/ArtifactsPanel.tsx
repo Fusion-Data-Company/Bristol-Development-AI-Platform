@@ -196,7 +196,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
           <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-slate-900/60 via-slate-800/70 to-slate-900/60">
             <div className="flex items-center gap-3">
               <FileText className="h-6 w-6 text-bristol-cyan" />
-              <h2 className="font-semibold text-white text-lg">Artifacts</h2>
+              <h2 className="font-semibold text-bristol-cyan text-lg">Artifacts</h2>
               <Badge variant="secondary" className="text-xs bg-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/20">
                 {artifacts.length}
               </Badge>

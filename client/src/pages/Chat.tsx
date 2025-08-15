@@ -163,7 +163,7 @@ export default function Chat() {
   
   // Real Estate Quick Action Buttons
   const realEstateQuickActions = [
-    { icon: Building2, label: "🔴 ANALYZE PROPERTY - CHANGED! 🔴", prompt: "I need help analyzing a property investment opportunity" },
+    { icon: Building2, label: "Analyze", prompt: "I need help analyzing a property investment opportunity" },
     { icon: TrendingUp, label: "Market Analysis", prompt: "Provide a comprehensive market analysis for [location]" },
     { icon: DollarSign, label: "Financial Modeling", prompt: "Help me create a financial model with IRR/NPV calculations" },
     { icon: Map, label: "Location Insights", prompt: "Give me demographic and economic insights for [address/area]" },
