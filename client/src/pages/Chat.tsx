@@ -1769,12 +1769,12 @@ What property or investment can I analyze for you today?`,
                             </div>
                           )}
                           
-                          {/* Model and provider badge for assistant messages */}
+                          {/* Bristol AI Mode badge for assistant messages */}
                           {msg.role === "assistant" && (msg as any).metadata && (
                             <div className="flex items-center gap-1">
                               {(msg as any).metadata.provider && (
-                                <span className="text-xs text-bristol-cyan bg-bristol-cyan/20 border border-bristol-cyan/30 px-2 py-1 rounded-full font-bold">
-                                  {(msg as any).metadata.provider.toUpperCase()}
+                                <span className="text-xs font-extrabold tracking-wider text-bristol-cyan bg-gradient-to-r from-bristol-cyan/25 via-bristol-cyan/20 to-bristol-cyan/25 border-2 border-bristol-cyan/60 px-4 py-2 rounded-xl shadow-xl shadow-bristol-cyan/30 backdrop-blur-sm hover:shadow-2xl hover:shadow-bristol-cyan/40 transition-all duration-300 transform hover:scale-105 animate-pulse">
+                                  BRISTOL-AI-MODE
                                 </span>
                               )}
                             </div>
