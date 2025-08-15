@@ -60,7 +60,6 @@ import { Link, useLocation } from "wouter";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
-import Chrome from "../components/brand/SimpleChrome";
 
 interface PremiumModel {
   id: string;
@@ -136,7 +135,7 @@ const DEFAULT_BRISTOL_PROMPT = `I'm the Bristol Site Intelligence AI – the pro
 - Clear investment recommendations with risk assessments
 - Use Bristol branding: "Bristol A.I." not "Bristol Brain"
 
-Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated, results-oriented approach expected from an enterprise-grade AI system.`;
+Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated, results-oriented approach expected from a Fortune 500-grade AI system.`;
 
 // Utility functions for the Bristol A.I. Elite system
 const nowISO = () => new Date().toISOString();
@@ -1173,7 +1172,6 @@ What property development project, market analysis, or investment opportunity ca
   ];
 
   return (
-    <Chrome>
     <div className="min-h-screen bg-bristol-ink">
       {/* Premium Bristol Header with Real Stucco Texture - Only Header, No Footer */}
       <header className="relative overflow-hidden shadow-2xl border-b-2 border-cyan-400/50 bg-slate-800" style={{
@@ -1326,7 +1324,7 @@ What property development project, market analysis, or investment opportunity ca
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-bristol-cyan/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute -top-5 -right-10 w-32 h-32 bg-bristol-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
           
-          {/* Enterprise Elite header background */}
+          {/* Fortune 500 Elite header background */}
           <div 
             className="absolute inset-0" 
             style={{
@@ -1349,9 +1347,9 @@ What property development project, market analysis, or investment opportunity ca
                 </h1>
                 <p className="text-lg text-bristol-gold font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                  Enterprise Intelligence Platform
+                  Fortune 500 Intelligence Platform
                   <div className="px-2 py-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-xs font-bold text-white ml-2">
-                    💎 ELITE
+                    💎 v5.0
                   </div>
                 </p>
               </div>
@@ -1650,26 +1648,17 @@ What property development project, market analysis, or investment opportunity ca
                       msg.role === "user" ? "justify-end" : "justify-start"
                     )}>
                       <div className={cx(
-                        "max-w-[85%] rounded-2xl px-6 py-4 backdrop-blur-xl border-2 relative overflow-hidden",
+                        "max-w-[85%] rounded-2xl px-4 py-3 backdrop-blur-sm border relative",
                         msg.role === "user" 
-                          ? "bg-gradient-to-br from-gray-600 via-gray-500 to-gray-700 border-cyan-400 text-white shadow-2xl shadow-cyan-400/60 hover:shadow-cyan-400/80 transition-all duration-300"
-                          : "bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 border-cyan-400/60 text-white shadow-2xl shadow-cyan-400/30 hover:shadow-cyan-400/50 transition-all duration-300"
+                          ? "bg-gradient-to-br from-bristol-cyan/20 to-bristol-cyan/10 border-bristol-cyan/50 text-bristol-cyan shadow-bristol-cyan/20 shadow-lg"
+                          : "bg-gradient-to-br from-slate-800/80 to-slate-700/60 border-bristol-cyan/30 text-white shadow-slate-900/50 shadow-lg"
                       )}>
-                        {/* Metallic shine overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50 pointer-events-none" />
-                        {/* Enterprise glow effect */}
-                        <div className={cx(
-                          "absolute -inset-0.5 rounded-2xl blur-sm opacity-60 pointer-events-none",
-                          msg.role === "user" 
-                            ? "bg-gradient-to-r from-bristol-cyan to-bristol-electric"
-                            : "bg-gradient-to-r from-bristol-gold to-bristol-maroon"
-                        )} />
                         {/* Streaming indicator for assistant messages */}
                         {msg.role === "assistant" && (msg as any).metadata?.streaming && (
                           <div className="absolute -top-1 -right-1 w-3 h-3 bg-bristol-cyan rounded-full animate-pulse" />
                         )}
                         
-                        <div className="text-sm whitespace-pre-wrap font-semibold relative z-10">
+                        <div className="text-sm whitespace-pre-wrap font-medium">
                           {msg.content || (msg.role === "assistant" && (msg as any).metadata?.streaming ? (
                             <div className="flex items-center gap-2 text-bristol-cyan/70">
                               <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse" />
@@ -1680,23 +1669,23 @@ What property development project, market analysis, or investment opportunity ca
                           ) : msg.content)}
                         </div>
                         
-                        <div className="flex items-center justify-between mt-3 relative z-10">
+                        <div className="flex items-center justify-between mt-2">
                           {msg.createdAt && (
-                            <div className="text-xs opacity-80 font-medium">
+                            <div className="text-xs opacity-60">
                               {new Date(msg.createdAt).toLocaleTimeString()}
                             </div>
                           )}
                           
                           {/* Model and provider badge for assistant messages */}
                           {msg.role === "assistant" && (msg as any).metadata && (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1">
                               {(msg as any).metadata.streaming && (
-                                <span className="text-xs text-white bg-gradient-to-r from-bristol-cyan to-bristol-electric px-2 py-1 rounded-full animate-pulse font-bold border border-bristol-cyan/50 shadow-lg">
+                                <span className="text-xs text-bristol-cyan bg-bristol-cyan/20 px-1.5 py-0.5 rounded-full animate-pulse">
                                   STREAMING
                                 </span>
                               )}
                               {(msg as any).metadata.provider && (
-                                <span className="text-xs text-white bg-gradient-to-r from-bristol-gold to-bristol-maroon border border-bristol-gold/60 px-3 py-1 rounded-full font-bold shadow-lg">
+                                <span className="text-xs text-bristol-cyan bg-bristol-cyan/20 border border-bristol-cyan/30 px-2 py-1 rounded-full font-bold">
                                   {(msg as any).metadata.provider.toUpperCase()}
                                 </span>
                               )}
@@ -1866,7 +1855,6 @@ What property development project, market analysis, or investment opportunity ca
       </div>
       </div>
     </div>
-    </Chrome>
   );
 };
 
@@ -2241,7 +2229,7 @@ function AgentsPane({
   return (
     <div className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <div className="p-8 space-y-8">
-        {/* Elite Enterprise Header */}
+        {/* Elite Fortune 500 Header */}
         <div className="relative overflow-hidden">
           {/* Background effects */}
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-600/10 rounded-3xl" />
@@ -2741,6 +2729,5 @@ function EnterpriseControlPanel({
       )}
       
     </div>
-    </Chrome>
   );
 }
