@@ -132,6 +132,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bristol A.I. Elite API with advanced memory and attachments
   const bristolBrainEliteRouter = (await import('./api/bristol-brain-elite')).default;
   app.use('/api/bristol-brain-elite', bristolBrainEliteRouter);
+
+  // Enhanced Chat API V2 with comprehensive model support and error handling
+  const enhancedChatV2Router = (await import('./api/enhanced-chat-v2')).default;
+  app.use('/api/enhanced-chat-v2', enhancedChatV2Router);
+
+  // Initialize chat health monitoring
+  const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
+  chatHealthMonitor.start();
+
+  // Chat system status and monitoring API
+  const chatSystemStatusRouter = (await import('./api/chat-system-status')).default;
+  app.use('/api/chat-system', chatSystemStatusRouter);
   
   // App Data Aggregation endpoint for AI context
   const { dataAggregationService } = await import('./services/dataAggregationService');

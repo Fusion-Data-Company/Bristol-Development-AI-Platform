@@ -799,9 +799,9 @@ What property development project, market analysis, or investment opportunity ca
         realTimeData
       });
 
-      // Fallback function for non-streaming
+      // Enhanced non-streaming fallback using new v2 endpoint
       const handleNonStreamingFallback = async () => {
-        const response = await fetch("/api/elite-chat/completions", {
+        const response = await fetch("/api/enhanced-chat-v2/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -811,7 +811,8 @@ What property development project, market analysis, or investment opportunity ca
             maxTokens: 4000,
             systemPrompt: systemPrompt,
             mcpEnabled: mcpEnabled,
-            realTimeData: realTimeData
+            realTimeData: realTimeData,
+            sourceInstance: 'main'
           })
         });
 
@@ -858,7 +859,7 @@ What property development project, market analysis, or investment opportunity ca
         }]);
 
         try {
-          const response = await fetch("/api/streaming-chat/stream", {
+          const response = await fetch("/api/enhanced-chat-v2/stream", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -868,7 +869,8 @@ What property development project, market analysis, or investment opportunity ca
               maxTokens: 4000,
               systemPrompt: systemPrompt,
               mcpEnabled: mcpEnabled,
-              realTimeData: realTimeData
+              realTimeData: realTimeData,
+              sourceInstance: 'main'
             })
           });
 

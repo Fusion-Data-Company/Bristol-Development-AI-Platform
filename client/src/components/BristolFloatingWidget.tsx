@@ -570,41 +570,47 @@ export default function BristolFloatingWidget({
     }
 
     try {
-      // Use elite endpoint when elite mode is on, otherwise use enhanced endpoint
-      const endpoint = "/api/bristol-brain-elite/chat"; // Always use elite endpoint
+      // Use enhanced chat v2 endpoint for better reliability
+      const endpoint = "/api/enhanced-chat-v2/message";
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: trimmed, // Elite endpoint expects single message
-          messages: enhancedPayload.messages,
+          message: trimmed,
           model: enhancedPayload.model,
+          temperature: 0.7,
+          maxTokens: 4000,
+          mcpEnabled: true,
+          realTimeData: true,
           dataContext: enhancedPayload.dataContext,
-          ...mcpContext,
-          systemStatus,
-          sessionId: sessionId,
-          userAgent: "Bristol A.I. Elite v1.0",
           enableAdvancedReasoning: true,
-          sourceInstance: 'floating' // Identify this as the floating widget instance
+          sessionId: sessionId,
+          sourceInstance: 'floating'
         }),
       });
 
       if (!res.ok) {
-        // Fallback to regular OpenRouter if enhanced endpoint fails
-        const fallbackRes = await fetch("/api/openrouter", {
+        // Fallback to bristol-brain-elite endpoint
+        const fallbackRes = await fetch("/api/bristol-brain-elite/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(enhancedPayload),
+          body: JSON.stringify({
+            message: trimmed,
+            sessionId: sessionId,
+            selectedModel: enhancedPayload.model,
+            enableAdvancedReasoning: true,
+            sourceInstance: 'floating'
+          }),
         });
         
         if (!fallbackRes.ok) throw new Error(`API error ${fallbackRes.status}`);
         
         const fallbackData = await fallbackRes.json();
-        const assistantText: string = fallbackData?.text ?? fallbackData?.message ?? "(No response)";
+        const assistantText: string = fallbackData?.text ?? fallbackData?.message ?? fallbackData?.content ?? "(No response)";
         
         const assistantMessage: ChatMessage = {
           role: "assistant",
-          content: `[Fallback Mode] ${assistantText}`,
+          content: assistantText,
           createdAt: nowISO(),
         };
         setMessages((prev) => [...prev, assistantMessage]);
