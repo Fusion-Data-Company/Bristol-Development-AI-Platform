@@ -157,6 +157,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const eliteProductionFeaturesRouter = (await import('./api/elite-production-features')).default;
   app.use('/api/elite', eliteProductionFeaturesRouter);
 
+  // Enhanced chat features with advanced MCP integration and agent capabilities
+  const enhancedChatFeaturesRouter = (await import('./api/enhanced-chat-features')).default;
+  app.use('/api/chat-enhanced', enhancedChatFeaturesRouter);
+
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
   chatHealthMonitor.start();
