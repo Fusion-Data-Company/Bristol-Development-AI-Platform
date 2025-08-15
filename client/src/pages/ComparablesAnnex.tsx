@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import Chrome from '@/components/brand/SimpleChrome';
-import { BristolFooter } from "@/components/ui/BristolFooter";
 import TanStackCompsTable from '@/components/comparables/TanStackCompsTable';
 import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
@@ -657,7 +656,38 @@ export default function ComparablesAnnex() {
           </div>
         </div>
         
-        <BristolFooter />
+        {/* Premium Glassmorphism Footer - Matches Header Exactly */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 p-6">
+          <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-2xl mx-auto max-w-7xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-6">
+                <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-xl">
+                  <Building2 className="h-6 w-6 text-bristol-gold" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-cinzel font-bold text-white drop-shadow-lg">
+                    Bristol Development Group
+                  </h3>
+                  <p className="text-white/90 text-xs font-medium">
+                    Elite Intelligence Platform
+                  </p>
+                </div>
+              </div>
+              
+              <div className="text-right">
+                <div className="text-white/80 text-sm font-medium">
+                  © 2025 Bristol Development Group
+                </div>
+                <div className="text-white/60 text-xs mt-1">
+                  Enterprise Real Estate Intelligence
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Spacer for fixed footer */}
+        <div className="h-24 mb-8"></div>
         </div>
       </div>
     </Chrome>
