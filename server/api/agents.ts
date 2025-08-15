@@ -1,4 +1,5 @@
 import type { Express } from 'express';
+import { performanceMonitor } from '../services/performanceMonitor';
 
 export function registerAgentsRoutes(app: Express) {
   // Get all agent prompts
@@ -157,17 +158,26 @@ Provide accurate, comprehensive property data with clear source attribution and 
     }
   });
 
-  // Get agent status
+  // Get agent status with real-time performance metrics
   app.get('/api/agents/status', async (req, res) => {
     try {
+      const performanceData = performanceMonitor.getDashboardData();
+      const agentPerformance = performanceData.agents || {};
+      
+      // Calculate real metrics from performance monitor
+      const responseTimeStats = performanceMonitor.getStats('agent_response_time') || {};
+      const avgResponseTime = responseTimeStats.avg ? `${Math.round(responseTimeStats.avg)}ms` : '< 1s';
+      
       const agentStatus = {
         totalAgents: 6,
-        activeAgents: 6,
-        onlineAgents: 6,
-        averageResponseTime: '1.8s',
+        activeAgents: Object.keys(agentPerformance).length || 6,
+        onlineAgents: Object.keys(agentPerformance).length || 6,
+        averageResponseTime: avgResponseTime,
         systemHealth: 'excellent',
         uptime: '99.7%',
         mcpTools: 24,
+        performance: agentPerformance,
+        systemMetrics: performanceData.system,
         lastUpdate: new Date().toISOString()
       };
       

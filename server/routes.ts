@@ -9,6 +9,7 @@ import { initializeWebSocketService } from "./services/websocketService";
 import { performanceMonitoringService } from "./services/performanceMonitoringService";
 import { errorHandlingService } from "./services/errorHandlingService";
 import { stabilityService } from "./services/stabilityService";
+import { performanceMonitor } from "./services/performanceMonitor";
 import { insertSiteSchema, insertChatSessionSchema } from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
@@ -183,6 +184,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       errorHandlingService.logError(error as Error, { endpoint: '/api/system-status' });
       res.status(500).json({ error: 'Failed to get system status' });
+    }
+  });
+
+  // Performance metrics endpoint
+  app.get('/api/performance-metrics', async (req, res) => {
+    try {
+      const dashboardData = performanceMonitor.getDashboardData();
+      const recommendations = performanceMonitor.getOptimizationRecommendations();
+      
+      res.json({
+        ...dashboardData,
+        recommendations,
+        status: 'ok'
+      });
+    } catch (error) {
+      errorHandlingService.logError(error as Error, { endpoint: '/api/performance-metrics' });
+      res.status(500).json({ error: 'Failed to get performance metrics' });
+    }
+  });
+
+  // Enhanced performance stats for specific metrics
+  app.get('/api/performance-stats/:metric?', async (req, res) => {
+    try {
+      const { metric } = req.params;
+      const stats = performanceMonitor.getStats(metric);
+      
+      res.json({
+        ok: true,
+        metric: metric || 'all',
+        stats,
+        timestamp: Date.now()
+      });
+    } catch (error) {
+      errorHandlingService.logError(error as Error, { endpoint: '/api/performance-stats' });
+      res.status(500).json({ error: 'Failed to get performance stats' });
     }
   });
 

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { storage } from "../storage";
 import { bristolBrainService } from "../services/bristolBrainService";
 import { memorySyncService } from "../services/memorySyncService";
+import { performanceMonitor } from "../services/performanceMonitor";
 import multer from "multer";
 import { z } from "zod";
 import type { AgentPrompt } from "@shared/schema";
@@ -44,6 +45,8 @@ const chatRequestSchema = z.object({
 
 // Elite chat endpoint with full Bristol A.I. capabilities
 router.post("/chat", async (req, res) => {
+  const agentTracker = performanceMonitor.trackAgentExecution('bristol-elite', 'chat_response');
+  
   try {
     const { 
       sessionId: providedSessionId, 
@@ -109,22 +112,26 @@ router.post("/chat", async (req, res) => {
     await memorySyncService.handleCrossInstanceMessage(
       sessionId,
       userId,
-      response,
+      response.content,
       'assistant',
       sourceInstance,
       { selectedModel, reasoning: enableAdvancedReasoning }
     );
     
     // Return in format expected by frontend
-    res.json({
+    const result = {
       text: response.content,
       message: response.content,
       content: response.content,
       role: response.role,
       createdAt: response.createdAt,
       metadata: response.metadata,
-    });
+    };
+    
+    agentTracker.end(result);
+    res.json(result);
   } catch (error) {
+    agentTracker.end();
     console.error("Bristol A.I. Elite Error:", error);
     res.status(500).json({
       error: "Failed to process message",

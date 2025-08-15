@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import { GlobalHeader } from "@/components/GlobalHeader";
+import { ErrorBoundary, setupGlobalErrorHandling } from "@/components/ErrorBoundary";
+import { useEffect } from "react";
 
 import BristolFloatingWidget from "@/components/BristolFloatingWidget";
 
@@ -111,13 +113,36 @@ function AppContent() {
 }
 
 function App() {
+  // Set up global error handling on app initialization
+  useEffect(() => {
+    setupGlobalErrorHandling();
+  }, []);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <AppContent />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ErrorBoundary
+      onError={(error, errorInfo) => {
+        // Enhanced error reporting
+        console.error('Bristol App Error:', {
+          error: error.message,
+          stack: error.stack,
+          componentStack: errorInfo.componentStack,
+          timestamp: new Date().toISOString()
+        });
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <ErrorBoundary
+            onError={(error) => {
+              console.error('Content Error:', error.message);
+            }}
+          >
+            <AppContent />
+          </ErrorBoundary>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

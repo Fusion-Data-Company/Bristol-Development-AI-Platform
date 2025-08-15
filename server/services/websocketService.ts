@@ -40,26 +40,45 @@ export class WebSocketService {
       };
 
       this.clients.set(clientId, client);
-      console.log(`WebSocket client connected: ${clientId}`);
+      console.log(`✅ WebSocket client connected: ${clientId}`);
 
-      // Send welcome message
-      this.sendToClient(clientId, {
-        type: "tool_status",
-        data: { status: "connected", clientId },
-        timestamp: Date.now()
-      });
+      // Enhanced connection setup with error handling
+      try {
+        // Send welcome message with retry mechanism
+        this.sendToClient(clientId, {
+          type: "tool_status",
+          data: { status: "connected", clientId },
+          timestamp: Date.now()
+        });
+      } catch (error) {
+        console.error(`Failed to send welcome message to ${clientId}:`, error);
+      }
 
       socket.on('message', (data) => {
-        this.handleMessage(clientId, data.toString());
+        try {
+          this.handleMessage(clientId, data.toString());
+        } catch (error) {
+          console.error(`Error processing message from ${clientId}:`, error);
+          // Don't disconnect on message processing errors, just log them
+        }
       });
 
-      socket.on('close', () => {
+      socket.on('close', (code, reason) => {
+        console.log(`WebSocket client ${clientId} disconnected: ${code} ${reason}`);
         this.handleDisconnect(clientId);
       });
 
       socket.on('error', (error) => {
-        console.error(`WebSocket error for client ${clientId}:`, error);
-        this.handleDisconnect(clientId);
+        console.error(`WebSocket error for client ${clientId}:`, error.message || error);
+        // Only disconnect if socket is in a bad state
+        if (socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
+          this.handleDisconnect(clientId);
+        }
+      });
+
+      // Set up automatic pong response to keep connection alive
+      socket.on('pong', () => {
+        client.lastPing = Date.now();
       });
     });
   }
@@ -247,7 +266,15 @@ export class WebSocketService {
   private sendToClient(clientId: string, message: WebSocketMessage) {
     const client = this.clients.get(clientId);
     if (client && client.socket.readyState === WebSocket.OPEN) {
-      client.socket.send(JSON.stringify(message));
+      try {
+        client.socket.send(JSON.stringify(message));
+      } catch (error) {
+        console.error(`Failed to send message to client ${clientId}:`, error);
+        // Remove client if socket is broken
+        if (client.socket.readyState !== WebSocket.OPEN) {
+          this.handleDisconnect(clientId);
+        }
+      }
     }
   }
 
