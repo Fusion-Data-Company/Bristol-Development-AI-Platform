@@ -55,6 +55,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { DataVisualizationPanel } from '@/components/chat/DataVisualizationPanel';
 import { OnboardingGuide } from '@/components/chat/OnboardingGuide';
+import { ArtifactsPanel, extractArtifacts, type Artifact } from '@/components/chat/ArtifactsPanel';
 import { ChatBackground } from "../components/EnterpriseBackgrounds";
 import { Link, useLocation } from "wouter";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
@@ -182,6 +183,8 @@ export default function Chat() {
   const [eliteLoading, setEliteLoading] = useState(false);
   const [streamingResponse, setStreamingResponse] = useState("");
   const [modelError, setModelError] = useState<string>("");
+  const [artifacts, setArtifacts] = useState<Artifact[]>([]);
+  const [showArtifacts, setShowArtifacts] = useState(false);
   const eliteInputRef = useRef<HTMLInputElement>(null);
   const [systemStatus, setSystemStatus] = useState<SystemStatus>({
     mcpTools: [],
@@ -805,6 +808,21 @@ What property development project, market analysis, or investment opportunity ca
     loadEliteModels();
   }, []);
 
+  // Process artifacts from AI response
+  const processArtifacts = (content: string, messageId?: string) => {
+    const newArtifacts = extractArtifacts(content, messageId);
+    if (newArtifacts.length > 0) {
+      setArtifacts(prev => [...prev, ...newArtifacts]);
+      setShowArtifacts(true);
+      console.log('Extracted artifacts:', newArtifacts.length, 'new artifacts found');
+    }
+  };
+
+  // Toggle artifacts panel
+  const toggleArtifacts = () => {
+    setShowArtifacts(!showArtifacts);
+  };
+
   // Bristol A.I. Elite chat functionality - the advanced chat handler
   const handleEliteSend = async () => {
     if (!eliteInput.trim() || eliteLoading) return;
@@ -904,14 +922,18 @@ What property development project, market analysis, or investment opportunity ca
           assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
         }
         
+        const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         setEliteMessages(prev => [...prev, {
           role: "assistant",
           content: assistantContent,
           createdAt: nowISO(),
           sessionId,
-          id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: assistantMessageId,
           metadata: { model, provider: model.split('/')[0] }
         }]);
+        
+        // Process artifacts from the response
+        processArtifacts(assistantContent, assistantMessageId);
       };
 
       // Enhanced streaming chat with real-time typing - use the streaming toggle state
@@ -1016,6 +1038,9 @@ What property development project, market analysis, or investment opportunity ca
                           : msg
                       )
                     );
+                    
+                    // Process artifacts from the completed streaming response
+                    processArtifacts(streamingContent, streamingMessageId);
                     return;
                   }
                   
@@ -1070,14 +1095,18 @@ What property development project, market analysis, or investment opportunity ca
                   assistantContent = Array.isArray(fallbackData.content) ? fallbackData.content[0].text : fallbackData.content;
                 }
                 
+                const fallbackMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
                 setEliteMessages(prev => [...prev, {
                   role: "assistant",
                   content: assistantContent,
                   createdAt: nowISO(),
                   sessionId,
-                  id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                  id: fallbackMessageId,
                   metadata: { model, provider: fallbackData.provider, tier: fallbackData.tier }
                 }]);
+                
+                // Process artifacts from the fallback response
+                processArtifacts(assistantContent, fallbackMessageId);
                 return;
               }
             } catch (fallbackError) {
@@ -1569,8 +1598,30 @@ What property development project, market analysis, or investment opportunity ca
               </div>
             </div>
 
-            {/* Streaming Toggle & WebSocket Status */}
+            {/* Streaming Toggle, Artifacts Toggle & WebSocket Status */}
             <div className="flex items-center gap-4">
+              {/* Artifacts Panel Toggle */}
+              <div className="flex items-center gap-2 text-xs">
+                <button
+                  onClick={toggleArtifacts}
+                  className={cx(
+                    "px-2 py-1 rounded-full text-xs font-bold transition-all duration-300",
+                    showArtifacts
+                      ? "bg-bristol-gold/20 text-bristol-gold border border-bristol-gold/40"
+                      : "bg-white/10 text-white/50 border border-white/20"
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-3 w-3" />
+                    <span className="font-black tracking-widest">ARTIFACTS</span>
+                    {artifacts.length > 0 && (
+                      <Badge variant="secondary" className="text-xs h-4 px-1">
+                        {artifacts.length}
+                      </Badge>
+                    )}
+                  </div>
+                </button>
+              </div>
               <div className="flex items-center gap-2 text-xs">
                 <button
                   onClick={() => {
@@ -1625,7 +1676,11 @@ What property development project, market analysis, or investment opportunity ca
         >
           {/* Chat Tab Content */}
           {activeTab === "chat" && (
-            <div className="flex-1 overflow-hidden flex flex-col relative">
+            <div className="flex-1 overflow-hidden flex relative">
+              {/* Main chat area */}
+              <div className={`flex-1 overflow-hidden flex flex-col relative transition-all duration-300 ${
+                showArtifacts ? 'mr-2' : ''
+              }`}>
               {/* Background tint overlay for chat area */}
               <div 
                 className="absolute inset-0 pointer-events-none"
@@ -1747,6 +1802,33 @@ What property development project, market analysis, or investment opportunity ca
                   )}
                 </div>
               </div>
+              </div>
+              
+              {/* Artifacts Panel */}
+              {showArtifacts && artifacts.length > 0 && (
+                <div className="w-[600px] flex-shrink-0 border-l border-bristol-cyan/20 bg-white/95 backdrop-blur-sm">
+                  <ArtifactsPanel 
+                    artifacts={artifacts}
+                    onCopy={(content) => {
+                      // Could add toast notification here
+                      console.log('Content copied to clipboard');
+                    }}
+                    onDownload={(artifact) => {
+                      // Create download link
+                      const blob = new Blob([artifact.content], { type: 'text/plain' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = artifact.filename || `${artifact.title}.${artifact.type === 'code' ? 'txt' : 'md'}`;
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                      URL.revokeObjectURL(url);
+                    }}
+                    className="h-full"
+                  />
+                </div>
+              )}
             </div>
           )}
 
