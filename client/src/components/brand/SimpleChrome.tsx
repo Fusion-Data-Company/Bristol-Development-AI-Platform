@@ -190,7 +190,6 @@ export default function SimpleChrome({ children }: ChromeProps) {
         {/* Accent lines */}
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent"></div>
         </div>
         
         <div className="pl-0 pr-6 lg:pr-8 py-4 lg:py-6 relative">
