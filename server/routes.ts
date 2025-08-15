@@ -169,6 +169,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const eliteMcpOrchestrationRouter = (await import('./api/elite-mcp-orchestration')).default;
   app.use('/api/elite-mcp', eliteMcpOrchestrationRouter);
 
+  // Autonomous Evolution API with consciousness simulation and dimensional transcendence
+  const autonomousEvolutionRouter = (await import('./api/autonomous-evolution')).default;
+  app.use('/api/autonomous-evolution', autonomousEvolutionRouter);
+
+  // Cross-Dimensional Intelligence API with hyper-manifold processing and transcendent cognition
+  const crossDimensionalIntelligenceRouter = (await import('./api/cross-dimensional-intelligence')).default;
+  app.use('/api/cross-dimensional', crossDimensionalIntelligenceRouter);
+
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
   chatHealthMonitor.start();
