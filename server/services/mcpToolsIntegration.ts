@@ -602,4 +602,5 @@ class MCPToolsIntegration {
   }
 }
 
+export { MCPToolsIntegration };
 export const mcpToolsIntegration = new MCPToolsIntegration();

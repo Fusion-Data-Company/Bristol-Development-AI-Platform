@@ -1008,7 +1008,7 @@ What property or investment can I analyze for you today?`,
         setStreamingResponse("");
         processArtifacts(streamedContent, assistantMessageId, model);
         // Track model used
-        setModelsUsed(prev => new Set([...prev, model]));
+        setModelsUsed(prev => new Set([...Array.from(prev), model]));
         
       } else {
         // NON-STREAMING MODE - Direct call to ultra-bulletproof endpoint
@@ -1066,7 +1066,7 @@ What property or investment can I analyze for you today?`,
       // Process artifacts from the response
       processArtifacts(assistantContent, assistantMessageId, model);
       // Track model used
-      setModelsUsed(prev => new Set([...prev, model]));
+      setModelsUsed(prev => new Set([...Array.from(prev), model]));
       
       }  // End of non-streaming else block
 
@@ -2691,7 +2691,7 @@ function EnterpriseControlPanel({
               </div>
               <div className="bg-slate-800/50 border border-slate-600/30 rounded-lg p-3">
                 <div className="text-sm font-bold text-bristol-cyan">
-                  {activeTasks.length}
+                  {agentTasks.length}
                 </div>
                 <div className="text-xs text-slate-400">Active Tasks</div>
               </div>

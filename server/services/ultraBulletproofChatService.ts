@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { mcpService } from './mcpService';
+import { mcpToolsIntegration } from './mcpToolsIntegration';
 
 // Enhanced schema with OpenRouter features
 const ultraSimpleSchema = z.object({
@@ -89,6 +91,7 @@ const CACHE_TTL = 300000; // 5 minute cache for speed
 
 class UltraBulletproofChatService {
   private attemptCounter = 0;
+  private mcpIntegration = mcpToolsIntegration;
 
   // STREAMING: Direct streaming response following OpenRouter SSE docs
   async processUltraBulletproofStream(request: any): Promise<StreamingResponse> {
@@ -178,11 +181,11 @@ class UltraBulletproofChatService {
       };
     }
 
-    // Step 3: Enhanced OpenRouter call with full parameter support
-    console.log(`🚀 ENHANCED: OpenRouter call with model ${model}`);
+    // Step 3: Enhanced OpenRouter call with MCP tool integration
+    console.log(`🚀 ENHANCED: OpenRouter + MCP call with model ${model}`);
     
     try {
-      const { content: directResponse, metadata: callMetadata } = await this.fastDirectOpenRouter(message, model, validatedRequest);
+      const { content: directResponse, metadata: callMetadata } = await this.enhancedOpenRouterWithMCP(message, model, validatedRequest, sessionId);
       if (directResponse) {
         // Cache for future speed with model-specific key
         responseCache.set(cacheKey, {
@@ -195,16 +198,17 @@ class UltraBulletproofChatService {
           content: directResponse,
           sessionId,
           model,
-          source: `openrouter-${callMetadata.model_actually_used || model}`,
+          source: `openrouter-mcp-enhanced-${callMetadata.model_actually_used || model}`,
           metadata: {
             processingTime: Date.now() - startTime,
             attemptNumber: this.attemptCounter,
+            mcpToolsUsed: callMetadata.mcpToolsUsed || [],
             ...callMetadata
           }
         };
       }
     } catch (error) {
-      console.warn('Enhanced OpenRouter call failed:', error);
+      console.warn('Enhanced OpenRouter+MCP call failed:', error);
     }
 
     // Step 4: Intelligent fallback (guaranteed response)
@@ -231,19 +235,135 @@ class UltraBulletproofChatService {
     };
   }
 
-  // Enhanced OpenRouter call with full parameter support
-  private async fastDirectOpenRouter(message: string, model: string, options: Partial<UltraSimpleRequest> = {}): Promise<{ content: string | null; metadata: any }> {
-    const API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
-    if (!API_KEY) {
-      console.warn('No OpenRouter API key found');
-      return { content: null, metadata: { error: 'No API key' } };
+  // NEW: Enhanced OpenRouter with MCP tool integration
+  private async enhancedOpenRouterWithMCP(message: string, model: string, options: Partial<UltraSimpleRequest> = {}, sessionId: string): Promise<{ content: string | null; metadata: any }> {
+    const metadata: any = { mcpToolsUsed: [] };
+    
+    // First, check if the message requires MCP tools
+    const needsData = this.analyzeDataNeeds(message);
+    
+    // Enhanced system prompt with MCP tool access
+    let enhancedSystemPrompt = `You are Bristol A.I. Elite, the proprietary AI intelligence system for Bristol Development Group. You have access to real-time data through integrated tools.
+
+AVAILABLE TOOLS:
+- Property database queries (Bristol portfolio, metrics, comparables)
+- Economic data (BLS employment, BEA GDP, HUD fair market rents)
+- Market intelligence (demographics, crime statistics, climate data)
+- Financial analysis tools (IRR/NPV calculators, cap rate analysis)
+
+When users ask about:
+- Specific properties or addresses → Query property database
+- Market conditions → Pull economic and demographic data  
+- Investment analysis → Use financial tools and comparables
+- Market trends → Access BLS, BEA, HUD data
+
+Always provide data-driven insights with specific metrics, sources, and Bristol's institutional expertise.
+
+User Message: ${message}`;
+
+    // If data tools are needed, gather context first
+    if (needsData.requiresData) {
+      console.log('🔧 Gathering data via MCP tools...');
+      
+      for (const toolCall of needsData.toolCalls) {
+        try {
+          const toolResult = await this.mcpIntegration.executeTool(toolCall.tool, toolCall.parameters);
+          if (toolResult.success) {
+            metadata.mcpToolsUsed.push({
+              tool: toolCall.tool,
+              success: true,
+              executionTime: toolResult.executionTime
+            });
+            // Add tool data to the enhanced prompt
+            enhancedSystemPrompt += `\n\nTOOL DATA (${toolCall.tool}):\n${JSON.stringify(toolResult.data, null, 2)}`;
+          }
+        } catch (error) {
+          console.warn(`MCP tool ${toolCall.tool} failed:`, error);
+          metadata.mcpToolsUsed.push({
+            tool: toolCall.tool,
+            success: false,
+            error: error instanceof Error ? error.message : 'Unknown error'
+          });
+        }
+      }
     }
 
-    // VERIFIED WORKING MODELS ONLY - matches /api/openrouter-models endpoint
+    // Now call OpenRouter with enhanced context
+    return await this.fastDirectOpenRouter(message, model, { ...options, systemPrompt: enhancedSystemPrompt }, metadata);
+  }
+
+  // Analyze what data/tools the message needs
+  private analyzeDataNeeds(message: string): { requiresData: boolean; toolCalls: Array<{ tool: string; parameters: any }> } {
+    const lowerMessage = message.toLowerCase();
+    const toolCalls: Array<{ tool: string; parameters: any }> = [];
+
+    // Property-specific queries
+    if (lowerMessage.includes('property') || lowerMessage.includes('address') || lowerMessage.includes('site')) {
+      toolCalls.push({
+        tool: 'search_properties',
+        parameters: { location: this.extractLocation(message), propertyType: 'multifamily' }
+      });
+    }
+
+    // Market analysis queries
+    if (lowerMessage.includes('market') || lowerMessage.includes('demographic') || lowerMessage.includes('employment')) {
+      toolCalls.push({
+        tool: 'get_demographics',
+        parameters: { location: this.extractLocation(message) }
+      });
+    }
+
+    // Financial analysis queries
+    if (lowerMessage.includes('irr') || lowerMessage.includes('npv') || lowerMessage.includes('cap rate') || lowerMessage.includes('financial')) {
+      toolCalls.push({
+        tool: 'calculate_financial_metrics',
+        parameters: { analysisType: 'comprehensive' }
+      });
+    }
+
+    return {
+      requiresData: toolCalls.length > 0,
+      toolCalls
+    };
+  }
+
+  // Extract location from message
+  private extractLocation(message: string): string {
+    // Simple regex to find city, state patterns or addresses
+    const locationPatterns = [
+      /([A-Z][a-z]+,?\s+[A-Z]{2})/g, // City, ST
+      /(\d+\s+[A-Za-z\s]+(?:Street|St|Avenue|Ave|Road|Rd|Drive|Dr|Boulevard|Blvd))/g // Street addresses
+    ];
+
+    for (const pattern of locationPatterns) {
+      const match = message.match(pattern);
+      if (match) return match[0];
+    }
+
+    return 'Atlanta, GA'; // Default fallback
+  }
+
+  // Enhanced OpenRouter call with full parameter support
+  private async fastDirectOpenRouter(message: string, model: string, options: Partial<UltraSimpleRequest> = {}, existingMetadata: any = {}): Promise<{ content: string | null; metadata: any }> {
+    // Enhanced API key handling with BYOK support
+    const API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY;
+    if (!API_KEY) {
+      console.warn('No OpenRouter API key found - ensure OPENROUTER_API_KEY is set for BYOK');
+      return { content: null, metadata: { error: 'No API key configured' } };
+    }
+    
+    console.log(`🔑 Using API key: ${API_KEY.substring(0, 8)}...${API_KEY.substring(API_KEY.length - 4)} for model: ${model}`);
+
+    // VERIFIED WORKING MODELS ONLY - Updated with GPT-5 and latest models
     const ELITE_MODELS = new Set([
+      // OpenAI Models (including GPT-5)
+      "openai/gpt-5", "openai/o1", "openai/o1-preview", "openai/o1-mini",
       "openai/gpt-4o", "openai/gpt-4o-mini", "openai/gpt-4-turbo", "openai/gpt-4", "openai/chatgpt-4o-latest",
+      // Anthropic Claude Models
       "anthropic/claude-3.5-sonnet", "anthropic/claude-3.5-haiku", "anthropic/claude-3-opus", "anthropic/claude-3-haiku",
+      // Grok Models
       "x-ai/grok-2-1212", "x-ai/grok-2-vision-1212", "x-ai/grok-vision-beta",
+      // Perplexity Models
       "perplexity/sonar-deep-research", "perplexity/sonar-reasoning-pro", "perplexity/sonar-pro", "perplexity/sonar-reasoning", "perplexity/sonar"
     ]);
 
