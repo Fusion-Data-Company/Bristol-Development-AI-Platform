@@ -219,12 +219,23 @@ export default function AnalyticsEnterprise() {
 
   return (
     <SimpleChrome title="Bristol Analytics Enterprise">
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
-        {/* Light background effects */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(69,214,202,0.05),transparent_50%)]" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-bristol-cyan/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-bristol-gold/10 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-0 w-64 h-64 bg-bristol-maroon/10 rounded-full blur-2xl animate-pulse delay-500" />
+      <div className="min-h-screen bg-white relative overflow-hidden">
+        {/* Ultra HD Minimalistic Background */}
+        <div className="absolute inset-0">
+          {/* Subtle grid pattern */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(69,214,202,0.02)_1px,transparent_0)] bg-[length:40px_40px]" />
+          
+          {/* Ultra subtle gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-transparent via-bristol-cyan/[0.01] to-transparent" />
+          
+          {/* Minimal accent elements */}
+          <div className="absolute top-20 right-40 w-2 h-32 bg-gradient-to-b from-bristol-cyan/20 to-transparent blur-sm" />
+          <div className="absolute bottom-40 left-20 w-32 h-2 bg-gradient-to-r from-bristol-gold/20 to-transparent blur-sm" />
+          
+          {/* Ultra HD crisp lines */}
+          <div className="absolute top-0 left-1/3 w-px h-full bg-gradient-to-b from-transparent via-bristol-cyan/10 to-transparent" />
+          <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-bristol-gold/10 to-transparent" />
+        </div>
         
         <div className="relative z-10 container mx-auto max-w-7xl space-y-8 px-6 py-8">
           
