@@ -157,14 +157,17 @@ export default function Chat() {
   const [activeTab, setActiveTab] = useState("chat");
   const [showDataViz, setShowDataViz] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [model, setModel] = useState("openai/gpt-5-chat");
+  const [model, setModel] = useState("openai/gpt-4o");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [systemPrompt, setSystemPrompt] = useState<string>(DEFAULT_BRISTOL_PROMPT);
-  const [eliteMessages, setEliteMessages] = useState<ChatMessage[]>([
+  const [eliteMessages, setEliteMessages] = useState<any[]>([
     {
       role: "assistant",
-      content: "I'm the Bristol Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.\n\nIf you're inquiring about a specific modeling approach – say, for cap rate projections, value-add strategies, or portfolio optimization – provide the details, and I'll dive in with quantitative analysis. What's the opportunity on the table? Let's evaluate it now.",
+      content: "Hello! I'm Bristol A.I., your dedicated site intelligence assistant. I'm here to help with real estate analysis, market insights, and investment decisions. What can I assist you with today?",
       createdAt: nowISO(),
+      sessionId: '',
+      id: `msg-${Date.now()}`,
+      metadata: {}
     }
   ]);
   const [input, setInput] = useState("");
@@ -238,8 +241,9 @@ export default function Chat() {
   // Create new session
   const createSessionMutation = useMutation({
     mutationFn: async (title: string) => {
-      const response = await apiRequest('/api/chat/sessions', {
+      const response = await fetch('/api/chat/sessions', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title })
       });
       return response.json();
@@ -263,7 +267,7 @@ export default function Chat() {
         body: JSON.stringify({
           message: content,
           sessionId: selectedSession,
-          model: selectedModel,
+          model: model,
           mcpEnabled: true,
           realTimeData: true
         })
@@ -540,141 +544,115 @@ export default function Chat() {
     }
   };
 
+  // Load available models on component mount
+  useEffect(() => {
+    const loadModels = async () => {
+      try {
+        const response = await fetch('/api/chat/models');
+        if (response.ok) {
+          const data = await response.json();
+          setModelList(data.models.map((m: any) => ({
+            id: m.id,
+            label: m.name,
+            context: m.contextLength
+          })));
+        }
+      } catch (error) {
+        console.error('Failed to load models:', error);
+      }
+    };
+    loadModels();
+  }, []);
+
   // Bristol A.I. Elite chat functionality - the advanced chat handler
   const handleEliteSend = async () => {
-    if (!input.trim() || loading) return;
+    if (!eliteInput.trim() || eliteLoading) return;
 
-    const userMessage = input.trim();
-    setInput("");
-    setLoading(true);
+    const userMessage = eliteInput.trim();
+    setEliteInput("");
+    setEliteLoading(true);
 
     // Add user message to Elite chat immediately
     const newUserMessage = {
       role: "user" as const,
       content: userMessage,
       createdAt: nowISO(),
+      sessionId,
+      id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      metadata: {}
     };
 
     setEliteMessages(prev => [...prev, newUserMessage]);
 
     try {
-      const payload = {
-        model,
-        messages: [
-          { role: "system", content: systemPrompt },
-          ...eliteMessages.filter(m => m.role !== "system"),
-          newUserMessage
-        ],
-        dataContext,
-        temperature: 0.1,
-        maxTokens: 8192
-      };
+      // Prepare messages for API (filter out system prompts and format properly)
+      const apiMessages = eliteMessages
+        .filter(msg => msg.role !== "system")
+        .map(msg => ({
+          role: msg.role as "user" | "assistant",
+          content: msg.content
+        }));
+      
+      // Add current user message
+      apiMessages.push({
+        role: "user",
+        content: userMessage
+      });
 
       console.log("Sending to Bristol A.I. Elite:", { 
         model, 
-        messageCount: payload.messages.length,
-        systemPromptLength: systemPrompt.length,
+        messageCount: apiMessages.length,
         mcpEnabled,
         realTimeData
       });
 
-      // Try Bristol Brain Elite endpoint first (advanced)
-      let response = await fetch('/api/bristol-brain-elite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      // Call the enhanced chat API
+      const response = await fetch("/api/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...payload,
-          sessionId,
-          mcpEnabled,
-          realTimeData,
-          multiAgentMode
+          model: model,
+          messages: apiMessages,
+          temperature: 0.7,
+          maxTokens: 4000
         })
       });
-
-      if (!response.ok) {
-        // Fallback to OpenRouter proxy
-        response = await fetch("/api/openrouter", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-      }
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
+      let assistantContent = "";
       
-      if (data.error) {
-        throw new Error(data.error);
+      // Handle different response formats from different providers
+      if (data.choices && data.choices[0]) {
+        assistantContent = data.choices[0].message?.content || "";
+      } else if (data.content) {
+        assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
       }
-
-      // Handle multi-agent response
-      if (data.agentTasks && Array.isArray(data.agentTasks)) {
-        console.log("🤖 Multi-agent tasks initiated:", data.agentTasks.length);
-        
-        // Add agent tasks to active tasks
-        setActiveTasks(prev => [
-          ...prev,
-          ...data.agentTasks.map((task: any) => ({
-            id: task.id,
-            type: task.type,
-            agentId: task.agentId,
-            status: 'processing' as const,
-            result: null,
-            agent: task.agent
-          }))
-        ]);
-
-        // Add initial response message
-        if (data.message) {
-          setEliteMessages(prev => [...prev, {
-            role: "assistant",
-            content: data.message,
-            createdAt: nowISO()
-          }]);
-        }
-      } else if (data.message || data.content) {
-        // Standard response
-        setEliteMessages(prev => [...prev, {
-          role: "assistant",
-          content: data.message || data.content,
-          createdAt: nowISO()
-        }]);
-      }
-
-      // Optional telemetry to n8n
-      if (import.meta.env.VITE_N8N_WEBHOOK_URL) {
-        try {
-          await fetch(import.meta.env.VITE_N8N_WEBHOOK_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              event: "chat_sent",
-              sessionId,
-              model,
-              userMessage,
-              assistantMessage: data.message || data.content,
-              timestamp: nowISO(),
-              mcpEnabled,
-              realTimeData
-            })
-          });
-        } catch (telemetryError) {
-          console.warn("Telemetry failed:", telemetryError);
-        }
-      }
+      
+      setEliteMessages(prev => [...prev, {
+        role: "assistant",
+        content: assistantContent,
+        createdAt: nowISO(),
+        sessionId,
+        id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        metadata: { model, provider: model.split('/')[0] }
+      }]);
 
     } catch (error) {
       console.error("Chat error:", error);
       setEliteMessages(prev => [...prev, {
         role: "assistant",
         content: `Error: ${error instanceof Error ? error.message : 'Unknown error occurred'}. Please try again or contact support.`,
-        createdAt: nowISO()
+        createdAt: nowISO(),
+        sessionId,
+        id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        metadata: { error: true }
       }]);
     } finally {
-      setLoading(false);
+      setEliteLoading(false);
     }
   };
 
@@ -1049,7 +1027,7 @@ export default function Chat() {
                     <Database className="h-5 w-5" />
                     Live Data Context
                   </h3>
-                  <DataVisualizationPanel data={appData} />
+                  <DataVisualizationPanel appData={appData} isOpen={true} />
                 </div>
               </div>
             </div>
@@ -1185,7 +1163,8 @@ export default function Chat() {
       {/* Data Visualization Panel - Exact from floating widget */}
       {showDataViz && (
         <DataVisualizationPanel 
-          data={appData}
+          appData={appData}
+          isOpen={showDataViz}
           onClose={() => setShowDataViz(false)}
         />
       )}

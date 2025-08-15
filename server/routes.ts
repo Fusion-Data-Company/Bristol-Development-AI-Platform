@@ -74,6 +74,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const mcpConfigRouter = (await import('./api/mcp-config')).default;
   app.use('/api/mcp-config', mcpConfigRouter);
 
+  // Enhanced Chat API with real AI functionality
+  const chatRouter = (await import('./api/chat')).default;
+  app.use('/api/chat', chatRouter);
+
   // Bristol Portfolio Analysis Agent API
   const bristolAgentRouter = (await import('./api/bristol-agent')).default;
   app.use('/api/bristol-agent', bristolAgentRouter);
