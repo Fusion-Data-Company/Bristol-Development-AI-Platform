@@ -1524,8 +1524,8 @@ export default function BristolFloatingWidget({
                       ) : (
                         <>
                           <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
-                          <span className="text-bristol-cyan group-hover:text-white transition-colors duration-300 font-bold">
-                            ANALYZE
+                          <span className="text-red-500 group-hover:text-red-400 transition-colors duration-300 font-bold text-xl animate-pulse">
+                            🔴 FIXED! I'M HERE NOW! 🔴
                           </span>
                         </>
                       )}
