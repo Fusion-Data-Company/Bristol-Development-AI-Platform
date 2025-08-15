@@ -22,6 +22,7 @@ import Demographics from "@/pages/Demographics";
 import { Tools } from "@/pages/Tools";
 import ComparablesAnnex from "@/pages/ComparablesAnnex";
 import EnterpriseDashboard from "@/pages/EnterpriseDashboard";
+import EnhancedAgents from "@/pages/EnhancedAgents";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -45,6 +46,8 @@ function Router() {
           <Route path="/tools" component={Tools} />
           <Route path="/comparables" component={ComparablesAnnex} />
           <Route path="/comparables-annex" component={ComparablesAnnex} />
+          <Route path="/agents" component={EnhancedAgents} />
+          <Route path="/enhanced-agents" component={EnhancedAgents} />
         </>
       )}
       <Route component={NotFound} />

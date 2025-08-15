@@ -7,6 +7,8 @@ import { mcpService } from "./services/mcpService";
 import { integrationService } from "./services/integrationService";
 import { initializeWebSocketService } from "./services/websocketService";
 import { performanceMonitoringService } from "./services/performanceMonitoringService";
+import { errorHandlingService } from "./services/errorHandlingService";
+import { stabilityService } from "./services/stabilityService";
 import { insertSiteSchema, insertChatSessionSchema } from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
@@ -20,6 +22,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Add performance monitoring middleware
   app.use(performanceMonitoringService.trackApiPerformance());
+
+  // Setup global error handling
+  errorHandlingService.setupGlobalErrorHandling(app);
 
   // Initialize WebSocket service
   initializeWebSocketService(httpServer);
@@ -107,6 +112,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { registerAgentsRoutes } = await import('./api/agents');
   registerAgentsRoutes(app);
   
+  // Enhanced Multi-Agent System API with full MCP integration
+  const { registerEnhancedAgentRoutes } = await import('./api/enhanced-agents');
+  registerEnhancedAgentRoutes(app);
+  
   // MCP Testing API
   const mcpTestRouter = (await import('./api/mcp-test')).default;
   app.use('/api/mcp-test', mcpTestRouter);
@@ -147,6 +156,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bristol Elite Scraping routes with advanced Firecrawl capabilities
   const bristolEliteScrapingRouter = (await import('./routes/bristol-elite-scraping')).default;
   app.use('/api/bristol-elite', bristolEliteScrapingRouter);
+
+  // System Health and Stability Monitoring
+  app.get('/api/health', async (req, res) => {
+    try {
+      const healthCheck = await stabilityService.performHealthCheck();
+      res.status(healthCheck.overall === 'healthy' ? 200 : 503).json(healthCheck);
+    } catch (error) {
+      errorHandlingService.logError(error as Error, { endpoint: '/api/health' });
+      res.status(500).json({ 
+        overall: 'unhealthy', 
+        error: 'Health check failed',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
+  app.get('/api/system-status', async (req, res) => {
+    try {
+      const systemStatus = stabilityService.getSystemStatus();
+      res.json(systemStatus);
+    } catch (error) {
+      errorHandlingService.logError(error as Error, { endpoint: '/api/system-status' });
+      res.status(500).json({ error: 'Failed to get system status' });
+    }
+  });
 
   // OpenRouter models endpoint
   // OpenRouter models endpoint - fix authentication

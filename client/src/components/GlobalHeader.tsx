@@ -117,6 +117,17 @@ export function GlobalHeader() {
                 </a>
               </Link>
               
+              <Link href="/agents">
+                <a className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                  location === '/agents' || location === '/enhanced-agents'
+                    ? 'bg-blue-600/20 text-blue-400 shadow-lg shadow-blue-500/20' 
+                    : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
+                }`}>
+                  <Brain className="h-4 w-4" />
+                  <span className="text-sm font-medium">Agents</span>
+                </a>
+              </Link>
+              
               <Link href="/chat">
                 <a className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
                   location === '/chat' 

@@ -230,15 +230,70 @@ export const memoryLong = pgTable("memory_long", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Agent system prompts and configurations
-export const agentPrompts = pgTable("agent_prompts", {
+// Enhanced Multi-Agent System Architecture
+export const agents = pgTable("agents", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").references(() => users.id),
   name: varchar("name").notNull(),
-  type: varchar("type").notNull(), // system, project, context, persona
+  role: varchar("role").notNull(), // bristol-master, data-processing, financial-analysis, market-intelligence, lead-management, web-scraping, risk-assessment, compliance, reporting
+  status: varchar("status").notNull().default("active"), // active, inactive, busy, error
+  model: varchar("model").default("gpt-4o"), // OpenRouter model to use
+  systemPrompt: text("system_prompt").notNull(),
+  capabilities: jsonb("capabilities"), // JSON array of MCP tools this agent can use
+  performance: jsonb("performance"), // Performance metrics and statistics
+  lastActive: timestamp("last_active").defaultNow(),
+  totalTasks: integer("total_tasks").default(0),
+  successRate: real("success_rate").default(1.0),
+  averageResponseTime: real("avg_response_time"), // in milliseconds
+  metadata: jsonb("metadata"), // Additional configuration
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Agent task queue and execution tracking
+export const agentTasks = pgTable("agent_tasks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  agentId: varchar("agent_id").references(() => agents.id),
+  sessionId: varchar("session_id").references(() => chatSessions.id),
+  userId: varchar("user_id").references(() => users.id),
+  taskType: varchar("task_type").notNull(), // analysis, research, calculation, scraping, reporting
+  input: jsonb("input").notNull(),
+  output: jsonb("output"),
+  status: varchar("status").notNull().default("pending"), // pending, running, completed, failed
+  priority: integer("priority").default(0), // Higher number = higher priority
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  errorMessage: text("error_message"),
+  executionTime: real("execution_time"), // in milliseconds
+  mcpToolsUsed: jsonb("mcp_tools_used"), // Array of MCP tools used
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Agent communication and data sharing
+export const agentCommunications = pgTable("agent_communications", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  fromAgentId: varchar("from_agent_id").references(() => agents.id),
+  toAgentId: varchar("to_agent_id").references(() => agents.id),
+  sessionId: varchar("session_id").references(() => chatSessions.id),
+  messageType: varchar("message_type").notNull(), // data_share, task_request, result_notification, coordination
+  content: jsonb("content").notNull(),
+  priority: integer("priority").default(0),
+  status: varchar("status").notNull().default("sent"), // sent, received, processed
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Agent system prompts and configurations (enhanced)
+export const agentPrompts = pgTable("agent_prompts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  agentId: varchar("agent_id").references(() => agents.id),
+  userId: varchar("user_id").references(() => users.id),
+  name: varchar("name").notNull(),
+  type: varchar("type").notNull(), // system, project, context, persona, instruction
   content: text("content").notNull(),
   active: boolean("active").default(true),
   priority: integer("priority").default(0), // Higher priority prompts get injected first
+  version: integer("version").default(1),
+  parentId: varchar("parent_id"), // For versioning and history
   metadata: jsonb("metadata"), // Additional configuration
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -579,3 +634,27 @@ export type ScrapeJobsAnnex = typeof scrapeJobsAnnex.$inferSelect;
 export type InsertScrapeJobsAnnex = z.infer<typeof insertScrapeJobsAnnexSchema>;
 export type CompEventsAnnex = typeof compEventsAnnex.$inferSelect;
 export type InsertCompEventsAnnex = z.infer<typeof insertCompEventsAnnexSchema>;
+
+// Enhanced Multi-Agent System Types
+export const insertAgentSchema = createInsertSchema(agents).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAgentTaskSchema = createInsertSchema(agentTasks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertAgentCommunicationSchema = createInsertSchema(agentCommunications).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type Agent = typeof agents.$inferSelect;
+export type InsertAgent = z.infer<typeof insertAgentSchema>;
+export type AgentTask = typeof agentTasks.$inferSelect;
+export type InsertAgentTask = z.infer<typeof insertAgentTaskSchema>;
+export type AgentCommunication = typeof agentCommunications.$inferSelect;
+export type InsertAgentCommunication = z.infer<typeof insertAgentCommunicationSchema>;

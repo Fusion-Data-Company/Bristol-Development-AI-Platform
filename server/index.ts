@@ -83,6 +83,14 @@ app.use((req, res, next) => {
       } catch (error) {
         console.error('Failed to initialize MCP server manager:', error);
       }
+
+      // Start stability monitoring
+      try {
+        const { stabilityService } = await import('./services/stabilityService');
+        stabilityService.startMonitoring(30000); // 30 second intervals
+      } catch (error) {
+        console.error('Failed to start stability monitoring:', error);
+      }
     });
 
     // Handle server errors
