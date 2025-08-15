@@ -5,7 +5,7 @@ import type { Site } from '@shared/schema';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Building, TrendingUp, Users, DollarSign, Info, Layers, Satellite, Map as MapIcon, Home, GraduationCap } from 'lucide-react';
+import { MapPin, Building, TrendingUp, Users, DollarSign, Info, Layers, Satellite, Map as MapIcon, Home, GraduationCap, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ArcGISLayer, useArcGISDemographics } from '../analytics/ArcGISLayer';
 import { KMLLayer } from './KMLLayer';
@@ -96,6 +96,7 @@ export function InteractiveMap({
   const [showDemographics, setShowDemographics] = useState(false);
   const [showHousing, setShowHousing] = useState(false);
   const [demographicPopup, setDemographicPopup] = useState<{lat: number, lng: number, loading: boolean, data?: any} | null>(null);
+  const [dataLayersCollapsed, setDataLayersCollapsed] = useState(false);
   const [viewport, setViewport] = useState({
     longitude: -82.4572, // Atlanta/Sunbelt center
     latitude: 33.7490,
@@ -637,13 +638,28 @@ export function InteractiveMap({
 
         {/* Enhanced Layer Controls */}
         {showControls && (
-          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-4 shadow-xl border border-bristol-stone/30 min-w-[280px]">
-            <div className="flex items-center gap-2 mb-4">
-              <Layers className="w-5 h-5 text-bristol-maroon" />
-              <h4 className="font-serif text-base font-semibold text-bristol-ink">Data Layers</h4>
+          <div className={`absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-bristol-stone/30 transition-all duration-300 ${dataLayersCollapsed ? 'p-2 min-w-[140px]' : 'p-4 min-w-[280px]'}`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Layers className="w-5 h-5 text-bristol-maroon" />
+                <h4 className="font-serif text-base font-semibold text-bristol-ink">Data Layers</h4>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setDataLayersCollapsed(!dataLayersCollapsed)}
+                className="h-6 w-6 p-0 hover:bg-bristol-stone/10"
+              >
+                {dataLayersCollapsed ? (
+                  <ChevronDown className="w-4 h-4 text-bristol-stone" />
+                ) : (
+                  <ChevronUp className="w-4 h-4 text-bristol-stone" />
+                )}
+              </Button>
             </div>
             
-            <div className="space-y-3">
+            {!dataLayersCollapsed && (
+              <div className="space-y-3 mt-4">
               {/* Market Analysis */}
               <div className="border-b border-bristol-stone/20 pb-3">
                 <h5 className="text-xs font-medium text-bristol-stone uppercase tracking-wide mb-2">Market Analysis</h5>
@@ -659,7 +675,6 @@ export function InteractiveMap({
                       />
                       <label htmlFor="heatmap" className="text-sm text-bristol-ink cursor-pointer">Market Heat Map</label>
                     </div>
-                    <Badge variant="secondary" className="text-xs">Enhanced</Badge>
                   </div>
                   {kmlData && (
                     <div className="flex items-center gap-2">
@@ -761,30 +776,31 @@ export function InteractiveMap({
                   </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="mt-3 pt-3 border-t border-bristol-stone">
-              <div className="flex gap-1">
-                <Button
-                  size="sm"
-                  variant={mapStyle.includes('satellite') ? 'default' : 'outline'}
-                  onClick={() => setMapStyle('mapbox://styles/mapbox/satellite-streets-v12')}
-                  className="text-xs"
-                >
-                  <Satellite className="w-3 h-3 mr-1" />
-                  Satellite
-                </Button>
-                <Button
-                  size="sm"
-                  variant={mapStyle.includes('streets') && !mapStyle.includes('satellite') ? 'default' : 'outline'}
-                  onClick={() => setMapStyle('mapbox://styles/mapbox/streets-v12')}
-                  className="text-xs"
-                >
-                  <MapIcon className="w-3 h-3 mr-1" />
-                  Streets
-                </Button>
+              
+              <div className="mt-3 pt-3 border-t border-bristol-stone">
+                <div className="flex gap-1">
+                  <Button
+                    size="sm"
+                    variant={mapStyle.includes('satellite') ? 'default' : 'outline'}
+                    onClick={() => setMapStyle('mapbox://styles/mapbox/satellite-streets-v12')}
+                    className="text-xs"
+                  >
+                    <Satellite className="w-3 h-3 mr-1" />
+                    Satellite
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant={mapStyle.includes('streets') && !mapStyle.includes('satellite') ? 'default' : 'outline'}
+                    onClick={() => setMapStyle('mapbox://styles/mapbox/streets-v12')}
+                    className="text-xs"
+                  >
+                    <MapIcon className="w-3 h-3 mr-1" />
+                    Streets
+                  </Button>
+                </div>
               </div>
             </div>
+            )}
           </div>
         )}
 
