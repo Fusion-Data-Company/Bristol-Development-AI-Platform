@@ -60,6 +60,7 @@ import { Link, useLocation } from "wouter";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
+import Chrome from "../components/brand/SimpleChrome";
 
 interface PremiumModel {
   id: string;
@@ -135,7 +136,7 @@ const DEFAULT_BRISTOL_PROMPT = `I'm the Bristol Site Intelligence AI – the pro
 - Clear investment recommendations with risk assessments
 - Use Bristol branding: "Bristol A.I." not "Bristol Brain"
 
-Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated, results-oriented approach expected from a Fortune 500-grade AI system.`;
+Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated, results-oriented approach expected from an enterprise-grade AI system.`;
 
 // Utility functions for the Bristol A.I. Elite system
 const nowISO = () => new Date().toISOString();
@@ -1172,6 +1173,7 @@ What property development project, market analysis, or investment opportunity ca
   ];
 
   return (
+    <Chrome>
     <div className="min-h-screen bg-bristol-ink">
       {/* Premium Bristol Header with Real Stucco Texture - Only Header, No Footer */}
       <header className="relative overflow-hidden shadow-2xl border-b-2 border-cyan-400/50 bg-slate-800" style={{
@@ -1324,7 +1326,7 @@ What property development project, market analysis, or investment opportunity ca
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-bristol-cyan/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute -top-5 -right-10 w-32 h-32 bg-bristol-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
           
-          {/* Fortune 500 Elite header background */}
+          {/* Enterprise Elite header background */}
           <div 
             className="absolute inset-0" 
             style={{
@@ -1347,9 +1349,9 @@ What property development project, market analysis, or investment opportunity ca
                 </h1>
                 <p className="text-lg text-bristol-gold font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                  Fortune 500 Intelligence Platform
+                  Enterprise Intelligence Platform
                   <div className="px-2 py-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-xs font-bold text-white ml-2">
-                    💎 v5.0
+                    💎 ELITE
                   </div>
                 </p>
               </div>
@@ -1650,8 +1652,8 @@ What property development project, market analysis, or investment opportunity ca
                       <div className={cx(
                         "max-w-[85%] rounded-2xl px-6 py-4 backdrop-blur-xl border-2 relative overflow-hidden",
                         msg.role === "user" 
-                          ? "bg-gradient-to-br from-bristol-cyan via-cyan-400 to-bristol-electric border-bristol-cyan text-white shadow-2xl shadow-bristol-cyan/60 hover:shadow-bristol-cyan/80 transition-all duration-300"
-                          : "bg-gradient-to-br from-slate-900 via-gray-800 to-slate-800 border-bristol-gold/60 text-white shadow-2xl shadow-black/80 hover:shadow-bristol-gold/40 transition-all duration-300"
+                          ? "bg-gradient-to-br from-gray-600 via-gray-500 to-gray-700 border-cyan-400 text-white shadow-2xl shadow-cyan-400/60 hover:shadow-cyan-400/80 transition-all duration-300"
+                          : "bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900 border-cyan-400/60 text-white shadow-2xl shadow-cyan-400/30 hover:shadow-cyan-400/50 transition-all duration-300"
                       )}>
                         {/* Metallic shine overlay */}
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50 pointer-events-none" />
@@ -1864,6 +1866,7 @@ What property development project, market analysis, or investment opportunity ca
       </div>
       </div>
     </div>
+    </Chrome>
   );
 };
 
@@ -2238,7 +2241,7 @@ function AgentsPane({
   return (
     <div className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <div className="p-8 space-y-8">
-        {/* Elite Fortune 500 Header */}
+        {/* Elite Enterprise Header */}
         <div className="relative overflow-hidden">
           {/* Background effects */}
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-600/10 rounded-3xl" />
@@ -2738,5 +2741,6 @@ function EnterpriseControlPanel({
       )}
       
     </div>
+    </Chrome>
   );
 }
