@@ -22,6 +22,7 @@ import { ExportCompsTools } from '@/components/comparables/ExportCompsTools';
 import { CompsFilters } from '@/components/comparables/CompsFilters';
 import ProductionMetrics from '@/components/comparables/ProductionMetrics';
 import ProductionValidation from '@/components/comparables/ProductionValidation';
+import backgroundImage from '@assets/5+Points+banner_1755274421793.webp';
 import { 
   Search, 
   Download, 
@@ -165,11 +166,11 @@ export default function ComparablesAnnex() {
 
   // Calculate available filter options from data
   const availableOptions = useMemo(() => {
-    const assetTypes = [...new Set(rawComps.map(c => c.assetType).filter(Boolean))];
-    const subtypes = [...new Set(rawComps.map(c => c.subtype).filter(Boolean))];
-    const sources = [...new Set(rawComps.map(c => c.source).filter(Boolean))];
-    const cities = [...new Set(rawComps.map(c => c.city).filter(Boolean))];
-    const amenities = [...new Set(rawComps.flatMap(c => c.amenityTags || []))];
+    const assetTypes = Array.from(new Set(rawComps.map(c => c.assetType).filter((item): item is string => Boolean(item))));
+    const subtypes = Array.from(new Set(rawComps.map(c => c.subtype).filter((item): item is string => Boolean(item))));
+    const sources = Array.from(new Set(rawComps.map(c => c.source).filter((item): item is string => Boolean(item))));
+    const cities = Array.from(new Set(rawComps.map(c => c.city).filter((item): item is string => Boolean(item))));
+    const amenities = Array.from(new Set(rawComps.flatMap(c => c.amenityTags || [])));
     
     return { assetTypes, subtypes, sources, cities, amenities };
   }, [rawComps]);
@@ -296,7 +297,16 @@ export default function ComparablesAnnex() {
 
   return (
     <Chrome>
-      <div className="container mx-auto px-6 py-8">
+      {/* Hero Background Section */}
+      <div 
+        className="relative min-h-screen bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        {/* Dark overlay for better readability */}
+        <div className="absolute inset-0 bg-black/40" />
+        
+        {/* Content Container */}
+        <div className="relative z-10 container mx-auto px-6 py-8">
         {/* Page Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -640,6 +650,7 @@ export default function ComparablesAnnex() {
         </div>
         
         <BristolFooter />
+        </div>
       </div>
     </Chrome>
   );
