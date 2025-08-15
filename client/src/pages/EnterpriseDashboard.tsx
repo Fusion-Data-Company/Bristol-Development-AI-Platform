@@ -27,6 +27,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
+import { BristolFooter } from "@/components/ui/BristolFooter";
 
 interface DashboardMetrics {
   totalSites: number;
@@ -174,7 +175,7 @@ export default function EnterpriseDashboard() {
   };
 
   return (
-    <SimpleChrome title="Enterprise Dashboard">
+    <SimpleChrome>
       <div className="min-h-screen bg-gray-50 p-6">
         {/* Header Section */}
         <div className="mb-8">
@@ -450,6 +451,8 @@ export default function EnterpriseDashboard() {
             </div>
           </TabsContent>
         </Tabs>
+        
+        <BristolFooter />
       </div>
     </SimpleChrome>
   );

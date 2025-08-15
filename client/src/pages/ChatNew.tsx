@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import SimpleChrome from '@/components/brand/SimpleChrome';
+import { BristolFooter } from "@/components/ui/BristolFooter";
 import { 
   Send, 
   MessageCircle, 
@@ -309,6 +310,8 @@ export default function Chat() {
             Instructions
           </Button>
         </div>
+        
+        <BristolFooter />
       </div>
     </SimpleChrome>
   );

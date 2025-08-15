@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Building, Map } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
 import { DataBackground } from "../components/EnterpriseBackgrounds";
+import { BristolFooter } from "@/components/ui/BristolFooter";
 import { SitesTable } from "../widgets/tables/SitesTable";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
 import { SiteDetails } from "../widgets/details/SiteDetails";
@@ -505,6 +506,8 @@ export default function Sites() {
             </div>
           </SheetContent>
         </Sheet>
+        
+        <BristolFooter />
       </div>
     </Chrome>
     </DataBackground>

@@ -21,6 +21,7 @@ import IntegrationsNew from "@/pages/IntegrationsNew";
 import Demographics from "@/pages/Demographics";
 import { Tools } from "@/pages/Tools";
 import ComparablesAnnex from "@/pages/ComparablesAnnex";
+import EnterpriseDashboard from "@/pages/EnterpriseDashboard";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -33,6 +34,7 @@ function Router() {
         <>
           <Route path="/" component={MainApp} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/enterprise" component={EnterpriseDashboard} />
           <Route path="/sites" component={Sites} />
           <Route path="/analytics" component={Analytics} />
           <Route path="/demographics" component={Demographics} />

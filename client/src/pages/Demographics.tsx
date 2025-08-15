@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, TrendingUp, Users, DollarSign, BarChart3, Info, Target } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
+import { BristolFooter } from "@/components/ui/BristolFooter";
 import { DemographicMap } from "../components/maps/DemographicMap";
 import { SiteDemographicAnalysis } from "../components/analysis/SiteDemographicAnalysis";
 import { AddressDemographics } from "../components/analysis/AddressDemographics";
@@ -351,6 +352,8 @@ export default function Demographics() {
           </TabsContent>
         </Tabs>
         </div>
+        
+        <BristolFooter />
       </div>
     </Chrome>
   );

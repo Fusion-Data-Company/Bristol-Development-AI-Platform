@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import Chrome from "../components/brand/SimpleChrome";
+import { BristolFooter } from "@/components/ui/BristolFooter";
 import { PortfolioMap } from "../components/maps/PortfolioMap";
 
 import { MetricsTable } from "../widgets/tables/MetricsTable";
@@ -83,6 +84,8 @@ export default function App() {
             </Card>
           </TabsContent>
         </Tabs>
+        
+        <BristolFooter />
       </div>
     </Chrome>
   );

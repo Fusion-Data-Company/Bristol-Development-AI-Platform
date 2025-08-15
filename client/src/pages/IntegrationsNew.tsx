@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Settings, CheckCircle, XCircle, Loader2, Plus, Trash2, Eye, EyeOff, Plug } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
+import { BristolFooter } from "@/components/ui/BristolFooter";
 import { apiRequest } from "@/lib/queryClient";
 
 interface Tool {
@@ -267,6 +268,8 @@ export default function Integrations() {
             )}
           </CardContent>
         </Card>
+        
+        <BristolFooter />
       </div>
     </Chrome>
   );

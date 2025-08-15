@@ -32,6 +32,7 @@ import {
 } from 'lucide-react';
 import Chrome from '@/components/brand/SimpleChrome';
 import { ToolsBackground } from "../components/EnterpriseBackgrounds";
+import { BristolFooter } from "@/components/ui/BristolFooter";
 
 export default function Analytics() {
   const [timeRange, setTimeRange] = useState('30d');
@@ -370,6 +371,8 @@ export default function Analytics() {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      <BristolFooter />
       </div>
     </Chrome>
     </ToolsBackground>

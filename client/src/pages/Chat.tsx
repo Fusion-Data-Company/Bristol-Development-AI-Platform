@@ -55,6 +55,7 @@ import { DataVisualizationPanel } from '@/components/chat/DataVisualizationPanel
 import { OnboardingGuide } from '@/components/chat/OnboardingGuide';
 import { ChatBackground } from "../components/EnterpriseBackgrounds";
 import SimpleChrome from "../components/brand/SimpleChrome";
+import { BristolFooter } from "@/components/ui/BristolFooter";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
 
 interface PremiumModel {
@@ -2457,6 +2458,8 @@ function EnterpriseControlPanel({
           </div>
         </div>
       )}
+      
+      <BristolFooter />
     </div>
   );
 }

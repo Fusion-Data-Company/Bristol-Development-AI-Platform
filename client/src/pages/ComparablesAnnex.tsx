@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import Chrome from '@/components/brand/SimpleChrome';
+import { BristolFooter } from "@/components/ui/BristolFooter";
 import TanStackCompsTable from '@/components/comparables/TanStackCompsTable';
 import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
@@ -637,6 +638,8 @@ export default function ComparablesAnnex() {
             <ProductionValidation />
           </div>
         </div>
+        
+        <BristolFooter />
       </div>
     </Chrome>
   );

@@ -56,6 +56,7 @@ import bristolLogoPath from '@assets/bristol-logo_1754934306711.gif';
 import propertyImage1 from '@assets/Screenshot 2025-08-11 at 10.44.53_1754934296368.png';
 import Chrome from "@/components/brand/SimpleChrome";
 import propertyImage2 from '@assets/Screenshot 2025-08-11 at 10.45.12_1754934314469.png';
+import { BristolFooter } from "@/components/ui/BristolFooter";
 
 interface DashboardData {
   summary: {
@@ -777,6 +778,8 @@ export default function Dashboard() {
           </div>
         )}
         </div>
+        
+        <BristolFooter />
       </div>
     </Chrome>
     </DashboardBackground>

@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import Chrome from '@/components/brand/SimpleChrome';
+import { BristolFooter } from "@/components/ui/BristolFooter";
 
 interface IntegrationStatus {
   name: string;
@@ -349,6 +350,8 @@ export default function Integrations() {
             </Card>
           </TabsContent>
         </Tabs>
+        
+        <BristolFooter />
       </div>
     </Chrome>
   );

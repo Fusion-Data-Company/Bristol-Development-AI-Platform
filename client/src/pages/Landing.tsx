@@ -15,6 +15,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { BristolFooter } from "@/components/ui/BristolFooter";
 
 export default function Landing() {
   const handleLogin = () => {

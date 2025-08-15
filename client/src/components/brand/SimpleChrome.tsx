@@ -18,6 +18,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
     { path: "/demographics", label: "Demographics", icon: Users },
     { path: "/comparables", label: "Comparables", icon: Building2 },
     { path: "/chat", label: "Chat", icon: MessageSquare },
+    { path: "/enterprise", label: "Enterprise", icon: Settings },
     { path: "/integrations", label: "Integrations", icon: Settings },
     { path: "/tools", label: "Tools", icon: Wrench },
   ];
