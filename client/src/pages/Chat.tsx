@@ -869,7 +869,8 @@ What property or investment can I analyze for you today?`,
           language,
           content: code,
           title: `${language.charAt(0).toUpperCase() + language.slice(1)} Code`,
-          messageId
+          messageId,
+          createdAt: new Date()
         });
       }
     }
@@ -1898,20 +1899,9 @@ What property or investment can I analyze for you today?`,
                           boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
                         }}
                       >
-                        {/* Streaming indicator for assistant messages */}
-                        {msg.role === "assistant" && (msg as any).metadata?.streaming && (
-                          <div className="absolute -top-1 -right-1 w-3 h-3 bg-bristol-cyan rounded-full animate-pulse" />
-                        )}
                         
                         <div className="text-sm whitespace-pre-wrap font-medium">
-                          {msg.content || (msg.role === "assistant" && (msg as any).metadata?.streaming ? (
-                            <div className="flex items-center gap-2 text-bristol-cyan/70">
-                              <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse" />
-                              <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse delay-150" />
-                              <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse delay-300" />
-                              <span className="ml-2 text-xs">Bristol A.I. is thinking...</span>
-                            </div>
-                          ) : msg.content)}
+                          {msg.content}
                         </div>
                         
                         <div className="flex items-center justify-between mt-2">
@@ -1924,17 +1914,6 @@ What property or investment can I analyze for you today?`,
                           {/* Model and provider badge for assistant messages */}
                           {msg.role === "assistant" && (msg as any).metadata && (
                             <div className="flex items-center gap-1">
-                              {(msg as any).metadata.streaming && (
-                                <div className="relative group">
-                                  <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/40 to-bristol-electric/40 rounded-full blur-sm opacity-75 animate-pulse"></div>
-                                  <span className="relative text-xs font-black text-bristol-cyan bg-gradient-to-r from-bristol-cyan/25 to-bristol-electric/25 px-2 py-1 rounded-full border border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/25 tracking-wider">
-                                    <div className="flex items-center gap-1">
-                                      <div className="w-1 h-1 bg-bristol-cyan rounded-full animate-pulse"></div>
-                                      STREAMING
-                                    </div>
-                                  </span>
-                                </div>
-                              )}
                               {(msg as any).metadata.provider && (
                                 <span className="text-xs text-bristol-cyan bg-bristol-cyan/20 border border-bristol-cyan/30 px-2 py-1 rounded-full font-bold">
                                   {(msg as any).metadata.provider.toUpperCase()}
@@ -2048,8 +2027,7 @@ What property or investment can I analyze for you today?`,
                   value={eliteInput}
                   onChange={(e) => setEliteInput(e.target.value)}
                   onKeyDown={handleEliteKeyPress}
-                  placeholder={eliteLoading ? "Bristol A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
-                  disabled={eliteLoading}
+                  placeholder="Ask about properties, market trends, demographics, investment opportunities..."
                   className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-bristol-cyan/60 disabled:opacity-60 relative z-10"
                   style={{
                     background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
@@ -2063,7 +2041,7 @@ What property or investment can I analyze for you today?`,
               {/* Glass Send Button */}
               <button
                 onClick={handleEliteSend}
-                disabled={eliteLoading || !eliteInput.trim()}
+                disabled={!eliteInput.trim()}
                 className={cx(
                   "chrome-metallic-button relative inline-flex items-center gap-3 px-6 py-4 rounded-3xl font-bold text-sm",
                   "disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden"
