@@ -1008,8 +1008,8 @@ What property development project, market analysis, or investment opportunity ca
   return (
     <ChatBackground>
       <div className="h-screen w-screen flex">
-      {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout - EXACT REPLICA OF FLOATING WIDGET */}
-      <div 
+        {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout - EXACT REPLICA OF FLOATING WIDGET */}
+        <div 
         className="w-full h-screen text-neutral-100 shadow-2xl flex flex-col chrome-metallic-panel font-cinzel"
         style={{
           background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 25%, rgba(51, 65, 85, 0.92) 50%, rgba(30, 41, 59, 0.95) 75%, rgba(15, 23, 42, 0.98) 100%)',
@@ -1943,7 +1943,6 @@ function AdminPane({
           </div>
         </div>
       </div>
-    </div>
     </ChatBackground>
   );
 };

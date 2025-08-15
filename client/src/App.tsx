@@ -4,6 +4,7 @@ import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
+import { GlobalHeader } from "@/components/GlobalHeader";
 
 import BristolFloatingWidget from "@/components/BristolFloatingWidget";
 
@@ -73,7 +74,14 @@ function AppContent() {
   
   return (
     <>
-      <Router />
+      {/* Global Header - Always visible when authenticated */}
+      {isAuthenticated && location !== "/landing" && <GlobalHeader />}
+      
+      {/* Main content with header spacing */}
+      <div className={isAuthenticated && location !== "/landing" ? "pt-20" : ""}>
+        <Router />
+      </div>
+      
       {/* Hide Bristol Floating Widget on chat page */}
       {isAuthenticated && location !== '/chat' && (
         <BristolFloatingWidget 
