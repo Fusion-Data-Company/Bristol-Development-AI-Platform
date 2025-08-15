@@ -22,11 +22,13 @@ interface InteractiveMapProps {
   fullScreen?: boolean;
 }
 
-const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || import.meta.env.VITE_MAPBOX_PUBLIC_KEY2;
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
 // Check MapBox token
 if (!MAPBOX_TOKEN) {
   console.error('MapBox access token is missing! Map will not render.');
+} else {
+  console.log('MapBox token loaded:', MAPBOX_TOKEN.substring(0, 20) + '...');
 }
 
 // Real verified data sources for map layers
@@ -92,7 +94,7 @@ export function InteractiveMap({
 }: InteractiveMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/satellite-streets-v12');
+  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v12');
   const [activeLayers, setActiveLayers] = useState<Set<string>>(new Set(['heatmap']));
   const [showKML, setShowKML] = useState(!!kmlData);
   const [layerData, setLayerData] = useState<{[key: string]: any}>({});
@@ -306,8 +308,15 @@ export function InteractiveMap({
           style={{ width: '100%', height: '100%' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}
-          onLoad={() => console.log('Map loaded successfully')}
-          onError={(error) => console.error('Map error:', error)}
+          onLoad={() => {
+            console.log('Map loaded successfully');
+            console.log('Map style:', mapStyle);
+          }}
+          onError={(error) => {
+            console.error('Map error:', error);
+            console.error('Map token being used:', MAPBOX_TOKEN?.substring(0, 20) + '...');
+            console.error('Map style:', mapStyle);
+          }}
           interactiveLayerIds={['market-heat', 'kml-polygons', 'kml-polygon-outlines', 'kml-lines', 'kml-points']}
           projection={{ name: 'mercator' }}
         >
