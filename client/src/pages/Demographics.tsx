@@ -86,63 +86,77 @@ export default function Demographics() {
 
   return (
     <Chrome>
-      <div className="min-h-screen bg-bristol-cream text-bristol-ink">
-        {/* Header */}
-        <div className="border-b border-bristol-stone/20 bg-bristol-ink text-white">
-          <div className="px-6 py-8">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-serif font-bold text-bristol-gold">
-                  Demographics Intelligence
-                </h1>
-                <p className="text-bristol-cream/80 mt-2">
-                  Census ACS demographic analysis for Bristol Development sites
-                </p>
-              </div>
-              <div className="flex items-center gap-4">
-                <Badge variant="outline" className="border-bristol-gold text-bristol-gold">
-                  ACS 2023 Data
-                </Badge>
-                <Badge variant="outline" className="border-bristol-stone text-bristol-cream">
-                  Live API
-                </Badge>
+      <div className="min-h-screen bg-gradient-to-br from-bristol-ink via-slate-900 to-bristol-ink relative overflow-hidden">
+        {/* Elite background effects */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(69,214,202,0.03),transparent_50%)]" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-bristol-gold/5 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-0 w-64 h-64 bg-bristol-maroon/5 rounded-full blur-2xl animate-pulse delay-500" />
+        
+        <div className="relative z-10">
+          {/* Elite Header */}
+          <div className="border-b border-bristol-cyan/20 bg-bristol-ink/60 backdrop-blur-xl">
+            <div className="container mx-auto max-w-7xl px-6 py-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-6">
+                  <div className="relative">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-bristol-cyan/20 to-bristol-gold/20 rounded-2xl blur-xl" />
+                    <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-bristol-maroon via-bristol-cyan to-bristol-gold flex items-center justify-center border border-bristol-cyan/30">
+                      <Users className="h-8 w-8 text-white drop-shadow-lg" />
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent">
+                      DEMOGRAPHICS INTELLIGENCE
+                    </h1>
+                    <p className="text-bristol-cyan font-medium text-lg mt-1">
+                      Census ACS demographic analysis for Bristol Development sites
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-bristol-ink/40 border border-bristol-cyan/30">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                    <span className="text-bristol-cyan text-sm font-medium">ACS 2023 Live</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-bristol-ink/40 border border-bristol-gold/30">
+                    <BarChart3 className="w-4 h-4 text-bristol-gold" />
+                    <span className="text-bristol-gold text-sm font-medium">Real-time API</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Stats Dashboard */}
-        <div className="px-6 py-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-            <Card className="bg-white border-bristol-stone/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  Total Sites
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
-                  {stats?.totalSites || 0}
-                </div>
-              </CardContent>
+          {/* Elite Stats Dashboard */}
+          <div className="container mx-auto max-w-7xl px-6 py-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+              <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-bristol-cyan font-medium">Total Sites</CardTitle>
+                    <MapPin className="h-5 w-5 text-bristol-gold" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-white">{stats?.totalSites || 0}</div>
+                </CardContent>
             </Card>
 
-            <Card className="bg-white border-bristol-stone/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4" />
-                  With Demographics
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
-                  {stats?.sitesWithData || 0}
-                </div>
-                <div className="text-xs text-bristol-stone">
-                  {stats?.totalSites ? Math.round((stats.sitesWithData / stats.totalSites) * 100) : 0}% coverage
-                </div>
-              </CardContent>
+              <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-bristol-cyan font-medium">With Demographics</CardTitle>
+                    <BarChart3 className="h-5 w-5 text-bristol-gold" />
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-white">{stats?.sitesWithData || 0}</div>
+                  <p className="text-bristol-stone text-sm mt-1">
+                    {stats?.totalSites ? Math.round((stats.sitesWithData / stats.totalSites) * 100) : 0}% coverage
+                  </p>
+                </CardContent>
             </Card>
 
             <Card className="bg-white border-bristol-stone/20">
@@ -351,6 +365,7 @@ export default function Demographics() {
             </div>
           </TabsContent>
         </Tabs>
+          </div>
         </div>
         
         <BristolFooter />

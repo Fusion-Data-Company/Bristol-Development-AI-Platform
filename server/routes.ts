@@ -47,6 +47,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Import analytics API - enterprise-grade analytics with performance monitoring
   const analyticsRouter = (await import('./api/analytics')).default;
   app.use('/api/analytics', analyticsRouter);
+  
+  // Enterprise Analytics APIs with MCP integration
+  const enterpriseMetricsRouter = (await import('./api/analytics/enterprise-metrics')).default;
+  const realTimeIntelligenceRouter = (await import('./api/analytics/real-time-intelligence')).default;
+  app.use('/api/analytics/enterprise', enterpriseMetricsRouter);
+  app.use('/api/analytics/intelligence', realTimeIntelligenceRouter);
 
   // Tools API routes (BLS, BEA, HUD, Foursquare, FBI, NOAA) - temporarily bypass auth for development
   const blsRouter = (await import('./api/tools/bls')).default;

@@ -76,6 +76,13 @@ interface AnalyticsAgent {
 }
 
 export default function Analytics() {
+  // Redirect to new enterprise analytics
+  window.location.href = '/analytics-enterprise';
+  return null;
+}
+
+// Keep old component for reference but redirect to new one
+export function AnalyticsOld() {
   const [activeTab, setActiveTab] = useState('portfolio');
   const [agentQuery, setAgentQuery] = useState('');
   const [agentResponse, setAgentResponse] = useState('');
