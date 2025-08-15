@@ -56,7 +56,8 @@ class EnterpriseHealthService {
       'Real-time Sync',
       'Bristol Brain',
       'Scraping Service',
-      'Integration Service'
+      'Integration Service',
+      'Analytics Agent'
     ];
 
     services.forEach(serviceName => {

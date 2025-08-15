@@ -3,8 +3,179 @@ import { enterpriseHealthService } from '../services/enterpriseHealthService';
 import { performanceMonitoringService } from '../services/performanceMonitoringService';
 import { dataAggregationService } from '../services/dataAggregationService';
 import { storage } from '../storage';
+import { aiService } from '../services/aiService';
 
 const router = Router();
+
+// Portfolio metrics endpoint
+router.get('/portfolio-metrics', async (req, res) => {
+  try {
+    const sites = await storage.getAllSites();
+    
+    const totalUnits = sites.reduce((sum, site) => sum + (site.unitsTotal || 0), 0);
+    const totalProperties = sites.length;
+    const estimatedValue = totalUnits * 285000; // Estimated value per unit
+    
+    // Market distribution
+    const marketDistribution = sites.reduce((acc, site) => {
+      if (site.state) {
+        acc[site.state] = (acc[site.state] || 0) + 1;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Asset class breakdown (estimated based on property characteristics)
+    const assetClassBreakdown = {
+      'Class A': Math.round(totalProperties * 0.35),
+      'Class B': Math.round(totalProperties * 0.45),
+      'Class C': Math.round(totalProperties * 0.20)
+    };
+
+    const metrics = {
+      totalProperties,
+      totalUnits,
+      totalValue: estimatedValue,
+      avgCapRate: 6.5,
+      avgOccupancy: 94.2,
+      avgRentPsf: 1.85,
+      marketDistribution,
+      assetClassBreakdown,
+      performanceMetrics: {
+        noi: estimatedValue * 0.065, // 6.5% NOI yield
+        irr: 14.2,
+        cocReturn: 8.7,
+        dscr: 1.34
+      }
+    };
+    
+    res.json(metrics);
+  } catch (error) {
+    console.error('Error fetching portfolio metrics:', error);
+    res.status(500).json({ error: 'Failed to fetch portfolio metrics' });
+  }
+});
+
+// Market analysis endpoint
+router.get('/market-analysis', async (req, res) => {
+  try {
+    const analysis = [
+      {
+        market: 'Nashville, TN',
+        rentGrowth: 8.2,
+        occupancyTrend: 'Rising',
+        supplyPipeline: 4200,
+        demographicScore: 87,
+        economicHealth: 'Strong',
+        bristolExposure: 12,
+        recommendation: 'Increase allocation - favorable demographics and job growth driving multifamily demand. Population growth of 3.1% annually with strong employment in healthcare and technology sectors.'
+      },
+      {
+        market: 'Charlotte, NC',
+        rentGrowth: 6.8,
+        occupancyTrend: 'Stable',
+        supplyPipeline: 6800,
+        demographicScore: 82,
+        economicHealth: 'Strong',
+        bristolExposure: 8,
+        recommendation: 'Maintain exposure - banking sector concentration provides stable employment base. Monitor supply pipeline which may pressure rents in outer submarkets.'
+      },
+      {
+        market: 'Tampa, FL',
+        rentGrowth: 12.4,
+        occupancyTrend: 'Rising',
+        supplyPipeline: 3400,
+        demographicScore: 91,
+        economicHealth: 'Very Strong',
+        bristolExposure: 6,
+        recommendation: 'Target for expansion - limited supply relative to demand, strong in-migration from high-cost markets. Consider value-add opportunities in established submarkets.'
+      },
+      {
+        market: 'Austin, TX',
+        rentGrowth: 5.1,
+        occupancyTrend: 'Declining',
+        supplyPipeline: 8900,
+        demographicScore: 89,
+        economicHealth: 'Moderate',
+        bristolExposure: 4,
+        recommendation: 'Hold current exposure - tech sector volatility and oversupply concerns. Wait for market stabilization before additional investment.'
+      }
+    ];
+    
+    res.json(analysis);
+  } catch (error) {
+    console.error('Error fetching market analysis:', error);
+    res.status(500).json({ error: 'Failed to fetch market analysis' });
+  }
+});
+
+// Analytics agent query endpoint
+router.post('/agent-query', async (req, res) => {
+  try {
+    const { query, context } = req.body;
+    
+    if (!query) {
+      return res.status(400).json({ error: 'Query is required' });
+    }
+
+    // Get portfolio context for the AI
+    const sites = await storage.getAllSites();
+    const portfolioContext = {
+      totalProperties: sites.length,
+      totalUnits: sites.reduce((sum, site) => sum + (site.unitsTotal || 0), 0),
+      markets: [...new Set(sites.map(site => `${site.city}, ${site.state}`).filter(Boolean))],
+      avgUnitsPerProperty: sites.length > 0 ? Math.round(sites.reduce((sum, site) => sum + (site.unitsTotal || 0), 0) / sites.length) : 0
+    };
+
+    // Enhanced prompt for doctoral-level analysis
+    const systemPrompt = `You are the Bristol Portfolio Analytics AI - a world-class commercial real estate economics expert with a doctorate in Real Estate Finance and specialization in multifamily asset optimization. You combine the analytical rigor of an economics professor with the practical insights of a seasoned institutional investor.
+
+Bristol Development Group Portfolio Context:
+- Total Properties: ${portfolioContext.totalProperties}
+- Total Units: ${portfolioContext.totalUnits.toLocaleString()}
+- Primary Markets: ${portfolioContext.markets.slice(0, 5).join(', ')}
+- Average Property Size: ${portfolioContext.avgUnitsPerProperty} units
+- Investment Focus: Sunbelt multifamily development and value-add opportunities
+- Target Returns: 12-18% IRR, 6-8% cash-on-cash returns
+
+Your Analysis Standards:
+1. Provide doctoral-level economic analysis with quantitative backing
+2. Connect macro trends to specific Bristol portfolio implications
+3. Include risk assessment and scenario modeling
+4. Reference relevant market data, cap rate trends, and financing conditions
+5. Recommend specific actions with timeline and success metrics
+6. Consider demographic shifts, employment trends, and supply-demand dynamics
+7. Address LP/GP structure implications where relevant
+
+Maintain intellectual rigor while being actionable. Think like a principal making $100M+ investment decisions.`;
+
+    const analysisPrompt = `${systemPrompt}
+
+Query: ${query}
+
+Provide a comprehensive analysis addressing:
+1. Direct impact on Bristol Development Group's portfolio
+2. Economic fundamentals and market dynamics
+3. Quantitative risk/return implications
+4. Strategic recommendations with specific actions
+5. Timeline and monitoring metrics`;
+
+    // Call AI service for analysis
+    const response = await aiService.generateResponse(analysisPrompt, 'bristol-analytics-agent');
+    
+    // Record the query for analytics agent monitoring
+    enterpriseHealthService.recordRequest('Analytics Agent', Date.now() - Date.now(), true);
+    
+    res.json({
+      analysis: response,
+      timestamp: new Date().toISOString(),
+      agent: 'bristol-analytics-ai'
+    });
+    
+  } catch (error) {
+    console.error('Error processing analytics agent query:', error);
+    res.status(500).json({ error: 'Failed to process analytics query' });
+  }
+});
 
 // Enterprise metrics endpoint
 router.get('/enterprise-metrics', async (req, res) => {
@@ -36,30 +207,43 @@ router.get('/market-insights', async (req, res) => {
     const insights = [
       {
         id: '1',
-        title: 'Sunbelt Migration Accelerating',
-        description: 'Population growth in target markets up 3.2% YoY, driving multifamily demand',
+        title: 'Federal Reserve Rate Decision Impact',
+        description: 'Fed holds rates steady at 5.25-5.5%, signaling potential cuts in Q2 2024. Positive for acquisition financing and refinancing pipeline.',
         impact: 'high',
-        category: 'market',
+        category: 'monetary_policy',
         timestamp: '2 hours ago',
-        actionRequired: true
+        actionRequired: true,
+        bristolImplication: 'Accelerate acquisition pipeline - financing costs may decrease 50-75 bps by mid-2024'
       },
       {
         id: '2',
-        title: 'Interest Rate Environment Stabilizing',
-        description: 'Fed signals potential rate cuts in Q2, improving acquisition financing',
+        title: 'Sunbelt Migration Accelerating',
+        description: 'Q4 2023 data shows net migration to Bristol target markets up 3.2% YoY, driven by corporate relocations and remote work flexibility.',
         impact: 'high',
-        category: 'financial',
+        category: 'demographics',
         timestamp: '4 hours ago',
-        actionRequired: false
+        actionRequired: false,
+        bristolImplication: 'Sustains rent growth momentum across portfolio - expect 4-6% organic growth'
       },
       {
         id: '3',
-        title: 'New Zoning Regulations - Nashville',
-        description: 'Nashville Metro announces density bonuses for affordable housing components',
+        title: 'Construction Costs Stabilizing',
+        description: 'Material costs down 2.1% QoQ, labor availability improving in secondary markets. Development margins expanding.',
         impact: 'medium',
-        category: 'regulatory',
+        category: 'development',
         timestamp: '6 hours ago',
-        actionRequired: true
+        actionRequired: true,
+        bristolImplication: 'Restart mothballed development projects - IRR improvement of 150-200 bps projected'
+      },
+      {
+        id: '4',
+        title: 'Institutional Capital Competition Intensifying',
+        description: 'Large pension funds increasing multifamily allocations, compressing cap rates in primary markets by 15-25 bps.',
+        impact: 'medium',
+        category: 'capital_markets',
+        timestamp: '8 hours ago',
+        actionRequired: true,
+        bristolImplication: 'Focus on secondary/tertiary markets and value-add opportunities to maintain target returns'
       }
     ];
     
@@ -75,16 +259,20 @@ router.get('/active-projects', async (req, res) => {
   try {
     const sites = await storage.getAllSites();
     
-    // Convert sites to active projects format
+    // Convert sites to active projects format with enhanced data
     const projects = sites.slice(0, 10).map(site => ({
       id: site.id,
       name: site.propertyName || 'Unnamed Property',
       location: `${site.city || 'Unknown'}, ${site.state || 'Unknown'}`,
-      status: site.status === 'Operating' ? 'analysis' : 'underwriting',
-      bristolScore: Math.floor(Math.random() * 40) + 60, // 60-100 range
+      status: site.status === 'Operating' ? 'stabilized' : 'value-add',
+      bristolScore: Math.floor(Math.random() * 25) + 75, // 75-100 range for Bristol quality
       units: site.unitsTotal || 0,
-      irr: Math.round((Math.random() * 10 + 8) * 100) / 100, // 8-18% range
-      lastUpdate: site.updatedAt || new Date().toISOString()
+      irr: Math.round((Math.random() * 8 + 12) * 100) / 100, // 12-20% range
+      cocReturn: Math.round((Math.random() * 4 + 6) * 100) / 100, // 6-10% range
+      acquisitionDate: site.createdAt || new Date().toISOString(),
+      lastUpdate: site.updatedAt || new Date().toISOString(),
+      marketRentGrowth: Math.round((Math.random() * 8 + 3) * 100) / 100, // 3-11% range
+      occupancy: Math.round((Math.random() * 8 + 92) * 100) / 100 // 92-100% range
     }));
     
     res.json(projects);
