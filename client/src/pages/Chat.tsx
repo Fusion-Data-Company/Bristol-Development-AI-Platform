@@ -220,7 +220,8 @@ export default function Chat() {
         <div className="p-6 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="relative">
-              <div className="bg-slate-100 p-3 rounded-full border border-slate-300">
+              <div className="absolute -inset-1 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-full blur-sm animate-pulse" />
+              <div className="relative bg-gradient-to-r from-bristol-cyan/10 to-bristol-electric/10 p-3 rounded-full border border-bristol-cyan/40 backdrop-blur-sm">
                 <Brain className="h-8 w-8 text-bristol-cyan" />
               </div>
             </div>
@@ -270,8 +271,9 @@ export default function Chat() {
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {!selectedSession ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <div className="mb-6">
-                <Brain className="h-16 w-16 text-bristol-cyan" />
+              <div className="relative mb-6">
+                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/15 to-bristol-electric/15 rounded-full blur-lg animate-pulse" />
+                <Brain className="h-16 w-16 text-bristol-cyan relative" />
               </div>
               <h2 className="text-3xl font-bold text-bristol-cyan mb-2">
                 Bristol A.I. Elite Ready
@@ -300,25 +302,25 @@ export default function Chat() {
                 Ask me about property analysis, market trends, demographics, or investment opportunities.
               </p>
               <div className="grid grid-cols-2 gap-4 text-sm w-full max-w-lg">
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <Building2 className="h-5 w-5 text-blue-600 mb-2" />
+                <div className="chrome-metallic-panel p-4 rounded-lg">
+                  <Building2 className="h-5 w-5 text-bristol-cyan mb-2" />
                   <div className="text-slate-700 font-semibold">Property Analysis</div>
-                  <div className="text-slate-500 text-xs">IRR, NPV, Cap Rates</div>
+                  <div className="text-bristol-cyan/70 text-xs">IRR, NPV, Cap Rates</div>
                 </div>
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <TrendingUp className="h-5 w-5 text-amber-600 mb-2" />
+                <div className="chrome-metallic-panel p-4 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-bristol-gold mb-2" />
                   <div className="text-slate-700 font-semibold">Market Intelligence</div>
-                  <div className="text-slate-500 text-xs">Demographics & Trends</div>
+                  <div className="text-bristol-gold/70 text-xs">Demographics & Trends</div>
                 </div>
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <DollarSign className="h-5 w-5 text-green-600 mb-2" />
+                <div className="chrome-metallic-panel p-4 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-green-500 mb-2" />
                   <div className="text-slate-700 font-semibold">Investment Metrics</div>
-                  <div className="text-slate-500 text-xs">LP/GP Structures</div>
+                  <div className="text-green-500/70 text-xs">LP/GP Structures</div>
                 </div>
-                <div className="bg-white p-4 rounded-lg border border-slate-200">
-                  <BarChart3 className="h-5 w-5 text-purple-600 mb-2" />
+                <div className="chrome-metallic-panel p-4 rounded-lg">
+                  <BarChart3 className="h-5 w-5 text-purple-500 mb-2" />
                   <div className="text-slate-700 font-semibold">Risk Assessment</div>
-                  <div className="text-slate-500 text-xs">Stress Testing</div>
+                  <div className="text-purple-500/70 text-xs">Stress Testing</div>
                 </div>
               </div>
             </div>
@@ -327,17 +329,17 @@ export default function Chat() {
               <div 
                 key={i} 
                 className={cn(
-                  "flex gap-4 p-4 rounded-xl transition-all duration-200",
+                  "flex gap-4 p-4 rounded-xl backdrop-blur transition-all duration-200",
                   msg.role === "assistant" 
-                    ? "bg-slate-50 border border-slate-200" 
-                    : "bg-blue-50 border border-blue-200 ml-12"
+                    ? "bg-bristol-cyan/5 border border-bristol-cyan/20" 
+                    : "bg-white/80 border border-bristol-cyan/15 ml-12"
                 )}
               >
                 <div className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
                   msg.role === "assistant" 
-                    ? "bg-blue-100 text-blue-600" 
-                    : "bg-slate-100 text-slate-600"
+                    ? "bg-bristol-cyan/20 text-bristol-cyan" 
+                    : "bg-bristol-gold/20 text-bristol-gold"
                 )}>
                   {msg.role === "assistant" ? <Brain className="h-5 w-5" /> : <Users className="h-5 w-5" />}
                 </div>
@@ -345,7 +347,7 @@ export default function Chat() {
                   <div className="flex items-center gap-2 mb-2">
                     <span className={cn(
                       "text-xs font-bold uppercase tracking-wider",
-                      msg.role === "assistant" ? "text-blue-600" : "text-slate-600"
+                      msg.role === "assistant" ? "text-bristol-cyan" : "text-bristol-gold"
                     )}>
                       {msg.role === "assistant" ? "Bristol A.I. Elite" : "You"}
                     </span>
@@ -364,21 +366,21 @@ export default function Chat() {
           )}
           
           {(isThinking || sendMessageMutation.isPending) && (
-            <div className="flex gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
-              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <div className="flex gap-4 p-4 rounded-xl bg-bristol-cyan/5 border border-bristol-cyan/20 backdrop-blur">
+              <div className="w-8 h-8 rounded-full bg-bristol-cyan/20 text-bristol-cyan flex items-center justify-center flex-shrink-0">
                 <Brain className="h-5 w-5" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
+                  <span className="text-xs font-bold uppercase tracking-wider text-bristol-cyan">
                     Bristol A.I. Elite
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-slate-600">
+                <div className="flex items-center gap-2 text-bristol-cyan/80">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.6s]" />
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.6s]" />
+                    <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.3s]" />
+                    <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce" />
                   </div>
                   <span>Analyzing your request...</span>
                 </div>
