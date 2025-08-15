@@ -1,5 +1,8 @@
 # Bristol Site Intelligence Platform
 
+## Recent Critical Fix (2025-08-15)
+**URGENT WebSocket Performance Issue Resolved** - Fixed critical WebSocket auto-reconnection loop that was causing performance degradation and console spam. Key changes: disabled aggressive 2-second reconnection timers, made WebSocket optional for core functionality, added manual reconnect option with visual status indicator. Core chat functionality now works reliably without WebSocket dependency.
+
 ## Overview
 The Bristol Site Intelligence Platform is an enterprise-grade, AI-powered real estate development analysis tool. It is designed for multifamily development opportunities within Sunbelt markets. The platform provides comprehensive site analytics, interactive mapping, a proprietary 100-point Bristol scoring methodology, and real-time market intelligence. A key feature is the integrated AI assistant, Bristol A.I. Elite v5.0, which functions as a Fortune 500-grade always-on "boss agent" for advanced deal analysis with full-screen cyberpunk/glassomorphic interface. The platform aims to provide institutional-quality real estate analysis capabilities, supporting decisions related to IRR, NPV, cap rates, and LP/GP structures.
 

@@ -208,6 +208,7 @@ export default function Chat() {
     websocket: 'connected'
   });
   const [wsConnected, setWsConnected] = useState(false);
+  const [wsOptional, setWsOptional] = useState(true); // URGENT: Make WebSocket optional
   const [mcpEnabled, setMcpEnabled] = useState(true);
   const [realTimeData, setRealTimeData] = useState(true);
   const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
@@ -258,12 +259,16 @@ export default function Chat() {
     user: { authenticated: true }
   }), [sites, analytics]);
 
-  // WebSocket for real-time updates - enhanced for Elite system
+  // WebSocket for real-time updates - URGENT: Disabled auto-reconnect
   const { isConnected: legacyWsConnected } = useWebSocket({
+    autoReconnect: false, // URGENT: Prevent auto-reconnection spam
     onMessage: (wsMessage) => {
       if (wsMessage.type === "chat_typing") {
         setIsThinking(wsMessage.data?.typing || false);
       }
+    },
+    onError: (error) => {
+      console.warn('Legacy WebSocket error (non-critical):', error.type);
     }
   });
 
@@ -307,7 +312,8 @@ export default function Chat() {
       
       setIsThinking(true);
       
-      // Use ultra-bulletproof endpoints first, then legacy fallbacks
+      // URGENT: Chat works without WebSocket - use bulletproof endpoints
+      console.log('💬 Chat request - WebSocket optional, using HTTP endpoints');
       const endpoints = [
         '/api/ultra-bulletproof-chat/chat',
         '/api/unified-chat/chat',
@@ -458,13 +464,20 @@ export default function Chat() {
     });
   };
 
-  // WebSocket connection for real-time Elite features
+  // WebSocket connection for real-time Elite features - URGENT: Optional
   useEffect(() => {
-    connectWebSocket();
+    if (wsOptional) {
+      connectWebSocket();
+    }
     return () => disconnectWebSocket();
-  }, []);
+  }, [wsOptional]);
 
   const connectWebSocket = () => {
+    if (!wsOptional) {
+      console.log('WebSocket disabled by user preference');
+      return;
+    }
+    
     try {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -496,23 +509,25 @@ export default function Chat() {
         }
       };
       
-      wsRef.current.onclose = () => {
+      wsRef.current.onclose = (event) => {
         setWsConnected(false);
         console.log("Bristol A.I. Elite WebSocket disconnected");
         
-        // Auto-reconnect after 2 seconds
-        setTimeout(() => {
-          console.log("Attempting WebSocket reconnection...");
-          connectWebSocket();
-        }, 2000);
+        // URGENT: Disable auto-reconnect to prevent spam
+        // Only reconnect on user action or manual retry
+        if (event.code !== 1000) {
+          console.log('WebSocket disconnected unexpectedly - auto-reconnect disabled');
+        }
       };
       
       wsRef.current.onerror = (error) => {
-        console.error("WebSocket error:", error);
+        console.warn("WebSocket error (non-critical):", error.type || 'connection failed');
         setWsConnected(false);
+        // URGENT: Don't spam console with WebSocket errors
       };
     } catch (error) {
-      console.error("Failed to connect WebSocket:", error);
+      console.warn("WebSocket connection failed (non-critical):", error instanceof Error ? error.message : 'unknown error');
+      // URGENT: WebSocket is optional - app should work without it
     }
   };
 
@@ -1227,6 +1242,33 @@ What property or investment can I analyze for you today?`,
                   </p>
                   <div className="w-full h-px bg-gradient-to-r from-cyan-400/60 to-transparent mt-1"></div>
                 </div>
+              </div>
+            </div>
+            
+            {/* WebSocket Status - URGENT: Manual reconnect option */}
+            <div className="flex items-center gap-2 mr-4">
+              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${
+                wsConnected 
+                  ? 'bg-green-500/10 border-green-500/30 text-green-400'
+                  : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
+              }`}>
+                {wsConnected ? (
+                  <Wifi className="h-3 w-3" />
+                ) : (
+                  <WifiOff className="h-3 w-3" />
+                )}
+                <span className="text-xs font-medium">
+                  {wsConnected ? 'Live' : 'Offline'}
+                </span>
+                {!wsConnected && wsOptional && (
+                  <button
+                    onClick={connectWebSocket}
+                    className="ml-2 px-2 py-0.5 bg-yellow-500/20 hover:bg-yellow-500/30 rounded text-xs transition-colors"
+                    title="Reconnect for real-time features"
+                  >
+                    Reconnect
+                  </button>
+                )}
               </div>
             </div>
             

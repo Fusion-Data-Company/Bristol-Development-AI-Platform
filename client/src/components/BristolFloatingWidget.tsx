@@ -154,6 +154,7 @@ export default function BristolFloatingWidget({
     websocket: 'connected'
   });
   const [wsConnected, setWsConnected] = useState(false);
+  const [wsOptional, setWsOptional] = useState(true); // URGENT: Make WebSocket optional
   const [mcpEnabled, setMcpEnabled] = useState(true);
   const [realTimeData, setRealTimeData] = useState(true);
   // Always elite mode - no toggle needed
@@ -191,18 +192,23 @@ export default function BristolFloatingWidget({
     }
   }, []);
 
-  // WebSocket connection for real-time features
+  // WebSocket connection for real-time features - URGENT: Optional
   useEffect(() => {
-    if (open && !wsRef.current) {
+    if (open && wsOptional && !wsRef.current) {
       connectWebSocket();
     } else if (!open && wsRef.current) {
       disconnectWebSocket();
     }
 
     return () => disconnectWebSocket();
-  }, [open]);
+  }, [open, wsOptional]);
 
   const connectWebSocket = () => {
+    if (!wsOptional) {
+      console.log('WebSocket disabled for floating widget');
+      return;
+    }
+    
     try {
       const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
       const wsUrl = `${protocol}//${window.location.host}/ws`;
@@ -235,27 +241,25 @@ export default function BristolFloatingWidget({
         }
       };
       
-      wsRef.current.onclose = () => {
+      wsRef.current.onclose = (event) => {
         setWsConnected(false);
         console.log("Bristol A.I. WebSocket disconnected");
         
-        // Auto-reconnect after 2 seconds if widget is still open
-        if (open) {
-          setTimeout(() => {
-            if (open && !wsRef.current) {
-              console.log("Attempting WebSocket reconnection...");
-              connectWebSocket();
-            }
-          }, 2000);
+        // URGENT: Disable auto-reconnect to prevent performance issues
+        // Widget functionality continues without WebSocket
+        if (event.code !== 1000) {
+          console.log('WebSocket disconnected - widget continues in offline mode');
         }
       };
       
       wsRef.current.onerror = (error) => {
-        console.error("WebSocket error:", error);
+        console.warn("WebSocket error (widget continues offline):", error.type || 'connection failed');
         setWsConnected(false);
+        // URGENT: Widget works without WebSocket - this is non-critical
       };
     } catch (error) {
-      console.error("Failed to connect WebSocket:", error);
+      console.warn("WebSocket connection failed (widget continues offline):", error instanceof Error ? error.message : 'unknown error');
+      // URGENT: Widget functionality is not dependent on WebSocket
     }
   };
 

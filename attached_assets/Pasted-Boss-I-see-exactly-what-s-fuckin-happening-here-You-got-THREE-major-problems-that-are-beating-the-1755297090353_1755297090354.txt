@@ -1,0 +1,88 @@
+Boss, I see exactly what's fuckin' happening here. You got THREE major problems that are beating the shit out of your chat system:
+PROBLEM #1: WebSocket is Getting Its Ass Kicked
+Your WebSocket connection is failing and reconnecting every 2 fuckin' seconds like a junkie looking for a fix. Look at line 636 in your code - it's set to auto-reconnect after 2 seconds, and that's exactly what's happening. The connection fails, tries again, fails, tries again - endless loop of bullshit.
+PROBLEM #2: The Errors Are Killing Performance
+Every time that WebSocket fails, it's:
+
+Spamming your console
+Eating up memory
+Slowing down your entire chat
+Potentially blocking your AI responses from displaying
+
+PROBLEM #3: Despite the Errors, It's Partially Working
+The fact that you're getting "pong" messages means the WebSocket IS connecting sometimes, but something's immediately killing it.
+HERE'S HOW TO FIX THIS SHIT:
+Tell that builder EXACTLY this:
+
+URGENT: Fix WebSocket Connection Issues First
+IMMEDIATE FIXES NEEDED:
+
+DISABLE WebSocket Auto-Reconnect Temporarily
+
+Go to line 636-640 in Chat.tsx
+Comment out the auto-reconnect:
+
+javascriptwsRef.current.onclose = () => {
+  setWsConnected(false);
+  console.log("WebSocket disconnected - NOT auto-reconnecting");
+  // COMMENTED OUT TO STOP SPAM
+  // setTimeout(() => {
+  //   console.log("Attempting WebSocket reconnection...");
+  //   connectWebSocket();
+  // }, 2000);
+};
+
+ADD Better Error Handling
+
+Replace line 645 (the onerror handler):
+
+javascriptwsRef.current.onerror = (error) => {
+  console.error("WebSocket error details:", {
+    readyState: wsRef.current?.readyState,
+    url: wsRef.current?.url,
+    error: error
+  });
+  setWsConnected(false);
+  // Don't auto-reconnect on errors
+};
+
+FIX WebSocket URL Construction
+
+Line 615-616, make it more robust:
+
+javascriptconst connectWebSocket = () => {
+  try {
+    // Check if we're in Replit environment
+    const isReplit = window.location.hostname.includes('replit');
+    
+    if (isReplit) {
+      console.log("Replit environment detected - WebSocket disabled");
+      setWsConnected(false);
+      return; // Don't connect WebSocket in Replit
+    }
+    
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    // ... rest of connection code
+
+MAKE WebSocket OPTIONAL
+
+The chat should work WITHOUT WebSocket
+WebSocket is only for real-time agent updates
+Don't let WebSocket failures break the main chat
+
+
+
+DO NOT:
+
+Try to force WebSocket to work in Replit if it's not supported
+Keep the auto-reconnect running endlessly
+Let WebSocket errors affect the main chat functionality
+
+TEST AFTER FIXES:
+
+Reload the page
+Check console - should see "WebSocket disabled" message
+Test chat - should work perfectly without WebSocket
+No more error spam
+

@@ -13,6 +13,7 @@ interface UseWebSocketOptions {
   onConnect?: () => void;
   onDisconnect?: () => void;
   onError?: (error: Event) => void;
+  autoReconnect?: boolean; // URGENT: Added to disable auto-reconnect
 }
 
 export function useWebSocket(options: UseWebSocketOptions = {}) {
@@ -22,7 +23,8 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
     onMessage,
     onConnect,
     onDisconnect,
-    onError
+    onError,
+    autoReconnect = false // URGENT: Disabled by default to prevent spam
   } = options;
 
   const [isConnected, setIsConnected] = useState(false);
@@ -74,7 +76,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
         }
       };
 
-      ws.current.onclose = () => {
+      ws.current.onclose = (event) => {
         setIsConnected(false);
         setConnectionStatus('disconnected');
         onDisconnect?.();
@@ -85,24 +87,31 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
           pingIntervalId.current = null;
         }
 
-        // Attempt reconnection
-        if (reconnectAttempts.current < maxReconnectAttempts) {
+        // URGENT: Only reconnect if explicitly enabled and not a manual close
+        if (autoReconnect && event.code !== 1000 && reconnectAttempts.current < maxReconnectAttempts) {
           reconnectAttempts.current++;
+          console.log(`WebSocket reconnect attempt ${reconnectAttempts.current}/${maxReconnectAttempts} in ${reconnectInterval}ms`);
           reconnectTimeoutId.current = setTimeout(() => {
-            connect();
+            if (autoReconnect) { // Double check before reconnecting
+              connect();
+            }
           }, reconnectInterval);
+        } else {
+          console.log('WebSocket closed - auto-reconnect disabled or manual close');
         }
       };
 
       ws.current.onerror = (error) => {
         setConnectionStatus('error');
         onError?.(error);
-        console.error('WebSocket error:', error);
+        console.warn('WebSocket error (non-critical):', error.type || 'connection failed');
+        // URGENT: Don't spam console with WebSocket errors
       };
 
     } catch (error) {
       setConnectionStatus('error');
-      console.error('Failed to create WebSocket connection:', error);
+      console.warn('WebSocket connection failed (non-critical):', error instanceof Error ? error.message : 'unknown error');
+      // URGENT: Don't treat WebSocket failures as critical errors
     }
   }, [maxReconnectAttempts, reconnectInterval, onConnect, onDisconnect, onMessage, onError]);
 

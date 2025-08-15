@@ -1,10 +1,37 @@
 import express, { type Request, Response, NextFunction } from "express";
+import cors from 'cors';
+import compression from 'compression';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { 
+  securityHeaders, 
+  rateLimiters, 
+  sanitizeInput, 
+  limitRequestSize, 
+  ipProtection, 
+  enhancedLogging, 
+  validateContentType,
+  corsConfig,
+  emergencyShutdown
+} from "./middleware/securityMiddleware";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+// Enhanced security and performance middleware
+app.use(securityHeaders);
+app.use(cors(corsConfig));
+app.use(compression({ threshold: 1024 })); // Compress responses > 1KB
+app.use(emergencyShutdown);
+app.use(ipProtection);
+app.use(enhancedLogging);
+app.use(limitRequestSize(50)); // 50MB max request size
+app.use(validateContentType(['application/json', 'application/x-www-form-urlencoded', 'multipart/form-data']));
+app.use(sanitizeInput);
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+
+// Apply general rate limiting to all routes
+app.use(rateLimiters.general);
 
 app.use((req, res, next) => {
   const start = Date.now();
