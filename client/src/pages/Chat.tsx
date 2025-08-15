@@ -2143,7 +2143,6 @@ function AdminPane({
           </div>
         </div>
       </div>
-      </div>
     </ChatBackground>
   );
 };
