@@ -4,26 +4,47 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Chrome Metallic Elite AI Animations */
-@keyframes chrome-pulse {
+/* Elite Bristol Chrome Metallic Animations */
+@keyframes bristol-elite-pulse {
   0%, 100% { 
-    filter: brightness(1.0);
-    border-color: rgba(69, 214, 202, 0.6);
+    filter: brightness(1.0) saturate(1.0);
+    border-color: rgba(139, 38, 53, 0.4);
+    box-shadow: 0 4px 20px rgba(139, 38, 53, 0.1);
   }
   50% { 
-    filter: brightness(1.1);
-    border-color: rgba(69, 214, 202, 1.0);
+    filter: brightness(1.15) saturate(1.2);
+    border-color: rgba(139, 38, 53, 0.8);
+    box-shadow: 0 8px 32px rgba(139, 38, 53, 0.25);
   }
 }
 
-@keyframes metallic-shine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+@keyframes elite-metallic-shine {
+  0% { 
+    transform: translateX(-100%); 
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% { 
+    transform: translateX(100%); 
+    opacity: 0;
+  }
 }
 
-@keyframes cyber-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-3px); }
+@keyframes bristol-cyber-float {
+  0%, 100% { 
+    transform: translateY(0px) scale(1.0);
+  }
+  33% { 
+    transform: translateY(-2px) scale(1.02);
+  }
+  66% { 
+    transform: translateY(-1px) scale(1.01);
+  }
 }
 
 @keyframes data-stream {
@@ -33,23 +54,61 @@
   100% { transform: translateY(100%); opacity: 0; }
 }
 
-/* Chrome Metallic Panel Styles - Light Chrome */
+@keyframes elite-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(139, 38, 53, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow: 
+      0 0 40px rgba(139, 38, 53, 0.5),
+      0 0 60px rgba(212, 165, 116, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Elite Chrome Metallic Panel Styles - Bristol Edition */
 .chrome-metallic-panel {
   position: relative;
   background: linear-gradient(135deg, 
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(248, 250, 252, 0.98) 25%,
-    rgba(241, 245, 249, 0.95) 50%,
-    rgba(248, 250, 252, 0.98) 75%,
-    rgba(255, 255, 255, 0.95) 100%
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(248, 250, 252, 0.99) 20%,
+    rgba(241, 245, 249, 0.97) 40%,
+    rgba(248, 250, 252, 0.99) 60%,
+    rgba(255, 255, 255, 0.98) 80%,
+    rgba(249, 250, 251, 0.99) 100%
   );
-  border: 1px solid rgba(69, 214, 202, 0.3);
-  border-radius: 8px;
+  background-size: 200% 200%;
+  border: 1px solid rgba(139, 38, 53, 0.2);
+  border-radius: 12px;
   overflow: hidden;
   box-shadow: 
-    0 8px 32px rgba(69, 214, 202, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    inset 0 -1px 0 rgba(69, 214, 202, 0.05);
+    0 10px 40px rgba(139, 38, 53, 0.08),
+    0 4px 20px rgba(212, 165, 116, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(139, 38, 53, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: bristol-elite-pulse 8s ease-in-out infinite;
+}
+
+.chrome-metallic-panel:hover {
+  border-color: rgba(139, 38, 53, 0.4);
+  box-shadow: 
+    0 20px 60px rgba(139, 38, 53, 0.12),
+    0 8px 30px rgba(212, 165, 116, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(139, 38, 53, 0.05);
+  transform: translateY(-2px);
 }
 
 .chrome-metallic-panel::before {
@@ -61,39 +120,75 @@
   height: 100%;
   background: linear-gradient(90deg, 
     transparent,
-    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.4),
+    rgba(212, 165, 116, 0.1),
+    rgba(255, 255, 255, 0.4),
     transparent
   );
-  animation: metallic-shine 8s ease-in-out infinite;
+  animation: elite-metallic-shine 12s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.chrome-metallic-panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(139, 38, 53, 0.01) 0%,
+    transparent 50%,
+    rgba(212, 165, 116, 0.01) 100%
+  );
+  border-radius: 12px;
   pointer-events: none;
 }
 
 .chrome-metallic-button {
   position: relative;
   background: linear-gradient(135deg, 
-    rgba(69, 214, 202, 0.08) 0%,
-    rgba(255, 255, 255, 0.95) 50%,
-    rgba(69, 214, 202, 0.08) 100%
+    rgba(139, 38, 53, 0.05) 0%,
+    rgba(255, 255, 255, 0.97) 25%,
+    rgba(249, 250, 251, 0.99) 50%,
+    rgba(255, 255, 255, 0.97) 75%,
+    rgba(139, 38, 53, 0.05) 100%
   );
-  border: 1px solid rgba(69, 214, 202, 0.4);
-  border-radius: 6px;
-  color: #0891b2;
+  border: 1px solid rgba(139, 38, 53, 0.3);
+  border-radius: 8px;
+  color: #8B2635;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(69, 214, 202, 0.1);
+  box-shadow: 
+    0 4px 16px rgba(139, 38, 53, 0.08),
+    0 2px 8px rgba(212, 165, 116, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .chrome-metallic-button:hover {
   background: linear-gradient(135deg, 
-    rgba(69, 214, 202, 0.15) 0%,
-    rgba(255, 255, 255, 0.98) 50%,
-    rgba(69, 214, 202, 0.15) 100%
+    rgba(139, 38, 53, 0.08) 0%,
+    rgba(255, 255, 255, 0.98) 25%,
+    rgba(248, 249, 250, 1.0) 50%,
+    rgba(255, 255, 255, 0.98) 75%,
+    rgba(139, 38, 53, 0.08) 100%
   );
-  border-color: rgba(69, 214, 202, 0.6);
-  color: #0e7490;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(69, 214, 202, 0.2);
+  border-color: rgba(139, 38, 53, 0.5);
+  color: #6B1F2A;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 8px 32px rgba(139, 38, 53, 0.15),
+    0 4px 16px rgba(212, 165, 116, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.chrome-metallic-button:active {
+  transform: translateY(0px) scale(1.0);
+  box-shadow: 
+    0 2px 8px rgba(139, 38, 53, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .chrome-metallic-button::before {
@@ -105,23 +200,91 @@
   height: 100%;
   background: linear-gradient(90deg, 
     transparent,
-    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.4),
+    rgba(212, 165, 116, 0.1),
+    rgba(255, 255, 255, 0.4),
     transparent
   );
-  transition: left 0.5s ease;
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+  z-index: 1;
 }
 
 .chrome-metallic-button:hover::before {
   left: 100%;
 }
 
-.chrome-pulse {
-  animation: chrome-pulse 2s ease-in-out infinite;
+/* Elite Utility Classes */
+.bristol-elite-pulse {
+  animation: bristol-elite-pulse 6s ease-in-out infinite;
 }
 
 .animate-float {
-  animation: cyber-float 6s ease-in-out infinite;
+  animation: bristol-cyber-float 8s ease-in-out infinite;
+}
+
+.elite-glow {
+  animation: elite-glow 4s ease-in-out infinite;
+}
+
+.gradient-text-bristol {
+  background: linear-gradient(135deg, #8B2635, #D4A574, #8B2635);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 6s ease-in-out infinite;
+}
+
+/* Elite Status Indicators */
+.status-online {
+  position: relative;
+}
+
+.status-online::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #10B981;
+  border-radius: 50%;
+  animation: bristol-elite-pulse 2s ease-in-out infinite;
+}
+
+/* Elite Data Cards */
+.data-card-elite {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(248, 250, 252, 0.99) 50%,
+    rgba(255, 255, 255, 0.98) 100%
+  );
+  border: 1px solid rgba(139, 38, 53, 0.15);
+  border-radius: 12px;
+  box-shadow: 
+    0 8px 32px rgba(139, 38, 53, 0.06),
+    0 4px 16px rgba(212, 165, 116, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.data-card-elite:hover {
+  border-color: rgba(139, 38, 53, 0.3);
+  box-shadow: 
+    0 16px 48px rgba(139, 38, 53, 0.1),
+    0 8px 24px rgba(212, 165, 116, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  transform: translateY(-4px) scale(1.02);
+}
+
+/* Bristol Brand Colors */
+:root {
+  --bristol-maroon: #8B2635;
+  --bristol-gold: #D4A574;
+  --bristol-dark: #2C3E50;
+  --bristol-light: #F8FAFC;
+  --bristol-accent: #10B981;
 }
 
 /* Chrome input styling - Clean Light Theme */

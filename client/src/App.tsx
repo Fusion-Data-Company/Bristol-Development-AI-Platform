@@ -35,6 +35,7 @@ function Router() {
           <Route path="/" component={MainApp} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/enterprise" component={EnterpriseDashboard} />
+          <Route path="/enterprise-dashboard" component={EnterpriseDashboard} />
           <Route path="/sites" component={Sites} />
           <Route path="/analytics" component={Analytics} />
           <Route path="/demographics" component={Demographics} />
