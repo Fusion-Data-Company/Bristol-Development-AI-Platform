@@ -251,11 +251,11 @@ export default function AnalyticsEnterprise() {
             <div className="flex items-center gap-4">
               {/* Live Status Indicators */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 border border-bristol-cyan/30 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-bristol-cyan/30 shadow-sm">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                   <span className="text-bristol-cyan text-sm font-medium">MCP Live</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 border border-bristol-gold/30 shadow-sm">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-bristol-gold/30 shadow-sm">
                   <Zap className="w-4 h-4 text-bristol-gold" />
                   <span className="text-bristol-gold text-sm font-medium">AI Active</span>
                 </div>
@@ -265,7 +265,7 @@ export default function AnalyticsEnterprise() {
                 variant="ghost"
                 size="sm"
                 onClick={() => window.location.reload()}
-                className="text-bristol-cyan hover:text-bristol-maroon hover:bg-bristol-cyan/10 border border-bristol-cyan/30 bg-white/80"
+                className="text-bristol-cyan hover:text-bristol-maroon hover:bg-bristol-cyan/10 border border-bristol-cyan/30 bg-white"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Refresh
@@ -275,7 +275,7 @@ export default function AnalyticsEnterprise() {
 
           {/* Enterprise Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="grid grid-cols-6 w-full bg-white/90 border border-bristol-cyan/20 backdrop-blur-xl shadow-lg">
+            <TabsList className="grid grid-cols-6 w-full bg-white border border-bristol-cyan/20 shadow-lg">
               <TabsTrigger 
                 value="portfolio" 
                 className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-gray-600"
@@ -370,7 +370,7 @@ export default function AnalyticsEnterprise() {
                   </div>
 
                   {/* Performance Metrics */}
-                  <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                     <CardHeader>
                       <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
                         <TrendingUp className="h-6 w-6 text-bristol-gold" />
@@ -410,7 +410,7 @@ export default function AnalyticsEnterprise() {
                   {/* Enhanced Portfolio Analysis */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Geographic Distribution */}
-                    <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                       <CardHeader>
                         <CardTitle className="text-bristol-cyan flex items-center gap-3">
                           <MapPin className="h-5 w-5 text-bristol-gold" />
@@ -423,7 +423,7 @@ export default function AnalyticsEnterprise() {
                             <div key={state} className="flex items-center justify-between">
                               <span className="text-gray-800 font-medium">{state}</span>
                               <div className="flex items-center gap-3">
-                                <div className="w-24 bg-gray-50/90 rounded-full h-2">
+                                <div className="w-24 bg-gray-100 rounded-full h-2">
                                   <div 
                                     className="h-2 bg-gradient-to-r from-bristol-cyan to-bristol-gold rounded-full transition-all duration-500"
                                     style={{ width: `${(count / portfolioData.totalProperties) * 100}%` }}
@@ -438,7 +438,7 @@ export default function AnalyticsEnterprise() {
                     </Card>
 
                     {/* Asset Class Performance */}
-                    <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                       <CardHeader>
                         <CardTitle className="text-bristol-cyan flex items-center gap-3">
                           <BarChart3 className="h-5 w-5 text-bristol-gold" />
@@ -453,7 +453,7 @@ export default function AnalyticsEnterprise() {
                                 <span className="text-gray-800 font-medium">{assetClass}</span>
                                 <span className="text-bristol-gold font-bold">{count}</span>
                               </div>
-                              <div className="w-full bg-gray-50/90 rounded-full h-3">
+                              <div className="w-full bg-gray-100 rounded-full h-3">
                                 <div 
                                   className="h-3 bg-gradient-to-r from-bristol-maroon via-bristol-cyan to-bristol-gold rounded-full transition-all duration-500"
                                   style={{ width: `${(count / portfolioData.totalProperties) * 100}%` }}
@@ -490,7 +490,7 @@ export default function AnalyticsEnterprise() {
                   {/* Enhanced Performance Analytics */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Performance Metrics Grid */}
-                    <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                       <CardHeader>
                         <CardTitle className="text-bristol-cyan flex items-center gap-3">
                           <TrendingUp className="h-5 w-5 text-bristol-gold" />
@@ -499,25 +499,25 @@ export default function AnalyticsEnterprise() {
                       </CardHeader>
                       <CardContent>
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="text-center p-4 bg-gray-50/90 rounded-xl border border-bristol-cyan/20">
+                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
                             <div className="text-2xl font-bold text-bristol-cyan mb-1">
                               {formatPercentage(94.2)}
                             </div>
                             <div className="text-xs text-bristol-stone">Avg Occupancy</div>
                           </div>
-                          <div className="text-center p-4 bg-gray-50/90 rounded-xl border border-bristol-cyan/20">
+                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
                             <div className="text-2xl font-bold text-bristol-gold mb-1">
                               {formatPercentage(7.8)}
                             </div>
                             <div className="text-xs text-bristol-stone">Rent Growth</div>
                           </div>
-                          <div className="text-center p-4 bg-gray-50/90 rounded-xl border border-bristol-cyan/20">
+                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
                             <div className="text-2xl font-bold text-green-400 mb-1">
                               {formatCurrency(1875)}
                             </div>
                             <div className="text-xs text-bristol-stone">Avg Rent PSF</div>
                           </div>
-                          <div className="text-center p-4 bg-gray-50/90 rounded-xl border border-bristol-cyan/20">
+                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
                             <div className="text-2xl font-bold text-bristol-maroon mb-1">
                               {formatPercentage(12.4)}
                             </div>
@@ -528,7 +528,7 @@ export default function AnalyticsEnterprise() {
                     </Card>
 
                     {/* Real-time Performance Indicators */}
-                    <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                       <CardHeader>
                         <CardTitle className="text-bristol-cyan flex items-center gap-3">
                           <Activity className="h-5 w-5 text-bristol-gold" />
@@ -537,21 +537,21 @@ export default function AnalyticsEnterprise() {
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">
-                          <div className="flex items-center justify-between p-3 bg-gray-50/90 rounded-lg border-l-4 border-green-400">
+                          <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg border-l-4 border-green-400">
                             <div>
                               <div className="text-gray-800 font-medium">Tampa Properties</div>
                               <div className="text-xs text-bristol-stone">Occupancy trending up 2.1%</div>
                             </div>
                             <div className="text-green-400 text-lg font-bold">97.2%</div>
                           </div>
-                          <div className="flex items-center justify-between p-3 bg-gray-50/90 rounded-lg border-l-4 border-bristol-cyan">
+                          <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg border-l-4 border-bristol-cyan">
                             <div>
                               <div className="text-gray-800 font-medium">Nashville Portfolio</div>
                               <div className="text-xs text-bristol-stone">Rent growth accelerating</div>
                             </div>
                             <div className="text-bristol-cyan text-lg font-bold">+8.7%</div>
                           </div>
-                          <div className="flex items-center justify-between p-3 bg-gray-50/90 rounded-lg border-l-4 border-bristol-gold">
+                          <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg border-l-4 border-bristol-gold">
                             <div>
                               <div className="text-gray-800 font-medium">Miami Market</div>
                               <div className="text-xs text-bristol-stone">Premium pricing achieved</div>
@@ -564,7 +564,7 @@ export default function AnalyticsEnterprise() {
                   </div>
                 </>
               ) : (
-                <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
                     <AlertTriangle className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
                     <p className="text-bristol-stone">Unable to load portfolio data</p>
@@ -594,7 +594,7 @@ export default function AnalyticsEnterprise() {
                   {/* Detailed Market Cards */}
                   <div className="grid grid-cols-1 gap-6">
                     {marketIntelligence.map((market, index) => (
-                      <Card key={index} className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg relative overflow-hidden">
+                      <Card key={index} className="bg-white border-bristol-cyan/30 shadow-lg relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-bristol-cyan to-bristol-gold"></div>
                       <CardHeader>
                         <div className="flex items-center justify-between">
@@ -647,7 +647,7 @@ export default function AnalyticsEnterprise() {
                             </div>
                           </div>
                         </div>
-                        <div className="bg-gray-50/90 p-4 rounded-xl border border-bristol-cyan/20">
+                        <div className="bg-gray-100 p-4 rounded-xl border border-bristol-cyan/20">
                           <div className="text-sm font-medium text-bristol-cyan mb-2">Investment Recommendation:</div>
                           <div className="text-sm text-bristol-stone">{market.recommendation}</div>
                         </div>
@@ -657,7 +657,7 @@ export default function AnalyticsEnterprise() {
                   </div>
                 </>
               ) : (
-                <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
                     <AlertTriangle className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
                     <p className="text-bristol-stone">Market intelligence unavailable</p>
@@ -675,7 +675,7 @@ export default function AnalyticsEnterprise() {
               ) : liveIntelligence ? (
                 <>
                   {/* Market Sentiment */}
-                  <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                     <CardHeader>
                       <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
                         <Activity className="h-6 w-6 text-bristol-gold" />
@@ -717,7 +717,7 @@ export default function AnalyticsEnterprise() {
                   </Card>
 
                   {/* Interest Rates */}
-                  <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                     <CardHeader>
                       <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
                         <TrendingUp className="h-6 w-6 text-bristol-gold" />
@@ -761,7 +761,7 @@ export default function AnalyticsEnterprise() {
 
                   {/* Economic Calendar & Alerts */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                       <CardHeader>
                         <CardTitle className="text-bristol-cyan flex items-center gap-3">
                           <Calendar className="h-5 w-5 text-bristol-gold" />
@@ -772,7 +772,7 @@ export default function AnalyticsEnterprise() {
                         <ScrollArea className="h-48">
                           <div className="space-y-3">
                             {liveIntelligence.upcoming_events.map((event, index) => (
-                              <div key={index} className="flex items-center justify-between p-3 bg-gray-50/90 rounded-lg">
+                              <div key={index} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                                 <div>
                                   <div className="text-gray-800 font-medium">{event.event}</div>
                                   <div className="text-bristol-stone text-sm">{event.date}</div>
@@ -819,7 +819,7 @@ export default function AnalyticsEnterprise() {
                   </div>
                 </>
               ) : (
-                <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
                     <AlertTriangle className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
                     <p className="text-bristol-stone">Live intelligence unavailable</p>
@@ -916,7 +916,7 @@ export default function AnalyticsEnterprise() {
 
                   {/* Predictive Forecasts */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                       <CardHeader>
                         <CardTitle className="text-bristol-cyan text-center">Rent Growth Forecast</CardTitle>
                       </CardHeader>
@@ -935,14 +935,14 @@ export default function AnalyticsEnterprise() {
                               <span className="text-red-400">{formatPercentage(2.1)}</span>
                             </div>
                           </div>
-                          <div className="w-full bg-gray-50/90 rounded-full h-2">
+                          <div className="w-full bg-gray-100 rounded-full h-2">
                             <div className="h-2 bg-gradient-to-r from-red-400 via-bristol-gold to-green-400 rounded-full w-full" />
                           </div>
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                       <CardHeader>
                         <CardTitle className="text-bristol-cyan text-center">Occupancy Forecast</CardTitle>
                       </CardHeader>
@@ -961,14 +961,14 @@ export default function AnalyticsEnterprise() {
                               <span className="text-red-400">{formatPercentage(89.1)}</span>
                             </div>
                           </div>
-                          <div className="w-full bg-gray-50/90 rounded-full h-2">
+                          <div className="w-full bg-gray-100 rounded-full h-2">
                             <div className="h-2 bg-gradient-to-r from-red-400 via-bristol-cyan to-green-400 rounded-full" style={{ width: '94%' }} />
                           </div>
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                       <CardHeader>
                         <CardTitle className="text-bristol-cyan text-center">Portfolio Impact</CardTitle>
                       </CardHeader>
@@ -996,7 +996,7 @@ export default function AnalyticsEnterprise() {
                   </div>
 
                   {/* Enhanced Risk Assessment */}
-                  <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                     <CardHeader>
                       <CardTitle className="text-bristol-cyan flex items-center gap-3">
                         <Shield className="h-5 w-5 text-bristol-gold" />
@@ -1007,7 +1007,7 @@ export default function AnalyticsEnterprise() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {Object.entries({ 'market_risk': 'low', 'interest_rate_risk': 'moderate', 'liquidity_risk': 'low', 'regulatory_risk': 'low' }).map(([risk, level]) => (
                           <div key={risk} className="relative group">
-                            <div className="text-center p-6 bg-gray-50/90 rounded-xl border border-bristol-cyan/20 hover:border-bristol-gold/40 transition-all duration-300">
+                            <div className="text-center p-6 bg-gray-100 rounded-xl border border-bristol-cyan/20 hover:border-bristol-gold/40 transition-all duration-300">
                               <div className="text-gray-800 font-medium mb-3 capitalize">
                                 {risk.replace('_', ' ')}
                               </div>
@@ -1030,7 +1030,7 @@ export default function AnalyticsEnterprise() {
                   </Card>
                 </>
               ) : (
-                <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
                     <Brain className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
                     <p className="text-bristol-stone">Predictive analytics loading...</p>
@@ -1042,7 +1042,7 @@ export default function AnalyticsEnterprise() {
             {/* AI Agent */}
             <TabsContent value="agent" className="space-y-6">
               {/* Agent Status */}
-              <Card className="bg-gradient-to-r from-bristol-ink/60 via-bristol-maroon/10 to-bristol-ink/60 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+              <Card className="bg-slate-800 border-bristol-cyan/30 shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-4">
                     <div className="relative">
@@ -1080,7 +1080,7 @@ export default function AnalyticsEnterprise() {
               </Card>
 
               {/* Query Interface */}
-              <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+              <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3 text-bristol-cyan">
                     <Lightbulb className="h-6 w-6 text-bristol-gold" />
@@ -1122,7 +1122,7 @@ export default function AnalyticsEnterprise() {
 
               {/* Agent Response */}
               {agentResponse && (
-                <Card className="bg-white/90 border-bristol-gold/30 backdrop-blur-xl">
+                <Card className="bg-white border-bristol-gold/30">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-3 text-bristol-gold">
                       <Sparkles className="h-6 w-6" />
@@ -1130,7 +1130,7 @@ export default function AnalyticsEnterprise() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="bg-gray-50/90 p-6 rounded-xl border border-bristol-cyan/20">
+                    <div className="bg-gray-100 p-6 rounded-xl border border-bristol-cyan/20">
                       <div className="text-gray-800 whitespace-pre-wrap leading-relaxed">
                         {agentResponse}
                       </div>
@@ -1154,7 +1154,7 @@ export default function AnalyticsEnterprise() {
                   confidenceScore={0.87}
                 />
               ) : (
-                <Card className="bg-white/90 border-bristol-cyan/30 backdrop-blur-xl shadow-lg">
+                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
                     <Brain className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
                     <p className="text-bristol-stone">Elite insights unavailable</p>
