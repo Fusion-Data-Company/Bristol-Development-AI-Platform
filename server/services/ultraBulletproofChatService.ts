@@ -45,7 +45,7 @@ class UltraBulletproofChatService {
     const { message, sessionId = `ultra-${Date.now()}`, model, userId } = validatedRequest;
 
     // Step 2: Check cache first for instant responses
-    const cacheKey = `${userId}-${message.substring(0, 100)}`;
+    const cacheKey = `${userId}-${model}-${message.substring(0, 100)}`; // Include model in cache key!
     const cached = responseCache.get(cacheKey);
     if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
       console.log('⚡ INSTANT: Cached response');
@@ -69,7 +69,7 @@ class UltraBulletproofChatService {
     try {
       const directResponse = await this.fastDirectOpenRouter(message, model);
       if (directResponse) {
-        // Cache for future speed
+        // Cache for future speed with model-specific key
         responseCache.set(cacheKey, {
           response: directResponse,
           timestamp: Date.now()
@@ -94,7 +94,7 @@ class UltraBulletproofChatService {
     // Step 4: Intelligent fallback (guaranteed response)
     const intelligentFallback = this.generateSmartFallback(message);
     
-    // Cache even fallback for consistency
+    // Cache even fallback for consistency with model-specific key
     responseCache.set(cacheKey, {
       response: intelligentFallback,
       timestamp: Date.now()
