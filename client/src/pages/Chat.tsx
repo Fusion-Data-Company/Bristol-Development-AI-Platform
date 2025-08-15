@@ -1012,27 +1012,34 @@ What property or investment can I analyze for you today?`,
         const data = await response.json();
         let assistantContent = "";
         
-        // Handle different response formats from different providers
-        // Check ultra-bulletproof format first (has success flag)
-        if (data.success && data.content) {
+        // Log the response to debug
+        console.log('Full API Response:', data);
+        
+        // Try different response formats in order of likelihood
+        if (data.content && typeof data.content === 'string') {
           assistantContent = data.content;
-        } else if (data.choices && data.choices[0]) {
-          assistantContent = data.choices[0].message?.content || "";
-        } else if (data.message) {
+        } else if (data.success && data.content) {
+          assistantContent = data.content;
+        } else if (data.choices && data.choices[0]?.message?.content) {
+          assistantContent = data.choices[0].message.content;
+        } else if (data.choices && data.choices[0]?.text) {
+          assistantContent = data.choices[0].text;
+        } else if (data.message && typeof data.message === 'string') {
           assistantContent = data.message;
-        } else if (data.text) {
+        } else if (data.text && typeof data.text === 'string') {
           assistantContent = data.text;
-        } else if (data.response) {
+        } else if (data.response && typeof data.response === 'string') {
           assistantContent = data.response;
-        } else if (data.content) {
-          assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
+        } else if (data.result && typeof data.result === 'string') {
+          assistantContent = data.result;
+        } else if (Array.isArray(data.content) && data.content[0]?.text) {
+          assistantContent = data.content[0].text;
+        } else {
+          console.error('Unknown response format:', data);
+          assistantContent = "Error: Could not parse AI response. Check console for details.";
         }
         
-        // CRITICAL FIX: Ensure we have actual content before adding message
-        if (!assistantContent || assistantContent.trim() === "") {
-          console.error("No content extracted from response:", data);
-          assistantContent = "I apologize, but I couldn't generate a response. Please try again.";
-        }
+        console.log('Extracted content:', assistantContent);
         
         const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         setEliteMessages(prev => [...prev, {
