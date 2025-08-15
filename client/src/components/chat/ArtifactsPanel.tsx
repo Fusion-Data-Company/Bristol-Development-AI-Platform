@@ -185,15 +185,15 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
 
   return (
     <>
-      {/* Full-Width Artifacts Panel */}
+      {/* Half-Screen Artifacts Panel */}
       <div className={cn(
-        "flex flex-col bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl border border-bristol-cyan/20 shadow-2xl shadow-bristol-cyan/10 m-4 rounded-xl",
-        fullscreen ? "fixed inset-4 z-50" : "h-full min-w-0 flex-1",
+        "flex flex-col bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl border border-bristol-cyan/20 shadow-2xl shadow-bristol-cyan/10",
+        fullscreen ? "fixed inset-4 z-50 rounded-xl" : "h-full min-w-0 flex-1",
         className
       )}>
         {/* Panel Header with Navigation Tabs */}
-        <div className="flex-shrink-0 border-b border-bristol-cyan/30 backdrop-blur-sm rounded-t-xl">
-          <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-slate-900/60 via-slate-800/70 to-slate-900/60 rounded-t-xl">
+        <div className="flex-shrink-0 border-b border-bristol-cyan/30 backdrop-blur-sm">
+          <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-slate-900/60 via-slate-800/70 to-slate-900/60">
             <div className="flex items-center gap-4">
               <FileText className="h-7 w-7 text-bristol-cyan" />
               <h2 className="font-semibold text-bristol-cyan text-xl">Artifacts</h2>

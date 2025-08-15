@@ -1679,8 +1679,8 @@ What property or investment can I analyze for you today?`,
           {activeTab === "chat" && (
             <div className="flex-1 overflow-hidden flex relative">
               {/* Main chat area */}
-              <div className={`flex-1 overflow-hidden flex flex-col relative transition-all duration-300 ${
-                showArtifacts ? 'mr-2' : ''
+              <div className={`overflow-hidden flex flex-col relative transition-all duration-300 ${
+                showArtifacts && artifacts.length > 0 ? 'flex-1 w-1/2' : 'flex-1 w-full'
               }`}>
               {/* Background tint overlay for chat area */}
               <div 
@@ -1799,7 +1799,7 @@ What property or investment can I analyze for you today?`,
               
               {/* Artifacts Panel */}
               {showArtifacts && artifacts.length > 0 && (
-                <div className="w-[600px] flex-shrink-0 border-l border-bristol-cyan/20 bg-white/95 backdrop-blur-sm">
+                <div className="w-1/2 flex-shrink-0 border-l border-bristol-cyan/20 bg-white/95 backdrop-blur-sm">
                   <ArtifactsPanel 
                     artifacts={artifacts}
                     onCopy={(content) => {
