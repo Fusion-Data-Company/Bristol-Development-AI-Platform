@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,32 +35,101 @@ interface LocationData {
   };
 }
 
+// Circuit breaker for address demographics API
+let addressApiFailureCount = 0;
+let lastAddressApiFailure = 0;
+const ADDRESS_API_FAILURE_THRESHOLD = 5;
+const ADDRESS_API_TIMEOUT = 300000; // 5 minutes
+const ADDRESS_API_MAX_RETRIES = 3;
+
 export function AddressDemographics({ className, onLocationSelect }: AddressDemographicsProps) {
   const [address, setAddress] = useState('');
   const [locationData, setLocationData] = useState<LocationData | null>(null);
+  const retryCountRef = useRef(0);
 
   const analyzeMutation = useMutation({
     mutationFn: async (params: { address?: string; latitude?: number; longitude?: number }) => {
-      const response = await fetch('/api/address/demographics', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(params)
-      });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.details || error.error || 'Failed to analyze address');
+      // Check circuit breaker
+      if (addressApiFailureCount >= ADDRESS_API_FAILURE_THRESHOLD) {
+        const timeSinceLastFailure = Date.now() - lastAddressApiFailure;
+        if (timeSinceLastFailure < ADDRESS_API_TIMEOUT) {
+          throw new Error('Address analysis temporarily disabled due to repeated failures. Please try again later.');
+        } else {
+          // Reset circuit breaker
+          addressApiFailureCount = 0;
+          console.log('Address API circuit breaker reset');
+        }
       }
-      
-      return response.json();
+
+      const fetchWithRetry = async (retryCount = 0): Promise<any> => {
+        if (retryCount >= ADDRESS_API_MAX_RETRIES) {
+          throw new Error(`Address analysis failed after ${ADDRESS_API_MAX_RETRIES} attempts`);
+        }
+
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
+          const response = await fetch('/api/address/demographics', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(params),
+            signal: controller.signal
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (!response.ok) {
+            const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+            throw new Error(error.details || error.error || `HTTP ${response.status}: ${response.statusText}`);
+          }
+          
+          const result = await response.json();
+          
+          // Reset failure count on success
+          if (addressApiFailureCount > 0) {
+            console.log('Address API request succeeded - resetting failure count');
+            addressApiFailureCount = 0;
+          }
+          
+          return result;
+        } catch (err: any) {
+          console.error(`Address API attempt ${retryCount + 1}/${ADDRESS_API_MAX_RETRIES} failed:`, err.message);
+          
+          if (err.name === 'AbortError') {
+            console.error('Address API request timed out');
+          }
+          
+          if (retryCount < ADDRESS_API_MAX_RETRIES - 1) {
+            // Exponential backoff
+            const delay = Math.pow(2, retryCount) * 1000;
+            console.log(`Retrying address API in ${delay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            return fetchWithRetry(retryCount + 1);
+          } else {
+            // Record failure for circuit breaker
+            addressApiFailureCount++;
+            lastAddressApiFailure = Date.now();
+            console.warn(`Address API failure count: ${addressApiFailureCount}/${ADDRESS_API_FAILURE_THRESHOLD}`);
+            throw err;
+          }
+        }
+      };
+
+      return fetchWithRetry();
     },
     onSuccess: (data: LocationData) => {
       setLocationData(data);
+      retryCountRef.current = 0; // Reset retry count on success
       if (onLocationSelect && data.location?.coordinates) {
         onLocationSelect(data.location.coordinates[1], data.location.coordinates[0]);
       }
+    },
+    onError: (error: Error) => {
+      console.error('Address demographics analysis failed:', error.message);
+      // Error is already handled by the circuit breaker and retry logic
     }
   });
 

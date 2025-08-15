@@ -270,7 +270,12 @@ export function InteractiveMap({
     viewport.latitude + 1   // north
   ];
 
-  const { data: demographicsData, loading: demographicsLoading } = useArcGISDemographics(bbox);
+  const { data: demographicsData, loading: demographicsLoading, error: demographicsError } = useArcGISDemographics(bbox);
+
+  // Log demographics errors but don't block the UI
+  if (demographicsError) {
+    console.warn('Demographics data temporarily unavailable:', demographicsError);
+  }
 
   if (fullScreen) {
     return (

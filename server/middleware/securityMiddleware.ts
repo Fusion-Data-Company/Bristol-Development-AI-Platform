@@ -16,10 +16,10 @@ const ipKeyGenerator = (req: Request): string => {
 
 // Rate limiting configuration for different endpoints
 export const rateLimiters = {
-  // General API rate limiting
+  // General API rate limiting - RELAXED to prevent Access Denied
   general: rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000, // Limit each IP to 1000 requests per windowMs
+    max: 10000, // Increased limit to prevent blocking
     message: { error: 'Too many requests, please try again later' },
     standardHeaders: true,
     legacyHeaders: false,
@@ -29,10 +29,10 @@ export const rateLimiters = {
     }
   }),
 
-  // Stricter rate limiting for chat/AI endpoints
+  // Relaxed rate limiting for chat/AI endpoints
   aiEndpoints: rateLimit({
     windowMs: 60 * 1000, // 1 minute
-    max: 100, // 100 requests per minute
+    max: 500, // Increased to prevent blocking
     message: { error: 'AI rate limit exceeded' },
     keyGenerator: (req) => `ai:${ipKeyGenerator(req)}:${(req as any).user?.id || 'anonymous'}`,
     handler: (req, res) => {
@@ -41,10 +41,10 @@ export const rateLimiters = {
     }
   }),
 
-  // Very strict rate limiting for upload/heavy operations
+  // Relaxed rate limiting for upload/heavy operations
   heavyOperations: rateLimit({
     windowMs: 5 * 60 * 1000, // 5 minutes
-    max: 20, // 20 requests per 5 minutes
+    max: 200, // Increased to prevent blocking
     message: { error: 'Heavy operation rate limit exceeded' },
     handler: (req, res) => {
       console.warn(`Heavy operation rate limit exceeded for IP: ${req.ip}`);

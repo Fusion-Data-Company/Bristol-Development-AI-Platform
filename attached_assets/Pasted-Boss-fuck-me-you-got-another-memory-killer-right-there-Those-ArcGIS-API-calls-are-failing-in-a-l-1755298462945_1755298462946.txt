@@ -1,0 +1,129 @@
+Boss, fuck me - you got another memory killer right there! Those ArcGIS API calls are failing in a loop and creating unhandled promise rejections that pile up like bodies in Jersey. Here's EXACTLY what to tell that builder:
+
+CRITICAL: FIX ARCGIS API ERROR LOOP IMMEDIATELY
+You have unhandled promise rejections from ArcGIS demographics API that are contributing to memory issues:
+THE PROBLEM:
+
+ArcGIS demographics API is being called repeatedly and failing
+Each failure creates an unhandled promise rejection
+These rejections accumulate in memory
+No error boundaries or retry limits
+
+FIND AND FIX THESE ISSUES:
+
+LOCATE THE ARCGIS CALLS:
+Search entire codebase for:
+
+arcgis
+demographics
+/api/address-demographics
+esri
+Any demographic data fetching
+
+
+ADD PROPER ERROR HANDLING:
+
+javascript// Wrap ALL ArcGIS calls with try-catch
+try {
+  const response = await fetch('/api/address-demographics');
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+  const data = await response.json();
+  return data;
+} catch (error) {
+  console.error('ArcGIS API failed:', error);
+  // DON'T RETRY IMMEDIATELY
+  return null; // Return null instead of crashing
+}
+
+ADD RETRY LIMITS:
+
+javascriptconst MAX_RETRIES = 3;
+let retryCount = 0;
+
+const fetchDemographics = async () => {
+  if (retryCount >= MAX_RETRIES) {
+    console.log('ArcGIS max retries reached - stopping');
+    return null;
+  }
+  
+  try {
+    // API call here
+  } catch (error) {
+    retryCount++;
+    // Wait before retry (exponential backoff)
+    await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)));
+    return fetchDemographics();
+  }
+};
+
+CHECK API KEY CONFIGURATION:
+
+Verify ArcGIS API key is present in environment variables
+Check if API key has proper permissions
+Verify API endpoint URL is correct
+
+
+ADD CIRCUIT BREAKER:
+
+javascriptlet arcGISFailures = 0;
+const FAILURE_THRESHOLD = 5;
+
+// Before making ArcGIS call
+if (arcGISFailures >= FAILURE_THRESHOLD) {
+  console.log('ArcGIS circuit breaker triggered - API disabled');
+  return null; // Don't even try
+}
+
+// On failure
+arcGISFailures++;
+
+// On success
+arcGISFailures = 0; // Reset counter
+
+FIND THE COMPONENT CALLING THIS:
+
+It's probably in a useEffect without proper cleanup
+Or in a component that's re-rendering constantly
+Could be in the data tools or demographics components
+
+
+
+IMMEDIATE ACTIONS:
+
+Search for all ArcGIS/demographics API calls
+Add .catch() to every single one
+Add retry limits (max 3 attempts)
+Add circuit breaker to stop after 5 failures
+Check if API key is configured properly
+
+CHECK THESE FILES SPECIFICALLY:
+
+Any demographics components
+Data visualization panels
+Market analysis tools
+Property analysis functions
+Background data fetchers
+
+The error "Failed to fetch" usually means:
+
+CORS issue (API blocking cross-origin requests)
+Missing API key
+Rate limiting
+Network timeout
+Wrong endpoint URL
+
+TEST FIX:
+After implementing, you should see:
+
+Maximum 3 retry attempts then stop
+No more unhandled promise rejections
+Clear error message about what's wrong
+Memory usage drops significantly
+
+DO NOT:
+
+Let it retry infinitely
+Ignore the errors
+Remove the demographics feature entirely (fix it properly)
