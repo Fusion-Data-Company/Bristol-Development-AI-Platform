@@ -8,7 +8,7 @@ import { ThinkingIndicator } from "./ThinkingIndicator";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import { Send, Paperclip, Mic, X, MapPin, BarChart, Brain, Settings, Cpu } from "lucide-react";
+import { Send, Paperclip, Mic, X, MapPin, BarChart, Brain, Settings, Cpu, Lightbulb, Target, TrendingUp, AlertTriangle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
@@ -60,12 +60,31 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
   const [selectedModel, setSelectedModel] = useState("gpt-5"); // Default to GPT-5 with BYOK
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+  
+  // Enhanced AI features
+  const [realTimeInsights, setRealTimeInsights] = useState<any>(null);
+  const [smartSuggestions, setSmartSuggestions] = useState<any[]>([]);
+  const [conversationAnalytics, setConversationAnalytics] = useState<any>(null);
+  const [showInsightsPanel, setShowInsightsPanel] = useState(false);
+  const [adaptiveMode, setAdaptiveMode] = useState(true);
+  const [userProfile, setUserProfile] = useState({
+    role: 'Portfolio Manager',
+    experience: 'Senior',
+    preferredDetail: 'balanced',
+    preferredFormality: 'professional'
+  });
 
   // WebSocket for real-time updates
   const { isConnected, sendMessage: sendWsMessage } = useWebSocket({
     onMessage: (wsMessage) => {
       if (wsMessage.type === "chat_typing" && wsMessage.data?.typing === false) {
         setIsThinking(false);
+      }
+      if (wsMessage.type === "real_time_insights") {
+        setRealTimeInsights(wsMessage.data);
+      }
+      if (wsMessage.type === "smart_suggestions") {
+        setSmartSuggestions(wsMessage.data?.suggestions || []);
       }
     }
   });
@@ -85,17 +104,34 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
     },
   });
 
-  // Send message mutation using Bristol A.I. Elite
+  // Enhanced message mutation with AI analytics
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
-      const response = await apiRequest('/api/bristol-brain-elite/chat', 'POST', {
-        sessionId: currentSessionId,
-        message: content,
-        enableAdvancedReasoning: true,
-        selectedModel, // Include selected model
-        dataContext: {} // Could include current app context here
-      });
-      return response;
+      // Run enhanced chat analysis in parallel
+      const [chatResponse, insights, recommendations] = await Promise.all([
+        apiRequest('/api/bristol-brain-elite/chat', 'POST', {
+          sessionId: currentSessionId,
+          message: content,
+          enableAdvancedReasoning: true,
+          selectedModel,
+          dataContext: { userProfile, conversationHistory: messages }
+        }),
+        apiRequest('/api/enhanced-chat/real-time-insights', 'POST', {
+          currentMessage: content,
+          conversationHistory: messages,
+          userContext: { portfolio: {}, role: userProfile.role }
+        }),
+        apiRequest('/api/intelligent-recommendations/next-actions', 'POST', {
+          context: {
+            currentTask: 'Chat conversation',
+            userProfile,
+            conversationHistory: messages
+          },
+          urgency: 'medium'
+        })
+      ]);
+      
+      return { chatResponse, insights, recommendations };
     },
     onMutate: async (content: string) => {
       // Add user message immediately
@@ -115,17 +151,32 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
         data: { sessionId: currentSessionId, typing: true }
       });
     },
-    onSuccess: (response: any) => {
-      // Add AI response
+    onSuccess: (data: any) => {
+      const { chatResponse, insights, recommendations } = data;
+      
+      // Add AI response with enhanced metadata
       const aiMessage: ChatMessage = {
         id: `ai_${Date.now()}`,
         role: 'assistant',
-        content: response?.content || response?.text || response?.message || 'I apologize, but I was unable to generate a response.',
-        createdAt: response?.createdAt || new Date().toISOString(),
-        metadata: response?.metadata
+        content: chatResponse?.content || chatResponse?.text || chatResponse?.message || 'I apologize, but I was unable to generate a response.',
+        createdAt: chatResponse?.createdAt || new Date().toISOString(),
+        metadata: {
+          ...chatResponse?.metadata,
+          insights,
+          recommendations,
+          confidence: insights?.confidence || 0.8
+        }
       };
       setMessages(prev => [...prev, aiMessage]);
       setIsThinking(false);
+      
+      // Update real-time insights
+      setRealTimeInsights(insights);
+      
+      // Generate smart suggestions
+      if (insights?.suggestions) {
+        setSmartSuggestions(insights.suggestions);
+      }
       
       // Send typing stop indicator
       sendWsMessage({
@@ -177,6 +228,48 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Real-time typing analysis
+  const handleMessageChange = async (value: string) => {
+    setMessage(value);
+    
+    // Trigger real-time insights for longer messages
+    if (value.length > 20 && adaptiveMode) {
+      try {
+        const insights = await apiRequest('/api/conversation-intelligence/real-time-insights', 'POST', {
+          currentMessage: value,
+          conversationHistory: messages,
+          userContext: { portfolio: {}, role: userProfile.role }
+        });
+        setRealTimeInsights(insights);
+      } catch (error) {
+        // Silently handle real-time insight errors
+      }
+    }
+  };
+
+  // Generate conversation analytics
+  useEffect(() => {
+    if (messages.length >= 4) {
+      const analyzeConversation = async () => {
+        try {
+          const analytics = await apiRequest('/api/conversation-analytics/comprehensive-insights', 'POST', {
+            conversationHistory: messages,
+            includeRecommendations: true
+          });
+          setConversationAnalytics(analytics);
+        } catch (error) {
+          console.warn('Failed to generate conversation analytics:', error);
+        }
+      };
+      
+      analyzeConversation();
+    }
+  }, [messages.length]);
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setMessage(suggestion);
+  };
 
   return (
     <Card className={cn("flex flex-col h-full bg-white/90 backdrop-blur-sm border-bristol-sky shadow-xl", className)}>
@@ -324,6 +417,100 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
           </div>
         </div>
 
+        {/* Enhanced AI Features Panel */}
+        {(realTimeInsights || smartSuggestions.length > 0 || conversationAnalytics) && (
+          <div className="px-6 py-4 border-b border-bristol-sky bg-gradient-to-r from-bristol-gold/5 to-bristol-maroon/5">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-bristol-ink flex items-center gap-2">
+                <Brain className="h-4 w-4 text-bristol-maroon" />
+                AI Insights
+              </h4>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowInsightsPanel(!showInsightsPanel)}
+                className="text-bristol-stone hover:text-bristol-maroon"
+              >
+                {showInsightsPanel ? 'Hide' : 'Show'}
+              </Button>
+            </div>
+            
+            {showInsightsPanel && (
+              <div className="space-y-3">
+                {/* Real-time Insights */}
+                {realTimeInsights && (
+                  <div className="p-3 bg-white rounded-lg border border-bristol-sky">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lightbulb className="h-4 w-4 text-bristol-gold" />
+                      <span className="text-sm font-medium text-bristol-ink">Real-time Analysis</span>
+                    </div>
+                    <div className="text-sm text-bristol-stone">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span>Urgency:</span>
+                        <Badge variant={realTimeInsights.urgency === 'critical' ? 'destructive' : 'secondary'}>
+                          {realTimeInsights.urgency}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span>Complexity:</span>
+                        <Badge variant="outline">{realTimeInsights.complexity}</Badge>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Smart Suggestions */}
+                {smartSuggestions.length > 0 && (
+                  <div className="p-3 bg-white rounded-lg border border-bristol-sky">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="h-4 w-4 text-bristol-maroon" />
+                      <span className="text-sm font-medium text-bristol-ink">Smart Suggestions</span>
+                    </div>
+                    <div className="space-y-2">
+                      {smartSuggestions.slice(0, 3).map((suggestion, index) => (
+                        <Button
+                          key={index}
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleSuggestionClick(suggestion.text)}
+                          className="w-full text-left text-xs p-2 h-auto bg-bristol-sky/50 hover:bg-bristol-maroon hover:text-white text-bristol-stone"
+                        >
+                          <div className="flex items-start gap-2">
+                            <Badge variant="outline" className="text-xs">
+                              {suggestion.priority}
+                            </Badge>
+                            <span className="flex-1">{suggestion.text}</span>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Conversation Analytics */}
+                {conversationAnalytics && (
+                  <div className="p-3 bg-white rounded-lg border border-bristol-sky">
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendingUp className="h-4 w-4 text-bristol-gold" />
+                      <span className="text-sm font-medium text-bristol-ink">Conversation Analytics</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="flex items-center gap-1">
+                        <span className="text-bristol-stone">Engagement:</span>
+                        <Badge variant="secondary">{conversationAnalytics.comprehensive?.metrics?.engagementScore > 0.7 ? 'High' : 'Medium'}</Badge>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-bristol-stone">Topics:</span>
+                        <span className="text-bristol-ink">{conversationAnalytics.comprehensive?.topics?.primaryTopics?.[0] || 'General'}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Function Toggles */}
         <div className="px-6 py-4 flex items-center gap-3 border-b border-bristol-sky">
           <button
@@ -372,7 +559,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
             <div className="flex-1 relative">
               <Input
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => handleMessageChange(e.target.value)}
                 placeholder="Ask about properties, market trends, demographics, investment opportunities..."
                 className="pr-4 py-3 text-lg border-bristol-sky focus:ring-bristol-maroon focus:border-bristol-maroon bg-white text-bristol-ink cursor-text"
                 disabled={sendMessageMutation.isPending}

@@ -168,6 +168,19 @@ export default function BristolFloatingWidget({
   const [agentCommunication, setAgentCommunication] = useState<any[]>([]);
   const [multiAgentMode, setMultiAgentMode] = useState(false);
 
+  // Enhanced AI features state
+  const [realTimeInsights, setRealTimeInsights] = useState<any>(null);
+  const [smartSuggestions, setSmartSuggestions] = useState<any[]>([]);
+  const [conversationAnalytics, setConversationAnalytics] = useState<any>(null);
+  const [showInsightsPanel, setShowInsightsPanel] = useState(false);
+  const [adaptiveMode, setAdaptiveMode] = useState(true);
+  const [userProfile, setUserProfile] = useState({
+    role: 'Portfolio Manager',
+    experience: 'Senior',
+    preferredDetail: 'balanced',
+    preferredFormality: 'professional'
+  });
+
   // SSR-safe localStorage loading and WebSocket connection
   useEffect(() => {
     try {
@@ -532,6 +545,60 @@ export default function BristolFloatingWidget({
     }
   };
 
+  // Real-time typing analysis
+  const handleInputChange = async (value: string) => {
+    setInput(value);
+    
+    // Trigger real-time insights for longer messages
+    if (value.length > 20 && adaptiveMode) {
+      try {
+        const insights = await fetch('/api/conversation-intelligence/real-time-insights', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            currentMessage: value,
+            conversationHistory: messages,
+            userContext: { portfolio: {}, role: userProfile.role }
+          })
+        });
+        
+        if (insights.ok) {
+          const insightsData = await insights.json();
+          setRealTimeInsights(insightsData);
+        }
+      } catch (error) {
+        // Silently handle real-time insight errors
+      }
+    }
+  };
+
+  // Generate conversation analytics for the floating widget
+  useEffect(() => {
+    if (messages.length >= 4) {
+      const analyzeConversation = async () => {
+        try {
+          const analytics = await fetch('/api/conversation-analytics/comprehensive-insights', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              conversationHistory: messages,
+              includeRecommendations: true
+            })
+          });
+          
+          if (analytics.ok) {
+            const analyticsData = await analytics.json();
+            setConversationAnalytics(analyticsData);
+          }
+        } catch (error) {
+          console.warn('Failed to generate conversation analytics:', error);
+        }
+      };
+      
+      analyzeConversation();
+    }
+  }, [messages.length]);
+
   const handleSend = async () => {
     const trimmed = input.trim();
     if (!trimmed || loading) return;
@@ -570,32 +637,56 @@ export default function BristolFloatingWidget({
     }
 
     try {
-      // Use unified chat endpoint for perfect memory and context sharing
-      const endpoint = "/api/unified-chat/chat";
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: trimmed,
-          model: enhancedPayload.model,
-          temperature: 0.7,
-          maxTokens: 4000,
-          mcpEnabled: true,
-          realTimeData: true,
-          dataContext: enhancedPayload.dataContext,
-          enableAdvancedReasoning: true,
-          sessionId: sessionId,
-          sourceInstance: 'floating',
-          memoryEnabled: true,
-          crossSessionMemory: true,
-          toolSharing: true,
-          messages: messages.filter(m => m.role !== 'system').map(m => ({
-            role: m.role,
-            content: m.content,
-            metadata: { sourceInstance: 'floating' }
-          }))
+      // Run enhanced AI analytics in parallel with chat
+      const [chatResponse, insights, recommendations] = await Promise.all([
+        fetch("/api/unified-chat/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: trimmed,
+            model: enhancedPayload.model,
+            temperature: 0.7,
+            maxTokens: 4000,
+            mcpEnabled: true,
+            realTimeData: true,
+            dataContext: enhancedPayload.dataContext,
+            enableAdvancedReasoning: true,
+            sessionId: sessionId,
+            sourceInstance: 'floating',
+            memoryEnabled: true,
+            crossSessionMemory: true,
+            toolSharing: true,
+            messages: messages.filter(m => m.role !== 'system').map(m => ({
+              role: m.role,
+              content: m.content,
+              metadata: { sourceInstance: 'floating' }
+            }))
+          }),
         }),
-      });
+        fetch("/api/enhanced-chat/real-time-insights", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            currentMessage: trimmed,
+            conversationHistory: messages,
+            userContext: { portfolio: {}, role: userProfile.role }
+          })
+        }).catch(() => null),
+        fetch("/api/intelligent-recommendations/next-actions", {
+          method: "POST", 
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            context: {
+              currentTask: 'Chat conversation',
+              userProfile,
+              conversationHistory: messages
+            },
+            urgency: 'medium'
+          })
+        }).catch(() => null)
+      ]);
+
+      const res = chatResponse;
 
       if (!res.ok) {
         // Fallback to enhanced chat v2 endpoint
@@ -691,6 +782,21 @@ export default function BristolFloatingWidget({
         createdAt: nowISO(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
+
+      // Process enhanced AI analytics
+      if (insights && insights.ok) {
+        const insightsData = await insights.json();
+        setRealTimeInsights(insightsData);
+        if (insightsData.suggestions) {
+          setSmartSuggestions(insightsData.suggestions);
+        }
+      }
+
+      if (recommendations && recommendations.ok) {
+        const recData = await recommendations.json();
+        // Store recommendations for display in insights panel
+        setRealTimeInsights(prev => ({ ...prev, recommendations: recData }));
+      }
       
       await sendTelemetry("unified_chat_response", { 
         tokens: assistantText.length,
@@ -1223,6 +1329,79 @@ export default function BristolFloatingWidget({
                   />
                   <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
                   <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
+                  
+                  {/* Enhanced AI Features Panel */}
+                  {(realTimeInsights || smartSuggestions.length > 0 || conversationAnalytics) && (
+                    <div className="relative z-20 p-4 border-b border-bristol-cyan/30 bg-gradient-to-r from-bristol-gold/5 to-bristol-maroon/5">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-semibold text-bristol-cyan flex items-center gap-2">
+                          <Brain className="h-4 w-4 text-bristol-maroon" />
+                          AI Insights
+                        </h4>
+                        <button
+                          onClick={() => setShowInsightsPanel(!showInsightsPanel)}
+                          className="text-bristol-stone hover:text-bristol-cyan transition-colors"
+                        >
+                          {showInsightsPanel ? 'Hide' : 'Show'}
+                        </button>
+                      </div>
+                      
+                      {showInsightsPanel && (
+                        <div className="space-y-3">
+                          {/* Real-time Insights */}
+                          {realTimeInsights && (
+                            <div className="p-3 bg-bristol-ink/20 rounded-lg border border-bristol-cyan/20">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Sparkles className="h-4 w-4 text-bristol-gold" />
+                                <span className="text-sm font-medium text-bristol-cyan">Real-time Analysis</span>
+                              </div>
+                              <div className="text-sm text-bristol-stone">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span>Urgency:</span>
+                                  <div className={`px-2 py-1 rounded text-xs ${realTimeInsights.urgency === 'critical' ? 'bg-red-900/50 text-red-300' : 'bg-bristol-cyan/20 text-bristol-cyan'}`}>
+                                    {realTimeInsights.urgency}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <span>Complexity:</span>
+                                  <div className="px-2 py-1 rounded text-xs bg-bristol-electric/20 text-bristol-electric border border-bristol-electric/30">
+                                    {realTimeInsights.complexity}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Smart Suggestions */}
+                          {smartSuggestions.length > 0 && (
+                            <div className="p-3 bg-bristol-ink/20 rounded-lg border border-bristol-cyan/20">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Target className="h-4 w-4 text-bristol-maroon" />
+                                <span className="text-sm font-medium text-bristol-cyan">Smart Suggestions</span>
+                              </div>
+                              <div className="space-y-2">
+                                {smartSuggestions.slice(0, 2).map((suggestion, index) => (
+                                  <button
+                                    key={index}
+                                    onClick={() => setInput(suggestion.text)}
+                                    className="w-full text-left text-xs p-2 h-auto bg-bristol-sky/50 hover:bg-bristol-maroon hover:text-white text-bristol-stone rounded transition-colors"
+                                  >
+                                    <div className="flex items-start gap-2">
+                                      <div className="px-2 py-1 rounded text-xs bg-bristol-gold/20 text-bristol-gold border border-bristol-gold/30">
+                                        {suggestion.priority}
+                                      </div>
+                                      <span className="flex-1">{suggestion.text}</span>
+                                    </div>
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="relative z-10 flex-1 overflow-hidden flex flex-col">
                     <ChatPane messages={messages} loading={loading} appData={appData} />
                   </div>
@@ -1304,7 +1483,7 @@ export default function BristolFloatingWidget({
                     <input
                       ref={inputRef}
                       value={input}
-                      onChange={(e) => setInput(e.target.value)}
+                      onChange={(e) => handleInputChange(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && !e.shiftKey ? handleSend() : null}
                       placeholder={loading ? "Bristol A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
                       disabled={loading}
