@@ -682,27 +682,36 @@ export default function Chat() {
             
             const welcomeMessage = {
               role: "assistant" as const,
-              content: `🚀 **Bristol A.I. Elite v5.0** - *Proprietary Intelligence System*
+              content: `🚀 **Bristol A.I. Elite v5.0** - *Fortune 500 Intelligence Platform*
 
-**Current Configuration:**
-• **Model:** ${currentModel?.label || 'Loading...'}${isPremium ? ' 💎 PREMIUM TIER' : ''}
+**🏢 Current Configuration:**
+• **AI Engine:** ${currentModel?.label || 'Loading...'}${isPremium ? ' 💎 **PREMIUM TIER**' : ' 🔧 **STANDARD**'}
 • **Provider:** ${currentModel?.provider?.toUpperCase() || 'OPENAI'}  
-• **Context:** ${currentModel?.context ? `${(currentModel.context/1000).toFixed(0)}K tokens` : 'Standard'}
-• **MCP Tools:** ${mcpEnabled ? '✅ ENABLED' : '❌ DISABLED'}  
-• **Streaming:** ${realTimeData ? '✅ REAL-TIME' : '❌ BATCH MODE'}
+• **Context Window:** ${currentModel?.context ? `${(currentModel.context/1000).toFixed(0)}K tokens` : 'Standard'}
+• **MCP Tools:** ${mcpEnabled ? '✅ **ENABLED**' : '❌ DISABLED'}  
+• **Streaming Mode:** ${realTimeData ? '✅ **REAL-TIME**' : '❌ BATCH MODE'}
 
-**Elite Capabilities Ready:**
-${isPremium ? '💎 **PREMIUM MODE ACTIVATED**' : '🔧 **STANDARD MODE**'}
+**⚡ Elite Capabilities Online:**
+${isPremium ? '💎 **PREMIUM MODE ACTIVATED** - Full Enterprise Features' : '🔧 **STANDARD MODE** - Core Features'}
+
+📊 **Financial Intelligence:**
 • Advanced IRR/NPV financial modeling with DCF analysis
-• Live demographic & market intelligence feeds
-• Multi-agent deal coordination system with WebSocket
-• Direct PostgreSQL database access for property data  
-• Real-time property analysis & Bristol scoring algorithms
-• Enhanced streaming responses with premium model access
+• Multi-scenario cash flow projections & sensitivity analysis
+• Real-time market valuation & comparable analysis
 
-**System Status:** All engines online and ready for property intelligence analysis.
+🏙️ **Market Intelligence:**
+• Live demographic & employment data feeds
+• Property analysis & Bristol scoring algorithms
+• Multi-agent deal coordination with WebSocket integration
 
-What development project or market analysis can I help you with today?`,
+🔗 **Data Integration:**
+• Direct PostgreSQL database access for property portfolios
+• Enhanced streaming responses with premium model support
+• Real-time property intelligence & market opportunity detection
+
+**🎯 System Status:** All enterprise engines online and optimized for Fortune 500 deployment.
+
+What property development project, market analysis, or investment opportunity can I evaluate for you today?`,
               createdAt: nowISO(),
               sessionId,
               id: `welcome-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -1001,12 +1010,14 @@ What development project or market analysis can I help you with today?`,
       <div 
         className="w-full h-screen text-neutral-100 shadow-2xl flex flex-col chrome-metallic-panel font-cinzel"
         style={{
-          background: 'linear-gradient(135deg, rgba(5, 10, 20, 0.95) 0%, rgba(69, 214, 202, 0.1) 25%, rgba(255, 255, 255, 0.05) 50%, rgba(69, 214, 202, 0.1) 75%, rgba(5, 10, 20, 0.95) 100%)',
-          backdropFilter: 'blur(20px) saturate(150%)',
-          border: '1px solid rgba(69, 214, 202, 0.3)',
+          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 25%, rgba(51, 65, 85, 0.92) 50%, rgba(30, 41, 59, 0.95) 75%, rgba(15, 23, 42, 0.98) 100%)',
+          backdropFilter: 'blur(25px) saturate(180%)',
+          border: '1px solid rgba(255, 215, 0, 0.2)',
           boxShadow: `
-            0 0 30px rgba(69, 214, 202, 0.2),
-            inset 0 1px 0 rgba(255, 255, 255, 0.1)
+            0 0 40px rgba(255, 215, 0, 0.15),
+            0 0 80px rgba(0, 206, 209, 0.1),
+            inset 0 2px 4px rgba(255, 255, 255, 0.08),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.1)
           `,
         }}
       >
@@ -1016,11 +1027,11 @@ What development project or market analysis can I help you with today?`,
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-bristol-cyan/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute -top-5 -right-10 w-32 h-32 bg-bristol-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
           
-          {/* Glass header background */}
+          {/* Fortune 500 Elite header background */}
           <div 
             className="absolute inset-0" 
             style={{
-              background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.15) 0%, rgba(168, 85, 247, 0.1) 50%, rgba(239, 68, 68, 0.08) 100%)',
+              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.12) 0%, rgba(0, 206, 209, 0.08) 35%, rgba(136, 0, 32, 0.06) 70%, rgba(255, 215, 0, 0.08) 100%)',
             }}
           />
           
@@ -1034,11 +1045,15 @@ What development project or market analysis can I help you with today?`,
                 </div>
               </div>
               <div>
-                <h1 className="font-serif font-bold text-2xl bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">
-                  BRISTOL A.I.
+                <h1 className="font-serif font-bold text-3xl bg-gradient-to-r from-bristol-gold via-white to-bristol-cyan bg-clip-text text-transparent drop-shadow-xl">
+                  BRISTOL A.I. ELITE
                 </h1>
-                <p className="text-lg text-bristol-cyan font-bold tracking-wide uppercase mt-1 drop-shadow-lg">
-                  AI Real Estate Intelligence
+                <p className="text-lg text-bristol-gold font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                  Fortune 500 Intelligence Platform
+                  <div className="px-2 py-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-xs font-bold text-white ml-2">
+                    💎 v5.0
+                  </div>
                 </p>
               </div>
             </div>
