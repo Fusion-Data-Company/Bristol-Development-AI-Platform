@@ -1647,12 +1647,19 @@ What property development project, market analysis, or investment opportunity ca
                       "flex w-full",
                       msg.role === "user" ? "justify-end" : "justify-start"
                     )}>
-                      <div className={cx(
-                        "max-w-[85%] rounded-2xl px-4 py-3 backdrop-blur-sm border relative",
-                        msg.role === "user" 
-                          ? "bg-gradient-to-br from-bristol-cyan/20 to-bristol-cyan/10 border-bristol-cyan/50 text-bristol-cyan shadow-bristol-cyan/20 shadow-lg"
-                          : "bg-gradient-to-br from-slate-800/80 to-slate-700/60 border-bristol-cyan/30 text-white shadow-slate-900/50 shadow-lg"
-                      )}>
+                      <div 
+                        className={cx(
+                          "max-w-[85%] rounded-2xl px-4 py-3 backdrop-blur-sm border relative",
+                          msg.role === "user" 
+                            ? "text-bristol-cyan"
+                            : "text-white"
+                        )}
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
+                          border: '1px solid rgba(69, 214, 202, 0.6)',
+                          boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
+                        }}
+                      >
                         {/* Streaming indicator for assistant messages */}
                         {msg.role === "assistant" && (msg as any).metadata?.streaming && (
                           <div className="absolute -top-1 -right-1 w-3 h-3 bg-bristol-cyan rounded-full animate-pulse" />
@@ -1765,7 +1772,7 @@ What property development project, market analysis, or investment opportunity ca
           <div 
             className="border-t border-bristol-cyan/40 relative flex-shrink-0"
             style={{
-              background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.95) 100%)',
+              background: 'transparent',
               backdropFilter: 'blur(20px) saturate(1.2)',
               boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.05)',
             }}
