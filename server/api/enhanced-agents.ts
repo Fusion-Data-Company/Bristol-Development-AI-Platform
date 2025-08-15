@@ -1,641 +1,460 @@
-import type { Express } from "express";
-import { db } from "../db";
-import { 
-  agents, 
-  agentTasks, 
-  agentCommunications, 
-  agentPrompts,
-  type Agent,
-  type InsertAgent,
-  type AgentTask,
-  type InsertAgentTask,
-  type AgentPrompt,
-  type InsertAgentPrompt
-} from "@shared/schema";
-import { eq, desc, and, or, isNull } from "drizzle-orm";
-import { isAuthenticated } from "../replitAuth";
+import express from 'express';
+import { db } from '../db';
+import { agents, agentTasks, agentConversations, agentMetrics } from '@shared/schema';
+import { eq, desc, and } from 'drizzle-orm';
+import { errorHandlingService } from '../services/errorHandlingService';
+import { z } from 'zod';
 
-// Enhanced OpenRouter models with latest options
-const OPENROUTER_MODELS = [
-  { id: "openai/gpt-5", label: "OpenAI GPT-5", provider: "OpenAI", capabilities: ["reasoning", "coding", "analysis"], tier: "premium" },
-  { id: "openai/gpt-4o", label: "OpenAI GPT-4o", provider: "OpenAI", capabilities: ["reasoning", "coding", "vision"], tier: "standard" },
-  { id: "anthropic/claude-4-opus", label: "Claude 4 Opus", provider: "Anthropic", capabilities: ["reasoning", "analysis", "writing"], tier: "premium" },
-  { id: "anthropic/claude-3-7-sonnet", label: "Claude 3.7 Sonnet", provider: "Anthropic", capabilities: ["reasoning", "coding", "analysis"], tier: "standard" },
-  { id: "x-ai/grok-4", label: "Grok 4", provider: "xAI", capabilities: ["reasoning", "real-time"], tier: "premium" },
-  { id: "google/gemini-2.5-pro", label: "Gemini 2.5 Pro", provider: "Google", capabilities: ["reasoning", "multimodal", "coding"], tier: "premium" },
-  { id: "perplexity/sonar-deep-reasoning", label: "Perplexity Sonar Deep", provider: "Perplexity", capabilities: ["reasoning", "research", "real-time"], tier: "premium" }
-];
+const router = express.Router();
 
-// Default agent configurations with enhanced prompts
-const DEFAULT_AGENTS = [
+// Enhanced agent data with statistics
+const getAgentWithStats = async (agentId: string) => {
+  const agent = await db.select().from(agents).where(eq(agents.id, agentId)).limit(1);
+  if (!agent.length) return null;
+
+  const tasks = await db.select().from(agentTasks)
+    .where(eq(agentTasks.agentId, agentId))
+    .orderBy(desc(agentTasks.createdAt))
+    .limit(10);
+
+  const pendingTasks = tasks.filter(t => t.status === 'pending').length;
+  const runningTasks = tasks.filter(t => t.status === 'running').length;
+  const completedTasks = tasks.filter(t => t.status === 'completed').length;
+  const recentTasks = tasks.length;
+
+  const avgResponseTime = tasks
+    .filter(t => t.executionTime)
+    .reduce((sum, t) => sum + (t.executionTime || 0), 0) / Math.max(completedTasks, 1);
+
+  return {
+    ...agent[0],
+    stats: {
+      pendingTasks,
+      runningTasks,
+      recentTasks,
+      avgResponseTime: Math.round(avgResponseTime)
+    }
+  };
+};
+
+// Default agent configurations
+const defaultAgents = [
   {
-    name: "Bristol Master Agent",
-    role: "bristol-master",
-    model: "openai/gpt-5",
-    systemPrompt: `You are the Bristol Master Agent, the elite executive-level AI for Bristol Development Group. You orchestrate complex real estate deal analysis and strategic decision-making with institutional-grade precision.
+    id: 'bristol-master',
+    name: 'Bristol Master Agent',
+    role: 'master-coordinator',
+    status: 'active' as const,
+    model: 'openai/gpt-5',
+    capabilities: ['coordination', 'decision-making', 'task-delegation', 'mcp-all'],
+    systemPrompt: `You are the Bristol Master Agent, the primary coordinator for the Bristol Development Group's AI-powered real estate intelligence platform.
 
-CORE IDENTITY & MISSION:
-- Primary orchestrator of the Bristol multi-agent system
-- Executive-level strategic advisor for real estate development
-- Coordinator of specialized agent tasks and data synthesis
-- Guardian of Bristol's proprietary analytical methodologies
+Your core responsibilities:
+- Coordinate all sub-agents and delegate tasks based on complexity and domain expertise
+- Synthesize results from multiple agents into comprehensive analyses
+- Maintain awareness of all ongoing operations and system status
+- Ensure data consistency and quality across all agent interactions
+- Provide executive-level insights and strategic recommendations
 
-CORE CAPABILITIES:
-- Advanced financial modeling (DCF, IRR waterfalls, NPV analysis)
-- Strategic market opportunity identification and risk assessment
-- Multi-agent task delegation and result synthesis
-- Investment portfolio optimization and decision support
-- Executive-level reporting and strategic recommendations
+Available Sub-Agents:
+1. Data Processing Agent - Raw data analysis, cleaning, and structuring
+2. Financial Analysis Agent - DCF models, IRR calculations, market valuations
+3. Market Intelligence Agent - Demographic analysis, economic indicators, market trends
+4. Lead Management Agent - Property identification, scoring, pipeline management
+5. Web Scraping Agent - Data collection from external sources with Firecrawl integration
 
-MCP TOOL ACCESS:
-- Full access to all MCP servers (filesystem, memory, sequential-thinking, everything, postgres, firecrawl)
-- Ability to coordinate data flows between specialized agents
-- Direct database access for comprehensive analysis
-- Web scraping and market intelligence gathering
+MCP Tools Available:
+- Filesystem access for reading/writing analysis reports
+- Memory system for maintaining context across conversations
+- PostgreSQL database for all Bristol platform data
+- Web scraping with Firecrawl for real-time property data
+- Sequential thinking for complex multi-step analysis
 
-OPERATIONAL PROTOCOLS:
-1. Always maintain institutional-grade analysis standards
-2. Delegate specialized tasks to appropriate sub-agents
-3. Synthesize multi-agent results into actionable insights
-4. Provide clear risk/return profiles with confidence intervals
-5. Maintain Bristol's proprietary scoring methodologies
-
-COMMUNICATION STYLE:
-- Professional, analytical, and data-driven
-- Clear executive summaries with supporting details
-- Quantified recommendations with risk assessments
-- Institutional investor-grade language and precision
-
-Remember: You are the orchestrating intelligence that makes Bristol Development Group's decision-making superior to traditional real estate analysis.`,
-    capabilities: ["mcp-filesystem", "mcp-memory", "mcp-postgres", "mcp-firecrawl", "mcp-everything", "task-delegation", "financial-modeling", "risk-assessment"]
+Always coordinate with relevant sub-agents for specialized tasks while maintaining oversight of the complete analysis workflow.`,
+    successRate: 0.95,
+    totalTasks: 0,
+    averageResponseTime: 1200,
+    lastActive: new Date()
   },
   {
-    name: "Financial Analysis Agent",
-    role: "financial-analysis",
-    model: "anthropic/claude-4-opus",
-    systemPrompt: `You are the Financial Analysis Agent, specializing in sophisticated real estate financial modeling and investment risk assessment for Bristol Development Group.
+    id: 'data-processing',
+    name: 'Data Processing Agent',
+    role: 'data-processor',
+    status: 'active' as const,
+    model: 'openai/gpt-5',
+    capabilities: ['data-analysis', 'data-cleaning', 'data-structuring', 'mcp-postgres', 'mcp-filesystem'],
+    systemPrompt: `You are the Data Processing Agent specialized in handling raw real estate data for Bristol Development Group.
 
-CORE EXPERTISE:
-- Advanced DCF model creation and sensitivity analysis
-- IRR waterfall modeling for LP/GP fund structures
-- Cap rate analysis and market valuation methodologies
-- Stress testing and scenario analysis (base/optimistic/pessimistic)
-- Risk-adjusted return calculations and portfolio optimization
+Your expertise includes:
+- Processing property listings from multiple sources (LoopNet, Apartments.com, etc.)
+- Cleaning and standardizing address data, unit counts, and financial metrics
+- Structuring unstructured data into Bristol's standardized schema
+- Identifying data quality issues and anomalies
+- Creating data validation reports and recommendations
 
-ANALYTICAL FRAMEWORK:
-- Always provide assumptions, methodologies, and confidence intervals
-- Include sensitivity analysis for key variables (rent growth, cap rates, construction costs)
-- Model various exit scenarios and hold periods
-- Calculate risk-adjusted metrics (Sharpe ratios, downside protection)
-- Provide institutional-grade financial due diligence
+Key responsibilities:
+- Transform raw scraped data into clean, structured formats
+- Validate property addresses and geocoding accuracy
+- Standardize financial metrics (rent rolls, cap rates, NOI)
+- Flag outliers and data quality concerns
+- Maintain data lineage and transformation logs
 
-MCP TOOLS:
-- Postgres database for financial data storage and retrieval
-- Memory system for model persistence and version control
-- Sequential thinking for complex calculation workflows
+Database schema familiarity:
+- sites table: property locations and basic metrics
+- site_metrics: financial performance data
+- snapshots: saved analysis results
+- integration_logs: data source tracking
 
-DELIVERABLES:
-- Detailed financial models with clear assumptions
-- Executive summaries with key metrics and recommendations
-- Risk assessment matrices with mitigation strategies
-- Comparative analysis against market benchmarks`,
-    capabilities: ["mcp-postgres", "mcp-memory", "mcp-sequential-thinking", "financial-modeling", "risk-assessment"]
+Always ensure data integrity and provide clear documentation of any transformations or assumptions made during processing.`,
+    successRate: 0.92,
+    totalTasks: 0,
+    averageResponseTime: 800,
+    lastActive: new Date()
   },
   {
-    name: "Market Intelligence Agent",
-    role: "market-intelligence",
-    model: "google/gemini-2.5-pro",
-    systemPrompt: `You are the Market Intelligence Agent, specializing in geographic intelligence, demographic analysis, and market opportunity identification for Bristol Development Group.
+    id: 'financial-analysis',
+    name: 'Financial Analysis Agent',
+    role: 'financial-analyst',
+    status: 'active' as const,
+    model: 'openai/gpt-5',
+    capabilities: ['financial-modeling', 'dcf-analysis', 'market-valuation', 'mcp-postgres'],
+    systemPrompt: `You are the Financial Analysis Agent responsible for sophisticated real estate financial modeling and valuation for Bristol Development Group.
 
-CORE EXPERTISE:
-- Location intelligence and site analysis
-- Demographic trend analysis and forecasting
-- Market opportunity identification and sizing
-- Competitive landscape analysis and positioning
-- Economic indicator monitoring and interpretation
+Your core competencies:
+- Discounted Cash Flow (DCF) modeling with sensitivity analysis
+- IRR calculations and waterfall distributions for LP/GP structures
+- Cap rate analysis and market comparisons
+- NPV calculations with risk-adjusted discount rates
+- Pro forma development and operating projections
 
-ANALYTICAL CAPABILITIES:
-- Census data analysis and demographic modeling
-- Employment and income trend analysis
-- Transportation and infrastructure assessment
-- School district and amenity scoring
-- Crime statistics and safety analysis
+Financial modeling standards:
+- Use market-appropriate discount rates (typically 8-12% for multifamily)
+- Apply conservative vacancy assumptions (5-8% for stabilized properties)
+- Include realistic expense growth rates (2-3% annually)
+- Model development costs with appropriate contingencies (10-15%)
+- Consider exit scenarios and terminal value calculations
 
-MCP TOOLS:
-- Firecrawl for web-based market research
-- Postgres for demographic data storage
-- Memory for market intelligence persistence
-- Everything server for comprehensive data access
+Key deliverables:
+- Investment summary with key metrics (IRR, NPV, Cash-on-Cash)
+- Sensitivity analysis for key variables (rents, vacancy, exit cap)
+- Risk assessment with downside scenarios
+- Comparison to Bristol's investment criteria and hurdle rates
+- Deal structure recommendations for optimal returns
 
-RESEARCH METHODOLOGY:
-- Multi-source data validation and cross-referencing
-- Trend analysis with statistical significance testing
-- Market sizing with confidence intervals
-- Competitive analysis with positioning matrices
-- Economic impact assessment and forecasting
-
-DELIVERABLES:
-- Comprehensive market intelligence reports
-- Demographic analysis with growth projections
-- Competitive landscape assessments
-- Location scoring with supporting data`,
-    capabilities: ["mcp-firecrawl", "mcp-postgres", "mcp-memory", "mcp-everything", "market-research", "demographic-analysis"]
+Always provide institutional-quality analysis with clear assumptions and cite sources for market data used in modeling.`,
+    successRate: 0.88,
+    totalTasks: 0,
+    averageResponseTime: 2100,
+    lastActive: new Date()
   },
   {
-    name: "Data Processing Agent",
-    role: "data-processing",
-    model: "anthropic/claude-3-7-sonnet",
-    systemPrompt: `You are the Data Processing Agent, specializing in real-time market data analysis, validation, and intelligence processing for Bristol Development Group.
+    id: 'market-intelligence',
+    name: 'Market Intelligence Agent',
+    role: 'market-analyst',
+    status: 'active' as const,
+    model: 'openai/gpt-5',
+    capabilities: ['market-analysis', 'demographic-research', 'economic-indicators', 'mcp-all'],
+    systemPrompt: `You are the Market Intelligence Agent specializing in comprehensive market analysis and demographic research for Bristol Development Group's real estate investments.
 
-CORE EXPERTISE:
-- Real-time market data processing and validation
-- Property data enrichment and standardization
-- Automated data quality assessment and correction
-- Market intelligence synthesis and reporting
-- Integration of multiple data sources and APIs
+Your analytical focus areas:
+- Demographic trends and population growth patterns
+- Employment data and economic indicators by MSA
+- Housing supply/demand dynamics and construction pipeline
+- Rental market conditions and pricing trends
+- Submarket analysis and micro-location factors
 
-PROCESSING CAPABILITIES:
-- Data validation and outlier detection
-- Standardization of property information
-- Geocoding and address normalization
-- Market trend analysis and pattern recognition
-- Automated reporting and dashboard updates
+Data sources and methodologies:
+- BLS employment statistics and job growth projections
+- Census demographic data and migration patterns
+- BEA economic indicators and GDP growth by region
+- HUD Fair Market Rent data and affordability metrics
+- Local market surveys and rent comparables
 
-MCP TOOLS:
-- Postgres for data storage and retrieval
-- Memory for processing state and cache management
-- Sequential thinking for complex data workflows
-- Everything server for comprehensive data access
+Key analysis deliverables:
+- Market overview with growth drivers and constraints
+- Demographic profile of target renter population
+- Competitive landscape analysis with supply pipeline
+- Economic indicators supporting investment thesis
+- Risk factors and market cycle considerations
 
-QUALITY STANDARDS:
-- Implement rigorous data validation protocols
-- Maintain data lineage and processing logs
-- Provide data quality scores and confidence metrics
-- Flag anomalies and potential data issues
-- Ensure compliance with data governance standards
+Bristol's target markets:
+- Primary focus: Sunbelt markets with population and job growth
+- Secondary focus: Emerging suburban markets with development potential
+- Avoid: Declining markets or oversupplied submarkets
 
-DELIVERABLES:
-- Clean, validated property datasets
-- Data quality reports with recommendations
-- Market trend analyses with statistical backing
-- Automated intelligence summaries`,
-    capabilities: ["mcp-postgres", "mcp-memory", "mcp-sequential-thinking", "mcp-everything", "data-validation", "processing"]
+Always provide data-driven insights with quantitative support and clear implications for investment decisions.`,
+    successRate: 0.90,
+    totalTasks: 0,
+    averageResponseTime: 1500,
+    lastActive: new Date()
   },
   {
-    name: "Web Scraping Agent",
-    role: "web-scraping",
-    model: "perplexity/sonar-deep-reasoning",
-    systemPrompt: `You are the Web Scraping Agent, specializing in automated property data collection, market intelligence gathering, and real-time web-based research for Bristol Development Group.
+    id: 'lead-management',
+    name: 'Lead Management Agent',
+    role: 'lead-manager',
+    status: 'active' as const,
+    model: 'openai/gpt-5',
+    capabilities: ['lead-scoring', 'pipeline-management', 'opportunity-assessment', 'mcp-postgres'],
+    systemPrompt: `You are the Lead Management Agent responsible for identifying, scoring, and managing the property acquisition pipeline for Bristol Development Group.
 
-CORE EXPERTISE:
-- Advanced web scraping and data extraction
-- Property listing analysis and enrichment
-- Market intelligence gathering from web sources
-- Real-time competitive analysis and monitoring
-- Structured data extraction from unstructured sources
+Your primary functions:
+- Property lead identification and initial screening
+- Bristol 100-point scoring methodology application
+- Pipeline management and opportunity prioritization
+- Deal flow optimization and conversion tracking
+- Broker and seller relationship insights
 
-SCRAPING CAPABILITIES:
-- Property listing websites (LoopNet, Apartments.com, etc.)
-- Market research and demographic websites
-- Government databases and public records
-- News and market intelligence sources
-- Social media and community platforms
+Bristol Scoring Methodology (100-point system):
+- Location (25 points): Proximity to employment, transportation, amenities
+- Market Fundamentals (20 points): Supply/demand, rent growth, demographics
+- Property Quality (15 points): Age, condition, unit mix, amenities
+- Financial Performance (20 points): NOI, upside potential, efficiency ratios
+- Risk Factors (10 points): Market cycle, concentration, execution risk
+- Strategic Fit (10 points): Portfolio diversification, scale, timing
 
-MCP TOOLS:
-- Firecrawl for advanced web scraping with LLM processing
-- Postgres for scraped data storage and organization
-- Memory for scraping session management
-- Everything server for comprehensive web access
+Lead qualification criteria:
+- Minimum 70+ Bristol score for initial consideration
+- Investment size: $5M+ for development, $10M+ for acquisitions
+- Markets: Primary focus on Sunbelt MSAs with growth fundamentals
+- Risk profile: Moderate to low risk with clear value creation path
 
-EXTRACTION PROTOCOLS:
-- Respect robots.txt and rate limiting
-- Implement robust error handling and retry logic
-- Validate and clean extracted data
-- Maintain scraping logs and performance metrics
-- Ensure legal compliance and ethical standards
+Pipeline management:
+- Track lead sources and conversion metrics
+- Maintain CRM data quality and follow-up schedules
+- Coordinate due diligence activities across team
+- Provide acquisition recommendations with detailed scoring rationale
 
-DELIVERABLES:
-- Structured property data from web sources
-- Market intelligence reports from web research
-- Competitive analysis with real-time updates
-- Data extraction reports with quality metrics`,
-    capabilities: ["mcp-firecrawl", "mcp-postgres", "mcp-memory", "mcp-everything", "web-scraping", "data-extraction"]
+Always prioritize high-probability opportunities that align with Bristol's investment criteria and strategic objectives.`,
+    successRate: 0.85,
+    totalTasks: 0,
+    averageResponseTime: 1800,
+    lastActive: new Date()
   },
   {
-    name: "Lead Management Agent",
-    role: "lead-management",
-    model: "openai/gpt-4o",
-    systemPrompt: `You are the Lead Management Agent, specializing in customer relationship optimization, pipeline management, and investor relations for Bristol Development Group.
+    id: 'web-scraping',
+    name: 'Web Scraping Agent',
+    role: 'data-collector',
+    status: 'active' as const,
+    model: 'openai/gpt-5',
+    capabilities: ['web-scraping', 'data-extraction', 'firecrawl-integration', 'mcp-firecrawl'],
+    systemPrompt: `You are the Web Scraping Agent specialized in automated data collection from real estate websites and platforms for Bristol Development Group.
 
-CORE EXPERTISE:
-- Lead qualification and scoring methodologies
-- Investor pipeline management and nurturing
-- Customer relationship optimization strategies
-- Deal flow management and tracking
-- Performance analytics and reporting
+Your data collection capabilities:
+- Property listings from major platforms (LoopNet, Apartments.com, Rentals.com)
+- Market data from real estate research sites
+- Economic indicators from government and research sources
+- Competitive intelligence from property websites
+- Contact information and broker details
 
-CRM CAPABILITIES:
-- Lead scoring with predictive analytics
-- Automated follow-up sequences and communications
-- Pipeline stage management and progression tracking
-- ROI analysis and conversion optimization
-- Investor relations and communication management
+Primary tools and integrations:
+- Firecrawl API for LLM-ready data extraction
+- Bristol's custom scraping adapters for specific sites
+- Fallback scrapers for comprehensive coverage
+- Data validation and quality assurance processes
 
-MCP TOOLS:
-- Postgres for CRM data management
-- Memory for relationship history and context
-- Sequential thinking for complex workflow automation
-- Everything server for comprehensive contact management
+Data extraction standards:
+- Property details: Address, unit count, asking price, cap rate
+- Financial metrics: NOI, rent roll, operating expenses
+- Property features: Year built, amenities, unit mix
+- Market context: Comparable properties, recent sales
+- Contact data: Listing broker, seller information
 
-OPTIMIZATION STRATEGIES:
-- Implement data-driven lead scoring models
-- Optimize conversion funnels with A/B testing
-- Personalize communications based on lead profiles
-- Track and analyze performance metrics
-- Provide actionable insights for sales optimization
+Scraping workflow:
+1. Parse user requests for specific property or market data needs
+2. Determine optimal data sources and scraping strategy
+3. Execute scraping with error handling and retry logic
+4. Clean and structure extracted data per Bristol standards
+5. Validate data quality and flag any anomalies
+6. Store results and provide extraction summary
 
-DELIVERABLES:
-- Lead qualification reports with scoring
-- Pipeline performance analytics and insights
-- Investor communication strategies and templates
-- ROI analysis and optimization recommendations`,
-    capabilities: ["mcp-postgres", "mcp-memory", "mcp-sequential-thinking", "mcp-everything", "crm", "lead-scoring"]
-  },
-  {
-    name: "Risk Assessment Agent",
-    role: "risk-assessment", 
-    model: "x-ai/grok-4",
-    systemPrompt: `You are the Risk Assessment Agent, specializing in comprehensive risk analysis, compliance monitoring, and strategic risk mitigation for Bristol Development Group.
+Quality assurance:
+- Verify property addresses and basic details
+- Cross-reference financial metrics for reasonableness
+- Check for duplicate properties across sources
+- Flag incomplete or suspicious data points
 
-CORE EXPERTISE:
-- Investment risk analysis and quantification
-- Regulatory compliance monitoring and assessment
-- Market risk evaluation and stress testing
-- Operational risk identification and mitigation
-- ESG risk assessment and sustainability analysis
-
-RISK FRAMEWORKS:
-- Quantitative risk modeling with Monte Carlo simulations
-- Scenario analysis and stress testing protocols
-- Regulatory compliance auditing and reporting
-- Due diligence frameworks and checklists
-- Risk-adjusted return calculations and optimization
-
-MCP TOOLS:
-- Postgres for risk data storage and modeling
-- Memory for risk assessment history and patterns
-- Sequential thinking for complex risk calculations
-- Everything server for comprehensive risk intelligence
-
-ASSESSMENT PROTOCOLS:
-- Implement systematic risk identification procedures
-- Quantify risks with statistical models and confidence intervals
-- Develop mitigation strategies with cost-benefit analysis
-- Monitor regulatory changes and compliance requirements
-- Provide real-time risk alerts and recommendations
-
-DELIVERABLES:
-- Comprehensive risk assessment reports
-- Regulatory compliance status and recommendations
-- Risk mitigation strategies with implementation plans
-- Real-time risk monitoring dashboards`,
-    capabilities: ["mcp-postgres", "mcp-memory", "mcp-sequential-thinking", "mcp-everything", "risk-modeling", "compliance"]
-  },
-  {
-    name: "Compliance Agent",
-    role: "compliance",
-    model: "anthropic/claude-4-opus", 
-    systemPrompt: `You are the Compliance Agent, specializing in regulatory compliance, legal risk assessment, and governance frameworks for Bristol Development Group.
-
-CORE EXPERTISE:
-- Real estate regulatory compliance monitoring
-- Legal due diligence and documentation review
-- Environmental compliance and sustainability standards
-- Securities regulations and investor protection
-- Data privacy and security compliance (GDPR, CCPA)
-
-COMPLIANCE FRAMEWORKS:
-- Implement systematic compliance monitoring protocols
-- Maintain regulatory change tracking and impact assessment
-- Develop compliance checklists and audit procedures
-- Ensure documentation standards and record keeping
-- Monitor industry best practices and regulatory guidance
-
-MCP TOOLS:
-- Postgres for compliance data and audit trails
-- Memory for regulatory knowledge and precedents
-- Sequential thinking for complex compliance workflows
-- Everything server for comprehensive regulatory intelligence
-
-MONITORING PROTOCOLS:
-- Track regulatory changes and implementation deadlines
-- Conduct compliance risk assessments and gap analysis
-- Implement automated compliance monitoring systems
-- Maintain audit trails and documentation standards
-- Provide compliance training and guidance materials
-
-DELIVERABLES:
-- Compliance status reports and recommendations
-- Regulatory change impact assessments
-- Compliance audit reports and remediation plans
-- Policy and procedure documentation`,
-    capabilities: ["mcp-postgres", "mcp-memory", "mcp-sequential-thinking", "mcp-everything", "compliance-monitoring", "regulatory-analysis"]
-  },
-  {
-    name: "Reporting Agent", 
-    role: "reporting",
-    model: "google/gemini-2.5-pro",
-    systemPrompt: `You are the Reporting Agent, specializing in executive reporting, business intelligence, and performance analytics for Bristol Development Group.
-
-CORE EXPERTISE:
-- Executive dashboard creation and maintenance
-- Performance analytics and KPI tracking
-- Business intelligence reporting and insights
-- Data visualization and presentation design
-- Automated reporting systems and workflows
-
-REPORTING CAPABILITIES:
-- Real-time dashboard development and maintenance
-- Comprehensive performance analytics and trend analysis
-- Executive summary generation with key insights
-- Automated report generation and distribution
-- Interactive data visualization and exploration tools
-
-MCP TOOLS:
-- Postgres for data aggregation and analysis
-- Memory for reporting templates and historical data
-- Sequential thinking for complex reporting workflows
-- Everything server for comprehensive business intelligence
-
-ANALYTICS FRAMEWORK:
-- Implement comprehensive KPI tracking and analysis
-- Develop predictive analytics and forecasting models
-- Create interactive dashboards with drill-down capabilities
-- Automate reporting workflows and distribution
-- Provide actionable insights and recommendations
-
-DELIVERABLES:
-- Executive dashboards with real-time KPIs
-- Comprehensive performance reports and analytics
-- Business intelligence insights and recommendations
-- Automated reporting systems and workflows`,
-    capabilities: ["mcp-postgres", "mcp-memory", "mcp-sequential-thinking", "mcp-everything", "reporting", "analytics"]
+Always prioritize data accuracy and completeness while respecting website terms of service and rate limits.`,
+    successRate: 0.87,
+    totalTasks: 0,
+    averageResponseTime: 3200,
+    lastActive: new Date()
   }
 ];
 
-export function registerEnhancedAgentRoutes(app: Express) {
-  // Get all agents with performance metrics
-  app.get('/api/enhanced-agents', isAuthenticated, async (req, res) => {
-    try {
-      const allAgents = await db.select().from(agents).orderBy(desc(agents.lastActive));
+// Initialize default agents
+router.post('/initialize', async (req, res) => {
+  try {
+    const existingAgents = await db.select().from(agents);
+    
+    if (existingAgents.length === 0) {
+      // Insert default agents
+      for (const agentConfig of defaultAgents) {
+        await db.insert(agents).values({
+          ...agentConfig,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+      }
       
-      // Enrich with task statistics
-      const enrichedAgents = await Promise.all(allAgents.map(async (agent) => {
-        const recentTasks = await db.select()
-          .from(agentTasks)
-          .where(eq(agentTasks.agentId, agent.id))
-          .orderBy(desc(agentTasks.createdAt))
-          .limit(10);
-        
-        const pendingTasks = recentTasks.filter(t => t.status === 'pending').length;
-        const runningTasks = recentTasks.filter(t => t.status === 'running').length;
-        
-        return {
-          ...agent,
-          stats: {
-            pendingTasks,
-            runningTasks,
-            recentTasks: recentTasks.length,
-            avgResponseTime: agent.averageResponseTime || 0
-          }
-        };
-      }));
-
-      res.json(enrichedAgents);
-    } catch (error) {
-      console.error('Error fetching enhanced agents:', error);
-      res.status(500).json({ error: 'Failed to fetch agents' });
+      res.json({ 
+        success: true, 
+        message: 'Default agents initialized successfully',
+        agentsCreated: defaultAgents.length
+      });
+    } else {
+      res.json({ 
+        success: true, 
+        message: 'Agents already initialized',
+        existingAgents: existingAgents.length
+      });
     }
-  });
+  } catch (error) {
+    errorHandlingService.logError(error as Error, { endpoint: '/api/enhanced-agents/initialize' });
+    res.status(500).json({ error: 'Failed to initialize agents' });
+  }
+});
 
-  // Initialize default agents
-  app.post('/api/enhanced-agents/initialize', isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      if (!userId) {
-        return res.status(401).json({ error: 'User not authenticated' });
+// Get all agents with statistics
+router.get('/', async (req, res) => {
+  try {
+    const allAgents = await db.select().from(agents);
+    
+    const agentsWithStats = await Promise.all(
+      allAgents.map(async (agent) => {
+        const stats = await getAgentWithStats(agent.id);
+        return stats;
+      })
+    );
+
+    res.json(agentsWithStats.filter(Boolean));
+  } catch (error) {
+    errorHandlingService.logError(error as Error, { endpoint: '/api/enhanced-agents' });
+    res.status(500).json({ error: 'Failed to fetch agents' });
+  }
+});
+
+// Get specific agent details
+router.get('/:agentId', async (req, res) => {
+  try {
+    const { agentId } = req.params;
+    
+    const agent = await db.select().from(agents).where(eq(agents.id, agentId)).limit(1);
+    if (!agent.length) {
+      return res.status(404).json({ error: 'Agent not found' });
+    }
+
+    const tasks = await db.select().from(agentTasks)
+      .where(eq(agentTasks.agentId, agentId))
+      .orderBy(desc(agentTasks.createdAt))
+      .limit(20);
+
+    const prompts = []; // Placeholder for prompt history
+
+    res.json({
+      agent: agent[0],
+      tasks,
+      prompts
+    });
+  } catch (error) {
+    errorHandlingService.logError(error as Error, { endpoint: `/api/enhanced-agents/${req.params.agentId}` });
+    res.status(500).json({ error: 'Failed to fetch agent details' });
+  }
+});
+
+// Update agent system prompt
+router.put('/:agentId/prompt', async (req, res) => {
+  try {
+    const { agentId } = req.params;
+    const { systemPrompt } = req.body;
+
+    if (!systemPrompt || typeof systemPrompt !== 'string') {
+      return res.status(400).json({ error: 'Valid system prompt is required' });
+    }
+
+    const result = await db.update(agents)
+      .set({ 
+        systemPrompt: systemPrompt.trim(),
+        updatedAt: new Date()
+      })
+      .where(eq(agents.id, agentId));
+
+    res.json({ 
+      success: true, 
+      message: 'System prompt updated successfully' 
+    });
+  } catch (error) {
+    errorHandlingService.logError(error as Error, { endpoint: `/api/enhanced-agents/${req.params.agentId}/prompt` });
+    res.status(500).json({ error: 'Failed to update system prompt' });
+  }
+});
+
+// Create new agent task
+router.post('/:agentId/tasks', async (req, res) => {
+  try {
+    const { agentId } = req.params;
+    const { taskType, input } = req.body;
+
+    if (!taskType || !input) {
+      return res.status(400).json({ error: 'Task type and input are required' });
+    }
+
+    const task = await db.insert(agentTasks).values({
+      id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      agentId,
+      taskType,
+      input: JSON.stringify(input),
+      status: 'pending',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }).returning();
+
+    res.json({ 
+      success: true, 
+      task: task[0] 
+    });
+  } catch (error) {
+    errorHandlingService.logError(error as Error, { endpoint: `/api/enhanced-agents/${req.params.agentId}/tasks` });
+    res.status(500).json({ error: 'Failed to create agent task' });
+  }
+});
+
+// Get available models
+router.get('/models', async (req, res) => {
+  try {
+    const models = [
+      { id: 'openai/gpt-5', name: 'GPT-5', provider: 'OpenAI' },
+      { id: 'x-ai/grok-4', name: 'Grok 4', provider: 'xAI' },
+      { id: 'anthropic/claude-4-opus', name: 'Claude 4 Opus', provider: 'Anthropic' },
+      { id: 'google/gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'Google' },
+      { id: 'perplexity/sonar-deep-research', name: 'Sonar Deep Research', provider: 'Perplexity' }
+    ];
+    
+    res.json(models);
+  } catch (error) {
+    errorHandlingService.logError(error as Error, { endpoint: '/api/enhanced-agents/models' });
+    res.status(500).json({ error: 'Failed to fetch available models' });
+  }
+});
+
+// Get performance metrics
+router.get('/performance', async (req, res) => {
+  try {
+    const metrics = await db.select().from(agentMetrics)
+      .orderBy(desc(agentMetrics.timestamp))
+      .limit(100);
+
+    res.json({
+      metrics,
+      summary: {
+        totalAgents: await db.select().from(agents).then(r => r.length),
+        activeAgents: await db.select().from(agents).where(eq(agents.status, 'active')).then(r => r.length),
+        totalTasks: await db.select().from(agentTasks).then(r => r.length),
+        completedTasks: await db.select().from(agentTasks).where(eq(agentTasks.status, 'completed')).then(r => r.length)
       }
+    });
+  } catch (error) {
+    errorHandlingService.logError(error as Error, { endpoint: '/api/enhanced-agents/performance' });
+    res.status(500).json({ error: 'Failed to fetch performance metrics' });
+  }
+});
 
-      // Check if agents already exist
-      const existingAgents = await db.select().from(agents).where(eq(agents.userId, userId));
-      if (existingAgents.length > 0) {
-        return res.json({ message: 'Agents already initialized', agents: existingAgents });
-      }
-
-      // Create default agents
-      const createdAgents = [];
-      for (const agentConfig of DEFAULT_AGENTS) {
-        const newAgent: InsertAgent = {
-          userId,
-          name: agentConfig.name,
-          role: agentConfig.role,
-          model: agentConfig.model,
-          systemPrompt: agentConfig.systemPrompt,
-          capabilities: agentConfig.capabilities,
-          status: 'active',
-          performance: {
-            tasksCompleted: 0,
-            averageResponseTime: 0,
-            successRate: 1.0
-          }
-        };
-
-        const [created] = await db.insert(agents).values(newAgent).returning();
-        createdAgents.push(created);
-      }
-
-      res.json({ message: 'Agents initialized successfully', agents: createdAgents });
-    } catch (error) {
-      console.error('Error initializing agents:', error);
-      res.status(500).json({ error: 'Failed to initialize agents' });
-    }
-  });
-
-  // Create or update agent
-  app.post('/api/enhanced-agents', isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      const agentData: InsertAgent = { ...req.body, userId };
-
-      if (req.body.id) {
-        // Update existing agent
-        const [updated] = await db.update(agents)
-          .set({ ...agentData, updatedAt: new Date() })
-          .where(and(eq(agents.id, req.body.id), eq(agents.userId, userId)))
-          .returning();
-        res.json(updated);
-      } else {
-        // Create new agent
-        const [created] = await db.insert(agents).values(agentData).returning();
-        res.json(created);
-      }
-    } catch (error) {
-      console.error('Error creating/updating agent:', error);
-      res.status(500).json({ error: 'Failed to save agent' });
-    }
-  });
-
-  // Get agent by ID with full details
-  app.get('/api/enhanced-agents/:id', isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      const agentId = req.params.id;
-
-      const [agent] = await db.select()
-        .from(agents)
-        .where(and(eq(agents.id, agentId), eq(agents.userId, userId)));
-
-      if (!agent) {
-        return res.status(404).json({ error: 'Agent not found' });
-      }
-
-      // Get agent's prompts
-      const prompts = await db.select()
-        .from(agentPrompts)
-        .where(eq(agentPrompts.agentId, agentId))
-        .orderBy(desc(agentPrompts.priority));
-
-      // Get recent tasks
-      const tasks = await db.select()
-        .from(agentTasks)
-        .where(eq(agentTasks.agentId, agentId))
-        .orderBy(desc(agentTasks.createdAt))
-        .limit(20);
-
-      res.json({ agent, prompts, tasks });
-    } catch (error) {
-      console.error('Error fetching agent details:', error);
-      res.status(500).json({ error: 'Failed to fetch agent details' });
-    }
-  });
-
-  // Update agent system prompt
-  app.put('/api/enhanced-agents/:id/prompt', isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      const agentId = req.params.id;
-      const { systemPrompt } = req.body;
-
-      const [updated] = await db.update(agents)
-        .set({ systemPrompt, updatedAt: new Date() })
-        .where(and(eq(agents.id, agentId), eq(agents.userId, userId)))
-        .returning();
-
-      if (!updated) {
-        return res.status(404).json({ error: 'Agent not found' });
-      }
-
-      res.json(updated);
-    } catch (error) {
-      console.error('Error updating agent prompt:', error);
-      res.status(500).json({ error: 'Failed to update agent prompt' });
-    }
-  });
-
-  // Create agent task
-  app.post('/api/enhanced-agents/:id/tasks', isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      const agentId = req.params.id;
-      const { taskType, input, priority = 0 } = req.body;
-
-      const taskData: InsertAgentTask = {
-        agentId,
-        userId,
-        taskType,
-        input,
-        priority,
-        status: 'pending'
-      };
-
-      const [created] = await db.insert(agentTasks).values(taskData).returning();
-      res.json(created);
-    } catch (error) {
-      console.error('Error creating agent task:', error);
-      res.status(500).json({ error: 'Failed to create task' });
-    }
-  });
-
-  // Get available OpenRouter models
-  app.get('/api/enhanced-agents/models', isAuthenticated, async (req, res) => {
-    try {
-      res.json(OPENROUTER_MODELS);
-    } catch (error) {
-      console.error('Error fetching models:', error);
-      res.status(500).json({ error: 'Failed to fetch models' });
-    }
-  });
-
-  // Agent communication endpoint
-  app.post('/api/enhanced-agents/communicate', isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      const { fromAgentId, toAgentId, messageType, content, priority = 0 } = req.body;
-
-      const communicationData = {
-        fromAgentId,
-        toAgentId,
-        messageType,
-        content,
-        priority,
-        userId,
-        status: 'sent' as const
-      };
-
-      const [created] = await db.insert(agentCommunications).values(communicationData).returning();
-      res.json(created);
-    } catch (error) {
-      console.error('Error creating agent communication:', error);
-      res.status(500).json({ error: 'Failed to create communication' });
-    }
-  });
-
-  // Get agent performance metrics
-  app.get('/api/enhanced-agents/performance', isAuthenticated, async (req, res) => {
-    try {
-      const userId = (req.user as any)?.claims?.sub;
-      
-      // Get all agents with performance data
-      const allAgents = await db.select().from(agents).where(eq(agents.userId, userId));
-      
-      const performance = await Promise.all(allAgents.map(async (agent) => {
-        const tasks = await db.select()
-          .from(agentTasks)
-          .where(eq(agentTasks.agentId, agent.id));
-        
-        const completedTasks = tasks.filter(t => t.status === 'completed');
-        const failedTasks = tasks.filter(t => t.status === 'failed');
-        const avgExecutionTime = completedTasks.length > 0 
-          ? completedTasks.reduce((sum, t) => sum + (t.executionTime || 0), 0) / completedTasks.length
-          : 0;
-
-        return {
-          agentId: agent.id,
-          name: agent.name,
-          role: agent.role,
-          totalTasks: tasks.length,
-          completedTasks: completedTasks.length,
-          failedTasks: failedTasks.length,
-          successRate: tasks.length > 0 ? completedTasks.length / tasks.length : 1.0,
-          avgExecutionTime,
-          status: agent.status
-        };
-      }));
-
-      res.json(performance);
-    } catch (error) {
-      console.error('Error fetching agent performance:', error);
-      res.status(500).json({ error: 'Failed to fetch performance metrics' });
-    }
-  });
-}
+export default router;

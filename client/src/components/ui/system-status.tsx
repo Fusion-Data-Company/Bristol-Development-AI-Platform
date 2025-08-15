@@ -21,8 +21,15 @@ interface SystemStatusProps {
   className?: string;
 }
 
+interface SystemStatusData {
+  services?: Record<string, any>;
+  circuitBreakers?: Array<any>;
+  recommendations?: string[];
+  timestamp?: string;
+}
+
 export function SystemStatus({ className }: SystemStatusProps) {
-  const { data: systemStatus, isLoading } = useQuery({
+  const { data: systemStatus, isLoading } = useQuery<SystemStatusData>({
     queryKey: ['/api/system-status'],
     refetchInterval: 10000 // Update every 10 seconds
   });
@@ -79,16 +86,16 @@ export function SystemStatus({ className }: SystemStatusProps) {
         <CardTitle className="flex items-center gap-2">
           <Activity className="h-5 w-5" />
           System Status
-          <Badge variant={systemStatus.services?.database?.status === 'healthy' ? 'default' : 'destructive'}>
-            {Object.values(systemStatus.services || {}).every((s: any) => s.status === 'healthy') ? 'All Healthy' : 'Issues Detected'}
+          <Badge variant={systemStatus?.services?.database?.status === 'healthy' ? 'default' : 'destructive'}>
+            {Object.values(systemStatus?.services || {}).every((s: any) => s?.status === 'healthy') ? 'All Healthy' : 'Issues Detected'}
           </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Service Status Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.entries(systemStatus.services || {}).map(([serviceName, serviceData]: [string, any]) => {
-            const StatusIcon = getStatusIcon(serviceData.status);
+          {Object.entries(systemStatus?.services || {}).map(([serviceName, serviceData]: [string, any]) => {
+            const StatusIcon = getStatusIcon(serviceData?.status || 'unknown');
             const ServiceIcon = getServiceIcon(serviceName);
             
             return (
@@ -97,9 +104,9 @@ export function SystemStatus({ className }: SystemStatusProps) {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium capitalize truncate">{serviceName}</p>
                   <div className="flex items-center gap-1">
-                    <StatusIcon className={cn("h-3 w-3", getStatusColor(serviceData.status))} />
-                    <span className={cn("text-xs", getStatusColor(serviceData.status))}>
-                      {serviceData.status}
+                    <StatusIcon className={cn("h-3 w-3", getStatusColor(serviceData?.status || 'unknown'))} />
+                    <span className={cn("text-xs", getStatusColor(serviceData?.status || 'unknown'))}>
+                      {serviceData?.status || 'unknown'}
                     </span>
                   </div>
                 </div>
@@ -112,53 +119,53 @@ export function SystemStatus({ className }: SystemStatusProps) {
 
         {/* Detailed Service Information */}
         <div className="space-y-3">
-          {Object.entries(systemStatus.services || {}).map(([serviceName, serviceData]: [string, any]) => (
+          {Object.entries(systemStatus?.services || {}).map(([serviceName, serviceData]: [string, any]) => (
             <div key={serviceName} className="space-y-2">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-medium capitalize">{serviceName} Service</h4>
-                <Badge variant={serviceData.status === 'healthy' ? 'default' : 'destructive'}>
-                  {serviceData.status}
+                <Badge variant={serviceData?.status === 'healthy' ? 'default' : 'destructive'}>
+                  {serviceData?.status || 'unknown'}
                 </Badge>
               </div>
               
               {/* Service-specific details */}
-              {serviceName === 'memory' && serviceData.details && (
+              {serviceName === 'memory' && serviceData?.details && (
                 <div className="space-y-2">
                   <div className="flex justify-between text-xs">
                     <span>Heap Usage</span>
-                    <span>{serviceData.details.heapUsagePercent}%</span>
+                    <span>{serviceData.details?.heapUsagePercent || 0}%</span>
                   </div>
-                  <Progress value={serviceData.details.heapUsagePercent} className="h-2" />
+                  <Progress value={serviceData.details?.heapUsagePercent || 0} className="h-2" />
                   <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                    <span>Used: {serviceData.details.heapUsed}MB</span>
-                    <span>Total: {serviceData.details.heapTotal}MB</span>
+                    <span>Used: {serviceData.details?.heapUsed || 0}MB</span>
+                    <span>Total: {serviceData.details?.heapTotal || 0}MB</span>
                   </div>
                 </div>
               )}
 
-              {serviceName === 'database' && serviceData.details && (
+              {serviceName === 'database' && serviceData?.details && (
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>Response Time</span>
-                  <span>{serviceData.details.responseTime}ms</span>
+                  <span>{serviceData.details?.responseTime || 0}ms</span>
                 </div>
               )}
 
-              {serviceName === 'agents' && serviceData.details && (
+              {serviceName === 'agents' && serviceData?.details && (
                 <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                  <span>Active Agents: {serviceData.details.activeAgents}</span>
-                  <span>Running Tasks: {serviceData.details.runningTasks}</span>
+                  <span>Active Agents: {serviceData.details?.activeAgents || 0}</span>
+                  <span>Running Tasks: {serviceData.details?.runningTasks || 0}</span>
                 </div>
               )}
 
-              {serviceName === 'mcp' && serviceData.details && (
+              {serviceName === 'mcp' && serviceData?.details && (
                 <div className="space-y-1">
                   <p className="text-xs text-muted-foreground">MCP Servers:</p>
                   <div className="grid grid-cols-2 gap-1">
-                    {Object.entries(serviceData.details.servers || {}).map(([server, status]: [string, any]) => (
+                    {Object.entries(serviceData.details?.servers || {}).map(([server, status]: [string, any]) => (
                       <div key={server} className="flex justify-between text-xs">
                         <span>{server}</span>
-                        <span className={status.status === 'healthy' ? 'text-green-500' : 'text-red-500'}>
-                          {status.status}
+                        <span className={status?.status === 'healthy' ? 'text-green-500' : 'text-red-500'}>
+                          {status?.status || 'unknown'}
                         </span>
                       </div>
                     ))}
@@ -166,7 +173,7 @@ export function SystemStatus({ className }: SystemStatusProps) {
                 </div>
               )}
 
-              {serviceData.lastCheck && (
+              {serviceData?.lastCheck && (
                 <p className="text-xs text-muted-foreground">
                   Last checked: {new Date(serviceData.lastCheck).toLocaleTimeString()}
                 </p>
@@ -178,7 +185,7 @@ export function SystemStatus({ className }: SystemStatusProps) {
         <Separator />
 
         {/* Circuit Breakers */}
-        {systemStatus.circuitBreakers && systemStatus.circuitBreakers.length > 0 && (
+        {systemStatus?.circuitBreakers && systemStatus.circuitBreakers.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium flex items-center gap-2">
               <Zap className="h-4 w-4" />
@@ -186,10 +193,10 @@ export function SystemStatus({ className }: SystemStatusProps) {
             </h4>
             <div className="space-y-1">
               {systemStatus.circuitBreakers.map((cb: any) => (
-                <div key={cb.name} className="flex justify-between items-center text-xs">
-                  <span>{cb.name}</span>
-                  <Badge variant={cb.status.isOpen ? 'destructive' : 'default'}>
-                    {cb.status.isOpen ? 'Open' : 'Closed'}
+                <div key={cb?.name} className="flex justify-between items-center text-xs">
+                  <span>{cb?.name}</span>
+                  <Badge variant={cb?.status?.isOpen ? 'destructive' : 'default'}>
+                    {cb?.status?.isOpen ? 'Open' : 'Closed'}
                   </Badge>
                 </div>
               ))}
@@ -198,7 +205,7 @@ export function SystemStatus({ className }: SystemStatusProps) {
         )}
 
         {/* Performance Recommendations */}
-        {systemStatus.recommendations && systemStatus.recommendations.length > 0 && (
+        {systemStatus?.recommendations && systemStatus.recommendations.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-medium flex items-center gap-2">
               <AlertTriangle className="h-4 w-4 text-yellow-500" />
@@ -214,7 +221,7 @@ export function SystemStatus({ className }: SystemStatusProps) {
           </div>
         )}
 
-        {systemStatus.timestamp && (
+        {systemStatus?.timestamp && (
           <p className="text-xs text-muted-foreground text-center">
             Last updated: {new Date(systemStatus.timestamp).toLocaleString()}
           </p>
