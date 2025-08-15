@@ -598,7 +598,7 @@ export default function AnalyticsEnterprise() {
                       <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-bristol-cyan to-bristol-gold"></div>
                       <CardHeader>
                         <div className="flex items-center justify-between">
-                          <CardTitle className="text-2xl text-white">{market.market}</CardTitle>
+                          <CardTitle className="text-2xl text-bristol-maroon">{market.market}</CardTitle>
                           <Badge className={cn(
                             "font-medium",
                             market.economicHealth === 'Very Strong' ? 'bg-green-900/50 text-green-300 border-green-600' :
@@ -1042,7 +1042,7 @@ export default function AnalyticsEnterprise() {
             {/* AI Agent */}
             <TabsContent value="agent" className="space-y-6">
               {/* Agent Status */}
-              <Card className="bg-slate-800 border-bristol-cyan/30 shadow-lg">
+              <Card className="bg-white border-bristol-cyan/30 shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-4">
                     <div className="relative">
@@ -1052,7 +1052,7 @@ export default function AnalyticsEnterprise() {
                       </div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold text-gray-800">Bristol Analytics AI Elite</div>
+                      <div className="text-2xl font-bold text-bristol-maroon">Bristol Analytics AI Elite</div>
                       <div className="text-bristol-cyan">Enterprise Real Estate Intelligence Agent</div>
                     </div>
                     <Badge className="bg-green-900/50 text-green-300 border-green-600 ml-auto">
