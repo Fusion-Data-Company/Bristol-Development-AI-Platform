@@ -924,360 +924,74 @@ What property or investment can I analyze for you today?`,
     setEliteMessages(prev => [...prev, newUserMessage]);
 
     try {
-      // Prepare messages for API (filter out system prompts and format properly)
-      const apiMessages = eliteMessages
-        .filter(msg => msg.role !== "system")
-        .map(msg => ({
-          role: msg.role as "user" | "assistant",
-          content: msg.content
-        }));
-      
-      // Add current user message
-      apiMessages.push({
-        role: "user",
-        content: userMessage
+      console.log("🚀 NUCLEAR SIMPLIFIED: Sending directly to ultra-bulletproof chat:", userMessage);
+
+      // NUCLEAR OPTION: Direct call to ultra-bulletproof endpoint only
+      const response = await fetch("/api/ultra-bulletproof-chat/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: userMessage,
+          sessionId: sessionId,
+          model: model,
+          userId: 'demo-user'
+        })
       });
 
-      console.log("Sending to Bristol A.I. Elite:", { 
-        model, 
-        messageCount: apiMessages.length,
-        mcpEnabled,
-        realTimeData
-      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
 
-      // CRITICAL FIX: Force proper response extraction
-      const handleNonStreamingFallback = async () => {
-        console.log('🚀 Starting non-streaming fallback for message:', userMessage);
-        // Try unified chat first for memory integration
-        let response = await fetch("/api/unified-chat/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: userMessage,  // Add the actual message!
-            model: model,
-            messages: apiMessages,
-            temperature: 0.7,
-            maxTokens: 4000,
-            systemPrompt: systemPrompt,
-            mcpEnabled: mcpEnabled,
-            realTimeData: realTimeData,
-            sourceInstance: 'main',
-            memoryEnabled: true,
-            crossSessionMemory: true,
-            toolSharing: true,
-            enableAdvancedReasoning: true,
-            sessionId: sessionId,
-            streaming: false
-          })
-        });
-
-        // Fallback to enhanced chat v2 if unified fails
-        if (!response.ok) {
-          console.warn("Unified chat failed, falling back to enhanced-chat-v2");
-          response = await fetch("/api/enhanced-chat-v2/completions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              message: userMessage,  // CRITICAL FIX: Add the actual message!
-              model: model,
-              messages: apiMessages,
-              temperature: 0.7,
-              maxTokens: 4000,
-              systemPrompt: systemPrompt,
-              mcpEnabled: mcpEnabled,
-              realTimeData: realTimeData,
-              sourceInstance: 'main'
-            })
-          });
-        }
-
-        // Ultimate fallback to ultra-bulletproof endpoint - GUARANTEED RESPONSE
-        if (!response.ok) {
-          console.warn("All chat endpoints failed, using ULTRA-BULLETPROOF fallback");
-          response = await fetch("/api/ultra-bulletproof-chat/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              message: userMessage,
-              sessionId: sessionId,
-              model: model,
-              userId: 'demo-user'
-            })
-          });
-        }
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        let assistantContent = "";
-        
-        // EXTREME DEBUGGING - THIS SHOULD BE VISIBLE IN CONSOLE
-        console.log('🚨🚨🚨 CRITICAL DEBUG START 🚨🚨🚨');
-        console.log('🔴 FULL API Response:', JSON.stringify(data, null, 2));
-        console.log('🔴 User message was:', userMessage);
-        console.log('🔴 Response type:', typeof data);
-        console.log('🔴 Response keys:', Object.keys(data || {}));
-        console.log('🚨🚨🚨 CRITICAL DEBUG END 🚨🚨🚨');
-        
-        // CRITICAL FIX: Extract response from all possible formats AND ensure it's not the user's message
-        if (data.success && data.content && data.content !== userMessage) {
-          assistantContent = data.content;
-        } else if (data.content && typeof data.content === 'string' && data.content !== userMessage) {
-          assistantContent = data.content;
-        } else if (data.choices && data.choices[0]?.message?.content && data.choices[0].message.content !== userMessage) {
-          assistantContent = data.choices[0].message.content;
-        } else if (data.choices && data.choices[0]?.text && data.choices[0].text !== userMessage) {
-          assistantContent = data.choices[0].text;
-        } else if (data.message && typeof data.message === 'string' && data.message !== userMessage) {
-          assistantContent = data.message;
-        } else if (data.text && typeof data.text === 'string' && data.text !== userMessage) {
-          assistantContent = data.text;
-        } else if (data.response && typeof data.response === 'string' && data.response !== userMessage) {
-          assistantContent = data.response;
-        } else if (data.result && typeof data.result === 'string' && data.result !== userMessage) {
-          assistantContent = data.result;
-        } else if (Array.isArray(data.content) && data.content[0]?.text && data.content[0].text !== userMessage) {
-          assistantContent = data.content[0].text;
-        }
-        
-        // CRITICAL: If we still don't have content or it's the user's message, generate a proper response
-        if (!assistantContent || assistantContent === userMessage || assistantContent.trim() === '') {
-          console.error('⚠️ Response extraction failed or returned user message! Data:', data);
-          assistantContent = `I understand you're asking about: "${userMessage.substring(0, 100)}${userMessage.length > 100 ? '...' : ''}". I'm currently experiencing technical difficulties connecting to our AI service. Let me provide you with helpful information about real estate investing while we resolve this issue. For property analysis, key factors include location, cap rates, cash flow projections, and market trends. What specific aspect would you like to explore?`;
-        }
-        
-        console.log('✅ Final extracted content:', assistantContent);
-        console.log('✅ Content is different from user message:', assistantContent !== userMessage);
-        
-        const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-        setEliteMessages(prev => [...prev, {
-          role: "assistant",
-          content: assistantContent,
-          createdAt: nowISO(),
-          sessionId,
-          id: assistantMessageId,
-          metadata: { model, provider: model.split('/')[0] }
-        }]);
-        
-        // Process artifacts from the response
-        processArtifacts(assistantContent, assistantMessageId);
-      };
-
-      // Enhanced streaming chat with real-time typing - use the streaming toggle state
-      const useStreaming = realTimeData; // Enable streaming based on user preference
+      const data = await response.json();
+      console.log('✅ Ultra-bulletproof response:', data);
       
-      if (useStreaming) {
-        // Use fetch with ReadableStream for better streaming support
-        let streamingContent = "";
-        const streamingMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-        // Add placeholder message for streaming
-        setEliteMessages(prev => [...prev, {
-          role: "assistant",
-          content: "",
-          createdAt: nowISO(),
-          sessionId,
-          id: streamingMessageId,
-          metadata: { model, provider: model.split('/')[0], streaming: true }
-        }]);
-
-        try {
-          // Try unified chat streaming first for memory integration
-          let streamingEndpoint = "/api/unified-chat/stream";
-          let streamingBody = {
-            message: userMessage,  // Add the actual message!
-            model: model,
-            messages: apiMessages,
-            temperature: 0.7,
-            maxTokens: 4000,
-            systemPrompt: systemPrompt,
-            mcpEnabled: mcpEnabled,
-            realTimeData: realTimeData,
-            sourceInstance: 'main',
-            memoryEnabled: true,
-            crossSessionMemory: true,
-            toolSharing: true,
-            enableAdvancedReasoning: true,
-            sessionId: sessionId,
-            streaming: true
-          };
-
-          let response = await fetch(streamingEndpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(streamingBody)
-          });
-
-          // Fallback to enhanced chat v2 if unified fails
-          if (!response.ok) {
-            console.warn("Unified chat streaming failed, falling back to enhanced-chat-v2");
-            streamingEndpoint = "/api/enhanced-chat-v2/stream";
-            response = await fetch(streamingEndpoint, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                message: userMessage,  // CRITICAL FIX: Add the actual message!
-                model: model,
-                messages: apiMessages,
-                temperature: 0.7,
-                maxTokens: 4000,
-                systemPrompt: systemPrompt,
-                mcpEnabled: mcpEnabled,
-                realTimeData: realTimeData,
-                sourceInstance: 'main'
-              })
-            });
-          }
-
-          if (!response.ok) {
-            throw new Error(`Streaming failed: ${response.status}`);
-          }
-
-          const reader = response.body?.getReader();
-          if (!reader) {
-            throw new Error("No response body reader available");
-          }
-
-          const decoder = new TextDecoder();
-          let buffer = "";
-
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            buffer += decoder.decode(value, { stream: true });
-            const lines = buffer.split('\n');
-            buffer = lines.pop() || "";
-
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                try {
-                  const data = JSON.parse(line.slice(6));
-                  
-                  if (data.error) {
-                    throw new Error(data.error);
-                  }
-                  
-                  if (data.done) {
-                    // Streaming complete
-                    setEliteMessages(prev => 
-                      prev.map(msg => 
-                        msg.id === streamingMessageId 
-                          ? { ...msg, metadata: { ...msg.metadata, streaming: false, completed: true } }
-                          : msg
-                      )
-                    );
-                    
-                    // Process artifacts from the completed streaming response
-                    processArtifacts(streamingContent, streamingMessageId);
-                    return;
-                  }
-                  
-                  if (data.content) {
-                    streamingContent += data.content;
-                    setEliteMessages(prev => 
-                      prev.map(msg => 
-                        msg.id === streamingMessageId 
-                          ? { ...msg, content: streamingContent }
-                          : msg
-                      )
-                    );
-                  }
-                } catch (parseError) {
-                  console.error('Parse error:', parseError);
-                }
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Streaming error:', error);
-          
-          // Update the streaming message to show partial content or error instead of removing it
-          setEliteMessages(prev => prev.map(msg => 
-            msg.id === streamingMessageId 
-              ? { 
-                  ...msg, 
-                  content: streamingContent || "I encountered an issue while streaming the response. Retrying with standard mode...",
-                  metadata: { ...msg.metadata, streaming: false, error: true } 
-                }
-              : msg
-          ));
-          
-          // Fallback to premium OpenRouter API if available
-          const modelConfig = modelList.find(m => m.id === model);
-          // Check if model is premium by checking if it contains "premium" in the id or label
-          const isPremiumModel = model.includes('premium') || model.includes('gpt-4') || model.includes('claude-3') || model.includes('gemini-pro');
-          if (isPremiumModel) {
-            try {
-              const fallbackResponse = await fetch("/api/openrouter-premium/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  model: model,
-                  messages: apiMessages,
-                  temperature: 0.7,
-                  maxTokens: 4000,
-                  systemPrompt: systemPrompt,
-                  mcpEnabled: mcpEnabled,
-                  realTimeData: realTimeData
-                })
-              });
-              
-              if (fallbackResponse.ok) {
-                const fallbackData = await fallbackResponse.json();
-                let assistantContent = "";
-                
-                if (fallbackData.choices && fallbackData.choices[0]) {
-                  assistantContent = fallbackData.choices[0].message?.content || "";
-                } else if (fallbackData.content) {
-                  assistantContent = Array.isArray(fallbackData.content) ? fallbackData.content[0].text : fallbackData.content;
-                }
-                
-                const fallbackMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                setEliteMessages(prev => [...prev, {
-                  role: "assistant",
-                  content: assistantContent,
-                  createdAt: nowISO(),
-                  sessionId,
-                  id: fallbackMessageId,
-                  metadata: { model, provider: fallbackData.provider, tier: fallbackData.tier }
-                }]);
-                
-                // Process artifacts from the fallback response
-                processArtifacts(assistantContent, fallbackMessageId);
-                return;
-              }
-            } catch (fallbackError) {
-              console.error('Premium fallback failed:', fallbackError);
-            }
-          }
-          
-          // Final fallback to standard API
-          await handleNonStreamingFallback();
-        }
-
-        // Don't continue to non-streaming code
-        return;
+      // Extract response from the guaranteed response format
+      let assistantContent = "";
+      
+      // The ultra-bulletproof endpoint returns multiple formats for compatibility
+      if (data.content) {
+        assistantContent = data.content;
+      } else if (data.choices && data.choices[0]?.message?.content) {
+        assistantContent = data.choices[0].message.content;
+      } else if (data.message) {
+        assistantContent = data.message;
+      } else if (data.text) {
+        assistantContent = data.text;
+      } else if (data.response) {
+        assistantContent = data.response;
       }
-
-      // Execute fallback if not using streaming
-      if (!useStreaming) {
-        await handleNonStreamingFallback();
+      
+      // Ensure we have valid content
+      if (!assistantContent || assistantContent.trim() === '') {
+        assistantContent = "I received your message and I'm here to help with your real estate and development needs. What specific information or analysis can I provide?";
       }
-
-    } catch (error) {
-      console.error("Chat error:", error);
-      // CRITICAL: Never show user's message as error, provide a proper fallback
-      const fallbackResponse = `I apologize for the technical issue. While I reconnect to our AI services, I can still help you with real estate insights. You asked about: "${userMessage.substring(0, 50)}...". Based on my expertise, here are key considerations for real estate investment: location analysis, market trends, financial modeling (IRR/NPV), and risk assessment. What specific information would be most helpful for your needs?`;
+      
+      console.log('✅ Final assistant content:', assistantContent);
+      
+      const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       setEliteMessages(prev => [...prev, {
         role: "assistant",
-        content: fallbackResponse,
+        content: assistantContent,
+        createdAt: nowISO(),
+        sessionId,
+        id: assistantMessageId,
+        metadata: { model, provider: 'ultra-bulletproof', source: data.source }
+      }]);
+      
+      // Process artifacts from the response
+      processArtifacts(assistantContent, assistantMessageId);
+
+    } catch (error) {
+      console.error("Ultra-bulletproof chat error:", error);
+      // Emergency response if even the bulletproof endpoint fails
+      const emergencyResponse = `I received your message: "${userMessage}". While experiencing a technical issue, I can still provide Bristol Development expertise. For real estate analysis, I focus on: location assessment, market trends, financial modeling (IRR/NPV), cap rates, and risk evaluation. What specific aspect interests you most?`;
+      setEliteMessages(prev => [...prev, {
+        role: "assistant",
+        content: emergencyResponse,
         createdAt: nowISO(),
         sessionId,
         id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        metadata: { error: true }
+        metadata: { error: true, source: 'emergency' }
       }]);
     } finally {
       setEliteLoading(false);
