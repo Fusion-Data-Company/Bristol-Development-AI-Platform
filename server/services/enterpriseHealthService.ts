@@ -40,9 +40,15 @@ class EnterpriseHealthService {
     // Initialize core services monitoring
     this.initializeServices();
     // Start health monitoring interval
-    setInterval(() => this.performHealthChecks(), 30000); // Every 30 seconds
-    // Clean up old metrics
-    setInterval(() => this.cleanupMetrics(), 300000); // Every 5 minutes
+    setInterval(() => this.performHealthChecks(), 60000); // Every 60 seconds
+    // Clean up old metrics and force garbage collection
+    setInterval(() => {
+      this.cleanupMetrics();
+      // Force garbage collection if available
+      if (global.gc) {
+        global.gc();
+      }
+    }, 300000); // Every 5 minutes
   }
 
   private initializeServices() {
@@ -147,7 +153,7 @@ class EnterpriseHealthService {
       // Store memory metrics (simplified for demo)
       this.metrics.set('Memory', {
         name: 'Memory',
-        status: (used / total) > 0.9 ? 'down' : (used / total) > 0.7 ? 'degraded' : 'up',
+        status: (used / total) > 0.95 ? 'down' : (used / total) > 0.85 ? 'degraded' : 'up',
         lastCheck: new Date().toISOString(),
         errors: 0,
         requests: 0
@@ -317,10 +323,16 @@ class EnterpriseHealthService {
     }
 
     // High memory usage
-    if (health.memory.percentage > 90) {
+    if (health.memory.percentage > 95) {
       alerts.push({
         type: 'high_memory',
-        message: `Memory usage is ${health.memory.percentage}% (threshold: 90%)`,
+        message: `Memory usage is ${health.memory.percentage}% (threshold: 95%)`,
+        severity: 'high' as const
+      });
+    } else if (health.memory.percentage > 85) {
+      alerts.push({
+        type: 'elevated_memory',
+        message: `Memory usage is ${health.memory.percentage}% (threshold: 85%)`,
         severity: 'medium' as const
       });
     }

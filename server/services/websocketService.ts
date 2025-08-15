@@ -2,6 +2,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import type { Server } from "http";
 import { storage } from "../storage";
 import { realTimeSyncService } from "./realTimeSync";
+import { connectionManager } from "./connectionManager";
 import type { IntegrationLog } from "@shared/schema";
 
 interface WebSocketClient {
@@ -32,7 +33,15 @@ export class WebSocketService {
 
   private setupWebSocketServer() {
     this.wss.on('connection', (socket: WebSocket, request) => {
+      const clientIP = request.socket.remoteAddress || 'unknown';
       const clientId = this.generateClientId();
+      
+      // Use connection manager for rate limiting and connection management
+      if (!connectionManager.addConnection(clientId, clientIP, socket)) {
+        socket.close(1008, 'Connection rejected');
+        return;
+      }
+      
       const client: WebSocketClient = {
         id: clientId,
         socket,
@@ -116,6 +125,7 @@ export class WebSocketService {
           
         case "ping":
           client.lastPing = Date.now();
+          connectionManager.updateActivity(clientId);
           this.sendToClient(clientId, {
             type: "pong",
             timestamp: Date.now()
@@ -168,6 +178,9 @@ export class WebSocketService {
   }
 
   private handleDisconnect(clientId: string) {
+    // Use connection manager for cleanup
+    connectionManager.removeConnection(clientId);
+    
     // Remove from all subscriptions
     this.subscriptions.forEach((clients, topic) => {
       clients.delete(clientId);
@@ -177,31 +190,45 @@ export class WebSocketService {
     });
 
     this.clients.delete(clientId);
-    console.log(`WebSocket client disconnected: ${clientId}`);
   }
 
   private startHeartbeat() {
     setInterval(() => {
       const now = Date.now();
+      const clientsToRemove: string[] = [];
+      
       this.clients.forEach((client, clientId) => {
-        if (now - client.lastPing > 90000) { // 90 seconds timeout (increased for stability)
+        if (client.socket.readyState === WebSocket.CLOSED || client.socket.readyState === WebSocket.CLOSING) {
+          clientsToRemove.push(clientId);
+        } else if (now - client.lastPing > 120000) { // 2 minutes timeout
           console.log(`Client ${clientId} timed out`);
           client.socket.terminate();
-          this.handleDisconnect(clientId);
-        } else if (now - client.lastPing > 30000) {
-          // Send ping if client hasn't sent anything in 30 seconds
+          clientsToRemove.push(clientId);
+        } else if (now - client.lastPing > 45000) {
+          // Send ping if client hasn't sent anything in 45 seconds
           try {
-            this.sendToClient(clientId, {
-              type: "ping",
-              timestamp: now
-            });
+            if (client.socket.readyState === WebSocket.OPEN) {
+              client.socket.ping();
+            }
           } catch (error) {
             console.error(`Failed to ping client ${clientId}:`, error);
-            this.handleDisconnect(clientId);
+            clientsToRemove.push(clientId);
           }
         }
       });
-    }, 20000); // Check every 20 seconds
+      
+      // Clean up disconnected clients
+      clientsToRemove.forEach(clientId => {
+        this.handleDisconnect(clientId);
+      });
+      
+      // Log connection stats periodically
+      if (clientsToRemove.length > 0) {
+        const stats = connectionManager.getStats();
+        console.log(`🔍 Connection stats: ${stats.totalConnections} total connections`);
+      }
+      
+    }, 30000); // Check every 30 seconds
   }
 
   private generateClientId(): string {

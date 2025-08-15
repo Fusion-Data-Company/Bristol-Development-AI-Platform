@@ -119,10 +119,10 @@ class ChatHealthMonitor {
   private async checkDatabase() {
     try {
       // Test database connection with a simple query
-      const sessions = await storage.getChatSessions('demo-user', 1);
+      const session = await storage.getChatSession('test-session-id');
       return {
         status: 'healthy',
-        details: { connectionTest: 'passed', sessionsCount: sessions.length }
+        details: { connectionTest: 'passed', sessionExists: !!session }
       };
     } catch (error) {
       return {
@@ -213,7 +213,8 @@ class ChatHealthMonitor {
         mcpEnabled: false,
         realTimeData: false,
         sourceInstance: 'main',
-        streaming: false
+        streaming: false,
+        enableAdvancedReasoning: false
       }, 'health-check-user');
 
       const responseTime = Date.now() - startTime;
