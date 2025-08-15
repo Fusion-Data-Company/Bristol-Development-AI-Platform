@@ -196,6 +196,8 @@ export default function Chat() {
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
   const [showArtifacts, setShowArtifacts] = useState(false);
   const eliteInputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
   const [systemStatus, setSystemStatus] = useState<SystemStatus>({
     mcpTools: [],
     apis: [],
@@ -675,6 +677,17 @@ export default function Chat() {
     });
   }, [systemPrompt]);
 
+  // Auto-scroll to bottom when new messages arrive
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [eliteMessages]);
+
   // Memoized merged data context for clean inspection
   const dataContext = useMemo(() => ({
     timestamp: nowISO(),
@@ -856,7 +869,6 @@ What property or investment can I analyze for you today?`,
           language,
           content: code,
           title: `${language.charAt(0).toUpperCase() + language.slice(1)} Code`,
-          timestamp: new Date().toISOString(),
           messageId
         });
       }
@@ -1800,10 +1812,11 @@ What property or investment can I analyze for you today?`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'no-repeat',
-                  backgroundAttachment: 'fixed'
+                  backgroundAttachment: 'fixed',
+                  willChange: 'auto'
                 }}
               >
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                <div ref={chatScrollRef} className="flex-1 overflow-y-auto p-6 space-y-4" style={{ scrollBehavior: 'smooth' }}>
                   {eliteMessages.length === 0 && (
                     <div className="text-center py-12">
                       <OnboardingGuide 
@@ -1825,10 +1838,10 @@ What property or investment can I analyze for you today?`,
                                   setEliteInput(action.prompt);
                                   eliteInputRef.current?.focus();
                                 }}
-                                className="flex flex-col items-center gap-2 p-4 bg-gradient-to-r from-bristol-cyan/10 to-bristol-cyan/5 hover:from-bristol-cyan/20 hover:to-bristol-cyan/10 border border-bristol-cyan/30 hover:border-bristol-cyan/50 rounded-xl transition-all duration-300 group"
+                                className="flex flex-col items-center gap-2 p-4 bg-gradient-to-r from-bristol-cyan/30 to-bristol-cyan/20 hover:from-bristol-cyan/40 hover:to-bristol-cyan/30 border border-bristol-cyan/50 hover:border-bristol-cyan/70 rounded-xl transition-all duration-300 group shadow-lg backdrop-blur-sm"
                               >
                                 <Icon className="h-8 w-8 text-bristol-cyan group-hover:text-bristol-gold transition-colors" />
-                                <span className="text-sm font-bold text-white/80 group-hover:text-white">{action.label}</span>
+                                <span className="text-sm font-bold text-white group-hover:text-bristol-gold">{action.label}</span>
                               </button>
                             );
                           })}
@@ -1924,6 +1937,7 @@ What property or investment can I analyze for you today?`,
                       </div>
                     </div>
                   )}
+                  <div ref={messagesEndRef} style={{ height: 1 }} />
                 </div>
               </div>
               </div>
