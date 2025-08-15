@@ -177,6 +177,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const crossDimensionalIntelligenceRouter = (await import('./api/cross-dimensional-intelligence')).default;
   app.use('/api/cross-dimensional', crossDimensionalIntelligenceRouter);
 
+  // Enhanced Chat Experience API with real-time context and intelligent interactions
+  const enhancedChatExperienceRouter = (await import('./api/enhanced-chat-experience')).default;
+  app.use('/api/enhanced-chat', enhancedChatExperienceRouter);
+
+
+
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
   chatHealthMonitor.start();
