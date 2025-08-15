@@ -37,7 +37,7 @@ class UltraBulletproofChatService {
       validatedRequest = {
         message: String(request?.message || request?.query || request?.text || 'Hello'),
         sessionId: String(request?.sessionId || `ultra-${Date.now()}`),
-        model: 'openai/gpt-4o',
+        model: String(request?.model || 'openai/gpt-4o'),
         userId: 'demo-user'
       };
     }
@@ -63,11 +63,11 @@ class UltraBulletproofChatService {
       };
     }
 
-    // Step 3: NUCLEAR FAST - Direct OpenAI call (no complex services)
-    console.log('🚀 NUCLEAR FAST: Direct OpenAI call');
+    // Step 3: NUCLEAR FAST - Direct OpenRouter call with selected model
+    console.log(`🚀 NUCLEAR FAST: OpenRouter call with model ${model}`);
     
     try {
-      const directResponse = await this.fastDirectOpenAI(message);
+      const directResponse = await this.fastDirectOpenRouter(message, model);
       if (directResponse) {
         // Cache for future speed
         responseCache.set(cacheKey, {
@@ -80,7 +80,7 @@ class UltraBulletproofChatService {
           content: directResponse,
           sessionId,
           model,
-          source: 'direct-openai-fast',
+          source: `openrouter-${model}`,
           metadata: {
             processingTime: Date.now() - startTime,
             attemptNumber: this.attemptCounter
@@ -115,20 +115,53 @@ class UltraBulletproofChatService {
     };
   }
 
-  // Fast Direct OpenAI call - optimized for speed
-  private async fastDirectOpenAI(message: string): Promise<string | null> {
-    const API_KEY = process.env.OPENAI_API_KEY || process.env.OPENROUTER_API_KEY2;
-    if (!API_KEY) return null;
+  // Fast Direct OpenRouter call - respects model selection
+  private async fastDirectOpenRouter(message: string, model: string): Promise<string | null> {
+    const API_KEY = process.env.OPENROUTER_API_KEY2 || process.env.OPENAI_API_KEY;
+    if (!API_KEY) {
+      console.warn('No OpenRouter API key found');
+      return null;
+    }
+
+    // Elite models allowlist
+    const ELITE_MODELS = new Set([
+      "openai/gpt-4o",
+      "openai/gpt-4o-mini",
+      "openai/gpt-4-turbo",
+      "openai/gpt-5",
+      "openai/gpt-5-chat",
+      "anthropic/claude-3.5-sonnet",
+      "anthropic/claude-3-opus",
+      "anthropic/claude-opus-4",
+      "anthropic/claude-opus-4.1",
+      "anthropic/claude-sonnet-4",
+      "x-ai/grok-4",
+      "x-ai/grok-beta",
+      "google/gemini-2.5-pro",
+      "google/gemini-2.5-flash",
+      "google/gemini-pro",
+      "perplexity/sonar-deep-research",
+      "perplexity/sonar-reasoning",
+      "perplexity/sonar-pro",
+      "perplexity/sonar-reasoning-pro"
+    ]);
+
+    // Use the selected model if it's in the allowlist, otherwise fallback
+    const finalModel = ELITE_MODELS.has(model) ? model : 'openai/gpt-4o';
+    
+    console.log(`🎯 Using model: ${finalModel}`);
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`
+          'Authorization': `Bearer ${API_KEY}`,
+          'HTTP-Referer': process.env.SITE_URL || 'http://localhost:5000',
+          'X-Title': 'Bristol Development AI'
         },
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo', // Fast model for speed
+          model: finalModel, // USE THE SELECTED MODEL!
           messages: [
             {
               role: 'system',
@@ -146,10 +179,14 @@ class UltraBulletproofChatService {
 
       if (response.ok) {
         const data = await response.json();
+        console.log(`✅ OpenRouter response received from model: ${finalModel}`);
         return data.choices?.[0]?.message?.content || null;
+      } else {
+        const errorText = await response.text();
+        console.error(`OpenRouter API error (${response.status}):`, errorText);
       }
     } catch (error) {
-      console.error('Fast OpenAI error:', error);
+      console.error('Fast OpenRouter error:', error);
     }
     return null;
   }
