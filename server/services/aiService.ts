@@ -85,94 +85,37 @@ export class AIService {
       };
       await storage.createChatMessage(userChatMessage);
 
-      // Check for scrape intent first
-      const { parseScrapeIntent, formatScrapeResults } = await import('../utils/scrapeIntentParser');
+      // Check for scrape intent and delegate to scraping agent
+      const { parseScrapeIntent } = await import('../utils/scrapeIntentParser');
       const scrapeIntent = parseScrapeIntent(userMessage);
 
       if (scrapeIntent) {
         try {
-          console.log('Detected scrape intent:', scrapeIntent);
+          console.log('Detected scrape intent, delegating to scraping agent:', scrapeIntent);
           
-          // Execute scraper
-          const { runScrapeAgent } = await import('../scrapers/agent');
-          const scrapeResult = await runScrapeAgent(scrapeIntent);
+          // Use the agent orchestrator to handle scraping tasks
+          const { AgentManager } = await import('../agents/AgentManager');
+          const agentManager = AgentManager.getInstance();
           
-          // Insert results into database
-          const { randomUUID } = await import('crypto');
-          const rows = (scrapeResult.records || []).map(r => ({
-            ...r,
-            id: randomUUID(),
-            jobId: randomUUID(),
-            scrapedAt: new Date().toISOString(),
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          }));
-
-          if (rows.length > 0) {
-            const { compsAnnex } = await import('../../shared/schema');
-            const { db } = await import('../db');
-            const { sql } = await import('drizzle-orm');
-
-            // Map scraper results to compsAnnex schema
-            const mappedRows = rows.map(r => ({
-              id: r.id,
-              source: r.source,
-              sourceUrl: r.sourceUrl,
-              name: r.name,
-              address: r.address,
-              city: r.city,
-              state: r.state,
-              zip: r.zip,
-              assetType: r.assetType,
-              units: r.units,
-              yearBuilt: r.yearBuilt,
-              rentPsf: r.rentPsf,
-              rentPu: r.rentPu,
-              occupancyPct: r.occupancyPct,
-              concessionPct: r.concessionPct,
-              amenityTags: r.amenityTags,
-              notes: r.notes,
-              canonicalAddress: r.canonicalAddress,
-              unitPlan: r.unitPlan,
-              scrapedAt: new Date(r.scrapedAt),
-              jobId: r.jobId,
-              createdAt: new Date(r.createdAt),
-              updatedAt: new Date(r.updatedAt)
-            }));
-
-            await db.insert(compsAnnex).values(mappedRows).onConflictDoUpdate({
-              target: [compsAnnex.canonicalAddress, compsAnnex.unitPlan],
-              set: {
-                rentPsf: sql`excluded.rent_psf`,
-                rentPu: sql`excluded.rent_pu`,
-                occupancyPct: sql`excluded.occupancy_pct`,
-                concessionPct: sql`excluded.concession_pct`,
-                amenityTags: sql`coalesce(excluded.amenity_tags, comps_annex.amenity_tags)`,
-                source: sql`coalesce(excluded.source, comps_annex.source)`,
-                sourceUrl: sql`coalesce(excluded.source_url, comps_annex.source_url)`,
-                scrapedAt: sql`excluded.scraped_at`,
-                jobId: sql`excluded.job_id`,
-                updatedAt: sql`now()`
-              }
-            });
-          }
-
-          const formattedResponse = formatScrapeResults({
-            ...scrapeResult,
-            inserted: rows.length,
-            records: rows.slice(0, 5)
-          });
-
-          // Store AI response
+          // Create a scraping task for the agent system
+          const taskId = agentManager.createTask('scrape_property_data', {
+            message: userMessage,
+            scrapeIntent,
+            sessionId,
+            userId
+          }, 'high');
+          
+          // Store AI response indicating scraping is in progress
           const aiChatMessage: InsertChatMessage = {
             sessionId,
             role: "assistant",
-            content: formattedResponse,
+            content: `🏢 **Bristol Scraping Agent Activated**\n\nI've delegated your request to our specialized Web Scraping Agent. The agent is now collecting comparable properties for:\n\n📍 **Location:** ${scrapeIntent.address}\n🎯 **Radius:** ${scrapeIntent.radius_mi} miles\n🏗️ **Asset Type:** ${scrapeIntent.asset_type}\n${scrapeIntent.amenities.length ? `✨ **Amenities:** ${scrapeIntent.amenities.join(', ')}\n` : ''}${scrapeIntent.keywords.length ? `🔍 **Keywords:** ${scrapeIntent.keywords.join(', ')}\n` : ''}\n\nThe scraping process is running in the background and results will be automatically added to your Comparables database. You can view live progress on the Comparables Annex page.\n\n**Task ID:** ${taskId}`,
+            metadata: { taskId, scrapeIntent }
           };
           
           return await storage.createChatMessage(aiChatMessage);
         } catch (scrapeError) {
-          console.error('Scrape execution failed:', scrapeError);
+          console.error('Scrape task creation failed:', scrapeError);
           // Fall through to normal AI response with error context
         }
       }

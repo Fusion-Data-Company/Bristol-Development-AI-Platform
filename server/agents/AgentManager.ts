@@ -3,7 +3,7 @@ import { WebSocket } from 'ws';
 import { db } from '../db';
 import { chatSessions, chatMessages, mcpExecutions } from '../../shared/schema';
 import OpenAI from 'openai';
-import { webSocketService } from '../services/websocketService';
+import { WebSocketService } from '../services/websocketService';
 
 export interface AgentConfig {
   id: string;
@@ -135,6 +135,24 @@ export class AgentManager extends EventEmitter {
       ],
       mcpTools: ['store_lead_info', 'schedule_property_showing', 'track_closing_deadlines']
     });
+
+    // Agent 6: Web Scraping Agent (Property Data Collection)
+    this.registerAgent({
+      id: 'scraping-agent',
+      name: 'Web Scraping Agent',
+      role: 'Automated property data collection and comparison analysis',
+      model: 'gpt-4o',
+      provider: 'openai',
+      capabilities: [
+        'web_scraping',
+        'property_data_extraction',
+        'comparable_property_analysis',
+        'data_validation',
+        'source_verification',
+        'rate_limit_management'
+      ],
+      mcpTools: ['firecrawl_scrape', 'apify_scrape', 'fallback_scrape', 'validate_property_data']
+    });
   }
 
   private registerAgent(config: AgentConfig) {
@@ -184,7 +202,11 @@ export class AgentManager extends EventEmitter {
       'financial_modeling': 'financial-analyst',
       'demographic_analysis': 'data-processor',
       'competitive_analysis': 'market-intelligence',
-      'deal_structuring': 'financial-analyst'
+      'deal_structuring': 'financial-analyst',
+      'scrape_property_data': 'scraping-agent',
+      'scrape_comparables': 'scraping-agent',
+      'property_data_extraction': 'scraping-agent',
+      'web_scraping': 'scraping-agent'
     };
 
     return taskAgentMap[taskType] || 'bristol-master';
@@ -199,7 +221,9 @@ export class AgentManager extends EventEmitter {
       console.log(`🚀 Executing task ${task.id} with ${agent.name}`);
       
       let result;
-      if (agent.provider === 'openai') {
+      if (agent.id === 'scraping-agent') {
+        result = await this.executeScrapingTask(agent, task);
+      } else if (agent.provider === 'openai') {
         result = await this.executeOpenAITask(agent, task);
       } else {
         result = await this.executeOpenRouterTask(agent, task);
@@ -732,12 +756,127 @@ Begin your specialized analysis now.`;
     return this.tasks.get(taskId);
   }
 
-  getAgents(): Agent[] {
+  getAgents(): AgentConfig[] {
     return Array.from(this.agents.values());
   }
 
   async getAllTasks(): Promise<AgentTask[]> {
     return Array.from(this.tasks.values());
+  }
+
+  // Scraping Agent Execution
+  private async executeScrapingTask(agent: AgentConfig, task: AgentTask): Promise<any> {
+    console.log(`🕸️ Executing scraping task: ${task.type}`);
+    
+    try {
+      const { scrapeIntent } = task.data;
+      
+      if (!scrapeIntent) {
+        throw new Error('No scrape intent provided for scraping task');
+      }
+
+      // Import and execute the scraper
+      const { runScrapeAgent } = await import('../scrapers/agent');
+      const scrapeResult = await runScrapeAgent(scrapeIntent);
+      
+      // Insert results into database
+      const { randomUUID } = await import('crypto');
+      const rows = (scrapeResult.records || []).map(r => ({
+        ...r,
+        id: randomUUID(),
+        jobId: randomUUID(),
+        scrapedAt: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }));
+
+      if (rows.length > 0) {
+        const { compsAnnex } = await import('../../shared/schema');
+        const { db } = await import('../db');
+        const { sql } = await import('drizzle-orm');
+
+        // Map scraper results to compsAnnex schema
+        const mappedRows = rows.map(r => ({
+          id: r.id,
+          source: r.source,
+          sourceUrl: r.sourceUrl,
+          name: r.name,
+          address: r.address,
+          city: r.city,
+          state: r.state,
+          zip: r.zip,
+          assetType: r.assetType,
+          units: r.units,
+          yearBuilt: r.yearBuilt,
+          rentPsf: r.rentPsf,
+          rentPu: r.rentPu,
+          occupancyPct: r.occupancyPct,
+          concessionPct: r.concessionPct,
+          amenityTags: r.amenityTags,
+          notes: r.notes,
+          canonicalAddress: r.canonicalAddress,
+          unitPlan: r.unitPlan,
+          scrapedAt: new Date(r.scrapedAt),
+          jobId: r.jobId,
+          createdAt: new Date(r.createdAt),
+          updatedAt: new Date(r.updatedAt)
+        }));
+
+        await db.insert(compsAnnex).values(mappedRows).onConflictDoUpdate({
+          target: [compsAnnex.canonicalAddress, compsAnnex.unitPlan],
+          set: {
+            rentPsf: sql`excluded.rent_psf`,
+            rentPu: sql`excluded.rent_pu`,
+            occupancyPct: sql`excluded.occupancy_pct`,
+            concessionPct: sql`excluded.concession_pct`,
+            amenityTags: sql`coalesce(excluded.amenity_tags, comps_annex.amenity_tags)`,
+            source: sql`coalesce(excluded.source, comps_annex.source)`,
+            sourceUrl: sql`coalesce(excluded.source_url, comps_annex.source_url)`,
+            scrapedAt: sql`excluded.scraped_at`,
+            jobId: sql`excluded.job_id`,
+            updatedAt: sql`now()`
+          }
+        });
+      }
+
+      const result = {
+        success: true,
+        source: scrapeResult.source,
+        inserted: rows.length,
+        records: rows.slice(0, 5),
+        caveats: scrapeResult.caveats || []
+      };
+
+      // Send success notification via WebSocket
+      this.notifyTaskCompletion(task, result);
+
+      return result;
+    } catch (error) {
+      console.error('Scraping task failed:', error);
+      throw error;
+    }
+  }
+
+  private notifyTaskCompletion(task: AgentTask, result: any) {
+    try {
+      // Format notification for WebSocket broadcast
+      const notification = {
+        type: 'task_completed',
+        taskId: task.id,
+        taskType: task.type,
+        result: result,
+        timestamp: new Date()
+      };
+
+      // Broadcast to all connected clients
+      this.wsConnections.forEach((ws, clientId) => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify(notification));
+        }
+      });
+    } catch (error) {
+      console.error('Failed to notify task completion:', error);
+    }
   }
 
   // Database Operations

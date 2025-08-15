@@ -700,6 +700,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Register AI agent routes
+  const { registerAIAgentRoute } = await import('./routes/ai-chat');
+  const { registerAIToolRoutes } = await import('./routes/ai-tools');
+  registerAIAgentRoute(app);
+  registerAIToolRoutes(app);
+
   // KML NetworkLink resolver endpoint
   app.post("/api/kml/resolve", async (req, res) => {
     try {
