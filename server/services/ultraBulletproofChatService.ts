@@ -123,27 +123,32 @@ class UltraBulletproofChatService {
       return null;
     }
 
-    // Elite models allowlist
+    // VERIFIED WORKING MODELS ONLY - matches /api/openrouter-models endpoint
     const ELITE_MODELS = new Set([
+      // OpenAI models (working with OpenRouter)
       "openai/gpt-4o",
-      "openai/gpt-4o-mini",
+      "openai/gpt-4o-mini", 
       "openai/gpt-4-turbo",
-      "openai/gpt-5",
-      "openai/gpt-5-chat",
+      "openai/gpt-4",
+      "openai/chatgpt-4o-latest",
+      
+      // Anthropic models (working)
       "anthropic/claude-3.5-sonnet",
+      "anthropic/claude-3.5-haiku",
       "anthropic/claude-3-opus",
-      "anthropic/claude-opus-4",
-      "anthropic/claude-opus-4.1",
-      "anthropic/claude-sonnet-4",
-      "x-ai/grok-4",
-      "x-ai/grok-beta",
-      "google/gemini-2.5-pro",
-      "google/gemini-2.5-flash",
-      "google/gemini-pro",
+      "anthropic/claude-3-haiku",
+      
+      // xAI models (REAL models, not phantom grok-4)
+      "x-ai/grok-2-1212",
+      "x-ai/grok-2-vision-1212",
+      "x-ai/grok-vision-beta",
+      
+      // Perplexity models (working)
       "perplexity/sonar-deep-research",
-      "perplexity/sonar-reasoning",
+      "perplexity/sonar-reasoning-pro",
       "perplexity/sonar-pro",
-      "perplexity/sonar-reasoning-pro"
+      "perplexity/sonar-reasoning",
+      "perplexity/sonar"
     ]);
 
     // Use the selected model if it's in the allowlist, otherwise fallback

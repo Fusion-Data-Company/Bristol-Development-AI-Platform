@@ -341,34 +341,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const data = await response.json();
       
-      // Filter to elite models only - prioritize our premium models
-      const PREMIUM_MODEL_IDS = [
-        "x-ai/grok-4",
-        "anthropic/claude-opus-4.1", 
-        "google/gemini-2.5-pro",
+      // VERIFIED WORKING MODELS ONLY - No phantom models that require special setup
+      const VERIFIED_WORKING_MODELS = [
+        // OpenAI models (working with OpenRouter)
+        "openai/gpt-4o",
+        "openai/gpt-4o-mini", 
+        "openai/gpt-4-turbo",
+        "openai/gpt-4",
+        "openai/chatgpt-4o-latest",
+        
+        // Anthropic models (working)
+        "anthropic/claude-3.5-sonnet",
+        "anthropic/claude-3.5-haiku",
+        "anthropic/claude-3-opus",
+        "anthropic/claude-3-haiku",
+        
+        // xAI models (REAL models, not phantom grok-4)
+        "x-ai/grok-2-1212",
+        "x-ai/grok-2-vision-1212",
+        "x-ai/grok-vision-beta",
+        
+        // Perplexity models (working)
         "perplexity/sonar-deep-research",
-        "openai/gpt-5"
+        "perplexity/sonar-reasoning-pro",
+        "perplexity/sonar-pro",
+        "perplexity/sonar-reasoning",
+        "perplexity/sonar"
       ];
       
+      // Filter to ONLY verified working models - no phantom models
       const eliteModels = data.data?.filter((model: any) => 
-        PREMIUM_MODEL_IDS.includes(model.id) ||
-        model.id.includes('gpt-4') || 
-        model.id.includes('claude-3') || 
-        model.id.includes('grok') ||
-        model.id.includes('perplexity')
+        VERIFIED_WORKING_MODELS.includes(model.id)
       ).map((model: any) => ({
         id: model.id,
         label: model.name || model.id
       })) || [];
 
-      // Add our guaranteed premium models if not found
+      // Fallback to basic working models if API fails - NO PHANTOM MODELS
       if (eliteModels.length === 0) {
-        eliteModels.push(
-          { id: "x-ai/grok-4", label: "Grok 4" },
-          { id: "anthropic/claude-opus-4.1", label: "Claude Opus 4.1" },
-          { id: "google/gemini-2.5-pro", label: "Gemini 2.5 Pro" },
-          { id: "perplexity/sonar-deep-research", label: "Sonar Deep Research" }
-        );
+        return res.json([
+          { id: "openai/gpt-4o", label: "OpenAI: GPT-4o" },
+          { id: "anthropic/claude-3.5-sonnet", label: "Anthropic: Claude 3.5 Sonnet" },
+          { id: "x-ai/grok-2-1212", label: "xAI: Grok 2 1212" },
+          { id: "perplexity/sonar-deep-research", label: "Perplexity: Sonar Deep Research" }
+        ]);
       }
 
       res.json(eliteModels);
