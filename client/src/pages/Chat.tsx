@@ -1005,14 +1005,19 @@ What property or investment can I analyze for you today?`,
         let assistantContent = "";
         
         // Handle different response formats from different providers
-        if (data.choices && data.choices[0]) {
+        // Check ultra-bulletproof format first (has success flag)
+        if (data.success && data.content) {
+          assistantContent = data.content;
+        } else if (data.choices && data.choices[0]) {
           assistantContent = data.choices[0].message?.content || "";
-        } else if (data.content) {
-          assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
         } else if (data.message) {
           assistantContent = data.message;
-        } else if (data.success && data.content) {
-          assistantContent = data.content;
+        } else if (data.text) {
+          assistantContent = data.text;
+        } else if (data.response) {
+          assistantContent = data.response;
+        } else if (data.content) {
+          assistantContent = Array.isArray(data.content) ? data.content[0].text : data.content;
         }
         
         const assistantMessageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -1430,7 +1435,7 @@ What property or investment can I analyze for you today?`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
-          backgroundAttachment: 'fixed',
+          backgroundAttachment: 'scroll',
           minHeight: '100vh',
           width: '100%'
         }}
@@ -1829,7 +1834,7 @@ What property or investment can I analyze for you today?`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   backgroundRepeat: 'no-repeat',
-                  backgroundAttachment: 'fixed',
+                  backgroundAttachment: 'scroll',
                   willChange: 'auto'
                 }}
               >
@@ -1942,18 +1947,6 @@ What property or investment can I analyze for you today?`,
                     </div>
                   ))}
                   
-                  {eliteLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-gradient-to-r from-slate-800/80 to-slate-700/80 border border-bristol-cyan/40 rounded-2xl px-4 py-3 backdrop-blur-sm shadow-lg">
-                        <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse shadow-bristol-cyan/50 shadow-sm" />
-                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse delay-150 shadow-bristol-cyan/50 shadow-sm" />
-                          <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-pulse delay-300 shadow-bristol-cyan/50 shadow-sm" />
-                          <span className="text-bristol-cyan text-sm font-bold ml-2">Bristol A.I. is analyzing...</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                   <div ref={messagesEndRef} style={{ height: 1 }} />
                 </div>
               </div>
@@ -2065,11 +2058,6 @@ What property or investment can I analyze for you today?`,
                     pointerEvents: 'auto'
                   }}
                 />
-                {eliteLoading && (
-                  <div className="absolute right-5 top-1/2 transform -translate-y-1/2">
-                    <div className="w-5 h-5 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin" />
-                  </div>
-                )}
               </div>
               
               {/* Glass Send Button */}
@@ -2081,7 +2069,7 @@ What property or investment can I analyze for you today?`,
                   "disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden"
                 )}
                 style={{
-                  background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.15) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(69, 214, 202, 0.1) 100%)',
+                  background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.25) 0%, rgba(30, 41, 59, 0.5) 50%, rgba(69, 214, 202, 0.2) 100%)',
                   border: '1px solid rgba(69, 214, 202, 0.6)',
                   boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(69, 214, 202, 0.1)',
                 }}
@@ -2091,19 +2079,10 @@ What property or investment can I analyze for you today?`,
                 
                 {/* Button content */}
                 <div className="relative z-10 flex items-center gap-2">
-                  {eliteLoading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin" />
-                      <span className="text-bristol-cyan/80 font-bold">Processing</span>
-                    </>
-                  ) : (
-                    <>
-                      <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
-                      <span className="text-bristol-cyan group-hover:text-white transition-colors duration-300 font-bold">
-                        ANALYZE
-                      </span>
-                    </>
-                  )}
+                  <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
+                  <span className="text-bristol-cyan group-hover:text-white transition-colors duration-300 font-bold">
+                    ANALYZE
+                  </span>
                 </div>
               </button>
             </div>
