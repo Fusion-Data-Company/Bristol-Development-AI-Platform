@@ -1,0 +1,91 @@
+Boss, perfect - the builder found the fuckin' problem. Here's EXACTLY how you respond to make sure they fix it right without breaking your multi-agent operation:
+
+---
+
+**YES - PROCEED WITH MEMORY OPTIMIZATION BUT FOLLOW THESE STRICT RULES:**
+
+**YOU CORRECTLY IDENTIFIED THE ISSUE - Memory health check failures. Fix them with these specific constraints:**
+
+**CRITICAL - MUST PRESERVE:**
+✅ Multi-agent coordination functionality  
+✅ MCP server connections  
+✅ WebSocket for agent communication (when it works)  
+✅ All API endpoints and chat functionality  
+✅ Task progress tracking  
+✅ Agent state management  
+
+**PRIMARY MEMORY FIXES REQUIRED:**
+
+1. **Message Array Memory Leak (HIGHEST PRIORITY)**
+   - Implement sliding window of 50 messages max
+   - Clear old messages from state, not just hide them
+   - Keep critical system messages but prune user/assistant pairs
+
+2. **WebSocket Connection Management**
+   - Add proper cleanup in useEffect return statements
+   - Clear all intervals/timeouts when component unmounts
+   - Prevent multiple connection attempts stacking up
+
+3. **Agent Task Cleanup**
+   - Limit `activeTasks` array to 20 most recent
+   - Clear completed tasks after 5 minutes
+   - Limit `agentCommunication` array to 50 messages
+
+4. **Artifact Memory Management**
+   - Limit artifacts array to 10 items
+   - Add "Clear Artifacts" button for manual cleanup
+   - Clear artifacts when starting new chat
+
+5. **State Update Optimization**
+   - Use functional setState updates: `setState(prev => ...)`
+   - Avoid creating new objects/arrays unnecessarily
+   - Clear unused state variables
+
+**DO NOT CHANGE:**
+- API endpoint logic
+- Multi-agent deployment functions
+- MCP tool integrations
+- Core chat message flow
+- Response extraction logic
+- Model selection system
+
+**ADD MEMORY MONITORING:**
+```javascript
+// Add this to track memory usage
+useEffect(() => {
+  const memoryCheck = setInterval(() => {
+    if (performance.memory && performance.memory.usedJSHeapSize > 100000000) {
+      console.warn('Memory usage high - triggering cleanup');
+      // Trigger cleanup actions
+    }
+  }, 30000); // Check every 30 seconds
+  
+  return () => clearInterval(memoryCheck);
+}, []);
+```
+
+**TEST AFTER EACH FIX:**
+- Memory usage should stabilize
+- Chat should remain responsive
+- Multi-agent features still work
+- No console errors about memory
+
+**FIX IN THIS ORDER:**
+1. Message array pruning first
+2. WebSocket cleanup second  
+3. Agent task cleanup third
+4. Everything else after
+
+**Report back with memory usage before/after metrics**
+
+---
+
+Boss, this is perfect timing. The builder found the problem and you're giving them the green light with guardrails. The key is making sure they:
+
+1. **Fix the memory leaks** (especially that message array that grows forever)
+2. **Don't break your multi-agent shit** (that's your crown jewel)
+3. **Add monitoring** so you can see if memory problems come back
+
+The memory health check failures are probably from your app using over 100MB of RAM because it never throws anything away. After these fixes, it should stay under 50MB even after hours of use.
+
+Let that builder cook, but keep them on a tight leash with those constraints. Your multi-agent coordination is too valuable to let them fuck it up while fixing memory issues.

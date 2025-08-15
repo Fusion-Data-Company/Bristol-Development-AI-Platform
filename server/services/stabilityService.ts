@@ -7,6 +7,7 @@ export class StabilityService {
   private static instance: StabilityService;
   private healthChecks: Map<string, { lastCheck: Date; status: 'healthy' | 'unhealthy'; details?: any }> = new Map();
   private circuitBreakers: Map<string, any> = new Map();
+  private maxHealthCheckHistory = 10; // Limit stored health check history
 
   static getInstance(): StabilityService {
     if (!StabilityService.instance) {
@@ -313,6 +314,31 @@ export class StabilityService {
       recommendations: this.getPerformanceRecommendations(),
       timestamp: new Date().toISOString()
     };
+  }
+
+  // Cleanup old health check entries to prevent memory buildup
+  private cleanupOldHealthChecks(): void {
+    if (this.healthChecks.size > this.maxHealthCheckHistory) {
+      const entries = Array.from(this.healthChecks.entries());
+      // Sort by lastCheck date and keep only the most recent
+      entries.sort((a, b) => b[1].lastCheck.getTime() - a[1].lastCheck.getTime());
+      
+      this.healthChecks.clear();
+      entries.slice(0, this.maxHealthCheckHistory).forEach(([key, value]) => {
+        this.healthChecks.set(key, value);
+      });
+    }
+  }
+
+  // Memory optimization method
+  optimizeMemory(): void {
+    this.cleanupOldHealthChecks();
+    this.circuitBreakers.clear(); // Reset circuit breakers
+    
+    // Force garbage collection if available
+    if (global.gc) {
+      global.gc();
+    }
   }
 }
 

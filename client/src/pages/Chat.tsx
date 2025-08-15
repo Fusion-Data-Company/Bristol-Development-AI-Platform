@@ -192,6 +192,7 @@ export default function Chat() {
   const [modelLoadingStream, setModelLoadingStream] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState<string>("");
   const [eliteMessages, setEliteMessages] = useState<any[]>([]);
+  const maxMessages = 50; // Sliding window for memory optimization
   const [input, setInput] = useState("");
   const [eliteInput, setEliteInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -199,6 +200,7 @@ export default function Chat() {
   const [streamingResponse, setStreamingResponse] = useState("");
   const [modelError, setModelError] = useState<string>("");
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
+  const maxArtifacts = 10; // PRIORITY 4: Artifact memory management
   const [showArtifacts, setShowArtifacts] = useState(false);
   const [modelsUsed, setModelsUsed] = useState<Set<string>>(new Set());
   const [showQuickActions, setShowQuickActions] = useState(false);
@@ -218,6 +220,87 @@ export default function Chat() {
   const [realTimeData, setRealTimeData] = useState(true);
   const [sessionId, setSessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const wsRef = useRef<WebSocket | null>(null);
+  const memoryCleanupRef = useRef<NodeJS.Timeout | null>(null);
+
+  // PRIORITY 2: WebSocket connection management with proper cleanup
+  useEffect(() => {
+    return () => {
+      // Clean up WebSocket on unmount
+      if (wsRef.current) {
+        wsRef.current.close(1000, 'Component unmounting');
+        wsRef.current = null;
+      }
+    };
+  }, []);
+
+  // PRIORITY 3: Agent task and communication cleanup
+  useEffect(() => {
+    if (activeTasks.length > maxActiveTasks) {
+      setActiveTasks(prev => {
+        // Remove completed tasks older than 5 minutes
+        const now = Date.now();
+        const recentTasks = prev.filter(task => 
+          task.status !== 'completed' || 
+          !task.completedAt || 
+          (now - new Date(task.completedAt).getTime()) < 300000
+        );
+        // Keep only most recent if still too many
+        return recentTasks.slice(-maxActiveTasks);
+      });
+    }
+  }, [activeTasks, maxActiveTasks]);
+
+  useEffect(() => {
+    if (agentCommunication.length > maxAgentMessages) {
+      setAgentCommunication(prev => prev.slice(-maxAgentMessages));
+    }
+  }, [agentCommunication, maxAgentMessages]);
+
+  // PRIORITY 4: Artifact memory management
+  useEffect(() => {
+    if (artifacts.length > maxArtifacts) {
+      setArtifacts(prev => prev.slice(-maxArtifacts));
+    }
+  }, [artifacts, maxArtifacts]);
+
+  // PRIORITY 5: Memory monitoring and cleanup
+  useEffect(() => {
+    const memoryCheck = setInterval(() => {
+      if (performance.memory && performance.memory.usedJSHeapSize > 100000000) {
+        console.warn('Memory usage high - triggering cleanup', {
+          used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
+          total: Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)
+        });
+        
+        // Trigger memory cleanup
+        setEliteMessages(prev => prev.slice(-maxMessages));
+        setActiveTasks(prev => prev.slice(-maxActiveTasks));
+        setAgentCommunication(prev => prev.slice(-maxAgentMessages));
+        setArtifacts(prev => prev.slice(-maxArtifacts));
+        
+        // Clear task progress for completed tasks
+        setTaskProgress(prev => {
+          const filtered = { ...prev };
+          Object.keys(filtered).forEach(key => {
+            const task = activeTasks.find(t => t.id === key);
+            if (!task || task.status === 'completed') {
+              delete filtered[key];
+            }
+          });
+          return filtered;
+        });
+      }
+    }, 30000); // Check every 30 seconds
+    
+    memoryCleanupRef.current = memoryCheck;
+    
+    return () => {
+      if (memoryCleanupRef.current) {
+        clearInterval(memoryCleanupRef.current);
+        memoryCleanupRef.current = null;
+      }
+    };
+  }, [maxMessages, maxActiveTasks, maxAgentMessages, maxArtifacts, activeTasks]);
   
   // Multi-Agent System States - VERIFIED OPENROUTER MODELS ONLY
   const [agents, setAgents] = useState<any[]>([
@@ -228,8 +311,10 @@ export default function Chat() {
     { id: 'lead-management', name: 'Lead Manager', model: 'openai/gpt-4-turbo', description: 'Assesses investor fit and manages lead conversion' }
   ]);
   const [activeTasks, setActiveTasks] = useState<AgentTask[]>([]);
+  const maxActiveTasks = 20; // Limit for memory optimization
   const [taskProgress, setTaskProgress] = useState<Record<string, any>>({});
   const [agentCommunication, setAgentCommunication] = useState<any[]>([]);
+  const maxAgentMessages = 50; // Limit for memory optimization
   const [multiAgentMode, setMultiAgentMode] = useState(true);
   
   // Web Scraping Agent status for live tracking
@@ -925,11 +1010,16 @@ What property or investment can I analyze for you today?`,
     setEliteLoading(true);
     setStreamingResponse("");
     
-    // Truncate conversation history to prevent memory overflow (keep last 50 messages)
-    if (eliteMessages.length > 50) {
-      const truncatedMessages = eliteMessages.slice(-50);
-      setEliteMessages(truncatedMessages);
-      console.log('Conversation truncated to prevent memory overflow');
+    // PRIORITY 1: Message array memory leak fix - sliding window cleanup
+    if (eliteMessages.length > maxMessages) {
+      setEliteMessages(prev => {
+        // Keep system messages and prune user/assistant pairs
+        const systemMessages = prev.filter(msg => msg.role === 'system');
+        const nonSystemMessages = prev.filter(msg => msg.role !== 'system');
+        const recentMessages = nonSystemMessages.slice(-(maxMessages - systemMessages.length));
+        console.log(`Memory optimization: Pruned messages from ${prev.length} to ${systemMessages.length + recentMessages.length}`);
+        return [...systemMessages, ...recentMessages];
+      });
     }
 
     // Add user message to Elite chat immediately

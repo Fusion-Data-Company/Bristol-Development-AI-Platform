@@ -25,6 +25,7 @@ export class PerformanceMonitor extends EventEmitter {
   };
   
   private intervals: NodeJS.Timeout[] = [];
+  private maxMetricsPerType = 50; // Reduced from 100 to save memory
 
   constructor() {
     super();
@@ -71,9 +72,9 @@ export class PerformanceMonitor extends EventEmitter {
     const metricArray = this.metrics.get(name)!;
     metricArray.push(metric);
 
-    // Keep only last 100 metrics per type
-    if (metricArray.length > 100) {
-      metricArray.shift();
+    // Keep only last 50 metrics per type to reduce memory usage
+    if (metricArray.length > this.maxMetricsPerType) {
+      metricArray.splice(0, metricArray.length - this.maxMetricsPerType);
     }
 
     this.emit('metric', metric);
@@ -154,7 +155,7 @@ export class PerformanceMonitor extends EventEmitter {
           timestamp: Date.now()
         });
       }
-    }, 10000); // Every 10 seconds
+    }, 30000); // Every 30 seconds - reduced frequency to save memory
 
     // Event loop lag monitoring
     const eventLoopInterval = setInterval(() => {
@@ -163,7 +164,7 @@ export class PerformanceMonitor extends EventEmitter {
         const lag = Number(process.hrtime.bigint() - start) / 1000000; // Convert to ms
         this.recordMetric('event_loop_lag', lag, { unit: 'ms' });
       });
-    }, 5000); // Every 5 seconds
+    }, 15000); // Every 15 seconds - reduced frequency to save memory
 
     this.intervals.push(memoryInterval, eventLoopInterval);
   }
@@ -270,13 +271,37 @@ export class PerformanceMonitor extends EventEmitter {
     return apiStats;
   }
 
-  // Cleanup
+  // Enhanced cleanup with memory optimization
   destroy(): void {
     this.intervals.forEach(clearInterval);
-    this.intervals = [];
+    this.intervals.length = 0;
     this.metrics.clear();
     this.timers.clear();
     this.removeAllListeners();
+    // Force garbage collection hint
+    if (global.gc) {
+      global.gc();
+    }
+  }
+
+  // Periodic memory cleanup
+  private performMemoryCleanup(): void {
+    // Remove old metrics beyond our limit
+    this.metrics.forEach((metricArray, name) => {
+      if (metricArray.length > this.maxMetricsPerType) {
+        metricArray.splice(0, metricArray.length - this.maxMetricsPerType);
+      }
+    });
+
+    // Clear completed timers
+    const now = Date.now();
+    const expiredTimers: string[] = [];
+    this.timers.forEach((startTime, name) => {
+      if (now - startTime > 300000) { // 5 minutes
+        expiredTimers.push(name);
+      }
+    });
+    expiredTimers.forEach(name => this.timers.delete(name));
   }
 
   // Performance optimization recommendations
