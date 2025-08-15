@@ -601,9 +601,9 @@ export default function AnalyticsEnterprise() {
                           <CardTitle className="text-2xl text-bristol-maroon">{market.market}</CardTitle>
                           <Badge className={cn(
                             "font-medium",
-                            market.economicHealth === 'Very Strong' ? 'bg-green-900/50 text-green-300 border-green-600' :
-                            market.economicHealth === 'Strong' ? 'bg-blue-900/50 text-blue-300 border-blue-600' :
-                            'bg-yellow-900/50 text-yellow-300 border-yellow-600'
+                            market.economicHealth === 'Very Strong' ? 'bg-green-100 text-green-800 border-green-600' :
+                            market.economicHealth === 'Strong' ? 'bg-blue-100 text-blue-800 border-blue-600' :
+                            'bg-yellow-100 text-yellow-800 border-yellow-600'
                           )}>
                             {market.economicHealth}
                           </Badge>
@@ -691,7 +691,7 @@ export default function AnalyticsEnterprise() {
                           <div className="text-bristol-stone">Sentiment Score</div>
                           <Badge className={cn(
                             "mt-2",
-                            liveIntelligence.market_sentiment.trend === 'positive' ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300'
+                            liveIntelligence.market_sentiment.trend === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                           )}>
                             {liveIntelligence.market_sentiment.trend}
                           </Badge>
@@ -747,9 +747,9 @@ export default function AnalyticsEnterprise() {
                         <div className="text-center">
                           <Badge className={cn(
                             "text-lg font-bold px-4 py-2",
-                            liveIntelligence.interest_rates.rate_direction === 'rising' ? 'bg-red-900/50 text-red-300' :
-                            liveIntelligence.interest_rates.rate_direction === 'falling' ? 'bg-green-900/50 text-green-300' :
-                            'bg-blue-900/50 text-blue-300'
+                            liveIntelligence.interest_rates.rate_direction === 'rising' ? 'bg-red-100 text-red-800' :
+                            liveIntelligence.interest_rates.rate_direction === 'falling' ? 'bg-green-100 text-green-800' :
+                            'bg-blue-100 text-blue-800'
                           )}>
                             {liveIntelligence.interest_rates.rate_direction}
                           </Badge>
@@ -778,9 +778,9 @@ export default function AnalyticsEnterprise() {
                                   <div className="text-bristol-stone text-sm">{event.date}</div>
                                 </div>
                                 <Badge className={cn(
-                                  event.importance === 'very_high' ? 'bg-red-900/50 text-red-300' :
-                                  event.importance === 'high' ? 'bg-orange-900/50 text-orange-300' :
-                                  'bg-blue-900/50 text-blue-300'
+                                  event.importance === 'very_high' ? 'bg-red-100 text-red-800' :
+                                  event.importance === 'high' ? 'bg-orange-100 text-orange-800' :
+                                  'bg-blue-100 text-blue-800'
                                 )}>
                                   {event.importance}
                                 </Badge>
@@ -1013,9 +1013,9 @@ export default function AnalyticsEnterprise() {
                               </div>
                               <Badge className={cn(
                                 "text-sm font-medium px-3 py-1",
-                                level === 'elevated' || level === 'high' ? 'bg-red-900/50 text-red-300 border-red-600' :
-                                level === 'moderate' || level === 'medium' ? 'bg-yellow-900/50 text-yellow-300 border-yellow-600' :
-                                'bg-green-900/50 text-green-300 border-green-600'
+                                level === 'elevated' || level === 'high' ? 'bg-red-100 text-red-800 border-red-600' :
+                                level === 'moderate' || level === 'medium' ? 'bg-yellow-100 text-yellow-800 border-yellow-600' :
+                                'bg-green-100 text-green-800 border-green-600'
                               )}>
                                 {level}
                               </Badge>
@@ -1055,7 +1055,7 @@ export default function AnalyticsEnterprise() {
                       <div className="text-2xl font-bold text-bristol-maroon">Bristol Analytics AI Elite</div>
                       <div className="text-bristol-cyan">Enterprise Real Estate Intelligence Agent</div>
                     </div>
-                    <Badge className="bg-green-900/50 text-green-300 border-green-600 ml-auto">
+                    <Badge className="bg-green-100 text-green-800 border-green-600 ml-auto">
                       <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse mr-2"></div>
                       MCP Active
                     </Badge>
