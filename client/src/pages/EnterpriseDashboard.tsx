@@ -38,7 +38,6 @@ import {
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
 import bristolBackground from '@assets/thumbnail_1755274091217.jpg';
-import { BristolFooter } from "@/components/BristolFooter";
 import { EnterpriseAnalyticsDashboard } from '@/components/ui/EnterpriseAnalyticsDashboard';
 
 export default function EnterpriseDashboard() {
@@ -264,7 +263,6 @@ export default function EnterpriseDashboard() {
               </Card>
             </div>
 
-            <BristolFooter variant="enterprise" />
           </div>
         </div>
       </div>
