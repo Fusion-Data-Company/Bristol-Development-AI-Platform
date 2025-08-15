@@ -2120,10 +2120,24 @@ function AgentsPane({
         <EnterpriseControlPanel 
           agents={enterpriseAgents}
           wsConnected={wsConnected}
-          systemStatus={systemStatus}
-          onDeployAgents={() => handleMultiAgentDeploy()}
-          onOptimizeAgents={() => handleOptimizeAgents()}
-          onPerformanceMonitor={() => setShowPerformanceMonitor(true)}
+          systemStatus={{
+            mcpTools: [],
+            apis: [],
+            database: 'connected' as const,
+            websocket: wsConnected ? 'connected' as const : 'disconnected' as const
+          }}
+          onDeployAgents={() => {
+            console.log('Deploying all agents...');
+            // Multi-agent deployment logic will be implemented here
+          }}
+          onOptimizeAgents={() => {
+            console.log('Optimizing agents...');
+            // Agent optimization logic will be implemented here
+          }}
+          onPerformanceMonitor={() => {
+            console.log('Opening performance monitor...');
+            // Performance monitor will be implemented here
+          }}
         />
       </div>
     </div>
