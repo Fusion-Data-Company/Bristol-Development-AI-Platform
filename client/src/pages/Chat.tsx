@@ -2053,17 +2053,18 @@ What property or investment can I analyze for you today?`,
             
             <div className="px-6 py-5 flex items-end gap-4">
               <div className="flex-1 relative group">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-3xl blur opacity-0 group-focus-within:opacity-100 transition duration-300 pointer-events-none" />
                 <input
                   ref={eliteInputRef}
                   value={eliteInput}
                   onChange={(e) => setEliteInput(e.target.value)}
                   onKeyDown={handleEliteKeyPress}
                   placeholder="Ask about properties, market trends, demographics, investment opportunities..."
-                  className="w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-white/80 disabled:opacity-60"
+                  className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-bristol-cyan/60 disabled:opacity-60 relative z-10"
                   style={{
-                    background: 'linear-gradient(135deg, rgb(69, 214, 202) 0%, rgb(30, 58, 138) 50%, rgb(69, 214, 202) 100%)',
-                    border: '2px solid rgb(69, 214, 202)',
-                    boxShadow: '0 4px 15px rgb(69, 214, 202)',
+                    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
+                    border: '1px solid rgba(69, 214, 202, 0.6)',
+                    boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
                     pointerEvents: 'auto'
                   }}
                 />
@@ -2074,19 +2075,21 @@ What property or investment can I analyze for you today?`,
                 onClick={handleEliteSend}
                 disabled={!eliteInput.trim()}
                 className={cx(
-                  "chrome-metallic-button relative inline-flex items-center gap-3 px-6 py-4 rounded-3xl font-bold text-sm",
+                  "relative inline-flex items-center gap-3 px-6 py-4 rounded-3xl font-bold text-sm",
                   "disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden"
                 )}
                 style={{
                   background: 'linear-gradient(135deg, rgb(69, 214, 202) 0%, rgb(30, 58, 138) 50%, rgb(69, 214, 202) 100%)',
                   border: '2px solid rgb(69, 214, 202)',
                   boxShadow: 'inset 0 2px 0 rgb(255, 255, 255), 0 6px 25px rgb(69, 214, 202)',
+                  zIndex: 9999,
+                  position: 'relative'
                 }}
               >
                 {/* Button content */}
-                <div className="relative z-10 flex items-center gap-2">
-                  <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
-                  <span className="text-white group-hover:text-bristol-cyan transition-colors duration-300 font-bold">
+                <div className="relative z-[10000] flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-white group-hover:text-bristol-gold transition-colors duration-300" />
+                  <span className="text-white group-hover:text-bristol-gold transition-colors duration-300 font-bold">
                     ANALYZE PROPERTY
                   </span>
                 </div>
