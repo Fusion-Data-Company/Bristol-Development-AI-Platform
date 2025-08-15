@@ -1,6 +1,7 @@
 import { eliteMemoryEnhancementService } from './eliteMemoryEnhancementService';
 import { advancedMemoryService } from './advancedMemoryService';
 import { advancedAgentOrchestrationService } from './advancedAgentOrchestrationService';
+import { eliteMCPOrchestrationService } from './eliteMCPOrchestrationService';
 
 interface MCPTool {
   id: string;

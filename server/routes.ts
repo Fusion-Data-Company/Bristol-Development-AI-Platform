@@ -165,6 +165,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const enhancedMcpNetworkingRouter = (await import('./api/enhanced-mcp-networking')).default;
   app.use('/api/mcp-networking', enhancedMcpNetworkingRouter);
 
+  // Elite MCP Orchestration API with quantum-level capabilities and autonomous operations
+  const eliteMcpOrchestrationRouter = (await import('./api/elite-mcp-orchestration')).default;
+  app.use('/api/elite-mcp', eliteMcpOrchestrationRouter);
+
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
   chatHealthMonitor.start();
