@@ -22,7 +22,7 @@ import { ExportCompsTools } from '@/components/comparables/ExportCompsTools';
 import { CompsFilters } from '@/components/comparables/CompsFilters';
 import ProductionMetrics from '@/components/comparables/ProductionMetrics';
 import ProductionValidation from '@/components/comparables/ProductionValidation';
-import backgroundImage from '@assets/5+Points+banner_1755274421793.webp';
+import backgroundImage from '@assets/bristol+southside+3_1755274717370.webp';
 import { 
   Search, 
   Download, 
@@ -300,10 +300,15 @@ export default function ComparablesAnnex() {
       {/* Hero Background Section */}
       <div 
         className="relative min-h-screen bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
+        style={{ 
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundAttachment: 'fixed',
+          imageRendering: 'crisp-edges',
+          backgroundSize: 'cover'
+        }}
       >
-        {/* Dark overlay for better readability */}
-        <div className="absolute inset-0 bg-black/40" />
+        {/* Subtle overlay for readability while preserving image clarity */}
+        <div className="absolute inset-0 bg-black/25" />
         
         {/* Content Container */}
         <div className="relative z-10 container mx-auto px-6 py-8">
