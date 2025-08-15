@@ -2079,9 +2079,9 @@ What property or investment can I analyze for you today?`,
                   "disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden"
                 )}
                 style={{
-                  background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.25) 0%, rgba(30, 41, 59, 0.5) 50%, rgba(69, 214, 202, 0.2) 100%)',
-                  border: '1px solid rgba(69, 214, 202, 0.6)',
-                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 4px 20px rgba(69, 214, 202, 0.1)',
+                  background: 'linear-gradient(135deg, rgba(69, 214, 202, 0.15) 0%, rgba(255, 255, 255, 0.1) 50%, rgba(69, 214, 202, 0.1) 100%)',
+                  border: '1px solid rgba(69, 214, 202, 0.4)',
+                  boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 20px rgba(69, 214, 202, 0.15)',
                 }}
               >
                 {/* Glass shimmer effect */}
@@ -2090,8 +2090,8 @@ What property or investment can I analyze for you today?`,
                 {/* Button content */}
                 <div className="relative z-10 flex items-center gap-2">
                   <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
-                  <span className="text-red-500 group-hover:text-red-400 transition-colors duration-300 font-bold text-xl animate-pulse">
-                    🚨 I FOUND THE REAL BUTTON! 🚨
+                  <span className="text-bristol-cyan group-hover:text-white transition-colors duration-300 font-bold">
+                    ANALYZE
                   </span>
                 </div>
               </button>
