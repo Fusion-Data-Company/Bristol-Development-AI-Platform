@@ -55,7 +55,7 @@ export function EnterpriseMetricCard({ title, value, change, trend, icon, descri
   };
 
   return (
-    <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl relative overflow-hidden group hover:border-bristol-gold/40 transition-all duration-300">
+    <Card className="bg-white border-bristol-cyan/30 shadow-lg relative overflow-hidden group hover:border-bristol-gold/40 transition-all duration-300">
       {/* Animated gradient border effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/10 via-transparent to-bristol-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
@@ -68,7 +68,7 @@ export function EnterpriseMetricCard({ title, value, change, trend, icon, descri
       
       <CardContent className="relative">
         <div className="space-y-2">
-          <div className="text-3xl font-bold text-white">
+          <div className="text-3xl font-bold text-bristol-maroon">
             {formatValue(value)}
           </div>
           
@@ -112,17 +112,17 @@ export function PerformanceGauge({ title, value, max, target, unit = '', color =
   };
 
   return (
-    <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
       <CardHeader className="pb-3">
         <CardTitle className="text-bristol-cyan text-sm">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="relative h-4 bg-bristol-ink/60 rounded-full overflow-hidden">
+          <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden">
             {/* Target line */}
             {target && (
               <div 
-                className="absolute top-0 w-0.5 h-full bg-white/60 z-10"
+                className="absolute top-0 w-0.5 h-full bg-gray-600 z-10"
                 style={{ left: `${targetPercentage}%` }}
               />
             )}
@@ -135,7 +135,7 @@ export function PerformanceGauge({ title, value, max, target, unit = '', color =
           </div>
           
           <div className="flex items-center justify-between text-sm">
-            <span className="text-white font-medium">
+            <span className="text-bristol-maroon font-medium">
               {value.toLocaleString()}{unit}
             </span>
             <span className="text-bristol-stone">
@@ -165,10 +165,10 @@ interface MarketHeatmapProps {
 
 export function MarketHeatmap({ markets }: MarketHeatmapProps) {
   const getPerformanceColor = (performance: number) => {
-    if (performance >= 80) return 'bg-green-500/20 border-green-500/40 text-green-300';
-    if (performance >= 60) return 'bg-bristol-cyan/20 border-bristol-cyan/40 text-bristol-cyan';
-    if (performance >= 40) return 'bg-yellow-500/20 border-yellow-500/40 text-yellow-300';
-    return 'bg-red-500/20 border-red-500/40 text-red-300';
+    if (performance >= 80) return 'bg-green-100 border-green-500 text-green-800';
+    if (performance >= 60) return 'bg-cyan-100 border-bristol-cyan text-bristol-maroon';
+    if (performance >= 40) return 'bg-yellow-100 border-yellow-500 text-yellow-800';
+    return 'bg-red-100 border-red-500 text-red-800';
   };
 
   const getRiskIndicator = (risk: string) => {
@@ -181,7 +181,7 @@ export function MarketHeatmap({ markets }: MarketHeatmapProps) {
   };
 
   return (
-    <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
       <CardHeader>
         <CardTitle className="text-bristol-cyan flex items-center gap-3">
           <Target className="h-5 w-5 text-bristol-gold" />
@@ -232,10 +232,10 @@ interface AlertsPanelProps {
 
 export function AlertsPanel({ alerts }: AlertsPanelProps) {
   const getAlertColor = (type: string, severity: string) => {
-    if (type === 'opportunity') return 'border-l-green-400 bg-green-900/20';
-    if (type === 'risk' && severity === 'high') return 'border-l-red-400 bg-red-900/20';
-    if (type === 'risk') return 'border-l-yellow-400 bg-yellow-900/20';
-    return 'border-l-bristol-cyan bg-bristol-ink/20';
+    if (type === 'opportunity') return 'border-l-green-400 bg-green-100';
+    if (type === 'risk' && severity === 'high') return 'border-l-red-400 bg-red-100';
+    if (type === 'risk') return 'border-l-yellow-400 bg-yellow-100';
+    return 'border-l-bristol-cyan bg-gray-100';
   };
 
   const getAlertIcon = (type: string) => {
@@ -245,7 +245,7 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
   };
 
   return (
-    <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
       <CardHeader>
         <CardTitle className="text-bristol-cyan flex items-center gap-3">
           <Activity className="h-5 w-5 text-bristol-gold" />
@@ -267,7 +267,7 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
                   {getAlertIcon(alert.type)}
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium text-white">{alert.title}</div>
+                      <div className="text-sm font-medium text-bristol-maroon">{alert.title}</div>
                       <Badge 
                         variant="outline" 
                         className={cn(
