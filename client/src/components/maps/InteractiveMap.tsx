@@ -24,11 +24,38 @@ interface InteractiveMapProps {
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-// ArcGIS Service URLs for real estate data
-const ARCGIS_SERVICES = {
-  demographics: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Demographics_Boundaries/FeatureServer',
-  housing: 'https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Housing_Density/FeatureServer',
-  employment: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Employment_by_Industry/FeatureServer'
+// Real verified data sources for map layers
+const DATA_SOURCES = {
+  // U.S. Census Bureau - American Community Survey Demographics
+  demographics: {
+    url: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/ACS_Population_by_Race_and_Hispanic_Origin_Boundaries/FeatureServer/2',
+    name: 'Census Demographics',
+    fields: ['TOTPOP_CY', 'MEDHINC_CY', 'AVGHINC_CY', 'POP25_CY']
+  },
+  // Census Bureau - Housing and Rent Data
+  housing: {
+    url: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/ACS_Housing_Characteristics_Boundaries/FeatureServer/2',
+    name: 'Housing Market Data',
+    fields: ['TOTHU_CY', 'AVGRENT_CY', 'MEDRENT_CY', 'VACANTHU_CY']
+  },
+  // Bureau of Labor Statistics - Employment Data
+  employment: {
+    url: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Labor_Force_Participation_Rate/FeatureServer/0',
+    name: 'Employment Statistics',
+    fields: ['UNEMPRT_CY', 'LABFORCE_CY', 'CIVLBFR_CY']
+  },
+  // Economic Research Service - Income and Poverty
+  economic: {
+    url: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/ACS_Poverty_and_Income_Boundaries/FeatureServer/2',
+    name: 'Economic Indicators',
+    fields: ['MEDHINC_CY', 'AVGHINC_CY', 'PCI_CY', 'POVPOP_CY']
+  },
+  // Transportation and Infrastructure
+  infrastructure: {
+    url: 'https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Transportation_Methods/FeatureServer/0',
+    name: 'Transportation Access',
+    fields: ['PUBTRANS_CY', 'COMMUTE_CY', 'X26001_X_CY']
+  }
 };
 
 // Bristol Site Scoring Color Scale
@@ -61,10 +88,10 @@ export function InteractiveMap({
   const mapRef = useRef<MapRef>(null);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
   const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/satellite-streets-v12');
-  const [showDemographics, setShowDemographics] = useState(false);
-  const [showHousing, setShowHousing] = useState(false);
-  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [activeLayers, setActiveLayers] = useState<Set<string>>(new Set(['heatmap']));
   const [showKML, setShowKML] = useState(!!kmlData);
+  const [layerData, setLayerData] = useState<{[key: string]: any}>({});
+  const [loading, setLoading] = useState<{[key: string]: boolean}>({});
   const [demographicPopup, setDemographicPopup] = useState<{lat: number, lng: number, loading: boolean, data?: any} | null>(null);
   const [viewport, setViewport] = useState({
     longitude: -82.4572, // Atlanta/Sunbelt center
@@ -75,14 +102,56 @@ export function InteractiveMap({
   // Use real site data or empty array to prevent TypeScript errors
   const activeSites: Site[] = sites.length > 0 ? sites : [];
 
-  // Heat map data for market opportunities
+  // Fetch real data from ArcGIS services
+  const fetchLayerData = useCallback(async (layerKey: string) => {
+    if (!DATA_SOURCES[layerKey as keyof typeof DATA_SOURCES]) return;
+    
+    setLoading(prev => ({ ...prev, [layerKey]: true }));
+    
+    try {
+      const source = DATA_SOURCES[layerKey as keyof typeof DATA_SOURCES];
+      const response = await fetch(
+        `${source.url}/query?where=1%3D1&outFields=*&geometry=-89.0,30.0,-79.0,36.0&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outSR=4326&f=geojson&resultRecordCount=500`
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setLayerData(prev => ({ ...prev, [layerKey]: data }));
+      } else {
+        console.warn(`Failed to fetch ${source.name} data:`, response.status);
+      }
+    } catch (error) {
+      console.warn(`Error fetching ${layerKey} data:`, error);
+    } finally {
+      setLoading(prev => ({ ...prev, [layerKey]: false }));
+    }
+  }, []);
+
+  // Toggle layer visibility and fetch data if needed
+  const toggleLayer = useCallback((layerKey: string) => {
+    setActiveLayers(prev => {
+      const newLayers = new Set(prev);
+      if (newLayers.has(layerKey)) {
+        newLayers.delete(layerKey);
+      } else {
+        newLayers.add(layerKey);
+        // Fetch data if not already loaded
+        if (!layerData[layerKey] && !loading[layerKey]) {
+          fetchLayerData(layerKey);
+        }
+      }
+      return newLayers;
+    });
+  }, [layerData, loading, fetchLayerData]);
+
+  // Enhanced heat map data for better visibility
   const marketHeatData = {
     type: 'FeatureCollection' as const,
     features: activeSites.map(site => ({
       type: 'Feature' as const,
       properties: {
-        score: 75,
-        density: Math.random() * 100
+        score: site.bristolScore || 75,
+        density: Math.max(50, (site.bristolScore || 75) * 1.2) // Enhanced density for visibility
       },
       geometry: {
         type: 'Point' as const,
@@ -124,8 +193,9 @@ export function InteractiveMap({
         'interpolate',
         ['linear'],
         ['zoom'],
-        0, 2,
-        15, 40
+        0, 15,
+        8, 25,
+        15, 60
       ] as any,
       'heatmap-opacity': [
         'interpolate',
@@ -213,18 +283,17 @@ export function InteractiveMap({
           interactiveLayerIds={['market-heat', 'kml-polygons', 'kml-polygon-outlines', 'kml-lines', 'kml-points']}
           projection={{ name: 'mercator' }}
         >
-          {/* Market Heat Map Layer */}
-          {showHeatmap && (
+          {/* Enhanced Heat Map Layer */}
+          {activeLayers.has('heatmap') && (
             <Source id="market-opportunities" type="geojson" data={marketHeatData}>
               <Layer {...heatmapLayer} />
             </Source>
           )}
 
-          {/* KML Layer */}
-          {kmlData && (
+          {/* KML Portfolio Layer */}
+          {kmlData && showKML && (
             <KMLLayer
               kmlData={kmlData}
-      
               visible={showKML}
               onFeaturesLoad={(features) => {
                 console.log(`Loaded ${features.length} KML features`);
@@ -232,36 +301,134 @@ export function InteractiveMap({
             />
           )}
 
-          {/* ArcGIS Demographics Layer */}
-          <ArcGISLayer
-            serviceUrl="https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Demographics_Boundaries/FeatureServer"
-            layerId="0"
-            visible={showDemographics}
-            layerType="fill"
-            paint={{
-              'fill-color': [
-                'interpolate',
-                ['linear'],
-                ['get', 'MEDHINC_CY'],
-                0, 'rgba(255, 0, 0, 0.2)',
-                50000, 'rgba(255, 255, 0, 0.3)',
-                100000, 'rgba(0, 255, 0, 0.4)'
-              ],
-              'fill-opacity': 0.3
-            }}
-          />
+          {/* Demographics Layer - Real Census Data */}
+          {activeLayers.has('demographics') && layerData.demographics && (
+            <Source id="demographics-source" type="geojson" data={layerData.demographics}>
+              <Layer
+                id="demographics-fill"
+                type="fill"
+                paint={{
+                  'fill-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'TOTPOP_CY'],
+                    0, '#f7fafc',
+                    1000, '#e2e8f0',
+                    5000, '#cbd5e0',
+                    10000, '#a0aec0',
+                    25000, '#718096',
+                    50000, '#4a5568'
+                  ],
+                  'fill-opacity': 0.7
+                }}
+              />
+              <Layer
+                id="demographics-line"
+                type="line"
+                paint={{
+                  'line-color': '#2d3748',
+                  'line-width': 1,
+                  'line-opacity': 0.5
+                }}
+              />
+            </Source>
+          )}
 
-          {/* ArcGIS Housing Density Layer */}
-          <ArcGISLayer
-            serviceUrl="https://services.arcgis.com/jIL9msH9OI208GCb/arcgis/rest/services/USA_Housing_Density/FeatureServer"
-            layerId="0"
-            visible={showHousing}
-            layerType="fill"
-            paint={{
-              'fill-color': '#FFB000',
-              'fill-opacity': 0.4
-            }}
-          />
+          {/* Housing Market Layer - Real Housing Data */}
+          {activeLayers.has('housing') && layerData.housing && (
+            <Source id="housing-source" type="geojson" data={layerData.housing}>
+              <Layer
+                id="housing-fill"
+                type="fill"
+                paint={{
+                  'fill-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'MEDRENT_CY'],
+                    0, '#fef5e7',
+                    500, '#fed7aa',
+                    1000, '#fdba74',
+                    1500, '#fb923c',
+                    2000, '#f97316',
+                    3000, '#ea580c'
+                  ],
+                  'fill-opacity': 0.6
+                }}
+              />
+            </Source>
+          )}
+
+          {/* Economic Layer - Real Income Data */}
+          {activeLayers.has('economic') && layerData.economic && (
+            <Source id="economic-source" type="geojson" data={layerData.economic}>
+              <Layer
+                id="economic-fill"
+                type="fill"
+                paint={{
+                  'fill-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'MEDHINC_CY'],
+                    0, '#f0fdf4',
+                    25000, '#dcfce7',
+                    50000, '#bbf7d0',
+                    75000, '#86efac',
+                    100000, '#4ade80',
+                    150000, '#22c55e'
+                  ],
+                  'fill-opacity': 0.6
+                }}
+              />
+            </Source>
+          )}
+
+          {/* Employment Layer - Real BLS Data */}
+          {activeLayers.has('employment') && layerData.employment && (
+            <Source id="employment-source" type="geojson" data={layerData.employment}>
+              <Layer
+                id="employment-fill"
+                type="fill"
+                paint={{
+                  'fill-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'UNEMPRT_CY'],
+                    0, '#eff6ff',
+                    2, '#dbeafe',
+                    5, '#bfdbfe',
+                    8, '#93c5fd',
+                    12, '#60a5fa',
+                    20, '#3b82f6'
+                  ],
+                  'fill-opacity': 0.6
+                }}
+              />
+            </Source>
+          )}
+
+          {/* Infrastructure Layer - Real Transportation Data */}
+          {activeLayers.has('infrastructure') && layerData.infrastructure && (
+            <Source id="infrastructure-source" type="geojson" data={layerData.infrastructure}>
+              <Layer
+                id="infrastructure-fill"
+                type="fill"
+                paint={{
+                  'fill-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['get', 'PUBTRANS_CY'],
+                    0, '#fdf4ff',
+                    5, '#fae8ff',
+                    15, '#f3e8ff',
+                    25, '#e9d5ff',
+                    40, '#d8b4fe',
+                    60, '#c084fc'
+                  ],
+                  'fill-opacity': 0.6
+                }}
+              />
+            </Source>
+          )}
 
           {/* Site Markers */}
           {activeSites.map((site) => (
@@ -460,52 +627,131 @@ export function InteractiveMap({
           />
         </Map>
 
-        {/* Layer Controls */}
+        {/* Enhanced Layer Controls */}
         {showControls && (
-          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">
-            <h4 className="font-semibold text-sm text-bristol-ink mb-3">Map Layers</h4>
-            <div className="space-y-2">
-              {kmlData && (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="kml"
-                    checked={showKML}
-                    onChange={(e) => setShowKML(e.target.checked)}
-                    className="w-4 h-4 text-bristol-maroon"
-                  />
-                  <label htmlFor="kml" className="text-sm text-bristol-ink">KML Layer</label>
+          <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-4 shadow-xl border border-bristol-stone/30 min-w-[280px]">
+            <div className="flex items-center gap-2 mb-4">
+              <Layers className="w-5 h-5 text-bristol-maroon" />
+              <h4 className="font-serif text-base font-semibold text-bristol-ink">Data Layers</h4>
+            </div>
+            
+            <div className="space-y-3">
+              {/* Market Analysis */}
+              <div className="border-b border-bristol-stone/20 pb-3">
+                <h5 className="text-xs font-medium text-bristol-stone uppercase tracking-wide mb-2">Market Analysis</h5>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="heatmap"
+                        checked={activeLayers.has('heatmap')}
+                        onChange={() => toggleLayer('heatmap')}
+                        className="w-4 h-4 accent-bristol-maroon"
+                      />
+                      <label htmlFor="heatmap" className="text-sm text-bristol-ink cursor-pointer">Market Heat Map</label>
+                    </div>
+                    <Badge variant="secondary" className="text-xs">Enhanced</Badge>
+                  </div>
+                  {kmlData && (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="kml"
+                        checked={showKML}
+                        onChange={(e) => setShowKML(e.target.checked)}
+                        className="w-4 h-4 accent-bristol-maroon"
+                      />
+                      <label htmlFor="kml" className="text-sm text-bristol-ink cursor-pointer">Portfolio Data</label>
+                    </div>
+                  )}
                 </div>
-              )}
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="heatmap"
-                  checked={showHeatmap}
-                  onChange={(e) => setShowHeatmap(e.target.checked)}
-                  className="w-4 h-4 text-bristol-maroon"
-                />
-                <label htmlFor="heatmap" className="text-sm text-bristol-ink">Market Heat Map</label>
               </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="demographics"
-                  checked={showDemographics}
-                  onChange={(e) => setShowDemographics(e.target.checked)}
-                  className="w-4 h-4 text-bristol-maroon"
-                />
-                <label htmlFor="demographics" className="text-sm text-bristol-ink">Demographics (ArcGIS)</label>
+
+              {/* Census & Demographics */}
+              <div className="border-b border-bristol-stone/20 pb-3">
+                <h5 className="text-xs font-medium text-bristol-stone uppercase tracking-wide mb-2">Demographics</h5>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="demographics"
+                        checked={activeLayers.has('demographics')}
+                        onChange={() => toggleLayer('demographics')}
+                        className="w-4 h-4 accent-bristol-maroon"
+                      />
+                      <label htmlFor="demographics" className="text-sm text-bristol-ink cursor-pointer">Census Demographics</label>
+                    </div>
+                    {loading.demographics && <div className="w-3 h-3 border border-bristol-maroon border-t-transparent rounded-full animate-spin"></div>}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="economic"
+                        checked={activeLayers.has('economic')}
+                        onChange={() => toggleLayer('economic')}
+                        className="w-4 h-4 accent-bristol-maroon"
+                      />
+                      <label htmlFor="economic" className="text-sm text-bristol-ink cursor-pointer">Income & Poverty</label>
+                    </div>
+                    {loading.economic && <div className="w-3 h-3 border border-bristol-maroon border-t-transparent rounded-full animate-spin"></div>}
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="housing"
-                  checked={showHousing}
-                  onChange={(e) => setShowHousing(e.target.checked)}
-                  className="w-4 h-4 text-bristol-maroon"
-                />
-                <label htmlFor="housing" className="text-sm text-bristol-ink">Housing Density</label>
+
+              {/* Housing Market */}
+              <div className="border-b border-bristol-stone/20 pb-3">
+                <h5 className="text-xs font-medium text-bristol-stone uppercase tracking-wide mb-2">Housing Market</h5>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="housing"
+                        checked={activeLayers.has('housing')}
+                        onChange={() => toggleLayer('housing')}
+                        className="w-4 h-4 accent-bristol-maroon"
+                      />
+                      <label htmlFor="housing" className="text-sm text-bristol-ink cursor-pointer">Housing Characteristics</label>
+                    </div>
+                    {loading.housing && <div className="w-3 h-3 border border-bristol-maroon border-t-transparent rounded-full animate-spin"></div>}
+                  </div>
+                </div>
+              </div>
+
+              {/* Employment & Infrastructure */}
+              <div className="pb-3">
+                <h5 className="text-xs font-medium text-bristol-stone uppercase tracking-wide mb-2">Economic Data</h5>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="employment"
+                        checked={activeLayers.has('employment')}
+                        onChange={() => toggleLayer('employment')}
+                        className="w-4 h-4 accent-bristol-maroon"
+                      />
+                      <label htmlFor="employment" className="text-sm text-bristol-ink cursor-pointer">Employment Stats</label>
+                    </div>
+                    {loading.employment && <div className="w-3 h-3 border border-bristol-maroon border-t-transparent rounded-full animate-spin"></div>}
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        id="infrastructure"
+                        checked={activeLayers.has('infrastructure')}
+                        onChange={() => toggleLayer('infrastructure')}
+                        className="w-4 h-4 accent-bristol-maroon"
+                      />
+                      <label htmlFor="infrastructure" className="text-sm text-bristol-ink cursor-pointer">Transportation</label>
+                    </div>
+                    {loading.infrastructure && <div className="w-3 h-3 border border-bristol-maroon border-t-transparent rounded-full animate-spin"></div>}
+                  </div>
+                </div>
               </div>
             </div>
             
