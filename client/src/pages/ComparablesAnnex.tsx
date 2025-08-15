@@ -298,7 +298,7 @@ export default function ComparablesAnnex() {
     <Chrome>
       {/* Hero Background Section */}
       <div 
-        className="relative min-h-screen bg-cover bg-center bg-no-repeat"
+        className="relative bg-cover bg-center bg-no-repeat"
         style={{ 
           backgroundImage: `url(${backgroundImage})`,
           backgroundAttachment: 'fixed',

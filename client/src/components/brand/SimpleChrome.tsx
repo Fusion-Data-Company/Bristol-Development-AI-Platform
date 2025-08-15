@@ -139,12 +139,12 @@ export default function SimpleChrome({ children }: ChromeProps) {
       </header>
 
       {/* Main Content with light theme */}
-      <main className="flex-1 bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10">
+      <main className="flex-1">
         {children}
       </main>
 
       {/* Footer - Exact Header Match */}
-      <footer className="relative overflow-hidden shadow-2xl border-t-2 border-cyan-400/50 bg-slate-800" style={{
+      <footer className="relative overflow-hidden shadow-2xl bg-slate-800" style={{
         backgroundImage: `
           radial-gradient(circle at 12% 34%, #374151 0%, transparent 20%),
           radial-gradient(circle at 67% 23%, #475569 0%, transparent 18%),
