@@ -245,14 +245,14 @@ export function FoursquareTool() {
   return (
     <div className="space-y-8">
       {/* MEGA HEADER */}
-      <div className="text-center space-y-6 bristol-enterprise-card p-8 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-rose-50/50 to-pink-50/50 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-rose-500/5 via-pink-500/5 to-bristol-gold/10 animate-pulse"></div>
+      <div className="text-center space-y-6 bristol-enterprise-card p-8 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-slate-50/50 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-slate-500/5 to-bristol-gold/10 animate-pulse"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-center gap-6 mb-6">
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-rose-500/20 to-pink-500/20 shadow-xl animate-bounce">
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-slate-500/20 shadow-xl animate-bounce">
               <MapPin className="h-16 w-16 text-rose-600 drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-rose-800 via-bristol-gold to-pink-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+            <h1 className="text-5xl font-black bg-gradient-to-r from-blue-800 via-bristol-gold to-slate-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
               📍 Foursquare Places
             </h1>
           </div>

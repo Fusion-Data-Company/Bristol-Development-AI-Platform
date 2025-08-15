@@ -410,8 +410,8 @@ export function HUDTool() {
                         <th className="text-left py-4 px-3 bg-gradient-to-r from-purple-100/60 to-emerald-100/60 font-bold text-slate-700">State</th>
                         <th className="text-left py-4 px-3 bg-gradient-to-r from-emerald-100/60 to-blue-100/60 font-bold text-slate-700">County</th>
                         <th className="text-left py-4 px-3 bg-gradient-to-r from-blue-100/60 to-yellow-100/60 font-bold text-slate-700">CBSA</th>
-                        <th className="text-left py-4 px-3 bg-gradient-to-r from-yellow-100/60 to-pink-100/60 font-bold text-slate-700">Census Tract</th>
-                        <th className="text-right py-4 px-3 bg-gradient-to-r from-pink-100/60 to-red-100/80 rounded-r-lg font-bold text-slate-700">Residential Ratio</th>
+                        <th className="text-left py-4 px-3 bg-gradient-to-r from-yellow-100/60 to-blue-100/60 font-bold text-slate-700">Census Tract</th>
+                        <th className="text-right py-4 px-3 bg-gradient-to-r from-blue-100/60 to-red-100/80 rounded-r-lg font-bold text-slate-700">Residential Ratio</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -423,7 +423,7 @@ export function HUDTool() {
                             </div>
                           </td>
                           <td className="py-4 px-3">
-                            <div className="bg-gradient-to-r from-purple-100 to-pink-100 px-3 py-2 rounded-lg border border-purple-200/50 font-semibold text-slate-800">
+                            <div className="bg-gradient-to-r from-purple-100 to-blue-100 px-3 py-2 rounded-lg border border-purple-200/50 font-semibold text-slate-800">
                               {row.state || 'N/A'}
                             </div>
                           </td>
@@ -443,7 +443,7 @@ export function HUDTool() {
                             </div>
                           </td>
                           <td className="py-4 px-3 text-right">
-                            <div className="bg-gradient-to-r from-pink-100 to-red-100 px-4 py-2 rounded-lg border border-pink-200/50 inline-block">
+                            <div className="bg-gradient-to-r from-blue-100 to-red-100 px-4 py-2 rounded-lg border border-blue-200/50 inline-block">
                               <div className="text-lg font-bold text-red-800">
                                 {row.res_ratio?.toFixed(4) || 'N/A'}
                               </div>

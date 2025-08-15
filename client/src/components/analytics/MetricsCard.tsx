@@ -181,7 +181,7 @@ export const bristolMetrics = {
       value: data.majorEmployers || 0,
       unit: "companies",
       color: "blue" as const,
-      description: "Fortune 500 companies in market"
+      description: "Enterprise companies in market"
     }
   ]
 };

@@ -238,7 +238,7 @@ export function BLSTool() {
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="37 (NC) 🌟"
-                className="bg-gradient-to-r from-red-50/80 via-white/95 to-pink-50/80 border-3 border-red-400/50 text-slate-900 font-black shadow-xl hover:border-red-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
+                className="bg-gradient-to-r from-red-50/80 via-white/95 to-blue-50/80 border-3 border-red-400/50 text-slate-900 font-black shadow-xl hover:border-red-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
               />
             </div>
             <div>

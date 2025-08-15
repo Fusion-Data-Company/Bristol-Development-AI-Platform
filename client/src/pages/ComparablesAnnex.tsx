@@ -11,6 +11,7 @@ import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
 import ScraperJobManager from '@/components/comparables/ScraperJobManager';
 import ScraperControlPanel from '@/components/comparables/ScraperControlPanel';
+import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
 import { EliteFirecrawlInterface } from '@/components/comparables/EliteFirecrawlInterface';
 import AIAnalyticsPanel from '@/components/comparables/AIAnalyticsPanel';
 import DataVisualization from '@/components/comparables/DataVisualization';
@@ -116,15 +117,6 @@ export default function ComparablesAnnex() {
   });
 
   const [scrapeDialogOpen, setScrapeDialogOpen] = useState(false);
-  const [scrapeQuery, setScrapeQuery] = useState<ScrapeQuery>({
-    address: '',
-    radius_mi: 5,
-    asset_type: 'Multifamily',
-    keywords: [],
-    amenities: []
-  });
-  
-  // Enhanced scraping agent state
   const [agentDialogOpen, setAgentDialogOpen] = useState(false);
   const [agentQuery, setAgentQuery] = useState<ScrapeQuery>({
     address: '',
@@ -132,6 +124,26 @@ export default function ComparablesAnnex() {
     asset_type: 'Multifamily',
     keywords: [],
     amenities: []
+  });
+  const [scrapeQuery, setScrapeQuery] = useState<ScrapeQuery>({
+    address: '',
+    radius_mi: 5,
+    asset_type: 'Multifamily',
+    keywords: [],
+    amenities: []
+  });
+  const [scrapingAgentStatus, setScrapingAgentStatus] = useState<{
+    active: boolean;
+    currentTask: string | null;
+    progress: number;
+    lastUpdate: string;
+    metrics: { processed: number; found: number; errors: number };
+  }>({
+    active: false,
+    currentTask: null,
+    progress: 0,
+    lastUpdate: '',
+    metrics: { processed: 0, found: 0, errors: 0 }
   });
 
   // Fetch comparables data
@@ -322,6 +334,12 @@ export default function ComparablesAnnex() {
               description: `Successfully scraped ${data.inserted || 0} properties from ${data.source}`,
             });
           }}
+        />
+
+        {/* Web Scraping Agent Live Tracking */}
+        <WebScrapingAgentTracker 
+          status={scrapingAgentStatus}
+          onStatusUpdate={setScrapingAgentStatus}
         />
 
         {/* Elite Firecrawl Operations Interface - Hero Section */}

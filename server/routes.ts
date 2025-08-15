@@ -100,8 +100,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/bristol-agent', bristolAgentRouter);
   
   // Multi-Agent System API - bypass auth for testing
-  const agentsRouter = (await import('./api/agents')).default;
-  app.use('/api/agents', agentsRouter);
+  const { registerAgentsRoutes } = await import('./api/agents');
+  registerAgentsRoutes(app);
   
   // MCP Testing API
   const mcpTestRouter = (await import('./api/mcp-test')).default;
