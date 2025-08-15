@@ -255,7 +255,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
           {selectedArtifactData ? (
             <ArtifactContent artifact={selectedArtifactData} />
           ) : (
-            <div className="h-full flex items-center justify-center text-slate-400 bg-gradient-to-br from-slate-900/40 via-slate-800/50 to-slate-900/40 backdrop-blur-sm rounded-b-xl">
+            <div className="h-full flex items-center justify-center text-slate-400 bg-gradient-to-br from-slate-900/40 via-slate-800/50 to-slate-900/40 backdrop-blur-sm">
               <div className="text-center p-12">
                 <FileText className="h-20 w-20 text-bristol-cyan/50 mx-auto mb-8" />
                 <p className="text-slate-300 text-xl font-medium mb-4">Select an artifact to view its content</p>
