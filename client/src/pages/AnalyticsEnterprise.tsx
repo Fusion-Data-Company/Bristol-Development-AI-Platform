@@ -48,7 +48,7 @@ import {
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
 import bristolBackground from '@assets/thumbnail_1755274091217.jpg';
-import { BristolFooter } from "@/components/ui/BristolFooter";
+import { BristolFooter } from "@/components/BristolFooter";
 import { cn } from '@/lib/utils';
 import { EnterpriseMetricCard, PerformanceGauge, MarketHeatmap, AlertsPanel } from '@/components/analytics/EnterpriseMetricsWidget';
 import { EliteTrendChart } from '@/components/analytics/EliteTrendChart';
@@ -1178,7 +1178,7 @@ export default function AnalyticsEnterprise() {
           </Tabs>
         </div>
         
-        <BristolFooter />
+        <BristolFooter variant="enterprise" />
       </div>
     </SimpleChrome>
   );
