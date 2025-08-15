@@ -280,26 +280,47 @@ export default function Chat() {
       
       setIsThinking(true);
       
-      const response = await fetch('/api/bristol-brain-elite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: content,
-          sessionId: selectedSession,
-          model: model,
-          mcpEnabled: true,
-          realTimeData: true
-        })
-      });
-      
-      if (!response.ok) {
-        const fallbackResponse = await fetch(`/api/chat/sessions/${selectedSession}/messages`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content })
-        });
-        if (!fallbackResponse.ok) throw new Error('Failed to send message');
-        return fallbackResponse.json();
+      // Try bulletproof chat API first, then fallbacks
+      const endpoints = [
+        '/api/bulletproof-chat/chat',
+        '/api/enhanced-chat-v2/message',
+        '/api/bristol-brain-elite',
+        `/api/chat/sessions/${selectedSession}/messages`
+      ];
+
+      let response;
+      let lastError;
+
+      for (const endpoint of endpoints) {
+        try {
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              message: content,
+              sessionId: selectedSession,
+              model: model,
+              mcpEnabled: true,
+              realTimeData: true,
+              sourceInstance: 'main'
+            })
+          });
+
+          if (response.ok) {
+            console.log(`✅ Chat success with endpoint: ${endpoint}`);
+            break;
+          } else {
+            throw new Error(`HTTP ${response.status}`);
+          }
+        } catch (error) {
+          console.warn(`⚠️ Endpoint ${endpoint} failed:`, error);
+          lastError = error;
+          continue;
+        }
+      }
+
+      if (!response || !response.ok) {
+        throw lastError || new Error('All chat endpoints failed');
       }
       
       return response.json();

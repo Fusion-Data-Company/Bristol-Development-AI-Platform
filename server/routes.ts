@@ -137,6 +137,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const enhancedChatV2Router = (await import('./api/enhanced-chat-v2')).default;
   app.use('/api/enhanced-chat-v2', enhancedChatV2Router);
 
+  // Bulletproof Chat API with maximum reliability and error recovery
+  const bulletproofChatRouter = (await import('./api/bulletproof-chat')).default;
+  app.use('/api/bulletproof-chat', bulletproofChatRouter);
+
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
   chatHealthMonitor.start();
