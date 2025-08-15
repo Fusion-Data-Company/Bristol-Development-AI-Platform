@@ -342,7 +342,7 @@ export const compsAnnex = pgTable('comps_annex', {
   unitMix: jsonb('unit_mix'),
   marketRentPsf: real('market_rent_psf'),
   effectiveRentPsf: real('effective_rent_psf'),
-  leaseUpStatus: varchar('lease_up_status', { length: 32 }),
+  leaseUpStatus: varchar('lease_up_status', { length: 64 }),
   developer: varchar('developer', { length: 128 }),
   propertyManager: varchar('property_manager', { length: 128 }),
 }, (t) => ({
