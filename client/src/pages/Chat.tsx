@@ -195,6 +195,7 @@ export default function Chat() {
   const [modelError, setModelError] = useState<string>("");
   const [artifacts, setArtifacts] = useState<Artifact[]>([]);
   const [showArtifacts, setShowArtifacts] = useState(false);
+  const [modelsUsed, setModelsUsed] = useState<Set<string>>(new Set());
   const eliteInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -845,9 +846,9 @@ What property or investment can I analyze for you today?`,
   }, []);
 
   // Process artifacts from AI response - enhanced code block detection
-  const processArtifacts = (content: string, messageId?: string) => {
+  const processArtifacts = (content: string, messageId?: string, modelUsed?: string) => {
     // First try the built-in extractArtifacts function
-    const newArtifacts = extractArtifacts(content, messageId);
+    const newArtifacts = extractArtifacts(content, messageId, modelUsed);
     
     // Also detect code blocks that might be missed
     const codeBlockRegex = /```([\w-]*)?\n([\s\S]*?)```/g;
@@ -871,7 +872,8 @@ What property or investment can I analyze for you today?`,
           content: code,
           title: `${language.charAt(0).toUpperCase() + language.slice(1)} Code`,
           messageId,
-          createdAt: new Date()
+          createdAt: new Date(),
+          modelUsed
         });
       }
     }
@@ -1002,7 +1004,9 @@ What property or investment can I analyze for you today?`,
         }]);
         
         setStreamingResponse("");
-        processArtifacts(streamedContent, assistantMessageId);
+        processArtifacts(streamedContent, assistantMessageId, model);
+        // Track model used
+        setModelsUsed(prev => new Set([...prev, model]));
         
       } else {
         // NON-STREAMING MODE - Direct call to ultra-bulletproof endpoint
@@ -1058,7 +1062,9 @@ What property or investment can I analyze for you today?`,
       }]);
       
       // Process artifacts from the response
-      processArtifacts(assistantContent, assistantMessageId);
+      processArtifacts(assistantContent, assistantMessageId, model);
+      // Track model used
+      setModelsUsed(prev => new Set([...prev, model]));
       
       }  // End of non-streaming else block
 
@@ -1584,6 +1590,39 @@ What property or investment can I analyze for you today?`,
                   </div>
                 </button>
               </div>
+
+              {/* Models Used Tracker */}
+              {modelsUsed.size > 0 && (
+                <div className="flex items-center gap-2 text-xs">
+                  <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-500/20 border border-green-400/30">
+                    <Brain className="h-3 w-3 text-green-400" />
+                    <span className="text-green-400 font-bold tracking-wider">MODELS USED</span>
+                    <div className="flex gap-1 ml-1">
+                      {Array.from(modelsUsed).map((model, index) => {
+                        const modelName = model.split('/').pop()?.replace('-', ' ').toUpperCase() || model;
+                        const getProviderEmoji = (modelId: string) => {
+                          if (modelId.includes('gpt') || modelId.includes('openai')) return '🟢';
+                          if (modelId.includes('claude') || modelId.includes('anthropic')) return '🔶';
+                          if (modelId.includes('grok') || modelId.includes('x-ai')) return '⚡';
+                          if (modelId.includes('gemini') || modelId.includes('google')) return '🔷';
+                          if (modelId.includes('perplexity') || modelId.includes('sonar')) return '🔍';
+                          return '🤖';
+                        };
+                        return (
+                          <Badge 
+                            key={model} 
+                            variant="outline" 
+                            className="text-xs bg-green-500/10 text-green-300 border-green-400/40 px-1 py-0 h-4"
+                          >
+                            {getProviderEmoji(model)} {modelName.slice(0, 8)}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="flex items-center gap-2 text-xs">
                 <button
                   onClick={() => {
