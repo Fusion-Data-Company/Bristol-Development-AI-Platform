@@ -72,33 +72,53 @@ export async function setupAuth(app: Express) {
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
-    const claims = tokens.claims();
-    const email = claims.email;
-    
-    // ACCESS CONTROL: Whitelist check
-    const allowedEmails = [
-      'rob@fusiondataco.com',
-      'mat@fusiondataco.com',
-      'theinsuranceschool@gmail.com',
-      'samyeager@me.com',
-      'yeager@bristoldevelopment.com'
-    ];
-    
-    const allowedDomain = '@bristoldevelopment.com';
-    
-    // Check if user is authorized
-    const isAllowedEmail = allowedEmails.includes(email?.toLowerCase());
-    const isAllowedDomain = email?.toLowerCase().endsWith(allowedDomain);
-    
-    if (!isAllowedEmail && !isAllowedDomain) {
-      // User is not authorized
-      return verified(new Error(`Access denied. Email ${email} is not authorized to access this application.`), false);
+    try {
+      const claims = tokens.claims();
+      const email = claims?.email as string;
+      
+      console.log('🔐 OAuth verification started for email:', email);
+      
+      if (!claims || !email) {
+        console.error('❌ Missing claims or email from OAuth provider');
+        return verified(new Error('Invalid OAuth response - missing user information'), false);
+      }
+      
+      // ACCESS CONTROL: Whitelist check
+      const allowedEmails = [
+        'rob@fusiondataco.com',
+        'mat@fusiondataco.com',
+        'theinsuranceschool@gmail.com',
+        'samyeager@me.com',
+        'yeager@bristoldevelopment.com'
+      ];
+      
+      const allowedDomain = '@bristoldevelopment.com';
+      
+      // Check if user is authorized
+      const emailLower = email.toLowerCase();
+      const isAllowedEmail = allowedEmails.includes(emailLower);
+      const isAllowedDomain = emailLower.endsWith(allowedDomain);
+      
+      if (!isAllowedEmail && !isAllowedDomain) {
+        console.error('❌ Access denied for email:', email);
+        return verified(new Error(`Access denied. Email ${email} is not authorized to access this application.`), false);
+      }
+      
+      console.log('✅ Email authorized, creating/updating user...');
+      
+      const user = {};
+      updateUserSession(user, tokens);
+      
+      // Add error handling around database operation
+      await upsertUser(claims);
+      
+      console.log('✅ User upsert successful, authentication complete');
+      verified(null, user);
+      
+    } catch (error) {
+      console.error('❌ OAuth verification failed:', error);
+      return verified(error as Error, false);
     }
-    
-    const user = {};
-    updateUserSession(user, tokens);
-    await upsertUser(claims);
-    verified(null, user);
   };
 
   for (const domain of process.env
