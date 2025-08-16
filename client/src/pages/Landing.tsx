@@ -93,60 +93,6 @@ export default function Landing() {
       {/* Dynamic Shadow Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 via-transparent to-gray-700/10"></div>
 
-      {/* CSS Animations */}
-      <style jsx>{`
-        @keyframes float-cyan {
-          0%, 100% { 
-            transform: translate(0, 0) scale(1); 
-            opacity: 0.6; 
-          }
-          25% { 
-            transform: translate(-20px, -30px) scale(1.1); 
-            opacity: 0.8; 
-          }
-          50% { 
-            transform: translate(15px, -10px) scale(0.9); 
-            opacity: 0.7; 
-          }
-          75% { 
-            transform: translate(-10px, 20px) scale(1.05); 
-            opacity: 0.9; 
-          }
-        }
-        
-        @keyframes float-orange {
-          0%, 100% { 
-            transform: translate(0, 0) scale(1) rotate(0deg); 
-            opacity: 0.5; 
-          }
-          33% { 
-            transform: translate(25px, -20px) scale(1.15) rotate(2deg); 
-            opacity: 0.7; 
-          }
-          66% { 
-            transform: translate(-15px, 25px) scale(0.85) rotate(-1deg); 
-            opacity: 0.6; 
-          }
-        }
-        
-        @keyframes drift {
-          0% { 
-            transform: translate(0, 0) rotate(0deg); 
-          }
-          25% { 
-            transform: translate(10px, -15px) rotate(1deg); 
-          }
-          50% { 
-            transform: translate(-5px, 10px) rotate(-0.5deg); 
-          }
-          75% { 
-            transform: translate(8px, -8px) rotate(0.8deg); 
-          }
-          100% { 
-            transform: translate(0, 0) rotate(0deg); 
-          }
-        }
-      `}</style>
       
       {/* GlobalHeader without navigation */}
       <div className="relative z-10">
