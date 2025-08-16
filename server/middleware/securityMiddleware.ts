@@ -97,11 +97,64 @@ export const securityHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://openrouter.ai"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      scriptSrc: [
+        "'self'", 
+        "'unsafe-inline'", 
+        "'unsafe-eval'", 
+        "https://openrouter.ai",
+        "https://api.mapbox.com",
+        "https://replit.com",
+        "blob:"
+      ],
+      styleSrc: [
+        "'self'", 
+        "'unsafe-inline'", 
+        "https://fonts.googleapis.com",
+        "https://api.mapbox.com"
+      ],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "https://openrouter.ai", "wss:", "ws:"],
+      imgSrc: [
+        "'self'", 
+        "data:", 
+        "https:", 
+        "blob:",
+        "https://*.mapbox.com",
+        "https://api.mapbox.com",
+        "https://events.mapbox.com",
+        "https://tiles.mapbox.com",
+        "https://a.tiles.mapbox.com",
+        "https://b.tiles.mapbox.com",
+        "https://tile.openstreetmap.org",
+        "https://*.arcgis.com",
+        "https://*.arcgisonline.com"
+      ],
+      connectSrc: [
+        "'self'", 
+        "https://openrouter.ai", 
+        "wss:", 
+        "ws:",
+        "https://api.mapbox.com",
+        "https://*.mapbox.com",
+        "https://events.mapbox.com",
+        "https://tiles.mapbox.com",
+        "https://a.tiles.mapbox.com",
+        "https://b.tiles.mapbox.com",
+        "https://*.arcgis.com",
+        "https://*.arcgisonline.com",
+        "https://tile.openstreetmap.org",
+        "https://replit.com"
+      ],
+      workerSrc: [
+        "'self'",
+        "blob:",
+        "https://api.mapbox.com",
+        "https://*.mapbox.com"
+      ],
+      childSrc: [
+        "'self'",
+        "blob:",
+        "https://api.mapbox.com"
+      ],
       mediaSrc: ["'self'"],
       objectSrc: ["'none'"],
       baseSrc: ["'none'"],
