@@ -39,7 +39,14 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-10"
+        style={{
+          backgroundImage: `url('/src/assets/bristol-analytics-background.jpg')`,
+        }}
+      />
       <Chrome>
         <div className="container mx-auto px-6 py-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -48,28 +55,28 @@ export default function App() {
               <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-300 p-1 rounded-lg h-12 shadow-sm">
                 <TabsTrigger 
                   value="interactive" 
-                  className="data-[state=active]:bg-bristol-gold data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
+                  className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
                 >
                   <MapPin className="h-4 w-4 mr-2" />
                   Interactive Map
                 </TabsTrigger>
                 <TabsTrigger 
                   value="map" 
-                  className="data-[state=active]:bg-bristol-gold data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
+                  className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
                 >
                   <Building className="h-4 w-4 mr-2" />
                   Portfolio
                 </TabsTrigger>
                 <TabsTrigger 
                   value="tables" 
-                  className="data-[state=active]:bg-bristol-gold data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
+                  className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
                 >
                   <Building className="h-4 w-4 mr-2" />
                   Analytics
                 </TabsTrigger>
                 <TabsTrigger 
                   value="sandbox" 
-                  className="data-[state=active]:bg-bristol-gold data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
+                  className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
                 >
                   <Building className="h-4 w-4 mr-2" />
                   3D View
