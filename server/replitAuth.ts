@@ -72,9 +72,32 @@ export async function setupAuth(app: Express) {
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
+    const claims = tokens.claims();
+    const email = claims.email;
+    
+    // ACCESS CONTROL: Whitelist check
+    const allowedEmails = [
+      'rob@fusiondataco.com',
+      'mat@fusiondataco.com',
+      'theinsuranceschool@gmail.com',
+      'samyeager@me.com',
+      'yeager@bristoldevelopment.com'
+    ];
+    
+    const allowedDomain = '@bristoldevelopment.com';
+    
+    // Check if user is authorized
+    const isAllowedEmail = allowedEmails.includes(email?.toLowerCase());
+    const isAllowedDomain = email?.toLowerCase().endsWith(allowedDomain);
+    
+    if (!isAllowedEmail && !isAllowedDomain) {
+      // User is not authorized
+      return verified(new Error(`Access denied. Email ${email} is not authorized to access this application.`), false);
+    }
+    
     const user = {};
     updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
+    await upsertUser(claims);
     verified(null, user);
   };
 
