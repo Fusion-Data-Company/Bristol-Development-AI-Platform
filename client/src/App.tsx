@@ -2,8 +2,7 @@ import React from 'react';
 import { Router, Route, Switch } from 'wouter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
-import { GlobalHeader } from '@/components/GlobalHeader';
-import { BristolFooter } from '@/components/BristolFooter';
+import SimpleChrome from '@/components/brand/SimpleChrome';
 import { ThinkingIndicator } from '@/components/chat/ThinkingIndicator';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -79,54 +78,40 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 function AppContent() {
   const { isAuthenticated, isLoading } = useAuth();
   
-  // Don't show GlobalHeader on login page
-  const showGlobalHeader = isAuthenticated && !isLoading;
-  // Don't show footer on login page since Landing handles its own footer
-  const showFooter = isAuthenticated && !isLoading;
+  if (isLoading) {
+    return <PageLoader />;
+  }
+  
+  if (!isAuthenticated) {
+    return <Landing />;
+  }
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Dark Bristol Header - Only show when authenticated */}
-      {showGlobalHeader && <GlobalHeader showNavigation={true} />}
-      
-      {/* Main Content Area - Light Theme */}
-      <div className={showGlobalHeader ? "pt-20" : ""}>
-        <Router>
-          <Switch>
-            <Route path="/">
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            </Route>
-            
-            <Route path="/dashboard">
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            </Route>
-            
-            <Route path="/users">
-              <ProtectedRoute>
-                <Users />
-              </ProtectedRoute>
-            </Route>
-            
-            {/* Fallback to dashboard for any other routes temporarily */}
-            <Route>
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            </Route>
-          </Switch>
-        </Router>
-      </div>
-      
-      {/* Thick Bristol Footer - Only show when authenticated, Landing has its own */}
-      {showFooter && <BristolFooter variant="thick" />}
+    <SimpleChrome showNavigation={true}>
+      <Router>
+        <Switch>
+          <Route path="/">
+            <Dashboard />
+          </Route>
+          
+          <Route path="/dashboard">
+            <Dashboard />
+          </Route>
+          
+          <Route path="/users">
+            <Users />
+          </Route>
+          
+          {/* Fallback to dashboard for any other routes temporarily */}
+          <Route>
+            <Dashboard />
+          </Route>
+        </Switch>
+      </Router>
       
       {/* Toast Notifications */}
       <Toaster />
-    </div>
+    </SimpleChrome>
   );
 }
 
