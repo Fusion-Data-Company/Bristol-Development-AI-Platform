@@ -1249,7 +1249,7 @@ What property or investment can I analyze for you today?`,
   // Navigation items for header
   const navItems = [
     { path: "/", label: "Map", icon: Map },
-    { path: "/sites", label: "Sites", icon: Building },
+    { path: "/sites", label: "Database", icon: Building },
     { path: "/analytics", label: "Analytics", icon: BarChart3 },
     { path: "/demographics", label: "Demographics", icon: Users },
     { path: "/comparables", label: "Comparables", icon: Building2 },

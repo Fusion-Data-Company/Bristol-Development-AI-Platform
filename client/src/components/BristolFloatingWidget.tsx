@@ -1606,7 +1606,7 @@ function DataPane({ data }: { data: any }) {
       description: "National weather and climate data"
     },
     sites: {
-      name: "Property Sites",
+      name: "Property Database",
       icon: <MapPin className="h-4 w-4" />,
       endpoint: "/api/sites",
       description: "Complete property database access"
