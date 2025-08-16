@@ -3,6 +3,7 @@ import { Strategy, type VerifyFunction } from "openid-client/passport";
 
 import passport from "passport";
 import session from "express-session";
+import connectPgSimple from "connect-pg-simple";
 import type { Express, RequestHandler } from "express";
 import memoize from "memoizee";
 import { storage } from "./storage";
@@ -24,17 +25,27 @@ const getOidcConfig = memoize(
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
   
-  // Temporarily using memory store to fix boot issues
-  // TODO: Re-enable PostgreSQL session store once connection issues are resolved
+  // PostgreSQL session store for persistent authentication
+  const PgSession = connectPgSimple(session);
+  
   return session({
+    store: new PgSession({
+      conString: process.env.DATABASE_URL,
+      tableName: 'user_sessions',
+      ttl: sessionTtl / 1000, // TTL in seconds for PostgreSQL
+      createTableIfMissing: true,
+      errorLog: console.error,
+    }),
     secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: sessionTtl,
     },
+    name: 'bristol.sid', // Custom session name to avoid conflicts
   });
 }
 
@@ -150,16 +161,114 @@ export async function setupAuth(app: Express) {
     
     passport.authenticate(`replitauth:${req.hostname}`, {
       successReturnToOrRedirect: "/",
-      failureRedirect: "/api/login",
-    })(req, res, (err) => {
+      failureRedirect: "/auth-error", // Changed from /api/login to break the loop
+    })(req, res, (err: Error) => {
       if (err) {
         console.error('❌ Authentication callback error:', err);
-        // User-friendly error page instead of silent redirect
-        return res.redirect('/?error=auth_failed&message=' + encodeURIComponent('Authentication failed. Please try again.'));
+        // Clear session and provide recovery options
+        req.session?.destroy(() => {
+          res.redirect('/auth-error?reason=' + encodeURIComponent(err.message || 'Authentication failed'));
+        });
+        return;
       }
       console.log('✅ Authentication callback successful');
       next();
     });
+  });
+  
+  // New auth error page endpoint
+  app.get("/auth-error", (req, res) => {
+    const reason = req.query.reason || 'Authentication failed';
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Authentication Error - Bristol Development AI Platform</title>
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+          }
+          .error-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+          }
+          h1 { 
+            margin-bottom: 1rem;
+            font-size: 2rem;
+          }
+          .error-message {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1.5rem 0;
+            font-family: monospace;
+          }
+          .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+          }
+          button {
+            background: white;
+            color: #764ba2;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+          }
+          button:hover {
+            transform: translateY(-2px);
+          }
+          .info {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="error-container">
+          <h1>🔐 Authentication Issue</h1>
+          <p>We couldn't complete your sign-in to Bristol Development AI Platform.</p>
+          <div class="error-message">${reason}</div>
+          <div class="info">
+            <p>📧 Authorized emails only:</p>
+            <p>*@bristoldevelopment.com domain<br>
+            or specific whitelisted accounts</p>
+          </div>
+          <div class="buttons">
+            <button onclick="window.location.href='/api/login'">Try Again</button>
+            <button onclick="clearAndRetry()">Clear Session & Retry</button>
+          </div>
+        </div>
+        <script>
+          function clearAndRetry() {
+            fetch('/api/logout', { method: 'GET' })
+              .then(() => {
+                window.location.href = '/api/login';
+              });
+          }
+        </script>
+      </body>
+      </html>
+    `);
   });
 
   app.get("/api/logout", (req, res) => {
@@ -170,6 +279,25 @@ export async function setupAuth(app: Express) {
           post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
         }).href
       );
+    });
+  });
+  
+  // Debug endpoint for auth status (helps diagnose issues)
+  app.get("/api/auth/status", (req, res) => {
+    const isAuthenticated = req.isAuthenticated();
+    const user = req.user as any;
+    
+    res.json({
+      authenticated: isAuthenticated,
+      sessionID: req.sessionID,
+      sessionExists: !!req.session,
+      hasUser: !!user,
+      userEmail: user?.claims?.email || null,
+      userSub: user?.claims?.sub || null,
+      expiresAt: user?.expires_at || null,
+      timestamp: new Date().toISOString(),
+      replitDomain: req.hostname,
+      replitId: process.env.REPL_ID,
     });
   });
 }

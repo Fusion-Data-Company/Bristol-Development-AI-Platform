@@ -30,38 +30,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize WebSocket service
   initializeWebSocketService(httpServer);
 
-  // Auth routes - return actual authenticated user WITH ACCESS CONTROL
+  // Auth routes - return authenticated user (whitelist already checked in OAuth)
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     const user = req.user as any;
     if (!user?.claims) {
       return res.status(401).json({ message: "Not authenticated" });
     }
     
-    const email = user.claims.email;
-    
-    // WHITELIST: Allowed emails and domains
-    const allowedEmails = [
-      'rob@fusiondataco.com',
-      'mat@fusiondataco.com',
-      'theinsuranceschool@gmail.com',
-      'samyeager@me.com',
-      'yeager@bristoldevelopment.com'
-    ];
-    
-    const allowedDomain = '@bristoldevelopment.com';
-    
-    // Check if user is authorized
-    const isAllowedEmail = allowedEmails.includes(email?.toLowerCase());
-    const isAllowedDomain = email?.toLowerCase().endsWith(allowedDomain);
-    
-    if (!isAllowedEmail && !isAllowedDomain) {
-      // User is not authorized - log them out and deny access
-      req.logout(() => {});
-      return res.status(403).json({ 
-        message: "Access denied. This application is restricted to authorized users only.",
-        email: email
-      });
-    }
+    // User is already authorized via OAuth whitelist check
+    // No need to check again - improves performance and prevents double-checking issues
     
     // Get user from database with latest info
     const dbUser = await storage.getUser(user.claims.sub);

@@ -34,15 +34,41 @@ const PageLoader = () => (
   </div>
 );
 
-// Auth-protected route wrapper
+// Auth-protected route wrapper with enhanced error handling
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, isAuthError, refreshAuth } = useAuth();
   
   if (isLoading) {
     return <PageLoader />;
   }
   
   if (!isAuthenticated) {
+    // If there's an auth error, show a recovery option
+    if (isAuthError) {
+      return (
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Authentication Required</h2>
+            <p className="text-gray-600 mb-6">Your session may have expired. Please sign in again to continue.</p>
+            <div className="space-y-3">
+              <button
+                onClick={() => window.location.href = '/api/login'}
+                className="w-full px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all"
+              >
+                Sign In with Replit Auth
+              </button>
+              <button
+                onClick={() => refreshAuth()}
+                className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all"
+              >
+                Retry Connection
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
     return <Landing />;
   }
   
