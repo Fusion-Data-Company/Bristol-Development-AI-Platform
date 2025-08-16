@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import apartmentBackgroundImage from "@assets/Screenshot 2025-08-16 at 09.56.04_1755363366808.png";
+import apartmentBackgroundImage from "@assets/thumbnail-1_1755367673202.jpg";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -376,7 +376,11 @@ export default function Sites() {
           className="fixed top-[200px] left-0 right-0 bottom-0 bg-cover bg-center bg-no-repeat z-0"
           style={{
             backgroundImage: `url(${apartmentBackgroundImage})`,
-            filter: 'brightness(0.85) contrast(1.1)'
+            filter: 'brightness(0.85) contrast(1.1)',
+            imageRendering: 'crisp-edges',
+            WebkitImageRendering: 'crisp-edges',
+            msInterpolationMode: 'nearest-neighbor',
+            backgroundAttachment: 'fixed'
           }}
         />
         {/* Background Overlay for Content Readability - Positioned below header */}
