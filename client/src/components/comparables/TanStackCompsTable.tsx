@@ -576,7 +576,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" style={{ height: '2000px', minHeight: '2000px' }}>
       {/* Global Search */}
       <div className="flex items-center justify-between gap-4 p-4 bg-gradient-to-r from-bristol-cream/20 to-white border-b border-bristol-gold/20">
         <div className="flex items-center gap-3">
@@ -601,7 +601,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-bristol-gold/30">
+      <div className="rounded-lg border border-bristol-gold/30" style={{ height: '1800px', minHeight: '1800px', overflow: 'visible' }}>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

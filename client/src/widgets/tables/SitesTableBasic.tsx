@@ -378,9 +378,9 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
   }
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-md border bg-white">
-        <div className="min-w-max">
+    <div className="space-y-4" style={{ height: '2000px', minHeight: '2000px' }}>
+      <div className="rounded-md border bg-white" style={{ height: '1800px', minHeight: '1800px', overflow: 'visible' }}>
+        <div className="min-w-max" style={{ height: '1700px', minHeight: '1700px' }}>
           <Table className="w-full">
             <TableHeader className="sticky top-0 bg-gradient-to-r from-white to-bristol-cream/50 z-10 shadow-lg border-b-2 border-bristol-stone/20">
               {table.getHeaderGroups().map((headerGroup) => (
