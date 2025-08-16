@@ -268,10 +268,15 @@ export function InteractiveMap({
     
     if (event.lngLat) {
       const { lng, lat } = event.lngLat;
-      console.log('✅ Map click working! Coordinates:', lng, lat); // Debug log - this proves the map is functional
+      console.log('✅ Map click working! Coordinates:', lng, lat);
       
-      // Show loading popup immediately
-      setDemographicPopup({ lat, lng, loading: true });
+      // Clear any existing popup first
+      setDemographicPopup(null);
+      
+      // Small delay to ensure state is cleared, then show loading popup
+      setTimeout(() => {
+        setDemographicPopup({ lat, lng, loading: true });
+      }, 50);
       
       try {
         // Fetch demographic data for these coordinates
@@ -285,14 +290,21 @@ export function InteractiveMap({
         
         if (response.ok) {
           const demographicData = await response.json();
-          setDemographicPopup({ lat, lng, loading: false, data: demographicData });
+          // Update with data after a small delay
+          setTimeout(() => {
+            setDemographicPopup({ lat, lng, loading: false, data: demographicData });
+          }, 100);
         } else {
           console.error('Failed to fetch demographics:', response.statusText);
-          setDemographicPopup(null);
+          setTimeout(() => {
+            setDemographicPopup(null);
+          }, 100);
         }
       } catch (error) {
         console.error('Error fetching demographics:', error);
-        setDemographicPopup(null);
+        setTimeout(() => {
+          setDemographicPopup(null);
+        }, 100);
       }
       
       onMapClick?.(lng, lat);
@@ -618,11 +630,14 @@ export function InteractiveMap({
             <Popup
               longitude={demographicPopup.lng}
               latitude={demographicPopup.lat}
-              anchor="bottom"
+              anchor="top-left"
+              offset={[10, 10]}
               onClose={() => setDemographicPopup(null)}
               closeButton={true}
               className="bristol-demographic-popup !max-w-none"
               maxWidth="none"
+              closeOnClick={false}
+              closeOnMove={false}
             >
               <div className="p-6 min-w-[480px] max-w-[550px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden rounded-lg">
                 {/* Metallic shine effect */}
