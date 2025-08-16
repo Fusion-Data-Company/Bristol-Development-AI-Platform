@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import apartmentBackgroundImage from "@assets/Screenshot 2025-08-16 at 09.56.04_1755363366808.png";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,6 +40,15 @@ export default function Sites() {
   const [showAddForm, setShowAddForm] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Parallax scroll effect
+  const [scrollY, setScrollY] = useState(0);
+  
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Fetch sites data - API is working fine based on logs
   const { data: sites = [], isLoading, refetch, error } = useQuery<Site[]>({
@@ -196,14 +206,39 @@ export default function Sites() {
   return (
     <DataBackground>
       <Chrome>
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10 pb-32">
-        {/* Premium Sites Intelligence Header with Light Theme */}
-        <div className="p-8 border-b-2 border-bristol-maroon/20 bg-white/90 backdrop-blur-sm relative overflow-hidden shadow-xl">
-          {/* Ambient glow background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-bristol-cream/50 via-white to-bristol-sky/20"></div>
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute top-0 left-0 w-96 h-96 bg-bristol-maroon/10 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-bristol-gold/10 rounded-full blur-3xl"></div>
+      <div className="min-h-screen flex flex-col relative pb-32 overflow-hidden">
+        {/* Fixed Parallax Background */}
+        <div 
+          className="fixed inset-0 w-full h-full z-0"
+          style={{
+            backgroundImage: `url(${apartmentBackgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            transform: `translateY(${scrollY * 0.5}px)`,
+            filter: 'brightness(0.85) contrast(1.1)'
+          }}
+        />
+        
+        {/* Background Overlay for Content Readability */}
+        <div className="fixed inset-0 bg-gradient-to-br from-bristol-cream/80 via-white/75 to-bristol-sky/60 backdrop-blur-sm z-[1]" />
+        {/* Premium Sites Intelligence Header with Parallax */}
+        <div 
+          className="p-8 border-b-2 border-bristol-maroon/20 bg-white/85 backdrop-blur-md relative overflow-hidden shadow-xl z-10"
+          style={{
+            transform: `translateY(${scrollY * 0.1}px)`
+          }}
+        >
+          {/* Enhanced ambient glow with parallax */}
+          <div className="absolute inset-0 bg-gradient-to-r from-bristol-cream/40 via-white/30 to-bristol-sky/40"></div>
+          <div 
+            className="absolute inset-0 opacity-20"
+            style={{
+              transform: `translateY(${scrollY * 0.15}px)`
+            }}
+          >
+            <div className="absolute top-0 left-0 w-96 h-96 bg-bristol-maroon/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-bristol-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
           </div>
           
           <div className="flex items-center justify-between mb-6 relative">
@@ -367,19 +402,34 @@ export default function Sites() {
           </div>
         </div>
 
-        {/* Premium Content Area with Light Theme & Ambient Glows */}
-        <div className="flex-1 p-8 relative mb-16 overflow-visible">
-          {/* Ambient background glows */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/5 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-bristol-gold/8 rounded-full blur-3xl"></div>
-            <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-bristol-sky/10 rounded-full blur-2xl"></div>
+        {/* Premium Content Area with Parallax Effects */}
+        <div 
+          className="flex-1 p-8 relative mb-16 overflow-visible z-10"
+          style={{
+            transform: `translateY(${scrollY * 0.2}px)`
+          }}
+        >
+          {/* Enhanced ambient glows with parallax movement */}
+          <div 
+            className="absolute inset-0 overflow-hidden pointer-events-none"
+            style={{
+              transform: `translateY(${scrollY * 0.25}px)`
+            }}
+          >
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/15 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-bristol-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+            <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-bristol-sky/15 rounded-full blur-2xl animate-pulse" style={{animationDelay: '3s'}}></div>
           </div>
           
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 relative pb-4 min-h-[80vh]">
-            {/* Premium Sites Database Table with Light Theme */}
-            <Card className="xl:col-span-2 bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
-              <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
+            {/* Premium Sites Database Table with Parallax */}
+            <Card 
+              className="xl:col-span-2 bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500 hover:scale-[1.01]"
+              style={{
+                transform: `translateY(${scrollY * 0.05}px) scale(${1 + scrollY * 0.0001})`
+              }}
+            >
+              <CardHeader className="pb-4 bg-gradient-to-r from-white/90 to-bristol-cream/60 border-b-2 border-bristol-maroon/30 backdrop-blur-sm">
                 <div className="flex items-center space-x-3">
                   <div className="relative group">
                     <Building className="h-6 w-6 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
@@ -397,7 +447,7 @@ export default function Sites() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-2 bg-gradient-to-br from-white to-bristol-cream/30">
+              <CardContent className="p-2 bg-gradient-to-br from-white/90 to-bristol-cream/40 backdrop-blur-sm">
                 <SitesTable 
                   data={(sites || []) as any[]}
                   isLoading={isLoading}
@@ -408,11 +458,21 @@ export default function Sites() {
               </CardContent>
             </Card>
 
-            {/* Premium Details & Analytics Sidebar with Light Theme */}
-            <div className="space-y-6">
-              {/* Site Details Card */}
-              <Card className="bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
-                <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
+            {/* Premium Details & Analytics Sidebar with Parallax */}
+            <div 
+              className="space-y-6"
+              style={{
+                transform: `translateY(${scrollY * 0.08}px)`
+              }}
+            >
+              {/* Site Details Card with Parallax */}
+              <Card 
+                className="bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500 hover:scale-[1.02]"
+                style={{
+                  transform: `translateY(${scrollY * 0.03}px)`
+                }}
+              >
+                <CardHeader className="pb-4 bg-gradient-to-r from-white/90 to-bristol-cream/60 border-b-2 border-bristol-maroon/30 backdrop-blur-sm">
                   <div className="flex items-center space-x-3">
                     <div className="relative group">
                       <Building className="h-5 w-5 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
@@ -423,7 +483,7 @@ export default function Sites() {
                     </CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="bg-gradient-to-br from-white to-bristol-cream/30 text-bristol-ink">
+                <CardContent className="bg-gradient-to-br from-white/90 to-bristol-cream/40 text-bristol-ink backdrop-blur-sm">
                   {selectedSite ? (
                     <SiteDetails site={selectedSite as any} onRefresh={refetch} />
                   ) : (
