@@ -4,14 +4,8 @@ import Chrome from "@/components/brand/SimpleChrome";
 export default function Landing() {
   const handleSocialSignIn = (provider: string) => {
     console.log(`Signing in with ${provider}...`);
-    // REPLIT AUTH FLOW:
-    // 1. All login buttons redirect to /api/login
-    // 2. Our backend (replitAuth.ts) redirects to Replit's auth page
-    // 3. Replit shows their login UI with Google, GitHub, X, Apple, Email options
-    // 4. User chooses provider and logs in
-    // 5. Replit redirects back to our /api/callback with user info
-    // 6. We create/update user in our database and establish session
-    // Note: We don't need separate endpoints for each provider - Replit handles that!
+    // All providers use the same Replit Auth endpoint
+    // Replit will handle the actual provider selection
     window.location.href = "/api/login";
   }
 
@@ -23,10 +17,8 @@ export default function Landing() {
   }
   
   const handleEmailLink = () => {
-    console.log("Bristol Team Email Registration...");
-    // Direct to Replit Auth for @bristoldevelopment.com email registration
-    // This allows Bristol team members to register with their company email
-    // They'll create their own password through Replit's secure system
+    console.log("Requesting email link...");
+    // Email magic link also handled by Replit Auth
     window.location.href = "/api/login";
   }
 
