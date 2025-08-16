@@ -368,7 +368,7 @@ export default function Sites() {
         </div>
 
         {/* Premium Content Area with Light Theme & Ambient Glows */}
-        <div className="flex-1 p-8 overflow-hidden relative mb-16">
+        <div className="flex-1 p-4 overflow-hidden relative">
           {/* Ambient background glows */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/5 rounded-full blur-3xl"></div>
@@ -397,7 +397,7 @@ export default function Sites() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-2 h-[calc(100vh-8rem)] bg-gradient-to-br from-white to-bristol-cream/30 overflow-hidden">
+              <CardContent className="p-2 h-[calc(100vh-2rem)] bg-gradient-to-br from-white to-bristol-cream/30 overflow-hidden">
                 <SitesTable 
                   data={(sites || []) as any[]}
                   isLoading={isLoading}
@@ -409,7 +409,7 @@ export default function Sites() {
             </Card>
 
             {/* Premium Details & Analytics Sidebar with Light Theme */}
-            <div className="space-y-6 h-[calc(100vh-8rem)] overflow-y-auto">
+            <div className="space-y-6 h-[calc(100vh-2rem)] overflow-y-auto">
               {/* Site Details Card */}
               <Card className="bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
                 <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">

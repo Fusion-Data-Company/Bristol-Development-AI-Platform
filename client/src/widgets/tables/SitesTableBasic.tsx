@@ -361,7 +361,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
     },
     initialState: {
       pagination: {
-        pageSize: 50,
+        pageSize: 100,
       },
     },
   });
