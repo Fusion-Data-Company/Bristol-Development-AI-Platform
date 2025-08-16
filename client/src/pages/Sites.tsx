@@ -394,7 +394,7 @@ export default function Sites() {
         </div>
         </div>
 
-        {/* Premium Content Area with Parallax Effects */
+        {/* Premium Content Area with Clean Parallax Effects */}
         <div 
           className="flex-1 p-8 relative mb-16 overflow-visible z-10"
           style={{
@@ -405,7 +405,7 @@ export default function Sites() {
           <div 
             className="absolute inset-0 overflow-hidden pointer-events-none"
             style={{
-              transform: `translateY(${scrollY * 0.25}px)`
+              transform: `translateY(${scrollY * 0.15}px)`
             }}
           >
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/15 rounded-full blur-3xl animate-pulse"></div>
@@ -414,11 +414,11 @@ export default function Sites() {
           </div>
           
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 relative pb-4 min-h-[80vh]">
-            {/* Premium Sites Database Table with Parallax */}
+            {/* Premium Sites Database Table with Clean Parallax */}
             <Card 
-              className="xl:col-span-2 bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500 hover:scale-[1.01]"
+              className="xl:col-span-2 bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500"
               style={{
-                transform: `translateY(${scrollY * 0.05}px) scale(${1 + scrollY * 0.0001})`
+                transform: `translateY(${scrollY * 0.05}px)`
               }}
             >
               <CardHeader className="pb-4 bg-gradient-to-r from-white/90 to-bristol-cream/60 border-b-2 border-bristol-maroon/30 backdrop-blur-sm">
@@ -450,16 +450,16 @@ export default function Sites() {
               </CardContent>
             </Card>
 
-            {/* Premium Details & Analytics Sidebar with Parallax */}
+            {/* Premium Details & Analytics Sidebar with Clean Parallax */}
             <div 
               className="space-y-6"
               style={{
                 transform: `translateY(${scrollY * 0.08}px)`
               }}
             >
-              {/* Site Details Card with Parallax */}
+              {/* Site Details Card with Clean Parallax */}
               <Card 
-                className="bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500 hover:scale-[1.02]"
+                className="bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500"
                 style={{
                   transform: `translateY(${scrollY * 0.03}px)`
                 }}
@@ -514,13 +514,13 @@ export default function Sites() {
                   <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
                 </div>
                 <SheetTitle className="font-cinzel text-bristol-ink text-2xl tracking-wide bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
-                  Add New Bristol Property
+                  Add New Property
                 </SheetTitle>
               </div>
             </SheetHeader>
-            <div className="mt-8 text-bristol-ink">
+            <div className="py-6">
               <AddSiteForm 
-                onSuccess={() => {
+                onSubmit={async (data) => {
                   setShowAddForm(false);
                   refetch();
                 }}
@@ -530,7 +530,6 @@ export default function Sites() {
           </SheetContent>
         </Sheet>
       </div>
-        
       </Chrome>
     </DataBackground>
   );
