@@ -48,45 +48,57 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
+// Main app content that uses auth
+function AppContent() {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  // Don't show GlobalHeader on login page
+  const showGlobalHeader = isAuthenticated && !isLoading;
+  
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Dark Bristol Header - Only show when authenticated */}
+      {showGlobalHeader && <GlobalHeader />}
+      
+      {/* Main Content Area - Light Theme */}
+      <div className={showGlobalHeader ? "pt-20" : ""}>
+        <Router>
+          <Switch>
+            <Route path="/">
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            </Route>
+            
+            <Route path="/dashboard">
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            </Route>
+            
+            {/* Fallback to dashboard for any other routes temporarily */}
+            <Route>
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            </Route>
+          </Switch>
+        </Router>
+      </div>
+      
+      {/* Thick Bristol Footer - Required for Floating Widget UX */}
+      <BristolFooter variant="thick" />
+      
+      {/* Toast Notifications */}
+      <Toaster />
+    </div>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-gray-50">
-        {/* Dark Bristol Header - Never Changes (per user preference) */}
-        <GlobalHeader />
-        
-        {/* Main Content Area - Light Theme */}
-        <div className="pt-20">
-          <Router>
-            <Switch>
-              <Route path="/" exact>
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              </Route>
-              
-              <Route path="/dashboard">
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              </Route>
-              
-              {/* Fallback to dashboard for any other routes temporarily */}
-              <Route>
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              </Route>
-            </Switch>
-          </Router>
-        </div>
-        
-        {/* Thick Bristol Footer - Required for Floating Widget UX */}
-        <BristolFooter variant="thick" />
-        
-        {/* Toast Notifications */}
-        <Toaster />
-      </div>
+      <AppContent />
     </QueryClientProvider>
   );
 }
