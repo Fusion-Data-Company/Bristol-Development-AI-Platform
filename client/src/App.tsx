@@ -87,31 +87,29 @@ function AppContent() {
   }
   
   return (
-    <SimpleChrome showNavigation={false}>
-      <Router>
-        <Switch>
-          <Route path="/">
-            <Dashboard />
-          </Route>
-          
-          <Route path="/dashboard">
-            <Dashboard />
-          </Route>
-          
-          <Route path="/users">
-            <Users />
-          </Route>
-          
-          {/* Fallback to dashboard for any other routes temporarily */}
-          <Route>
-            <Dashboard />
-          </Route>
-        </Switch>
-      </Router>
+    <Router>
+      <Switch>
+        <Route path="/">
+          <Dashboard />
+        </Route>
+        
+        <Route path="/dashboard">
+          <Dashboard />
+        </Route>
+        
+        <Route path="/users">
+          <Users />
+        </Route>
+        
+        {/* Fallback to dashboard for any other routes temporarily */}
+        <Route>
+          <Dashboard />
+        </Route>
+      </Switch>
       
       {/* Toast Notifications */}
       <Toaster />
-    </SimpleChrome>
+    </Router>
   );
 }
 

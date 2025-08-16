@@ -9,6 +9,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import type { User as UserType } from '@shared/schema';
 
+import SimpleChrome from "@/components/brand/SimpleChrome";
+
 export default function Users() {
   const { user: currentUser } = useAuth();
   const { toast } = useToast();
@@ -29,7 +31,8 @@ export default function Users() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <SimpleChrome showNavigation={false}>
+      <div className="container mx-auto px-4 py-8">
       <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
         <CardHeader className="bg-gradient-to-r from-cyan-500/10 to-orange-500/10 border-b">
           <div className="flex items-center justify-between">
@@ -119,6 +122,7 @@ export default function Users() {
           )}
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </SimpleChrome>
   );
 }
