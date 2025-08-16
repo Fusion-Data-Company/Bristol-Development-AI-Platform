@@ -799,7 +799,7 @@ export default function BristolFloatingWidget({
       if (recommendations && recommendations.ok) {
         const recData = await recommendations.json();
         // Store recommendations for display in insights panel
-        setRealTimeInsights((prev: any) => ({ ...prev, recommendations: recData }));
+        setRealTimeInsights(prev => ({ ...prev, recommendations: recData }));
       }
       
       await sendTelemetry("unified_chat_response", { 

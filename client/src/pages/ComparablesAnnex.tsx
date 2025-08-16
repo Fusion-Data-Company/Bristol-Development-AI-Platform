@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import SimpleChrome from '@/components/brand/SimpleChrome';
+import Chrome from '@/components/brand/SimpleChrome';
 import TanStackCompsTable from '@/components/comparables/TanStackCompsTable';
 import AdvancedFilters from '@/components/comparables/AdvancedFilters';
 import BulkImport from '@/components/comparables/BulkImport';
@@ -295,7 +295,7 @@ export default function ComparablesAnnex() {
 
 
   return (
-    <SimpleChrome showNavigation={true}>
+    <Chrome>
       {/* Hero Background Section */}
       <div 
         className="relative bg-cover bg-center bg-no-repeat"
@@ -658,6 +658,6 @@ export default function ComparablesAnnex() {
         
         </div>
       </div>
-    </SimpleChrome>
+    </Chrome>
   );
 }

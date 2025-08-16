@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { queryClient } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,7 +28,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import SimpleChrome from '@/components/brand/SimpleChrome';
+import Chrome from '@/components/brand/SimpleChrome';
 
 interface IntegrationStatus {
   name: string;
@@ -40,7 +41,6 @@ interface IntegrationStatus {
 export default function Integrations() {
   const [activeTab, setActiveTab] = useState('services');
   const [testingService, setTestingService] = useState<string | null>(null);
-  const queryClient = useQueryClient();
 
   // Get integration status
   const { data: integrations, isLoading } = useQuery<IntegrationStatus[]>({
@@ -135,22 +135,22 @@ export default function Integrations() {
     {
       name: 'OpenAI',
       description: 'AI-powered analysis and chat capabilities',
-      configured: !!import.meta.env.VITE_OPENAI_API_KEY,
-      connected: !!import.meta.env.VITE_OPENAI_API_KEY,
+      configured: !!process.env.OPENAI_API_KEY,
+      connected: !!process.env.OPENAI_API_KEY,
       features: ['Site analysis', 'Chat assistance', 'Report generation']
     },
     {
       name: 'Microsoft',
       description: 'OneDrive integration for file storage',
-      configured: !!import.meta.env.VITE_MICROSOFT_CLIENT_ID,
+      configured: !!process.env.MICROSOFT_CLIENT_ID,
       connected: false,
       features: ['File sync', 'Document storage', 'Collaboration']
     },
     {
       name: 'Apify',
       description: 'Web scraping and data extraction',
-      configured: !!import.meta.env.VITE_APIFY_API_TOKEN,
-      connected: !!import.meta.env.VITE_APIFY_API_TOKEN,
+      configured: !!process.env.APIFY_API_TOKEN,
+      connected: !!process.env.APIFY_API_TOKEN,
       features: ['Property data', 'Market research', 'Competitor analysis']
     },
     {
@@ -163,7 +163,7 @@ export default function Integrations() {
   ];
 
   return (
-    <SimpleChrome showNavigation={true}>
+    <Chrome>
       <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -351,7 +351,7 @@ export default function Integrations() {
         </Tabs>
         
       </div>
-    </SimpleChrome>
+    </Chrome>
   );
 }
 

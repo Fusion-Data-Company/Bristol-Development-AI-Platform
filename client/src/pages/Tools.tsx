@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SimpleChrome from "@/components/brand/SimpleChrome";
+import Chrome from "@/components/brand/SimpleChrome";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart3, TrendingUp, Home, MapPin, Shield, Cloud } from "lucide-react";
@@ -15,7 +15,7 @@ export function Tools() {
   const [activeTab, setActiveTab] = useState("bls");
 
   return (
-    <SimpleChrome showNavigation={true}>
+    <Chrome>
       <div className="min-h-screen relative overflow-hidden">
         {/* Circuit World Map Background */}
         <div 
@@ -185,6 +185,6 @@ export function Tools() {
         </div>
         
       </div>
-    </SimpleChrome>
+    </Chrome>
   );
 }

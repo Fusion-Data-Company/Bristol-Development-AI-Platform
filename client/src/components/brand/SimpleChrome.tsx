@@ -6,10 +6,9 @@ import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 
 interface ChromeProps {
   children: ReactNode;
-  showNavigation?: boolean;
 }
 
-export default function SimpleChrome({ children, showNavigation = true }: ChromeProps) {
+export default function SimpleChrome({ children }: ChromeProps) {
   const [location] = useLocation();
 
   const navItems = [
@@ -108,7 +107,6 @@ export default function SimpleChrome({ children, showNavigation = true }: Chrome
             </div>
             
             {/* Elite Navigation */}
-            {showNavigation && (
             <nav className="flex items-center space-x-1 lg:space-x-2 ml-auto">
               {navItems.map(({ path, label, icon: Icon }) => (
                 <Link key={path} href={path}>
@@ -136,7 +134,6 @@ export default function SimpleChrome({ children, showNavigation = true }: Chrome
                 </Link>
               ))}
             </nav>
-            )}
           </div>
         </div>
       </header>
@@ -146,8 +143,8 @@ export default function SimpleChrome({ children, showNavigation = true }: Chrome
         {children}
       </main>
 
-      {/* Footer - Full Content with Proper Spacing */}
-      <footer className="relative overflow-hidden shadow-2xl bg-slate-800 py-8" style={{
+      {/* Footer - Exact Header Match */}
+      <footer className="relative overflow-hidden shadow-2xl bg-slate-800 min-h-[400px]" style={{
         backgroundImage: `
           radial-gradient(circle at 12% 34%, #374151 0%, transparent 20%),
           radial-gradient(circle at 67% 23%, #475569 0%, transparent 18%),
@@ -195,166 +192,168 @@ export default function SimpleChrome({ children, showNavigation = true }: Chrome
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400/80 to-transparent"></div>
         </div>
         
-        <div className="max-w-7xl mx-auto px-6">
-          
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="pl-0 pr-6 lg:pr-8 py-24 lg:py-32 relative h-full">
+          <div className="max-w-7xl mx-auto px-6 h-full flex flex-col justify-between">
             
-            {/* Platform Core */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <img 
-                  src={bristolLogoPath} 
-                  alt="Bristol Development Group" 
-                  className="h-8 w-auto object-contain drop-shadow-xl filter brightness-110"
-                />
-                <h3 className="text-lg font-bold text-cyan-400 tracking-wide">
-                  Bristol Elite
-                </h3>
-              </div>
-              <p className="text-slate-300 text-sm leading-relaxed">
-                Institutional-grade real estate intelligence platform delivering AI-powered 
-                site analytics and predictive market intelligence for strategic development decisions.
-              </p>
-              <div className="flex items-center space-x-2 text-sm text-slate-400">
-                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                <span>Live Intelligence Platform</span>
-              </div>
-            </div>
-
-            {/* AI & Analytics */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-cyan-400 tracking-wide">
-                AI Intelligence
-              </h3>
-              <ul className="space-y-2 text-sm text-slate-300">
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Bristol A.I. Elite v5.0</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Predictive Analytics Engine</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Multi-Agent Architecture</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Real-Time Market Intelligence</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Advanced Financial Modeling</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Data & Integration */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-cyan-400 tracking-wide">
-                Data Sources
-              </h3>
-              <ul className="space-y-2 text-sm text-slate-300">
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>ArcGIS Demographics</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Bureau of Labor Statistics</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>HUD Property Data</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>FBI Crime Statistics</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Firecrawl Web Intelligence</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Enterprise Features */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-cyan-400 tracking-wide">
-                Enterprise Suite
-              </h3>
-              <ul className="space-y-2 text-sm text-slate-300">
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Portfolio Analytics</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Interactive Mapping</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Comparables Analysis</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>Market Intelligence Dashboard</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                  <span>24/7 AI Agent Support</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Bottom Status Bar */}
-          <div className="border-t border-cyan-400/20 pt-4">
-            <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0">
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
               
-              {/* Copyright & Platform Info */}
-              <div className="text-sm text-slate-400">
-                <p>© 2025 Bristol Development Group. All rights reserved.</p>
-                <p className="text-xs text-cyan-400">
-                  Powered by Bristol A.I. Elite v5.0 • Institutional Real Estate Intelligence Platform
+              {/* Platform Core */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <img 
+                    src={bristolLogoPath} 
+                    alt="Bristol Development Group" 
+                    className="h-8 w-auto object-contain drop-shadow-xl filter brightness-110"
+                  />
+                  <h3 className="text-lg font-bold text-cyan-400 tracking-wide">
+                    Bristol Elite
+                  </h3>
+                </div>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  Institutional-grade real estate intelligence platform delivering AI-powered 
+                  site analytics and predictive market intelligence for strategic development decisions.
                 </p>
-              </div>
-
-              {/* Live Status Indicators */}
-              <div className="flex items-center space-x-6 text-xs text-slate-400">
-                <div className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span>Platform Online</span>
-                </div>
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-2 text-sm text-slate-400">
                   <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                  <span>AI Agents Active</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
-                  <span>Data Streams Live</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-                  <span>MCP Connected</span>
+                  <span>Live Intelligence Platform</span>
                 </div>
               </div>
 
-              {/* Platform Stats */}
-              <div className="flex space-x-6 text-xs text-slate-400">
-                <div className="text-center">
-                  <div className="text-cyan-400 font-semibold">46</div>
-                  <div>Properties</div>
+              {/* AI & Analytics */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-cyan-400 tracking-wide">
+                  AI Intelligence
+                </h3>
+                <ul className="space-y-2 text-sm text-slate-300">
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Bristol A.I. Elite v5.0</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Predictive Analytics Engine</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Multi-Agent Architecture</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Real-Time Market Intelligence</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Advanced Financial Modeling</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Data & Integration */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-cyan-400 tracking-wide">
+                  Data Sources
+                </h3>
+                <ul className="space-y-2 text-sm text-slate-300">
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>ArcGIS Demographics</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Bureau of Labor Statistics</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>HUD Property Data</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>FBI Crime Statistics</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Firecrawl Web Intelligence</span>
+                  </li>
+                </ul>
+              </div>
+
+              {/* Enterprise Features */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-cyan-400 tracking-wide">
+                  Enterprise Suite
+                </h3>
+                <ul className="space-y-2 text-sm text-slate-300">
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Portfolio Analytics</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Interactive Mapping</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Comparables Analysis</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>Market Intelligence Dashboard</span>
+                  </li>
+                  <li className="flex items-center space-x-2">
+                    <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    <span>24/7 AI Agent Support</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Bottom Status Bar */}
+            <div className="border-t border-cyan-400/20 pt-6">
+              <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                
+                {/* Copyright & Platform Info */}
+                <div className="text-sm text-slate-400">
+                  <p>© 2025 Bristol Development Group. All rights reserved.</p>
+                  <p className="text-xs mt-1 text-cyan-400">
+                    Powered by Bristol A.I. Elite v5.0 • Institutional Real Estate Intelligence Platform
+                  </p>
                 </div>
-                <div className="text-center">
-                  <div className="text-cyan-400 font-semibold">9.9K</div>
-                  <div>Units</div>
+
+                {/* Live Status Indicators */}
+                <div className="flex items-center space-x-6 text-xs text-slate-400">
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                    <span>Platform Online</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                    <span>AI Agents Active</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                    <span>Data Streams Live</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                    <span>MCP Connected</span>
+                  </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-cyan-400 font-semibold">97%</div>
-                  <div>Uptime</div>
+
+                {/* Platform Stats */}
+                <div className="flex space-x-6 text-xs text-slate-400">
+                  <div className="text-center">
+                    <div className="text-cyan-400 font-semibold">46</div>
+                    <div>Properties</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-cyan-400 font-semibold">9.9K</div>
+                    <div>Units</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-cyan-400 font-semibold">97%</div>
+                    <div>Uptime</div>
+                  </div>
                 </div>
               </div>
             </div>

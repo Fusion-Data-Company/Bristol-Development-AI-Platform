@@ -218,14 +218,14 @@ export default function AnalyticsEnterprise() {
   };
 
   return (
-    <SimpleChrome showNavigation={true}>
+    <SimpleChrome>
       <div className="min-h-screen relative overflow-hidden" style={{
         backgroundImage: `url(${bristolBackground})`, 
         backgroundSize: 'cover', 
         backgroundPosition: 'center', 
         backgroundRepeat: 'no-repeat',
         imageRendering: 'crisp-edges',
-        WebkitImageRendering: 'crisp-edges' as any,
+        WebkitImageRendering: 'crisp-edges',
         msInterpolationMode: 'nearest-neighbor',
         backgroundAttachment: 'fixed'
       }}>
