@@ -397,7 +397,7 @@ export default function Sites() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-2 h-[calc(100vh-2rem)] bg-gradient-to-br from-white to-bristol-cream/30 overflow-hidden">
+              <CardContent className="p-2 bg-gradient-to-br from-white to-bristol-cream/30" style={{ height: '2500px', minHeight: '2500px', overflow: 'visible' }}>
                 <SitesTable 
                   data={(sites || []) as any[]}
                   isLoading={isLoading}
