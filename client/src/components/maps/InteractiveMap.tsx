@@ -124,7 +124,7 @@ export function InteractiveMap({
   const [showHeatmap, setShowHeatmap] = useState(true);
   const [showDemographics, setShowDemographics] = useState(false);
   const [showHousing, setShowHousing] = useState(false);
-  const [demographicPopup, setDemographicPopup] = useState<{lat: number, lng: number, loading: boolean, data?: any} | null>(null);
+  const [locationPopup, setLocationPopup] = useState<{lat: number, lng: number, loading: boolean, address?: string} | null>(null);
   const [dataLayersCollapsed, setDataLayersCollapsed] = useState(true);
   const [viewport, setViewport] = useState({
     longitude: -82.4572, // Atlanta/Sunbelt center
@@ -271,29 +271,35 @@ export function InteractiveMap({
       console.log('✅ Map click working! Coordinates:', lng, lat);
       
       // Always clear existing popup and show loading immediately
-      setDemographicPopup({ lat, lng, loading: true });
+      setLocationPopup({ lat, lng, loading: true });
       
       try {
-        // Fetch demographic data for these coordinates
-        const response = await fetch('/api/address/demographics', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ latitude: lat, longitude: lng })
-        });
+        // Use Mapbox reverse geocoding API to get address
+        const response = await fetch(
+          `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_TOKEN}&types=address,poi`
+        );
         
         if (response.ok) {
-          const demographicData = await response.json();
-          // Update with real data only
-          setDemographicPopup({ lat, lng, loading: false, data: demographicData });
+          const geocodingData = await response.json();
+          let address = 'Address not found';
+          
+          if (geocodingData.features && geocodingData.features.length > 0) {
+            // Get the most relevant address from the first result
+            const feature = geocodingData.features[0];
+            address = feature.place_name || feature.text || 'Address not available';
+          }
+          
+          // Update with address data
+          setLocationPopup({ lat, lng, loading: false, address });
         } else {
-          console.error('Failed to fetch demographics:', response.statusText);
-          setDemographicPopup(null);
+          console.warn('Failed to fetch address:', response.statusText);
+          // Show coordinates only if reverse geocoding fails
+          setLocationPopup({ lat, lng, loading: false, address: 'Address lookup failed' });
         }
       } catch (error) {
-        console.error('Error fetching demographics:', error);
-        setDemographicPopup(null);
+        console.warn('Error fetching address:', error);
+        // Show coordinates only if reverse geocoding fails
+        setLocationPopup({ lat, lng, loading: false, address: 'Address lookup failed' });
       }
       
       onMapClick?.(lng, lat);
@@ -614,21 +620,21 @@ export function InteractiveMap({
             </Popup>
           )}
 
-          {/* Enhanced Metallic Demographic Popup for Map Clicks */}
-          {demographicPopup && (
+          {/* Enhanced Metallic Location Popup for Map Clicks */}
+          {locationPopup && (
             <Popup
-              longitude={demographicPopup.lng}
-              latitude={demographicPopup.lat}
+              longitude={locationPopup.lng}
+              latitude={locationPopup.lat}
               anchor="top-left"
               offset={[10, 10]}
-              onClose={() => setDemographicPopup(null)}
+              onClose={() => setLocationPopup(null)}
               closeButton={true}
-              className="bristol-demographic-popup !max-w-none"
+              className="bristol-location-popup !max-w-none"
               maxWidth="none"
               closeOnClick={false}
               closeOnMove={false}
             >
-              <div className="p-4 min-w-[360px] max-w-[420px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden rounded-lg">
+              <div className="p-4 min-w-[300px] max-w-[360px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden rounded-lg">
                 {/* Metallic shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400/10 via-transparent to-cyan-300/10 pointer-events-none" />
                 <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-cyan-500/5 to-transparent pointer-events-none animate-pulse" />
@@ -639,115 +645,52 @@ export function InteractiveMap({
                     <MapPin className="w-5 h-5 text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
                   </div>
                   <h3 className="font-serif text-lg font-bold bg-gradient-to-r from-cyan-300 to-cyan-100 bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-                    LOCATION DEMOGRAPHICS
+                    LOCATION INFO
                   </h3>
                 </div>
                 
-                {demographicPopup.loading ? (
+                {locationPopup.loading ? (
                   <div className="flex items-center justify-center py-6">
                     <div className="relative">
                       <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-cyan-400 border-r-2 border-cyan-300"></div>
                       <div className="absolute inset-0 animate-ping rounded-full h-8 w-8 border border-cyan-400/30"></div>
                     </div>
-                    <span className="ml-3 text-cyan-200 font-medium">Loading data...</span>
-                  </div>
-                ) : demographicPopup.data ? (
-                  <div className="space-y-3">
-                    {/* Location address with metallic border */}
-                    <div className="text-sm text-cyan-200 mb-2 p-2 bg-slate-800/50 rounded-lg border border-cyan-500/30 backdrop-blur-sm">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-                        {demographicPopup.data.location?.address || `${demographicPopup.lat.toFixed(4)}, ${demographicPopup.lng.toFixed(4)}`}
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="p-1 bg-cyan-500/20 rounded">
-                            <Users className="w-3 h-3 text-cyan-400" />
-                          </div>
-                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Population</span>
-                        </div>
-                        <div className="text-lg font-bold text-cyan-100">
-                          {demographicPopup.data.demographics?.population?.toLocaleString() || 
-                           demographicPopup.data.location?.population?.toLocaleString() ||
-                           (demographicPopup.data.census_tract ? '8,247' : '—')}
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="p-1 bg-cyan-500/20 rounded">
-                            <DollarSign className="w-3 h-3 text-cyan-400" />
-                          </div>
-                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Med. Income</span>
-                        </div>
-                        <div className="text-lg font-bold text-cyan-100">
-                          {demographicPopup.data.demographics?.median_income 
-                            ? `$${demographicPopup.data.demographics.median_income.toLocaleString()}`
-                            : demographicPopup.data.location?.median_income
-                            ? `$${demographicPopup.data.location.median_income.toLocaleString()}`
-                            : (demographicPopup.data.census_tract ? '$68,900' : '—')
-                          }
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="p-1 bg-cyan-500/20 rounded">
-                            <Home className="w-3 h-3 text-cyan-400" />
-                          </div>
-                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Med. Rent</span>
-                        </div>
-                        <div className="text-lg font-bold text-cyan-100">
-                          {demographicPopup.data.demographics?.median_rent 
-                            ? `$${demographicPopup.data.demographics.median_rent.toLocaleString()}`
-                            : demographicPopup.data.location?.median_rent
-                            ? `$${demographicPopup.data.location.median_rent.toLocaleString()}`
-                            : (demographicPopup.data.census_tract ? '$1,450' : '—')
-                          }
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300">
-                        <div className="flex items-center gap-2 mb-1">
-                          <div className="p-1 bg-cyan-500/20 rounded">
-                            <Building className="w-3 h-3 text-cyan-400" />
-                          </div>
-                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Occupancy Rate</span>
-                        </div>
-                        <div className="text-lg font-bold text-cyan-100">
-                          {demographicPopup.data.demographics?.bachelor_plus_pct 
-                            ? `${demographicPopup.data.demographics.bachelor_plus_pct.toFixed(1)}%`
-                            : demographicPopup.data.demographics?.occupancy_rate
-                            ? `${demographicPopup.data.demographics.occupancy_rate.toFixed(1)}%`
-                            : '94.2%'
-                          }
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {demographicPopup.data.location?.census_tract && (
-                      <div className="pt-3 mt-3 border-t border-cyan-500/20 flex items-center justify-between">
-                        <div className="text-xs text-cyan-400/60">
-                          Census Tract: <span className="text-cyan-300">{demographicPopup.data.location.census_tract.geoid}</span>
-                        </div>
-                        <div className="flex gap-2">
-                          <button className="px-3 py-1 text-xs bg-cyan-500/20 hover:bg-cyan-400/30 text-cyan-300 rounded border border-cyan-500/30 transition-all duration-200">
-                            Export Data
-                          </button>
-                          <button className="px-3 py-1 text-xs bg-cyan-500/20 hover:bg-cyan-400/30 text-cyan-300 rounded border border-cyan-500/30 transition-all duration-200">
-                            Learn More
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                    <span className="ml-3 text-cyan-200 font-medium">Loading address...</span>
                   </div>
                 ) : (
-                  <div className="text-cyan-300/60 text-sm py-4 text-center">
-                    <div className="mb-2">📍</div>
-                    No demographic data available for this location.
+                  <div className="space-y-4">
+                    {/* Coordinates with metallic styling */}
+                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="p-1 bg-cyan-500/20 rounded">
+                          <MapPin className="w-4 h-4 text-cyan-400" />
+                        </div>
+                        <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Coordinates</span>
+                      </div>
+                      <div className="text-cyan-100 font-mono text-sm">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-cyan-300/70">Latitude:</span>
+                          <span className="font-bold">{locationPopup.lat.toFixed(6)}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-cyan-300/70">Longitude:</span>
+                          <span className="font-bold">{locationPopup.lng.toFixed(6)}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Address with metallic styling */}
+                    <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="p-1 bg-cyan-500/20 rounded">
+                          <Building className="w-4 h-4 text-cyan-400" />
+                        </div>
+                        <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Address</span>
+                      </div>
+                      <div className="text-cyan-100 text-sm leading-relaxed">
+                        {locationPopup.address || 'Address not available'}
+                      </div>
+                    </div>
                   </div>
                 )}
                 
