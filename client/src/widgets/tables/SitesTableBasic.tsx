@@ -142,14 +142,14 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       
       return (
         <div 
-          className="cursor-pointer hover:bg-gray-100 p-2 rounded"
+          className="cursor-pointer hover:bg-gradient-to-r hover:from-bristol-gold/10 hover:to-bristol-maroon/10 p-2 rounded-lg transition-all duration-300 hover:shadow-lg border-2 border-transparent hover:border-bristol-gold/30"
           onClick={() => {
             setEditingCell({ rowId: site.id, columnId: column.id });
             setEditValue(value?.toString() || '');
           }}
         >
-          <span className="text-gray-900">
-            {value || <span className="text-gray-400 italic">—</span>}
+          <span className="font-medium text-bristol-ink hover:text-bristol-maroon transition-colors duration-200">
+            {value || <span className="text-bristol-stone/60 italic">—</span>}
           </span>
         </div>
       );
@@ -166,14 +166,15 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
           <Badge
             variant="outline"
             className={`
-              font-medium text-xs px-2 py-1 rounded
-              ${status === 'Operating' ? 'bg-green-100 text-green-800 border-green-300' :
-              status === 'Completed' ? 'bg-green-100 text-green-800 border-green-300' :
-              status === 'Newest' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
-              status === 'Pipeline' ? 'bg-blue-100 text-blue-800 border-blue-300' :
-              'bg-gray-100 text-gray-800 border-gray-300'}
+              relative font-bold text-xs px-3 py-1.5 border-2 rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl
+              ${status === 'Operating' ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border-emerald-400 shadow-emerald-500/30 hover:shadow-emerald-500/50' :
+              status === 'Completed' ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-400 shadow-green-500/30 hover:shadow-green-500/50' :
+              status === 'Newest' ? 'bg-gradient-to-r from-bristol-gold to-yellow-500 text-bristol-ink border-bristol-gold shadow-bristol-gold/40 hover:shadow-bristol-gold/60' :
+              status === 'Pipeline' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-blue-400 shadow-blue-500/30 hover:shadow-blue-500/50' :
+              'bg-gradient-to-r from-gray-500 to-slate-600 text-white border-gray-400 shadow-gray-500/30 hover:shadow-gray-500/50'}
             `}
           >
+            <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
             {status}
           </Badge>
         );
@@ -194,10 +195,13 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       size: 200,
       cell: ({ row }) => (
         <div 
-          className="cursor-pointer font-medium text-gray-900 hover:text-blue-600 p-2"
+          className="group cursor-pointer relative overflow-hidden"
           onClick={() => onSelectSite(row.original)}
         >
-          {row.getValue('name')}
+          <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/0 via-bristol-gold/10 to-bristol-maroon/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+          <div className="relative font-bold text-bristol-ink group-hover:text-bristol-maroon transition-all duration-300 p-2 rounded-lg group-hover:bg-gradient-to-r group-hover:from-bristol-gold/5 group-hover:to-bristol-maroon/5 group-hover:shadow-lg">
+            {row.getValue('name')}
+          </div>
         </div>
       ),
     },
@@ -375,16 +379,16 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
 
   return (
     <div className="space-y-4">
-      <div className="rounded-md border bg-white overflow-auto max-h-[70vh]">
+      <div className="rounded-md border bg-white overflow-visible">
         <div className="min-w-full">
           <Table className="w-full">
-            <TableHeader className="sticky top-0 bg-white z-10 border-b border-gray-200">
+            <TableHeader className="sticky top-0 bg-gradient-to-r from-bristol-maroon via-bristol-maroon/95 to-bristol-maroon z-10 shadow-xl">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                <TableRow key={headerGroup.id} className="hover:bg-transparent border-b-2 border-bristol-gold/50">
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id} 
-                      className="font-medium text-gray-900 whitespace-nowrap px-4 py-3 text-left"
+                      className="font-cinzel font-bold text-white whitespace-nowrap px-4 py-4 border-r border-bristol-gold/30 text-shadow-lg hover:bg-bristol-gold/20 transition-all duration-300"
                       style={{ width: header.getSize() }}
                     >
                       {header.isPlaceholder
@@ -402,16 +406,16 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                     className={`
-                      border-b border-gray-100
-                      ${row.index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                      ${selectedSite?.id === row.original.id ? 'bg-blue-50 border-blue-200' : ''}
-                      hover:bg-gray-100
+                      transition-all duration-300 border-b border-bristol-stone/10
+                      ${row.index % 2 === 0 ? 'bg-gradient-to-r from-white to-bristol-cream/20' : 'bg-gradient-to-r from-bristol-cream/10 to-white'}
+                      ${selectedSite?.id === row.original.id ? 'bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/10 to-bristol-gold/20 shadow-lg shadow-bristol-gold/20 border-bristol-gold/30' : ''}
+                      hover:bg-gradient-to-r hover:from-bristol-maroon/5 hover:via-bristol-gold/5 hover:to-bristol-maroon/5 hover:shadow-lg hover:shadow-bristol-maroon/10
                     `}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell 
                         key={cell.id} 
-                        className="px-4 py-2 whitespace-nowrap"
+                        className="px-4 py-2 whitespace-nowrap border-r"
                         style={{ width: cell.column.getSize() }}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

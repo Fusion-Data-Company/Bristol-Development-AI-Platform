@@ -368,7 +368,7 @@ export default function Sites() {
         </div>
 
         {/* Premium Content Area with Light Theme & Ambient Glows */}
-        <div className="flex-1 p-8 relative mb-16">
+        <div className="flex-1 p-8 relative mb-16 overflow-visible">
           {/* Ambient background glows */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/5 rounded-full blur-3xl"></div>
