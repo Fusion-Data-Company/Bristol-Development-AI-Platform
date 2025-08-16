@@ -30,14 +30,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize WebSocket service
   initializeWebSocketService(httpServer);
 
-  // Auth routes - temporary demo user for development
+  // Auth routes - NUCLEAR FIX for development
   app.get('/api/auth/user', async (req: any, res) => {
+    // DEVELOPMENT MODE - BYPASS ALL AUTH
+    if (process.env.NODE_ENV === 'development') {
+      const user = req.user as any;
+      
+      // If we have a user from OAuth, return it
+      if (user?.claims) {
+        const dbUser = await storage.getUser(user.claims.sub);
+        return res.json({
+          id: user.claims.sub,
+          email: user.claims.email || dbUser?.email,
+          firstName: user.claims.first_name || user.claims.given_name || dbUser?.firstName,
+          lastName: user.claims.last_name || user.claims.family_name || dbUser?.lastName,
+          profileImageUrl: user.claims.profile_image_url || user.claims.picture || dbUser?.profileImageUrl,
+          provider: user.claims.provider || user.claims.iss
+        });
+      }
+      
+      // NUCLEAR OPTION: Return mock user if no real user
+      console.log('⚠️ DEVELOPMENT MODE: Returning mock user for immediate access');
+      return res.json({
+        id: 'dev-user-001',
+        email: 'developer@bristol.dev',
+        firstName: 'Development',
+        lastName: 'User',
+        profileImageUrl: null,
+        provider: 'development'
+      });
+    }
+    
+    // Production mode - normal auth check
+    if (!isAuthenticated(req, res, () => {})) {
+      return;
+    }
+    
+    const user = req.user as any;
+    if (!user?.claims) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const dbUser = await storage.getUser(user.claims.sub);
+    
     res.json({
-      id: "demo-user",
-      email: "demo@bristol.dev", 
-      firstName: "Demo",
-      lastName: "User"
+      id: user.claims.sub,
+      email: user.claims.email || dbUser?.email,
+      firstName: user.claims.first_name || user.claims.given_name || dbUser?.firstName,
+      lastName: user.claims.last_name || user.claims.family_name || dbUser?.lastName,
+      profileImageUrl: user.claims.profile_image_url || user.claims.picture || dbUser?.profileImageUrl,
+      provider: user.claims.provider || user.claims.iss
     });
+  });
+  
+  // Get all users (admin endpoint - in production, add role checking)
+  app.get('/api/users', isAuthenticated, async (req: any, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      res.status(500).json({ message: 'Failed to fetch users' });
+    }
   });
 
   // Import the new comprehensive sites API - temporarily removing auth to fix table display

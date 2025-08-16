@@ -45,7 +45,10 @@ import {
   Clock,
   Database,
   ExternalLink,
-  Zap
+  Zap,
+  LogOut,
+  User,
+  Shield
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -260,25 +263,51 @@ export default function Dashboard() {
         {activeTab === "overview" && (
           <div className="py-8">
             <div className="max-w-7xl mx-auto px-4">
-              {/* Welcome Section */}
+              {/* Welcome Section with User Info */}
               <div className="mb-8">
                 <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-2xl font-serif font-bold text-bristol-ink mb-2">
-                        Welcome back, {(user as any)?.firstName || "Developer"}
-                      </h2>
-                      <p className="text-bristol-stone">
-                        Your Bristol Intelligence dashboard • Last updated: {dashboardData?.summary.lastUpdated ? new Date(dashboardData.summary.lastUpdated).toLocaleString() : "Loading..."}
-                      </p>
+                    <div className="flex items-center gap-6">
+                      <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-orange-500/20 rounded-full">
+                        <User className="h-8 w-8 text-cyan-700" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-serif font-bold text-bristol-ink mb-2">
+                          Welcome back, {(user as any)?.firstName || "User"} {(user as any)?.lastName || ""}
+                        </h2>
+                        <div className="flex items-center gap-4">
+                          <p className="text-bristol-stone">
+                            {(user as any)?.email || "Loading..."}
+                          </p>
+                          {(user as any)?.provider && (
+                            <div className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full">
+                              <Shield className="h-3 w-3" />
+                              <span className="text-xs font-medium">Authenticated via Replit</span>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm text-bristol-stone mt-1">
+                          Last updated: {dashboardData?.summary.lastUpdated ? new Date(dashboardData.summary.lastUpdated).toLocaleString() : "Loading..."}
+                        </p>
+                      </div>
                     </div>
-                    <Button
-                      onClick={() => setActiveTab("chat")}
-                      className="bg-bristol-maroon hover:bg-bristol-maroon/90 text-white"
-                    >
-                      <MessageSquare className="w-4 h-4 mr-2" />
-                      Start Analysis
-                    </Button>
+                    <div className="flex items-center gap-3">
+                      <Button
+                        onClick={() => setActiveTab("chat")}
+                        className="bg-bristol-maroon hover:bg-bristol-maroon/90 text-white"
+                      >
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Start Analysis
+                      </Button>
+                      <Button
+                        onClick={handleLogout}
+                        variant="outline"
+                        className="border-bristol-maroon text-bristol-maroon hover:bg-bristol-maroon hover:text-white"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Sign Out
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -635,7 +664,10 @@ export default function Dashboard() {
 
             {/* Interactive Map Dashboard - Override All Margins */}
             <div className="flex-1 flex relative w-full h-full m-0 p-0 max-w-none overflow-hidden">
-              <InteractiveMapDashboard />
+              <InteractiveMapDashboard 
+                selectedSite={selectedSite}
+                onSiteSelect={setSelectedSite}
+              />
             </div>
           </div>
         )}
@@ -711,7 +743,7 @@ export default function Dashboard() {
               
               {selectedSite ? (
                 <MarketAnalytics
-                  site={selectedSite}
+                  siteId={selectedSite.id}
                   metrics={siteMetrics}
                 />
               ) : (
