@@ -378,9 +378,9 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
   }
 
   return (
-    <div className="space-y-4" style={{ height: '2000px', minHeight: '2000px' }}>
-      <div className="rounded-md border bg-white" style={{ height: '1800px', minHeight: '1800px', overflow: 'visible' }}>
-        <div className="min-w-max" style={{ height: '1700px', minHeight: '1700px' }}>
+    <div className="space-y-4">
+      <div className="rounded-md border bg-white">
+        <div className="min-w-max">
           <Table className="w-full">
             <TableHeader className="sticky top-0 bg-gradient-to-r from-white to-bristol-cream/50 z-10 shadow-lg border-b-2 border-bristol-stone/20">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -414,7 +414,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                         ${selectedSite?.id === row.original.id ? 'bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/10 to-bristol-gold/20 shadow-lg shadow-bristol-gold/20 border-bristol-gold/30' : ''}
                         hover:bg-gradient-to-r hover:from-bristol-maroon/5 hover:via-bristol-gold/5 hover:to-bristol-maroon/5 hover:shadow-lg hover:shadow-bristol-maroon/10
                       `}
-                      style={{ height: '60px' }}
+                      style={{ height: '80px', minHeight: '80px' }}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell 
@@ -436,7 +436,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                         transition-all duration-300 border-b border-bristol-stone/10
                         ${index % 2 === 0 ? 'bg-gradient-to-r from-white to-bristol-cream/20' : 'bg-gradient-to-r from-bristol-cream/10 to-white'}
                       `}
-                      style={{ height: '60px' }}
+                      style={{ height: '80px', minHeight: '80px' }}
                     >
                       {columns.map((column, colIndex) => (
                         <TableCell 
