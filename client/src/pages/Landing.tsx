@@ -1,6 +1,5 @@
 import { AuthForm } from "@/components/ui/sign-in";
-import { GlobalHeader } from "@/components/GlobalHeader";
-import { BristolFooter } from "@/components/BristolFooter";
+import Chrome from "@/components/brand/SimpleChrome";
 
 export default function Landing() {
   const handleSocialSignIn = (provider: string) => {
@@ -94,24 +93,18 @@ export default function Landing() {
       <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 via-transparent to-gray-700/10"></div>
 
       
-      {/* GlobalHeader without navigation */}
+      {/* Main Content with Chrome wrapper for perfect header/footer */}
       <div className="relative z-10">
-        <GlobalHeader showNavigation={false} />
-      </div>
-      
-      {/* Main Content */}
-      <div className="relative z-10 pt-20 min-h-[calc(100vh-80px)] flex items-center justify-center py-16">
-        <AuthForm 
-          onSocialSignIn={handleSocialSignIn}
-          onEmailSubmit={handleEmailSubmit}
-          onEmailLink={handleEmailLink}
-          className="shadow-2xl backdrop-blur-sm bg-white/95 border-2 border-cyan-200/30"
-        />
-      </div>
-      
-      {/* BristolFooter */}
-      <div className="relative z-10">
-        <BristolFooter variant="thick" />
+        <Chrome>
+          <div className="min-h-[calc(100vh-400px)] flex items-center justify-center py-16">
+            <AuthForm 
+              onSocialSignIn={handleSocialSignIn}
+              onEmailSubmit={handleEmailSubmit}
+              onEmailLink={handleEmailLink}
+              className="shadow-2xl backdrop-blur-sm bg-white/95 border-2 border-cyan-200/30"
+            />
+          </div>
+        </Chrome>
       </div>
     </div>
   );
