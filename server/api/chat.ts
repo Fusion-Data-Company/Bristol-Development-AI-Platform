@@ -94,11 +94,18 @@ You are Bristol's Elite Deal Intelligence Officer—a hybrid of senior acquisiti
 • Your north star: superior risk‑adjusted returns for Bristol Development Group (Franklin, TN) through disciplined site selection, underwriting, and execution.
 • You operate across multifamily / mixed‑use / select commercial in the Southeast & Mid‑South, with emphasis on amenity‑driven competitiveness, liquidity, and durable demand.
 
-Data Hierarchy
+Data Hierarchy & Bristol Property Database Access
 
-Use all live data passed in dataContext. If a field is missing or stale, backfill from the embedded KNOWLEDGE_SEED. Mark backfilled fields as "seed" in your reasoning (don't print JSON unless asked).
+You have direct access to Bristol Development Group's complete property database through MCP tools. Use all live data passed in dataContext. If a field is missing or stale, backfill from the embedded KNOWLEDGE_SEED. Mark backfilled fields as "seed" in your reasoning (don't print JSON unless asked).
 
 Priority: dataContext.latest → dataContext.snapshot → KNOWLEDGE_SEED.
+
+Bristol Property Search Capabilities:
+• Query all 46+ Bristol properties by location (city, state, address)
+• Filter by development status (Operating, Pipeline, Completed, Newest)
+• Access detailed property metrics (units, sq ft, completion year, coordinates)
+• Get real-time occupancy and performance data for each asset
+• Cross-reference with demographic and market data for any location
 
 Core Disciplines (what you do every time)
 1. Comps Discipline — Build a comp set using asset type, vintage ±10 yrs, size ±25%, and market‑realistic radii (urban 2–3 mi; suburban 5–10 mi). Adjust tiers if thin and say so. Compute rent PSF, rent PU, occupancy, concessions, and renovation premiums.
@@ -127,7 +134,8 @@ House Rules (hard)
 • If a value is unknown, return null and add a caveat or tool request.
 • Use USD, SF, units, %, and ISO dates.
 • Keep tables crisp, not ornamental.
-• Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated approach expected from a premium AI system.`;
+• Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated approach expected from a premium AI system.
+• When asked about Bristol properties or locations, use the available MCP tools to query the live database rather than relying on cached data.`;
 
 // Chat completion schema
 const chatRequestSchema = z.object({
@@ -166,9 +174,31 @@ router.post('/completions', async (req, res) => {
       return res.status(400).json({ error: 'Invalid model specified' });
     }
 
-    // Inject Bristol system prompt (hidden from user)
+    // Get Bristol property data context for AI
+    const { mcpToolsService } = await import('../services/mcpToolsService');
+    let bristolContext = '';
+    
+    try {
+      const aiContext = await mcpToolsService.getAiContext();
+      if (aiContext.bristolProperties && aiContext.bristolProperties.length > 0) {
+        bristolContext = `\n\nBRISTOL PROPERTIES DATABASE CONTEXT:\n` +
+          `Total Properties: ${aiContext.propertiesByLocation?.totalProperties || 0}\n` +
+          `States: ${aiContext.propertiesByLocation?.states?.join(', ') || 'N/A'}\n` +
+          `Cities: ${aiContext.propertiesByLocation?.cities?.join(', ') || 'N/A'}\n` +
+          `Development Status: ${aiContext.propertiesByLocation?.statuses?.join(', ') || 'N/A'}\n` +
+          `Properties by State: ${JSON.stringify(Object.fromEntries(
+            Object.entries(aiContext.propertiesByLocation?.byState || {}).map(([state, props]: [string, any]) => 
+              [state, (props as any[]).map(p => `${p.name} (${p.city})`)]
+            )
+          ), null, 2)}\n\n`;
+      }
+    } catch (error) {
+      console.log('Could not fetch Bristol properties context:', error);
+    }
+
+    // Inject Bristol system prompt with live property data (hidden from user)
     const enhancedMessages = [
-      { role: 'system' as const, content: BRISTOL_SYSTEM_PROMPT },
+      { role: 'system' as const, content: BRISTOL_SYSTEM_PROMPT + bristolContext },
       ...messages.filter(msg => msg.role !== 'system') // Remove any user-provided system messages
     ];
 
@@ -197,7 +227,7 @@ router.post('/completions', async (req, res) => {
 
         completion = await anthropic.messages.create({
           model: modelConfig.model,
-          system: BRISTOL_SYSTEM_PROMPT,
+          system: BRISTOL_SYSTEM_PROMPT + bristolContext,
           messages: anthropicMessages,
           max_tokens: maxTokens,
           temperature
@@ -216,7 +246,7 @@ router.post('/completions', async (req, res) => {
         const result = await genai.models.generateContent({
           model: modelConfig.model,
           config: {
-            systemInstruction: BRISTOL_SYSTEM_PROMPT,
+            systemInstruction: BRISTOL_SYSTEM_PROMPT + bristolContext,
             temperature,
             maxOutputTokens: maxTokens
           },

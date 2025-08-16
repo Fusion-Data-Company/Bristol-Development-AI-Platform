@@ -248,6 +248,52 @@ export class McpToolsService {
       category: 'external'
     });
 
+    // Bristol Properties Location-Based Search Tools
+    this.registerTool({
+      name: 'search_bristol_properties',
+      description: 'Search Bristol Development properties by location, city, state, or criteria',
+      endpoint: '/api/sites',
+      method: 'GET',
+      category: 'data',
+      parameters: { 
+        q: 'string',         // Search query for names, addresses, cities
+        status: 'string',    // Property status filter
+        city: 'string',      // City filter
+        state: 'string'      // State filter
+      }
+    });
+
+    this.registerTool({
+      name: 'get_bristol_property_details',
+      description: 'Get detailed information about a specific Bristol property including location, units, and metrics',
+      endpoint: '/api/sites/{id}',
+      method: 'GET',
+      category: 'data',
+      parameters: { id: 'string' }
+    });
+
+    this.registerTool({
+      name: 'find_bristol_properties_near',
+      description: 'Find all Bristol properties in a specific city, state, or location area',
+      endpoint: '/api/sites',
+      method: 'GET', 
+      category: 'data',
+      parameters: {
+        city: 'string',
+        state: 'string',
+        location: 'string'   // General location search
+      }
+    });
+
+    this.registerTool({
+      name: 'get_bristol_properties_by_status',
+      description: 'Get Bristol properties filtered by development status (Operating, Pipeline, Completed, Newest)',
+      endpoint: '/api/sites',
+      method: 'GET',
+      category: 'data',
+      parameters: { status: 'string' }
+    });
+
     this.registerTool({
       name: 'get_saved_snapshots',
       description: 'Access previously saved analysis results',
@@ -341,16 +387,19 @@ export class McpToolsService {
   // Real-time data aggregation for AI context
   async getAiContext(): Promise<any> {
     try {
-      const [portfolio, pipeline, market] = await Promise.all([
+      const [portfolio, pipeline, market, bristolProperties] = await Promise.all([
         this.executeTool('get_portfolio_overview'),
         this.executeTool('get_deal_pipeline'),
-        this.executeTool('get_market_analytics')
+        this.executeTool('get_market_analytics'),
+        this.executeTool('get_property_sites')
       ]);
 
       return {
         portfolio: portfolio.data || portfolio,
         pipeline: pipeline.data || pipeline,
         market: market.data || market,
+        bristolProperties: bristolProperties || [],
+        propertiesByLocation: this.organizeBristolPropertiesByLocation(bristolProperties || []),
         timestamp: new Date().toISOString(),
         toolsAvailable: this.tools.size
       };
@@ -362,6 +411,43 @@ export class McpToolsService {
         timestamp: new Date().toISOString()
       };
     }
+  }
+
+  // Organize Bristol properties by location for easy AI queries
+  private organizeBristolPropertiesByLocation(properties: any[]): any {
+    const byState: any = {};
+    const byCity: any = {};
+    const byStatus: any = {};
+
+    properties.forEach(property => {
+      // Group by state
+      if (property.state) {
+        if (!byState[property.state]) byState[property.state] = [];
+        byState[property.state].push(property);
+      }
+
+      // Group by city
+      if (property.city) {
+        if (!byCity[property.city]) byCity[property.city] = [];
+        byCity[property.city].push(property);
+      }
+
+      // Group by status
+      if (property.status) {
+        if (!byStatus[property.status]) byStatus[property.status] = [];
+        byStatus[property.status].push(property);
+      }
+    });
+
+    return {
+      byState,
+      byCity, 
+      byStatus,
+      totalProperties: properties.length,
+      states: Object.keys(byState),
+      cities: Object.keys(byCity),
+      statuses: Object.keys(byStatus)
+    };
   }
 }
 
