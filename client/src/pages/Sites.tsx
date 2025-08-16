@@ -196,7 +196,7 @@ export default function Sites() {
   return (
     <DataBackground>
       <Chrome>
-      <div className="h-screen flex flex-col bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10 pb-32">
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10 pb-32">
         {/* Premium Sites Intelligence Header with Light Theme */}
         <div className="p-8 border-b-2 border-bristol-maroon/20 bg-white/90 backdrop-blur-sm relative overflow-hidden shadow-xl">
           {/* Ambient glow background */}
@@ -368,7 +368,7 @@ export default function Sites() {
         </div>
 
         {/* Premium Content Area with Light Theme & Ambient Glows */}
-        <div className="flex-1 p-8 overflow-hidden relative mb-16">
+        <div className="flex-1 p-8 relative mb-16">
           {/* Ambient background glows */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/5 rounded-full blur-3xl"></div>
@@ -376,9 +376,9 @@ export default function Sites() {
             <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-bristol-sky/10 rounded-full blur-2xl"></div>
           </div>
           
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 h-full relative pb-4">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 relative pb-4 min-h-[80vh]">
             {/* Premium Sites Database Table with Light Theme */}
-            <Card className="xl:col-span-2 overflow-hidden bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
+            <Card className="xl:col-span-2 bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
               <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
                 <div className="flex items-center space-x-3">
                   <div className="relative group">
@@ -397,7 +397,7 @@ export default function Sites() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-2 h-[calc(100vh-8rem)] bg-gradient-to-br from-white to-bristol-cream/30 overflow-hidden">
+              <CardContent className="p-2 bg-gradient-to-br from-white to-bristol-cream/30">
                 <SitesTable 
                   data={(sites || []) as any[]}
                   isLoading={isLoading}
@@ -409,7 +409,7 @@ export default function Sites() {
             </Card>
 
             {/* Premium Details & Analytics Sidebar with Light Theme */}
-            <div className="space-y-6 h-[calc(100vh-8rem)] overflow-y-auto">
+            <div className="space-y-6">
               {/* Site Details Card */}
               <Card className="bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
                 <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
@@ -439,7 +439,7 @@ export default function Sites() {
               </Card>
 
               {/* Bristol Portfolio Analysis Agent */}
-              <div className="h-[600px]">
+              <div>
                 <BristolPortfolioAgent 
                   selectedSite={selectedSite}
                   portfolioData={portfolioData}
