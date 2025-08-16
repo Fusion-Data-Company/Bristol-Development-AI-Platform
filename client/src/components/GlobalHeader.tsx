@@ -13,7 +13,11 @@ import {
   ChevronDown
 } from 'lucide-react';
 
-export function GlobalHeader() {
+interface GlobalHeaderProps {
+  showNavigation?: boolean;
+}
+
+export function GlobalHeader({ showNavigation = true }: GlobalHeaderProps) {
   const [location] = useLocation();
 
   return (
@@ -49,8 +53,9 @@ export function GlobalHeader() {
               </div>
             </div>
 
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center space-x-1">
+            {/* Navigation - only show if showNavigation is true */}
+            {showNavigation && (
+              <nav className="hidden md:flex items-center space-x-1">
               <Link href="/">
                 <a className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
                   location === '/' 
@@ -161,10 +166,12 @@ export function GlobalHeader() {
                 </a>
               </Link>
             </nav>
+            )}
           </div>
 
-          {/* Right side - Search, Notifications, User */}
-          <div className="flex items-center space-x-4">
+          {/* Right side - Search, Notifications, User - only show if showNavigation is true */}
+          {showNavigation && (
+            <div className="flex items-center space-x-4">
             {/* Search */}
             <div className="hidden md:flex items-center">
               <div className="relative">
@@ -192,6 +199,7 @@ export function GlobalHeader() {
               <ChevronDown className="h-4 w-4 text-slate-400" />
             </div>
           </div>
+          )}
         </div>
       </div>
     </header>

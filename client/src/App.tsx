@@ -58,7 +58,7 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Dark Bristol Header - Only show when authenticated */}
-      {showGlobalHeader && <GlobalHeader />}
+      {showGlobalHeader && <GlobalHeader showNavigation={true} />}
       
       {/* Main Content Area - Light Theme */}
       <div className={showGlobalHeader ? "pt-20" : ""}>
