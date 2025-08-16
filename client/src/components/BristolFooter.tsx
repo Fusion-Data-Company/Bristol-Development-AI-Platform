@@ -23,10 +23,10 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
           repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px)
         `
       }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-1 pb-2">
         
         {/* Main Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
           
           {/* Company Info */}
           <div className="space-y-4">
@@ -108,7 +108,7 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-cyan-400/20 pt-4">
+        <div className="border-t border-cyan-400/20 pt-2">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             
             {/* Copyright */}
