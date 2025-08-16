@@ -9,6 +9,7 @@ import { MapPin, Building, TrendingUp, Users, DollarSign, Info, Layers, Satellit
 import { cn } from '@/lib/utils';
 import { ArcGISLayer, useArcGISDemographics } from '../analytics/ArcGISLayer';
 import { KMLLayer } from './KMLLayer';
+import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface InteractiveMapProps {
@@ -22,11 +23,19 @@ interface InteractiveMapProps {
   fullScreen?: boolean;
 }
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiYnJpc3RvbGRldiIsImEiOiJjbTIxdW9hdG0wMnBrMnRzZThwbXo5dzV4In0.Qwn5r6i6cFE0oBqUDXWuSA';
+const MAPBOX_TOKEN = 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtZWRnM3IwbjA3M3IybG1zNnAzeWtuZ3EifQ.mif4Tbd3ceKQh6YAS8EPDQ';
+
+// Set Mapbox token globally for better compatibility
+mapboxgl.accessToken = MAPBOX_TOKEN;
 
 // Log token for debugging
 console.log('Using Mapbox token:', MAPBOX_TOKEN.substring(0, 20) + '...');
 console.log('Token starts with pk.:', MAPBOX_TOKEN.startsWith('pk.'));
+
+// Add browser support check
+if (!mapboxgl.supported()) {
+  console.error('Mapbox GL JS is not supported by this browser');
+}
 
 // Real verified data sources for map layers
 const DATA_SOURCES = {
@@ -91,22 +100,7 @@ export function InteractiveMap({
 }: InteractiveMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-  const [mapStyle, setMapStyle] = useState({
-    version: 8,
-    sources: {
-      'osm-tiles': {
-        type: 'raster',
-        tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-        tileSize: 256,
-        attribution: '© OpenStreetMap contributors'
-      }
-    },
-    layers: [{
-      id: 'osm-layer',
-      type: 'raster',
-      source: 'osm-tiles'
-    }]
-  });
+  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/dark-v11');
   const [activeLayers, setActiveLayers] = useState<Set<string>>(new Set(['heatmap']));
   const [showKML, setShowKML] = useState(!!kmlData);
   const [layerData, setLayerData] = useState<{[key: string]: any}>({});
@@ -298,13 +292,24 @@ export function InteractiveMap({
   const demographicsError = null;
 
   if (fullScreen) {
-    // If no token, show error
+    // If no token or browser not supported, show error
     if (!MAPBOX_TOKEN) {
       return (
         <div className={cn("h-screen w-full relative bg-red-100 flex items-center justify-center", className)}>
           <div className="text-center p-8">
             <h2 className="text-2xl font-bold text-red-600 mb-4">MapBox Token Missing</h2>
             <p className="text-red-500">VITE_MAPBOX_PUBLIC_KEY2 environment variable is not set</p>
+          </div>
+        </div>
+      );
+    }
+    
+    if (!mapboxgl.supported()) {
+      return (
+        <div className={cn("h-screen w-full relative bg-orange-100 flex items-center justify-center", className)}>
+          <div className="text-center p-8">
+            <h2 className="text-2xl font-bold text-orange-600 mb-4">Browser Not Supported</h2>
+            <p className="text-orange-500">Your browser does not support Mapbox GL JS. Please update your browser or enable WebGL.</p>
           </div>
         </div>
       );
@@ -318,7 +323,7 @@ export function InteractiveMap({
           latitude={viewport.latitude}
           zoom={viewport.zoom}
           onMove={evt => setViewport(evt.viewState)}
-          mapboxAccessToken={undefined}
+          mapboxAccessToken={MAPBOX_TOKEN}
           style={{ width: '100%', height: '100%', minHeight: '500px' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}
@@ -885,7 +890,7 @@ export function InteractiveMap({
           ref={mapRef}
           {...viewport}
           onMove={evt => setViewport(evt.viewState)}
-          mapboxAccessToken={undefined}
+          mapboxAccessToken={MAPBOX_TOKEN}
           style={{ width: '100%', height: '100%' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}

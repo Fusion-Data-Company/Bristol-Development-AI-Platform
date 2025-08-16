@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { type Site } from '@shared/schema';
 
 // Initialize Mapbox token
-mapboxgl.accessToken = 'pk.eyJ1IjoiYnJpc3RvbGRldiIsImEiOiJjbTIxdW9hdG0wMnBrMnRzZThwbXo5dzV4In0.Qwn5r6i6cFE0oBqUDXWuSA';
+mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtZWRnM3IwbjA3M3IybG1zNnAzeWtuZ3EifQ.mif4Tbd3ceKQh6YAS8EPDQ';
 
 interface MapContainerProps {
   sites: Site[];
@@ -71,15 +71,15 @@ export function MapContainer({ sites, onSiteSelect, selectedSite, className }: M
                   <p style="margin: 0; font-size: 14px; color: #666;">
                     ${site.city}, ${site.state}
                   </p>
-                  ${site.bristolScore ? `
+                  ${(site as any).bristolScore ? `
                     <p style="margin: 4px 0 0 0; font-size: 14px;">
-                      <strong>Bristol Score:</strong> ${site.bristolScore}
+                      <strong>Bristol Score:</strong> ${(site as any).bristolScore}
                     </p>
                   ` : ''}
                 </div>
               `)
           )
-          .addTo(map.current);
+          .addTo(map.current!);
 
         el.addEventListener('click', () => {
           onSiteSelect?.(site);
