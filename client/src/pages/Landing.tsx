@@ -95,7 +95,7 @@ export default function Landing() {
       
       {/* Main Content with Chrome wrapper for perfect header/footer */}
       <div className="relative z-10">
-        <Chrome>
+        <Chrome showNavigation={false}>
           <div className="min-h-[calc(100vh-400px)] flex items-center justify-center py-16">
             <AuthForm 
               onSocialSignIn={handleSocialSignIn}

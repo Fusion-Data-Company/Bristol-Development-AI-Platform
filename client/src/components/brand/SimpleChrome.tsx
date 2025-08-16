@@ -6,9 +6,10 @@ import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 
 interface ChromeProps {
   children: ReactNode;
+  showNavigation?: boolean;
 }
 
-export default function SimpleChrome({ children }: ChromeProps) {
+export default function SimpleChrome({ children, showNavigation = true }: ChromeProps) {
   const [location] = useLocation();
 
   const navItems = [
@@ -107,6 +108,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
             </div>
             
             {/* Elite Navigation */}
+            {showNavigation && (
             <nav className="flex items-center space-x-1 lg:space-x-2 ml-auto">
               {navItems.map(({ path, label, icon: Icon }) => (
                 <Link key={path} href={path}>
@@ -134,6 +136,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 </Link>
               ))}
             </nav>
+            )}
           </div>
         </div>
       </header>
