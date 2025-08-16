@@ -197,8 +197,7 @@ export default function Sites() {
 
   return (
     <Chrome>
-        <div className="min-h-screen relative z-10">
-            
+      <div className="min-h-screen relative z-10">
         {/* Premium Sites Intelligence Header */}
         <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
         <div className="p-8 relative overflow-hidden">
@@ -367,11 +366,11 @@ export default function Sites() {
                 </Badge>
               ))}
             </div>
-          </div>
+        </div>
         </div>
 
-      {/* Main Content Area - With Background Starting Below Hero Header */}
-      <DataBackground>
+        {/* Main Content Area - With Background Starting Below Hero Header */}
+        <DataBackground>
         {/* Background Image Layer */}
         <div 
           className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
@@ -493,7 +492,9 @@ export default function Sites() {
             </div>
           </SheetContent>
         </Sheet>
-      </DataBackground>
+        </DataBackground>
+      </div>
+      </div>
     </Chrome>
   );
 }
