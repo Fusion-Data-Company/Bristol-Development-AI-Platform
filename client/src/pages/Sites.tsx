@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Building, Map } from "lucide-react";
+import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Building, Map, Users } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
 import { DataBackground } from "../components/EnterpriseBackgrounds";
 import { SitesTable } from "../widgets/tables/SitesTableBasic";
@@ -59,32 +59,20 @@ export default function Sites() {
     retry: 3 // Allow retries
   });
 
-  // FORCE UPDATE WITH DIRECT STATE MANAGEMENT 
-  const [portfolioData, setPortfolioData] = useState<{totalSites: number; totalUnits: number} | null>(null);
-  const [isMetricsLoading, setIsMetricsLoading] = useState(true);
-  
-  useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        setIsMetricsLoading(true);
-        const response = await fetch('/api/analytics/sites-metrics');
-        if (!response.ok) throw new Error('Failed to fetch metrics');
-        const data = await response.json();
-        console.log('FORCE SETTING STATE WITH:', data.totalSites, data.totalUnits);
-        setPortfolioData({
-          totalSites: data.totalSites,
-          totalUnits: data.totalUnits
-        });
-      } catch (error) {
-        console.error('Metrics error:', error);
-        setPortfolioData({ totalSites: 46, totalUnits: 9953 });
-      } finally {
-        setIsMetricsLoading(false);
-      }
-    };
+  // Calculate live metrics from table data
+  const calculateLiveMetrics = () => {
+    if (!sites || sites.length === 0) return { totalProperties: 0, totalUnits: 0 };
     
-    fetchMetrics();
-  }, []);
+    // Count properties with names in SITE NAME column
+    const totalProperties = sites.filter(site => site.name && site.name.trim() !== '').length;
+    
+    // Sum all TOTAL UNITS column values
+    const totalUnits = sites.reduce((sum, site) => sum + (site.unitsTotal || 0), 0);
+    
+    return { totalProperties, totalUnits };
+  };
+  
+  const liveMetrics = calculateLiveMetrics();
 
   // Debugging removed - using direct values
 
@@ -227,18 +215,18 @@ export default function Sites() {
             </div>
             <div className="flex items-center gap-4">
               <Badge 
-                key={`sites-${portfolioData?.totalSites || 'loading'}`}
                 variant="outline" 
-                className="px-6 py-3 text-bristol-ink border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white backdrop-blur-sm font-bold text-xl shadow-lg shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-300"
+                className="px-8 py-4 text-bristol-ink border-bristol-maroon/50 bg-gradient-to-br from-white via-bristol-cream/30 to-bristol-maroon/10 backdrop-blur-sm font-bold text-2xl shadow-xl shadow-bristol-maroon/25 hover:shadow-bristol-maroon/40 transition-all duration-500 hover:scale-105 border-2"
               >
-                {isMetricsLoading ? 'Loading...' : `${portfolioData?.totalSites || 46} Properties`}
+                <Building className="w-6 h-6 mr-3 text-bristol-maroon" />
+                {liveMetrics.totalProperties} Properties
               </Badge>
               <Badge 
-                key={`units-${portfolioData?.totalUnits || 'loading'}`}
                 variant="outline" 
-                className="px-6 py-3 text-bristol-maroon border-bristol-gold/40 bg-gradient-to-r from-bristol-gold/10 to-bristol-cream backdrop-blur-sm font-medium text-lg shadow-lg shadow-bristol-gold/20"
+                className="px-8 py-4 text-bristol-maroon border-bristol-gold/50 bg-gradient-to-br from-bristol-gold/20 via-bristol-cream/40 to-white backdrop-blur-sm font-bold text-xl shadow-xl shadow-bristol-gold/25 hover:shadow-bristol-gold/40 transition-all duration-500 hover:scale-105 border-2"
               >
-                {isMetricsLoading ? 'Loading...' : `${portfolioData?.totalUnits?.toLocaleString() || '9,953'} Total Units`}
+                <Users className="w-6 h-6 mr-3 text-bristol-gold" />
+                {liveMetrics.totalUnits.toLocaleString()} Total Units
               </Badge>
             </div>
           </div>
@@ -408,11 +396,10 @@ export default function Sites() {
                     Bristol Portfolio Database
                   </CardTitle>
                   <Badge 
-                    key={`table-sites-${portfolioData?.totalSites || 'loading'}`}
                     variant="outline" 
                     className="ml-auto px-4 py-2 text-bristol-maroon border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white font-bold shadow-lg shadow-bristol-maroon/20"
                   >
-                    {isMetricsLoading ? 'Loading...' : `${portfolioData?.totalSites || 46} Properties`}
+                    {liveMetrics.totalProperties} Properties
                   </Badge>
                 </div>
               </CardHeader>
