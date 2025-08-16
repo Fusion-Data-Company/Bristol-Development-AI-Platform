@@ -161,14 +161,14 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
                   e.currentTarget.style.boxShadow = `
-                    0 12px 48px rgba(6, 182, 212, 0.5),
-                    0 6px 24px rgba(6, 182, 212, 0.3),
-                    0 0 30px rgba(6, 182, 212, 0.4),
+                    0 8px 24px rgba(6, 182, 212, 0.25),
+                    0 4px 12px rgba(6, 182, 212, 0.15),
+                    0 0 15px rgba(6, 182, 212, 0.2),
                     inset 0 1px 0 rgba(6, 182, 212, 0.3),
                     inset 0 -1px 0 rgba(0, 0, 0, 0.3)
                   `;
                   e.currentTarget.style.background = 'linear-gradient(135deg, rgba(0, 0, 0, 1) 0%, rgba(6, 182, 212, 0.1) 50%, rgba(0, 0, 0, 1) 100%)';
-                  e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.8)';
+                  e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.6)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'translateY(0) scale(1)';
