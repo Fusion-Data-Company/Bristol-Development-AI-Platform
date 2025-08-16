@@ -100,63 +100,64 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Operating': return 'from-emerald-400 to-green-500';
-      case 'Completed': return 'from-green-400 to-emerald-500'; 
-      case 'Newest': return 'from-bristol-gold to-yellow-400';
-      case 'Pipeline': return 'from-blue-400 to-purple-500';
-      default: return 'from-gray-400 to-slate-500';
+      case 'Operating': return 'from-emerald-500/40 to-green-600/40';
+      case 'Completed': return 'from-green-500/40 to-emerald-600/40'; 
+      case 'Newest': return 'from-bristol-gold/40 to-yellow-500/40';
+      case 'Pipeline': return 'from-blue-500/40 to-purple-600/40';
+      default: return 'from-gray-500/40 to-slate-600/40';
     }
   };
 
   const getStatusGlow = (status: string) => {
     switch (status) {
-      case 'Operating': return 'shadow-emerald-500/50';
-      case 'Completed': return 'shadow-green-500/50';
-      case 'Newest': return 'shadow-bristol-gold/60';
-      case 'Pipeline': return 'shadow-blue-500/50';
-      default: return 'shadow-gray-500/30';
+      case 'Operating': return 'shadow-emerald-500/30';
+      case 'Completed': return 'shadow-green-500/30';
+      case 'Newest': return 'shadow-bristol-gold/40';
+      case 'Pipeline': return 'shadow-blue-500/30';
+      default: return 'shadow-gray-500/20';
     }
   };
 
   return (
     <Card 
       className={`
-        relative overflow-hidden transition-all duration-500 cursor-pointer group border-2 backdrop-blur-sm
+        relative overflow-hidden transition-all duration-700 cursor-pointer group backdrop-blur-xl border
         ${isSelected 
-          ? 'border-bristol-gold shadow-2xl shadow-bristol-gold/40 bg-gradient-to-br from-white via-bristol-cream/30 to-bristol-gold/10' 
-          : 'border-bristol-stone/20 hover:border-bristol-gold/50 bg-gradient-to-br from-white via-bristol-cream/20 to-white hover:shadow-xl hover:shadow-bristol-gold/20'
+          ? 'border-bristol-gold/60 shadow-2xl shadow-bristol-gold/40 bg-white/15' 
+          : 'border-white/20 hover:border-bristol-gold/40 bg-white/10 hover:shadow-2xl hover:shadow-white/10'
         }
-        ${isHovered ? 'scale-[1.02] shadow-2xl' : 'hover:scale-[1.01]'}
+        ${isHovered ? 'scale-[1.03] shadow-3xl' : 'hover:scale-[1.02]'}
+        rounded-3xl
       `}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onSelect}
     >
-      {/* Animated Background Glow */}
-      <div className={`absolute inset-0 bg-gradient-to-r ${getStatusColor(site.status)} opacity-0 group-hover:opacity-5 transition-opacity duration-500`} />
+      {/* Premium Glass Morphism Background */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${getStatusColor(site.status)} opacity-0 group-hover:opacity-100 transition-all duration-700`} />
       
-      {/* Ambient Light Effect */}
-      <div className={`absolute -top-1 -left-1 -right-1 -bottom-1 rounded-lg bg-gradient-to-r ${getStatusColor(site.status)} opacity-0 group-hover:opacity-20 blur-xl transition-all duration-700 ${getStatusGlow(site.status)}`} />
+      {/* Executive Glow Effect */}
+      <div className={`absolute -inset-0.5 rounded-3xl bg-gradient-to-br ${getStatusColor(site.status)} opacity-0 group-hover:opacity-50 blur-xl transition-all duration-1000 ${getStatusGlow(site.status)}`} />
       
-      <CardHeader className="relative z-10 pb-3">
+      <CardHeader className="relative z-20 pb-6">
         <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <CardTitle className="text-lg font-cinzel font-bold text-bristol-ink group-hover:text-bristol-maroon transition-colors duration-300">
+          <div className="space-y-4">
+            <CardTitle className="text-2xl font-cinzel font-bold text-white group-hover:text-bristol-gold transition-colors duration-500 tracking-wide">
               {site.name}
             </CardTitle>
             <Badge 
               className={`
-                relative font-bold text-xs px-3 py-1.5 border-2 rounded-full shadow-lg transition-all duration-300
-                bg-gradient-to-r ${getStatusColor(site.status)} text-white border-white/30
-                ${getStatusGlow(site.status)} group-hover:shadow-xl group-hover:scale-110
+                relative font-bold text-sm px-4 py-2 rounded-2xl shadow-2xl transition-all duration-500
+                bg-gradient-to-r ${getStatusColor(site.status)} text-white border border-white/30 backdrop-blur-xl
+                ${getStatusGlow(site.status)} group-hover:shadow-2xl group-hover:scale-105
               `}
             >
-              <div className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              {site.status}
+              <div className="absolute inset-0 rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <span className="relative z-10">{site.status}</span>
             </Badge>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="sm"
@@ -164,16 +165,16 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
                 e.stopPropagation();
                 onViewDemographics();
               }}
-              className="text-bristol-maroon hover:text-white hover:bg-gradient-to-r hover:from-bristol-maroon hover:to-bristol-gold hover:shadow-lg hover:shadow-bristol-maroon/30 transition-all duration-300"
+              className="text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-bristol-gold/40 hover:to-yellow-500/40 hover:shadow-xl backdrop-blur-xl border border-white/20 rounded-xl px-4 py-2 transition-all duration-500"
             >
-              <Eye className="h-4 w-4 mr-1" />
-              Demographics
+              <Eye className="h-4 w-4 mr-2" />
+              Analytics
             </Button>
             {site.latitude && site.longitude && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-blue-600 hover:text-white hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:shadow-lg hover:shadow-blue-500/30 transition-all duration-300"
+                className="text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/40 hover:to-purple-600/40 hover:shadow-xl backdrop-blur-xl border border-white/20 rounded-xl p-2 transition-all duration-500"
               >
                 <MapPin className="h-4 w-4" />
               </Button>
@@ -182,29 +183,29 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
         </div>
       </CardHeader>
 
-      <CardContent className="relative z-10 space-y-4">
-        {/* Location Info */}
-        <div className="space-y-2">
-          <div className="flex items-center text-bristol-stone group-hover:text-bristol-ink transition-colors duration-300">
-            <MapPin className="h-4 w-4 mr-2 text-bristol-maroon" />
-            <span className="font-medium">
+      <CardContent className="relative z-20 space-y-6 p-8">
+        {/* Premium Location Info */}
+        <div className="space-y-3">
+          <div className="flex items-center text-white/80 group-hover:text-white transition-colors duration-500">
+            <MapPin className="h-5 w-5 mr-3 text-bristol-gold" />
+            <span className="font-medium text-lg">
               {site.addrLine1 && `${site.addrLine1}, `}{site.city}, {site.state} {site.postalCode}
             </span>
           </div>
           {site.country && site.country !== 'USA' && (
-            <div className="text-sm text-bristol-stone/70">{site.country}</div>
+            <div className="text-base text-white/60">{site.country}</div>
           )}
         </div>
 
-        {/* Key Metrics Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Executive Metrics Grid */}
+        <div className="grid grid-cols-2 gap-6">
           {/* Units */}
-          <div className="space-y-1">
-            <div className="flex items-center text-bristol-stone/70 text-sm">
-              <Building2 className="h-4 w-4 mr-1" />
+          <div className="space-y-2">
+            <div className="flex items-center text-white/60 text-base">
+              <Building2 className="h-5 w-5 mr-2" />
               <span>Total Units</span>
             </div>
-            <div className="text-2xl font-bold text-bristol-ink group-hover:text-bristol-maroon transition-colors duration-300">
+            <div className="text-3xl font-bold text-white group-hover:text-bristol-gold transition-colors duration-500 tracking-tight">
               {site.unitsTotal?.toLocaleString() || 'TBD'}
             </div>
             {site.units1b || site.units2b || site.units3b ? (
@@ -217,12 +218,12 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
           </div>
 
           {/* Acreage */}
-          <div className="space-y-1">
-            <div className="flex items-center text-bristol-stone/70 text-sm">
-              <Layers className="h-4 w-4 mr-1" />
+          <div className="space-y-2">
+            <div className="flex items-center text-white/60 text-base">
+              <Layers className="h-5 w-5 mr-2" />
               <span>Acreage</span>
             </div>
-            <div className="text-2xl font-bold text-bristol-ink group-hover:text-bristol-maroon transition-colors duration-300">
+            <div className="text-3xl font-bold text-white group-hover:text-bristol-gold transition-colors duration-500 tracking-tight">
               {site.acreage ? `${site.acreage}` : 'TBD'}
             </div>
             {site.acreage && site.unitsTotal && (
@@ -234,28 +235,28 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
 
           {/* Completion Year */}
           {site.completionYear && (
-            <div className="space-y-1">
-              <div className="flex items-center text-bristol-stone/70 text-sm">
-                <Calendar className="h-4 w-4 mr-1" />
+            <div className="space-y-2">
+              <div className="flex items-center text-white/60 text-base">
+                <Calendar className="h-5 w-5 mr-2" />
                 <span>Completed</span>
               </div>
-              <div className="text-xl font-bold text-bristol-ink group-hover:text-bristol-maroon transition-colors duration-300">
+              <div className="text-2xl font-bold text-white group-hover:text-bristol-gold transition-colors duration-500 tracking-tight">
                 {site.completionYear}
               </div>
-              <div className="text-xs text-bristol-stone/60">
-                {new Date().getFullYear() - site.completionYear} years ago
+              <div className="text-sm text-white/50">
+                {new Date().getFullYear() - site.completionYear} years
               </div>
             </div>
           )}
 
           {/* Average SF */}
           {site.avgSf && (
-            <div className="space-y-1">
-              <div className="flex items-center text-bristol-stone/70 text-sm">
-                <Maximize className="h-4 w-4 mr-1" />
+            <div className="space-y-2">
+              <div className="flex items-center text-white/60 text-base">
+                <Maximize className="h-5 w-5 mr-2" />
                 <span>Avg SF</span>
               </div>
-              <div className="text-xl font-bold text-bristol-ink group-hover:text-bristol-maroon transition-colors duration-300">
+              <div className="text-2xl font-bold text-white group-hover:text-bristol-gold transition-colors duration-500 tracking-tight">
                 {site.avgSf.toLocaleString()}
               </div>
               {site.unitsTotal && (
@@ -267,33 +268,33 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
           )}
         </div>
 
-        {/* Additional Details */}
+        {/* Premium Details */}
         {site.parkingSpaces && (
-          <div className="flex items-center text-sm text-bristol-stone/70">
-            <div className="w-2 h-2 bg-bristol-gold rounded-full mr-2"></div>
+          <div className="flex items-center text-base text-white/70">
+            <div className="w-3 h-3 bg-bristol-gold rounded-full mr-3 shadow-lg shadow-bristol-gold/50"></div>
             <span>{site.parkingSpaces.toLocaleString()} parking spaces</span>
             {site.unitsTotal && (
-              <span className="ml-1">({(site.parkingSpaces / site.unitsTotal).toFixed(1)} per unit)</span>
+              <span className="ml-2 text-bristol-gold">({(site.parkingSpaces / site.unitsTotal).toFixed(1)} per unit)</span>
             )}
           </div>
         )}
 
         {site.notes && (
-          <div className="text-xs text-bristol-stone/60 bg-bristol-cream/20 rounded p-2 border-l-2 border-bristol-gold/30">
+          <div className="text-sm text-white/60 bg-black/20 backdrop-blur-xl rounded-xl p-4 border border-white/10">
             {site.notes.length > 100 ? `${site.notes.substring(0, 100)}...` : site.notes}
           </div>
         )}
 
-        {/* Interactive Elements */}
-        <div className="flex items-center justify-between pt-2 border-t border-bristol-stone/10">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center text-xs text-bristol-stone/60">
-              <Clock className="h-3 w-3 mr-1" />
+        {/* Executive Footer */}
+        <div className="flex items-center justify-between pt-6 border-t border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center text-sm text-white/50">
+              <Clock className="h-4 w-4 mr-2" />
               Updated {site.updatedAt ? new Date(site.updatedAt).toLocaleDateString() : 'N/A'}
             </div>
           </div>
           
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             {site.sourceUrl && (
               <Button
                 variant="ghost"
@@ -302,23 +303,23 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
                   e.stopPropagation();
                   if (site.sourceUrl) window.open(site.sourceUrl, '_blank');
                 }}
-                className="h-6 w-6 p-0 text-blue-500 hover:text-blue-700"
+                className="h-8 w-8 p-0 text-bristol-gold hover:text-white hover:bg-bristol-gold/20 rounded-xl transition-all duration-300"
               >
-                <ExternalLink className="h-3 w-3" />
+                <ExternalLink className="h-4 w-4" />
               </Button>
             )}
-            <div className="text-xs text-bristol-gold">
-              <Star className="h-3 w-3" />
+            <div className="text-bristol-gold">
+              <Star className="h-4 w-4 drop-shadow-lg" />
             </div>
           </div>
         </div>
       </CardContent>
 
-      {/* Selection Indicator */}
+      {/* Premium Selection Indicator */}
       {isSelected && (
-        <div className="absolute top-2 right-2 z-20">
-          <div className="bg-bristol-gold text-bristol-ink p-1 rounded-full shadow-lg shadow-bristol-gold/50">
-            <CheckCircle className="h-4 w-4" />
+        <div className="absolute top-6 right-6 z-30">
+          <div className="bg-gradient-to-r from-bristol-gold to-yellow-500 text-black p-3 rounded-2xl shadow-2xl shadow-bristol-gold/60 backdrop-blur-xl border border-white/30">
+            <CheckCircle className="h-6 w-6" />
           </div>
         </div>
       )}
@@ -575,205 +576,220 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
   }, [filteredAndSortedSites, toast]);
 
   return (
-    <div className="space-y-6">
-      {/* Elite Header */}
-      <div className="relative bg-gradient-to-r from-white via-bristol-cream/30 to-white rounded-2xl border-2 border-bristol-gold/30 shadow-xl overflow-hidden">
-        {/* Ambient Background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/5 via-transparent to-bristol-maroon/5" />
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-transparent via-bristol-gold/10 to-transparent opacity-50" />
+    <div className="min-h-screen relative">
+      {/* Fortune 500 Background */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('/src/assets/Icon+1_1755370919284.webp')`
+        }}
+      />
+      
+      {/* Enterprise Glass Overlay */}
+      <div className="relative z-10 min-h-screen backdrop-blur-sm">
+        <div className="space-y-8 p-8">
+          {/* Executive Header */}
+          <div className="relative backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
+            {/* Premium Glass Morphism */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-bristol-gold/10 to-white/5" />
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent" />
 
-        <div className="relative z-10 p-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-6">
-              <div className="p-4 bg-gradient-to-br from-bristol-maroon to-bristol-gold rounded-2xl shadow-xl shadow-bristol-maroon/30">
-                <Database className="h-8 w-8 text-white" />
+            <div className="relative z-20 p-12">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-8">
+                  <div className="p-6 bg-gradient-to-br from-bristol-gold/90 via-yellow-500/80 to-bristol-gold/90 rounded-3xl shadow-2xl shadow-bristol-gold/50 backdrop-blur-xl border border-white/30">
+                    <Database className="h-12 w-12 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-6xl font-cinzel font-bold text-white mb-3 tracking-wide">
+                      Elite Property Intelligence
+                    </h1>
+                    <p className="text-white/80 text-2xl font-light tracking-wide">
+                      Bristol Development Group • Fortune 500 Analytics Platform
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-6">
+                  <Tabs value={activeView} onValueChange={(value: any) => setActiveView(value)} className="w-auto">
+                    <TabsList className="grid w-full grid-cols-3 bg-black/30 backdrop-blur-xl border border-white/20 p-2 rounded-2xl">
+                      <TabsTrigger value="cards" className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-3 rounded-xl font-medium transition-all">
+                        <Layers className="h-5 w-5 mr-3" />
+                        Portfolio
+                      </TabsTrigger>
+                      <TabsTrigger value="demographics" className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-3 rounded-xl font-medium transition-all">
+                        <Users className="h-5 w-5 mr-3" />
+                        Demographics
+                      </TabsTrigger>
+                      <TabsTrigger value="analytics" className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-3 rounded-xl font-medium transition-all">
+                        <BarChart3 className="h-5 w-5 mr-3" />
+                        Analytics
+                      </TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
+          </div>
+
+              {/* Executive Analytics Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8">
+                <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-2xl overflow-hidden group">
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white/70 text-lg font-light mb-2">Portfolio</p>
+                        <p className="text-4xl font-bold text-white tracking-tight">{analytics.totalProperties.toLocaleString()}</p>
+                        <p className="text-bristol-gold font-medium text-sm mt-1">PROPERTIES</p>
+                      </div>
+                      <div className="p-4 bg-gradient-to-br from-bristol-gold/40 to-yellow-500/30 rounded-2xl backdrop-blur-sm border border-white/20">
+                        <Building2 className="h-8 w-8 text-white" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-2xl overflow-hidden group">
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white/70 text-lg font-light mb-2">Total Units</p>
+                        <p className="text-4xl font-bold text-white tracking-tight">{analytics.totalUnits.toLocaleString()}</p>
+                        <p className="text-bristol-gold font-medium text-sm mt-1">RESIDENTIAL</p>
+                      </div>
+                      <div className="p-4 bg-gradient-to-br from-blue-500/40 to-purple-600/30 rounded-2xl backdrop-blur-sm border border-white/20">
+                        <Users className="h-8 w-8 text-white" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-2xl overflow-hidden group">
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white/70 text-lg font-light mb-2">Land Assets</p>
+                        <p className="text-4xl font-bold text-white tracking-tight">{analytics.totalAcreage.toFixed(1)}</p>
+                        <p className="text-bristol-gold font-medium text-sm mt-1">ACRES</p>
+                      </div>
+                      <div className="p-4 bg-gradient-to-br from-bristol-gold/40 to-yellow-500/30 rounded-2xl backdrop-blur-sm border border-white/20">
+                        <Layers className="h-8 w-8 text-white" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-2xl overflow-hidden group">
+                  <CardContent className="p-8">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-white/70 text-lg font-light mb-2">Avg Density</p>
+                        <p className="text-4xl font-bold text-white tracking-tight">{Math.round(analytics.avgUnitsPerSite)}</p>
+                        <p className="text-bristol-gold font-medium text-sm mt-1">UNITS/SITE</p>
+                      </div>
+                      <div className="p-4 bg-gradient-to-br from-purple-500/40 to-pink-600/30 rounded-2xl backdrop-blur-sm border border-white/20">
+                        <TrendingUp className="h-8 w-8 text-white" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-              <div>
-                <h1 className="text-4xl font-cinzel font-bold text-bristol-ink mb-2">
-                  Elite Property Analytics Dashboard
-                </h1>
-                <p className="text-bristol-stone text-lg font-medium">
-                  Bristol Development Group's Comprehensive Property Intelligence Platform
-                </p>
+            </div>
+          </div>
+
+          {/* Executive Command Center */}
+          <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-3xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-black/20 via-bristol-gold/10 to-black/20 border-b border-white/20 backdrop-blur-xl">
+              <CardTitle className="flex items-center gap-6">
+                <div className="p-4 bg-gradient-to-br from-bristol-gold/80 to-yellow-500/70 rounded-2xl shadow-2xl backdrop-blur-sm border border-white/30">
+                  <Filter className="h-6 w-6 text-white" />
+                </div>
+                <span className="font-cinzel text-white text-2xl font-bold tracking-wide">Portfolio Command Center</span>
+                <Badge variant="secondary" className="ml-4 bg-bristol-gold/20 text-white border-bristol-gold/30 px-4 py-2 text-lg">
+                  {filteredAndSortedSites.length} of {sites.length} assets
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-10">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                {/* Executive Search */}
+                <div className="relative">
+                  <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-white/60 h-5 w-5" />
+                  <Input
+                    placeholder="Search portfolio..."
+                    value={filters.search}
+                    onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                    className="pl-12 h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl focus:border-bristol-gold focus:ring-bristol-gold/30"
+                  />
+                </div>
+
+                {/* Asset Type Filter */}
+                <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
+                  <SelectTrigger className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white text-lg rounded-2xl">
+                    <SelectValue placeholder="All Asset Types" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-black/90 backdrop-blur-xl border-white/20 text-white">
+                    <SelectItem value="all">All Asset Types</SelectItem>
+                    {Object.keys(filteredAnalytics.statusBreakdown).map(status => (
+                      <SelectItem key={status} value={status}>
+                        {status} ({filteredAnalytics.statusBreakdown[status]})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Market Filter */}
+                <Select value={filters.state} onValueChange={(value) => setFilters(prev => ({ ...prev, state: value }))}>
+                  <SelectTrigger className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white text-lg rounded-2xl">
+                    <SelectValue placeholder="All Markets" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-black/90 backdrop-blur-xl border-white/20 text-white">
+                    <SelectItem value="all">All Markets</SelectItem>
+                    {Object.keys(filteredAnalytics.stateBreakdown).map(state => (
+                      <SelectItem key={state} value={state}>
+                        {state} ({filteredAnalytics.stateBreakdown[state]})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Sort By */}
+                <Select value={filters.sortBy} onValueChange={(value) => setFilters(prev => ({ ...prev, sortBy: value }))}>
+                  <SelectTrigger className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white text-lg rounded-2xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-black/90 backdrop-blur-xl border-white/20 text-white">
+                    <SelectItem value="name">Property Name</SelectItem>
+                    <SelectItem value="unitsTotal">Unit Count</SelectItem>
+                    <SelectItem value="acreage">Land Area</SelectItem>
+                    <SelectItem value="completionYear">Development Year</SelectItem>
+                    <SelectItem value="state">Market</SelectItem>
+                    <SelectItem value="status">Asset Type</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
 
-            <div className="flex items-center gap-4">
-              <Tabs value={activeView} onValueChange={(value: any) => setActiveView(value)} className="w-auto">
-                <TabsList className="grid w-full grid-cols-3 bg-white/50 border border-bristol-gold/20">
-                  <TabsTrigger value="cards" className="data-[state=active]:bg-bristol-gold data-[state=active]:text-bristol-ink">
-                    <Layers className="h-4 w-4 mr-2" />
-                    Properties
-                  </TabsTrigger>
-                  <TabsTrigger value="demographics" className="data-[state=active]:bg-bristol-gold data-[state=active]:text-bristol-ink">
-                    <Users className="h-4 w-4 mr-2" />
-                    Demographics
-                  </TabsTrigger>
-                  <TabsTrigger value="analytics" className="data-[state=active]:bg-bristol-gold data-[state=active]:text-bristol-ink">
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Analytics
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
-          </div>
-
-          {/* Real-time Analytics Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <Card className="bg-gradient-to-br from-white to-emerald-50 border-emerald-200/50 shadow-lg shadow-emerald-500/10">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg">
-                    <Building2 className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-emerald-700">Total Properties</p>
-                    <p className="text-2xl font-bold text-emerald-900">{analytics.totalProperties.toLocaleString()}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-white to-blue-50 border-blue-200/50 shadow-lg shadow-blue-500/10">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
-                    <Users className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-blue-700">Total Units</p>
-                    <p className="text-2xl font-bold text-blue-900">{analytics.totalUnits.toLocaleString()}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-white to-bristol-cream border-bristol-gold/30 shadow-lg shadow-bristol-gold/20">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-gradient-to-br from-bristol-gold to-yellow-500 rounded-xl shadow-lg">
-                    <Layers className="h-5 w-5 text-bristol-ink" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-bristol-maroon">Total Acreage</p>
-                    <p className="text-2xl font-bold text-bristol-ink">{analytics.totalAcreage.toFixed(1)}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-white to-purple-50 border-purple-200/50 shadow-lg shadow-purple-500/10">
-              <CardContent className="p-4">
-                <div className="flex items-center space-x-3">
-                  <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg">
-                    <TrendingUp className="h-5 w-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-purple-700">Avg Units/Site</p>
-                    <p className="text-2xl font-bold text-purple-900">{Math.round(analytics.avgUnitsPerSite)}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-
-      {/* Advanced Filters Panel */}
-      <Card className="bg-gradient-to-r from-white via-bristol-cream/20 to-white border-bristol-gold/30 shadow-xl">
-        <CardHeader className="bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 border-b border-bristol-gold/20">
-          <CardTitle className="flex items-center gap-3">
-            <div className="p-2 bg-bristol-maroon/10 rounded-lg">
-              <Filter className="h-5 w-5 text-bristol-maroon" />
-            </div>
-            <span className="font-cinzel text-bristol-maroon">Elite Filtering & Search</span>
-            <Badge variant="secondary" className="ml-2 bg-bristol-gold/20 text-bristol-maroon">
-              {filteredAndSortedSites.length} of {sites.length} properties
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-bristol-stone/60 h-4 w-4" />
-              <Input
-                placeholder="Search properties..."
-                value={filters.search}
-                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-                className="pl-10 border-bristol-gold/30 focus:border-bristol-maroon focus:ring-bristol-maroon/20"
-              />
-            </div>
-
-            {/* Status Filter */}
-            <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
-              <SelectTrigger className="border-bristol-gold/30">
-                <SelectValue placeholder="All Statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                {Object.keys(filteredAnalytics.statusBreakdown).map(status => (
-                  <SelectItem key={status} value={status}>
-                    {status} ({filteredAnalytics.statusBreakdown[status]})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* State Filter */}
-            <Select value={filters.state} onValueChange={(value) => setFilters(prev => ({ ...prev, state: value }))}>
-              <SelectTrigger className="border-bristol-gold/30">
-                <SelectValue placeholder="All States" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All States</SelectItem>
-                {Object.keys(filteredAnalytics.stateBreakdown).map(state => (
-                  <SelectItem key={state} value={state}>
-                    {state} ({filteredAnalytics.stateBreakdown[state]})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Sort By */}
-            <Select value={filters.sortBy} onValueChange={(value) => setFilters(prev => ({ ...prev, sortBy: value }))}>
-              <SelectTrigger className="border-bristol-gold/30">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="name">Name</SelectItem>
-                <SelectItem value="unitsTotal">Total Units</SelectItem>
-                <SelectItem value="acreage">Acreage</SelectItem>
-                <SelectItem value="completionYear">Completion Year</SelectItem>
-                <SelectItem value="state">State</SelectItem>
-                <SelectItem value="status">Status</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Input
-              type="number"
-              placeholder="Min Units"
-              value={filters.minUnits}
-              onChange={(e) => setFilters(prev => ({ ...prev, minUnits: e.target.value }))}
-              className="border-bristol-gold/30"
-            />
-            <Input
-              type="number"
-              placeholder="Max Units"
-              value={filters.maxUnits}
-              onChange={(e) => setFilters(prev => ({ ...prev, maxUnits: e.target.value }))}
-              className="border-bristol-gold/30"
-            />
-            <Input
-              type="number"
-              step="0.1"
-              placeholder="Min Acreage"
-              value={filters.minAcreage}
-              onChange={(e) => setFilters(prev => ({ ...prev, minAcreage: e.target.value }))}
-              className="border-bristol-gold/30"
-            />
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <Input
+                  type="number"
+                  placeholder="Min Units"
+                  value={filters.minUnits}
+                  onChange={(e) => setFilters(prev => ({ ...prev, minUnits: e.target.value }))}
+                  className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl"
+                />
+                <Input
+                  type="number"
+                  placeholder="Max Units"
+                  value={filters.maxUnits}
+                  onChange={(e) => setFilters(prev => ({ ...prev, maxUnits: e.target.value }))}
+                  className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl"
+                />
+                <Input
+                  type="number"
+                  step="0.1"
+                  placeholder="Min Acreage"
+                  value={filters.minAcreage}
+                  onChange={(e) => setFilters(prev => ({ ...prev, minAcreage: e.target.value }))}
+                  className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl"
+                />
             <div className="flex gap-2">
               <Input
                 type="number"
@@ -1067,6 +1083,8 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
           </Card>
         </div>
       )}
+        </div>
+      </div>
     </div>
   );
 }
