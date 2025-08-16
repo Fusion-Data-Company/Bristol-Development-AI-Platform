@@ -6,16 +6,14 @@ interface BristolFooterProps {
   variant?: 'standard' | 'thick' | 'enterprise';
 }
 
-export function BristolFooter({ className = '', variant = 'thick' }: BristolFooterProps) {
+export function BristolFooter({ className = '' }: BristolFooterProps) {
   const currentYear = new Date().getFullYear();
-  
-  const getFooterHeight = () => {
-    // Force minimal height with no padding
-    return 'h-auto py-0';
-  };
 
   return (
-    <footer className={`bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 text-white ${getFooterHeight()} ${className}`} style={{
+    <footer className={`bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 text-white ${className}`} style={{
+        margin: '0 !important',
+        padding: '0 !important',
+        minHeight: 'auto !important',
         backgroundImage: `
           radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
           radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
@@ -23,13 +21,13 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
           repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px)
         `
       }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-1 pb-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style={{paddingTop: '4px !important', paddingBottom: '4px !important', margin: '0 !important'}}>
         
         {/* Main Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4" style={{gap: '8px !important', marginBottom: '4px !important'}}>
           
           {/* Company Info */}
-          <div className="space-y-4">
+          <div className="space-y-1" style={{margin: '0 !important', padding: '0 !important'}}>
             <div className="flex items-center space-x-2">
               <Building2 className="h-6 w-6 text-cyan-400" />
               <h3 className="text-lg font-bold text-cyan-400 font-serif">
@@ -47,24 +45,24 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
           </div>
 
           {/* Platform Features */}
-          <div className="space-y-4">
+          <div className="space-y-1" style={{margin: '0 !important', padding: '0 !important'}}>
             <h3 className="text-lg font-semibold text-cyan-400 font-serif">
               Platform Intelligence
             </h3>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li className="flex items-center space-x-2">
+            <ul className="space-y-0 text-sm text-gray-300" style={{margin: '0 !important', padding: '0 !important'}}>
+              <li className="flex items-center space-x-2" style={{margin: '0 !important', padding: '0 !important'}}>
                 <Cpu className="h-3 w-3 text-cyan-400" />
                 <span className="font-serif">Bristol A.I. Elite v5.0</span>
               </li>
-              <li className="flex items-center space-x-2">
+              <li className="flex items-center space-x-2" style={{margin: '0 !important', padding: '0 !important'}}>
                 <BarChart3 className="h-3 w-3 text-cyan-400" />
                 <span className="font-serif">Real-Time Analytics</span>
               </li>
-              <li className="flex items-center space-x-2">
+              <li className="flex items-center space-x-2" style={{margin: '0 !important', padding: '0 !important'}}>
                 <MapPin className="h-3 w-3 text-cyan-400" />
                 <span className="font-serif">Interactive Mapping</span>
               </li>
-              <li className="flex items-center space-x-2">
+              <li className="flex items-center space-x-2" style={{margin: '0 !important', padding: '0 !important'}}>
                 <Shield className="h-3 w-3 text-cyan-400" />
                 <span className="font-serif">Enterprise Security</span>
               </li>
@@ -72,34 +70,34 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
           </div>
 
           {/* Technology Stack */}
-          <div className="space-y-4">
+          <div className="space-y-1" style={{margin: '0 !important', padding: '0 !important'}}>
             <h3 className="text-lg font-semibold text-cyan-400 font-serif">
               Technology
             </h3>
-            <ul className="space-y-2 text-sm text-gray-300">
-              <li className="font-serif">Advanced AI Processing</li>
-              <li className="font-serif">Multi-Agent Architecture</li>
-              <li className="font-serif">Real-Time Data Streams</li>
-              <li className="font-serif">Enterprise APIs</li>
-              <li className="font-serif">Predictive Analytics</li>
+            <ul className="space-y-0 text-sm text-gray-300" style={{margin: '0 !important', padding: '0 !important'}}>
+              <li className="font-serif" style={{margin: '0 !important', padding: '0 !important'}}>Advanced AI Processing</li>
+              <li className="font-serif" style={{margin: '0 !important', padding: '0 !important'}}>Multi-Agent Architecture</li>
+              <li className="font-serif" style={{margin: '0 !important', padding: '0 !important'}}>Real-Time Data Streams</li>
+              <li className="font-serif" style={{margin: '0 !important', padding: '0 !important'}}>Enterprise APIs</li>
+              <li className="font-serif" style={{margin: '0 !important', padding: '0 !important'}}>Predictive Analytics</li>
             </ul>
           </div>
 
           {/* Contact & Support */}
-          <div className="space-y-4">
+          <div className="space-y-1" style={{margin: '0 !important', padding: '0 !important'}}>
             <h3 className="text-lg font-semibold text-cyan-400 font-serif">
               Enterprise Support
             </h3>
-            <div className="space-y-3 text-sm text-gray-300">
-              <div className="flex items-center space-x-2">
+            <div className="space-y-0 text-sm text-gray-300" style={{margin: '0 !important', padding: '0 !important'}}>
+              <div className="flex items-center space-x-2" style={{margin: '0 !important', padding: '0 !important'}}>
                 <Mail className="h-4 w-4 text-cyan-400" />
                 <span className="font-serif">elite@bristol.dev</span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2" style={{margin: '0 !important', padding: '0 !important'}}>
                 <Phone className="h-4 w-4 text-cyan-400" />
                 <span className="font-serif">Enterprise Hotline</span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2" style={{margin: '0 !important', padding: '0 !important'}}>
                 <Globe className="h-4 w-4 text-cyan-400" />
                 <span className="font-serif">24/7 AI Support</span>
               </div>
@@ -108,19 +106,19 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-cyan-400/20 pt-2">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="border-t border-cyan-400/20" style={{paddingTop: '4px !important', margin: '0 !important'}}>
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-0" style={{margin: '0 !important', padding: '0 !important'}}>
             
             {/* Copyright */}
             <div className="text-sm text-gray-400">
               <p className="font-serif">© {currentYear} Bristol Development Group. All rights reserved.</p>
-              <p className="text-xs mt-1 font-serif">
+              <p className="text-xs font-serif" style={{margin: '0 !important', padding: '0 !important'}}>
                 Powered by Bristol A.I. Elite v5.0 • Enterprise Intelligence Platform
               </p>
             </div>
 
             {/* Status Indicators */}
-            <div className="flex items-center space-x-6 text-xs text-gray-400">
+            <div className="flex items-center space-x-6 text-xs text-gray-400" style={{margin: '0 !important', padding: '0 !important'}}>
               <div className="flex items-center space-x-1">
                 <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
                 <span className="font-serif">System Online</span>
@@ -136,7 +134,7 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
             </div>
 
             {/* Legal Links */}
-            <div className="flex space-x-4 text-xs text-gray-400">
+            <div className="flex space-x-4 text-xs text-gray-400" style={{margin: '0 !important', padding: '0 !important'}}>
               <button className="hover:text-cyan-400 transition-colors font-serif">Privacy</button>
               <button className="hover:text-cyan-400 transition-colors font-serif">Terms</button>
               <button className="hover:text-cyan-400 transition-colors font-serif">Security</button>
