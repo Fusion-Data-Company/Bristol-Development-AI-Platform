@@ -179,7 +179,7 @@ export default function Sites() {
     }
   };
 
-  const statusOptions = ["Completed", "Pipeline", "Other"];
+  const statusOptions = ["Operating", "Pipeline", "Other"];
 
   return (
     <Chrome>
@@ -348,7 +348,7 @@ export default function Sites() {
                     );
                   }}
                 >
-                  {status === "Completed" ? "Operational" : status}
+                  {status}
                 </Badge>
               ))}
             </div>
@@ -364,8 +364,6 @@ export default function Sites() {
             backgroundImage: `url(${apartmentBackgroundImage})`,
             filter: 'brightness(0.85) contrast(1.1)',
             imageRendering: 'crisp-edges',
-            WebkitImageRendering: 'crisp-edges',
-            msInterpolationMode: 'nearest-neighbor',
             backgroundAttachment: 'fixed'
           }}
         />
@@ -446,7 +444,7 @@ export default function Sites() {
               <div>
                 <BristolPortfolioAgent 
                   selectedSite={selectedSite}
-                  portfolioData={portfolioData}
+                  portfolioData={sites || []}
                 />
               </div>
             </div>
