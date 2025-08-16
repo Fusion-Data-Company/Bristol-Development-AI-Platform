@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import SimpleChrome from '@/components/brand/SimpleChrome';
+import bristolBackground from '@assets/bristol-analytics-background.jpg';
 import { 
   Send, 
   MessageCircle, 
@@ -159,17 +160,24 @@ export default function Chat() {
 
   return (
     <SimpleChrome>
-      <div className="flex flex-col h-screen bg-gray-50">
+      <div 
+        className="flex flex-col h-screen"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${bristolBackground})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}>
         {/* Chat Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="bg-white/95 backdrop-blur-sm border-b border-cyan-400/50 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <MessageCircle className="h-6 w-6 text-blue-600" />
+              <div className="p-2 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg">
+                <Brain className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">AI Chat</h1>
-                <p className="text-sm text-gray-500">Powered by advanced language models</p>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">Bristol A.I. Chat</h1>
+                <p className="text-sm text-gray-600">Enterprise Intelligence System</p>
               </div>
             </div>
             
@@ -203,10 +211,10 @@ export default function Chat() {
             <div className="space-y-4 max-w-4xl mx-auto">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[80%] rounded-lg px-4 py-3 ${
+                  <div className={`max-w-[80%] rounded-lg px-4 py-3 backdrop-blur-sm ${
                     msg.role === 'user' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-white border border-gray-200 text-gray-900'
+                      ? 'bg-gradient-to-r from-cyan-600/90 to-blue-600/90 text-white' 
+                      : 'bg-white/90 border border-cyan-200/50 text-gray-900'
                   }`}>
                     <div className="flex items-start gap-3">
                       {msg.role === 'assistant' && (
@@ -249,7 +257,7 @@ export default function Chat() {
         </div>
 
         {/* Input Area */}
-        <div className="bg-white border-t border-gray-200 px-6 py-4">
+        <div className="bg-white/95 backdrop-blur-sm border-t border-cyan-400/50 px-6 py-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-end gap-3">
               <div className="flex-1">

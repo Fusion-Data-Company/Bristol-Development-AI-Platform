@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { queryClient } from '@/lib/queryClient';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -41,6 +40,7 @@ interface IntegrationStatus {
 export default function Integrations() {
   const [activeTab, setActiveTab] = useState('services');
   const [testingService, setTestingService] = useState<string | null>(null);
+  const queryClient = useQueryClient();
 
   // Get integration status
   const { data: integrations, isLoading } = useQuery<IntegrationStatus[]>({

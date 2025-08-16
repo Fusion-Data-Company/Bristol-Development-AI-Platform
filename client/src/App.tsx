@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import SimpleChrome from '@/components/brand/SimpleChrome';
 import { ThinkingIndicator } from '@/components/chat/ThinkingIndicator';
 import { useAuth } from '@/hooks/useAuth';
+import BristolFloatingWidget from '@/components/BristolFloatingWidget';
 
 // Import all pages
 import Landing from '@/pages/Landing';
@@ -115,6 +116,9 @@ function AppContent() {
       
       {/* Toast Notifications */}
       <Toaster />
+      
+      {/* Bristol AI Floating Widget - Always visible */}
+      <BristolFloatingWidget />
     </Router>
   );
 }
