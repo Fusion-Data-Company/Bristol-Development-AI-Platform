@@ -44,7 +44,24 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
     }
 
     return (
-      <Card ref={ref} className={cn("w-full max-w-xl mx-auto", className)} {...props}>
+      <Card 
+        ref={ref} 
+        className={cn("w-full max-w-xl mx-auto relative overflow-hidden", className)} 
+        style={{
+          background: `
+            linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.99) 25%, rgba(241, 245, 249, 0.97) 50%, rgba(248, 250, 252, 0.99) 75%, rgba(255, 255, 255, 0.98) 100%),
+            repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(139, 38, 53, 0.02) 2px, rgba(139, 38, 53, 0.02) 4px),
+            repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(212, 165, 116, 0.015) 1px, rgba(212, 165, 116, 0.015) 3px)
+          `,
+          boxShadow: `
+            0 25px 50px -12px rgba(139, 38, 53, 0.08),
+            0 10px 25px -5px rgba(0, 0, 0, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 0 rgba(139, 38, 53, 0.03)
+          `,
+          border: '1px solid rgba(139, 38, 53, 0.1)'
+        }}
+        {...props}>
         <CardHeader className="text-left">
           <CardTitle className="text-2xl font-serif whitespace-nowrap">Sign In To Bristol AI Intelligence</CardTitle>
           <CardDescription className="font-serif">
