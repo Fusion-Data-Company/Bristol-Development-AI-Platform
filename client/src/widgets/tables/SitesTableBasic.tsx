@@ -378,8 +378,8 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
   }
 
   return (
-    <div className="space-y-4 h-full flex flex-col" style={{ minHeight: '800px' }}>
-      <div className="rounded-md border bg-white flex-1 overflow-x-auto">
+    <div className="space-y-4">
+      <div className="rounded-md border bg-white">
         <div className="min-w-max">
           <Table className="w-full">
             <TableHeader className="sticky top-0 bg-gradient-to-r from-white to-bristol-cream/50 z-10 shadow-lg border-b-2 border-bristol-stone/20">
