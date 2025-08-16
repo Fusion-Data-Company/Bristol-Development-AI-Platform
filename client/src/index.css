@@ -648,6 +648,11 @@
   /* Bristol Floating Widget Animations */
   --bristol-glow: drop-shadow(0 0 20px hsl(189 85% 67% / 0.3));
   --bristol-glow-strong: drop-shadow(0 0 30px hsl(189 85% 67% / 0.5));
+  
+  /* 3D Effect Loader Variables */
+  --bg: hsl(210 17% 97%);
+  --primary1: hsl(189 85% 67%);
+  --primary2: hsl(339 100% 31%);
 }
 
 /* Enterprise Elite Tools Styling */
@@ -793,6 +798,152 @@
 
 .bristol-glow-hover:hover {
   filter: drop-shadow(0 0 30px hsl(189 85% 67% / 0.6)) drop-shadow(0 0 60px hsl(267 87% 67% / 0.3));
+}
+
+/* 3D Effect Loader Animations */
+@keyframes shadow724 {
+  from {
+    animation-timing-function: ease-in;
+    box-shadow: 0.1em 0.1em 0 0.1em black, 0.3em 0 0.3em rgba(0, 0, 0, 0.3);
+  }
+  25% {
+    animation-timing-function: ease-out;
+    box-shadow: 0.1em 0.1em 0 0.1em black, 0.8em 0 0.8em rgba(0, 0, 0, 0.5);
+  }
+  50%, to {
+    box-shadow: 0.1em 0.1em 0 0.1em black, 0.3em 0 0.3em rgba(0, 0, 0, 0.3);
+  }
+}
+
+@keyframes pushInOut1724 {
+  from {
+    animation-timing-function: ease-in;
+    background-color: var(--bg);
+    transform: translate(0, 0);
+  }
+  25% {
+    animation-timing-function: ease-out;
+    background-color: var(--primary2);
+    transform: translate(-71%, -71%);
+  }
+  50%, to {
+    background-color: var(--bg);
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes pushInOut2724 {
+  from {
+    animation-timing-function: ease-in;
+    background-color: var(--bg);
+    clip-path: polygon(0 75%, 100% 75%, 100% 100%, 0 100%);
+  }
+  25% {
+    animation-timing-function: ease-out;
+    background-color: var(--primary1);
+    clip-path: polygon(0 25%, 100% 25%, 100% 100%, 0 100%);
+  }
+  50%, to {
+    background-color: var(--bg);
+    clip-path: polygon(0 75%, 100% 75%, 100% 100%, 0 100%);
+  }
+}
+
+/* 3D Effect Loader Styles */
+.pl {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75em;
+  width: 9em;
+  height: 9em;
+  position: relative;
+  margin: 0 auto;
+}
+
+.pl__dot {
+  width: 2em;
+  height: 2em;
+  background-color: var(--primary1);
+  border-radius: 0.2em;
+  animation: pushInOut1724 2.4s ease-in-out infinite;
+  position: relative;
+  box-shadow: 0.1em 0.1em 0 0.1em black, 0.3em 0 0.3em rgba(0, 0, 0, 0.3);
+}
+
+.pl__dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.pl__dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.pl__dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.pl__dot:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+.pl__dot:nth-child(5) {
+  animation-delay: 0.8s;
+}
+
+.pl__dot:nth-child(6) {
+  animation-delay: 1s;
+}
+
+.pl__dot:nth-child(7) {
+  animation-delay: 1.2s;
+}
+
+.pl__dot:nth-child(8) {
+  animation-delay: 1.4s;
+}
+
+.pl__dot:nth-child(9) {
+  animation-delay: 1.6s;
+}
+
+.pl__dot:nth-child(10) {
+  animation-delay: 1.8s;
+}
+
+.pl__dot:nth-child(11) {
+  animation-delay: 2s;
+}
+
+.pl__dot:nth-child(12) {
+  animation-delay: 2.2s;
+}
+
+.pl__dot::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: var(--primary2);
+  border-radius: inherit;
+  animation: pushInOut2724 2.4s ease-in-out infinite;
+  animation-delay: inherit;
+}
+
+.pl__text {
+  position: absolute;
+  bottom: -2.5em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2em;
+  font-weight: 600;
+  color: var(--bristol-maroon);
+  font-family: var(--font-sans);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: bristol-pulse 2s ease-in-out infinite;
 }
 
 /* Landing Page Animated Background Layers */
