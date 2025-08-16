@@ -23,8 +23,10 @@ export default function Landing() {
   }
   
   const handleEmailLink = () => {
-    console.log("Requesting email link...");
-    // Email magic link also handled by Replit Auth
+    console.log("Bristol Team Email Registration...");
+    // Direct to Replit Auth for @bristoldevelopment.com email registration
+    // This allows Bristol team members to register with their company email
+    // They'll create their own password through Replit's secure system
     window.location.href = "/api/login";
   }
 
