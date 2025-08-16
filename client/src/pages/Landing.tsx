@@ -24,24 +24,129 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen relative">
-      {/* Stucco Background with Visual Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300" 
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Main Stucco Background with Enhanced Texture */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-700 via-gray-600 to-gray-800" 
            style={{
              backgroundImage: `
-               repeating-linear-gradient(45deg, transparent, transparent 1px, rgba(255, 255, 255, 0.1) 1px, rgba(255, 255, 255, 0.1) 2px),
-               repeating-linear-gradient(-45deg, transparent, transparent 1px, rgba(0, 0, 0, 0.05) 1px, rgba(0, 0, 0, 0.05) 2px),
-               radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
-               radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.15) 0%, transparent 50%),
-               radial-gradient(circle at 40% 80%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
-               repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255, 255, 255, 0.03) 2deg, transparent 4deg)
+               repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(255, 255, 255, 0.15) 3px, rgba(255, 255, 255, 0.15) 6px),
+               repeating-linear-gradient(-45deg, transparent, transparent 3px, rgba(0, 0, 0, 0.1) 3px, rgba(0, 0, 0, 0.1) 6px),
+               repeating-conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255, 255, 255, 0.08) 3deg, transparent 6deg),
+               radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+               radial-gradient(circle at 75% 75%, rgba(0, 0, 0, 0.1) 0%, transparent 50%)
              `,
-             backgroundSize: '4px 4px, 4px 4px, 200% 200%, 300% 300%, 250% 250%, 20px 20px'
+             backgroundSize: '8px 8px, 8px 8px, 24px 24px, 100px 100px, 150px 150px'
            }}>
       </div>
-      
-      {/* Overlay for texture depth */}
-      <div className="absolute inset-0 bg-gradient-to-t from-gray-200/30 via-transparent to-gray-100/20"></div>
+
+      {/* Animated Moving Layer 1 - Cyan Glows */}
+      <div className="absolute inset-0 animate-pulse" 
+           style={{
+             backgroundImage: `
+               radial-gradient(circle at 15% 30%, rgba(6, 182, 212, 0.4) 0%, transparent 40%),
+               radial-gradient(circle at 85% 60%, rgba(6, 182, 212, 0.3) 0%, transparent 45%),
+               radial-gradient(circle at 50% 90%, rgba(6, 182, 212, 0.25) 0%, transparent 35%)
+             `,
+             backgroundSize: '600px 600px, 800px 800px, 500px 500px',
+             animation: 'float-cyan 8s ease-in-out infinite'
+           }}>
+      </div>
+
+      {/* Animated Moving Layer 2 - Orange Glows */}
+      <div className="absolute inset-0" 
+           style={{
+             backgroundImage: `
+               radial-gradient(circle at 70% 20%, rgba(255, 165, 0, 0.35) 0%, transparent 40%),
+               radial-gradient(circle at 30% 70%, rgba(255, 140, 0, 0.3) 0%, transparent 45%),
+               radial-gradient(circle at 90% 80%, rgba(255, 165, 0, 0.25) 0%, transparent 35%)
+             `,
+             backgroundSize: '700px 700px, 600px 600px, 550px 550px',
+             animation: 'float-orange 10s ease-in-out infinite reverse'
+           }}>
+      </div>
+
+      {/* Animated Moving Layer 3 - Mixed Glows */}
+      <div className="absolute inset-0" 
+           style={{
+             backgroundImage: `
+               radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.2) 0%, transparent 50%),
+               radial-gradient(circle at 80% 30%, rgba(255, 165, 0, 0.2) 0%, transparent 50%),
+               radial-gradient(circle at 20% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 40%)
+             `,
+             backgroundSize: '900px 900px, 750px 750px, 650px 650px',
+             animation: 'drift 12s linear infinite'
+           }}>
+      </div>
+
+      {/* Advanced Stucco Texture Overlay */}
+      <div className="absolute inset-0" 
+           style={{
+             backgroundImage: `
+               repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 255, 255, 0.08) 1px, rgba(255, 255, 255, 0.08) 2px),
+               repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(0, 0, 0, 0.05) 1px, rgba(0, 0, 0, 0.05) 2px),
+               repeating-radial-gradient(circle at 50% 50%, transparent 0px, rgba(255, 255, 255, 0.03) 1px, transparent 2px)
+             `,
+             backgroundSize: '3px 3px, 3px 3px, 15px 15px'
+           }}>
+      </div>
+
+      {/* Dynamic Shadow Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-gray-900/20 via-transparent to-gray-700/10"></div>
+
+      {/* CSS Animations */}
+      <style jsx>{`
+        @keyframes float-cyan {
+          0%, 100% { 
+            transform: translate(0, 0) scale(1); 
+            opacity: 0.6; 
+          }
+          25% { 
+            transform: translate(-20px, -30px) scale(1.1); 
+            opacity: 0.8; 
+          }
+          50% { 
+            transform: translate(15px, -10px) scale(0.9); 
+            opacity: 0.7; 
+          }
+          75% { 
+            transform: translate(-10px, 20px) scale(1.05); 
+            opacity: 0.9; 
+          }
+        }
+        
+        @keyframes float-orange {
+          0%, 100% { 
+            transform: translate(0, 0) scale(1) rotate(0deg); 
+            opacity: 0.5; 
+          }
+          33% { 
+            transform: translate(25px, -20px) scale(1.15) rotate(2deg); 
+            opacity: 0.7; 
+          }
+          66% { 
+            transform: translate(-15px, 25px) scale(0.85) rotate(-1deg); 
+            opacity: 0.6; 
+          }
+        }
+        
+        @keyframes drift {
+          0% { 
+            transform: translate(0, 0) rotate(0deg); 
+          }
+          25% { 
+            transform: translate(10px, -15px) rotate(1deg); 
+          }
+          50% { 
+            transform: translate(-5px, 10px) rotate(-0.5deg); 
+          }
+          75% { 
+            transform: translate(8px, -8px) rotate(0.8deg); 
+          }
+          100% { 
+            transform: translate(0, 0) rotate(0deg); 
+          }
+        }
+      `}</style>
       
       {/* GlobalHeader without navigation */}
       <div className="relative z-10">
