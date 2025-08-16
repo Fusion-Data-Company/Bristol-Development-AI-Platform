@@ -69,7 +69,7 @@ export function GlobalHeader() {
                     : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
                 }`}>
                   <BarChart3 className="h-4 w-4" />
-                  <span className="text-sm font-medium">Sites</span>
+                  <span className="text-sm font-medium">Database</span>
                 </a>
               </Link>
               
