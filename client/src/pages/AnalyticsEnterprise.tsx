@@ -47,7 +47,7 @@ import {
   Settings
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
-import bristolBackground from '@assets/thumbnail_1755274091217.jpg';
+import bristolBackground from '@assets/tapestry+clubhouse_1755367516748.webp';
 import { cn } from '@/lib/utils';
 import { EnterpriseMetricCard, PerformanceGauge, MarketHeatmap, AlertsPanel } from '@/components/analytics/EnterpriseMetricsWidget';
 import { EliteTrendChart } from '@/components/analytics/EliteTrendChart';
@@ -219,7 +219,16 @@ export default function AnalyticsEnterprise() {
 
   return (
     <SimpleChrome>
-      <div className="min-h-screen relative overflow-hidden" style={{backgroundImage: `url(${bristolBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
+      <div className="min-h-screen relative overflow-hidden" style={{
+        backgroundImage: `url(${bristolBackground})`, 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center', 
+        backgroundRepeat: 'no-repeat',
+        imageRendering: 'crisp-edges',
+        WebkitImageRendering: 'crisp-edges',
+        msInterpolationMode: 'nearest-neighbor',
+        backgroundAttachment: 'fixed'
+      }}>
         {/* Professional overlay for content readability */}
         <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
         
