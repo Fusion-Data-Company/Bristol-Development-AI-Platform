@@ -105,7 +105,75 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
                   </Button>
                 </div>
               </div>
-              <Button type="submit" className="w-full bg-gray-700 hover:bg-gray-800 font-serif">Sign In</Button>
+              <Button 
+                type="submit" 
+                className="w-full font-serif relative overflow-hidden group"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(59, 130, 246, 0.9) 50%, rgba(147, 51, 234, 0.95) 100%)',
+                  backdropFilter: 'blur(20px)',
+                  border: '2px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: `
+                    0 8px 32px rgba(6, 182, 212, 0.3),
+                    0 4px 16px rgba(59, 130, 246, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                  `,
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)';
+                  e.currentTarget.style.boxShadow = `
+                    0 12px 48px rgba(6, 182, 212, 0.4),
+                    0 6px 24px rgba(59, 130, 246, 0.3),
+                    0 0 30px rgba(147, 51, 234, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                  `;
+                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(6, 182, 212, 1) 0%, rgba(59, 130, 246, 0.95) 50%, rgba(147, 51, 234, 1) 100%)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = `
+                    0 8px 32px rgba(6, 182, 212, 0.3),
+                    0 4px 16px rgba(59, 130, 246, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                    inset 0 -1px 0 rgba(0, 0, 0, 0.1)
+                  `;
+                  e.currentTarget.style.background = 'linear-gradient(135deg, rgba(6, 182, 212, 0.95) 0%, rgba(59, 130, 246, 0.9) 50%, rgba(147, 51, 234, 0.95) 100%)';
+                }}
+              >
+                {/* Animated gradient overlay */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  style={{
+                    background: 'linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                    animation: 'shimmer 2s ease-in-out infinite'
+                  }}
+                />
+                
+                {/* Glass reflection */}
+                <div 
+                  className="absolute inset-0 opacity-30"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%, rgba(255, 255, 255, 0.1) 100%)'
+                  }}
+                />
+                
+                {/* Button text */}
+                <span className="relative z-10 font-bold text-white drop-shadow-lg">
+                  Sign In
+                </span>
+                
+                {/* Animated border glow */}
+                <div 
+                  className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: 'linear-gradient(45deg, rgba(6, 182, 212, 0.5), rgba(59, 130, 246, 0.5), rgba(147, 51, 234, 0.5))',
+                    filter: 'blur(4px)',
+                    zIndex: -1
+                  }}
+                />
+              </Button>
             </form>
           </div>
         </CardContent>
