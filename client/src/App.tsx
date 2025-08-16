@@ -98,6 +98,14 @@ function AppContent() {
             <Dashboard />
           </Route>
           
+          <Route path="/sites">
+            <Sites />
+          </Route>
+          
+          <Route path="/analytics">
+            <Analytics />
+          </Route>
+          
           <Route path="/users">
             <Users />
           </Route>

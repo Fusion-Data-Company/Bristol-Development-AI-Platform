@@ -182,7 +182,6 @@ export default function Sites() {
   const statusOptions = ["Operating", "Pipeline", "Other"];
 
   return (
-    <Chrome>
       <div className="min-h-screen relative z-10">
         {/* Premium Sites Intelligence Header */}
         <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
@@ -481,7 +480,5 @@ export default function Sites() {
         </Sheet>
         </DataBackground>
       </div>
-      </div>
-    </Chrome>
   );
 }
