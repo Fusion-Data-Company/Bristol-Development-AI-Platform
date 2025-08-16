@@ -39,14 +39,14 @@ export default function App() {
           </TabsList>
 
           <TabsContent value="map" className="mt-6">
-            <Card>
-              <CardContent className="p-0">
-                <PortfolioMap onSiteSelect={handleSiteSelect} selectedSiteId={selectedSite?.id} />
+            <Card className="h-[600px]">
+              <CardContent className="p-0 h-full">
+                <PortfolioMap onSiteSelect={handleSiteSelect} selectedSiteId={selectedSite?.id} className="h-full" />
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="interactive" className="mt-6">
+          <TabsContent value="interactive" className="mt-6 h-[600px]">
             <InteractiveMapDashboard 
               selectedSite={selectedSite} 
               onSiteSelect={handleSiteSelect}
