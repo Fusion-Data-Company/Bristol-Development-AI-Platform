@@ -215,7 +215,7 @@ export default function Sites() {
                 </div>
                 <div>
                   <h1 className="text-5xl font-cinzel font-bold text-bristol-ink tracking-wide drop-shadow-lg bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
-                    Sites Intelligence
+                    Database
                   </h1>
                   <p className="text-bristol-maroon mt-1 font-medium tracking-wider text-lg">
                     Bristol Development Portfolio Management
