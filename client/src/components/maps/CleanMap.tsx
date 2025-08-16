@@ -11,6 +11,7 @@ export default function CleanMap() {
   const map = useRef<mapboxgl.Map | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [mapError, setMapError] = useState<string>('');
+  const [isInitializing, setIsInitializing] = useState(true);
   const [demographicPopup, setDemographicPopup] = useState<{lat: number, lng: number, loading: boolean, data?: any} | null>(null);
   
   // Get your sites data
@@ -24,31 +25,145 @@ export default function CleanMap() {
     if (map.current) return;
     if (!mapContainer.current) return;
 
+    let mapInstance: mapboxgl.Map | null = null;
+
     try {
-      console.log('Initializing Mapbox with Bristol properties...');
+      console.log('✅ Using Mapbox token:', mapboxgl.accessToken ? mapboxgl.accessToken.substring(0, 20) + '...' : 'MISSING');
+      console.log('✅ Token validation:', mapboxgl.accessToken ? 'VALID' : 'MISSING');
       
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/dark-v11',
-        center: [-121.4944, 38.5816], // Sacramento
-        zoom: 10,
-        pitch: 45,
-        bearing: -17.6
-      });
+      // Check if Mapbox GL JS is supported
+      if (!mapboxgl.supported()) {
+        throw new Error('Mapbox GL JS not supported');
+      }
+      console.log('✅ Mapbox GL JS browser support confirmed');
+
+      // Try Mapbox built-in style first (most reliable)
+      console.log('🗺️ Attempting to load Mapbox built-in style...');
+      try {
+        mapInstance = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: 'mapbox://styles/mapbox/streets-v12',
+          center: [-121.4944, 38.5816], // Sacramento
+          zoom: 10
+        });
+        console.log('✅ Mapbox style loading...');
+      } catch (styleError) {
+        console.log('⚠️ Mapbox style failed, trying CartoDB tiles:', styleError);
+        // Fallback to CartoDB tiles (very reliable)
+        mapInstance = new mapboxgl.Map({
+          container: mapContainer.current,
+          style: {
+            version: 8,
+            sources: {
+              'carto-tiles': {
+                type: 'raster',
+                tiles: [
+                  'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+                  'https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+                  'https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+                ],
+                tileSize: 256,
+                attribution: '© CartoDB, © OpenStreetMap contributors'
+              }
+            },
+            layers: [{
+              id: 'carto-tiles',
+              type: 'raster',
+              source: 'carto-tiles'
+            }]
+          },
+          center: [-121.4944, 38.5816],
+          zoom: 10
+        });
+        console.log('✅ CartoDB fallback loaded');
+      }
+
+      map.current = mapInstance;
+      setIsInitializing(false);
 
       // Add controls
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
       map.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 
       map.current.on('load', () => {
-        console.log('Mapbox loaded successfully');
+        console.log('✅ Map loaded successfully');
         setMapLoaded(true);
         setMapError('');
       });
 
       map.current.on('error', (e) => {
-        console.error('Mapbox error:', e);
-        setMapError('Map loading error - check console');
+        console.error('❌ Map error:', e);
+        console.log('🔍 Error details:', JSON.stringify(e, null, 2));
+        
+        // If it's a style error, try secondary fallback
+        if (e.error && (e.error.message.includes('style') || e.error.message.includes('source'))) {
+          console.log('🔄 Style/source error - trying emergency fallback...');
+          
+          setTimeout(() => {
+            try {
+              if (map.current) {
+                map.current.remove();
+              }
+              
+              // Emergency fallback - OpenStreetMap with different approach
+              map.current = new mapboxgl.Map({
+                container: mapContainer.current!,
+                style: {
+                  version: 8,
+                  sources: {
+                    'osm-tiles': {
+                      type: 'raster',
+                      tiles: [
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+                      ],
+                      tileSize: 256,
+                      attribution: '© OpenStreetMap contributors'
+                    }
+                  },
+                  layers: [{
+                    id: 'osm-layer',
+                    type: 'raster',
+                    source: 'osm-tiles',
+                    minzoom: 0,
+                    maxzoom: 18
+                  }]
+                },
+                center: [-121.4944, 38.5816],
+                zoom: 10
+              });
+              
+              map.current.on('load', () => {
+                console.log('✅ Emergency fallback map loaded!');
+                setMapLoaded(true);
+                setMapError('');
+              });
+              
+              map.current.on('error', (fallbackError) => {
+                console.error('❌ All fallbacks failed:', fallbackError);
+                setMapError('All map sources failed - please reload');
+              });
+              
+            } catch (fallbackError) {
+              console.error('❌ Emergency fallback failed:', fallbackError);
+              setMapError('Critical map error - please reload page');
+            }
+          }, 1000);
+        } else {
+          setMapError('Map error: ' + (e.error?.message || 'Unknown error'));
+        }
+      });
+      
+      // Add tile loading monitoring
+      map.current.on('sourcedata', (e) => {
+        if (e.isSourceLoaded) {
+          console.log('📡 Tiles loaded for source:', e.sourceId);
+        }
+      });
+      
+      map.current.on('data', (e) => {
+        if (e.dataType === 'source' && e.isSourceLoaded) {
+          console.log('📊 Data ready for source:', e.sourceId);
+        }
       });
 
       // Add click handler for demographics
@@ -83,15 +198,23 @@ export default function CleanMap() {
       });
 
     } catch (error) {
-      console.error('Failed to initialize map:', error);
-      setMapError('Failed to initialize map - check Mapbox token');
+      console.error('❌ Failed to initialize map:', error);
+      setMapError(`Map initialization failed: ${error}`);
+      setIsInitializing(false);
     }
 
     // Cleanup function - CRITICAL
     return () => {
-      if (map.current) {
-        map.current.remove();
-        map.current = null;
+      try {
+        if (mapInstance) {
+          mapInstance.remove();
+        }
+        if (map.current) {
+          map.current.remove();
+          map.current = null;
+        }
+      } catch (e) {
+        console.warn('Cleanup error:', e);
       }
     };
   }, []); // Empty deps - run once
@@ -150,19 +273,40 @@ export default function CleanMap() {
 
   }, [sites, mapLoaded]);
 
-  // Error display
-  if (mapError) {
+  // Loading display
+  if (isInitializing) {
     return (
       <div className="w-full h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center p-8">
-          <h2 className="text-red-500 text-2xl mb-4">Map Error</h2>
-          <p className="text-white">{mapError}</p>
-          <button 
-            onClick={() => window.location.reload()} 
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            Reload Page
-          </button>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <h2 className="text-white text-xl mb-2">Loading Map...</h2>
+          <p className="text-gray-400">Initializing Bristol property map</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error display (non-blocking)
+  if (mapError && !mapLoaded) {
+    return (
+      <div className="w-full h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center p-8">
+          <h2 className="text-red-500 text-2xl mb-4">Map Loading Issue</h2>
+          <p className="text-white mb-4">{mapError}</p>
+          <div className="space-x-4">
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Reload Page
+            </button>
+            <button 
+              onClick={() => { setMapError(''); setIsInitializing(true); }} 
+              className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              Retry Map
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -172,10 +316,26 @@ export default function CleanMap() {
     <div className="relative w-full h-screen">
       <div ref={mapContainer} className="w-full h-full" />
       
+      {/* Map status overlay */}
+      {!mapLoaded && (
+        <div className="absolute top-4 right-4 bg-yellow-500/90 backdrop-blur rounded-lg px-3 py-2">
+          <div className="text-black text-sm font-medium">Map Loading...</div>
+        </div>
+      )}
+      
+      {mapError && mapLoaded && (
+        <div className="absolute top-4 right-4 bg-red-500/90 backdrop-blur rounded-lg px-3 py-2">
+          <div className="text-white text-sm font-medium">Map Warning</div>
+        </div>
+      )}
+      
       {/* Bristol branding overlay */}
       <div className="absolute top-4 left-4 bg-black/80 backdrop-blur rounded-lg px-4 py-2">
         <div className="text-white font-bold">Bristol Development</div>
         <div className="text-cyan-400 text-sm">{Array.isArray(sites) ? sites.length : 0} Properties</div>
+        <div className="text-green-400 text-xs mt-1">
+          {mapLoaded ? '✅ Map Ready' : '⏳ Loading...'}
+        </div>
       </div>
 
       {/* Demographic Popup */}
