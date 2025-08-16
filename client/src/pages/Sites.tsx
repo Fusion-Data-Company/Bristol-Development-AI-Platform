@@ -199,8 +199,8 @@ export default function Sites() {
     <Chrome>
       <div className="min-h-screen relative z-10">
         {/* Premium Sites Intelligence Header */}
-        <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl h-[400px]">
-        <div className="p-8 relative overflow-hidden h-full flex flex-col justify-between">
+        <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
+        <div className="p-8 relative overflow-hidden">
           {/* Enhanced ambient glow - Static for Header */}
           <div className="absolute inset-0 bg-gradient-to-r from-bristol-cream/40 via-white/30 to-bristol-sky/40"></div>
           <div className="absolute inset-0 opacity-20">
