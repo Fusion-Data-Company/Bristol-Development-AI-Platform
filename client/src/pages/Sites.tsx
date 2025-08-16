@@ -397,14 +397,16 @@ export default function Sites() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-0 h-full bg-gradient-to-br from-white to-bristol-cream/30 overflow-hidden">
-                <SitesTable 
-                  data={sites || []} 
-                  isLoading={isLoading} 
-                  onSelectSite={setSelectedSite}
-                  selectedSite={selectedSite}
-                  onRefresh={refetch}
-                />
+              <CardContent className="p-0 min-h-[600px] bg-gradient-to-br from-white to-bristol-cream/30" style={{height: 'calc(100vh - 300px)'}}>                {/* FORCE TABLE VISIBILITY DEBUG */}
+                <div className="w-full h-full border-2 border-red-500 border-dashed">
+                  <SitesTable 
+                    data={sites || []} 
+                    isLoading={isLoading} 
+                    onSelectSite={setSelectedSite}
+                    selectedSite={selectedSite}
+                    onRefresh={refetch}
+                  />
+                </div>
               </CardContent>
             </Card>
 
