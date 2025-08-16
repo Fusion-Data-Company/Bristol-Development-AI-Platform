@@ -382,13 +382,13 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       <div className="rounded-md border bg-white flex-1 overflow-x-auto">
         <div className="min-w-max">
           <Table className="w-full">
-            <TableHeader className="sticky top-0 bg-gradient-to-r from-bristol-maroon via-bristol-maroon/95 to-bristol-maroon z-10 shadow-xl">
+            <TableHeader className="sticky top-0 bg-gradient-to-r from-white to-bristol-cream/50 z-10 shadow-lg border-b-2 border-bristol-stone/20">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="hover:bg-transparent border-b-2 border-bristol-gold/50">
+                <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-bristol-stone/10">
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id} 
-                      className="font-cinzel font-bold text-white whitespace-nowrap px-4 py-4 border-r border-bristol-gold/30 text-shadow-lg hover:bg-bristol-gold/20 transition-all duration-300"
+                      className="font-medium text-bristol-ink whitespace-nowrap px-4 py-3 border-r border-bristol-stone/10 hover:bg-bristol-stone/5 transition-all duration-300"
                       style={{ width: header.getSize() }}
                     >
                       {header.isPlaceholder
