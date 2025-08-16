@@ -371,16 +371,16 @@ export default function Sites() {
 
         {/* Main Content Area - With Background Starting Below Hero Header */}
         <DataBackground>
-        {/* Background Image Layer */}
+        {/* Background Image Layer - Positioned below header */}
         <div 
-          className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
+          className="fixed top-[200px] left-0 right-0 bottom-0 bg-cover bg-center bg-no-repeat z-0"
           style={{
             backgroundImage: `url(${apartmentBackgroundImage})`,
             filter: 'brightness(0.85) contrast(1.1)'
           }}
         />
-        {/* Background Overlay for Content Readability */}
-        <div className="fixed inset-0 bg-gradient-to-br from-bristol-cream/70 via-white/60 to-bristol-sky/50 z-0" />
+        {/* Background Overlay for Content Readability - Positioned below header */}
+        <div className="fixed top-[200px] left-0 right-0 bottom-0 bg-gradient-to-br from-bristol-cream/70 via-white/60 to-bristol-sky/50 z-0" />
 
         {/* Premium Content Area */}
         <div className="flex-1 p-8 relative mb-16 z-10">
