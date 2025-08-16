@@ -376,7 +376,7 @@ export default function Sites() {
             <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-bristol-sky/10 rounded-full blur-2xl"></div>
           </div>
           
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 h-full relative pb-20">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 h-full relative pb-4">
             {/* Premium Sites Database Table with Light Theme */}
             <Card className="xl:col-span-2 overflow-hidden bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
               <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
@@ -397,7 +397,7 @@ export default function Sites() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-2 h-[calc(100vh-12rem)] bg-gradient-to-br from-white to-bristol-cream/30 overflow-hidden">
+              <CardContent className="p-2 h-[calc(100vh-8rem)] bg-gradient-to-br from-white to-bristol-cream/30 overflow-hidden">
                 <SitesTable 
                   data={(sites || []) as any[]}
                   isLoading={isLoading}
@@ -409,7 +409,7 @@ export default function Sites() {
             </Card>
 
             {/* Premium Details & Analytics Sidebar with Light Theme */}
-            <div className="space-y-6 h-[calc(100vh-12rem)] overflow-y-auto">
+            <div className="space-y-6 h-[calc(100vh-8rem)] overflow-y-auto">
               {/* Site Details Card */}
               <Card className="bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
                 <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
