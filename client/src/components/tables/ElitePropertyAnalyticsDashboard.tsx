@@ -733,8 +733,8 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
                 variant="outline"
                 onClick={() => setFilters({
                   search: '',
-                  status: '',
-                  state: '',
+                  status: 'all',
+                  state: 'all',
                   minUnits: '',
                   maxUnits: '',
                   minAcreage: '',
@@ -765,125 +765,130 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
       </Card>
 
       {/* Main Content */}
-      <TabsContent value="cards" className="space-y-6">
-        {/* Property Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAndSortedSites.map((site) => (
-            <EnhancedPropertyCard
-              key={site.id}
-              site={site}
-              isSelected={selectedSite?.id === site.id}
-              onSelect={() => onSiteSelect(site)}
-              onViewDemographics={() => {
-                onSiteSelect(site);
-                setActiveView('demographics');
-              }}
-            />
-          ))}
+      {activeView === 'cards' && (
+        <div className="space-y-6">
+          {/* Property Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAndSortedSites.map((site) => (
+              <EnhancedPropertyCard
+                key={site.id}
+                site={site}
+                isSelected={selectedSite?.id === site.id}
+                onSelect={() => onSiteSelect(site)}
+                onViewDemographics={() => {
+                  onSiteSelect(site);
+                  setActiveView('demographics');
+                }}
+              />
+            ))}
+          </div>
+
+          {filteredAndSortedSites.length === 0 && (
+            <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-stone/20">
+              <CardContent className="flex flex-col items-center justify-center py-16">
+                <AlertCircle className="h-16 w-16 text-bristol-stone/40 mb-4" />
+                <h3 className="text-xl font-semibold text-bristol-stone/70 mb-2">No Properties Found</h3>
+                <p className="text-bristol-stone/60 text-center mb-4">
+                  Try adjusting your filters or search criteria to find properties.
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={() => setFilters({
+                    search: '',
+                    status: 'all',
+                    state: 'all',
+                    minUnits: '',
+                    maxUnits: '',
+                    minAcreage: '',
+                    maxAcreage: '',
+                    completionYear: '',
+                    sortBy: 'name',
+                    sortOrder: 'asc'
+                  })}
+                  className="border-bristol-gold/30 hover:bg-bristol-gold/10"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Clear All Filters
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
+      )}
 
-        {filteredAndSortedSites.length === 0 && (
-          <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-stone/20">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <AlertCircle className="h-16 w-16 text-bristol-stone/40 mb-4" />
-              <h3 className="text-xl font-semibold text-bristol-stone/70 mb-2">No Properties Found</h3>
-              <p className="text-bristol-stone/60 text-center mb-4">
-                Try adjusting your filters or search criteria to find properties.
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => setFilters({
-                  search: '',
-                  status: '',
-                  state: '',
-                  minUnits: '',
-                  maxUnits: '',
-                  minAcreage: '',
-                  maxAcreage: '',
-                  completionYear: '',
-                  sortBy: 'name',
-                  sortOrder: 'asc'
-                })}
-                className="border-bristol-gold/30 hover:bg-bristol-gold/10"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Clear All Filters
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-      </TabsContent>
+      {activeView === 'demographics' && (
+        <div className="space-y-6">
+          {selectedSite ? (
+            <div className="space-y-6">
+              <Card className="bg-gradient-to-r from-white to-bristol-cream/30 border-bristol-gold/30 shadow-xl">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    <div className="p-2 bg-bristol-maroon/10 rounded-lg">
+                      <Users className="h-5 w-5 text-bristol-maroon" />
+                    </div>
+                    <span className="font-cinzel text-bristol-maroon">
+                      Demographics Analysis: {selectedSite.name}
+                    </span>
+                  </CardTitle>
+                </CardHeader>
+              </Card>
+              <SiteDemographicAnalysis siteId={selectedSite.id} />
+              <AddressDemographics 
+                className="mt-4"
+                onLocationSelect={(lat, lng) => console.log('Location selected:', lat, lng)}
+              />
+            </div>
+          ) : (
+            <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-stone/20">
+              <CardContent className="flex flex-col items-center justify-center py-16">
+                <Eye className="h-16 w-16 text-bristol-stone/40 mb-4" />
+                <h3 className="text-xl font-semibold text-bristol-stone/70 mb-2">Select a Property</h3>
+                <p className="text-bristol-stone/60 text-center">
+                  Choose a property from the Properties tab to view detailed demographics analysis.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      )}
 
-      <TabsContent value="demographics" className="space-y-6">
-        {selectedSite ? (
-          <div className="space-y-6">
-            <Card className="bg-gradient-to-r from-white to-bristol-cream/30 border-bristol-gold/30 shadow-xl">
+      {activeView === 'analytics' && (
+        <div className="space-y-6">
+          {/* Advanced Analytics Dashboard */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-xl">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
                   <div className="p-2 bg-bristol-maroon/10 rounded-lg">
-                    <Users className="h-5 w-5 text-bristol-maroon" />
+                    <BarChart3 className="h-5 w-5 text-bristol-maroon" />
                   </div>
-                  <span className="font-cinzel text-bristol-maroon">
-                    Demographics Analysis: {selectedSite.name}
-                  </span>
+                  <span className="font-cinzel text-bristol-maroon">Status Distribution</span>
                 </CardTitle>
               </CardHeader>
-            </Card>
-            <SiteDemographicAnalysis siteId={selectedSite.id} />
-            <AddressDemographics 
-              className="mt-4"
-              onLocationSelect={(lat, lng) => console.log('Location selected:', lat, lng)}
-            />
-          </div>
-        ) : (
-          <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-stone/20">
-            <CardContent className="flex flex-col items-center justify-center py-16">
-              <Eye className="h-16 w-16 text-bristol-stone/40 mb-4" />
-              <h3 className="text-xl font-semibold text-bristol-stone/70 mb-2">Select a Property</h3>
-              <p className="text-bristol-stone/60 text-center">
-                Choose a property from the Properties tab to view detailed demographics analysis.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </TabsContent>
-
-      <TabsContent value="analytics" className="space-y-6">
-        {/* Advanced Analytics Dashboard */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-xl">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="p-2 bg-bristol-maroon/10 rounded-lg">
-                  <BarChart3 className="h-5 w-5 text-bristol-maroon" />
+              <CardContent>
+                <div className="space-y-4">
+                  {Object.entries(analytics.statusBreakdown).map(([status, count]) => (
+                    <div key={status} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-4 h-4 rounded-full ${
+                          status === 'Operating' ? 'bg-emerald-500' :
+                          status === 'Completed' ? 'bg-green-500' :
+                          status === 'Newest' ? 'bg-bristol-gold' :
+                          status === 'Pipeline' ? 'bg-blue-500' : 'bg-gray-500'
+                        }`} />
+                        <span className="font-medium">{status}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-bold">{count}</span>
+                        <span className="text-sm text-bristol-stone/60">
+                          ({Math.round((count / analytics.totalProperties) * 100)}%)
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <span className="font-cinzel text-bristol-maroon">Status Distribution</span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {Object.entries(analytics.statusBreakdown).map(([status, count]) => (
-                  <div key={status} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-4 h-4 rounded-full ${
-                        status === 'Operating' ? 'bg-emerald-500' :
-                        status === 'Completed' ? 'bg-green-500' :
-                        status === 'Newest' ? 'bg-bristol-gold' :
-                        status === 'Pipeline' ? 'bg-blue-500' : 'bg-gray-500'
-                      }`} />
-                      <span className="font-medium">{status}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold">{count}</span>
-                      <span className="text-sm text-bristol-stone/60">
-                        ({Math.round((count / analytics.totalProperties) * 100)}%)
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
           <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-xl">
             <CardHeader>
@@ -944,8 +949,9 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
               </div>
             </div>
           </CardContent>
-        </Card>
-      </TabsContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

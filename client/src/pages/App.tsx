@@ -43,7 +43,7 @@ export default function App() {
       <div className="container mx-auto px-4 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="interactive">MapBox Intelligence</TabsTrigger>
+            <TabsTrigger value="interactive">GeoMapping Demographics</TabsTrigger>
             <TabsTrigger value="map">Basic Map</TabsTrigger>
             <TabsTrigger value="tables">Tables</TabsTrigger>
             <TabsTrigger value="sandbox">3D Sandbox</TabsTrigger>
