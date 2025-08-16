@@ -199,8 +199,8 @@ export default function Sites() {
     <Chrome>
       <div className="min-h-screen relative z-10">
         {/* Premium Sites Intelligence Header */}
-        <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
-        <div className="p-12 relative overflow-hidden">
+        <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl min-h-[320px]">
+        <div className="px-12 py-20 relative overflow-hidden">
           {/* Enhanced ambient glow - Static for Header */}
           <div className="absolute inset-0 bg-gradient-to-r from-bristol-cream/40 via-white/30 to-bristol-sky/40"></div>
           <div className="absolute inset-0 opacity-20">
@@ -244,7 +244,7 @@ export default function Sites() {
           </div>
 
           {/* Premium Action Toolbar with Light Theme */}
-          <div className="flex flex-wrap items-center gap-4 relative mt-8 mb-6">
+          <div className="flex flex-wrap items-center gap-4 relative">
             <Button 
               onClick={() => setShowAddForm(true)} 
               className="relative group overflow-hidden bg-gradient-to-r from-bristol-maroon via-red-600 to-bristol-maroon text-white font-bold px-6 py-3 rounded-xl shadow-2xl shadow-bristol-maroon/40 hover:shadow-bristol-maroon/60 transition-all duration-500 border-2 border-bristol-gold/30 hover:border-bristol-gold/60 hover:scale-110 transform hover:rotate-1"
