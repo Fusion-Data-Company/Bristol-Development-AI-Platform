@@ -26,6 +26,7 @@ import { Tools } from "@/pages/Tools";
 import ComparablesAnnex from "@/pages/ComparablesAnnex";
 import EnterpriseDashboard from "@/pages/EnterpriseDashboard";
 import EnhancedAgents from "@/pages/EnhancedAgents";
+import Maps2 from "@/pages/Maps2";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -52,6 +53,7 @@ function Router() {
           <Route path="/comparables-annex" component={ComparablesAnnex} />
           <Route path="/agents" component={EnhancedAgents} />
           <Route path="/enhanced-agents" component={EnhancedAgents} />
+          <Route path="/maps2" component={Maps2} />
         </>
       )}
       <Route component={NotFound} />
