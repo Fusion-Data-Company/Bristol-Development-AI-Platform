@@ -378,8 +378,8 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
   }
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-md border bg-white">
+    <div className="space-y-4 h-full flex flex-col">
+      <div className="rounded-md border bg-white flex-1 overflow-x-auto">
         <div className="min-w-max">
           <Table className="w-full">
             <TableHeader className="sticky top-0 bg-gradient-to-r from-white to-bristol-cream/50 z-10 shadow-lg border-b-2 border-bristol-stone/20">
@@ -400,57 +400,36 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
               ))}
             </TableHeader>
             <TableBody>
-              {Array.from({ length: 50 }, (_, index) => {
-                const row = data[index] ? table.getRowModel().rows.find(r => r.original.id === data[index].id) : null;
-                if (row) {
-                  // Render actual data row
-                  return (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                      className={`
-                        transition-all duration-300 border-b border-bristol-stone/10
-                        ${row.index % 2 === 0 ? 'bg-gradient-to-r from-white to-bristol-cream/20' : 'bg-gradient-to-r from-bristol-cream/10 to-white'}
-                        ${selectedSite?.id === row.original.id ? 'bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/10 to-bristol-gold/20 shadow-lg shadow-bristol-gold/20 border-bristol-gold/30' : ''}
-                        hover:bg-gradient-to-r hover:from-bristol-maroon/5 hover:via-bristol-gold/5 hover:to-bristol-maroon/5 hover:shadow-lg hover:shadow-bristol-maroon/10
-                      `}
-                      style={{ height: '80px', minHeight: '80px' }}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell 
-                          key={cell.id} 
-                          className="px-4 py-2 whitespace-nowrap border-r"
-                          style={{ width: cell.column.getSize() }}
-                        >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                } else {
-                  // Render empty placeholder row
-                  return (
-                    <TableRow
-                      key={`empty-${index}`}
-                      className={`
-                        transition-all duration-300 border-b border-bristol-stone/10
-                        ${index % 2 === 0 ? 'bg-gradient-to-r from-white to-bristol-cream/20' : 'bg-gradient-to-r from-bristol-cream/10 to-white'}
-                      `}
-                      style={{ height: '80px', minHeight: '80px' }}
-                    >
-                      {columns.map((column, colIndex) => (
-                        <TableCell 
-                          key={`empty-${index}-${colIndex}`} 
-                          className="px-4 py-2 whitespace-nowrap border-r text-bristol-stone/30"
-                          style={{ width: column.size || 100 }}
-                        >
-                          —
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                }
-              })}
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className={`
+                      transition-all duration-300 border-b border-bristol-stone/10
+                      ${row.index % 2 === 0 ? 'bg-gradient-to-r from-white to-bristol-cream/20' : 'bg-gradient-to-r from-bristol-cream/10 to-white'}
+                      ${selectedSite?.id === row.original.id ? 'bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/10 to-bristol-gold/20 shadow-lg shadow-bristol-gold/20 border-bristol-gold/30' : ''}
+                      hover:bg-gradient-to-r hover:from-bristol-maroon/5 hover:via-bristol-gold/5 hover:to-bristol-maroon/5 hover:shadow-lg hover:shadow-bristol-maroon/10
+                    `}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell 
+                        key={cell.id} 
+                        className="px-4 py-2 whitespace-nowrap border-r"
+                        style={{ width: cell.column.getSize() }}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center text-bristol-stone">
+                    No sites found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>
@@ -459,8 +438,35 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex items-center gap-4">
           <div className="text-sm text-bristol-stone">
-            Showing all {data.length} sites (50 rows total)
+            {table.getFilteredRowModel().rows.length} site(s) total
           </div>
+          <select
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => table.setPageSize(Number(e.target.value))}
+            className="text-sm border rounded px-2 py-1"
+          >
+            {[25, 50, 100, 200].map(size => (
+              <option key={size} value={size}>{size} per page</option>
+            ))}
+          </select>
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
         </div>
       </div>
     </div>

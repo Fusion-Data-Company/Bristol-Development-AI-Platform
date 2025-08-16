@@ -10,7 +10,6 @@ import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Bui
 import Chrome from "../components/brand/SimpleChrome";
 import { DataBackground } from "../components/EnterpriseBackgrounds";
 import { SitesTable } from "../widgets/tables/SitesTableBasic";
-import { NewTanStackTable } from "@/components/tables/NewTanStackTable";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
 import { SiteDetails } from "../widgets/details/SiteDetails";
 import { SiteMapPreview } from "../widgets/maps/SiteMapPreview";
@@ -369,7 +368,7 @@ export default function Sites() {
         </div>
 
         {/* Premium Content Area with Light Theme & Ambient Glows */}
-        <div className="flex-1 p-4 overflow-hidden relative">
+        <div className="flex-1 p-8 overflow-hidden relative mb-16">
           {/* Ambient background glows */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/5 rounded-full blur-3xl"></div>
@@ -398,7 +397,7 @@ export default function Sites() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-2 bg-gradient-to-br from-white to-bristol-cream/30" style={{ height: 'auto', overflow: 'visible' }}>
+              <CardContent className="p-2 h-[calc(100vh-8rem)] bg-gradient-to-br from-white to-bristol-cream/30 overflow-hidden">
                 <SitesTable 
                   data={(sites || []) as any[]}
                   isLoading={isLoading}
@@ -410,7 +409,7 @@ export default function Sites() {
             </Card>
 
             {/* Premium Details & Analytics Sidebar with Light Theme */}
-            <div className="space-y-6 h-[calc(100vh-2rem)] overflow-y-auto">
+            <div className="space-y-6 h-[calc(100vh-8rem)] overflow-y-auto">
               {/* Site Details Card */}
               <Card className="bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
                 <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
@@ -451,37 +450,6 @@ export default function Sites() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* New TanStack Table with 50 Fixed Rows */}
-        <div className="p-4">
-          <Card className="overflow-hidden bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
-            <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
-              <div className="flex items-center space-x-3">
-                <div className="relative group">
-                  <Building className="h-6 w-6 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
-                  <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
-                </div>
-                <CardTitle className="font-cinzel text-bristol-ink text-xl tracking-wide bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
-                  Bristol Enhanced Portfolio Table
-                </CardTitle>
-                <Badge 
-                  variant="outline" 
-                  className="ml-auto px-4 py-2 text-bristol-maroon border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white font-bold shadow-lg shadow-bristol-maroon/20"
-                >
-                  50 Fixed Rows
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent className="p-2 bg-gradient-to-br from-white to-bristol-cream/30">
-              <NewTanStackTable 
-                data={(sites || []) as any[]}
-                isLoading={isLoading}
-                onSelectSite={setSelectedSite as any}
-                selectedSite={selectedSite as any}
-              />
-            </CardContent>
-          </Card>
         </div>
 
         {/* Premium Add Site Modal with Light Theme */}

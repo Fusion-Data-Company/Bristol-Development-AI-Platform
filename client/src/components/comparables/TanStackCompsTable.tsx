@@ -106,7 +106,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 50,
+    pageSize: 25,
   });
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -576,7 +576,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
   }
 
   return (
-    <div className="space-y-4" style={{ height: '2000px', minHeight: '2000px' }}>
+    <div className="space-y-4">
       {/* Global Search */}
       <div className="flex items-center justify-between gap-4 p-4 bg-gradient-to-r from-bristol-cream/20 to-white border-b border-bristol-gold/20">
         <div className="flex items-center gap-3">
@@ -601,7 +601,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-bristol-gold/30" style={{ height: '1800px', minHeight: '1800px', overflow: 'visible' }}>
+      <div className="rounded-lg border border-bristol-gold/30 overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -620,45 +620,37 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
             ))}
           </TableHeader>
           <TableBody>
-            {Array.from({ length: 50 }, (_, index) => {
-              const row = table.getRowModel().rows[index];
-              if (row) {
-                // Render actual data row
-                return (
-                  <TableRow
-                    key={row.id}
-                    className="hover:bg-gray-50/50 transition-colors"
-                    data-state={row.getIsSelected() && 'selected'}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              } else {
-                // Render empty placeholder row
-                return (
-                  <TableRow
-                    key={`empty-${index}`}
-                    className={`transition-colors h-12 ${index % 2 === 0 ? 'bg-gray-50/20' : 'bg-white'}`}
-                  >
-                    {columns.map((column, colIndex) => (
-                      <TableCell 
-                        key={`empty-${index}-${colIndex}`} 
-                        className="px-4 py-2 text-gray-300"
-                      >
-                        —
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                );
-              }
-            })}
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  className="hover:bg-gray-50/50 transition-colors"
+                  data-state={row.getIsSelected() && 'selected'}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  <div className="text-center py-8 text-gray-500">
+                    <Building2 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p>No comparable properties found</p>
+                    <p className="text-sm">Try launching a scrape job to populate data</p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </div>
@@ -674,7 +666,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
             }}
             className="h-8 w-[70px] rounded border border-input px-2 text-sm"
           >
-            {[50].map((pageSize) => (
+            {[10, 25, 50, 100].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
