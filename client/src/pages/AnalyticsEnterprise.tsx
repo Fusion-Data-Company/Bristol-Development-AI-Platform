@@ -228,49 +228,53 @@ export default function AnalyticsEnterprise() {
         
         <div className="relative z-10 container mx-auto max-w-7xl space-y-8 px-6 py-8">
           
-          {/* Elite Header */}
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center space-x-6">
-              <div className="relative">
-                <div className="absolute -inset-4 bg-gradient-to-r from-bristol-cyan/20 to-bristol-gold/20 rounded-2xl blur-xl" />
-                <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-bristol-maroon via-bristol-cyan to-bristol-gold flex items-center justify-center border border-bristol-cyan/30">
-                  <BarChart4 className="h-8 w-8 text-white drop-shadow-lg" />
+          {/* Elite Hero Header Card */}
+          <Card className="bg-white/95 backdrop-blur-md border-bristol-maroon/20 shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-500 mb-8">
+            <CardContent className="p-8">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-6">
+                  <div className="relative">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-bristol-cyan/20 to-bristol-gold/20 rounded-2xl blur-xl" />
+                    <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-bristol-maroon via-bristol-cyan to-bristol-gold flex items-center justify-center border border-bristol-cyan/30">
+                      <BarChart4 className="h-8 w-8 text-white drop-shadow-lg" />
+                    </div>
+                  </div>
+                  <div>
+                    <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-bristol-maroon via-bristol-cyan to-bristol-gold bg-clip-text text-transparent">
+                      BRISTOL ANALYTICS
+                    </h1>
+                    <p className="text-bristol-maroon font-medium text-lg mt-1">
+                      Enterprise Real Estate Intelligence Platform
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  {/* Live Status Indicators */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-bristol-cyan/30 shadow-sm">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                      <span className="text-bristol-cyan text-sm font-medium">MCP Live</span>
+                    </div>
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-bristol-gold/30 shadow-sm">
+                      <Zap className="w-4 h-4 text-bristol-gold" />
+                      <span className="text-bristol-gold text-sm font-medium">AI Active</span>
+                    </div>
+                  </div>
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => window.location.reload()}
+                    className="text-bristol-cyan hover:text-bristol-maroon hover:bg-bristol-cyan/10 border border-bristol-cyan/30 bg-white"
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Refresh
+                  </Button>
                 </div>
               </div>
-              <div>
-                <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-bristol-maroon via-bristol-cyan to-bristol-gold bg-clip-text text-transparent">
-                  BRISTOL ANALYTICS
-                </h1>
-                <p className="text-bristol-maroon font-medium text-lg mt-1">
-                  Enterprise Real Estate Intelligence Platform
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              {/* Live Status Indicators */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-bristol-cyan/30 shadow-sm">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                  <span className="text-bristol-cyan text-sm font-medium">MCP Live</span>
-                </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-bristol-gold/30 shadow-sm">
-                  <Zap className="w-4 h-4 text-bristol-gold" />
-                  <span className="text-bristol-gold text-sm font-medium">AI Active</span>
-                </div>
-              </div>
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.location.reload()}
-                className="text-bristol-cyan hover:text-bristol-maroon hover:bg-bristol-cyan/10 border border-bristol-cyan/30 bg-white"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Refresh
-              </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Enterprise Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
