@@ -10,6 +10,7 @@ import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Bui
 import Chrome from "../components/brand/SimpleChrome";
 import { DataBackground } from "../components/EnterpriseBackgrounds";
 import { SitesTable } from "../widgets/tables/SitesTableBasic";
+import { NewTanStackTable } from "@/components/tables/NewTanStackTable";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
 import { SiteDetails } from "../widgets/details/SiteDetails";
 import { SiteMapPreview } from "../widgets/maps/SiteMapPreview";
@@ -450,6 +451,37 @@ export default function Sites() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* New TanStack Table with 50 Fixed Rows */}
+        <div className="p-4">
+          <Card className="overflow-hidden bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
+            <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
+              <div className="flex items-center space-x-3">
+                <div className="relative group">
+                  <Building className="h-6 w-6 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
+                </div>
+                <CardTitle className="font-cinzel text-bristol-ink text-xl tracking-wide bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
+                  Bristol Enhanced Portfolio Table
+                </CardTitle>
+                <Badge 
+                  variant="outline" 
+                  className="ml-auto px-4 py-2 text-bristol-maroon border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white font-bold shadow-lg shadow-bristol-maroon/20"
+                >
+                  50 Fixed Rows
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="p-2 bg-gradient-to-br from-white to-bristol-cream/30">
+              <NewTanStackTable 
+                data={(sites || []) as any[]}
+                isLoading={isLoading}
+                onSelectSite={setSelectedSite as any}
+                selectedSite={selectedSite as any}
+              />
+            </CardContent>
+          </Card>
         </div>
 
         {/* Premium Add Site Modal with Light Theme */}
