@@ -200,7 +200,7 @@ export default function Sites() {
       <div className="min-h-screen relative z-10">
         {/* Premium Sites Intelligence Header */}
         <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
-        <div className="p-8 relative overflow-hidden">
+        <div className="px-8 py-6 relative overflow-hidden">
           {/* Enhanced ambient glow - Static for Header */}
           <div className="absolute inset-0 bg-gradient-to-r from-bristol-cream/40 via-white/30 to-bristol-sky/40"></div>
           <div className="absolute inset-0 opacity-20">
@@ -208,7 +208,7 @@ export default function Sites() {
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-bristol-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
           </div>
           
-          <div className="flex items-center justify-between mb-6 relative">
+          <div className="flex items-center justify-between mb-4 relative">
             <div className="space-y-2">
               <div className="flex items-center space-x-4">
                 <div className="relative group">
