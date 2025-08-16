@@ -376,37 +376,41 @@ export default function Sites() {
             <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-bristol-sky/10 rounded-full blur-2xl"></div>
           </div>
           
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 h-full relative pb-4">
-            {/* Premium Sites Database Table with Light Theme */}
-            <Card className="xl:col-span-2 overflow-hidden bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
-              <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
-                <div className="flex items-center space-x-3">
-                  <div className="relative group">
-                    <Building className="h-6 w-6 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
-                    <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
+          {/* NEW FULL-HEIGHT TABLE CONTAINER */}
+          <div className="h-full relative pb-4 flex gap-8">
+            {/* Bristol Portfolio Database - Full Height Container */}
+            <div className="flex-1" style={{ minHeight: '2000px' }}>
+              <Card className="h-full bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
+                <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20 flex-shrink-0">
+                  <div className="flex items-center space-x-3">
+                    <div className="relative group">
+                      <Building className="h-6 w-6 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
+                      <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
+                    </div>
+                    <CardTitle className="font-cinzel text-bristol-ink text-xl tracking-wide bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
+                      Bristol Portfolio Database
+                    </CardTitle>
+                    <Badge 
+                      key={`table-sites-${portfolioData?.totalSites || 'loading'}`}
+                      variant="outline" 
+                      className="ml-auto px-4 py-2 text-bristol-maroon border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white font-bold shadow-lg shadow-bristol-maroon/20"
+                    >
+                      {isMetricsLoading ? 'Loading...' : `${portfolioData?.totalSites || 46} Properties`}
+                    </Badge>
                   </div>
-                  <CardTitle className="font-cinzel text-bristol-ink text-xl tracking-wide bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
-                    Bristol Portfolio Database
-                  </CardTitle>
-                  <Badge 
-                    key={`table-sites-${portfolioData?.totalSites || 'loading'}`}
-                    variant="outline" 
-                    className="ml-auto px-4 py-2 text-bristol-maroon border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white font-bold shadow-lg shadow-bristol-maroon/20"
-                  >
-                    {isMetricsLoading ? 'Loading...' : `${portfolioData?.totalSites || 46} Properties`}
-                  </Badge>
+                </CardHeader>
+                {/* NEW UNRESTRICTED TABLE CONTAINER */}
+                <div className="p-4 bg-gradient-to-br from-white to-bristol-cream/30" style={{ minHeight: '1800px', height: 'auto' }}>
+                  <SitesTable 
+                    data={(sites || []) as any[]}
+                    isLoading={isLoading}
+                    onSelectSite={setSelectedSite as any}
+                    selectedSite={selectedSite as any}
+                    onRefresh={refetch}
+                  />
                 </div>
-              </CardHeader>
-              <CardContent className="p-2 bg-gradient-to-br from-white to-bristol-cream/30" style={{ height: '2500px', minHeight: '2500px', overflow: 'visible' }}>
-                <SitesTable 
-                  data={(sites || []) as any[]}
-                  isLoading={isLoading}
-                  onSelectSite={setSelectedSite as any}
-                  selectedSite={selectedSite as any}
-                  onRefresh={refetch}
-                />
-              </CardContent>
-            </Card>
+              </Card>
+            </div>
 
             {/* Premium Details & Analytics Sidebar with Light Theme */}
             <div className="space-y-6 h-[calc(100vh-2rem)] overflow-y-auto">
