@@ -39,58 +39,48 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen relative">
-      {/* Fortune 500 Executive Background */}
-      <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('/src/assets/Icon+1_1755370919284.webp')`
-        }}
-      />
-      
-      {/* Executive Glass Overlay */}
-      <div className="relative z-10 min-h-screen backdrop-blur-sm">
-        <Chrome>
-          <div className="container mx-auto px-8 py-8">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              {/* Executive Navigation */}
-              <div className="mb-8">
-                <TabsList className="grid w-full grid-cols-4 bg-black/30 backdrop-blur-xl border border-white/20 p-2 rounded-3xl h-16">
-                  <TabsTrigger 
-                    value="interactive" 
-                    className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-4 rounded-2xl font-semibold transition-all duration-300"
-                  >
-                    <MapPin className="h-5 w-5 mr-3" />
-                    Executive Intelligence
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="map" 
-                    className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-4 rounded-2xl font-semibold transition-all duration-300"
-                  >
-                    <Building className="h-5 w-5 mr-3" />
-                    Portfolio Map
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="tables" 
-                    className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-4 rounded-2xl font-semibold transition-all duration-300"
-                  >
-                    <Building className="h-5 w-5 mr-3" />
-                    Analytics Dashboard
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="sandbox" 
-                    className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-4 rounded-2xl font-semibold transition-all duration-300"
-                  >
-                    <Building className="h-5 w-5 mr-3" />
-                    3D Visualization
-                  </TabsTrigger>
-                </TabsList>
-              </div>
+    <div className="min-h-screen bg-white">
+      <Chrome>
+        <div className="container mx-auto px-6 py-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            {/* Clean Navigation */}
+            <div className="mb-6">
+              <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-300 p-1 rounded-lg h-12 shadow-sm">
+                <TabsTrigger 
+                  value="interactive" 
+                  className="data-[state=active]:bg-bristol-gold data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
+                >
+                  <MapPin className="h-4 w-4 mr-2" />
+                  Interactive Map
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="map" 
+                  className="data-[state=active]:bg-bristol-gold data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
+                >
+                  <Building className="h-4 w-4 mr-2" />
+                  Portfolio
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="tables" 
+                  className="data-[state=active]:bg-bristol-gold data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
+                >
+                  <Building className="h-4 w-4 mr-2" />
+                  Analytics
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="sandbox" 
+                  className="data-[state=active]:bg-bristol-gold data-[state=active]:text-white text-gray-700 text-base px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200"
+                >
+                  <Building className="h-4 w-4 mr-2" />
+                  3D View
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
               <TabsContent value="map" className="mt-0">
-                <Card className="h-[80vh] backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-3xl overflow-hidden">
+                <Card className="h-[80vh] bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden">
                   <CardContent className="p-0 h-full">
-                    <PortfolioMap onSiteSelect={handleSiteSelect} selectedSiteId={selectedSite?.id} className="h-full rounded-3xl" />
+                    <PortfolioMap onSiteSelect={handleSiteSelect} selectedSiteId={selectedSite?.id} className="h-full rounded-lg" />
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -111,8 +101,8 @@ export default function App() {
               </TabsContent>
 
               <TabsContent value="sandbox" className="mt-0 h-[80vh]">
-                <Card className="h-full backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-3xl overflow-hidden">
-                  <CardContent className="p-8 h-full">
+                <Card className="h-full bg-white border border-gray-200 shadow-lg rounded-lg overflow-hidden">
+                  <CardContent className="p-6 h-full">
                     <ThreeJSSandbox 
                       selectedSite={selectedSite}
                       onSiteSelect={handleSiteSelect}
@@ -123,7 +113,6 @@ export default function App() {
             </Tabs>
           </div>
         </Chrome>
-      </div>
     </div>
   );
 }
