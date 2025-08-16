@@ -240,7 +240,7 @@ export function DemographicMap({ className, onEnrichComplete }: DemographicMapPr
   }
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative h-full", className)}>
       {/* Control Panel */}
       <Card className="absolute top-4 left-4 z-10 bg-gray-900/90 border-gray-700">
         <CardHeader className="pb-3">
