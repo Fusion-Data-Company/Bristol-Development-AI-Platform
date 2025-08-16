@@ -522,8 +522,8 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       </div>
 
       <div className="rounded-lg border-2 border-bristol-maroon/20 bg-gradient-to-br from-white via-bristol-cream/20 to-white flex-1 shadow-2xl shadow-bristol-maroon/15 flex flex-col min-h-0">
-        <div className="flex-1 overflow-auto">
-          <Table className="w-full relative">
+        <div className="flex-1 overflow-x-auto overflow-y-auto">
+          <Table className="w-full relative min-w-[2000px]">
             <TableHeader className="sticky top-0 bg-gradient-to-r from-bristol-ink via-slate-800 to-bristol-ink z-10 shadow-lg shadow-bristol-ink/30">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-bristol-gold/50">
