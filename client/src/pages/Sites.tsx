@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Building, Map } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
 import { DataBackground } from "../components/EnterpriseBackgrounds";
-import { SitesTable } from "../widgets/tables/SitesTable";
+import { SitesTable } from "../widgets/tables/SitesTableBasic";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
 import { SiteDetails } from "../widgets/details/SiteDetails";
 import { SiteMapPreview } from "../widgets/maps/SiteMapPreview";
@@ -397,59 +397,19 @@ export default function Sites() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 h-full bg-gradient-to-br from-white to-bristol-cream/30">
-                {sites && sites.length > 0 ? (
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse border border-gray-300">
-                      <thead>
-                        <tr className="bg-bristol-ink text-white">
-                          <th className="border border-gray-300 px-4 py-2">Status</th>
-                          <th className="border border-gray-300 px-4 py-2">Name</th>
-                          <th className="border border-gray-300 px-4 py-2">Location</th>
-                          <th className="border border-gray-300 px-4 py-2">Units</th>
-                          <th className="border border-gray-300 px-4 py-2">Year</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {sites.map((site: any, index: number) => (
-                          <tr key={site.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                            <td className="border border-gray-300 px-4 py-2">
-                              <Badge className={
-                                site.status === 'Operating' 
-                                  ? "bg-green-500 text-white" 
-                                  : site.status === 'Pipeline'
-                                  ? "bg-blue-500 text-white"
-                                  : "bg-gray-500 text-white"
-                              }>
-                                {site.status}
-                              </Badge>
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2 font-bold cursor-pointer hover:text-bristol-maroon"
-                                onClick={() => setSelectedSite(site)}>
-                              {site.name}
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2">
-                              {site.city}, {site.state}
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2 text-center">
-                              {site.unitsTotal?.toLocaleString() || '—'}
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2 text-center">
-                              {site.completionYear || '—'}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <p>Loading {sites?.length || 0} properties...</p>
-                )}
+              <CardContent className="p-2 h-[calc(100vh-12rem)] bg-gradient-to-br from-white to-bristol-cream/30 overflow-hidden">
+                <SitesTable 
+                  data={(sites || []) as any[]}
+                  isLoading={isLoading}
+                  onSelectSite={setSelectedSite as any}
+                  selectedSite={selectedSite as any}
+                  onRefresh={refetch}
+                />
               </CardContent>
             </Card>
 
             {/* Premium Details & Analytics Sidebar with Light Theme */}
-            <div className="space-y-6">
+            <div className="space-y-6 h-[calc(100vh-12rem)] overflow-y-auto">
               {/* Site Details Card */}
               <Card className="bg-white/90 border-bristol-maroon/20 backdrop-blur-md shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300">
                 <CardHeader className="pb-4 bg-gradient-to-r from-white to-bristol-cream/50 border-b-2 border-bristol-maroon/20">
