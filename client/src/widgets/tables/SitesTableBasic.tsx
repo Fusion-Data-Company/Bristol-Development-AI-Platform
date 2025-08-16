@@ -400,36 +400,55 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
               ))}
             </TableHeader>
             <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className={`
-                      transition-all duration-300 border-b border-bristol-stone/10
-                      ${row.index % 2 === 0 ? 'bg-gradient-to-r from-white to-bristol-cream/20' : 'bg-gradient-to-r from-bristol-cream/10 to-white'}
-                      ${selectedSite?.id === row.original.id ? 'bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/10 to-bristol-gold/20 shadow-lg shadow-bristol-gold/20 border-bristol-gold/30' : ''}
-                      hover:bg-gradient-to-r hover:from-bristol-maroon/5 hover:via-bristol-gold/5 hover:to-bristol-maroon/5 hover:shadow-lg hover:shadow-bristol-maroon/10
-                    `}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell 
-                        key={cell.id} 
-                        className="px-4 py-2 whitespace-nowrap border-r"
-                        style={{ width: cell.column.getSize() }}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center text-bristol-stone">
-                    No sites found.
-                  </TableCell>
-                </TableRow>
-              )}
+              {Array.from({ length: 50 }, (_, index) => {
+                const row = table.getRowModel().rows[index];
+                if (row) {
+                  // Render actual data row
+                  return (
+                    <TableRow
+                      key={row.id}
+                      data-state={row.getIsSelected() && "selected"}
+                      className={`
+                        transition-all duration-300 border-b border-bristol-stone/10
+                        ${row.index % 2 === 0 ? 'bg-gradient-to-r from-white to-bristol-cream/20' : 'bg-gradient-to-r from-bristol-cream/10 to-white'}
+                        ${selectedSite?.id === row.original.id ? 'bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/10 to-bristol-gold/20 shadow-lg shadow-bristol-gold/20 border-bristol-gold/30' : ''}
+                        hover:bg-gradient-to-r hover:from-bristol-maroon/5 hover:via-bristol-gold/5 hover:to-bristol-maroon/5 hover:shadow-lg hover:shadow-bristol-maroon/10
+                      `}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell 
+                          key={cell.id} 
+                          className="px-4 py-2 whitespace-nowrap border-r"
+                          style={{ width: cell.column.getSize() }}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                } else {
+                  // Render empty placeholder row
+                  return (
+                    <TableRow
+                      key={`empty-${index}`}
+                      className={`
+                        transition-all duration-300 border-b border-bristol-stone/10 h-12
+                        ${index % 2 === 0 ? 'bg-gradient-to-r from-white to-bristol-cream/20' : 'bg-gradient-to-r from-bristol-cream/10 to-white'}
+                      `}
+                    >
+                      {columns.map((column, colIndex) => (
+                        <TableCell 
+                          key={`empty-${index}-${colIndex}`} 
+                          className="px-4 py-2 whitespace-nowrap border-r text-bristol-stone/30"
+                          style={{ width: column.size || 100 }}
+                        >
+                          —
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                }
+              })}
             </TableBody>
           </Table>
         </div>

@@ -620,37 +620,45 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  className="hover:bg-gray-50/50 transition-colors"
-                  data-state={row.getIsSelected() && 'selected'}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  <div className="text-center py-8 text-gray-500">
-                    <Building2 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                    <p>No comparable properties found</p>
-                    <p className="text-sm">Try launching a scrape job to populate data</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
+            {Array.from({ length: 50 }, (_, index) => {
+              const row = table.getRowModel().rows[index];
+              if (row) {
+                // Render actual data row
+                return (
+                  <TableRow
+                    key={row.id}
+                    className="hover:bg-gray-50/50 transition-colors"
+                    data-state={row.getIsSelected() && 'selected'}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              } else {
+                // Render empty placeholder row
+                return (
+                  <TableRow
+                    key={`empty-${index}`}
+                    className={`transition-colors h-12 ${index % 2 === 0 ? 'bg-gray-50/20' : 'bg-white'}`}
+                  >
+                    {columns.map((column, colIndex) => (
+                      <TableCell 
+                        key={`empty-${index}-${colIndex}`} 
+                        className="px-4 py-2 text-gray-300"
+                      >
+                        —
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              }
+            })}
           </TableBody>
         </Table>
       </div>
