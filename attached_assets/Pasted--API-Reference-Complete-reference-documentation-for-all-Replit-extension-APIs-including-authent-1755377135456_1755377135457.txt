@@ -1,0 +1,65 @@
+# API Reference
+
+> Complete reference documentation for all Replit extension APIs, including authentication, commands, filesystem access, and workspace integration.
+
+<CardGroup cols={3}>
+  <Card title="Manifest" icon="file-code" iconType="solid" href="/extensions/api/manifest" horizontal>
+    The extension.json file contains the manifest for an Extension and is required for publishing to the Extensions Store.
+  </Card>
+
+  <Card title="Authentication API" icon="lock" iconType="solid" href="/extensions/api/auth" horizontal>
+    Allows secure authentication of Replit users when they use your extension.
+  </Card>
+
+  <Card title="Background Script API" icon="code" iconType="solid" href="/extensions/api/background" horizontal>
+    Scripts loaded when the Replit App opens, remaining active until uninstalled or workspace closure.
+  </Card>
+
+  <Card title="Commands API" icon="terminal" iconType="solid" href="/extensions/api/commands" horizontal>
+    Register commands that can be run from the CLUI command bar and other contribution points.
+  </Card>
+
+  <Card title="Data API" icon="database" iconType="solid" href="/extensions/api/data" horizontal>
+    Get information and metadata exposed from Replit's GraphQL API.
+  </Card>
+
+  <Card title="Debug API" icon="bug" iconType="solid" href="/extensions/api/debug" horizontal>
+    Log data to the Extension Devtools.
+  </Card>
+
+  <Card title="Editor API" icon="pen-to-square" iconType="solid" href="/extensions/api/editor" horizontal>
+    Get the current user's editor preferences.
+  </Card>
+
+  <Card title="Exec API" icon="terminal" iconType="solid" href="/extensions/api/exec" horizontal>
+    Execute arbitrary shell commands.
+  </Card>
+
+  <Card title="Filesystem API" icon="folder" iconType="solid" href="/extensions/api/fs" horizontal>
+    Create, read, and modify files on the replit app's filesystem.
+  </Card>
+
+  <Card title="Initialization API" icon="play" iconType="solid" href="/extensions/api/init" horizontal>
+    Initialize the Extension and establish a handshake with the Replit App, and adds an event listener to the window object. It takes as an argument an object containing optional parameters for the initialization process. It returns a function that removes the event listener added to the window object.
+  </Card>
+
+  <Card title="Me API" icon="user" iconType="solid" href="/extensions/api/me" horizontal>
+    Exposes information specific to the current extension.
+  </Card>
+
+  <Card title="Messages API" icon="comment" iconType="solid" href="/extensions/api/messages" horizontal>
+    Allows you to send custom notices in the Replit workspace.
+  </Card>
+
+  <Card title="ReplDB API" icon="database" iconType="solid" href="/extensions/api/replDb" horizontal>
+    Simple key-value store for storing replit app specific data.
+  </Card>
+
+  <Card title="Session API" icon="clock" iconType="solid" href="/extensions/api/session" horizontal>
+    Provides information on the current user's coding session in the workspace.
+  </Card>
+
+  <Card title="Themes API" icon="palette" iconType="solid" href="/extensions/api/themes" horizontal>
+    Allows access to the current user's theme and color tokens.
+  </Card>
+</CardGroup>
