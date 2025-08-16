@@ -306,7 +306,7 @@ export function DemographicMap({ className, onEnrichComplete }: DemographicMapPr
         onMove={(evt) => setViewport(evt.viewState)}
         mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: '100%', height: '100%' }}
-        mapStyle="mapbox://styles/mapbox/streets-v8"
+        mapStyle="mapbox://styles/mapbox/streets-v12"
         onLoad={handleMapLoad}
         onClick={handleMapClick}
         interactiveLayerIds={['sites-circles']}
