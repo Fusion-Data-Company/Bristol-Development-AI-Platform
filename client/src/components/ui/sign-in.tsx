@@ -7,15 +7,15 @@ import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, KeyRound, Mail, Sparkles } from "lucide-react"
 
 // Simple SVG components for brand icons as placeholders
-const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const GoogleIcon = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
   <img src="https://svgl.app/library/google.svg" {...props}/>
 )
 
-const MicrosoftIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const MicrosoftIcon = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
   <img src="https://svgl.app/library/microsoft.svg" {...props}/>
 )
 
-const AppleIcon = (props: React.SVGProps<SVGSVGElement>) => (
+const AppleIcon = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
   <img src="https://svgl.app/library/apple.svg" {...props}/>
 )
 
@@ -40,8 +40,8 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
     return (
       <Card ref={ref} className={cn("w-full max-w-md mx-auto", className)} {...props}>
         <CardHeader className="text-left">
-          <CardTitle className="text-2xl">Sign in to Bristol</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-2xl font-serif">Sign in to Bristol</CardTitle>
+          <CardDescription className="font-serif">
             Access your Site Intelligence Platform for enterprise real estate analysis.
           </CardDescription>
         </CardHeader>
@@ -49,7 +49,7 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
           <div className="space-y-4">
             {/* Social Sign-in */}
             <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Sign in with</Label>
+              <Label className="text-xs text-muted-foreground font-serif">Sign in with</Label>
               <div className="grid grid-cols-4 gap-2">
                 <Button variant="outline" onClick={() => onSocialSignIn?.('google')}>
                   <GoogleIcon className="size-4" />
@@ -80,7 +80,7 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
             {/* Email Form */}
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="font-serif">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input id="email" name="email" type="email" placeholder="your.email@company.com" className="pl-9" required />
@@ -88,8 +88,8 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <a href="#" className="text-sm font-medium text-primary hover:underline">Forgot password?</a>
+                  <Label htmlFor="password" className="font-serif">Password</Label>
+                  <a href="#" className="text-sm font-medium text-primary hover:underline font-serif">Forgot password?</a>
                 </div>
                 <div className="relative">
                   <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -105,16 +105,16 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
                   </Button>
                 </div>
               </div>
-              <Button type="submit" className="w-full bg-bristol-maroon hover:bg-bristol-maroon/90">Sign In</Button>
+              <Button type="submit" className="w-full bg-gray-700 hover:bg-gray-800 font-serif">Sign In</Button>
             </form>
           </div>
         </CardContent>
         <CardFooter className="flex-col items-start space-y-4">
-          <Button variant="ghost" className="w-full text-muted-foreground" onClick={() => onEmailLink?.()}>
+          <Button variant="ghost" className="w-full text-muted-foreground font-serif" onClick={() => onEmailLink?.()}>
             <Sparkles className="mr-2 h-4 w-4" />
             Or email me a link
           </Button>
-          <p className="text-xs text-muted-foreground text-center w-full">
+          <p className="text-xs text-muted-foreground text-center w-full font-serif">
             By logging in, you agree to our{' '}
             <a href="#" className="underline hover:text-primary">
               Terms of Service

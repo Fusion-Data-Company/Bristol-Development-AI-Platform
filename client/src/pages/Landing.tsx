@@ -5,19 +5,21 @@ import { BristolFooter } from "@/components/BristolFooter";
 export default function Landing() {
   const handleSocialSignIn = (provider: string) => {
     console.log(`Signing in with ${provider}...`);
-    // For now, redirect to the main login endpoint
+    // All providers use the same Replit Auth endpoint
+    // Replit will handle the actual provider selection
     window.location.href = "/api/login";
   }
 
   const handleEmailSubmit = (data: { email: string; password?: string }) => {
     console.log("Form submitted:", data);
-    // For now, redirect to the main login endpoint
+    // Replit Auth handles email/password authentication
+    // Redirect to the login endpoint which will handle the authentication flow
     window.location.href = "/api/login";
   }
   
   const handleEmailLink = () => {
     console.log("Requesting email link...");
-    // For now, redirect to the main login endpoint
+    // Email magic link also handled by Replit Auth
     window.location.href = "/api/login";
   }
 
