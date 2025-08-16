@@ -397,14 +397,58 @@ export default function Sites() {
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-0 h-full bg-gradient-to-br from-white to-bristol-cream/30">
-                <SitesTable 
-                  data={sites as any} 
-                  isLoading={isLoading && !error}
-                  onSelectSite={(site: any) => setSelectedSite(site)}
-                  selectedSite={selectedSite as any}
-                  onRefresh={refetch}
-                />
+              <CardContent className="p-4 h-full bg-gradient-to-br from-white to-bristol-cream/30">
+                {/* FORCE TABLE DEBUG */}
+                <div className="w-full">
+                  <p className="mb-4">Debug: Sites count = {sites?.length || 0}</p>
+                  {sites && sites.length > 0 ? (
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse border border-gray-300">
+                        <thead>
+                          <tr className="bg-bristol-ink text-white">
+                            <th className="border border-gray-300 px-4 py-2">Status</th>
+                            <th className="border border-gray-300 px-4 py-2">Name</th>
+                            <th className="border border-gray-300 px-4 py-2">Location</th>
+                            <th className="border border-gray-300 px-4 py-2">Units</th>
+                            <th className="border border-gray-300 px-4 py-2">Year</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sites.map((site: any, index: number) => (
+                            <tr key={site.id} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                              <td className="border border-gray-300 px-4 py-2">
+                                <Badge className={
+                                  site.status === 'Operating' 
+                                    ? "bg-green-500 text-white" 
+                                    : site.status === 'Pipeline'
+                                    ? "bg-blue-500 text-white"
+                                    : "bg-gray-500 text-white"
+                                }>
+                                  {site.status}
+                                </Badge>
+                              </td>
+                              <td className="border border-gray-300 px-4 py-2 font-bold cursor-pointer hover:text-bristol-maroon"
+                                  onClick={() => setSelectedSite(site)}>
+                                {site.name}
+                              </td>
+                              <td className="border border-gray-300 px-4 py-2">
+                                {site.city}, {site.state}
+                              </td>
+                              <td className="border border-gray-300 px-4 py-2 text-center">
+                                {site.unitsTotal?.toLocaleString() || '—'}
+                              </td>
+                              <td className="border border-gray-300 px-4 py-2 text-center">
+                                {site.completionYear || '—'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <p>No sites loaded or sites array is empty</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
