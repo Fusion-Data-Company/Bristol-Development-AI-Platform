@@ -87,7 +87,7 @@ function AppContent() {
   }
   
   return (
-    <SimpleChrome showNavigation={true}>
+    <SimpleChrome showNavigation={false}>
       <Router>
         <Switch>
           <Route path="/">
