@@ -211,11 +211,11 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
               </div>
             </div>
             <div className="relative">
-              {/* Maroon ambient glow behind button */}
+              {/* Bristol maroon ambient glow behind button */}
               <div 
                 className="absolute inset-0 rounded-lg"
                 style={{
-                  background: 'radial-gradient(ellipse at center, rgba(139, 69, 19, 0.4) 0%, rgba(139, 69, 19, 0.2) 50%, transparent 100%)',
+                  background: 'radial-gradient(ellipse at center, rgba(139, 38, 53, 0.4) 0%, rgba(139, 38, 53, 0.2) 50%, transparent 100%)',
                   filter: 'blur(8px)',
                   transform: 'scale(1.1)',
                   zIndex: -1
@@ -226,12 +226,12 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
                 className="w-full font-serif relative overflow-hidden group transition-all duration-300 hover:scale-[1.02] shadow-lg"
                 onClick={() => onEmailLink?.()}
                 style={{
-                  background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
+                  background: 'linear-gradient(135deg, #8B2635 0%, #A03545 50%, #8B2635 100%)',
                   color: 'white',
                   border: 'none',
                   borderRadius: '8px',
                   padding: '12px 24px',
-                  boxShadow: '0 4px 20px rgba(139, 69, 19, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                  boxShadow: '0 4px 20px rgba(139, 38, 53, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
                 }}
               >
                 {/* Enhanced shimmer effect */}
@@ -256,7 +256,7 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
                   className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{
                     background: 'rgba(255, 255, 255, 0.1)',
-                    boxShadow: '0 0 20px rgba(139, 69, 19, 0.6)'
+                    boxShadow: '0 0 20px rgba(139, 38, 53, 0.6)'
                   }}
                 />
               </Button>
