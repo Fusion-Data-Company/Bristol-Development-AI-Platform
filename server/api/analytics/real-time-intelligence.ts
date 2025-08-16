@@ -10,28 +10,28 @@ router.get('/market-intelligence', async (req, res) => {
   try {
     const { market, timeframe = '30d' } = req.query;
 
-    // Get real-time market data using MCP tools
+    // Get real-time market data using MCP tools with error handling
     const marketData = await Promise.all([
       // Employment data from BLS
       mcpService.executeTool('bls_employment_data', {
         timeframe,
         metrics: ['employment_rate', 'job_growth', 'wage_growth']
-      }),
+      }).catch(() => null),
       // Housing market data from HUD
       mcpService.executeTool('hud_housing_data', {
         timeframe,
         metrics: ['fair_market_rent', 'rental_vacancy', 'affordability_index']
-      }),
+      }).catch(() => null),
       // Economic indicators from BEA
       mcpService.executeTool('bea_economic_data', {
         timeframe,
         metrics: ['gdp_growth', 'personal_income', 'consumer_spending']
-      }),
+      }).catch(() => null),
       // Crime statistics from FBI
       mcpService.executeTool('fbi_crime_data', {
         timeframe,
         metrics: ['crime_rate', 'property_crime', 'safety_index']
-      })
+      }).catch(() => null)
     ]);
 
     const intelligence = {
@@ -78,13 +78,19 @@ router.get('/predictive-analytics', async (req, res) => {
   try {
     const { horizon = '12m', confidence = 'medium' } = req.query;
 
-    // Use MCP for predictive modeling
-    const predictions = await mcpService.executeTool('predictive_modeling', {
-      horizon,
-      confidence_level: confidence,
-      model_type: 'real_estate_multifamily',
-      include_scenarios: true
-    });
+    // Use MCP for predictive modeling with error handling
+    let predictions = null;
+    try {
+      predictions = await mcpService.executeTool('predictive_modeling', {
+        horizon,
+        confidence_level: confidence,
+        model_type: 'real_estate_multifamily',
+        include_scenarios: true
+      });
+    } catch (error) {
+      console.log('[INFO] Predictive modeling service not available');
+      predictions = null;
+    }
 
     const analytics = {
       forecast_horizon: horizon,
@@ -131,25 +137,25 @@ router.get('/predictive-analytics', async (req, res) => {
 // Live Data Streams
 router.get('/live-streams', async (req, res) => {
   try {
-    // Get real-time data streams
+    // Get real-time data streams with error handling
     const streams = await Promise.all([
       // Market sentiment from news and social media
       mcpService.executeTool('sentiment_analysis', {
         sources: ['news', 'financial_reports', 'market_analysis'],
         keywords: ['multifamily', 'real estate', 'sunbelt markets'],
         timeframe: '24h'
-      }),
+      }).catch(() => null),
       // Interest rate movements
       mcpService.executeTool('interest_rate_monitor', {
         instruments: ['10yr_treasury', 'fed_funds', 'mortgage_rates'],
         frequency: 'hourly'
-      }),
+      }).catch(() => null),
       // Economic calendar events
       mcpService.executeTool('economic_calendar', {
         importance: 'high',
         timeframe: '7d',
         categories: ['employment', 'inflation', 'housing']
-      })
+      }).catch(() => null)
     ]);
 
     const liveData = {

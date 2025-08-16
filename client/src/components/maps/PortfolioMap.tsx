@@ -223,23 +223,51 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
       <MapContainer 
         center={defaultCenter} 
         zoom={defaultZoom} 
-        minZoom={3} 
+        minZoom={3}
+        maxZoom={19}
         scrollWheelZoom 
+        doubleClickZoom
+        touchZoom
+        zoomControl
+        attributionControl
         style={{ width: "100%", height: "100%" }}
+        whenReady={() => {
+          console.log('Map is ready and tiles should be loading');
+        }}
       >
         <LayersControl position="topright">
-          {/* Base layers */}
+          {/* Base layers with improved tile loading */}
           <LayersControl.BaseLayer checked name="OpenStreetMap">
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; OpenStreetMap contributors'
+              subdomains={['a', 'b', 'c']}
+              maxZoom={19}
+              tileSize={256}
+              zoomOffset={0}
+              crossOrigin="anonymous"
+              errorTileUrl="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Crect width='256' height='256' fill='%23f0f0f0'/%3E%3Ctext x='128' y='128' text-anchor='middle' fill='%23999' font-family='Arial' font-size='14'%3ETile Error%3C/text%3E%3C/svg%3E"
+            />
+          </LayersControl.BaseLayer>
+          
+          <LayersControl.BaseLayer name="CartoDB Light">
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              subdomains={['a', 'b', 'c', 'd']}
+              maxZoom={19}
+              tileSize={256}
+              zoomOffset={0}
             />
           </LayersControl.BaseLayer>
           
           <LayersControl.BaseLayer name="Satellite">
             <TileLayer
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              attribution='&copy; Esri'
+              attribution='&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+              maxZoom={19}
+              tileSize={256}
+              zoomOffset={0}
             />
           </LayersControl.BaseLayer>
 
@@ -247,6 +275,21 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
             <TileLayer
               url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
               attribution='&copy; OpenTopoMap contributors'
+              subdomains={['a', 'b', 'c']}
+              maxZoom={17}
+              tileSize={256}
+              zoomOffset={0}
+            />
+          </LayersControl.BaseLayer>
+          
+          <LayersControl.BaseLayer name="Streets (Backup)">
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              subdomains={['a', 'b', 'c', 'd']}
+              maxZoom={19}
+              tileSize={256}
+              zoomOffset={0}
             />
           </LayersControl.BaseLayer>
 

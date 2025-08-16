@@ -14,7 +14,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
   const navItems = [
     { path: "/", label: "Map", icon: Map },
     { path: "/sites", label: "Database", icon: Building },
-    { path: "/analytics", label: "Analytics", icon: BarChart3 },
+    { path: "/analytics-enterprise", label: "Analytics", icon: BarChart3 },
     { path: "/demographics", label: "Demographics", icon: Users },
     { path: "/comparables", label: "Comparables", icon: Building2 },
     { path: "/chat", label: "Chat", icon: MessageSquare },

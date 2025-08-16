@@ -196,19 +196,7 @@ export default function Sites() {
   const statusOptions = ["Newest", "Completed", "Pipeline", "Other"];
 
   return (
-    <DataBackground>
-      {/* Background Image Layer */}
-      <div 
-        className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
-        style={{
-          backgroundImage: `url(${apartmentBackgroundImage})`,
-          filter: 'brightness(0.85) contrast(1.1)'
-        }}
-      />
-      {/* Background Overlay for Content Readability */}
-      <div className="fixed inset-0 bg-gradient-to-br from-bristol-cream/70 via-white/60 to-bristol-sky/50 z-0" />
-      
-      <Chrome>
+    <Chrome>
         <div className="min-h-screen relative z-10">
             
         {/* Premium Sites Intelligence Header */}
@@ -381,10 +369,22 @@ export default function Sites() {
             </div>
           </div>
         </div>
-        </div>
+
+      {/* Main Content Area - With Background Starting Below Hero Header */}
+      <DataBackground>
+        {/* Background Image Layer */}
+        <div 
+          className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
+          style={{
+            backgroundImage: `url(${apartmentBackgroundImage})`,
+            filter: 'brightness(0.85) contrast(1.1)'
+          }}
+        />
+        {/* Background Overlay for Content Readability */}
+        <div className="fixed inset-0 bg-gradient-to-br from-bristol-cream/70 via-white/60 to-bristol-sky/50 z-0" />
 
         {/* Premium Content Area */}
-        <div className="flex-1 p-8 relative mb-16">
+        <div className="flex-1 p-8 relative mb-16 z-10">
           {/* Enhanced ambient glows */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/15 rounded-full blur-3xl animate-pulse"></div>
@@ -463,6 +463,7 @@ export default function Sites() {
               </div>
             </div>
           </div>
+          </div>
         </div>
 
         {/* Premium Add Site Modal with Light Theme */}
@@ -493,8 +494,7 @@ export default function Sites() {
             </div>
           </SheetContent>
         </Sheet>
-        </div>
-      </Chrome>
-    </DataBackground>
+      </DataBackground>
+    </Chrome>
   );
 }

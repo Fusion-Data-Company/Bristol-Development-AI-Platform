@@ -86,19 +86,31 @@ router.get('/market-analysis', async (req, res) => {
           // Get BLS employment data for the market
           const [city, state] = market.split(', ');
           
-          // Use MCP to get real employment data
-          const employmentResult = await mcpService.executeTool('bls_employment_data', {
-            location: city,
-            state: state,
-            metrics: ['unemployment_rate', 'labor_force', 'employment_growth']
-          });
+          // Use MCP to get real employment data with error handling
+          let employmentResult = null;
+          let demographicsResult = null;
+          
+          try {
+            employmentResult = await mcpService.executeTool('bls_employment_data', {
+              location: city,
+              state: state,
+              metrics: ['unemployment_rate', 'labor_force', 'employment_growth']
+            });
+          } catch (error) {
+            console.log(`[INFO] BLS employment data not available for ${market}`);
+            employmentResult = null;
+          }
 
-          // Get demographic data
-          const demographicsResult = await mcpService.executeTool('census_demographics', {
-            city,
-            state,
-            metrics: ['population', 'median_income', 'education_level']
-          });
+          try {
+            demographicsResult = await mcpService.executeTool('census_demographics', {
+              city,
+              state,
+              metrics: ['population', 'median_income', 'education_level']
+            });
+          } catch (error) {
+            console.log(`[INFO] Census demographics not available for ${market}`);
+            demographicsResult = null;
+          }
 
           // Calculate Bristol exposure in this market
           const bristolProperties = sites_data.filter(site => 
