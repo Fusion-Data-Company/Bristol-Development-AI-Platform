@@ -361,7 +361,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
     },
     initialState: {
       pagination: {
-        pageSize: 50,
+        pageSize: 1000,
       },
     },
   });
@@ -401,7 +401,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
             </TableHeader>
             <TableBody>
               {Array.from({ length: 50 }, (_, index) => {
-                const row = table.getRowModel().rows[index];
+                const row = table.getCoreRowModel().rows[index];
                 if (row) {
                   // Render actual data row
                   return (
@@ -457,35 +457,8 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex items-center gap-4">
           <div className="text-sm text-bristol-stone">
-            {table.getFilteredRowModel().rows.length} site(s) total
+            Showing all {table.getCoreRowModel().rows.length} sites (50 rows total)
           </div>
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="text-sm border rounded px-2 py-1"
-          >
-            {[50].map(size => (
-              <option key={size} value={size}>{size} per page</option>
-            ))}
-          </select>
-        </div>
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
         </div>
       </div>
     </div>
