@@ -1,5 +1,5 @@
 import { AuthForm } from "@/components/ui/sign-in";
-import Chrome from "@/components/brand/SimpleChrome";
+import SimpleChrome from "@/components/brand/SimpleChrome";
 
 export default function Landing() {
   const handleSocialSignIn = (provider: string) => {
@@ -103,7 +103,7 @@ export default function Landing() {
       
       {/* Main Content with Chrome wrapper for perfect header/footer */}
       <div className="relative z-10">
-        <Chrome showNavigation={false}>
+        <SimpleChrome showNavigation={false}>
           <div className="min-h-[calc(100vh-400px)] flex items-center justify-center py-16">
             <AuthForm 
               onSocialSignIn={handleSocialSignIn}
@@ -112,7 +112,7 @@ export default function Landing() {
               className="shadow-2xl backdrop-blur-sm bg-white/95 border-2 border-cyan-200/30"
             />
           </div>
-        </Chrome>
+        </SimpleChrome>
       </div>
     </div>
   );
