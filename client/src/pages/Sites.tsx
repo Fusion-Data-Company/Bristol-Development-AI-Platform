@@ -193,7 +193,7 @@ export default function Sites() {
     }
   };
 
-  const statusOptions = ["Newest", "Completed", "Pipeline", "Other"];
+  const statusOptions = ["Completed", "Pipeline", "Other"];
 
   return (
     <Chrome>
@@ -331,7 +331,7 @@ export default function Sites() {
             </Button>
 
             {/* Premium Search with Light Theme */}
-            <div className="flex-1 max-w-md">
+            <div className="flex-1 max-w-xl">
               <div className="relative group">
                 <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-bristol-maroon/60 w-5 h-5 group-focus-within:text-bristol-maroon transition-colors" />
                 <Input
@@ -362,7 +362,7 @@ export default function Sites() {
                     );
                   }}
                 >
-                  {status}
+                  {status === "Completed" ? "Operational" : status}
                 </Badge>
               ))}
             </div>
