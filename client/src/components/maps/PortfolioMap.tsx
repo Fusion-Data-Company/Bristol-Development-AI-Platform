@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MapContainer, TileLayer, LayersControl, Marker, Popup, useMap, CircleMarker, GeoJSON } from "react-leaflet";
 import L, { LatLngBoundsExpression } from "leaflet";
 import { patchLeafletIcons } from "@/lib/leafletIconFix";
+import "leaflet/dist/leaflet.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -214,9 +215,8 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
 
   return (
     <div className={`relative w-full h-[80vh] rounded-2xl overflow-hidden border ${className || ''}`}>
-      {/* Leaflet CSS */}
+      {/* Leaflet container styling */}
       <style>{`
-        @import url('https://unpkg.com/leaflet@1.7.1/dist/leaflet.css');
         .leaflet-container { width: 100%; height: 100%; }
       `}</style>
 
