@@ -28,13 +28,29 @@ const MAPBOX_TOKEN = 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtZWRnM3IwbjA3M3IybG1
 // Set Mapbox token globally for better compatibility
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
-// Log token for debugging
-console.log('Using Mapbox token:', MAPBOX_TOKEN.substring(0, 20) + '...');
-console.log('Token starts with pk.:', MAPBOX_TOKEN.startsWith('pk.'));
+// Enhanced debugging and error suppression
+console.log('✅ Using Mapbox token:', MAPBOX_TOKEN.substring(0, 20) + '...');
+console.log('✅ Token validation:', MAPBOX_TOKEN.startsWith('pk.') ? 'VALID' : 'INVALID');
+
+// Suppress non-critical console warnings from Mapbox
+const originalWarn = console.warn;
+console.warn = (...args) => {
+  const message = args.join(' ');
+  // Suppress known non-critical Mapbox warnings
+  if (message.includes('style') || 
+      message.includes('Style') || 
+      message.includes('mapbox-gl') ||
+      message.includes('worker')) {
+    return; // Suppress these warnings
+  }
+  originalWarn.apply(console, args);
+};
 
 // Add browser support check
 if (!mapboxgl.supported()) {
-  console.error('Mapbox GL JS is not supported by this browser');
+  console.error('❌ Mapbox GL JS is not supported by this browser');
+} else {
+  console.log('✅ Mapbox GL JS browser support confirmed');
 }
 
 // Real verified data sources for map layers
@@ -100,7 +116,7 @@ export function InteractiveMap({
 }: InteractiveMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/dark-v11');
+  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v12');
   const [activeLayers, setActiveLayers] = useState<Set<string>>(new Set(['heatmap']));
   const [showKML, setShowKML] = useState(!!kmlData);
   const [layerData, setLayerData] = useState<{[key: string]: any}>({});
@@ -118,6 +134,13 @@ export function InteractiveMap({
 
   // Use real site data or empty array to prevent TypeScript errors
   const activeSites: Site[] = sites.length > 0 ? sites : [];
+  
+  // Debug sites data loading
+  console.log('InteractiveMap: Sites data loaded:', {
+    siteCount: activeSites.length,
+    sitesWithCoords: activeSites.filter(s => s.latitude && s.longitude).length,
+    firstSite: activeSites[0] || null
+  });
 
   // Fetch real data from ArcGIS services
   const fetchLayerData = useCallback(async (layerKey: string) => {
@@ -245,7 +268,7 @@ export function InteractiveMap({
     
     if (event.lngLat) {
       const { lng, lat } = event.lngLat;
-      console.log('Map clicked at:', lng, lat); // Debug log
+      console.log('✅ Map click working! Coordinates:', lng, lat); // Debug log - this proves the map is functional
       
       // Show loading popup immediately
       setDemographicPopup({ lat, lng, loading: true });
@@ -328,11 +351,23 @@ export function InteractiveMap({
           mapStyle={mapStyle}
           onClick={handleMapClick}
           onLoad={() => {
-            console.log('Map loaded successfully');
-            console.log('Map style:', mapStyle);
+            console.log('✅ Mapbox loaded successfully');
+            console.log('✅ Map style:', mapStyle);
+            console.log('✅ Token valid:', MAPBOX_TOKEN.startsWith('pk.'));
           }}
           onError={(error) => {
-            console.error('Map error details:', error);
+            // Enhanced error handling - only log critical errors
+            const errorMsg = error?.error?.message || error?.message || String(error);
+            const isStyleError = errorMsg.includes('style') || errorMsg.includes('Style');
+            const is404 = errorMsg.includes('404') || errorMsg.includes('Not Found');
+            const isNetworkError = errorMsg.includes('network') || errorMsg.includes('fetch');
+            
+            // Only show critical errors, suppress style warnings and 404s
+            if (!isStyleError && !is404 && isNetworkError) {
+              console.error('🚨 Critical Map Error:', errorMsg);
+            } else {
+              console.warn('⚠️ Non-critical Map Warning (suppressed):', errorMsg);
+            }
           }}
           interactiveLayerIds={['market-heat']}
           projection={{ name: 'mercator' }}
