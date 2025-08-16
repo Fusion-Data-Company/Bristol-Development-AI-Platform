@@ -463,7 +463,6 @@ export default function Sites() {
               </div>
             </div>
           </div>
-          </div>
         </div>
 
         {/* Premium Add Site Modal with Light Theme */}
