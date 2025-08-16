@@ -40,7 +40,7 @@ export default function Sites() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  // Fetch sites data with auth - handle 401 gracefully
+  // Fetch sites data - API is working fine based on logs
   const { data: sites = [], isLoading, refetch, error } = useQuery<Site[]>({
     queryKey: ['/api/sites', { q: searchQuery, status: statusFilter }],
     queryFn: async () => {
@@ -50,15 +50,11 @@ export default function Sites() {
       
       const response = await fetch(`/api/sites?${params}`);
       if (!response.ok) {
-        if (response.status === 401) {
-          console.log('Sites API requires authentication, using empty array for now');
-          return [];
-        }
         throw new Error('Failed to fetch sites');
       }
       return response.json();
     },
-    retry: false // Don't retry auth failures
+    retry: 3 // Allow retries
   });
 
   // FORCE UPDATE WITH DIRECT STATE MANAGEMENT 
@@ -402,34 +398,13 @@ export default function Sites() {
                 </div>
               </CardHeader>
               <CardContent className="p-0 h-full bg-gradient-to-br from-white to-bristol-cream/30">
-                {sites.length > 0 ? (
-                  <SitesTable 
-                    data={sites as any} 
-                    isLoading={isLoading && !error}
-                    onSelectSite={(site: any) => setSelectedSite(site)}
-                    selectedSite={selectedSite as any}
-                    onRefresh={refetch}
-                  />
-                ) : (
-                  <div className="p-8 text-center text-bristol-stone">
-                    <Building className="h-12 w-12 mx-auto mb-4 text-bristol-maroon/40" />
-                    <p className="text-lg font-medium">
-                      {isLoading ? 'Loading Portfolio Data...' : 'No Site Data Available'}
-                    </p>
-                    <p className="text-sm mt-2">
-                      {error ? 'Authentication required to display site details' : 'Add sites to view portfolio data'}
-                    </p>
-                    {!error && !isLoading && (
-                      <Button 
-                        onClick={() => setShowAddForm(true)}
-                        className="mt-4 bg-bristol-maroon text-white hover:bg-bristol-maroon/90"
-                      >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Your First Site
-                      </Button>
-                    )}
-                  </div>
-                )}
+                <SitesTable 
+                  data={sites as any} 
+                  isLoading={isLoading && !error}
+                  onSelectSite={(site: any) => setSelectedSite(site)}
+                  selectedSite={selectedSite as any}
+                  onRefresh={refetch}
+                />
               </CardContent>
             </Card>
 
