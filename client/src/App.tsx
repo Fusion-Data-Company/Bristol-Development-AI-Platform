@@ -1,152 +1,93 @@
-import { Switch, Route, useLocation } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider, useQuery } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { useAuth } from "@/hooks/useAuth";
-import { GlobalHeader } from "@/components/GlobalHeader";
-import { ErrorBoundary, setupGlobalErrorHandling } from "@/components/ErrorBoundary";
-import { useEffect } from "react";
+import React from 'react';
+import { Router, Route, Switch } from 'wouter';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '@/components/ui/toaster';
+import { GlobalHeader } from '@/components/GlobalHeader';
+import { BristolFooter } from '@/components/BristolFooter';
+import { ThinkingIndicator } from '@/components/chat/ThinkingIndicator';
+import { useAuth } from '@/hooks/useAuth';
 
-import BristolFloatingWidget from "@/components/BristolFloatingWidget";
+// Only import pages that we know work
+import Landing from '@/pages/Landing';
+import Dashboard from '@/pages/Dashboard';
+import NotFound from '@/pages/not-found';
 
-import NotFound from "@/pages/not-found";
-import Landing from "@/pages/Landing";
-import Dashboard from "@/pages/Dashboard";
-import Sites from "@/pages/Sites";
-import Analytics from "@/pages/Analytics";
-import AnalyticsEnterprise from "@/pages/AnalyticsEnterprise";
-import Chat from "@/pages/Chat";
-import Integrations from "@/pages/Integrations";
-import MainApp from "@/pages/App";
-import ToolsConsole from "@/pages/ToolsConsole";
-import IntegrationsNew from "@/pages/IntegrationsNew";
-import Demographics from "@/pages/Demographics";
-import { Tools } from "@/pages/Tools";
-import ComparablesAnnex from "@/pages/ComparablesAnnex";
-import EnterpriseDashboard from "@/pages/EnterpriseDashboard";
-import EnhancedAgents from "@/pages/EnhancedAgents";
-import Maps2 from "@/pages/Maps2";
+// Create query client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5,
+    },
+  },
+});
 
-function Router() {
+// Loading component
+const PageLoader = () => (
+  <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="text-center">
+      <ThinkingIndicator isThinking={true} size="lg" />
+      <p className="mt-4 text-gray-600">Loading Bristol Intelligence...</p>
+    </div>
+  </div>
+);
+
+// Auth-protected route wrapper
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
-
-  return (
-    <Switch>
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
-        <>
-          <Route path="/" component={MainApp} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/enterprise" component={EnterpriseDashboard} />
-          <Route path="/enterprise-dashboard" component={EnterpriseDashboard} />
-          <Route path="/sites" component={Sites} />
-          <Route path="/analytics" component={Analytics} />
-          <Route path="/analytics-enterprise" component={AnalyticsEnterprise} />
-          <Route path="/demographics" component={Demographics} />
-          <Route path="/chat" component={Chat} />
-          <Route path="/integrations" component={IntegrationsNew} />
-          <Route path="/tools-console" component={ToolsConsole} />
-          <Route path="/tools" component={Tools} />
-          <Route path="/comparables" component={ComparablesAnnex} />
-          <Route path="/comparables-annex" component={ComparablesAnnex} />
-          <Route path="/agents" component={EnhancedAgents} />
-          <Route path="/enhanced-agents" component={EnhancedAgents} />
-          <Route path="/maps2" component={Maps2} />
-        </>
-      )}
-      <Route component={NotFound} />
-    </Switch>
-  );
-}
-
-function AppContent() {
-  const { isAuthenticated } = useAuth();
-  const [location] = useLocation();
   
-  // Aggregate app data for Bristol Floating Widget
-  const { data: sites } = useQuery({
-    queryKey: ['/api/sites'],
-    enabled: isAuthenticated,
-  });
+  if (isLoading) {
+    return <PageLoader />;
+  }
   
-  const { data: analytics } = useQuery({
-    queryKey: ['/api/analytics/overview'],
-    enabled: isAuthenticated,
-  });
+  if (!isAuthenticated) {
+    return <Landing />;
+  }
   
-  // Combine all data sources
-  const appData = {
-    sites: sites || [],
-    analytics: analytics || {},
-    timestamp: new Date().toISOString(),
-    user: { authenticated: isAuthenticated }
-  };
-  
-  return (
-    <>      
-      {/* Main content without global header - each page uses SimpleChrome */}
-      <div>
-        <Router />
-      </div>
-      
-      {/* Hide Bristol Floating Widget on chat page */}
-      {isAuthenticated && location !== '/chat' && (
-        <BristolFloatingWidget 
-            appData={appData}
-            webhookUrl={import.meta.env.VITE_N8N_WEBHOOK_URL}
-            onSaveSystemPrompt={async (prompt) => {
-              try {
-                console.log("System prompt saved:", prompt.length, "characters");
-              } catch (error) {
-                console.error("Error saving system prompt:", error);
-              }
-            }}
-            onSend={async (payload) => {
-              try {
-                console.log("Chat sent:", payload.model, payload.messages.length, "messages");
-              } catch (error) {
-                console.error("Error sending chat:", error);
-              }
-            }}
-          />
-      )}
-    </>
-  );
-}
+  return <>{children}</>;
+};
 
 function App() {
-  // Set up global error handling on app initialization
-  useEffect(() => {
-    setupGlobalErrorHandling();
-  }, []);
-
   return (
-    <ErrorBoundary
-      onError={(error, errorInfo) => {
-        // Enhanced error reporting
-        console.error('Bristol App Error:', {
-          error: error.message,
-          stack: error.stack,
-          componentStack: errorInfo.componentStack,
-          timestamp: new Date().toISOString()
-        });
-      }}
-    >
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <ErrorBoundary
-            onError={(error) => {
-              console.error('Content Error:', error.message);
-            }}
-          >
-            <AppContent />
-          </ErrorBoundary>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <div className="min-h-screen bg-gray-50">
+        {/* Dark Bristol Header - Never Changes (per user preference) */}
+        <GlobalHeader />
+        
+        {/* Main Content Area - Light Theme */}
+        <div className="pt-20">
+          <Router>
+            <Switch>
+              <Route path="/" exact>
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              </Route>
+              
+              <Route path="/dashboard">
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              </Route>
+              
+              {/* Fallback to dashboard for any other routes temporarily */}
+              <Route>
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              </Route>
+            </Switch>
+          </Router>
+        </div>
+        
+        {/* Thick Bristol Footer - Required for Floating Widget UX */}
+        <BristolFooter variant="thick" />
+        
+        {/* Toast Notifications */}
+        <Toaster />
+      </div>
+    </QueryClientProvider>
   );
 }
 
