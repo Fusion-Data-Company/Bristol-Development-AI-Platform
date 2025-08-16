@@ -146,10 +146,20 @@ export async function setupAuth(app: Express) {
   });
 
   app.get("/api/callback", (req, res, next) => {
+    console.log('📥 OAuth callback received');
+    
     passport.authenticate(`replitauth:${req.hostname}`, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
-    })(req, res, next);
+    })(req, res, (err) => {
+      if (err) {
+        console.error('❌ Authentication callback error:', err);
+        // User-friendly error page instead of silent redirect
+        return res.redirect('/?error=auth_failed&message=' + encodeURIComponent('Authentication failed. Please try again.'));
+      }
+      console.log('✅ Authentication callback successful');
+      next();
+    });
   });
 
   app.get("/api/logout", (req, res) => {
