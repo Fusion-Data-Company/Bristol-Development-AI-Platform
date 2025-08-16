@@ -91,7 +91,22 @@ export function InteractiveMap({
 }: InteractiveMapProps) {
   const mapRef = useRef<MapRef>(null);
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
-  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/streets-v9');
+  const [mapStyle, setMapStyle] = useState({
+    version: 8,
+    sources: {
+      'osm-tiles': {
+        type: 'raster',
+        tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+        tileSize: 256,
+        attribution: '© OpenStreetMap contributors'
+      }
+    },
+    layers: [{
+      id: 'osm-layer',
+      type: 'raster',
+      source: 'osm-tiles'
+    }]
+  });
   const [activeLayers, setActiveLayers] = useState<Set<string>>(new Set(['heatmap']));
   const [showKML, setShowKML] = useState(!!kmlData);
   const [layerData, setLayerData] = useState<{[key: string]: any}>({});
@@ -303,7 +318,7 @@ export function InteractiveMap({
           latitude={viewport.latitude}
           zoom={viewport.zoom}
           onMove={evt => setViewport(evt.viewState)}
-          mapboxAccessToken={MAPBOX_TOKEN}
+          mapboxAccessToken={undefined}
           style={{ width: '100%', height: '100%', minHeight: '500px' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}
@@ -312,7 +327,7 @@ export function InteractiveMap({
             console.log('Map style:', mapStyle);
           }}
           onError={(error) => {
-            console.error('Map loading error - using basic style');
+            console.error('Map error details:', error);
           }}
           interactiveLayerIds={['market-heat']}
           projection={{ name: 'mercator' }}
@@ -870,7 +885,7 @@ export function InteractiveMap({
           ref={mapRef}
           {...viewport}
           onMove={evt => setViewport(evt.viewState)}
-          mapboxAccessToken={MAPBOX_TOKEN}
+          mapboxAccessToken={undefined}
           style={{ width: '100%', height: '100%' }}
           mapStyle={mapStyle}
           onClick={handleMapClick}
