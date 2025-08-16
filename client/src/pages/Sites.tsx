@@ -41,14 +41,6 @@ export default function Sites() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  // Parallax scroll effect
-  const [scrollY, setScrollY] = useState(0);
-  
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Fetch sites data - API is working fine based on logs
   const { data: sites = [], isLoading, refetch, error } = useQuery<Site[]>({
@@ -205,25 +197,22 @@ export default function Sites() {
 
   return (
     <DataBackground>
+      {/* Background Image Layer */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
+        style={{
+          backgroundImage: `url(${apartmentBackgroundImage})`,
+          filter: 'brightness(0.85) contrast(1.1)'
+        }}
+      />
+      {/* Background Overlay for Content Readability */}
+      <div className="fixed inset-0 bg-gradient-to-br from-bristol-cream/70 via-white/60 to-bristol-sky/50 z-0" />
+      
       <Chrome>
-      <div className="min-h-screen flex flex-col relative pb-32 overflow-hidden">
-        {/* Fixed Parallax Background */}
-        <div 
-          className="fixed inset-0 w-full h-full z-0"
-          style={{
-            backgroundImage: `url(${apartmentBackgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            transform: `translateY(${scrollY * 0.5}px)`,
-            filter: 'brightness(0.85) contrast(1.1)'
-          }}
-        />
-        
-        {/* Background Overlay for Content Readability - No Blur to Keep Image Crisp */}
-        <div className="fixed inset-0 bg-gradient-to-br from-bristol-cream/70 via-white/60 to-bristol-sky/50 z-[1]" />
-        {/* Premium Sites Intelligence Header - Fixed with Hero */}
-        <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
+        <div className="min-h-screen relative z-10">
+            
+        {/* Premium Sites Intelligence Header */}
+        <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
         <div className="p-8 relative overflow-hidden">
           {/* Enhanced ambient glow - Static for Header */}
           <div className="absolute inset-0 bg-gradient-to-r from-bristol-cream/40 via-white/30 to-bristol-sky/40"></div>
@@ -394,33 +383,18 @@ export default function Sites() {
         </div>
         </div>
 
-        {/* Premium Content Area with Clean Parallax Effects */}
-        <div 
-          className="flex-1 p-8 relative mb-16 overflow-visible z-10"
-          style={{
-            transform: `translateY(${scrollY * 0.1}px)`
-          }}
-        >
-          {/* Enhanced ambient glows with parallax movement */}
-          <div 
-            className="absolute inset-0 overflow-hidden pointer-events-none"
-            style={{
-              transform: `translateY(${scrollY * 0.15}px)`
-            }}
-          >
+        {/* Premium Content Area */}
+        <div className="flex-1 p-8 relative mb-16">
+          {/* Enhanced ambient glows */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/15 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-bristol-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
             <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-bristol-sky/15 rounded-full blur-2xl animate-pulse" style={{animationDelay: '3s'}}></div>
           </div>
           
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 relative pb-4 min-h-[80vh]">
-            {/* Premium Sites Database Table with Clean Parallax */}
-            <Card 
-              className="xl:col-span-2 bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500"
-              style={{
-                transform: `translateY(${scrollY * 0.05}px)`
-              }}
-            >
+            {/* Premium Sites Database Table */}
+            <Card className="xl:col-span-2 bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500">
               <CardHeader className="pb-4 bg-gradient-to-r from-white/90 to-bristol-cream/60 border-b-2 border-bristol-maroon/30 backdrop-blur-sm">
                 <div className="flex items-center space-x-3">
                   <div className="relative group">
@@ -450,20 +424,10 @@ export default function Sites() {
               </CardContent>
             </Card>
 
-            {/* Premium Details & Analytics Sidebar with Clean Parallax */}
-            <div 
-              className="space-y-6"
-              style={{
-                transform: `translateY(${scrollY * 0.08}px)`
-              }}
-            >
-              {/* Site Details Card with Clean Parallax */}
-              <Card 
-                className="bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500"
-                style={{
-                  transform: `translateY(${scrollY * 0.03}px)`
-                }}
-              >
+            {/* Premium Details & Analytics Sidebar */}
+            <div className="space-y-6">
+              {/* Site Details Card */}
+              <Card className="bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500">
                 <CardHeader className="pb-4 bg-gradient-to-r from-white/90 to-bristol-cream/60 border-b-2 border-bristol-maroon/30 backdrop-blur-sm">
                   <div className="flex items-center space-x-3">
                     <div className="relative group">
@@ -520,7 +484,7 @@ export default function Sites() {
             </SheetHeader>
             <div className="py-6">
               <AddSiteForm 
-                onSubmit={async (data) => {
+                onSuccess={() => {
                   setShowAddForm(false);
                   refetch();
                 }}
@@ -529,7 +493,8 @@ export default function Sites() {
             </div>
           </SheetContent>
         </Sheet>
-      </div>
+          </div>
+        </div>
       </Chrome>
     </DataBackground>
   );
