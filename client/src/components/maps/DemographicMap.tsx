@@ -46,7 +46,7 @@ interface SitesGeoJSON {
   features: GeoJSONFeature[];
 }
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiYnJpc3RvbGRldiIsImEiOiJjbTIxdW9hdG0wMnBrMnRzZThwbXo5dzV4In0.Qwn5r6i6cFE0oBqUDXWuSA';
+const MAPBOX_TOKEN = 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtZWRnM3IwbjA3M3IybG1zNnAzeWtuZ3EifQ.mif4Tbd3ceKQh6YAS8EPDQ';
 
 // Quantile color stops for demographic visualization
 function quantileStops(fc: SitesGeoJSON, key: string) {
