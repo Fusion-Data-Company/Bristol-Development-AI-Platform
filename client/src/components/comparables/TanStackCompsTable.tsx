@@ -469,7 +469,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
                 </div>
               </div>
             </HoverCardTrigger>
-            <HoverCardContent className="w-96 bg-white/95 backdrop-blur border-bristol-gold/30 shadow-xl">
+            <HoverCardContent className="w-96 bg-white/95 backdrop-blur border-bristol-gold/30 shadow-xl z-[9999]">
               <div className="space-y-4">
                 <div className="border-b border-bristol-gold/20 pb-2">
                   <h4 className="font-semibold text-bristol-maroon flex items-center gap-2">
