@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import Chrome from "../components/brand/SimpleChrome";
+import Chrome from "../components/brand/Chrome";
 import { PortfolioMap } from "../components/maps/PortfolioMap";
 import { SiteDemographicAnalysis } from "../components/analysis/SiteDemographicAnalysis";
 import { AddressDemographics } from "../components/analysis/AddressDemographics";

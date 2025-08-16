@@ -6,11 +6,11 @@ import SimpleChrome from '@/components/brand/SimpleChrome';
 import { ThinkingIndicator } from '@/components/chat/ThinkingIndicator';
 import { useAuth } from '@/hooks/useAuth';
 
-// Only import pages that we know work
+// Import all pages
 import Landing from '@/pages/Landing';
-import Dashboard from '@/pages/Dashboard';
+import MapPage from '@/pages/App';
+import Sites from '@/pages/Sites';
 import Users from '@/pages/Users';
-import NotFound from '@/pages/not-found';
 
 // Create query client
 const queryClient = new QueryClient({
@@ -89,21 +89,13 @@ function AppContent() {
   return (
     <Router>
       <Switch>
-        <Route path="/">
-          <Dashboard />
-        </Route>
+        <Route path="/" component={MapPage} />
+        <Route path="/sites" component={Sites} />
+        <Route path="/users" component={Users} />
         
-        <Route path="/dashboard">
-          <Dashboard />
-        </Route>
-        
-        <Route path="/users">
-          <Users />
-        </Route>
-        
-        {/* Fallback to dashboard for any other routes temporarily */}
+        {/* Fallback to main app */}
         <Route>
-          <Dashboard />
+          <MapPage />
         </Route>
       </Switch>
       
