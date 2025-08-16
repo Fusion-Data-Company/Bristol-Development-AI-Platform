@@ -361,7 +361,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
     },
     initialState: {
       pagination: {
-        pageSize: 100,
+        pageSize: 50,
       },
     },
   });
@@ -378,7 +378,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
   }
 
   return (
-    <div className="space-y-4 h-full flex flex-col">
+    <div className="space-y-4 h-full flex flex-col" style={{ minHeight: '800px' }}>
       <div className="rounded-md border bg-white flex-1 overflow-x-auto">
         <div className="min-w-max">
           <Table className="w-full">
@@ -445,7 +445,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
             onChange={(e) => table.setPageSize(Number(e.target.value))}
             className="text-sm border rounded px-2 py-1"
           >
-            {[25, 50, 100, 200].map(size => (
+            {[50].map(size => (
               <option key={size} value={size}>{size} per page</option>
             ))}
           </select>

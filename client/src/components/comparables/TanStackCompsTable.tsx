@@ -106,7 +106,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 25,
+    pageSize: 50,
   });
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
@@ -576,7 +576,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" style={{ minHeight: '800px' }}>
       {/* Global Search */}
       <div className="flex items-center justify-between gap-4 p-4 bg-gradient-to-r from-bristol-cream/20 to-white border-b border-bristol-gold/20">
         <div className="flex items-center gap-3">
@@ -666,7 +666,7 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
             }}
             className="h-8 w-[70px] rounded border border-input px-2 text-sm"
           >
-            {[10, 25, 50, 100].map((pageSize) => (
+            {[50].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
