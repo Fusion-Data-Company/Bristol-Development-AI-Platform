@@ -270,13 +270,8 @@ export function InteractiveMap({
       const { lng, lat } = event.lngLat;
       console.log('✅ Map click working! Coordinates:', lng, lat);
       
-      // Clear any existing popup first
-      setDemographicPopup(null);
-      
-      // Small delay to ensure state is cleared, then show loading popup
-      setTimeout(() => {
-        setDemographicPopup({ lat, lng, loading: true });
-      }, 50);
+      // Always clear existing popup and show loading immediately
+      setDemographicPopup({ lat, lng, loading: true });
       
       try {
         // Fetch demographic data for these coordinates
@@ -290,21 +285,15 @@ export function InteractiveMap({
         
         if (response.ok) {
           const demographicData = await response.json();
-          // Update with data after a small delay
-          setTimeout(() => {
-            setDemographicPopup({ lat, lng, loading: false, data: demographicData });
-          }, 100);
+          // Update with real data only
+          setDemographicPopup({ lat, lng, loading: false, data: demographicData });
         } else {
           console.error('Failed to fetch demographics:', response.statusText);
-          setTimeout(() => {
-            setDemographicPopup(null);
-          }, 100);
+          setDemographicPopup(null);
         }
       } catch (error) {
         console.error('Error fetching demographics:', error);
-        setTimeout(() => {
-          setDemographicPopup(null);
-        }, 100);
+        setDemographicPopup(null);
       }
       
       onMapClick?.(lng, lat);
@@ -639,130 +628,94 @@ export function InteractiveMap({
               closeOnClick={false}
               closeOnMove={false}
             >
-              <div className="p-6 min-w-[480px] max-w-[550px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden rounded-lg">
+              <div className="p-4 min-w-[360px] max-w-[420px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden rounded-lg">
                 {/* Metallic shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400/10 via-transparent to-cyan-300/10 pointer-events-none" />
                 <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-cyan-500/5 to-transparent pointer-events-none animate-pulse" />
                 
                 {/* Header with cyan glow */}
-                <div className="flex items-center gap-3 mb-5 relative">
-                  <div className="p-2 bg-cyan-500/20 rounded-lg backdrop-blur-sm border border-cyan-400/30">
-                    <MapPin className="w-6 h-6 text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+                <div className="flex items-center gap-2 mb-4 relative">
+                  <div className="p-1.5 bg-cyan-500/20 rounded-lg backdrop-blur-sm border border-cyan-400/30">
+                    <MapPin className="w-5 h-5 text-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
                   </div>
-                  <h3 className="font-serif text-2xl font-bold bg-gradient-to-r from-cyan-300 to-cyan-100 bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                  <h3 className="font-serif text-lg font-bold bg-gradient-to-r from-cyan-300 to-cyan-100 bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
                     LOCATION DEMOGRAPHICS
                   </h3>
                 </div>
                 
                 {demographicPopup.loading ? (
-                  <div className="flex items-center justify-center py-8">
+                  <div className="flex items-center justify-center py-6">
                     <div className="relative">
-                      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-cyan-400 border-r-2 border-cyan-300"></div>
-                      <div className="absolute inset-0 animate-ping rounded-full h-12 w-12 border border-cyan-400/30"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-cyan-400 border-r-2 border-cyan-300"></div>
+                      <div className="absolute inset-0 animate-ping rounded-full h-8 w-8 border border-cyan-400/30"></div>
                     </div>
-                    <span className="ml-3 text-cyan-200 font-medium">Analyzing location data...</span>
+                    <span className="ml-3 text-cyan-200 font-medium">Loading data...</span>
                   </div>
                 ) : demographicPopup.data ? (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {/* Location address with metallic border */}
-                    <div className="text-sm text-cyan-200 mb-3 p-3 bg-slate-800/50 rounded-lg border border-cyan-500/30 backdrop-blur-sm">
+                    <div className="text-sm text-cyan-200 mb-2 p-2 bg-slate-800/50 rounded-lg border border-cyan-500/30 backdrop-blur-sm">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
                         {demographicPopup.data.location?.address || `${demographicPopup.lat.toFixed(4)}, ${demographicPopup.lng.toFixed(4)}`}
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-4 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="p-1.5 bg-cyan-500/20 rounded">
-                            <Users className="w-4 h-4 text-cyan-400" />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="p-1 bg-cyan-500/20 rounded">
+                            <Users className="w-3 h-3 text-cyan-400" />
                           </div>
-                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Population Growth</span>
+                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Population</span>
                         </div>
-                        <div className="text-2xl font-bold text-cyan-100 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                        <div className="text-lg font-bold text-cyan-100">
                           {demographicPopup.data.demographics?.population?.toLocaleString() || '—'}
                         </div>
-                        <div className="text-xs text-emerald-400 mt-1">+2,689 people</div>
                       </div>
                       
-                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-4 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="p-1.5 bg-cyan-500/20 rounded">
-                            <DollarSign className="w-4 h-4 text-cyan-400" />
+                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="p-1 bg-cyan-500/20 rounded">
+                            <DollarSign className="w-3 h-3 text-cyan-400" />
                           </div>
-                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Median Income</span>
+                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Med. Income</span>
                         </div>
-                        <div className="text-2xl font-bold text-cyan-100 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                        <div className="text-lg font-bold text-cyan-100">
                           {demographicPopup.data.demographics?.median_income 
                             ? `$${demographicPopup.data.demographics.median_income.toLocaleString()}`
                             : '—'
                           }
                         </div>
-                        <div className="text-xs text-amber-400 mt-1">Household</div>
                       </div>
                       
-                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-4 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="p-1.5 bg-cyan-500/20 rounded">
-                            <Home className="w-4 h-4 text-cyan-400" />
+                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="p-1 bg-cyan-500/20 rounded">
+                            <Home className="w-3 h-3 text-cyan-400" />
                           </div>
-                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Employment Rate</span>
+                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Med. Rent</span>
                         </div>
-                        <div className="text-2xl font-bold text-cyan-100 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                          97.2%
+                        <div className="text-lg font-bold text-cyan-100">
+                          {demographicPopup.data.demographics?.median_rent 
+                            ? `$${demographicPopup.data.demographics.median_rent.toLocaleString()}`
+                            : '—'
+                          }
                         </div>
-                        <div className="text-xs text-emerald-400 mt-1">Active Workforce</div>
                       </div>
                       
-                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-4 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300 hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="p-1.5 bg-cyan-500/20 rounded">
-                            <Building className="w-4 h-4 text-cyan-400" />
+                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 p-3 rounded-lg border border-cyan-500/20 backdrop-blur-sm hover:border-cyan-400/40 transition-all duration-300">
+                        <div className="flex items-center gap-2 mb-1">
+                          <div className="p-1 bg-cyan-500/20 rounded">
+                            <GraduationCap className="w-3 h-3 text-cyan-400" />
                           </div>
-                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Age 25-44</span>
+                          <span className="text-cyan-300/80 text-xs uppercase tracking-wider font-medium">Bachelor's+</span>
                         </div>
-                        <div className="text-2xl font-bold text-cyan-100 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                          10.3%
-                        </div>
-                        <div className="text-xs text-blue-400 mt-1">Target Demo</div>
-                      </div>
-                    </div>
-                    
-                    {/* Additional demographic cards */}
-                    <div className="grid grid-cols-3 gap-3 mt-4">
-                      <div className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 p-3 rounded-lg border border-cyan-500/15 backdrop-blur-sm">
-                        <div className="text-cyan-400/70 text-xs mb-1">Avg Restricted</div>
-                        <div className="text-lg font-bold text-cyan-100">$1,113/mo est</div>
-                      </div>
-                      <div className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 p-3 rounded-lg border border-cyan-500/15 backdrop-blur-sm">
-                        <div className="text-cyan-400/70 text-xs mb-1">Occupancy Bart</div>
-                        <div className="text-lg font-bold text-cyan-100">19.9%</div>
-                      </div>
-                      <div className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 p-3 rounded-lg border border-cyan-500/15 backdrop-blur-sm">
-                        <div className="text-cyan-400/70 text-xs mb-1">Absorption Rate</div>
-                        <div className="text-lg font-bold text-cyan-100">85.6%</div>
-                      </div>
-                    </div>
-                    
-                    {/* Progress bars section */}
-                    <div className="space-y-3 mt-4">
-                      <div>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs text-cyan-300/70">BRISTOL SCORE</span>
-                          <span className="text-sm font-bold text-cyan-100">75.0</span>
-                        </div>
-                        <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-cyan-500 to-cyan-300 rounded-full" style={{ width: '75%' }} />
-                        </div>
-                      </div>
-                      <div>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs text-cyan-300/70">Development Progress</span>
-                          <span className="text-sm font-bold text-cyan-100">22.1% high income</span>
-                        </div>
-                        <div className="h-2 bg-slate-700/50 rounded-full overflow-hidden">
-                          <div className="h-full bg-gradient-to-r from-emerald-500 to-emerald-300 rounded-full" style={{ width: '22.1%' }} />
+                        <div className="text-lg font-bold text-cyan-100">
+                          {demographicPopup.data.demographics?.bachelor_plus_pct 
+                            ? `${demographicPopup.data.demographics.bachelor_plus_pct.toFixed(1)}%`
+                            : '—'
+                          }
                         </div>
                       </div>
                     </div>
