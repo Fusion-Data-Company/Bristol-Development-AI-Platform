@@ -361,7 +361,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
     },
     initialState: {
       pagination: {
-        pageSize: 1000,
+        pageSize: 50,
       },
     },
   });
@@ -401,7 +401,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
             </TableHeader>
             <TableBody>
               {Array.from({ length: 50 }, (_, index) => {
-                const row = table.getCoreRowModel().rows[index];
+                const row = data[index] ? table.getRowModel().rows.find(r => r.original.id === data[index].id) : null;
                 if (row) {
                   // Render actual data row
                   return (
@@ -459,7 +459,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex items-center gap-4">
           <div className="text-sm text-bristol-stone">
-            Showing all {table.getCoreRowModel().rows.length} sites (50 rows total)
+            Showing all {data.length} sites (50 rows total)
           </div>
         </div>
       </div>
