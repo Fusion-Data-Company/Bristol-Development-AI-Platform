@@ -11,8 +11,12 @@ const GoogleIcon = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
   <img src="https://svgl.app/library/google.svg" {...props}/>
 )
 
-const MicrosoftIcon = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
-  <img src="https://svgl.app/library/microsoft.svg" {...props}/>
+const GitHubIcon = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+  <img src="https://svgl.app/library/github.svg" {...props}/>
+)
+
+const XIcon = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+  <img src="https://svgl.app/library/x.svg" {...props}/>
 )
 
 const AppleIcon = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
@@ -21,7 +25,7 @@ const AppleIcon = (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
 
 interface AuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   onEmailSubmit?: (data: { email: string; password?: string }) => void
-  onSocialSignIn?: (provider: 'google' | 'microsoft' | 'apple' | 'sso') => void
+  onSocialSignIn?: (provider: 'google' | 'github' | 'x' | 'apple') => void
   onEmailLink?: () => void
 }
 
@@ -51,18 +55,33 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
             <div className="space-y-2">
               <Label className="text-xs text-muted-foreground font-serif">Sign in with</Label>
               <div className="grid grid-cols-4 gap-2">
-                <Button variant="outline" onClick={() => onSocialSignIn?.('google')}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => onSocialSignIn?.('google')}
+                  title="Sign in with Google"
+                >
                   <GoogleIcon className="size-4" />
                 </Button>
-                <Button variant="outline" onClick={() => onSocialSignIn?.('microsoft')}>
-                  <MicrosoftIcon className="size-4" />
+                <Button 
+                  variant="outline" 
+                  onClick={() => onSocialSignIn?.('github')}
+                  title="Sign in with GitHub"
+                >
+                  <GitHubIcon className="size-4" />
                 </Button>
-                <Button variant="outline" onClick={() => onSocialSignIn?.('apple')}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => onSocialSignIn?.('x')}
+                  title="Sign in with X (Twitter)"
+                >
+                  <XIcon className="size-4" />
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => onSocialSignIn?.('apple')}
+                  title="Sign in with Apple"
+                >
                   <AppleIcon className="size-5" />
-                </Button>
-                <Button variant="outline" onClick={() => onSocialSignIn?.('sso')}>
-                  <KeyRound className="h-5 w-5" />
-                  <span className="ml-1.5">SSO</span>
                 </Button>
               </div>
             </div>

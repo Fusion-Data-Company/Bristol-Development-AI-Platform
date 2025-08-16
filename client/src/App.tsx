@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 // Only import pages that we know work
 import Landing from '@/pages/Landing';
 import Dashboard from '@/pages/Dashboard';
+import Users from '@/pages/Users';
 import NotFound from '@/pages/not-found';
 
 // Create query client
@@ -75,6 +76,12 @@ function AppContent() {
             <Route path="/dashboard">
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            </Route>
+            
+            <Route path="/users">
+              <ProtectedRoute>
+                <Users />
               </ProtectedRoute>
             </Route>
             

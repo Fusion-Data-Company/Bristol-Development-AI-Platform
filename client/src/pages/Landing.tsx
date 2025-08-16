@@ -4,8 +4,14 @@ import Chrome from "@/components/brand/SimpleChrome";
 export default function Landing() {
   const handleSocialSignIn = (provider: string) => {
     console.log(`Signing in with ${provider}...`);
-    // All providers use the same Replit Auth endpoint
-    // Replit will handle the actual provider selection
+    // REPLIT AUTH FLOW:
+    // 1. All login buttons redirect to /api/login
+    // 2. Our backend (replitAuth.ts) redirects to Replit's auth page
+    // 3. Replit shows their login UI with Google, GitHub, X, Apple, Email options
+    // 4. User chooses provider and logs in
+    // 5. Replit redirects back to our /api/callback with user info
+    // 6. We create/update user in our database and establish session
+    // Note: We don't need separate endpoints for each provider - Replit handles that!
     window.location.href = "/api/login";
   }
 
