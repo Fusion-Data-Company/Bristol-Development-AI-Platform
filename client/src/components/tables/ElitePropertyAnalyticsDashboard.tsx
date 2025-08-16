@@ -343,8 +343,8 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
     sortOrder: 'asc'
   });
 
-  // Calculate comprehensive analytics
-  const analytics = useMemo<AnalyticsMetrics>(() => {
+  // Calculate comprehensive analytics from all sites
+  const totalAnalytics = useMemo<AnalyticsMetrics>(() => {
     const validSites = sites.filter(site => site);
     
     return {
@@ -372,6 +372,72 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
       occupancyRate: 85.4 // This would come from real occupancy data
     };
   }, [sites]);
+
+  // Calculate filtered analytics for accurate dropdown counts
+  const filteredAnalytics = useMemo(() => {
+    // Get sites filtered by all criteria EXCEPT the specific filter we're calculating for
+    const getFilteredSitesExcluding = (excludeFilter: string) => {
+      return sites.filter(site => {
+        if (!site) return false;
+
+        // Search filter
+        if (filters.search && excludeFilter !== 'search') {
+          const searchLower = filters.search.toLowerCase();
+          const searchableText = [
+            site.name,
+            site.addrLine1,
+            site.city,
+            site.state,
+            site.postalCode,
+            site.notes
+          ].filter(Boolean).join(' ').toLowerCase();
+          
+          if (!searchableText.includes(searchLower)) return false;
+        }
+
+        // Status filter
+        if (filters.status && filters.status !== 'all' && excludeFilter !== 'status' && site.status !== filters.status) return false;
+
+        // State filter (exclude when calculating state breakdown)
+        if (filters.state && filters.state !== 'all' && excludeFilter !== 'state' && site.state !== filters.state) return false;
+
+        // Units range filter
+        if (filters.minUnits && excludeFilter !== 'units' && (!site.unitsTotal || site.unitsTotal < parseInt(filters.minUnits))) return false;
+        if (filters.maxUnits && excludeFilter !== 'units' && (!site.unitsTotal || site.unitsTotal > parseInt(filters.maxUnits))) return false;
+
+        // Acreage range filter
+        if (filters.minAcreage && excludeFilter !== 'acreage' && (!site.acreage || site.acreage < parseFloat(filters.minAcreage))) return false;
+        if (filters.maxAcreage && excludeFilter !== 'acreage' && (!site.acreage || site.acreage > parseFloat(filters.maxAcreage))) return false;
+
+        // Completion year filter
+        if (filters.completionYear && excludeFilter !== 'completionYear' && site.completionYear?.toString() !== filters.completionYear) return false;
+
+        return true;
+      });
+    };
+
+    // Calculate state breakdown excluding state filter
+    const sitesForStateBreakdown = getFilteredSitesExcluding('state');
+    const stateBreakdown = sitesForStateBreakdown.reduce((acc, site) => {
+      if (site.state) acc[site.state] = (acc[site.state] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Calculate status breakdown excluding status filter
+    const sitesForStatusBreakdown = getFilteredSitesExcluding('status');
+    const statusBreakdown = sitesForStatusBreakdown.reduce((acc, site) => {
+      acc[site.status] = (acc[site.status] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      stateBreakdown,
+      statusBreakdown
+    };
+  }, [sites, filters]);
+
+  // Use total analytics for main display, filtered analytics for dropdowns
+  const analytics = totalAnalytics;
 
   // Advanced filtering and sorting
   const filteredAndSortedSites = useMemo(() => {
@@ -646,9 +712,9 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Statuses</SelectItem>
-                {Object.keys(analytics.statusBreakdown).map(status => (
+                {Object.keys(filteredAnalytics.statusBreakdown).map(status => (
                   <SelectItem key={status} value={status}>
-                    {status} ({analytics.statusBreakdown[status]})
+                    {status} ({filteredAnalytics.statusBreakdown[status]})
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -661,9 +727,9 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All States</SelectItem>
-                {Object.keys(analytics.stateBreakdown).map(state => (
+                {Object.keys(filteredAnalytics.stateBreakdown).map(state => (
                   <SelectItem key={state} value={state}>
-                    {state} ({analytics.stateBreakdown[state]})
+                    {state} ({filteredAnalytics.stateBreakdown[state]})
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -767,6 +833,55 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
       {/* Main Content */}
       {activeView === 'cards' && (
         <div className="space-y-6">
+          {/* Filter Status Indicator */}
+          <div className="flex items-center justify-between bg-gradient-to-r from-bristol-cream/10 to-transparent p-4 rounded-lg border border-bristol-gold/20">
+            <div className="flex items-center gap-4">
+              {filteredAndSortedSites.length !== sites.length ? (
+                <Badge variant="secondary" className="bg-bristol-maroon/10 text-bristol-maroon border-bristol-maroon/20 px-3 py-1.5 text-sm font-medium">
+                  Showing {filteredAndSortedSites.length} of {sites.length} properties
+                </Badge>
+              ) : (
+                <Badge variant="secondary" className="bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30 px-3 py-1.5 text-sm font-medium">
+                  All {sites.length} properties shown
+                </Badge>
+              )}
+              {(filters.search || filters.state || filters.status || filters.minUnits || filters.maxUnits || filters.minAcreage || filters.maxAcreage || filters.completionYear) && (
+                <div className="text-sm text-bristol-stone/70">
+                  Active filters: {[
+                    filters.search && 'Search',
+                    filters.state && filters.state !== 'all' && `State: ${filters.state}`,
+                    filters.status && filters.status !== 'all' && `Status: ${filters.status}`,
+                    (filters.minUnits || filters.maxUnits) && 'Units',
+                    (filters.minAcreage || filters.maxAcreage) && 'Acreage',
+                    filters.completionYear && `Year: ${filters.completionYear}`
+                  ].filter(Boolean).join(', ')}
+                </div>
+              )}
+            </div>
+            {(filters.search || filters.state || filters.status || filters.minUnits || filters.maxUnits || filters.minAcreage || filters.maxAcreage || filters.completionYear) && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setFilters({
+                  search: '',
+                  status: '',
+                  state: '',
+                  minUnits: '',
+                  maxUnits: '',
+                  minAcreage: '',
+                  maxAcreage: '',
+                  completionYear: '',
+                  sortBy: 'name',
+                  sortOrder: 'asc'
+                })}
+                className="text-bristol-maroon border-bristol-maroon/30 hover:bg-bristol-maroon/5"
+              >
+                <RefreshCw className="h-4 w-4 mr-1" />
+                Clear All Filters
+              </Button>
+            )}
+          </div>
+
           {/* Property Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredAndSortedSites.map((site) => (
