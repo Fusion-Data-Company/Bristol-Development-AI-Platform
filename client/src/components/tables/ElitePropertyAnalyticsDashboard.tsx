@@ -732,20 +732,20 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
                 </Select>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Input
                   type="number"
                   placeholder="Min Units"
                   value={filters.minUnits}
                   onChange={(e) => setFilters(prev => ({ ...prev, minUnits: e.target.value }))}
-                  className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl"
+                  className="h-10 bg-white border border-gray-300 text-gray-900 placeholder:text-gray-500 rounded-lg"
                 />
                 <Input
                   type="number"
                   placeholder="Max Units"
                   value={filters.maxUnits}
                   onChange={(e) => setFilters(prev => ({ ...prev, maxUnits: e.target.value }))}
-                  className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl"
+                  className="h-10 bg-white border border-gray-300 text-gray-900 placeholder:text-gray-500 rounded-lg"
                 />
                 <Input
                   type="number"
@@ -753,63 +753,61 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
                   placeholder="Min Acreage"
                   value={filters.minAcreage}
                   onChange={(e) => setFilters(prev => ({ ...prev, minAcreage: e.target.value }))}
-                  className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl"
+                  className="h-10 bg-white border border-gray-300 text-gray-900 placeholder:text-gray-500 rounded-lg"
                 />
-            <div className="flex gap-2">
-              <Input
-                type="number"
-                step="0.1"
-                placeholder="Max Acreage"
-                value={filters.maxAcreage}
-                onChange={(e) => setFilters(prev => ({ ...prev, maxAcreage: e.target.value }))}
-                className="border-bristol-gold/30"
-              />
-              <Button
-                variant="outline"
-                onClick={() => setFilters(prev => ({ ...prev, sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' }))}
-                className="border-bristol-gold/30 hover:bg-bristol-gold/10"
-              >
-                <ArrowUpDown className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+                <Input
+                  type="number"
+                  step="0.1"
+                  placeholder="Max Acreage"
+                  value={filters.maxAcreage}
+                  onChange={(e) => setFilters(prev => ({ ...prev, maxAcreage: e.target.value }))}
+                  className="h-10 bg-white border border-gray-300 text-gray-900 placeholder:text-gray-500 rounded-lg"
+                />
+              </div>
 
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-bristol-gold/20">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={() => setFilters({
-                  search: '',
-                  status: 'all',
-                  state: 'all',
-                  minUnits: '',
-                  maxUnits: '',
-                  minAcreage: '',
-                  maxAcreage: '',
-                  completionYear: '',
-                  sortBy: 'name',
-                  sortOrder: 'asc'
-                })}
-                className="border-bristol-gold/30 hover:bg-bristol-gold/10"
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Clear Filters
-              </Button>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={() => handleExport('csv')}
-                className="border-bristol-gold/30 hover:bg-bristol-gold/10"
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Export CSV
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setFilters({
+                      search: '',
+                      status: 'all',
+                      state: 'all',
+                      minUnits: '',
+                      maxUnits: '',
+                      minAcreage: '',
+                      maxAcreage: '',
+                      completionYear: '',
+                      sortBy: 'name',
+                      sortOrder: 'asc'
+                    })}
+                    className="border-gray-300 hover:bg-gray-50"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Clear Filters
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setFilters(prev => ({ ...prev, sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' }))}
+                    className="border-gray-300 hover:bg-gray-50"
+                  >
+                    <ArrowUpDown className="h-4 w-4 mr-2" />
+                    {filters.sortOrder === 'asc' ? 'Asc' : 'Desc'}
+                  </Button>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleExport('csv')}
+                    className="border-gray-300 hover:bg-gray-50"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Export CSV
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
       {/* Main Content */}
       {activeView === 'cards' && (
