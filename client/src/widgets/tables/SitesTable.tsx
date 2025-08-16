@@ -139,6 +139,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         
         const getStatusStyle = () => {
           switch (statusLower) {
+            case 'operating':
             case 'completed':
               return 'bg-gradient-to-r from-emerald-400/20 via-green-500/30 to-emerald-600/40 backdrop-blur-sm border border-emerald-400/50 text-emerald-800 shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/40 hover:scale-105';
             case 'newest':
@@ -146,7 +147,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
             case 'pipeline':
               return 'bg-gradient-to-r from-blue-400/20 via-cyan-500/30 to-blue-600/40 backdrop-blur-sm border border-blue-400/50 text-blue-800 shadow-xl shadow-blue-500/30 hover:shadow-blue-500/40 hover:scale-105';
             default:
-              return 'bg-gradient-to-r from-amber-400/20 via-orange-500/30 to-amber-600/40 backdrop-blur-sm border border-amber-400/50 text-amber-800 shadow-xl shadow-amber-500/30 hover:shadow-amber-500/40 hover:scale-105';
+              return 'bg-gradient-to-r from-emerald-400/20 via-green-500/30 to-emerald-600/40 backdrop-blur-sm border border-emerald-400/50 text-emerald-800 shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/40 hover:scale-105';
           }
         };
 
