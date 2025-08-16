@@ -339,7 +339,7 @@ export function InteractiveMap({
     }
     
     return (
-      <div className={cn("h-screen w-full relative bg-bristol-cream", className)} style={{ minHeight: '500px' }}>
+      <div className={cn("h-screen w-full relative", className)} style={{ minHeight: '500px' }}>
         <Map
           ref={mapRef}
           longitude={viewport.longitude}
@@ -526,6 +526,7 @@ export function InteractiveMap({
               longitude={site.longitude || -82.4572}
               latitude={site.latitude || 33.7490}
               anchor="bottom"
+              style={{ zIndex: 1000 }}
               onClick={(e) => {
                 e.originalEvent.stopPropagation();
                 handleSiteClick(site);
@@ -716,9 +717,9 @@ export function InteractiveMap({
           />
         </Map>
 
-        {/* Enhanced Layer Controls */}
-        {showControls && (
-          <div className={`absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-bristol-stone/30 transition-all duration-300 ${dataLayersCollapsed ? 'p-2 min-w-[140px]' : 'p-4 min-w-[280px]'}`}>
+        {/* Enhanced Layer Controls - REMOVED TO CLEAR MAP */}
+        {false && (
+          <div className={`absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-bristol-stone/30 transition-all duration-300 z-10 ${dataLayersCollapsed ? 'p-2 min-w-[140px]' : 'p-4 min-w-[280px]'}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5 text-bristol-maroon" />
@@ -884,8 +885,8 @@ export function InteractiveMap({
           </div>
         )}
 
-        {/* Map Legend */}
-        {showControls && (
+        {/* Map Legend - REMOVED TO CLEAR MAP */}
+        {false && (
           <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">
             <h4 className="font-semibold text-sm text-bristol-ink mb-2">Bristol Score Legend</h4>
             <div className="space-y-1">
@@ -977,6 +978,7 @@ export function InteractiveMap({
               longitude={site.longitude || -82.4572}
               latitude={site.latitude || 33.7490}
               anchor="bottom"
+              style={{ zIndex: 1000 }}
               onClick={(e) => {
                 e.originalEvent.stopPropagation();
                 handleSiteClick(site);
@@ -1082,8 +1084,8 @@ export function InteractiveMap({
           />
         </Map>
 
-        {/* Layer Controls */}
-        <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">
+        {/* Layer Controls - REMOVED TO CLEAR MAP */}
+        <div style={{display: 'none'}} className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">
           <h4 className="font-semibold text-sm text-bristol-ink mb-3">Map Layers</h4>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -1142,8 +1144,8 @@ export function InteractiveMap({
           </div>
         </div>
 
-        {/* Map Legend */}
-        <div className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">
+        {/* Map Legend - REMOVED TO CLEAR MAP */}
+        <div style={{display: 'none'}} className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">
           <h4 className="font-semibold text-sm text-bristol-ink mb-2">Bristol Score Legend</h4>
           <div className="space-y-1">
             {[
