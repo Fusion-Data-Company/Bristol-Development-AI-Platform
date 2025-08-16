@@ -493,7 +493,6 @@ export default function Sites() {
             </div>
           </SheetContent>
         </Sheet>
-          </div>
         </div>
       </Chrome>
     </DataBackground>
