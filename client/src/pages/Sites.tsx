@@ -220,23 +220,14 @@ export default function Sites() {
           }}
         />
         
-        {/* Background Overlay for Content Readability */}
-        <div className="fixed inset-0 bg-gradient-to-br from-bristol-cream/80 via-white/75 to-bristol-sky/60 backdrop-blur-sm z-[1]" />
-        {/* Premium Sites Intelligence Header with Parallax */}
-        <div 
-          className="p-8 border-b-2 border-bristol-maroon/20 bg-white/85 backdrop-blur-md relative overflow-hidden shadow-xl z-10"
-          style={{
-            transform: `translateY(${scrollY * 0.1}px)`
-          }}
-        >
-          {/* Enhanced ambient glow with parallax */}
+        {/* Background Overlay for Content Readability - No Blur to Keep Image Crisp */}
+        <div className="fixed inset-0 bg-gradient-to-br from-bristol-cream/70 via-white/60 to-bristol-sky/50 z-[1]" />
+        {/* Premium Sites Intelligence Header - Fixed with Hero */}
+        <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
+        <div className="p-8 relative overflow-hidden">
+          {/* Enhanced ambient glow - Static for Header */}
           <div className="absolute inset-0 bg-gradient-to-r from-bristol-cream/40 via-white/30 to-bristol-sky/40"></div>
-          <div 
-            className="absolute inset-0 opacity-20"
-            style={{
-              transform: `translateY(${scrollY * 0.15}px)`
-            }}
-          >
+          <div className="absolute inset-0 opacity-20">
             <div className="absolute top-0 left-0 w-96 h-96 bg-bristol-maroon/20 rounded-full blur-3xl animate-pulse"></div>
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-bristol-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
           </div>
@@ -401,12 +392,13 @@ export default function Sites() {
             </div>
           </div>
         </div>
+        </div>
 
-        {/* Premium Content Area with Parallax Effects */}
+        {/* Premium Content Area with Parallax Effects */
         <div 
           className="flex-1 p-8 relative mb-16 overflow-visible z-10"
           style={{
-            transform: `translateY(${scrollY * 0.2}px)`
+            transform: `translateY(${scrollY * 0.1}px)`
           }}
         >
           {/* Enhanced ambient glows with parallax movement */}
@@ -503,9 +495,6 @@ export default function Sites() {
                 <BristolPortfolioAgent 
                   selectedSite={selectedSite}
                   portfolioData={portfolioData}
-                  onAnalysisUpdate={(results) => {
-                    console.log('Portfolio analysis updated:', results);
-                  }}
                 />
               </div>
             </div>
@@ -540,9 +529,9 @@ export default function Sites() {
             </div>
           </SheetContent>
         </Sheet>
-        
       </div>
-    </Chrome>
+        
+      </Chrome>
     </DataBackground>
   );
 }
