@@ -40,7 +40,7 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
     return (
       <Card ref={ref} className={cn("w-full max-w-md mx-auto", className)} {...props}>
         <CardHeader className="text-left">
-          <CardTitle className="text-2xl font-serif">Sign in to Bristol</CardTitle>
+          <CardTitle className="text-2xl font-serif">Sign In To Bristol AI Intelligence</CardTitle>
           <CardDescription className="font-serif">
             Access your Site Intelligence Platform for enterprise real estate analysis.
           </CardDescription>

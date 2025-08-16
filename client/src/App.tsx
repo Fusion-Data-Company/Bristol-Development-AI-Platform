@@ -54,6 +54,8 @@ function AppContent() {
   
   // Don't show GlobalHeader on login page
   const showGlobalHeader = isAuthenticated && !isLoading;
+  // Don't show footer on login page since Landing handles its own footer
+  const showFooter = isAuthenticated && !isLoading;
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -86,8 +88,8 @@ function AppContent() {
         </Router>
       </div>
       
-      {/* Thick Bristol Footer - Required for Floating Widget UX */}
-      <BristolFooter variant="thick" />
+      {/* Thick Bristol Footer - Only show when authenticated, Landing has its own */}
+      {showFooter && <BristolFooter variant="thick" />}
       
       {/* Toast Notifications */}
       <Toaster />
