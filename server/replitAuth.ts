@@ -173,21 +173,33 @@ export async function setupAuth(app: Express) {
   app.get("/api/callback", (req, res, next) => {
     console.log('📥 OAuth callback received');
     
-    passport.authenticate(`replitauth:${req.hostname}`, {
-      successReturnToOrRedirect: "/",
-      failureRedirect: "/auth-error", // Changed from /api/login to break the loop
-    })(req, res, (err: Error) => {
-      if (err) {
-        console.error('❌ Authentication callback error:', err);
-        // Clear session and provide recovery options
-        req.session?.destroy(() => {
-          res.redirect('/auth-error?reason=' + encodeURIComponent(err.message || 'Authentication failed'));
-        });
-        return;
+    passport.authenticate(`replitauth:${req.hostname}`, (err: Error, user: any, info: any) => {
+      if (err || !user) {
+        console.error('❌ Authentication failed:', err || 'No user returned');
+        return res.redirect('/auth-error?reason=' + encodeURIComponent(err?.message || 'Authentication failed'));
       }
-      console.log('✅ Authentication callback successful');
-      next();
-    });
+      
+      // Manually establish the session
+      req.logIn(user, (loginErr) => {
+        if (loginErr) {
+          console.error('❌ Session creation failed:', loginErr);
+          return res.redirect('/auth-error?reason=' + encodeURIComponent('Session creation failed'));
+        }
+        
+        console.log('✅ User logged in successfully, session created');
+        
+        // Force session save before redirect
+        req.session.save((saveErr) => {
+          if (saveErr) {
+            console.error('❌ Session save failed:', saveErr);
+            return res.redirect('/auth-error?reason=' + encodeURIComponent('Session save failed'));
+          }
+          
+          console.log('✅ Session saved successfully, redirecting to app');
+          res.redirect('/');
+        });
+      });
+    })(req, res, next);
   });
   
   // New auth error page endpoint
