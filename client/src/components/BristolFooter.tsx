@@ -10,14 +10,8 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
   const currentYear = new Date().getFullYear();
   
   const getFooterHeight = () => {
-    switch (variant) {
-      case 'thick':
-        return 'min-h-[400px] py-16';
-      case 'enterprise':
-        return 'min-h-[500px] py-24';
-      default:
-        return 'min-h-[300px] py-12';
-    }
+    // Force minimal height with no padding
+    return 'h-auto py-0';
   };
 
   return (
@@ -29,10 +23,10 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
           repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px)
         `
       }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-4">
         
         {/* Main Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           
           {/* Company Info */}
           <div className="space-y-4">
@@ -114,7 +108,7 @@ export function BristolFooter({ className = '', variant = 'thick' }: BristolFoot
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-cyan-400/20 pt-6">
+        <div className="border-t border-cyan-400/20 pt-4">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             
             {/* Copyright */}
