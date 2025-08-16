@@ -113,7 +113,7 @@ function AppContent() {
       <Toaster />
       
       {/* Bristol AI Floating Widget - Always visible */}
-      {/* <BristolFloatingWidget /> */}
+      <BristolFloatingWidget />
     </Router>
     );
   }
