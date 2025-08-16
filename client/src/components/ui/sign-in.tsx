@@ -210,47 +210,57 @@ const AuthForm = React.forwardRef<HTMLDivElement, AuthFormProps>(
                 <span className="bg-background px-3 text-bristol-stone font-serif">Bristol Team Access</span>
               </div>
             </div>
-            <Button 
-              variant="outline" 
-              className="w-full font-serif border-bristol-maroon text-bristol-maroon hover:bg-bristol-maroon hover:text-white transition-all duration-300 relative overflow-hidden group"
-              onClick={() => onEmailLink?.()}
-              style={{
-                background: 'linear-gradient(135deg, rgba(139, 69, 19, 0.03) 0%, rgba(255, 255, 255, 1) 50%, rgba(139, 69, 19, 0.03) 100%)',
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                borderImage: 'linear-gradient(135deg, rgba(139, 69, 19, 0.6), rgba(139, 69, 19, 0.3), rgba(139, 69, 19, 0.6)) 1'
-              }}
-            >
-              {/* Animated background */}
+            <div className="relative">
+              {/* Maroon ambient glow behind button */}
               <div 
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                className="absolute inset-0 rounded-lg"
                 style={{
-                  background: 'linear-gradient(45deg, transparent, rgba(139, 69, 19, 0.2), transparent)',
-                  animation: 'shimmer 2s ease-in-out infinite'
-                }}
-              />
-              
-              {/* Glass reflection */}
-              <div 
-                className="absolute inset-0 opacity-20"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(139, 69, 19, 0.1) 0%, transparent 50%, rgba(139, 69, 19, 0.05) 100%)'
-                }}
-              />
-              
-              <Sparkles className="mr-2 h-4 w-4 group-hover:animate-pulse relative z-10" />
-              <span className="relative z-10 font-semibold">Bristol Team Email Registration</span>
-              
-              {/* Animated border glow */}
-              <div 
-                className="absolute inset-0 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                style={{
-                  background: 'rgba(139, 69, 19, 0.3)',
-                  filter: 'blur(3px)',
+                  background: 'radial-gradient(ellipse at center, rgba(139, 69, 19, 0.4) 0%, rgba(139, 69, 19, 0.2) 50%, transparent 100%)',
+                  filter: 'blur(8px)',
+                  transform: 'scale(1.1)',
                   zIndex: -1
                 }}
               />
-            </Button>
+              
+              <Button 
+                className="w-full font-serif relative overflow-hidden group transition-all duration-300 hover:scale-[1.02] shadow-lg"
+                onClick={() => onEmailLink?.()}
+                style={{
+                  background: 'linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #8B4513 100%)',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  padding: '12px 24px',
+                  boxShadow: '0 4px 20px rgba(139, 69, 19, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+                }}
+              >
+                {/* Enhanced shimmer effect */}
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                  style={{
+                    background: 'linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%)',
+                    animation: 'shimmer 2s ease-in-out infinite'
+                  }}
+                />
+                
+                {/* Sparkle icon with enhanced visibility */}
+                <Sparkles className="mr-3 h-5 w-5 group-hover:animate-pulse relative z-10 drop-shadow-sm" />
+                
+                {/* Button text with enhanced readability */}
+                <span className="relative z-10 font-bold text-white drop-shadow-sm">
+                  Bristol Team Email Registration
+                </span>
+                
+                {/* Enhanced hover glow */}
+                <div 
+                  className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    boxShadow: '0 0 20px rgba(139, 69, 19, 0.6)'
+                  }}
+                />
+              </Button>
+            </div>
           </div>
           <p className="text-xs text-muted-foreground text-center w-full font-serif">
             By logging in, you agree to our{' '}
