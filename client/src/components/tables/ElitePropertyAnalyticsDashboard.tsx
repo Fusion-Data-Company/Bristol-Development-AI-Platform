@@ -94,48 +94,70 @@ interface AnalyticsMetrics {
   occupancyRate: number;
 }
 
-// Clean Light Theme Property Card Component
+// Enhanced Property Card Component with Ambient Glows
 function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }: PropertyCard) {
+  const [isHovered, setIsHovered] = useState(false);
+
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Operating': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case 'Completed': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Newest': return 'bg-cyan-100 text-cyan-800 border-cyan-200';
-      case 'Pipeline': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'Operating': return 'from-emerald-500/40 to-green-600/40';
+      case 'Completed': return 'from-green-500/40 to-emerald-600/40'; 
+      case 'Newest': return 'from-bristol-gold/40 to-yellow-500/40';
+      case 'Pipeline': return 'from-blue-500/40 to-purple-600/40';
+      default: return 'from-gray-500/40 to-slate-600/40';
+    }
+  };
+
+  const getStatusGlow = (status: string) => {
+    switch (status) {
+      case 'Operating': return 'shadow-emerald-500/30';
+      case 'Completed': return 'shadow-green-500/30';
+      case 'Newest': return 'shadow-bristol-gold/40';
+      case 'Pipeline': return 'shadow-blue-500/30';
+      default: return 'shadow-gray-500/20';
     }
   };
 
   return (
     <Card 
       className={`
-        bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer group rounded-lg overflow-hidden
+        relative overflow-hidden transition-all duration-700 cursor-pointer group backdrop-blur-xl border
         ${isSelected 
-          ? 'border-cyan-300 shadow-lg shadow-cyan-100' 
-          : 'hover:border-cyan-200'
+          ? 'border-bristol-gold/60 shadow-2xl shadow-bristol-gold/40 bg-white/15' 
+          : 'border-white/20 hover:border-bristol-gold/40 bg-white/10 hover:shadow-2xl hover:shadow-white/10'
         }
-        hover:scale-[1.01]
+        ${isHovered ? 'scale-[1.03] shadow-3xl' : 'hover:scale-[1.02]'}
+        rounded-3xl
       `}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={onSelect}
     >
+      {/* Premium Glass Morphism Background */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${getStatusColor(site.status)} opacity-0 group-hover:opacity-100 transition-all duration-700`} />
       
-      <CardHeader className="pb-4">
+      {/* Executive Glow Effect */}
+      <div className={`absolute -inset-0.5 rounded-3xl bg-gradient-to-br ${getStatusColor(site.status)} opacity-0 group-hover:opacity-50 blur-xl transition-all duration-1000 ${getStatusGlow(site.status)}`} />
+      
+      <CardHeader className="relative z-20 pb-6">
         <div className="flex items-start justify-between">
-          <div className="space-y-3">
-            <CardTitle className="text-xl font-cinzel font-bold text-gray-900 group-hover:text-cyan-700 transition-colors duration-300">
+          <div className="space-y-4">
+            <CardTitle className="text-2xl font-cinzel font-bold text-white group-hover:text-bristol-gold transition-colors duration-500 tracking-wide">
               {site.name}
             </CardTitle>
             <Badge 
               className={`
-                font-semibold text-sm px-3 py-1 rounded-lg transition-all duration-300
-                ${getStatusColor(site.status)}
+                relative font-bold text-sm px-4 py-2 rounded-2xl shadow-2xl transition-all duration-500
+                bg-gradient-to-r ${getStatusColor(site.status)} text-white border border-white/30 backdrop-blur-xl
+                ${getStatusGlow(site.status)} group-hover:shadow-2xl group-hover:scale-105
               `}
             >
-              {site.status}
+              <div className="absolute inset-0 rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <span className="relative z-10">{site.status}</span>
             </Badge>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="sm"
@@ -143,16 +165,16 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
                 e.stopPropagation();
                 onViewDemographics();
               }}
-              className="text-gray-600 hover:text-cyan-700 hover:bg-cyan-50 border border-gray-200 hover:border-cyan-200 rounded-lg px-3 py-2 transition-all duration-300"
+              className="text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-bristol-gold/40 hover:to-yellow-500/40 hover:shadow-xl backdrop-blur-xl border border-white/20 rounded-xl px-4 py-2 transition-all duration-500"
             >
               <Eye className="h-4 w-4 mr-2" />
-              View
+              Analytics
             </Button>
             {site.latitude && site.longitude && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="text-gray-600 hover:text-cyan-700 hover:bg-cyan-50 border border-gray-200 hover:border-cyan-200 rounded-lg p-2 transition-all duration-300"
+                className="text-white/80 hover:text-white hover:bg-gradient-to-r hover:from-blue-500/40 hover:to-purple-600/40 hover:shadow-xl backdrop-blur-xl border border-white/20 rounded-xl p-2 transition-all duration-500"
               >
                 <MapPin className="h-4 w-4" />
               </Button>
@@ -161,33 +183,33 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4 p-6">
-        {/* Clean Location Info */}
-        <div className="space-y-2">
-          <div className="flex items-center text-gray-700">
-            <MapPin className="h-4 w-4 mr-2 text-cyan-600" />
-            <span className="font-medium text-base font-cinzel">
+      <CardContent className="relative z-20 space-y-6 p-8">
+        {/* Premium Location Info */}
+        <div className="space-y-3">
+          <div className="flex items-center text-white/80 group-hover:text-white transition-colors duration-500">
+            <MapPin className="h-5 w-5 mr-3 text-bristol-gold" />
+            <span className="font-medium text-lg">
               {site.addrLine1 && `${site.addrLine1}, `}{site.city}, {site.state} {site.postalCode}
             </span>
           </div>
           {site.country && site.country !== 'USA' && (
-            <div className="text-sm text-gray-500">{site.country}</div>
+            <div className="text-base text-white/60">{site.country}</div>
           )}
         </div>
 
-        {/* Clean Metrics Grid */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Executive Metrics Grid */}
+        <div className="grid grid-cols-2 gap-6">
           {/* Units */}
-          <div className="space-y-1">
-            <div className="flex items-center text-gray-600 text-sm">
-              <Building2 className="h-4 w-4 mr-2" />
-              <span className="font-cinzel">Total Units</span>
+          <div className="space-y-2">
+            <div className="flex items-center text-white/60 text-base">
+              <Building2 className="h-5 w-5 mr-2" />
+              <span>Total Units</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900 font-cinzel">
+            <div className="text-3xl font-bold text-white group-hover:text-bristol-gold transition-colors duration-500 tracking-tight">
               {site.unitsTotal?.toLocaleString() || 'TBD'}
             </div>
             {site.units1b || site.units2b || site.units3b ? (
-              <div className="text-xs text-gray-500 space-x-2 font-cinzel">
+              <div className="text-xs text-bristol-stone/60 space-x-2">
                 {site.units1b && <span>1BR: {site.units1b}</span>}
                 {site.units2b && <span>2BR: {site.units2b}</span>}
                 {site.units3b && <span>3BR: {site.units3b}</span>}
@@ -196,16 +218,16 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
           </div>
 
           {/* Acreage */}
-          <div className="space-y-1">
-            <div className="flex items-center text-gray-600 text-sm">
-              <Layers className="h-4 w-4 mr-2" />
-              <span className="font-cinzel">Acreage</span>
+          <div className="space-y-2">
+            <div className="flex items-center text-white/60 text-base">
+              <Layers className="h-5 w-5 mr-2" />
+              <span>Acreage</span>
             </div>
-            <div className="text-2xl font-bold text-gray-900 font-cinzel">
+            <div className="text-3xl font-bold text-white group-hover:text-bristol-gold transition-colors duration-500 tracking-tight">
               {site.acreage ? `${site.acreage}` : 'TBD'}
             </div>
             {site.acreage && site.unitsTotal && (
-              <div className="text-xs text-gray-500 font-cinzel">
+              <div className="text-xs text-bristol-stone/60">
                 {Math.round((site.unitsTotal / site.acreage) * 10) / 10} units/acre
               </div>
             )}
@@ -213,12 +235,12 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
 
           {/* Completion Year */}
           {site.completionYear && (
-            <div className="space-y-1">
-              <div className="flex items-center text-gray-600 text-sm">
-                <Calendar className="h-4 w-4 mr-2" />
-                <span className="font-cinzel">Completed</span>
+            <div className="space-y-2">
+              <div className="flex items-center text-white/60 text-base">
+                <Calendar className="h-5 w-5 mr-2" />
+                <span>Completed</span>
               </div>
-              <div className="text-xl font-bold text-gray-900 font-cinzel">
+              <div className="text-2xl font-bold text-white group-hover:text-bristol-gold transition-colors duration-500 tracking-tight">
                 {site.completionYear}
               </div>
               <div className="text-sm text-white/50">
@@ -246,29 +268,29 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
           )}
         </div>
 
-        {/* Clean Details */}
+        {/* Premium Details */}
         {site.parkingSpaces && (
-          <div className="flex items-center text-sm text-gray-600">
-            <div className="w-2 h-2 bg-cyan-500 rounded-full mr-3"></div>
-            <span className="font-cinzel">{site.parkingSpaces.toLocaleString()} parking spaces</span>
+          <div className="flex items-center text-base text-white/70">
+            <div className="w-3 h-3 bg-bristol-gold rounded-full mr-3 shadow-lg shadow-bristol-gold/50"></div>
+            <span>{site.parkingSpaces.toLocaleString()} parking spaces</span>
             {site.unitsTotal && (
-              <span className="ml-2 text-cyan-600 font-cinzel">({(site.parkingSpaces / site.unitsTotal).toFixed(1)} per unit)</span>
+              <span className="ml-2 text-bristol-gold">({(site.parkingSpaces / site.unitsTotal).toFixed(1)} per unit)</span>
             )}
           </div>
         )}
 
         {site.notes && (
-          <div className="text-sm text-gray-600 bg-gray-50 rounded-lg p-3 border border-gray-200">
+          <div className="text-sm text-white/60 bg-black/20 backdrop-blur-xl rounded-xl p-4 border border-white/10">
             {site.notes.length > 100 ? `${site.notes.substring(0, 100)}...` : site.notes}
           </div>
         )}
 
-        {/* Clean Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+        {/* Executive Footer */}
+        <div className="flex items-center justify-between pt-6 border-t border-white/10">
           <div className="flex items-center gap-3">
-            <div className="flex items-center text-xs text-gray-500">
-              <Clock className="h-3 w-3 mr-2" />
-              <span className="font-cinzel">Updated {site.updatedAt ? new Date(site.updatedAt).toLocaleDateString() : 'N/A'}</span>
+            <div className="flex items-center text-sm text-white/50">
+              <Clock className="h-4 w-4 mr-2" />
+              Updated {site.updatedAt ? new Date(site.updatedAt).toLocaleDateString() : 'N/A'}
             </div>
           </div>
           
@@ -281,23 +303,23 @@ function EnhancedPropertyCard({ site, isSelected, onSelect, onViewDemographics }
                   e.stopPropagation();
                   if (site.sourceUrl) window.open(site.sourceUrl, '_blank');
                 }}
-                className="h-6 w-6 p-0 text-cyan-600 hover:text-cyan-700 hover:bg-cyan-50 rounded-md transition-all duration-300"
+                className="h-8 w-8 p-0 text-bristol-gold hover:text-white hover:bg-bristol-gold/20 rounded-xl transition-all duration-300"
               >
-                <ExternalLink className="h-3 w-3" />
+                <ExternalLink className="h-4 w-4" />
               </Button>
             )}
-            <div className="text-cyan-600">
-              <Star className="h-3 w-3" />
+            <div className="text-bristol-gold">
+              <Star className="h-4 w-4 drop-shadow-lg" />
             </div>
           </div>
         </div>
       </CardContent>
 
-      {/* Clean Selection Indicator */}
+      {/* Premium Selection Indicator */}
       {isSelected && (
-        <div className="absolute top-4 right-4 z-30">
-          <div className="bg-cyan-500 text-white p-2 rounded-lg shadow-md">
-            <CheckCircle className="h-4 w-4" />
+        <div className="absolute top-6 right-6 z-30">
+          <div className="bg-gradient-to-r from-bristol-gold to-yellow-500 text-black p-3 rounded-2xl shadow-2xl shadow-bristol-gold/60 backdrop-blur-xl border border-white/30">
+            <CheckCircle className="h-6 w-6" />
           </div>
         </div>
       )}
@@ -554,40 +576,53 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
   }, [filteredAndSortedSites, toast]);
 
   return (
-    <div className="min-h-screen bg-white">
-        <div className="space-y-6 p-6">
-          {/* Clean Header */}
-          <div className="bg-white rounded-lg border border-gray-200 shadow-lg overflow-hidden">
+    <div className="min-h-screen relative">
+      {/* Fortune 500 Background */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)), url('/src/assets/Icon+1_1755370919284.webp')`
+        }}
+      />
+      
+      {/* Enterprise Glass Overlay */}
+      <div className="relative z-10 min-h-screen backdrop-blur-sm">
+        <div className="space-y-8 p-8">
+          {/* Executive Header */}
+          <div className="relative backdrop-blur-xl bg-white/10 rounded-3xl border border-white/20 shadow-2xl overflow-hidden">
+            {/* Premium Glass Morphism */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-bristol-gold/10 to-white/5" />
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent" />
 
-            <div className="p-8">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-6">
-                  <div className="p-4 bg-cyan-500 rounded-lg shadow-md">
-                    <Database className="h-8 w-8 text-white" />
+            <div className="relative z-20 p-12">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-8">
+                  <div className="p-6 bg-gradient-to-br from-bristol-gold/90 via-yellow-500/80 to-bristol-gold/90 rounded-3xl shadow-2xl shadow-bristol-gold/50 backdrop-blur-xl border border-white/30">
+                    <Database className="h-12 w-12 text-white" />
                   </div>
                   <div>
-                    <h1 className="text-3xl font-cinzel font-bold text-gray-900 mb-2">
-                      Property Analytics Dashboard
+                    <h1 className="text-6xl font-cinzel font-bold text-white mb-3 tracking-wide">
+                      Elite Property Intelligence
                     </h1>
-                    <p className="text-gray-600 text-lg font-cinzel">
-                      Bristol Development Group • Analytics Platform
+                    <p className="text-white/80 text-2xl font-light tracking-wide">
+                      Bristol Development Group • Fortune 500 Analytics Platform
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-6">
                   <Tabs value={activeView} onValueChange={(value: any) => setActiveView(value)} className="w-auto">
-                    <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-300 p-1 rounded-lg">
-                      <TabsTrigger value="cards" className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-gray-700 text-sm px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200">
-                        <Layers className="h-4 w-4 mr-2" />
+                    <TabsList className="grid w-full grid-cols-3 bg-black/30 backdrop-blur-xl border border-white/20 p-2 rounded-2xl">
+                      <TabsTrigger value="cards" className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-3 rounded-xl font-medium transition-all">
+                        <Layers className="h-5 w-5 mr-3" />
                         Portfolio
                       </TabsTrigger>
-                      <TabsTrigger value="demographics" className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-gray-700 text-sm px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200">
-                        <Users className="h-4 w-4 mr-2" />
+                      <TabsTrigger value="demographics" className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-3 rounded-xl font-medium transition-all">
+                        <Users className="h-5 w-5 mr-3" />
                         Demographics
                       </TabsTrigger>
-                      <TabsTrigger value="analytics" className="data-[state=active]:bg-cyan-500 data-[state=active]:text-white text-gray-700 text-sm px-4 py-2 rounded-md font-cinzel font-semibold transition-all duration-200">
-                        <BarChart3 className="h-4 w-4 mr-2" />
+                      <TabsTrigger value="analytics" className="data-[state=active]:bg-bristol-gold data-[state=active]:text-black text-white/80 text-lg px-6 py-3 rounded-xl font-medium transition-all">
+                        <BarChart3 className="h-5 w-5 mr-3" />
                         Analytics
                       </TabsTrigger>
                     </TabsList>
@@ -595,63 +630,63 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
                 </div>
           </div>
 
-              {/* Clean Analytics Cards */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
-                <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg overflow-hidden">
-                  <CardContent className="p-6">
+              {/* Executive Analytics Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-8">
+                <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-2xl overflow-hidden group">
+                  <CardContent className="p-8">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-gray-600 text-sm font-cinzel mb-1">Portfolio</p>
-                        <p className="text-2xl font-bold text-gray-900 font-cinzel">{analytics.totalProperties.toLocaleString()}</p>
-                        <p className="text-cyan-600 font-medium text-xs mt-1 font-cinzel">PROPERTIES</p>
+                        <p className="text-white/70 text-lg font-light mb-2">Portfolio</p>
+                        <p className="text-4xl font-bold text-white tracking-tight">{analytics.totalProperties.toLocaleString()}</p>
+                        <p className="text-bristol-gold font-medium text-sm mt-1">PROPERTIES</p>
                       </div>
-                      <div className="p-3 bg-cyan-500 rounded-lg">
-                        <Building2 className="h-6 w-6 text-white" />
+                      <div className="p-4 bg-gradient-to-br from-bristol-gold/40 to-yellow-500/30 rounded-2xl backdrop-blur-sm border border-white/20">
+                        <Building2 className="h-8 w-8 text-white" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg overflow-hidden">
-                  <CardContent className="p-6">
+                <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-2xl overflow-hidden group">
+                  <CardContent className="p-8">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-gray-600 text-sm font-cinzel mb-1">Total Units</p>
-                        <p className="text-2xl font-bold text-gray-900 font-cinzel">{analytics.totalUnits.toLocaleString()}</p>
-                        <p className="text-cyan-600 font-medium text-xs mt-1 font-cinzel">RESIDENTIAL</p>
+                        <p className="text-white/70 text-lg font-light mb-2">Total Units</p>
+                        <p className="text-4xl font-bold text-white tracking-tight">{analytics.totalUnits.toLocaleString()}</p>
+                        <p className="text-bristol-gold font-medium text-sm mt-1">RESIDENTIAL</p>
                       </div>
-                      <div className="p-3 bg-blue-500 rounded-lg">
-                        <Users className="h-6 w-6 text-white" />
+                      <div className="p-4 bg-gradient-to-br from-blue-500/40 to-purple-600/30 rounded-2xl backdrop-blur-sm border border-white/20">
+                        <Users className="h-8 w-8 text-white" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg overflow-hidden">
-                  <CardContent className="p-6">
+                <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-2xl overflow-hidden group">
+                  <CardContent className="p-8">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-gray-600 text-sm font-cinzel mb-1">Land Assets</p>
-                        <p className="text-2xl font-bold text-gray-900 font-cinzel">{analytics.totalAcreage.toFixed(1)}</p>
-                        <p className="text-cyan-600 font-medium text-xs mt-1 font-cinzel">ACRES</p>
+                        <p className="text-white/70 text-lg font-light mb-2">Land Assets</p>
+                        <p className="text-4xl font-bold text-white tracking-tight">{analytics.totalAcreage.toFixed(1)}</p>
+                        <p className="text-bristol-gold font-medium text-sm mt-1">ACRES</p>
                       </div>
-                      <div className="p-3 bg-emerald-500 rounded-lg">
-                        <Layers className="h-6 w-6 text-white" />
+                      <div className="p-4 bg-gradient-to-br from-bristol-gold/40 to-yellow-500/30 rounded-2xl backdrop-blur-sm border border-white/20">
+                        <Layers className="h-8 w-8 text-white" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 rounded-lg overflow-hidden">
-                  <CardContent className="p-6">
+                <Card className="backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl hover:shadow-3xl transition-all duration-500 rounded-2xl overflow-hidden group">
+                  <CardContent className="p-8">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-gray-600 text-sm font-cinzel mb-1">Avg Density</p>
-                        <p className="text-2xl font-bold text-gray-900 font-cinzel">{Math.round(analytics.avgUnitsPerSite)}</p>
-                        <p className="text-cyan-600 font-medium text-xs mt-1 font-cinzel">UNITS/SITE</p>
+                        <p className="text-white/70 text-lg font-light mb-2">Avg Density</p>
+                        <p className="text-4xl font-bold text-white tracking-tight">{Math.round(analytics.avgUnitsPerSite)}</p>
+                        <p className="text-bristol-gold font-medium text-sm mt-1">UNITS/SITE</p>
                       </div>
-                      <div className="p-3 bg-purple-500 rounded-lg">
-                        <TrendingUp className="h-6 w-6 text-white" />
+                      <div className="p-4 bg-gradient-to-br from-purple-500/40 to-pink-600/30 rounded-2xl backdrop-blur-sm border border-white/20">
+                        <TrendingUp className="h-8 w-8 text-white" />
                       </div>
                     </div>
                   </CardContent>
@@ -688,10 +723,10 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
 
                 {/* Asset Type Filter */}
                 <Select value={filters.status} onValueChange={(value) => setFilters(prev => ({ ...prev, status: value }))}>
-                  <SelectTrigger className="h-10 bg-white border border-gray-300 text-gray-900 rounded-lg focus:border-cyan-500 focus:ring-cyan-500/30">
+                  <SelectTrigger className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white text-lg rounded-2xl">
                     <SelectValue placeholder="All Asset Types" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200">
+                  <SelectContent className="bg-black/90 backdrop-blur-xl border-white/20 text-white">
                     <SelectItem value="all">All Asset Types</SelectItem>
                     {Object.keys(filteredAnalytics.statusBreakdown).map(status => (
                       <SelectItem key={status} value={status}>
@@ -703,10 +738,10 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
 
                 {/* Market Filter */}
                 <Select value={filters.state} onValueChange={(value) => setFilters(prev => ({ ...prev, state: value }))}>
-                  <SelectTrigger className="h-10 bg-white border border-gray-300 text-gray-900 rounded-lg focus:border-cyan-500 focus:ring-cyan-500/30">
+                  <SelectTrigger className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white text-lg rounded-2xl">
                     <SelectValue placeholder="All Markets" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200">
+                  <SelectContent className="bg-black/90 backdrop-blur-xl border-white/20 text-white">
                     <SelectItem value="all">All Markets</SelectItem>
                     {Object.keys(filteredAnalytics.stateBreakdown).map(state => (
                       <SelectItem key={state} value={state}>
@@ -718,10 +753,10 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
 
                 {/* Sort By */}
                 <Select value={filters.sortBy} onValueChange={(value) => setFilters(prev => ({ ...prev, sortBy: value }))}>
-                  <SelectTrigger className="h-10 bg-white border border-gray-300 text-gray-900 rounded-lg focus:border-cyan-500 focus:ring-cyan-500/30">
+                  <SelectTrigger className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white text-lg rounded-2xl">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200">
+                  <SelectContent className="bg-black/90 backdrop-blur-xl border-white/20 text-white">
                     <SelectItem value="name">Property Name</SelectItem>
                     <SelectItem value="unitsTotal">Unit Count</SelectItem>
                     <SelectItem value="acreage">Land Area</SelectItem>
@@ -732,20 +767,20 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
                 </Select>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <Input
                   type="number"
                   placeholder="Min Units"
                   value={filters.minUnits}
                   onChange={(e) => setFilters(prev => ({ ...prev, minUnits: e.target.value }))}
-                  className="h-10 bg-white border border-gray-300 text-gray-900 placeholder:text-gray-500 rounded-lg"
+                  className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl"
                 />
                 <Input
                   type="number"
                   placeholder="Max Units"
                   value={filters.maxUnits}
                   onChange={(e) => setFilters(prev => ({ ...prev, maxUnits: e.target.value }))}
-                  className="h-10 bg-white border border-gray-300 text-gray-900 placeholder:text-gray-500 rounded-lg"
+                  className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl"
                 />
                 <Input
                   type="number"
@@ -753,61 +788,63 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
                   placeholder="Min Acreage"
                   value={filters.minAcreage}
                   onChange={(e) => setFilters(prev => ({ ...prev, minAcreage: e.target.value }))}
-                  className="h-10 bg-white border border-gray-300 text-gray-900 placeholder:text-gray-500 rounded-lg"
+                  className="h-14 bg-black/20 backdrop-blur-xl border-white/20 text-white placeholder:text-white/60 text-lg rounded-2xl"
                 />
-                <Input
-                  type="number"
-                  step="0.1"
-                  placeholder="Max Acreage"
-                  value={filters.maxAcreage}
-                  onChange={(e) => setFilters(prev => ({ ...prev, maxAcreage: e.target.value }))}
-                  className="h-10 bg-white border border-gray-300 text-gray-900 placeholder:text-gray-500 rounded-lg"
-                />
-              </div>
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                step="0.1"
+                placeholder="Max Acreage"
+                value={filters.maxAcreage}
+                onChange={(e) => setFilters(prev => ({ ...prev, maxAcreage: e.target.value }))}
+                className="border-bristol-gold/30"
+              />
+              <Button
+                variant="outline"
+                onClick={() => setFilters(prev => ({ ...prev, sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' }))}
+                className="border-bristol-gold/30 hover:bg-bristol-gold/10"
+              >
+                <ArrowUpDown className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
 
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setFilters({
-                      search: '',
-                      status: 'all',
-                      state: 'all',
-                      minUnits: '',
-                      maxUnits: '',
-                      minAcreage: '',
-                      maxAcreage: '',
-                      completionYear: '',
-                      sortBy: 'name',
-                      sortOrder: 'asc'
-                    })}
-                    className="border-gray-300 hover:bg-gray-50"
-                  >
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Clear Filters
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setFilters(prev => ({ ...prev, sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' }))}
-                    className="border-gray-300 hover:bg-gray-50"
-                  >
-                    <ArrowUpDown className="h-4 w-4 mr-2" />
-                    {filters.sortOrder === 'asc' ? 'Asc' : 'Desc'}
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => handleExport('csv')}
-                    className="border-gray-300 hover:bg-gray-50"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Export CSV
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-bristol-gold/20">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setFilters({
+                  search: '',
+                  status: 'all',
+                  state: 'all',
+                  minUnits: '',
+                  maxUnits: '',
+                  minAcreage: '',
+                  maxAcreage: '',
+                  completionYear: '',
+                  sortBy: 'name',
+                  sortOrder: 'asc'
+                })}
+                className="border-bristol-gold/30 hover:bg-bristol-gold/10"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Clear Filters
+              </Button>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={() => handleExport('csv')}
+                className="border-bristol-gold/30 hover:bg-bristol-gold/10"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export CSV
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Main Content */}
       {activeView === 'cards' && (
@@ -1046,6 +1083,7 @@ export function ElitePropertyAnalyticsDashboard({ sites, selectedSite, onSiteSel
           </Card>
         </div>
       )}
+        </div>
       </div>
     </div>
   );

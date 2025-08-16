@@ -635,10 +635,7 @@ export default function Dashboard() {
 
             {/* Interactive Map Dashboard - Override All Margins */}
             <div className="flex-1 flex relative w-full h-full m-0 p-0 max-w-none overflow-hidden">
-              <InteractiveMapDashboard 
-                selectedSite={selectedSite}
-                onSiteSelect={setSelectedSite}
-              />
+              <InteractiveMapDashboard />
             </div>
           </div>
         )}
@@ -714,7 +711,7 @@ export default function Dashboard() {
               
               {selectedSite ? (
                 <MarketAnalytics
-                  siteId={selectedSite.id}
+                  site={selectedSite}
                   metrics={siteMetrics}
                 />
               ) : (
