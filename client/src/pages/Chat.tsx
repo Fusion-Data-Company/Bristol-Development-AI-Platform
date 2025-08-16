@@ -156,6 +156,11 @@ function safeStringify(obj: any, space = 2) {
 }
 
 export default function Chat() {
+  // Fix state declarations moved to top 
+  const [activeTasks, setActiveTasks] = useState<any[]>([]);
+  const maxActiveTasks = 20;
+  const [agentCommunication, setAgentCommunication] = useState<any[]>([]);
+  const maxAgentMessages = 50;
   // Navigation state for header
   const [location] = useLocation();
   
@@ -310,11 +315,7 @@ export default function Chat() {
     { id: 'market-intelligence', name: 'Market Intelligence', model: 'anthropic/claude-3.5-sonnet', description: 'Analyzes comparable properties and market trends' },
     { id: 'lead-management', name: 'Lead Manager', model: 'openai/gpt-4-turbo', description: 'Assesses investor fit and manages lead conversion' }
   ]);
-  const [activeTasks, setActiveTasks] = useState<AgentTask[]>([]);
-  const maxActiveTasks = 20; // Limit for memory optimization
-  const [taskProgress, setTaskProgress] = useState<Record<string, any>>({});
-  const [agentCommunication, setAgentCommunication] = useState<any[]>([]);
-  const maxAgentMessages = 50; // Limit for memory optimization
+  const [taskProgress, setTaskProgress] = useState<Record<string, any>>();
   const [multiAgentMode, setMultiAgentMode] = useState(true);
   
   // Web Scraping Agent status for live tracking
