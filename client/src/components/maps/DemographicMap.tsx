@@ -70,7 +70,10 @@ function upsertPinsLayer(map: MapRef, sourceId: string, layerId: string, fc: Sit
   if (!map || !fc) return;
 
   const mapInstance = map.getMap();
-  if (!mapInstance) return;
+  if (!mapInstance || !mapInstance.isStyleLoaded()) {
+    console.warn('Map style not loaded, skipping layer update');
+    return;
+  }
 
   // Update source
   if (mapInstance.getSource(sourceId)) {
@@ -130,6 +133,7 @@ export function DemographicMap({ className, onEnrichComplete }: DemographicMapPr
   const [popupInfo, setPopupInfo] = useState<{ longitude: number; latitude: number; feature: GeoJSONFeature } | null>(null);
   const [metric, setMetric] = useState<DemographicMetric>('median_income');
   const [isEnriching, setIsEnriching] = useState(false);
+  const [isStyleLoaded, setIsStyleLoaded] = useState(false);
   const [viewport, setViewport] = useState({
     longitude: -82.4572, // Atlanta/Sunbelt center
     latitude: 33.7490,
@@ -146,12 +150,22 @@ export function DemographicMap({ className, onEnrichComplete }: DemographicMapPr
     }
   });
 
-  // Update map when metric changes
+  // Handle map style load
+  const handleMapLoad = useCallback(() => {
+    console.log('Map style loaded successfully');
+    setIsStyleLoaded(true);
+  }, []);
+
+  // Update map when metric changes and style is loaded
   useEffect(() => {
-    if (mapRef.current && sitesData) {
-      upsertPinsLayer(mapRef.current, 'sites-src', 'sites-circles', sitesData, metric);
+    if (mapRef.current && sitesData && isStyleLoaded) {
+      try {
+        upsertPinsLayer(mapRef.current, 'sites-src', 'sites-circles', sitesData, metric);
+      } catch (error) {
+        console.error('Error updating map pins:', error);
+      }
     }
-  }, [sitesData, metric]);
+  }, [sitesData, metric, isStyleLoaded]);
 
   // Run ACS enrichment
   const handleEnrich = async () => {
@@ -293,6 +307,7 @@ export function DemographicMap({ className, onEnrichComplete }: DemographicMapPr
         mapboxAccessToken={MAPBOX_TOKEN}
         style={{ width: '100%', height: '100%' }}
         mapStyle="mapbox://styles/mapbox/streets-v8"
+        onLoad={handleMapLoad}
         onClick={handleMapClick}
         interactiveLayerIds={['sites-circles']}
       >
