@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { InteractiveMap } from "../maps/InteractiveMap";
+import CleanMap from "../maps/CleanMap";
 import { SiteScoring } from "../analytics/SiteScoring";
 import { MarketAnalytics } from "../analytics/MarketAnalytics";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -219,15 +219,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
     <div className="h-full w-full flex bg-bristol-ink m-0 p-0 max-w-none overflow-hidden">
       {/* Main Map Area - Expanded */}
       <div className="flex-1 relative">
-        <InteractiveMap
-          sites={sites}
-          selectedSiteId={selectedSite?.id}
-          onSiteSelect={onSiteSelect}
-          onMapClick={handleMapClick}
-          className="w-full h-full"
-          fullScreen={true}
-          showControls={true}
-        />
+        <CleanMap />
         
 
       </div>
