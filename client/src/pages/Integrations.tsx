@@ -135,22 +135,22 @@ export default function Integrations() {
     {
       name: 'OpenAI',
       description: 'AI-powered analysis and chat capabilities',
-      configured: !!process.env.OPENAI_API_KEY,
-      connected: !!process.env.OPENAI_API_KEY,
+      configured: !!import.meta.env.VITE_OPENAI_API_KEY,
+      connected: !!import.meta.env.VITE_OPENAI_API_KEY,
       features: ['Site analysis', 'Chat assistance', 'Report generation']
     },
     {
       name: 'Microsoft',
       description: 'OneDrive integration for file storage',
-      configured: !!process.env.MICROSOFT_CLIENT_ID,
+      configured: !!import.meta.env.VITE_MICROSOFT_CLIENT_ID,
       connected: false,
       features: ['File sync', 'Document storage', 'Collaboration']
     },
     {
       name: 'Apify',
       description: 'Web scraping and data extraction',
-      configured: !!process.env.APIFY_API_TOKEN,
-      connected: !!process.env.APIFY_API_TOKEN,
+      configured: !!import.meta.env.VITE_APIFY_API_TOKEN,
+      connected: !!import.meta.env.VITE_APIFY_API_TOKEN,
       features: ['Property data', 'Market research', 'Competitor analysis']
     },
     {
