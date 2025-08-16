@@ -84,6 +84,41 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Main app content that uses auth
 function AppContent() {
+  // Temporarily bypass auth for development to fix white screen
+  const isDevelopment = import.meta.env.DEV;
+  
+  if (isDevelopment) {
+    // In development, show the main app directly
+    return (
+    <Router>
+      <Switch>
+        <Route path="/" component={MapPage} />
+        <Route path="/sites" component={Sites} />
+        <Route path="/analytics-enterprise" component={Analytics} />
+        <Route path="/demographics" component={Demographics} />
+        <Route path="/chat" component={Chat} />
+        <Route path="/enterprise" component={Enterprise} />
+        <Route path="/tools" component={Tools} />
+        <Route path="/integrations" component={Integrations} />
+        <Route path="/comparables" component={Comparables} />
+        <Route path="/users" component={Users} />
+        
+        {/* Fallback to main app */}
+        <Route>
+          <MapPage />
+        </Route>
+      </Switch>
+      
+      {/* Toast Notifications */}
+      <Toaster />
+      
+      {/* Bristol AI Floating Widget - Always visible */}
+      {/* <BristolFloatingWidget /> */}
+    </Router>
+    );
+  }
+  
+  // Production auth flow
   const { isAuthenticated, isLoading } = useAuth();
   
   if (isLoading) {
@@ -118,7 +153,7 @@ function AppContent() {
       <Toaster />
       
       {/* Bristol AI Floating Widget - Always visible */}
-      <BristolFloatingWidget />
+      {/* <BristolFloatingWidget /> */}
     </Router>
   );
 }
