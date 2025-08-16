@@ -28,7 +28,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import Chrome from '@/components/brand/SimpleChrome';
+import SimpleChrome from '@/components/brand/SimpleChrome';
 
 interface IntegrationStatus {
   name: string;
@@ -163,7 +163,7 @@ export default function Integrations() {
   ];
 
   return (
-    <Chrome>
+    <SimpleChrome showNavigation={true}>
       <div className="container mx-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -351,7 +351,7 @@ export default function Integrations() {
         </Tabs>
         
       </div>
-    </Chrome>
+    </SimpleChrome>
   );
 }
 

@@ -10,6 +10,13 @@ import { useAuth } from '@/hooks/useAuth';
 import Landing from '@/pages/Landing';
 import MapPage from '@/pages/App';
 import Sites from '@/pages/Sites';
+import Analytics from '@/pages/Analytics';
+import Demographics from '@/pages/Demographics';
+import Chat from '@/pages/Chat';
+import Enterprise from '@/pages/Enterprise';
+import { Tools } from '@/pages/Tools';
+import Integrations from '@/pages/Integrations';
+import Comparables from '@/pages/ComparablesAnnex';
 import Users from '@/pages/Users';
 
 // Create query client
@@ -91,6 +98,13 @@ function AppContent() {
       <Switch>
         <Route path="/" component={MapPage} />
         <Route path="/sites" component={Sites} />
+        <Route path="/analytics-enterprise" component={Analytics} />
+        <Route path="/demographics" component={Demographics} />
+        <Route path="/chat" component={Chat} />
+        <Route path="/enterprise" component={Enterprise} />
+        <Route path="/tools" component={Tools} />
+        <Route path="/integrations" component={Integrations} />
+        <Route path="/comparables" component={Comparables} />
         <Route path="/users" component={Users} />
         
         {/* Fallback to main app */}

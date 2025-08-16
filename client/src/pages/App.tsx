@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import Chrome from "../components/brand/Chrome";
+import SimpleChrome from "../components/brand/SimpleChrome";
 import { PortfolioMap } from "../components/maps/PortfolioMap";
 import { SiteDemographicAnalysis } from "../components/analysis/SiteDemographicAnalysis";
 import { AddressDemographics } from "../components/analysis/AddressDemographics";
@@ -47,7 +47,7 @@ export default function App() {
           backgroundImage: `url('/src/assets/bristol-analytics-background.jpg')`,
         }}
       />
-      <Chrome>
+      <SimpleChrome showNavigation={true}>
         <div className="container mx-auto px-6 py-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             {/* Clean Navigation */}
@@ -119,7 +119,7 @@ export default function App() {
               </TabsContent>
             </Tabs>
           </div>
-        </Chrome>
+        </SimpleChrome>
     </div>
   );
 }

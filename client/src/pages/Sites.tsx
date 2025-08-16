@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Upload, Download, Search, MapPin, Filter, Settings2, Loader2, Building, Map, Users } from "lucide-react";
-import Chrome from "../components/brand/SimpleChrome";
+import SimpleChrome from "../components/brand/SimpleChrome";
 import { DataBackground } from "../components/EnterpriseBackgrounds";
 import { SitesTable } from "../widgets/tables/SitesTableBasic";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
@@ -182,7 +182,7 @@ export default function Sites() {
   const statusOptions = ["Operating", "Pipeline", "Other"];
 
   return (
-    <Chrome>
+    <SimpleChrome showNavigation={true}>
       <div className="min-h-screen relative z-10">
         {/* Premium Sites Intelligence Header */}
         <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
@@ -482,6 +482,6 @@ export default function Sites() {
         </DataBackground>
       </div>
       </div>
-    </Chrome>
+    </SimpleChrome>
   );
 }
