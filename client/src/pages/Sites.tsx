@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import apartmentBackgroundImage from "@assets/thumbnail-1_1755367673202.jpg";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -59,8 +59,8 @@ export default function Sites() {
     retry: 3 // Allow retries
   });
 
-  // Calculate live metrics from table data
-  const calculateLiveMetrics = () => {
+  // Calculate live metrics from table data - using useMemo for performance
+  const liveMetrics = useMemo(() => {
     if (!sites || sites.length === 0) return { totalProperties: 0, totalUnits: 0 };
     
     // Count properties with names in SITE NAME column
@@ -70,9 +70,7 @@ export default function Sites() {
     const totalUnits = sites.reduce((sum, site) => sum + (site.unitsTotal || 0), 0);
     
     return { totalProperties, totalUnits };
-  };
-  
-  const liveMetrics = calculateLiveMetrics();
+  }, [sites]);
 
   // Debugging removed - using direct values
 

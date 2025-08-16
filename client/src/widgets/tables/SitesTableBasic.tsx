@@ -70,10 +70,11 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/sites'] });
+      // Invalidate all sites queries regardless of search parameters
+      queryClient.invalidateQueries({ queryKey: ['/api/sites'], exact: false });
       onRefresh();
       setEditingCell(null);
-      toast({ title: "Site Updated", description: "Site has been updated" });
+      toast({ title: "Site Updated", description: "Site has been updated successfully" });
     },
     onError: () => {
       toast({ title: "Update Failed", description: "Failed to update site", variant: "destructive" });
@@ -87,10 +88,11 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       return response.json();
     },
     onSuccess: (_, siteId) => {
-      queryClient.invalidateQueries({ queryKey: ['/api/sites'] });
+      // Invalidate all sites queries regardless of search parameters
+      queryClient.invalidateQueries({ queryKey: ['/api/sites'], exact: false });
       onRefresh();
       if (selectedSite?.id === siteId) onSelectSite(null);
-      toast({ title: "Site Deleted", description: "Site has been deleted" });
+      toast({ title: "Site Deleted", description: "Site has been deleted successfully" });
     },
     onError: () => {
       toast({ title: "Delete Failed", description: "Failed to delete site", variant: "destructive" });
