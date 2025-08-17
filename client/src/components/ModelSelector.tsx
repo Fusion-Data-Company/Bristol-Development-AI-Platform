@@ -186,7 +186,7 @@ export function ModelSelector({
 
         {/* Dropdown */}
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-bristol-cyan/30 rounded-xl shadow-2xl backdrop-blur-sm z-50 max-h-80 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-bristol-cyan/30 rounded-xl shadow-2xl backdrop-blur-sm z-[9999] max-h-80 overflow-y-auto">
             <div className="p-2">
               <div className="text-xs text-bristol-cyan/70 px-3 py-2 border-b border-bristol-cyan/20 mb-2 flex items-center justify-between">
                 <span>OpenRouter Models ({modelList.length})</span>
