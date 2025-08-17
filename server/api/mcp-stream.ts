@@ -1,6 +1,48 @@
 import { Router } from 'express';
 import { eliteMCPSuperserver } from '../services/eliteMCPSuperserver';
 
+// Convert tool parameters to proper MCP JSON Schema format
+function convertToMCPSchema(parameters: any): any {
+  const schema: any = {};
+  
+  for (const [key, value] of Object.entries(parameters)) {
+    if (typeof value === 'object' && value !== null) {
+      const param = value as any;
+      schema[key] = {
+        type: param.type || 'string',
+        description: param.description || `Parameter ${key}`,
+        ...(param.enum && { enum: param.enum }),
+        ...(param.default !== undefined && { default: param.default }),
+        ...(param.minimum !== undefined && { minimum: param.minimum }),
+        ...(param.maximum !== undefined && { maximum: param.maximum })
+      };
+    } else {
+      schema[key] = {
+        type: 'string',
+        description: `Parameter ${key}`
+      };
+    }
+  }
+  
+  return schema;
+}
+
+// Extract required fields from parameters
+function getRequiredFields(parameters: any): string[] {
+  const required: string[] = [];
+  
+  for (const [key, value] of Object.entries(parameters)) {
+    if (typeof value === 'object' && value !== null) {
+      const param = value as any;
+      if (param.required === true || param.required !== false) {
+        required.push(key);
+      }
+    }
+  }
+  
+  return required;
+}
+
 const router = Router();
 
 // STREAMABLE_HTTP endpoint for ElevenLabs MCP - follows MCP protocol exactly
@@ -42,7 +84,7 @@ router.post('/api/mcp/stream', async (req, res) => {
         break;
         
       case 'tools/list':
-        // List available tools
+        // List available tools with proper MCP schema compliance
         const tools = eliteMCPSuperserver.getAvailableTools();
         res.json({
           jsonrpc: '2.0',
@@ -53,10 +95,9 @@ router.post('/api/mcp/stream', async (req, res) => {
               description: tool.description,
               inputSchema: {
                 type: 'object',
-                properties: tool.parameters || {},
-                required: Object.keys(tool.parameters || {}).filter(key => 
-                  tool.parameters?.[key]?.required !== false
-                )
+                properties: convertToMCPSchema(tool.parameters || {}),
+                required: getRequiredFields(tool.parameters || {}),
+                additionalProperties: false
               }
             }))
           }
