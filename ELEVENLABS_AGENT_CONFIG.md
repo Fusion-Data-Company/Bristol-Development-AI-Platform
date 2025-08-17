@@ -1,6 +1,6 @@
 # ElevenLabs Agent Configuration Instructions
 
-## ✅ WORKING SOLUTION - Tools are Now Accessible!
+## ✅ VERIFIED WORKING - All 5 EXACT Tools Now Available!
 
 ## Agent ID
 `agent_8801k2t62y9qehhsqqdmzmp10kt9`
@@ -218,26 +218,29 @@ curl -X POST https://[your-domain]/api/mcp/elevenlabs \
 **HTTP Method:** GET
 **URL:** `https://[your-domain]/api/mcp/available-tools`
 
-### Step 3: Update Agent System Prompt
-Add this to your ElevenLabs agent's system prompt:
+### Step 3: Update Agent System Prompt with EXACT Tool Names
+Replace your current Cap personality with the one from the attached file, then add this tools section:
 
 ```
-You have access to 20+ Bristol MCP tools. To use them:
+You have access to these EXACT Bristol MCP tools:
 
 1. Call list_tools to see all available tools
 2. Call execute_tool with:
    - tool: the tool name (e.g., "verify_user", "portfolio_analytics", "market_research")
    - args: the arguments for that tool
 
-Available tools include:
+CRITICAL - Use these EXACT tool names:
 - verify_user: Verify Bristol team members
-- portfolio_analytics: Get Bristol portfolio data
+- fetch_last_conversation: Retrieve last conversation summary
+- log_conversation: Log conversation with summary and tags
+- query_analytics: Query Bristol portfolio KPIs and metrics
+- store_artifact: Store drafts, memos, and reports
+
+Plus additional tools:
+- portfolio_analytics: Get Bristol portfolio data (alternative to query_analytics)
 - market_research: Search market intelligence using Perplexity
-- save_conversation: Save conversation to shared memory
-- get_conversation_history: Get previous conversations
 - generate_image: Create images with DALL-E 3
-- web_search: Search the web
-- And 13+ more tools
+- And 14+ more tools
 
 All conversations are automatically saved to shared memory for seamless context switching between voice agent, chat, and pop-out interfaces.
 

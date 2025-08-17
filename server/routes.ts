@@ -222,6 +222,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ElevenLabs MCP Gateway API for Cap AI assistant integration
   const elevenLabsMCPRouter = (await import('./api/mcp-elevenlabs')).default;
   app.use(elevenLabsMCPRouter);
+  
+  // ElevenLabs Webhook endpoint for direct integration
+  const elevenLabsWebhookRouter = (await import('./api/elevenlabs-webhook')).default;
+  app.use(elevenLabsWebhookRouter);
 
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
