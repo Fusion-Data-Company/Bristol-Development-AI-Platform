@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { elevenLabsMCPGateway } from '../services/elevenLabsMCPGateway';
+import { eliteMCPSuperserver } from '../services/eliteMCPSuperserver';
 import { seedBristolTeam } from '../services/bristolTeamSeeder';
 import crypto from 'crypto';
 
@@ -33,22 +34,48 @@ router.post('/api/mcp/elevenlabs', async (req, res) => {
     // Handle different MCP methods
     switch (method) {
       case 'tools/list':
-        // Return available tools
-        const tools = elevenLabsMCPGateway.getToolDefinitions();
+        // Return all available tools from superserver
+        const superTools = eliteMCPSuperserver.getAvailableTools();
+        const legacyTools = elevenLabsMCPGateway.getToolDefinitions();
+        const allTools = [...superTools, ...legacyTools];
         return res.json({
           jsonrpc: '2.0',
           id,
-          result: { tools }
+          result: { tools: allTools }
         });
         
       case 'tools/execute':
-        // Execute a tool
+      case 'tools/call':  // Support both method names for compatibility
+        // Execute a tool from superserver or legacy gateway
         const { name, arguments: args } = params;
-        const result = await elevenLabsMCPGateway.executeTool(
-          name, 
-          args,
-          req.headers['x-conversation-id']
-        );
+        
+        const startTime = Date.now();
+        let result;
+        
+        try {
+          // Get user context from request
+          const context = {
+            userId: req.body.userId || req.headers['x-user-id'] as string,
+            sessionId: req.body.sessionId || req.headers['x-session-id'] as string,
+            conversationId: req.headers['x-conversation-id'] as string,
+            source: 'elevenlabs' as const,
+            timestamp: new Date().toISOString()
+          };
+          
+          // Try superserver first
+          result = await eliteMCPSuperserver.executeTool(name, args, context);
+        } catch (superserverError) {
+          // Fallback to legacy gateway
+          console.log(`Superserver: ${superserverError}, using legacy gateway for ${name}`);
+          result = await elevenLabsMCPGateway.executeTool(
+            name, 
+            args,
+            req.headers['x-conversation-id']
+          );
+        }
+        
+        const executionTime = Date.now() - startTime;
+        console.log(`Tool ${name} executed in ${executionTime}ms - Status: success`);
         
         return res.json({
           jsonrpc: '2.0',
@@ -105,20 +132,53 @@ router.post('/api/mcp/elevenlabs', async (req, res) => {
   }
 });
 
-// Tool discovery endpoint
-router.get('/api/mcp/tools', (req, res) => {
-  const tools = elevenLabsMCPGateway.getToolDefinitions();
-  res.json({
-    name: 'Bristol Elite MCP Gateway',
-    version: '1.0.0',
-    tools,
-    capabilities: {
-      streaming: true,
-      batch: true,
-      async: true,
-      errorHandling: 'circuit-breaker'
-    }
-  });
+// Tool discovery endpoint - Superserver Edition
+router.get('/api/mcp/tools', async (req, res) => {
+  try {
+    // Get all tools from superserver
+    const superTools = eliteMCPSuperserver.getAvailableTools();
+    const legacyTools = elevenLabsMCPGateway.getToolDefinitions();
+    
+    // Combine tools
+    const allTools = [...superTools, ...legacyTools.filter(lt => 
+      !superTools.find(st => st.name === lt.name)
+    )];
+    
+    // Get health status
+    const health = await eliteMCPSuperserver.healthCheck();
+    
+    res.json({
+      name: 'Bristol Elite MCP Superserver',
+      version: '2.0.0',
+      tools: allTools,
+      totalTools: allTools.length,
+      categories: health.categories,
+      capabilities: {
+        streaming: true,
+        batch: true,
+        async: true,
+        errorHandling: 'elite-circuit-breaker',
+        sharedMemory: true,
+        crossAgentSync: true,
+        realTimeData: true,
+        aiModels: ['Claude 4.1 Opus', 'GPT-4o', 'Perplexity Sonar', 'DALL-E 3']
+      }
+    });
+  } catch (error) {
+    // Fallback to legacy if superserver fails
+    const tools = elevenLabsMCPGateway.getToolDefinitions();
+    res.json({
+      name: 'Bristol Elite MCP Gateway',
+      version: '1.0.0', 
+      tools,
+      capabilities: {
+        streaming: true,
+        batch: true,
+        async: true,
+        errorHandling: 'circuit-breaker'
+      }
+    });
+  }
 });
 
 // Health check endpoint
