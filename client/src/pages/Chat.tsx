@@ -1667,12 +1667,12 @@ What property or investment can I analyze for you today?`,
           <div className="flex flex-wrap items-center gap-6">
             
             {/* Clean Model Selector */}
-            <div className="flex-1 max-w-md relative z-[9999]">
+            <div className="flex-1 relative">
               <label className="block text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                 <Brain className="h-3 w-3 animate-pulse" />
                 AI Model
               </label>
-              <div className="relative group z-[9999]">
+              <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-orange-500/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
                 <ModelSelector
                   value={model}
