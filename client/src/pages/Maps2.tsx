@@ -240,10 +240,7 @@ export default function Maps2() {
   };
 
   return (
-    <SimpleChrome 
-      title="Bristol Maps Intelligence"
-      description="Advanced geospatial analytics and property mapping"
-    >
+    <SimpleChrome>
       <div className="relative w-full h-screen">
         {/* Map Container */}
         <div ref={mapContainer} className="w-full h-full" />
