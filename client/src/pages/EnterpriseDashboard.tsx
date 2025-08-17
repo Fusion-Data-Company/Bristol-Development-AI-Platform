@@ -69,43 +69,37 @@ export default function EnterpriseDashboard() {
         backgroundSize: 'cover', 
         backgroundPosition: 'center', 
         backgroundRepeat: 'no-repeat',
-        filter: 'brightness(0.8) contrast(1.1) saturate(0.9)'
+        filter: 'brightness(1.0) contrast(1.2) saturate(1.0)'
       }}>
-        
-        {/* Professional overlay for crystal clarity and content readability */}
-        <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
-        
-        {/* Subtle brand accent overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/[0.03] via-transparent to-bristol-gold/[0.03]" />
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bristol-maroon via-amber-500 to-bristol-maroon" />
         
         <div className="relative px-6 py-8">
           <div className="container mx-auto max-w-7xl space-y-8">
             
-            {/* Elite Header with Status - Enhanced Glass Morphism */}
-            <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 p-8 ring-1 ring-black/5">
+            {/* Elite Header with Status - Ultra Premium Glass */}
+            <div className="bg-white/98 backdrop-blur-2xl rounded-3xl shadow-[0_32px_64px_rgba(0,0,0,0.3)] border-2 border-white/60 p-10 ring-2 ring-white/50 hover:shadow-[0_40px_80px_rgba(0,0,0,0.4)] transition-all duration-500">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-6">
                   <div className="relative">
-                    <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-bristol-maroon via-red-700 to-amber-600 flex items-center justify-center shadow-xl ring-4 ring-white/50">
-                      <Crown className="h-8 w-8 text-amber-100 drop-shadow-lg" />
+                    <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-bristol-maroon via-red-700 to-amber-600 flex items-center justify-center shadow-2xl ring-6 ring-white/70 hover:scale-105 transition-transform duration-300">
+                      <Crown className="h-10 w-10 text-amber-100 drop-shadow-2xl" />
                     </div>
-                    <div className="absolute -top-1 -right-1 h-5 w-5 bg-emerald-500 rounded-full border-3 border-white animate-pulse shadow-lg" />
+                    <div className="absolute -top-2 -right-2 h-6 w-6 bg-emerald-500 rounded-full border-4 border-white animate-pulse shadow-xl ring-2 ring-emerald-200" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-4 mb-2">
-                      <h1 className="text-5xl font-bold bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
+                    <div className="flex items-center gap-6 mb-3">
+                      <h1 className="text-6xl font-bold bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 bg-clip-text text-transparent drop-shadow-lg">
                         Enterprise Command Center
                       </h1>
-                      <Badge className="bg-gradient-to-r from-bristol-maroon to-amber-600 text-white px-4 py-2 text-sm font-bold shadow-lg ring-2 ring-white/20">
-                        <Sparkles className="h-4 w-4 mr-2" />
+                      <Badge className="bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 text-white px-6 py-3 text-lg font-bold shadow-2xl ring-4 ring-white/30 hover:scale-105 transition-transform duration-300">
+                        <Sparkles className="h-5 w-5 mr-3" />
                         ELITE
                       </Badge>
                     </div>
-                    <p className="text-slate-700 font-semibold text-lg">Bristol Development Group Intelligence Platform</p>
-                    <div className="flex items-center gap-3 mt-2">
-                      <div className="h-3 w-3 bg-emerald-500 rounded-full animate-pulse shadow-sm" />
-                      <span className="text-sm text-slate-600 font-medium">Last updated {formatTimeAgo(lastUpdated)}</span>
+                    <p className="text-slate-800 font-bold text-xl">Bristol Development Group Intelligence Platform</p>
+                    <div className="flex items-center gap-4 mt-3">
+                      <div className="h-4 w-4 bg-emerald-500 rounded-full animate-pulse shadow-lg ring-2 ring-emerald-200" />
+                      <span className="text-base text-slate-700 font-semibold">Last updated {formatTimeAgo(lastUpdated)}</span>
                     </div>
                   </div>
                 </div>
@@ -138,57 +132,57 @@ export default function EnterpriseDashboard() {
                 </div>
               </div>
 
-              {/* Real-Time Status Bar - Enhanced Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-gradient-to-br from-emerald-50 to-green-100 rounded-xl border-2 border-emerald-200 shadow-lg hover:shadow-xl transition-all duration-300 p-5 ring-1 ring-emerald-200/50">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-emerald-500 rounded-lg shadow-md">
-                      <CheckCircle className="h-6 w-6 text-white" />
+              {/* Real-Time Status Bar - Ultra Premium Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-100 rounded-2xl border-3 border-emerald-300 shadow-[0_20px_40px_rgba(16,185,129,0.2)] hover:shadow-[0_30px_60px_rgba(16,185,129,0.3)] transition-all duration-500 p-6 ring-2 ring-emerald-200/70 hover:scale-105">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-xl ring-2 ring-white/50">
+                      <CheckCircle className="h-7 w-7 text-white" />
                     </div>
                     <div>
-                      <div className="font-bold text-emerald-900 text-lg">System Online</div>
-                      <div className="text-sm text-emerald-700 font-medium">99.9% uptime</div>
+                      <div className="font-bold text-emerald-900 text-xl">System Online</div>
+                      <div className="text-base text-emerald-700 font-semibold">99.9% uptime</div>
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-100 rounded-xl border-2 border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 p-5 ring-1 ring-blue-200/50">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-blue-500 rounded-lg shadow-md">
-                      <Database className="h-6 w-6 text-white" />
+                <div className="bg-gradient-to-br from-blue-50 via-sky-50 to-cyan-100 rounded-2xl border-3 border-blue-300 shadow-[0_20px_40px_rgba(59,130,246,0.2)] hover:shadow-[0_30px_60px_rgba(59,130,246,0.3)] transition-all duration-500 p-6 ring-2 ring-blue-200/70 hover:scale-105">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl shadow-xl ring-2 ring-white/50">
+                      <Database className="h-7 w-7 text-white" />
                     </div>
                     <div>
-                      <div className="font-bold text-blue-900 text-lg">Data Sync</div>
-                      <div className="text-sm text-blue-700 font-medium">Real-time</div>
+                      <div className="font-bold text-blue-900 text-xl">Data Sync</div>
+                      <div className="text-base text-blue-700 font-semibold">Real-time</div>
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-xl border-2 border-amber-200 shadow-lg hover:shadow-xl transition-all duration-300 p-5 ring-1 ring-amber-200/50">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-amber-500 rounded-lg shadow-md">
-                      <Zap className="h-6 w-6 text-white" />
+                <div className="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-100 rounded-2xl border-3 border-amber-300 shadow-[0_20px_40px_rgba(245,158,11,0.2)] hover:shadow-[0_30px_60px_rgba(245,158,11,0.3)] transition-all duration-500 p-6 ring-2 ring-amber-200/70 hover:scale-105">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-xl ring-2 ring-white/50">
+                      <Zap className="h-7 w-7 text-white" />
                     </div>
                     <div>
-                      <div className="font-bold text-amber-900 text-lg">AI Engine</div>
-                      <div className="text-sm text-amber-700 font-medium">Active</div>
+                      <div className="font-bold text-amber-900 text-xl">AI Engine</div>
+                      <div className="text-base text-amber-700 font-semibold">Active</div>
                     </div>
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-purple-50 to-indigo-100 rounded-xl border-2 border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300 p-5 ring-1 ring-purple-200/50">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-500 rounded-lg shadow-md">
-                      <Globe className="h-6 w-6 text-white" />
+                <div className="bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-100 rounded-2xl border-3 border-purple-300 shadow-[0_20px_40px_rgba(168,85,247,0.2)] hover:shadow-[0_30px_60px_rgba(168,85,247,0.3)] transition-all duration-500 p-6 ring-2 ring-purple-200/70 hover:scale-105">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-xl ring-2 ring-white/50">
+                      <Globe className="h-7 w-7 text-white" />
                     </div>
                     <div>
-                      <div className="font-bold text-purple-900 text-lg">Market Data</div>
-                      <div className="text-sm text-purple-700 font-medium">Live feed</div>
+                      <div className="font-bold text-purple-900 text-xl">Market Data</div>
+                      <div className="text-base text-purple-700 font-semibold">Live feed</div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Enhanced Analytics Dashboard - Premium Glass Container */}
-            <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 p-8 ring-1 ring-black/5">
+            {/* Enhanced Analytics Dashboard - Ultra Premium Glass Container */}
+            <div className="bg-white/98 backdrop-blur-2xl rounded-3xl shadow-[0_32px_64px_rgba(0,0,0,0.3)] border-2 border-white/60 p-10 ring-2 ring-white/50 hover:shadow-[0_40px_80px_rgba(0,0,0,0.4)] transition-all duration-500">
               <EnterpriseAnalyticsDashboard />
             </div>
 
@@ -196,7 +190,7 @@ export default function EnterpriseDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               
               {/* Performance Metrics */}
-              <Card className="bg-white/95 backdrop-blur-xl border-2 border-white/40 shadow-2xl ring-1 ring-black/5 hover:shadow-3xl transition-all duration-300">
+              <Card className="bg-white/98 backdrop-blur-2xl border-3 border-white/60 shadow-[0_24px_48px_rgba(0,0,0,0.3)] ring-2 ring-white/50 hover:shadow-[0_32px_64px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500">
                 <CardHeader className="pb-4 border-b border-gray-100">
                   <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
                     <div className="p-2 bg-gradient-to-r from-bristol-maroon to-amber-600 rounded-lg shadow-md">
@@ -229,7 +223,7 @@ export default function EnterpriseDashboard() {
               </Card>
 
               {/* System Health */}
-              <Card className="bg-white/95 backdrop-blur-xl border-2 border-white/40 shadow-2xl ring-1 ring-black/5 hover:shadow-3xl transition-all duration-300">
+              <Card className="bg-white/98 backdrop-blur-2xl border-3 border-white/60 shadow-[0_24px_48px_rgba(0,0,0,0.3)] ring-2 ring-white/50 hover:shadow-[0_32px_64px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500">
                 <CardHeader className="pb-4 border-b border-gray-100">
                   <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
                     <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-lg shadow-md">
@@ -262,7 +256,7 @@ export default function EnterpriseDashboard() {
               </Card>
 
               {/* Quick Actions */}
-              <Card className="bg-white/95 backdrop-blur-xl border-2 border-white/40 shadow-2xl ring-1 ring-black/5 hover:shadow-3xl transition-all duration-300">
+              <Card className="bg-white/98 backdrop-blur-2xl border-3 border-white/60 shadow-[0_24px_48px_rgba(0,0,0,0.3)] ring-2 ring-white/50 hover:shadow-[0_32px_64px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500">
                 <CardHeader className="pb-4 border-b border-gray-100">
                   <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
                     <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg shadow-md">
