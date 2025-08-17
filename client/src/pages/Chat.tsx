@@ -1418,7 +1418,7 @@ What property or investment can I analyze for you today?`,
         }}
       >
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]"></div>
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px] z-0"></div>
         <div className="h-screen w-screen flex">
         {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout - EXACT REPLICA OF FLOATING WIDGET */}
         <div 
@@ -1843,7 +1843,7 @@ What property or investment can I analyze for you today?`,
               
               {/* Chat Messages Area */}
               <div 
-                className="relative z-10 flex-1 overflow-hidden flex flex-col"
+                className="relative z-0 flex-1 overflow-hidden flex flex-col"
                 style={{
                   backgroundImage: `url(${chatBackgroundImg})`,
                   backgroundSize: 'cover',
