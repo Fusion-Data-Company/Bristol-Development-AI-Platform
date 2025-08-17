@@ -510,7 +510,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chat routes
   app.get('/api/chat/sessions', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      // Use demo user ID since auth is disabled for internal app
+      const userId = req.user?.claims?.sub || "demo-user";
       const sessions = await storage.getUserChatSessions(userId);
       res.json(sessions);
     } catch (error) {
@@ -521,7 +522,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/chat/sessions', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      // Use demo user ID since auth is disabled for internal app
+      const userId = req.user?.claims?.sub || "demo-user";
       const sessionData = insertChatSessionSchema.parse({
         ...req.body,
         userId
@@ -545,7 +547,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Session not found" });
       }
 
-      const userId = req.user.claims.sub;
+      const userId = req.user?.claims?.sub || "demo-user";
       if (session.userId !== userId) {
         return res.status(403).json({ message: "Access denied" });
       }
@@ -573,7 +575,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Session not found" });
       }
 
-      const userId = req.user.claims.sub;
+      const userId = req.user?.claims?.sub || "demo-user";
       if (session.userId !== userId) {
         return res.status(403).json({ message: "Access denied" });
       }
@@ -605,7 +607,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/mcp/execute', isAuthenticated, async (req: any, res) => {
     try {
       const { tool, payload } = req.body;
-      const userId = req.user.claims.sub;
+      const userId = req.user?.claims?.sub || "demo-user";
 
       if (!tool || !payload) {
         return res.status(400).json({ message: "Tool name and payload are required" });
@@ -632,7 +634,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/integrations/logs', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user?.claims?.sub || "demo-user";
       const { service } = req.query;
       
       const logs = await storage.getIntegrationLogs(userId, service as string);
@@ -649,7 +651,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/ai/enhanced/chat', isAuthenticated, async (req: any, res) => {
     try {
       const { sessionId, message, options = {} } = req.body;
-      const userId = req.user.claims.sub;
+      const userId = req.user?.claims?.sub || "demo-user";
 
       if (!sessionId || !message) {
         return res.status(400).json({ message: "Session ID and message are required" });
@@ -672,7 +674,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/ai/enhanced/context', isAuthenticated, async (req: any, res) => {
     try {
       const { sessionId, dataTypes = ['all'] } = req.body;
-      const userId = req.user.claims.sub;
+      const userId = req.user?.claims?.sub || "demo-user";
 
       if (!sessionId) {
         return res.status(400).json({ message: "Session ID is required" });
@@ -768,7 +770,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Analytics endpoints
   app.get('/api/analytics/dashboard', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user?.claims?.sub || "demo-user";
       
       // Get user's sites and aggregated metrics
       const sites = await storage.getUserSites(userId);

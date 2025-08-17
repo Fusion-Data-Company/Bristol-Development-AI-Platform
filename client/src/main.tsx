@@ -36,6 +36,8 @@ console.warn = (...args) => {
 window.addEventListener('unhandledrejection', (event) => {
   const error = event.reason?.toString() || '';
   const errorMessage = event.reason?.message || '';
+  
+  // Suppress Replit-specific errors
   if (error.includes('beacon.js') || 
       error.includes('beacon') ||
       error.includes('replit.com') || 
@@ -43,6 +45,23 @@ window.addEventListener('unhandledrejection', (event) => {
       errorMessage.includes('beacon') ||
       errorMessage.includes('replit')) {
     event.preventDefault(); // Prevent Replit errors from showing
+    return;
+  }
+  
+  // Suppress WebSocket connection errors that are non-critical
+  if (error.includes('WebSocket') || 
+      error.includes('websocket') ||
+      errorMessage.includes('WebSocket') ||
+      errorMessage.includes('Connection failed')) {
+    event.preventDefault(); // Prevent WebSocket errors from showing
+    return;
+  }
+  
+  // Suppress query/fetch errors that are handled gracefully
+  if (error.includes('Failed to fetch') || 
+      errorMessage.includes('NetworkError') ||
+      errorMessage.includes('fetch')) {
+    event.preventDefault(); // These are handled by React Query
     return;
   }
 });

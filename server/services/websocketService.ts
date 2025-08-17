@@ -277,7 +277,7 @@ export class WebSocketService {
         console.log(`🔍 Connection stats: ${stats.totalConnections} total connections`);
       }
       
-    }, 30000); // Check every 30 seconds
+    }, 60000); // Check every 60 seconds (reduced frequency)
   }
 
   private generateClientId(): string {

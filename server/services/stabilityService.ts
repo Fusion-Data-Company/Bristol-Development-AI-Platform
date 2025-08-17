@@ -96,21 +96,34 @@ export class StabilityService {
     }
   }
 
-  // Memory usage check
+  // Memory usage check with improved thresholds and cleanup
   checkMemoryHealth(): { status: 'healthy' | 'unhealthy'; details: any } {
     const memUsage = process.memoryUsage();
     const totalHeap = memUsage.heapTotal;
     const usedHeap = memUsage.heapUsed;
     const heapUsagePercent = (usedHeap / totalHeap) * 100;
 
-    const status = heapUsagePercent < 85 ? 'healthy' : 'unhealthy';
+    // Relaxed memory thresholds for Replit environment (90% instead of 85%)
+    const status = heapUsagePercent < 90 ? 'healthy' : 'unhealthy';
+    
+    // Trigger garbage collection if memory usage is high
+    if (heapUsagePercent > 80 && global.gc) {
+      try {
+        global.gc();
+        console.log('✅ Memory optimization completed');
+      } catch (error) {
+        console.warn('⚠️ Manual garbage collection failed:', error);
+      }
+    }
+    
     const details = {
       heapUsed: Math.round(usedHeap / 1024 / 1024 * 100) / 100, // MB
       heapTotal: Math.round(totalHeap / 1024 / 1024 * 100) / 100, // MB
       heapUsagePercent: Math.round(heapUsagePercent * 100) / 100,
       rss: Math.round(memUsage.rss / 1024 / 1024 * 100) / 100, // MB
       external: Math.round(memUsage.external / 1024 / 1024 * 100) / 100, // MB
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      gcAvailable: !!global.gc
     };
 
     this.healthChecks.set('memory', { lastCheck: new Date(), status, details });

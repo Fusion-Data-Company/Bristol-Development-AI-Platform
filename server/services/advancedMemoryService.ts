@@ -63,6 +63,32 @@ class AdvancedMemoryService {
   private memoryCache = new Map<string, MemoryContext>();
   private summaryCache = new Map<string, ConversationSummary>();
   private profileCache = new Map<string, UserProfile>();
+  private readonly MAX_CACHE_SIZE = 100; // Limit cache size to prevent memory leaks
+
+  constructor() {
+    this.setupCacheCleanup();
+  }
+
+  // Cache management methods to prevent memory leaks
+  private manageCacheSize<T>(cache: Map<string, T>): void {
+    if (cache.size > this.MAX_CACHE_SIZE) {
+      // Remove oldest entries
+      const keys = Array.from(cache.keys());
+      const deleteCount = Math.floor(this.MAX_CACHE_SIZE * 0.2); // Remove 20% of entries
+      for (let i = 0; i < deleteCount; i++) {
+        cache.delete(keys[i]);
+      }
+    }
+  }
+
+  // Periodic cache cleanup
+  private setupCacheCleanup(): void {
+    setInterval(() => {
+      this.manageCacheSize(this.memoryCache);
+      this.manageCacheSize(this.summaryCache);
+      this.manageCacheSize(this.profileCache);
+    }, 300000); // Every 5 minutes
+  }
 
   // Initialize user profile and memory context
   async initializeUserContext(userId: string): Promise<UserProfile> {
