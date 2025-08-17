@@ -2117,7 +2117,7 @@ What property or investment can I analyze for you today?`,
                 <div className="relative z-[10000] flex items-center gap-2">
                   <Brain className="h-5 w-5 text-white group-hover:text-orange-500 transition-colors duration-300" />
                   <span className="text-white group-hover:text-orange-500 transition-colors duration-300 font-bold">
-                    ANALYZE PROPERTY
+                    ANALYZE
                   </span>
                 </div>
               </button>
