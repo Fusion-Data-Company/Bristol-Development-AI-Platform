@@ -1295,15 +1295,9 @@ html {
 }
 
 /* 3D Effect Loader Styles */
-:root {
-  --bg: #1e1e2e;
-  --primary1: #6c63ff;
-  --primary2: #ff6b9d;
-}
-
 .pl {
-  width: 6em;
-  height: 6em;
+  width: 120px;
+  height: 120px;
   margin: 2em auto;
   position: relative;
   display: flex;
@@ -1312,96 +1306,89 @@ html {
 }
 
 .pl__dot {
-  width: 0.75em;
-  height: 0.75em;
-  background: var(--primary1);
+  width: 12px;
+  height: 12px;
+  background: #6c63ff;
   border-radius: 50%;
   position: absolute;
-  animation: pushInOut1724 2.4s ease-in-out infinite;
+  animation: pl-rotate 2s linear infinite;
+  box-shadow: 0 0 10px rgba(108, 99, 255, 0.5);
 }
 
 .pl__dot:nth-child(1) {
   animation-delay: 0s;
-  top: 0;
+  top: 0px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .pl__dot:nth-child(2) {
-  animation-delay: 0.2s;
-  top: 0.866em;
-  right: 0;
+  animation-delay: 0.17s;
+  top: 15px;
+  right: 15px;
 }
 
 .pl__dot:nth-child(3) {
-  animation-delay: 0.4s;
-  top: 2.598em;
-  right: 0.866em;
+  animation-delay: 0.33s;
+  top: 50%;
+  right: 0px;
+  transform: translateY(-50%);
 }
 
 .pl__dot:nth-child(4) {
-  animation-delay: 0.6s;
-  bottom: 0;
-  right: 0;
+  animation-delay: 0.5s;
+  bottom: 15px;
+  right: 15px;
 }
 
 .pl__dot:nth-child(5) {
-  animation-delay: 0.8s;
-  bottom: 0;
+  animation-delay: 0.67s;
+  bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .pl__dot:nth-child(6) {
-  animation-delay: 1s;
-  bottom: 0;
-  left: 0;
+  animation-delay: 0.83s;
+  bottom: 15px;
+  left: 15px;
 }
 
 .pl__dot:nth-child(7) {
-  animation-delay: 1.2s;
-  top: 2.598em;
-  left: 0.866em;
+  animation-delay: 1s;
+  top: 50%;
+  left: 0px;
+  transform: translateY(-50%);
 }
 
 .pl__dot:nth-child(8) {
-  animation-delay: 1.4s;
-  top: 0.866em;
-  left: 0;
+  animation-delay: 1.17s;
+  top: 15px;
+  left: 15px;
 }
 
 .pl__dot:nth-child(9) {
-  animation-delay: 1.6s;
-  background: var(--primary2);
-  top: 1.732em;
-  left: 50%;
-  transform: translateX(-50%);
-  animation-name: pushInOut2724;
+  animation-delay: 1.33s;
+  top: 7.5px;
+  left: 38%;
 }
 
 .pl__dot:nth-child(10) {
-  animation-delay: 1.8s;
-  background: var(--primary2);
-  top: 1.299em;
-  right: 0.75em;
-  animation-name: pushInOut2724;
+  animation-delay: 1.5s;
+  top: 38%;
+  right: 7.5px;
 }
 
 .pl__dot:nth-child(11) {
-  animation-delay: 2s;
-  background: var(--primary2);
-  bottom: 1.299em;
-  right: 0.75em;
-  animation-name: pushInOut2724;
+  animation-delay: 1.67s;
+  bottom: 7.5px;
+  right: 38%;
 }
 
 .pl__dot:nth-child(12) {
-  animation-delay: 2.2s;
-  background: var(--primary2);
-  bottom: 1.732em;
-  left: 50%;
-  transform: translateX(-50%);
-  animation-name: pushInOut2724;
+  animation-delay: 1.83s;
+  bottom: 38%;
+  left: 7.5px;
 }
 
 .pl__text {
@@ -1431,36 +1418,13 @@ html {
   }
 }
 
-@keyframes pushInOut1724 {
-  from {
-    animation-timing-function: ease-in;
-    background-color: var(--bg);
-    transform: translate(0, 0);
+@keyframes pl-rotate {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
   }
-  25% {
-    animation-timing-function: ease-out;
-    background-color: var(--primary2);
-    transform: translate(-71%, -71%);
-  }
-  50%, to {
-    background-color: var(--bg);
-    transform: translate(0, 0);
-  }
-}
-
-@keyframes pushInOut2724 {
-  from {
-    animation-timing-function: ease-in;
-    background-color: var(--bg);
-    clip-path: polygon(0 75%, 100% 75%, 100% 100%, 0 100%);
-  }
-  25% {
-    animation-timing-function: ease-out;
-    background-color: var(--primary1);
-    clip-path: polygon(0 25%, 100% 25%, 100% 100%, 0 100%);
-  }
-  50%, to {
-    background-color: var(--bg);
-    clip-path: polygon(0 75%, 100% 75%, 100% 100%, 0 100%);
+  50% {
+    opacity: 0.3;
+    transform: scale(0.6);
   }
 }
