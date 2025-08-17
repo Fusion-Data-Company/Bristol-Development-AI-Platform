@@ -124,44 +124,75 @@ class UnifiedMemoryManager {
     metadata?: any;
   }): Promise<void> {
     try {
-      // Save to chat_messages table
-      const [chatMessage] = await db.insert(chatMessages).values({
-        sessionId: params.userId,
-        content: params.message,
-        role: 'user',
-        metadata: {
-          source: params.source,
-          timestamp: new Date().toISOString(),
-          ...params.metadata
-        }
-      }).returning();
+      // Step 1: Find or create chat session
+      let session = await db.select().from(chatSessions)
+        .where(eq(chatSessions.userId, params.userId))
+        .orderBy(desc(chatSessions.lastMessageAt))
+        .limit(1);
 
-      await db.insert(chatMessages).values({
-        sessionId: params.userId,
-        content: params.response,
-        role: 'assistant',
-        metadata: {
-          source: params.source,
-          timestamp: new Date().toISOString(),
-          ...params.metadata
-        }
-      });
+      let sessionId: string;
+      
+      if (session.length === 0) {
+        // Create new session
+        const [newSession] = await db.insert(chatSessions).values({
+          userId: params.userId,
+          title: `${params.source} conversation`,
+          lastMessageAt: new Date()
+        }).returning();
+        sessionId = newSession.id;
+      } else {
+        sessionId = session[0].id;
+        // Update last message time
+        await db.update(chatSessions)
+          .set({ lastMessageAt: new Date() })
+          .where(eq(chatSessions.id, sessionId));
+      }
 
-      // Save to memory for long-term retention
+      // Step 2: Save both user message and assistant response
+      await db.insert(chatMessages).values([
+        {
+          sessionId: sessionId,
+          content: params.message,
+          role: 'user',
+          metadata: {
+            source: params.source,
+            timestamp: new Date().toISOString(),
+            ...params.metadata
+          }
+        },
+        {
+          sessionId: sessionId,
+          content: params.response,
+          role: 'assistant',
+          metadata: {
+            source: params.source,
+            timestamp: new Date().toISOString(),
+            ...params.metadata
+          }
+        }
+      ]);
+
+      // Step 3: Save to memory for long-term retention
       await db.insert(memoryLong).values({
         userId: params.userId,
+        key: `conversation_${sessionId}_${Date.now()}`,
         category: 'conversation',
         content: JSON.stringify({
           message: params.message,
           response: params.response,
-          source: params.source
+          source: params.source,
+          sessionId: sessionId
         }),
-        metadata: params.metadata,
+        metadata: {
+          ...params.metadata,
+          sessionId: sessionId
+        },
         importance: this.calculateImportance(params.message)
       });
 
-      // Update context cache
+      // Step 4: Update context cache
       this.conversationContext.set(params.userId, {
+        sessionId: sessionId,
         lastMessage: params.message,
         lastResponse: params.response,
         lastUpdate: new Date(),
@@ -174,33 +205,33 @@ class UnifiedMemoryManager {
 
   async getConversationHistory(userId: string, limit = 20): Promise<any[]> {
     try {
-      // Get from both chat_messages and memories
-      const [messages, memories] = await Promise.all([
-        db.select()
-          .from(chatMessages)
-          .where(eq(chatMessages.sessionId, userId))
-          .orderBy(desc(chatMessages.createdAt))
-          .limit(limit),
-        
-        db.select()
-          .from(memoryLong)
-          .where(and(
-            eq(memoryLong.userId, userId),
-            eq(memoryLong.category, 'conversation')
-          ))
-          .orderBy(desc(memoryLong.createdAt))
-          .limit(limit)
-      ]);
+      // Get the most recent session for this user
+      const sessions = await db.select()
+        .from(chatSessions)
+        .where(eq(chatSessions.userId, userId))
+        .orderBy(desc(chatSessions.lastMessageAt))
+        .limit(1);
 
-      // Merge and deduplicate
-      const combined = [...messages, ...memories.map(m => ({
-        ...m,
-        content: JSON.parse(m.content as string)
-      }))];
+      if (sessions.length === 0) {
+        return [];
+      }
 
-      return combined.sort((a, b) => 
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+      const sessionId = sessions[0].id;
+
+      // Get messages from the most recent session
+      const messages = await db.select()
+        .from(chatMessages)
+        .where(eq(chatMessages.sessionId, sessionId))
+        .orderBy(desc(chatMessages.createdAt))
+        .limit(limit);
+
+      return messages.map(msg => ({
+        role: msg.role,
+        content: msg.content,
+        timestamp: msg.createdAt,
+        metadata: msg.metadata,
+        sessionId: sessionId
+      }));
     } catch (error) {
       console.error('Failed to get conversation history:', error);
       return [];
