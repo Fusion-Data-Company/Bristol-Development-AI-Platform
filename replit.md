@@ -2,6 +2,9 @@
 
 ## Recent Critical Updates
 
+### ElevenLabs ConvAI Widget Integration (2025-08-17)
+**ELEVENLABS CONVAI WIDGET ADDED** - Successfully integrated ElevenLabs ConvAI widget globally across all pages. Widget placed directly in HTML body with script loaded in head section for proper initialization. Agent ID: agent_8801k2t62y9qehhsqqdmzmp10kt9. Widget should appear in bottom right corner as floating conversational AI interface.
+
 ### Market Intelligence Integration Completed (2025-08-17)
 **LIVE PERPLEXITY SONAR DEEP RESEARCH INTEGRATION** - Successfully connected market intelligence agent to OpenRouter API using Perplexity Sonar Deep Research model. System now automatically searches for real market intelligence every 2 hours and populates the Live Intelligence feed with authentic Federal Reserve policy updates, population migration trends, and construction cost analysis. Real-time data collection confirmed working with Bristol-specific business implications.
 
