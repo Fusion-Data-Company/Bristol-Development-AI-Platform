@@ -124,6 +124,95 @@ export const mcpTools = pgTable("mcp_tools", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Bristol team members for Cap verification
+export const bristolUsers = pgTable("bristol_users", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name").notNull(),
+  email: varchar("email").unique(),
+  role: varchar("role").notNull(),
+  department: varchar("department"),
+  accessLevel: varchar("access_level").default("standard"), // admin, full, standard
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_bristol_users_name").on(table.name),
+  index("idx_bristol_users_email").on(table.email),
+]);
+
+// Conversation sessions for Cap's state management
+export const conversationSessions = pgTable("conversation_sessions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => bristolUsers.id),
+  conversationId: varchar("conversation_id").notNull().unique(),
+  summary: text("summary"),
+  tags: text("tags").array(), // Array of tags
+  context: jsonb("context"), // Full context data
+  status: varchar("status").default("active"),
+  startedAt: timestamp("started_at").defaultNow(),
+  lastActive: timestamp("last_active").defaultNow(),
+  endedAt: timestamp("ended_at"),
+}, (table) => [
+  index("idx_conversation_sessions_user").on(table.userId),
+  index("idx_conversation_sessions_id").on(table.conversationId),
+]);
+
+// MCP tool execution logs for monitoring
+export const mcpToolExecutions = pgTable("mcp_tool_executions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  conversationId: varchar("conversation_id").references(() => conversationSessions.conversationId),
+  toolName: varchar("tool_name").notNull(),
+  inputParams: jsonb("input_params"),
+  outputData: jsonb("output_data"),
+  executionTimeMs: integer("execution_time_ms"),
+  status: varchar("status"), // success, error, timeout
+  errorMessage: text("error_message"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Analytics cache for performance
+export const analyticsCache = pgTable("analytics_cache", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  queryHash: varchar("query_hash").notNull().unique(),
+  queryType: varchar("query_type").notNull(),
+  data: jsonb("data").notNull(),
+  metadata: jsonb("metadata"),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_analytics_cache_hash").on(table.queryHash),
+  index("idx_analytics_cache_expires").on(table.expiresAt),
+]);
+
+// Document artifacts storage for Cap
+export const artifacts = pgTable("artifacts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").references(() => bristolUsers.id),
+  conversationId: varchar("conversation_id"),
+  type: varchar("type").notNull(), // memo, report, email_draft, etc.
+  content: text("content").notNull(),
+  metadata: jsonb("metadata"),
+  version: integer("version").default(1),
+  parentId: varchar("parent_id"), // For versioning
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Task management for Cap
+export const tasks = pgTable("tasks", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  conversationId: varchar("conversation_id"),
+  userId: varchar("user_id").references(() => bristolUsers.id),
+  title: varchar("title").notNull(),
+  description: text("description"),
+  priority: varchar("priority"), // P0, P1, P2, P3
+  status: varchar("status").default("pending"),
+  owner: varchar("owner"),
+  dueDate: timestamp("due_date"),
+  dependencies: jsonb("dependencies"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Market Intelligence entries for live updates
 export const marketIntelligence = pgTable("market_intelligence", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
@@ -184,8 +273,35 @@ export const insertAgentExecutionSchema = createInsertSchema(agentExecutions).om
 
 // TypeScript types
 export type MarketIntelligence = typeof marketIntelligence.$inferSelect;
-export type InsertMarketIntelligence = z.infer<typeof insertMarketIntelligenceSchema>;
+export type InsertMarketIntelligence = typeof marketIntelligence.$inferInsert;
 export type AgentExecution = typeof agentExecutions.$inferSelect;
+export type InsertAgentExecution = typeof agentExecutions.$inferInsert;
+
+// Type exports for original tables
+export type UpsertUser = typeof users.$inferInsert;
+export type User = typeof users.$inferSelect;
+export type Site = typeof sites.$inferSelect;
+export type InsertSite = typeof sites.$inferInsert;
+export type SiteMetric = typeof siteMetrics.$inferSelect;
+export type InsertSiteMetric = typeof siteMetrics.$inferInsert;
+export type ChatSession = typeof chatSessions.$inferSelect;
+export type InsertChatSession = typeof chatSessions.$inferInsert;
+export type ChatMessage = typeof chatMessages.$inferSelect;
+export type InsertChatMessage = typeof chatMessages.$inferInsert;
+
+// Type exports for Cap-specific tables
+export type BristolUser = typeof bristolUsers.$inferSelect;
+export type InsertBristolUser = typeof bristolUsers.$inferInsert;
+export type ConversationSession = typeof conversationSessions.$inferSelect;
+export type InsertConversationSession = typeof conversationSessions.$inferInsert;
+export type MCPToolExecution = typeof mcpToolExecutions.$inferSelect;
+export type InsertMCPToolExecution = typeof mcpToolExecutions.$inferInsert;
+export type AnalyticsCache = typeof analyticsCache.$inferSelect;
+export type InsertAnalyticsCache = typeof analyticsCache.$inferInsert;
+export type Artifact = typeof artifacts.$inferSelect;
+export type InsertArtifact = typeof artifacts.$inferInsert;
+export type Task = typeof tasks.$inferSelect;
+export type InsertTask = typeof tasks.$inferInsert;
 export type InsertAgentExecution = z.infer<typeof insertAgentExecutionSchema>;
 
 // Comps table for comparable property analysis

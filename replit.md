@@ -2,6 +2,9 @@
 
 ## Recent Critical Updates
 
+### ElevenLabs MCP Gateway Integration (2025-08-17)
+**ELITE MCP GATEWAY FOR CAP AI COMPLETED** - Successfully implemented enterprise-grade MCP (Model Context Protocol) gateway serving as intelligent bridge between ElevenLabs voice agent "Cap" and all platform MCP servers. Features Claude 4.1 Opus as primary model via OpenRouter with fallback to Claude 4 and Claude 3.5 Sonnet. Implements 6 core tools: verify_user (Bristol team authentication), fetch_last_conversation (context retrieval), log_conversation (state management), query_analytics (portfolio insights with caching), store_artifact (document storage), and web_search (Perplexity Sonar integration). Database populated with 22 Bristol team members with role-based access (admin/full/standard). Architecture includes circuit breaker pattern for resilience, 1-hour analytics caching, parallel tool execution, and HMAC signature validation. API endpoints: /api/mcp/elevenlabs (main), /api/mcp/tools (discovery), /api/mcp/health (monitoring), /api/mcp/stream (SSE), /api/mcp/register (ElevenLabs registration). Status: FULLY OPERATIONAL - All tools tested and working.
+
 ### ElevenLabs ConvAI Widget Integration (2025-08-17)
 **ELEVENLABS CONVAI WIDGET COMPLETED** - Successfully integrated ElevenLabs ConvAI widget using React SDK (@elevenlabs/react package) with comprehensive fallback system. Widget implemented as React component in client/src/components/ElevenLabsWidget.tsx and globally integrated via App.tsx for all authenticated pages. Agent ID: agent_8801k2t62y9qehhsqqdmzmp10kt9. Features robust error handling with Bristol-branded fallback widget when SDK fails, positioned in bottom-right corner with Bristol corporate styling (Bristol maroon/gold gradient). Includes troubleshooting alerts and graceful degradation for network connectivity issues.
 

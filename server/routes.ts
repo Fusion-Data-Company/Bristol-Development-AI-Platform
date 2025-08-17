@@ -219,7 +219,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const conversationIntelligenceRouter = (await import('./api/conversation-intelligence')).default;
   app.use('/api/conversation-intelligence', conversationIntelligenceRouter);
 
-
+  // ElevenLabs MCP Gateway API for Cap AI assistant integration
+  const elevenLabsMCPRouter = (await import('./api/mcp-elevenlabs')).default;
+  app.use(elevenLabsMCPRouter);
 
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');
