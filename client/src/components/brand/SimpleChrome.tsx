@@ -3,7 +3,6 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Building, Map, BarChart3, MessageSquare, Settings, Wrench, Users, Building2 } from "lucide-react";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
-import { ElevenLabsWidget } from "../ElevenLabsWidget";
 
 interface ChromeProps {
   children: ReactNode;
@@ -358,9 +357,6 @@ export default function SimpleChrome({ children }: ChromeProps) {
           </div>
         </div>
       </footer>
-
-      {/* ElevenLabs Voice Widget - Global Overlay */}
-      <ElevenLabsWidget />
     </div>
   );
 }

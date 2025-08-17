@@ -322,13 +322,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ElevenLabs API routes for voice synthesis and speech processing
-  try {
-    const { default: elevenLabsRouter } = await import('./api/elevenlabs.js');
-    app.use('/api/elevenlabs', elevenLabsRouter);
-  } catch (error) {
-    console.warn('ElevenLabs routes not loaded:', error);
-  }
+
 
   // OpenRouter models endpoint
   // OpenRouter models endpoint - fix authentication
