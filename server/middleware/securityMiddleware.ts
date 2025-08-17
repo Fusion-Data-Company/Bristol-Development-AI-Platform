@@ -104,6 +104,7 @@ export const securityHeaders = helmet({
         "https://openrouter.ai",
         "https://api.mapbox.com",
         "https://replit.com",
+        "https://unpkg.com",
         "blob:"
       ],
       styleSrc: [
@@ -142,7 +143,9 @@ export const securityHeaders = helmet({
         "https://*.arcgis.com",
         "https://*.arcgisonline.com",
         "https://tile.openstreetmap.org",
-        "https://replit.com"
+        "https://replit.com",
+        "https://*.elevenlabs.io",
+        "wss://*.elevenlabs.io"
       ],
       workerSrc: [
         "'self'",
@@ -155,7 +158,7 @@ export const securityHeaders = helmet({
         "blob:",
         "https://api.mapbox.com"
       ],
-      mediaSrc: ["'self'"],
+      mediaSrc: ["'self'", "https://*.elevenlabs.io", "blob:", "data:"],
       objectSrc: ["'none'"],
       baseSrc: ["'none'"],
       formAction: ["'self'"],
