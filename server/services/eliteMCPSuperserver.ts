@@ -274,7 +274,59 @@ export class EliteMCPSuperserver {
         name: { type: 'string', required: true }
       },
       handler: async (params) => {
-        const user = this.bristolTeamCache.get(params.name.toLowerCase());
+        const searchName = params.name.toLowerCase().trim();
+        
+        // Direct match first
+        let user = this.bristolTeamCache.get(searchName);
+        
+        // If no direct match, try variations and partial matches
+        if (!user) {
+          for (const [cachedName, cachedUser] of this.bristolTeamCache) {
+            // Check if search name contains the cached name or vice versa
+            if (cachedName.includes(searchName) || searchName.includes(cachedName)) {
+              user = cachedUser;
+              break;
+            }
+            
+            // Check common name variations
+            const searchParts = searchName.split(' ');
+            const cachedParts = cachedName.split(' ');
+            
+            // Check if last names match and first name is a common variation
+            if (searchParts.length >= 2 && cachedParts.length >= 2) {
+              const searchLast = searchParts[searchParts.length - 1];
+              const cachedLast = cachedParts[cachedParts.length - 1];
+              
+              if (searchLast === cachedLast) {
+                const searchFirst = searchParts[0];
+                const cachedFirst = cachedParts[0];
+                
+                // Common name variations
+                const nameVariations: Record<string, string[]> = {
+                  'rob': ['robert', 'bobby'],
+                  'robert': ['rob', 'bobby', 'bob'],
+                  'bobby': ['rob', 'robert', 'bob'],
+                  'bob': ['rob', 'robert', 'bobby'],
+                  'sam': ['samuel'],
+                  'samuel': ['sam'],
+                  'mike': ['michael'],
+                  'michael': ['mike'],
+                  'matt': ['matthew'],
+                  'matthew': ['matt'],
+                  'chris': ['christopher'],
+                  'christopher': ['chris']
+                };
+                
+                if (nameVariations[searchFirst]?.includes(cachedFirst) || 
+                    nameVariations[cachedFirst]?.includes(searchFirst)) {
+                  user = cachedUser;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        
         if (user) {
           return { verified: true, user, accessLevel: user.accessLevel };
         }
