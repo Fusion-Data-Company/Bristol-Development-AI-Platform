@@ -35,29 +35,82 @@ export function AIMultiModalGeneration() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [results, setResults] = useState<GenerationResult[]>([])
+  const [isEnhancing, setIsEnhancing] = useState(false)
+
+  const handleEnhancePrompt = async () => {
+    if (!prompt.trim() || isEnhancing) return;
+    
+    setIsEnhancing(true);
+    try {
+      const response = await fetch('/api/ai-generation/enhance-prompt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt,
+          mode
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success && data.enhancedPrompt) {
+        setPrompt(data.enhancedPrompt);
+      }
+    } catch (error) {
+      console.error('Prompt enhancement failed:', error);
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return
     
     setIsGenerating(true)
     
-    // Simulate generation process
-    setTimeout(() => {
-      const newResult: GenerationResult = {
-        id: Date.now().toString(),
-        type: mode,
-        url: mode === "image" 
-          ? "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
-          : mode === "video"
-          ? "https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4"
-          : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-        prompt,
-        timestamp: new Date()
+    try {
+      if (mode === "image") {
+        // Call OpenAI DALL-E API
+        const response = await fetch('/api/ai-generation/generate-image', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt,
+            size: "1024x1024",
+            quality: showAdvanced ? "hd" : "standard",
+            style: "vivid"
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.imageUrl) {
+          const newResult: GenerationResult = {
+            id: Date.now().toString(),
+            type: mode,
+            url: data.imageUrl,
+            prompt: data.revisedPrompt || prompt,
+            timestamp: new Date()
+          };
+          
+          setResults(prev => [newResult, ...prev]);
+        } else {
+          console.error('Image generation failed:', data.error);
+          alert(`Image generation failed: ${data.error || 'Unknown error'}`);
+        }
+      } else {
+        // For video and avatar modes, show coming soon message
+        alert(`${mode} generation is coming soon! Currently only image generation with DALL-E 3 is available.`);
       }
-      
-      setResults(prev => [newResult, ...prev])
-      setIsGenerating(false)
-    }, 3000)
+    } catch (error) {
+      console.error('Generation error:', error);
+      alert('Failed to generate content. Please check your connection and try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   }
 
   const modeConfigs = {
@@ -157,15 +210,37 @@ export function AIMultiModalGeneration() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Switch
-                      id="advanced"
-                      checked={showAdvanced}
-                      onCheckedChange={setShowAdvanced}
-                    />
-                    <Label htmlFor="advanced" className="text-sm text-zinc-600 dark:text-zinc-400">
-                      Advanced settings
-                    </Label>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        id="advanced"
+                        checked={showAdvanced}
+                        onCheckedChange={setShowAdvanced}
+                      />
+                      <Label htmlFor="advanced" className="text-sm text-zinc-600 dark:text-zinc-400">
+                        Advanced settings
+                      </Label>
+                    </div>
+                    
+                    <Button
+                      onClick={handleEnhancePrompt}
+                      disabled={!prompt.trim() || isEnhancing || isGenerating}
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                    >
+                      {isEnhancing ? (
+                        <>
+                          <Loader2 className="w-3 h-3 mr-1 animate-spin" />
+                          Enhancing...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-3 h-3 mr-1" />
+                          Enhance with GPT-4o
+                        </>
+                      )}
+                    </Button>
                   </div>
                   
                   <Button
@@ -176,7 +251,7 @@ export function AIMultiModalGeneration() {
                     {isGenerating ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Generating...
+                        Generating with DALL-E 3...
                       </>
                     ) : (
                       <>

@@ -64,6 +64,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Advanced Analytics API
   app.get('/api/analytics/advanced/metrics', (await import('./api/analytics/advanced-metrics')).getAdvancedMetrics);
 
+  // AI Generation API - OpenAI DALL-E and GPT-4o integration
+  const aiGenerationRouter = (await import('./routes/ai-generation')).default;
+  app.use('/api/ai-generation', aiGenerationRouter);
+
   // Tools API routes (BLS, BEA, HUD, Foursquare, FBI, NOAA) - temporarily bypass auth for development
   const blsRouter = (await import('./api/tools/bls')).default;
   const beaRouter = (await import('./api/tools/bea')).default;
