@@ -1,0 +1,151 @@
+CONVERSATIONAL AI
+Widget
+Get widget
+GET
+
+https://api.elevenlabs.io
+/v1/convai/agents/:agent_id/widget
+GET
+/v1/convai/agents/:agent_id/widget
+
+cURL
+
+curl https://api.elevenlabs.io/v1/convai/agents/agent_id/widget \
+     -H "xi-api-key: xi-api-key"
+Try it
+200
+Retrieved
+
+{
+  "agent_id": "foo",
+  "widget_config": {
+    "language": "foo",
+    "variant": "tiny",
+    "placement": "top-left",
+    "expandable": "never",
+    "avatar": {
+      "type": "orb",
+      "color_1": "#2792dc",
+      "color_2": "#9ce6e6"
+    },
+    "feedback_mode": "none",
+    "bg_color": "#ffffff",
+    "text_color": "#000000",
+    "btn_color": "#000000",
+    "btn_text_color": "#ffffff",
+    "border_color": "#e1e1e1",
+    "focus_color": "#000000",
+    "border_radius": 42,
+    "btn_radius": 42,
+    "action_text": "foo",
+    "start_call_text": "foo",
+    "end_call_text": "foo",
+    "expand_text": "foo",
+    "listening_text": "foo",
+    "speaking_text": "foo",
+    "shareable_page_text": "foo",
+    "shareable_page_show_terms": true,
+    "terms_text": "foo",
+    "terms_html": "foo",
+    "terms_key": "foo",
+    "show_avatar_when_collapsed": true,
+    "disable_banner": false,
+    "override_link": "foo",
+    "mic_muting_enabled": false,
+    "transcript_enabled": false,
+    "text_input_enabled": true,
+    "default_expanded": false,
+    "always_expanded": false,
+    "text_contents": {
+      "main_label": "foo",
+      "start_call": "foo",
+      "start_chat": "foo",
+      "new_call": "foo",
+      "end_call": "foo",
+      "mute_microphone": "foo",
+      "change_language": "foo",
+      "collapse": "foo",
+      "expand": "foo",
+      "copied": "foo",
+      "accept_terms": "foo",
+      "dismiss_terms": "foo",
+      "listening_status": "foo",
+      "speaking_status": "foo",
+      "connecting_status": "foo",
+      "chatting_status": "foo",
+      "input_label": "foo",
+      "input_placeholder": "foo",
+      "input_placeholder_text_only": "foo",
+      "input_placeholder_new_conversation": "foo",
+      "user_ended_conversation": "foo",
+      "agent_ended_conversation": "foo",
+      "conversation_id": "foo",
+      "error_occurred": "foo",
+      "copy_id": "foo"
+    },
+    "styles": {
+      "base": "foo",
+      "base_hover": "foo",
+      "base_active": "foo",
+      "base_border": "foo",
+      "base_subtle": "foo",
+      "base_primary": "foo",
+      "base_error": "foo",
+      "accent": "foo",
+      "accent_hover": "foo",
+      "accent_active": "foo",
+      "accent_border": "foo",
+      "accent_subtle": "foo",
+      "accent_primary": "foo",
+      "overlay_padding": 42,
+      "button_radius": 42,
+      "input_radius": 42,
+      "bubble_radius": 42,
+      "sheet_radius": 42,
+      "compact_sheet_radius": 42,
+      "dropdown_sheet_radius": 42
+    },
+    "supported_language_overrides": [
+      "foo"
+    ],
+    "language_presets": {},
+    "text_only": false,
+    "supports_text_only": false,
+    "first_message": "foo"
+  }
+}
+Retrieve the widget configuration for an agent
+Path parameters
+agent_id
+string
+Required
+The id of an agent. This is returned on agent creation.
+Headers
+xi-api-key
+string
+Required
+Query parameters
+conversation_signature
+string or null
+Optional
+An expiring token that enables a websocket conversation to start. These can be generated for an agent using the /v1/convai/conversation/get-signed-url endpoint
+
+Response
+Successful Response
+agent_id
+string
+widget_config
+object
+
+Show 40 properties
+Errors
+
+422
+Unprocessable Entity Error
+Was this page helpful?
+Yes
+No
+Previous
+Create widget avatar
+Next
+Built with

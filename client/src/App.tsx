@@ -9,6 +9,7 @@ import { ErrorBoundary, setupGlobalErrorHandling } from "@/components/ErrorBound
 import { useEffect } from "react";
 
 import BristolFloatingWidget from "@/components/BristolFloatingWidget";
+import ElevenLabsWidget from "@/components/ElevenLabsWidget";
 
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
@@ -114,6 +115,11 @@ function AppContent() {
               }
             }}
           />
+      )}
+      
+      {/* ElevenLabs ConvAI Widget - Global across all authenticated pages */}
+      {isAuthenticated && (
+        <ElevenLabsWidget agentId="agent_8801k2t62y9qehhsqqdmzmp10kt9" position="bottom-right" />
       )}
     </>
   );
