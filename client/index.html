@@ -26,13 +26,40 @@
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iIzhCMTUzOCIvPgo8dGV4dCB4PSIxNiIgeT0iMjIiIGZvbnQtZmFtaWx5PSJDaW56ZWwiIGZvbnQtc2l6ZT0iMjAiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5CPC90ZXh0Pgo8L3N2Zz4K" />
     
-    <!-- ElevenLabs ConvAI Widget Script -->
-    <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" type="text/javascript"></script>
   </head>
   <body>
     <div id="root"></div>
-    <!-- ElevenLabs ConvAI Widget -->
+    
+    <!-- ElevenLabs ConvAI Widget - Must be placed in body -->
     <elevenlabs-convai agent-id="agent_8801k2t62y9qehhsqqdmzmp10kt9"></elevenlabs-convai>
+    
+    <!-- ElevenLabs ConvAI Widget Script - Load after widget element -->
+    <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" type="text/javascript"></script>
+    
+    <!-- Debug ElevenLabs Widget -->
+    <script>
+      // Debug widget loading
+      console.log('ElevenLabs widget element:', document.querySelector('elevenlabs-convai'));
+      
+      // Check for widget initialization
+      document.addEventListener('DOMContentLoaded', function() {
+        const widget = document.querySelector('elevenlabs-convai');
+        if (widget) {
+          console.log('✅ ElevenLabs widget found in DOM');
+          console.log('Agent ID:', widget.getAttribute('agent-id'));
+        } else {
+          console.log('❌ ElevenLabs widget not found');
+        }
+      });
+      
+      // Listen for any widget errors
+      window.addEventListener('error', function(e) {
+        if (e.message && e.message.includes('elevenlabs')) {
+          console.log('ElevenLabs error:', e.message);
+        }
+      });
+    </script>
+    
     <script type="module" src="/src/main.tsx"></script>
     <!-- Replit dev banner temporarily disabled due to map loading conflicts -->
     <!-- <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script> -->
