@@ -228,4 +228,83 @@ router.post('/api/mcp/register', async (req, res) => {
   }
 });
 
+// Webhook endpoint for external triggers from ElevenLabs
+router.get('/webhook/trigger', async (req, res) => {
+  try {
+    const { action, ...params } = req.query;
+    
+    // Log the webhook call
+    console.log('ElevenLabs webhook triggered:', { action, params });
+    
+    // Handle different webhook actions
+    let result;
+    switch (action as string) {
+      case 'portfolio_summary':
+        result = await gateway.executeToolInternal('query_analytics', {
+          query: 'portfolio overview',
+          type: 'portfolio'
+        });
+        break;
+        
+      case 'verify_team_member':
+        const name = params.name as string;
+        if (!name) {
+          return res.status(400).json({ error: 'Name parameter required' });
+        }
+        result = await gateway.executeToolInternal('verify_user', { name });
+        break;
+        
+      case 'market_research':
+        const query = params.query as string || 'latest sunbelt market trends';
+        result = await gateway.executeToolInternal('web_search', { query });
+        break;
+        
+      case 'save_note':
+        const content = params.content as string;
+        if (!content) {
+          return res.status(400).json({ error: 'Content parameter required' });
+        }
+        result = await gateway.executeToolInternal('store_artifact', {
+          type: 'note',
+          content,
+          meta: { source: 'webhook', timestamp: new Date().toISOString() }
+        });
+        break;
+        
+      case 'get_last_conversation':
+        const userId = params.user_id as string || 'default';
+        result = await gateway.executeToolInternal('fetch_last_conversation', { 
+          user_id: userId 
+        });
+        break;
+        
+      default:
+        return res.status(400).json({ 
+          error: 'Invalid action',
+          available_actions: [
+            'portfolio_summary',
+            'verify_team_member',
+            'market_research', 
+            'save_note',
+            'get_last_conversation'
+          ],
+          example: '/api/mcp/webhook/trigger?action=portfolio_summary'
+        });
+    }
+    
+    res.json({
+      success: true,
+      action,
+      result,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Webhook error:', error);
+    res.status(500).json({ 
+      error: 'Webhook execution failed',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 export default router;
