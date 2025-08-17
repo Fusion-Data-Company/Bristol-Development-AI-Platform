@@ -245,96 +245,247 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
       if (!building) return;
       const { site, index, x, y, depth } = building;
       
-      // Enhanced building dimensions with scaling
-      const height = Math.max(20, (site.unitsTotal || 50) / 10) * buildingScale[0];
-      const buildingWidth = (12 + (index % 3) * 4) * buildingScale[0];
-      const depthScale = 1 + depth * 0.001; // Perspective scaling
+      // Enhanced building dimensions with realistic proportions
+      const unitsValue = site.unitsTotal || 50;
+      const height = Math.max(30, unitsValue * 1.2 + Math.sin(building.angle * 3) * 8) * buildingScale[0];
+      const buildingWidth = (14 + (index % 4) * 5 + Math.cos(building.angle * 2) * 2) * buildingScale[0];
+      const depthScale = 1 + depth * 0.002; // Enhanced perspective scaling
       
-      // Enhanced 3D building with isometric perspective
+      // Professional 3D building with advanced isometric perspective
       const scaledWidth = buildingWidth * depthScale;
       const scaledHeight = height * depthScale;
-      const baseHeight = 8 * depthScale;
+      const baseHeight = 12 * depthScale;
+      const roofHeight = 6 * depthScale;
       
-      // Building shadow (depth effect)
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
-      ctx.fillRect(x - scaledWidth/2 + 3, y + 3, scaledWidth, baseHeight);
+      // Advanced multi-layer shadow system for realism
+      const shadowOffset = 4 + depth * 0.01;
+      const shadowAlpha = Math.max(0.1, 0.4 - depth * 0.0001);
       
-      // Building base (foundation) with gradient
-      const baseGradient = ctx.createLinearGradient(x - scaledWidth/2, y, x + scaledWidth/2, y + baseHeight);
-      baseGradient.addColorStop(0, '#8B1538');
-      baseGradient.addColorStop(1, '#6B1126');
+      // Primary shadow
+      ctx.fillStyle = `rgba(0, 0, 0, ${shadowAlpha})`;
+      ctx.fillRect(x - scaledWidth/2 + shadowOffset, y + shadowOffset, scaledWidth, baseHeight + scaledHeight/3);
+      
+      // Secondary shadow for depth
+      ctx.fillStyle = `rgba(0, 0, 0, ${shadowAlpha * 0.3})`;
+      ctx.fillRect(x - scaledWidth/2 + shadowOffset + 2, y + shadowOffset + 2, scaledWidth, baseHeight + scaledHeight/4);
+      
+      // Professional foundation with Bristol colors
+      const baseGradient = ctx.createRadialGradient(x, y, 0, x, y, scaledWidth);
+      baseGradient.addColorStop(0, '#8B1538'); // Bristol Maroon
+      baseGradient.addColorStop(0.6, '#6B1126');
+      baseGradient.addColorStop(1, '#4A0C1A');
       ctx.fillStyle = baseGradient;
       ctx.fillRect(x - scaledWidth/2, y, scaledWidth, baseHeight);
       
-      // Enhanced building main structure with dynamic lighting
-      const gradient3D = ctx.createLinearGradient(x - scaledWidth/2, y - scaledHeight, x + scaledWidth/2, y);
+      // Foundation edge highlighting
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      ctx.fillRect(x - scaledWidth/2, y, scaledWidth, 2);
+      ctx.fillRect(x - scaledWidth/2, y, 2, baseHeight);
       
-      // Dynamic building colors based on status and lighting mode
-      let primaryColor, secondaryColor;
+      // Professional 3D building main structure with enhanced lighting
+      const mainStructureGradient = ctx.createLinearGradient(x - scaledWidth/2, y - scaledHeight, x + scaledWidth/2, y - baseHeight);
+      
+      // Advanced dynamic building colors based on status and lighting mode
+      let primaryColor, secondaryColor, accentColor;
       if (selectedSite?.id === site.id) {
         primaryColor = lightingMode === 'night' ? '#60a5fa' : '#3b82f6';
         secondaryColor = lightingMode === 'night' ? '#3b82f6' : '#1d4ed8';
+        accentColor = lightingMode === 'night' ? '#93c5fd' : '#60a5fa';
       } else if (site.status === 'Pipeline') {
         primaryColor = lightingMode === 'golden' ? '#fbbf24' : '#f59e0b';
         secondaryColor = lightingMode === 'golden' ? '#f59e0b' : '#d97706';
+        accentColor = lightingMode === 'golden' ? '#fcd34d' : '#fbbf24';
       } else {
         primaryColor = colors.building.primary;
         secondaryColor = colors.building.secondary;
+        accentColor = colors.accent;
       }
       
-      gradient3D.addColorStop(0, primaryColor);
-      gradient3D.addColorStop(0.7, secondaryColor);
-      gradient3D.addColorStop(1, primaryColor);
+      // Multi-stop gradient for sophisticated lighting
+      mainStructureGradient.addColorStop(0, accentColor);
+      mainStructureGradient.addColorStop(0.15, primaryColor);
+      mainStructureGradient.addColorStop(0.6, secondaryColor);
+      mainStructureGradient.addColorStop(0.85, primaryColor);
+      mainStructureGradient.addColorStop(1, secondaryColor);
       
-      ctx.fillStyle = gradient3D;
-      ctx.fillRect(x - scaledWidth/2, y - scaledHeight, scaledWidth, scaledHeight);
+      ctx.fillStyle = mainStructureGradient;
+      ctx.fillRect(x - scaledWidth/2, y - scaledHeight - baseHeight, scaledWidth, scaledHeight);
       
-      // Enhanced building outline with glow effect
-      ctx.strokeStyle = selectedSite?.id === site.id ? 
-        `rgba(96, 165, 250, 0.8)` : 
-        `rgba(255, 255, 255, 0.3)`;
-      ctx.lineWidth = selectedSite?.id === site.id ? 2 : 1;
-      ctx.strokeRect(x - scaledWidth/2, y - scaledHeight, scaledWidth, scaledHeight);
+      // Professional isometric side face for 3D depth
+      const sideWidth = scaledWidth * 0.3;
+      const sideGradient = ctx.createLinearGradient(x + scaledWidth/2, y - scaledHeight - baseHeight, x + scaledWidth/2 + sideWidth, y - baseHeight);
+      sideGradient.addColorStop(0, secondaryColor);
+      sideGradient.addColorStop(1, `rgba(0, 0, 0, 0.4)`);
       
-      // Enhanced windows with random lighting
-      const windowBrightness = lightingMode === 'night' ? 0.9 : 0.6;
-      ctx.fillStyle = `rgba(255, 255, 255, ${windowBrightness})`;
+      ctx.fillStyle = sideGradient;
+      ctx.beginPath();
+      ctx.moveTo(x + scaledWidth/2, y - scaledHeight - baseHeight);
+      ctx.lineTo(x + scaledWidth/2 + sideWidth, y - scaledHeight - baseHeight);
+      ctx.lineTo(x + scaledWidth/2 + sideWidth, y - baseHeight);
+      ctx.lineTo(x + scaledWidth/2, y - baseHeight);
+      ctx.closePath();
+      ctx.fill();
       
-      const floors = Math.floor(scaledHeight / 12);
-      const windowsPerFloor = Math.floor(scaledWidth / 6);
+      // Professional roof structure with pyramid design
+      const roofGradient = ctx.createRadialGradient(x, y - scaledHeight - baseHeight, 0, x, y - scaledHeight - baseHeight, scaledWidth/2);
+      roofGradient.addColorStop(0, accentColor);
+      roofGradient.addColorStop(1, primaryColor);
       
-      for (let floor = 1; floor < floors; floor++) {
-        for (let window = 0; window < windowsPerFloor; window++) {
-          // Random window lighting for night mode
-          if (lightingMode === 'night' && Math.random() > 0.3) {
-            ctx.fillStyle = Math.random() > 0.7 ? 
-              'rgba(255, 255, 150, 0.9)' : 
-              'rgba(150, 200, 255, 0.8)';
+      ctx.fillStyle = roofGradient;
+      ctx.beginPath();
+      ctx.moveTo(x, y - scaledHeight - baseHeight - roofHeight);
+      ctx.lineTo(x - scaledWidth/2, y - scaledHeight - baseHeight);
+      ctx.lineTo(x + scaledWidth/2, y - scaledHeight - baseHeight);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Enhanced building outline with professional glow effect
+      if (selectedSite?.id === site.id) {
+        // Selected building glow effect
+        ctx.shadowColor = '#60a5fa';
+        ctx.shadowBlur = 15;
+        ctx.strokeStyle = '#60a5fa';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(x - scaledWidth/2, y - scaledHeight - baseHeight, scaledWidth, scaledHeight);
+        ctx.shadowBlur = 0;
+      } else {
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x - scaledWidth/2, y - scaledHeight - baseHeight, scaledWidth, scaledHeight);
+      }
+      
+      // Professional edge highlighting for 3D effect
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x - scaledWidth/2, y - scaledHeight - baseHeight);
+      ctx.lineTo(x, y - scaledHeight - baseHeight - roofHeight);
+      ctx.lineTo(x + scaledWidth/2, y - scaledHeight - baseHeight);
+      ctx.stroke();
+      
+      // Professional window system with sophisticated lighting
+      const floors = Math.floor(scaledHeight / 15);
+      const windowsPerFloor = Math.max(2, Math.floor(scaledWidth / 8));
+      const windowSpacing = scaledWidth / (windowsPerFloor + 1);
+      
+      for (let floor = 1; floor < floors - 1; floor++) {
+        for (let window = 1; window <= windowsPerFloor; window++) {
+          const windowX = x - scaledWidth/2 + window * windowSpacing - 3;
+          const windowY = y - scaledHeight - baseHeight + (floor * 15) + 3;
+          const windowWidth = Math.max(3, windowSpacing * 0.6);
+          const windowHeight = Math.max(6, scaledHeight / 20);
+          
+          // Professional window frame
+          ctx.fillStyle = 'rgba(40, 40, 60, 0.8)';
+          ctx.fillRect(windowX - 1, windowY - 1, windowWidth + 2, windowHeight + 2);
+          
+          // Dynamic window lighting based on mode and randomness
+          let windowColor;
+          if (lightingMode === 'night') {
+            const isLit = Math.random() > 0.2;
+            if (isLit) {
+              const warmLight = Math.random() > 0.6;
+              windowColor = warmLight ? 
+                'rgba(255, 235, 180, 0.95)' :  // Warm interior light
+                'rgba(180, 220, 255, 0.9)';   // Cool TV/computer light
+            } else {
+              windowColor = 'rgba(20, 30, 50, 0.8)'; // Dark window
+            }
+          } else if (lightingMode === 'golden') {
+            windowColor = 'rgba(255, 245, 200, 0.7)'; // Golden reflection
+          } else {
+            windowColor = 'rgba(200, 230, 255, 0.6)'; // Day sky reflection
           }
           
-          const windowX = x - scaledWidth/2 + 3 + window * 6;
-          const windowY = y - scaledHeight + floor * 12 + 2;
-          const windowWidth = Math.max(2, scaledWidth / 8);
-          const windowHeight = Math.max(3, scaledHeight / 15);
-          
+          ctx.fillStyle = windowColor;
           ctx.fillRect(windowX, windowY, windowWidth, windowHeight);
+          
+          // Window mullions for realism
+          if (windowWidth > 6 && windowHeight > 8) {
+            ctx.strokeStyle = 'rgba(60, 60, 80, 0.6)';
+            ctx.lineWidth = 0.5;
+            ctx.beginPath();
+            // Vertical mullion
+            ctx.moveTo(windowX + windowWidth/2, windowY);
+            ctx.lineTo(windowX + windowWidth/2, windowY + windowHeight);
+            // Horizontal mullion
+            ctx.moveTo(windowX, windowY + windowHeight/2);
+            ctx.lineTo(windowX + windowWidth, windowY + windowHeight/2);
+            ctx.stroke();
+          }
+          
+          // Window reflection highlight
+          if (lightingMode !== 'night') {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.fillRect(windowX, windowY, windowWidth, 2);
+            ctx.fillRect(windowX, windowY, 1, windowHeight);
+          }
         }
       }
       
-      // Building top highlight for 3D effect
-      ctx.fillStyle = `rgba(255, 255, 255, 0.4)`;
-      ctx.fillRect(x - scaledWidth/2, y - scaledHeight, scaledWidth, 2);
+      // Professional building edge details
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+      ctx.fillRect(x - scaledWidth/2, y - scaledHeight - baseHeight, scaledWidth, 1);
+      ctx.fillRect(x - scaledWidth/2, y - scaledHeight - baseHeight, 1, scaledHeight);
       
-      // Site label
-      if (buildingWidth > 12) { // Only show labels for larger buildings
-        ctx.font = '10px Arial';
-        ctx.fillStyle = '#ffffff';
+      // Professional antenna/rooftop details for larger buildings
+      if (scaledHeight > 60) {
+        const antennaHeight = 8;
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(x, y - scaledHeight - baseHeight - roofHeight);
+        ctx.lineTo(x, y - scaledHeight - baseHeight - roofHeight - antennaHeight);
+        ctx.stroke();
+        
+        // Antenna top
+        ctx.fillStyle = accentColor;
+        ctx.beginPath();
+        ctx.arc(x, y - scaledHeight - baseHeight - roofHeight - antennaHeight, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // Professional site labels with enhanced styling
+      if (scaledWidth > 15) { // Only show labels for larger buildings
+        const labelY = y + 20;
+        
+        // Professional label background
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(x - scaledWidth/2 - 2, labelY - 12, scaledWidth + 4, 16);
+        
+        // Site name
+        ctx.font = 'bold 9px Arial';
+        ctx.fillStyle = accentColor;
         ctx.textAlign = 'center';
         ctx.fillText(
-          site.name.substring(0, 8) + (site.name.length > 8 ? '...' : ''), 
+          site.name.substring(0, 12) + (site.name.length > 12 ? '...' : ''), 
           x, 
-          y + 18
+          labelY - 5
         );
+        
+        // Site metrics
+        ctx.font = '7px Arial';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.fillText(
+          `${site.unitsTotal || 0} units • ${site.status}`, 
+          x, 
+          labelY + 3
+        );
+      }
+      
+      // Professional interaction indicator for selected building
+      if (selectedSite?.id === site.id) {
+        // Pulsing selection indicator
+        const pulseSize = 8 + Math.sin(timestamp * 0.008) * 3;
+        ctx.fillStyle = 'rgba(96, 165, 250, 0.4)';
+        ctx.beginPath();
+        ctx.arc(x, y - scaledHeight/2, pulseSize, 0, Math.PI * 2);
+        ctx.fill();
+        
+        ctx.fillStyle = '#60a5fa';
+        ctx.beginPath();
+        ctx.arc(x, y - scaledHeight/2, pulseSize * 0.6, 0, Math.PI * 2);
+        ctx.fill();
       }
     });
 
