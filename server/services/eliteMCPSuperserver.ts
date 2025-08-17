@@ -717,6 +717,64 @@ export class EliteMCPSuperserver {
       }
     });
 
+    // Database Query Tools - CRITICAL FOR ELEVENLABS ACCESS
+    this.registerTool({
+      name: 'query_bristol_database',
+      category: 'bristol',
+      description: 'Execute SQL queries against the Bristol Development database for comprehensive property and team analysis',
+      parameters: {
+        query: { type: 'string', required: true },
+        params: { type: 'array', default: [] }
+      },
+      handler: async (params) => {
+        // Security: Only allow SELECT statements
+        const trimmedQuery = params.query.trim().toLowerCase();
+        if (!trimmedQuery.startsWith('select')) {
+          throw new Error('Only SELECT queries are allowed for safety');
+        }
+
+        try {
+          const result = await db.execute(sql.raw(params.query));
+          return {
+            success: true,
+            rows: result.rows,
+            rowCount: result.rows.length,
+            query: params.query,
+            timestamp: new Date().toISOString()
+          };
+        } catch (error) {
+          throw new Error(`Database query failed: ${error.message}`);
+        }
+      }
+    });
+
+    this.registerTool({
+      name: 'get_bristol_team',
+      category: 'bristol',
+      description: 'Get all Bristol Development team members with full details',
+      parameters: {
+        searchName: { type: 'string', required: false }
+      },
+      handler: async (params) => {
+        let query = db.select().from(bristolUsers);
+        
+        if (params.searchName) {
+          const searchTerm = `%${params.searchName.toLowerCase()}%`;
+          query = query.where(
+            sql`LOWER(${bristolUsers.name}) LIKE ${searchTerm} OR LOWER(${bristolUsers.email}) LIKE ${searchTerm}`
+          );
+        }
+        
+        const users = await query;
+        return {
+          success: true,
+          teamMembers: users,
+          total: users.length,
+          searchTerm: params.searchName || 'all'
+        };
+      }
+    });
+
     console.log(`✅ Initialized ${this.tools.size} tools in MCP Superserver`);
   }
 
