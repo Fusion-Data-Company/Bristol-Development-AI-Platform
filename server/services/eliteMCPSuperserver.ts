@@ -177,17 +177,17 @@ class UnifiedMemoryManager {
         userId: params.userId,
         key: `conversation_${sessionId}_${Date.now()}`,
         category: 'conversation',
-        content: JSON.stringify({
+        value: {
           message: params.message,
           response: params.response,
           source: params.source,
-          sessionId: sessionId
-        }),
-        metadata: {
-          ...params.metadata,
-          sessionId: sessionId
+          sessionId: sessionId,
+          metadata: {
+            ...params.metadata,
+            sessionId: sessionId
+          }
         },
-        importance: this.calculateImportance(params.message)
+        confidence: this.calculateImportance(params.message)
       });
 
       // Step 4: Update context cache
