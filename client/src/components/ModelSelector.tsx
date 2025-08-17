@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Check, X, RefreshCw, Zap, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -38,11 +39,52 @@ export function ModelSelector({
   const [pendingModel, setPendingModel] = useState<string | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [lastConfirmedModel, setLastConfirmedModel] = useState(value);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Update last confirmed model when value changes externally
   useEffect(() => {
     setLastConfirmedModel(value);
   }, [value]);
+
+  // Calculate dropdown position when opened
+  const updateDropdownPosition = useCallback(() => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 8,
+        left: rect.left,
+        width: rect.width
+      });
+    }
+  }, []);
+
+  // Handle button click to open/close dropdown
+  const handleButtonClick = useCallback(() => {
+    if (!isOpen) {
+      updateDropdownPosition();
+    }
+    setIsOpen(!isOpen);
+  }, [isOpen, updateDropdownPosition]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      window.addEventListener('resize', () => setIsOpen(false));
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('resize', () => setIsOpen(false));
+    };
+  }, [isOpen]);
 
   const getProviderEmoji = useCallback((modelId: string) => {
     if (modelId.includes('gpt') || modelId.includes('openai')) return '🟢';
@@ -153,7 +195,8 @@ export function ModelSelector({
       {/* Main Model Selector */}
       <div className="relative">
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          ref={buttonRef}
+          onClick={handleButtonClick}
           disabled={loading || modelList.length === 0}
           className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-bristol-cyan hover:text-white focus:text-white focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/40 disabled:opacity-50 text-left"
           style={{
@@ -184,9 +227,17 @@ export function ModelSelector({
           </div>
         </button>
 
-        {/* Dropdown */}
-        {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900 border border-bristol-cyan/30 rounded-xl shadow-2xl backdrop-blur-sm z-[99999] max-h-80 overflow-y-auto">
+        {/* Dropdown Portal */}
+        {isOpen && createPortal(
+          <div 
+            className="fixed bg-slate-900 border border-bristol-cyan/30 rounded-xl shadow-2xl backdrop-blur-sm z-[99999] max-h-80 overflow-y-auto"
+            style={{
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+              width: dropdownPosition.width,
+              maxHeight: `calc(100vh - ${dropdownPosition.top + 20}px)`
+            }}
+          >
             <div className="p-2">
               <div className="text-xs text-bristol-cyan/70 px-3 py-2 border-b border-bristol-cyan/20 mb-2 flex items-center justify-between">
                 <span>OpenRouter Models ({modelList.length})</span>
@@ -232,7 +283,8 @@ export function ModelSelector({
                 </button>
               ))}
             </div>
-          </div>
+          </div>,
+          document.body
         )}
       </div>
 
