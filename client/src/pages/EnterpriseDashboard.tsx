@@ -37,7 +37,7 @@ import {
   Trophy
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
-import bristolBackground from '@assets/thumbnail_1755274091217.jpg';
+import luxuryInteriorBg from '@assets/thumbnail-2_1755400030789.jpg';
 import { EnterpriseAnalyticsDashboard } from '@/components/ui/EnterpriseAnalyticsDashboard';
 
 export default function EnterpriseDashboard() {
@@ -64,13 +64,19 @@ export default function EnterpriseDashboard() {
 
   return (
     <SimpleChrome>
-      <div className="min-h-screen relative overflow-hidden" style={{backgroundImage: `url(${bristolBackground})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat'}}>
+      <div className="min-h-screen relative overflow-hidden" style={{
+        backgroundImage: `url(${luxuryInteriorBg})`, 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center', 
+        backgroundRepeat: 'no-repeat',
+        filter: 'brightness(0.8) contrast(1.1) saturate(0.9)'
+      }}>
         
-        {/* Professional overlay for content readability */}
-        <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
+        {/* Professional overlay for crystal clarity and content readability */}
+        <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
         
         {/* Subtle brand accent overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/[0.05] via-transparent to-bristol-gold/[0.05]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/[0.03] via-transparent to-bristol-gold/[0.03]" />
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bristol-maroon via-amber-500 to-bristol-maroon" />
         
         <div className="relative px-6 py-8">
