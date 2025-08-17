@@ -151,7 +151,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
     ctx.lineWidth = 1;
     
     const gridSize = 35 + zoom * 0.3;
-    const centerX = width / 2;
+    const centerX = width * 0.4; // Move center to the left (40% from left edge)
     const centerY = height / 2 + cameraAngle[0] * 50; // Reduced camera movement
     const perspectiveFactor = 0.03 + perspective[0] * 0.05;
     
@@ -195,6 +195,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
     // Enhanced building rendering with multiple animation modes
     let rotation = 0;
     let waveOffset = 0;
+    let heightOffset = 0;
     
     if (isAutoRotating) {
       switch (animationMode) {
@@ -203,11 +204,13 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
           break;
         case 'fly':
           rotation = timestamp * 0.001 * rotationSpeed[0];
-          waveOffset = Math.sin(timestamp * 0.002) * 20;
+          waveOffset = Math.sin(timestamp * 0.002) * 15;
+          heightOffset = Math.cos(timestamp * 0.0015) * 10;
           break;
         case 'wave':
-          rotation = timestamp * 0.0002 * rotationSpeed[0];
-          waveOffset = Math.sin(timestamp * 0.003) * 30;
+          rotation = timestamp * 0.0003 * rotationSpeed[0];
+          waveOffset = Math.sin(timestamp * 0.004) * 25;
+          heightOffset = Math.sin(timestamp * 0.003 + Math.PI/4) * 8;
           break;
       }
     }
@@ -233,7 +236,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
         const baseRadius = 100 + (index % 3) * 30; // Reduced radius
         const radius = baseRadius + waveOffset * Math.sin(angle * 2) * 0.5;
         const x = centerX + Math.cos(angle) * radius;
-        const y = centerY + Math.sin(angle) * radius * (0.4 + perspective[0] * 0.2); // Better centering
+        const y = centerY + Math.sin(angle) * radius * (0.4 + perspective[0] * 0.2) + heightOffset * Math.sin(angle * 3); // Better centering with height animation
         const depth = Math.sin(angle) * radius; // For depth sorting
         
         return { site, index, x, y, depth, angle, radius };
@@ -563,7 +566,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
         cancelAnimationFrame(animationIdRef.current);
       }
     };
-  }, [sites, isAutoRotating, selectedSite]);
+  }, [sites, isAutoRotating, selectedSite, animationMode, lightingMode, buildingScale, rotationSpeed, cameraAngle, perspective]);
 
   // Handle canvas clicks for site selection
   const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
