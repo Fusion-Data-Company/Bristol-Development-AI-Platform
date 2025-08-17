@@ -27,6 +27,7 @@ import ComparablesAnnex from "@/pages/ComparablesAnnex";
 import EnterpriseDashboard from "@/pages/EnterpriseDashboard";
 import EnhancedAgents from "@/pages/EnhancedAgents";
 import Maps2 from "@/pages/Maps2";
+import LoaderDemo from "@/pages/LoaderDemo";
 
 
 function Router() {
@@ -55,6 +56,7 @@ function Router() {
           <Route path="/agents" component={EnhancedAgents} />
           <Route path="/enhanced-agents" component={EnhancedAgents} />
           <Route path="/maps2" component={Maps2} />
+          <Route path="/loader-demo" component={LoaderDemo} />
         </>
       )}
       <Route component={NotFound} />

@@ -1293,3 +1293,174 @@ html {
 .bristol-brain-pulse {
   animation: bristol-pulse 2s infinite;
 }
+
+/* 3D Effect Loader Styles */
+:root {
+  --bg: #1e1e2e;
+  --primary1: #6c63ff;
+  --primary2: #ff6b9d;
+}
+
+.pl {
+  width: 6em;
+  height: 6em;
+  margin: 2em auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pl__dot {
+  width: 0.75em;
+  height: 0.75em;
+  background: var(--primary1);
+  border-radius: 50%;
+  position: absolute;
+  animation: pushInOut1724 2.4s ease-in-out infinite;
+}
+
+.pl__dot:nth-child(1) {
+  animation-delay: 0s;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.pl__dot:nth-child(2) {
+  animation-delay: 0.2s;
+  top: 0.866em;
+  right: 0;
+}
+
+.pl__dot:nth-child(3) {
+  animation-delay: 0.4s;
+  top: 2.598em;
+  right: 0.866em;
+}
+
+.pl__dot:nth-child(4) {
+  animation-delay: 0.6s;
+  bottom: 0;
+  right: 0;
+}
+
+.pl__dot:nth-child(5) {
+  animation-delay: 0.8s;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.pl__dot:nth-child(6) {
+  animation-delay: 1s;
+  bottom: 0;
+  left: 0;
+}
+
+.pl__dot:nth-child(7) {
+  animation-delay: 1.2s;
+  top: 2.598em;
+  left: 0.866em;
+}
+
+.pl__dot:nth-child(8) {
+  animation-delay: 1.4s;
+  top: 0.866em;
+  left: 0;
+}
+
+.pl__dot:nth-child(9) {
+  animation-delay: 1.6s;
+  background: var(--primary2);
+  top: 1.732em;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-name: pushInOut2724;
+}
+
+.pl__dot:nth-child(10) {
+  animation-delay: 1.8s;
+  background: var(--primary2);
+  top: 1.299em;
+  right: 0.75em;
+  animation-name: pushInOut2724;
+}
+
+.pl__dot:nth-child(11) {
+  animation-delay: 2s;
+  background: var(--primary2);
+  bottom: 1.299em;
+  right: 0.75em;
+  animation-name: pushInOut2724;
+}
+
+.pl__dot:nth-child(12) {
+  animation-delay: 2.2s;
+  background: var(--primary2);
+  bottom: 1.732em;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-name: pushInOut2724;
+}
+
+.pl__text {
+  position: absolute;
+  bottom: -2em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.875em;
+  color: var(--primary1);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@keyframes shadow724 {
+  from {
+    animation-timing-function: ease-in;
+    box-shadow: 0.1em 0.1em 0 0.1em black, 0.3em 0 0.3em rgba(0, 0, 0, 0.3);
+  }
+  25% {
+    animation-timing-function: ease-out;
+    box-shadow: 0.1em 0.1em 0 0.1em black, 0.8em 0 0.8em rgba(0, 0, 0, 0.5);
+  }
+  50%, to {
+    box-shadow: 0.1em 0.1em 0 0.1em black, 0.3em 0 0.3em rgba(0, 0, 0, 0.3);
+  }
+}
+
+@keyframes pushInOut1724 {
+  from {
+    animation-timing-function: ease-in;
+    background-color: var(--bg);
+    transform: translate(0, 0);
+  }
+  25% {
+    animation-timing-function: ease-out;
+    background-color: var(--primary2);
+    transform: translate(-71%, -71%);
+  }
+  50%, to {
+    background-color: var(--bg);
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes pushInOut2724 {
+  from {
+    animation-timing-function: ease-in;
+    background-color: var(--bg);
+    clip-path: polygon(0 75%, 100% 75%, 100% 100%, 0 100%);
+  }
+  25% {
+    animation-timing-function: ease-out;
+    background-color: var(--primary1);
+    clip-path: polygon(0 25%, 100% 25%, 100% 100%, 0 100%);
+  }
+  50%, to {
+    background-color: var(--bg);
+    clip-path: polygon(0 75%, 100% 75%, 100% 100%, 0 100%);
+  }
+}
