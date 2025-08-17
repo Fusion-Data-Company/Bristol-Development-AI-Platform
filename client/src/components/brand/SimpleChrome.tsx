@@ -357,6 +357,13 @@ export default function SimpleChrome({ children }: ChromeProps) {
           </div>
         </div>
       </footer>
+
+      {/* ElevenLabs ConvAI Widget */}
+      <div 
+        dangerouslySetInnerHTML={{
+          __html: '<elevenlabs-convai agent-id="agent_8801k2t62y9qehhsqqdmzmp10kt9"></elevenlabs-convai>'
+        }}
+      />
     </div>
   );
 }
