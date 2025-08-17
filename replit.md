@@ -1,6 +1,11 @@
 # Bristol Site Intelligence Platform
 
-## Recent Critical Fix (2025-08-15)
+## Recent Critical Updates
+
+### Market Intelligence Integration Completed (2025-08-17)
+**LIVE PERPLEXITY SONAR DEEP RESEARCH INTEGRATION** - Successfully connected market intelligence agent to OpenRouter API using Perplexity Sonar Deep Research model. System now automatically searches for real market intelligence every 2 hours and populates the Live Intelligence feed with authentic Federal Reserve policy updates, population migration trends, and construction cost analysis. Real-time data collection confirmed working with Bristol-specific business implications.
+
+### WebSocket Performance Issue Resolved (2025-08-15)
 **URGENT WebSocket Performance Issue Resolved** - Fixed critical WebSocket auto-reconnection loop that was causing performance degradation and console spam. Key changes: disabled aggressive 2-second reconnection timers, made WebSocket optional for core functionality, added manual reconnect option with visual status indicator. Core chat functionality now works reliably without WebSocket dependency.
 
 ## Overview

@@ -28,13 +28,13 @@ interface PerplexityResponse {
 
 export class MarketIntelligenceAgent {
   private readonly apiKey: string;
-  private readonly baseUrl = 'https://api.perplexity.ai/chat/completions';
+  private readonly baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
   private readonly agentName = 'market-intelligence-agent';
   
   constructor() {
-    this.apiKey = process.env.PERPLEXITY_API_KEY || '';
+    this.apiKey = process.env.OPENROUTER_API_KEY || '';
     if (!this.apiKey) {
-      console.warn('⚠️ Perplexity API key not found - Market Intelligence Agent will use fallback data');
+      console.warn('⚠️ OpenRouter API key not found - Market Intelligence Agent will use fallback data');
     }
   }
 
@@ -181,7 +181,7 @@ export class MarketIntelligenceAgent {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: 'llama-3.1-sonar-small-128k-online',
+          model: 'perplexity/sonar-deep-research',
           messages: [
             {
               role: 'system',
@@ -192,18 +192,17 @@ export class MarketIntelligenceAgent {
               content: query
             }
           ],
-          max_tokens: 1000,
+          max_tokens: 2000,
           temperature: 0.2,
           top_p: 0.9,
-          search_recency_filter: 'week',
-          return_images: false,
-          return_related_questions: false,
           stream: false
         })
       });
 
       if (!response.ok) {
-        throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error(`❌ OpenRouter API error: ${response.status} ${response.statusText} - ${errorText}`);
+        throw new Error(`OpenRouter API error: ${response.status} ${response.statusText}`);
       }
 
       const data: PerplexityResponse = await response.json();
