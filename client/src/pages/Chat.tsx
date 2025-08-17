@@ -271,10 +271,11 @@ export default function Chat() {
   // PRIORITY 5: Memory monitoring and cleanup
   useEffect(() => {
     const memoryCheck = setInterval(() => {
-      if (performance.memory && performance.memory.usedJSHeapSize > 100000000) {
+      const memory = (performance as any).memory;
+      if (memory && memory.usedJSHeapSize > 100000000) {
         console.warn('Memory usage high - triggering cleanup', {
-          used: Math.round(performance.memory.usedJSHeapSize / 1024 / 1024),
-          total: Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)
+          used: Math.round(memory.usedJSHeapSize / 1024 / 1024),
+          total: Math.round(memory.totalJSHeapSize / 1024 / 1024)
         });
         
         // Trigger memory cleanup
@@ -285,7 +286,7 @@ export default function Chat() {
         
         // Clear task progress for completed tasks
         setTaskProgress(prev => {
-          const filtered = { ...prev };
+          const filtered = { ...(prev || {}) };
           Object.keys(filtered).forEach(key => {
             const task = activeTasks.find(t => t.id === key);
             if (!task || task.status === 'completed') {
@@ -518,7 +519,7 @@ export default function Chat() {
       setTimeout(() => {
         const interval = setInterval(() => {
           setTaskProgress(prev => {
-            const currentProgress = prev[agent.id] || 0;
+            const currentProgress = (prev || {})[agent.id] || 0;
             if (currentProgress >= 100) {
               clearInterval(interval);
               
@@ -535,7 +536,7 @@ export default function Chat() {
             }
             
             return {
-              ...prev,
+              ...(prev || {}),
               [agent.id]: Math.min(currentProgress + Math.random() * 15, 100)
             };
           });
@@ -547,7 +548,7 @@ export default function Chat() {
               to: 'master',
               message: `Analysis update for ${property.name || property.address || 'property'}`,
               timestamp: Date.now(),
-              data: { progress: taskProgress[agent.id] || 0 }
+              data: { progress: (taskProgress || {})[agent.id] || 0 }
             };
             
             setAgentCommunication(prev => [...prev.slice(-9), message]);
@@ -2846,7 +2847,7 @@ function EnterpriseControlPanel({
               </div>
               <div className="bg-slate-800/50 border border-slate-600/30 rounded-lg p-3">
                 <div className="text-sm font-bold text-bristol-cyan">
-                  {agentTasks.length}
+                  {activeTasks.length}
                 </div>
                 <div className="text-xs text-slate-400">Active Tasks</div>
               </div>

@@ -15,8 +15,8 @@ import { z } from "zod";
 import { randomUUID } from "crypto";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // Auth middleware - disabled for internal app
+  // await setupAuth(app);
 
   // Create HTTP server
   const httpServer = createServer(app);
