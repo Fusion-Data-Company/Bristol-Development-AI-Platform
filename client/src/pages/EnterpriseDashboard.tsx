@@ -97,7 +97,7 @@ export default function EnterpriseDashboard() {
                   <div>
                     <div className="flex items-center gap-6 mb-3">
                       <h1 className="text-6xl font-bold bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 bg-clip-text text-transparent drop-shadow-lg">
-                        Enterprise Command Center
+                        Project Dashboard
                       </h1>
                       <Badge className="bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 text-white px-6 py-3 text-lg font-bold shadow-2xl ring-4 ring-white/30 hover:scale-105 transition-transform duration-300">
                         <Sparkles className="h-5 w-5 mr-3" />
