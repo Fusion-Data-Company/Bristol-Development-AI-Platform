@@ -13,6 +13,8 @@ import {
   agentAttachments,
   agentContext,
   agentDecisions,
+  marketIntelligence,
+  agentExecutions,
   type User,
   type UpsertUser,
   type Site,
@@ -41,6 +43,10 @@ import {
   type InsertAgentContext,
   type AgentDecision,
   type InsertAgentDecision,
+  type MarketIntelligence,
+  type InsertMarketIntelligence,
+  type AgentExecution,
+  type InsertAgentExecution,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql } from "drizzle-orm";
@@ -119,6 +125,20 @@ export interface IStorage {
   createAgentDecision(decision: InsertAgentDecision): Promise<AgentDecision>;
   getSessionDecisions(sessionId: string): Promise<AgentDecision[]>;
   getUserDecisions(userId: string, limit?: number): Promise<AgentDecision[]>;
+  
+  // Market Intelligence operations
+  createMarketIntelligence(intelligence: InsertMarketIntelligence): Promise<MarketIntelligence>;
+  getMarketIntelligence(limit?: number, category?: string): Promise<MarketIntelligence[]>;
+  getMarketIntelligenceByPriority(minPriority?: number): Promise<MarketIntelligence[]>;
+  updateMarketIntelligence(id: string, updates: Partial<InsertMarketIntelligence>): Promise<MarketIntelligence>;
+  deleteExpiredMarketIntelligence(): Promise<void>;
+  markMarketIntelligenceProcessed(id: string): Promise<void>;
+  
+  // Agent Execution operations
+  createAgentExecution(execution: InsertAgentExecution): Promise<AgentExecution>;
+  getAgentExecutions(agentName?: string, status?: string): Promise<AgentExecution[]>;
+  updateAgentExecution(id: string, updates: Partial<InsertAgentExecution>): Promise<AgentExecution>;
+  getScheduledAgentExecutions(): Promise<AgentExecution[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -470,6 +490,95 @@ export class DatabaseStorage implements IStorage {
       .where(eq(agentDecisions.userId, userId))
       .orderBy(desc(agentDecisions.createdAt))
       .limit(limit);
+  }
+
+  // Market Intelligence operations
+  async createMarketIntelligence(intelligence: InsertMarketIntelligence): Promise<MarketIntelligence> {
+    const [newIntelligence] = await db.insert(marketIntelligence).values(intelligence).returning();
+    return newIntelligence;
+  }
+
+  async getMarketIntelligence(limit: number = 50, category?: string): Promise<MarketIntelligence[]> {
+    let query = db
+      .select()
+      .from(marketIntelligence)
+      .orderBy(desc(marketIntelligence.priority), desc(marketIntelligence.createdAt))
+      .limit(limit);
+
+    if (category) {
+      query = query.where(eq(marketIntelligence.category, category));
+    }
+
+    return await query;
+  }
+
+  async getMarketIntelligenceByPriority(minPriority: number = 7): Promise<MarketIntelligence[]> {
+    return await db
+      .select()
+      .from(marketIntelligence)
+      .where(sql`${marketIntelligence.priority} >= ${minPriority}`)
+      .orderBy(desc(marketIntelligence.priority), desc(marketIntelligence.createdAt));
+  }
+
+  async updateMarketIntelligence(id: string, updates: Partial<InsertMarketIntelligence>): Promise<MarketIntelligence> {
+    const [updated] = await db
+      .update(marketIntelligence)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(marketIntelligence.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteExpiredMarketIntelligence(): Promise<void> {
+    await db
+      .delete(marketIntelligence)
+      .where(sql`${marketIntelligence.expiresAt} IS NOT NULL AND ${marketIntelligence.expiresAt} < NOW()`);
+  }
+
+  async markMarketIntelligenceProcessed(id: string): Promise<void> {
+    await db
+      .update(marketIntelligence)
+      .set({ processed: true, updatedAt: new Date() })
+      .where(eq(marketIntelligence.id, id));
+  }
+
+  // Agent Execution operations
+  async createAgentExecution(execution: InsertAgentExecution): Promise<AgentExecution> {
+    const [newExecution] = await db.insert(agentExecutions).values(execution).returning();
+    return newExecution;
+  }
+
+  async getAgentExecutions(agentName?: string, status?: string): Promise<AgentExecution[]> {
+    let query = db
+      .select()
+      .from(agentExecutions)
+      .orderBy(desc(agentExecutions.startedAt));
+
+    if (agentName) {
+      query = query.where(eq(agentExecutions.agentName, agentName));
+    }
+    if (status) {
+      query = query.where(eq(agentExecutions.status, status));
+    }
+
+    return await query;
+  }
+
+  async updateAgentExecution(id: string, updates: Partial<InsertAgentExecution>): Promise<AgentExecution> {
+    const [updated] = await db
+      .update(agentExecutions)
+      .set(updates)
+      .where(eq(agentExecutions.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getScheduledAgentExecutions(): Promise<AgentExecution[]> {
+    return await db
+      .select()
+      .from(agentExecutions)
+      .where(sql`${agentExecutions.nextScheduledAt} IS NOT NULL AND ${agentExecutions.nextScheduledAt} <= NOW()`)
+      .orderBy(agentExecutions.nextScheduledAt);
   }
 }
 

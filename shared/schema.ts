@@ -124,6 +124,70 @@ export const mcpTools = pgTable("mcp_tools", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Market Intelligence entries for live updates
+export const marketIntelligence = pgTable("market_intelligence", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: varchar("title").notNull(),
+  description: text("description").notNull(),
+  source: varchar("source").notNull(), // news outlet, report, etc.
+  sourceUrl: text("source_url"),
+  category: varchar("category").notNull(), // monetary_policy, demographics, development, capital_markets, regulatory, etc.
+  impact: varchar("impact").notNull(), // high, medium, low
+  priority: integer("priority").notNull().default(5), // 1-10, higher is more urgent
+  bristolImplication: text("bristol_implication"),
+  actionRequired: boolean("action_required").default(false),
+  expiresAt: timestamp("expires_at"),
+  processed: boolean("processed").default(false),
+  agentSource: varchar("agent_source"), // which agent/system generated this
+  metadata: jsonb("metadata"), // additional data like citations, analysis, etc.
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_market_intelligence_category").on(table.category),
+  index("idx_market_intelligence_priority").on(table.priority),
+  index("idx_market_intelligence_created").on(table.createdAt),
+  index("idx_market_intelligence_expires").on(table.expiresAt),
+]);
+
+// Agent execution logs for tracking automated market intelligence gathering
+export const agentExecutions = pgTable("agent_executions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  agentName: varchar("agent_name").notNull(),
+  executionType: varchar("execution_type").notNull(), // scheduled, manual, triggered
+  status: varchar("status").notNull(), // running, completed, failed, cancelled
+  startedAt: timestamp("started_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+  duration: integer("duration"), // in milliseconds
+  itemsProcessed: integer("items_processed").default(0),
+  itemsCreated: integer("items_created").default(0),
+  errorMessage: text("error_message"),
+  executionData: jsonb("execution_data"), // search queries, results summary, etc.
+  nextScheduledAt: timestamp("next_scheduled_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_agent_executions_agent").on(table.agentName),
+  index("idx_agent_executions_status").on(table.status),
+  index("idx_agent_executions_scheduled").on(table.nextScheduledAt),
+]);
+
+// Zod schemas for type safety and validation
+export const insertMarketIntelligenceSchema = createInsertSchema(marketIntelligence).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertAgentExecutionSchema = createInsertSchema(agentExecutions).omit({
+  id: true,
+  createdAt: true,
+});
+
+// TypeScript types
+export type MarketIntelligence = typeof marketIntelligence.$inferSelect;
+export type InsertMarketIntelligence = z.infer<typeof insertMarketIntelligenceSchema>;
+export type AgentExecution = typeof agentExecutions.$inferSelect;
+export type InsertAgentExecution = z.infer<typeof insertAgentExecutionSchema>;
+
 // Comps table for comparable property analysis
 export const comps = pgTable("comps", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

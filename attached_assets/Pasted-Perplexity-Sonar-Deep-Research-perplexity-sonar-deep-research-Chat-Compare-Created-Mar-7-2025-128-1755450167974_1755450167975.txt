@@ -1,0 +1,65 @@
+Perplexity: Sonar Deep Research
+perplexity/sonar-deep-research
+
+Chat
+Compare
+Created Mar 7, 2025
+128,000 context
+$2/M input tokens
+$8/M output tokens
+$5/K web search
+Sonar Deep Research is a research-focused model designed for multi-step retrieval, synthesis, and reasoning across complex topics. It autonomously searches, reads, and evaluates sources, refining its approach as it gathers information. This enables comprehensive report generation across domains like finance, technology, health, and current events.
+
+Notes on Pricing (Source)
+
+Input tokens comprise of Prompt tokens (user prompt) + Citation tokens (these are processed tokens from running searches)
+Deep Research runs multiple searches to conduct exhaustive research. Searches are priced at $5/1000 searches. A request that does 30 searches will cost $0.15 in this step.
+Reasoning is a distinct step in Deep Research since it does extensive automated reasoning through all the material it gathers during its research phase. Reasoning tokens here are a bit different than the CoTs in the answer - these are tokens that we use to reason through the research material prior to generating the outputs via the CoTs. Reasoning tokens are priced at $3/1M tokens
+
+Overview
+Providers
+Apps
+Activity
+Uptime
+API
+Sample code and API for Sonar Deep Research
+OpenRouter normalizes requests and responses across providers for you.
+Create API key
+OpenRouter provides an OpenAI-compatible completion API to 400+ models & providers that you can call directly, or using the OpenAI SDK. Additionally, some third-party SDKs are available.
+
+In the examples below, the OpenRouter-specific headers are optional. Setting them allows your app to appear on the OpenRouter leaderboards.
+
+openai-python
+python
+typescript
+openai-typescript
+curl
+
+Copy
+from openai import OpenAI
+
+client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key="<OPENROUTER_API_KEY>",
+)
+
+completion = client.chat.completions.create(
+  extra_headers={
+    "HTTP-Referer": "<YOUR_SITE_URL>", # Optional. Site URL for rankings on openrouter.ai.
+    "X-Title": "<YOUR_SITE_NAME>", # Optional. Site title for rankings on openrouter.ai.
+  },
+  extra_body={},
+  model="perplexity/sonar-deep-research",
+  messages=[
+    {
+      "role": "user",
+      "content": "What is the meaning of life?"
+    }
+  ]
+)
+print(completion.choices[0].message.content)
+Using third-party SDKs
+For information about using third-party SDKs and frameworks with OpenRouter, please see our frameworks documentation.
+
+See the Request docs for all possible fields, and Parameters for explanations of specific sampling parameters.
+

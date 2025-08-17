@@ -55,8 +55,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Enterprise Analytics APIs with MCP integration
   const enterpriseMetricsRouter = (await import('./api/analytics/enterprise-metrics')).default;
   const realTimeIntelligenceRouter = (await import('./api/analytics/real-time-intelligence')).default;
+  const marketIntelligenceRouter = (await import('./api/analytics/market-intelligence')).default;
   app.use('/api/analytics/enterprise', enterpriseMetricsRouter);
   app.use('/api/analytics/intelligence', realTimeIntelligenceRouter);
+  app.use('/api/analytics/market-intelligence', marketIntelligenceRouter);
   
   // Elite Portfolio Insights API
   app.get('/api/analytics/elite/portfolio-insights', (await import('./api/analytics/elite-portfolio-insights')).getElitePortfolioInsights);

@@ -71,6 +71,11 @@ app.use((req, res, next) => {
     const server = await registerRoutes(app);
     
     console.log("Routes registered successfully");
+    
+    // Initialize scheduler service for automated tasks
+    const { schedulerService } = await import("./services/schedulerService");
+    await schedulerService.initialize();
+    console.log("Scheduler service initialized");
 
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;

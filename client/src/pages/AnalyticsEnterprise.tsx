@@ -44,7 +44,8 @@ import {
   Star,
   ChevronRight,
   Filter,
-  Settings
+  Settings,
+  ExternalLink
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
 import bristolBackground from '@assets/tapestry+clubhouse_1755367516748.webp';
@@ -138,6 +139,13 @@ export default function AnalyticsEnterprise() {
   const { data: liveIntelligence, isLoading: liveLoading } = useQuery<LiveIntelligence>({
     queryKey: ['/api/analytics/intelligence/live-streams'],
     refetchInterval: 60000,
+    staleTime: 30000
+  });
+
+  // Real Market Intelligence Entries from Perplexity Agent
+  const { data: marketIntelligenceData, isLoading: marketIntelligenceLoading, refetch: refetchMarketIntelligence } = useQuery({
+    queryKey: ['/api/analytics/market-intelligence/entries'],
+    refetchInterval: 120000, // Refetch every 2 minutes
     staleTime: 30000
   });
 
@@ -768,6 +776,118 @@ export default function AnalyticsEnterprise() {
                           <div className="text-bristol-stone text-sm mt-2">Direction</div>
                         </div>
                       </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Real-Time Market Intelligence from Perplexity Agent */}
+                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
+                          <Activity className="h-6 w-6 text-bristol-gold" />
+                          Live Market Intelligence Feed
+                          <Badge className="ml-3 bg-green-100 text-green-800">Automated Agent</Badge>
+                        </CardTitle>
+                        <Button 
+                          onClick={() => refetchMarketIntelligence()}
+                          variant="outline" 
+                          size="sm"
+                          className="border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10"
+                        >
+                          <RefreshCw className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <p className="text-bristol-stone text-sm">
+                        Real-time market intelligence gathered every 2 hours using advanced web search
+                      </p>
+                    </CardHeader>
+                    <CardContent>
+                      {marketIntelligenceLoading ? (
+                        <div className="flex items-center justify-center h-64">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-bristol-cyan"></div>
+                        </div>
+                      ) : marketIntelligenceData?.entries?.length > 0 ? (
+                        <ScrollArea className="h-80">
+                          <div className="space-y-4">
+                            {marketIntelligenceData.entries.map((entry: any) => (
+                              <div key={entry.id} className="border border-bristol-cyan/20 rounded-lg p-4 bg-gray-50">
+                                <div className="flex items-start justify-between mb-3">
+                                  <div className="flex-1">
+                                    <h4 className="font-semibold text-gray-800 mb-1">{entry.title}</h4>
+                                    <div className="flex items-center gap-2 mb-2">
+                                      <Badge 
+                                        className={cn(
+                                          "text-xs",
+                                          entry.category === 'monetary_policy' ? 'bg-red-100 text-red-800' :
+                                          entry.category === 'demographics' ? 'bg-blue-100 text-blue-800' :
+                                          entry.category === 'development' ? 'bg-green-100 text-green-800' :
+                                          entry.category === 'capital_markets' ? 'bg-purple-100 text-purple-800' :
+                                          entry.category === 'employment' ? 'bg-orange-100 text-orange-800' :
+                                          'bg-gray-100 text-gray-800'
+                                        )}
+                                      >
+                                        {entry.category.replace('_', ' ')}
+                                      </Badge>
+                                      <Badge 
+                                        className={cn(
+                                          "text-xs",
+                                          entry.impact === 'high' ? 'bg-red-100 text-red-800' :
+                                          entry.impact === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                          'bg-gray-100 text-gray-800'
+                                        )}
+                                      >
+                                        {entry.impact} impact
+                                      </Badge>
+                                      <span className="text-xs text-bristol-stone">
+                                        Priority: {entry.priority}/10
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <div className="text-xs text-bristol-stone">{entry.timeAgo}</div>
+                                    {entry.actionRequired && (
+                                      <Badge className="mt-1 bg-orange-100 text-orange-800 text-xs">
+                                        Action Required
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                                <p className="text-sm text-gray-700 mb-3 leading-relaxed">
+                                  {entry.description.length > 200 
+                                    ? `${entry.description.substring(0, 200)}...` 
+                                    : entry.description
+                                  }
+                                </p>
+                                <div className="bg-bristol-cyan/5 p-3 rounded-lg border border-bristol-cyan/20">
+                                  <div className="text-xs font-medium text-bristol-cyan mb-1">Bristol Implication:</div>
+                                  <div className="text-sm text-gray-800">{entry.bristolImplication}</div>
+                                </div>
+                                {entry.sourceUrl && (
+                                  <div className="mt-2 pt-2 border-t border-gray-200">
+                                    <a 
+                                      href={entry.sourceUrl} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="text-xs text-bristol-cyan hover:text-bristol-gold transition-colors flex items-center gap-1"
+                                    >
+                                      <ExternalLink className="h-3 w-3" />
+                                      Source: {entry.source}
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </ScrollArea>
+                      ) : (
+                        <div className="text-center py-12">
+                          <Activity className="h-12 w-12 text-bristol-stone mx-auto mb-4 opacity-50" />
+                          <p className="text-bristol-stone">No market intelligence entries available</p>
+                          <p className="text-sm text-bristol-stone mt-2">
+                            The automated agent will gather market intelligence every 2 hours
+                          </p>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
 
