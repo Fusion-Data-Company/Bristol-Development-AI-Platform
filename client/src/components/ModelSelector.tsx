@@ -51,21 +51,29 @@ export function ModelSelector({
   const updateDropdownPosition = useCallback(() => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPosition({
+      const position = {
         top: rect.bottom + 8,
         left: rect.left,
         width: rect.width
-      });
+      };
+      console.log('ModelSelector position calculated:', position);
+      setDropdownPosition(position);
     }
   }, []);
 
   // Handle button click to open/close dropdown
   const handleButtonClick = useCallback(() => {
+    console.log('ModelSelector button clicked, current isOpen:', isOpen, 'modelList length:', modelList.length);
     if (!isOpen) {
       updateDropdownPosition();
     }
-    setIsOpen(!isOpen);
-  }, [isOpen, updateDropdownPosition]);
+    const newIsOpen = !isOpen;
+    setIsOpen(newIsOpen);
+    console.log('ModelSelector dropdown state changed to:', newIsOpen);
+    if (newIsOpen) {
+      console.log('Portal will render with models:', modelList.length, 'position:', dropdownPosition);
+    }
+  }, [isOpen, updateDropdownPosition, modelList.length, dropdownPosition]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
