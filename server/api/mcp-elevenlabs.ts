@@ -229,6 +229,29 @@ router.post('/api/mcp/init-team', async (req, res) => {
   }
 });
 
+// Test endpoint for ElevenLabs agent
+router.get('/api/mcp/test-elevenlabs', (req, res) => {
+  const tools = eliteMCPSuperserver.getAvailableTools();
+  res.json({
+    message: 'ElevenLabs MCP Connection Test',
+    status: 'connected',
+    availableTools: tools.length,
+    toolNames: tools.map(t => t.name),
+    mcpEndpoint: 'https://' + req.hostname + '/api/mcp/elevenlabs',
+    instructions: {
+      listTools: 'POST to /api/mcp/elevenlabs with method: "tools/list"',
+      callTool: 'POST to /api/mcp/elevenlabs with method: "tools/call" and params: {name, arguments}',
+      example: {
+        method: 'tools/call',
+        params: {
+          name: 'verify_user',
+          arguments: { name: 'John Smith' }
+        }
+      }
+    }
+  });
+});
+
 // Register MCP server with ElevenLabs (to be called manually or on startup)
 router.post('/api/mcp/register', async (req, res) => {
   try {
@@ -286,6 +309,52 @@ router.post('/api/mcp/register', async (req, res) => {
       error: error instanceof Error ? error.message : 'Registration failed'
     });
   }
+});
+
+// Simple tool execution endpoint for ElevenLabs widget
+router.post('/api/mcp/execute', async (req, res) => {
+  try {
+    const { tool, args = {} } = req.body;
+    
+    if (!tool) {
+      return res.status(400).json({ error: 'Tool name required' });
+    }
+    
+    // Execute tool via superserver
+    const result = await eliteMCPSuperserver.executeTool(tool, args, {
+      userId: 'elevenlabs-widget',
+      source: 'elevenlabs-widget',
+      timestamp: new Date().toISOString()
+    });
+    
+    res.json({
+      success: true,
+      tool,
+      result,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Tool execution error:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Tool execution failed'
+    });
+  }
+});
+
+// Simple GET endpoint for ElevenLabs to check available tools
+router.get('/api/mcp/available-tools', (req, res) => {
+  const tools = eliteMCPSuperserver.getAvailableTools();
+  res.json({
+    tools: tools.map(t => ({
+      name: t.name,
+      description: t.description,
+      parameters: t.parameters
+    })),
+    total: tools.length,
+    endpoint: '/api/mcp/execute',
+    usage: 'POST { tool: "tool_name", args: {...} }'
+  });
 });
 
 // Webhook endpoint for external triggers from ElevenLabs
