@@ -150,10 +150,10 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
     ctx.strokeStyle = colors.grid;
     ctx.lineWidth = 1;
     
-    const gridSize = 40 + zoom * 0.5;
+    const gridSize = 35 + zoom * 0.3;
     const centerX = width / 2;
-    const centerY = height / 2 + cameraAngle[0] * 100;
-    const perspectiveFactor = 0.05 + perspective[0] * 0.1;
+    const centerY = height / 2 + cameraAngle[0] * 50; // Reduced camera movement
+    const perspectiveFactor = 0.03 + perspective[0] * 0.05;
     
     // Enhanced horizontal grid lines with dynamic perspective
     for (let i = -15; i <= 15; i++) {
@@ -229,11 +229,11 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
       .map((site, index) => {
         if (!site.latitude || !site.longitude) return null;
         
-        const angle = (index / sites.length) * Math.PI * 2 + rotation + cameraAngle[0] * 0.1;
-        const baseRadius = 120 + (index % 3) * 40;
-        const radius = baseRadius + waveOffset * Math.sin(angle * 2);
+        const angle = (index / sites.length) * Math.PI * 2 + rotation + cameraAngle[0] * 0.05;
+        const baseRadius = 100 + (index % 3) * 30; // Reduced radius
+        const radius = baseRadius + waveOffset * Math.sin(angle * 2) * 0.5;
         const x = centerX + Math.cos(angle) * radius;
-        const y = centerY + Math.sin(angle) * radius * (0.5 + perspective[0] * 0.3);
+        const y = centerY + Math.sin(angle) * radius * (0.4 + perspective[0] * 0.2); // Better centering
         const depth = Math.sin(angle) * radius; // For depth sorting
         
         return { site, index, x, y, depth, angle, radius };
@@ -245,17 +245,18 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
       if (!building) return;
       const { site, index, x, y, depth } = building;
       
-      // Enhanced building dimensions with realistic proportions
+      // Enhanced building dimensions with proper scaling
       const unitsValue = site.unitsTotal || 50;
-      const height = Math.max(30, unitsValue * 1.2 + Math.sin(building.angle * 3) * 8) * buildingScale[0];
-      const buildingWidth = (14 + (index % 4) * 5 + Math.cos(building.angle * 2) * 2) * buildingScale[0];
-      const depthScale = 1 + depth * 0.002; // Enhanced perspective scaling
+      const maxCanvasHeight = ctx.canvas.height * 0.4; // Use 40% of canvas height max
+      const buildingHeight = Math.min(maxCanvasHeight, Math.max(20, unitsValue * 0.8 + Math.sin(building.angle * 3) * 5)) * buildingScale[0];
+      const buildingWidth = (12 + (index % 4) * 3 + Math.cos(building.angle * 2) * 1) * buildingScale[0];
+      const depthScale = 1 + depth * 0.001; // Reduced perspective scaling
       
       // Professional 3D building with advanced isometric perspective
       const scaledWidth = buildingWidth * depthScale;
-      const scaledHeight = height * depthScale;
-      const baseHeight = 12 * depthScale;
-      const roofHeight = 6 * depthScale;
+      const scaledHeight = buildingHeight * depthScale;
+      const baseHeight = 10 * depthScale;
+      const roofHeight = 5 * depthScale;
       
       // Advanced multi-layer shadow system for realism
       const shadowOffset = 4 + depth * 0.01;
@@ -527,20 +528,20 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
       ctx.fillText(`● ${isAutoRotating ? 'LIVE' : 'PAUSED'} • Speed: ${rotationSpeed[0].toFixed(1)}x • Scale: ${buildingScale[0].toFixed(1)}x`, 20, 95);
     }
     
-    // Enhanced center focal point with pulsing effect
-    const pulseSize = 5 + Math.sin(timestamp * 0.005) * 2;
+    // Professional center focal point with pulsing effect
+    const pulseSize = 4 + Math.sin(timestamp * 0.005) * 1.5;
     ctx.beginPath();
     ctx.arc(centerX, centerY, pulseSize, 0, Math.PI * 2);
     ctx.fillStyle = colors.accent;
     ctx.fill();
     ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
     
     // Add center glow effect
     ctx.beginPath();
-    ctx.arc(centerX, centerY, pulseSize + 3, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(255, 255, 255, 0.3)`;
+    ctx.arc(centerX, centerY, pulseSize + 2, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(255, 255, 255, 0.2)`;
     ctx.lineWidth = 1;
     ctx.stroke();
   };
