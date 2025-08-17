@@ -82,158 +82,179 @@ export default function EnterpriseDashboard() {
         <div className="relative px-6 py-8">
           <div className="container mx-auto max-w-7xl space-y-8">
             
-            {/* Elite Header with Status */}
-            <div className="chrome-metallic-panel p-6 border-2">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-4">
+            {/* Elite Header with Status - Enhanced Glass Morphism */}
+            <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 p-8 ring-1 ring-black/5">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-6">
                   <div className="relative">
-                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-bristol-maroon to-red-800 flex items-center justify-center shadow-lg">
-                      <Crown className="h-7 w-7 text-amber-300" />
+                    <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-bristol-maroon via-red-700 to-amber-600 flex items-center justify-center shadow-xl ring-4 ring-white/50">
+                      <Crown className="h-8 w-8 text-amber-100 drop-shadow-lg" />
                     </div>
-                    <div className="absolute -top-1 -right-1 h-4 w-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+                    <div className="absolute -top-1 -right-1 h-5 w-5 bg-emerald-500 rounded-full border-3 border-white animate-pulse shadow-lg" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-3 mb-1">
-                      <h1 className="text-4xl font-bold bg-gradient-to-r from-bristol-maroon to-amber-600 bg-clip-text text-transparent">
+                    <div className="flex items-center gap-4 mb-2">
+                      <h1 className="text-5xl font-bold bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
                         Enterprise Command Center
                       </h1>
-                      <Badge className="bg-gradient-to-r from-bristol-maroon to-red-800 text-white animate-float">
-                        <Sparkles className="h-3 w-3 mr-1" />
+                      <Badge className="bg-gradient-to-r from-bristol-maroon to-amber-600 text-white px-4 py-2 text-sm font-bold shadow-lg ring-2 ring-white/20">
+                        <Sparkles className="h-4 w-4 mr-2" />
                         ELITE
                       </Badge>
                     </div>
-                    <p className="text-gray-600 font-medium">Bristol Development Group Intelligence Platform</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
-                      <span className="text-xs text-gray-500">Last updated {formatTimeAgo(lastUpdated)}</span>
+                    <p className="text-slate-700 font-semibold text-lg">Bristol Development Group Intelligence Platform</p>
+                    <div className="flex items-center gap-3 mt-2">
+                      <div className="h-3 w-3 bg-emerald-500 rounded-full animate-pulse shadow-sm" />
+                      <span className="text-sm text-slate-600 font-medium">Last updated {formatTimeAgo(lastUpdated)}</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-4">
                   <Button 
                     variant="outline" 
-                    size="sm" 
-                    className="chrome-metallic-button border-bristol-maroon/30 hover:border-bristol-maroon"
+                    size="lg" 
+                    className="bg-white/70 backdrop-blur-sm border-2 border-slate-300 hover:border-bristol-maroon hover:bg-white/90 shadow-lg transition-all duration-300 font-semibold"
                     onClick={() => setIsMaximized(!isMaximized)}
                   >
-                    <Maximize2 className="h-4 w-4 mr-2" />
+                    <Maximize2 className="h-5 w-5 mr-2" />
                     {isMaximized ? 'Minimize' : 'Fullscreen'}
                   </Button>
                   <Button 
                     variant="outline" 
-                    size="sm" 
-                    className="chrome-metallic-button border-amber-400/30 hover:border-amber-400"
+                    size="lg" 
+                    className="bg-white/70 backdrop-blur-sm border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50/90 shadow-lg transition-all duration-300 font-semibold"
                   >
-                    <Download className="h-4 w-4 mr-2" />
+                    <Download className="h-5 w-5 mr-2" />
                     Export Report
                   </Button>
                   <Button 
-                    className="bg-gradient-to-r from-bristol-maroon to-red-800 hover:from-red-800 hover:to-bristol-maroon text-white shadow-lg"
+                    size="lg"
+                    className="bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 hover:from-red-800 hover:via-bristol-maroon hover:to-amber-700 text-white shadow-xl ring-2 ring-white/30 font-bold transition-all duration-300"
                   >
-                    <Eye className="h-4 w-4 mr-2" />
+                    <Eye className="h-5 w-5 mr-2" />
                     Live Analytics
                   </Button>
                 </div>
               </div>
 
-              {/* Real-Time Status Bar */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <div>
-                    <div className="font-semibold text-green-800">System Online</div>
-                    <div className="text-xs text-green-600">99.9% uptime</div>
+              {/* Real-Time Status Bar - Enhanced Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="bg-gradient-to-br from-emerald-50 to-green-100 rounded-xl border-2 border-emerald-200 shadow-lg hover:shadow-xl transition-all duration-300 p-5 ring-1 ring-emerald-200/50">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-emerald-500 rounded-lg shadow-md">
+                      <CheckCircle className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-emerald-900 text-lg">System Online</div>
+                      <div className="text-sm text-emerald-700 font-medium">99.9% uptime</div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200">
-                  <Database className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <div className="font-semibold text-blue-800">Data Sync</div>
-                    <div className="text-xs text-blue-600">Real-time</div>
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-100 rounded-xl border-2 border-blue-200 shadow-lg hover:shadow-xl transition-all duration-300 p-5 ring-1 ring-blue-200/50">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-500 rounded-lg shadow-md">
+                      <Database className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-blue-900 text-lg">Data Sync</div>
+                      <div className="text-sm text-blue-700 font-medium">Real-time</div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200">
-                  <Zap className="h-5 w-5 text-amber-600" />
-                  <div>
-                    <div className="font-semibold text-amber-800">AI Engine</div>
-                    <div className="text-xs text-amber-600">Active</div>
+                <div className="bg-gradient-to-br from-amber-50 to-yellow-100 rounded-xl border-2 border-amber-200 shadow-lg hover:shadow-xl transition-all duration-300 p-5 ring-1 ring-amber-200/50">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-500 rounded-lg shadow-md">
+                      <Zap className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-amber-900 text-lg">AI Engine</div>
+                      <div className="text-sm text-amber-700 font-medium">Active</div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200">
-                  <Globe className="h-5 w-5 text-purple-600" />
-                  <div>
-                    <div className="font-semibold text-purple-800">Market Data</div>
-                    <div className="text-xs text-purple-600">Live feed</div>
+                <div className="bg-gradient-to-br from-purple-50 to-indigo-100 rounded-xl border-2 border-purple-200 shadow-lg hover:shadow-xl transition-all duration-300 p-5 ring-1 ring-purple-200/50">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-purple-500 rounded-lg shadow-md">
+                      <Globe className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-purple-900 text-lg">Market Data</div>
+                      <div className="text-sm text-purple-700 font-medium">Live feed</div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Enhanced Analytics Dashboard */}
-            <div className="chrome-metallic-panel">
+            {/* Enhanced Analytics Dashboard - Premium Glass Container */}
+            <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/40 p-8 ring-1 ring-black/5">
               <EnterpriseAnalyticsDashboard />
             </div>
 
-            {/* Elite Performance Indicators */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Elite Performance Indicators - Enhanced Glass Cards */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               
               {/* Performance Metrics */}
-              <Card className="chrome-metallic-panel border-0">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-bristol-maroon">
-                    <Trophy className="h-5 w-5" />
+              <Card className="bg-white/95 backdrop-blur-xl border-2 border-white/40 shadow-2xl ring-1 ring-black/5 hover:shadow-3xl transition-all duration-300">
+                <CardHeader className="pb-4 border-b border-gray-100">
+                  <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
+                    <div className="p-2 bg-gradient-to-r from-bristol-maroon to-amber-600 rounded-lg shadow-md">
+                      <Trophy className="h-6 w-6 text-white" />
+                    </div>
                     Performance Metrics
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
+                <CardContent className="space-y-6 pt-6">
+                  <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Processing Speed</span>
-                      <span className="text-sm font-bold text-green-600">2.3s avg</span>
+                      <span className="text-base font-semibold text-gray-700">Processing Speed</span>
+                      <span className="text-base font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full">2.3s avg</span>
                     </div>
-                    <Progress value={92} className="h-2" />
+                    <Progress value={92} className="h-3 bg-gray-200" />
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">Data Accuracy</span>
-                      <span className="text-sm font-bold text-bristol-maroon">99.7%</span>
+                      <span className="text-base font-semibold text-gray-700">Data Accuracy</span>
+                      <span className="text-base font-bold text-bristol-maroon bg-red-50 px-3 py-1 rounded-full">99.7%</span>
                     </div>
-                    <Progress value={97} className="h-2" />
+                    <Progress value={97} className="h-3 bg-gray-200" />
                     
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium">API Response</span>
-                      <span className="text-sm font-bold text-blue-600">145ms avg</span>
+                      <span className="text-base font-semibold text-gray-700">API Response</span>
+                      <span className="text-base font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">145ms avg</span>
                     </div>
-                    <Progress value={88} className="h-2" />
+                    <Progress value={88} className="h-3 bg-gray-200" />
                   </div>
                 </CardContent>
               </Card>
 
               {/* System Health */}
-              <Card className="chrome-metallic-panel border-0">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-bristol-maroon">
-                    <Shield className="h-5 w-5" />
+              <Card className="bg-white/95 backdrop-blur-xl border-2 border-white/40 shadow-2xl ring-1 ring-black/5 hover:shadow-3xl transition-all duration-300">
+                <CardHeader className="pb-4 border-b border-gray-100">
+                  <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
+                    <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-lg shadow-md">
+                      <Shield className="h-6 w-6 text-white" />
+                    </div>
                     System Health
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <Alert className="border-green-200 bg-green-50">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <AlertDescription className="text-green-800">
+                <CardContent className="pt-6">
+                  <div className="space-y-6">
+                    <Alert className="border-2 border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 shadow-lg">
+                      <CheckCircle className="h-5 w-5 text-emerald-600" />
+                      <AlertDescription className="text-emerald-800 font-semibold text-base">
                         All systems operational. No issues detected.
                       </AlertDescription>
                     </Alert>
                     
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div className="text-center p-2 rounded bg-gray-50">
-                        <div className="font-bold text-bristol-maroon">47</div>
-                        <div className="text-gray-600">Active Scrapes</div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-4 rounded-xl bg-gradient-to-br from-red-50 to-bristol-maroon/10 border-2 border-red-100 shadow-md">
+                        <div className="font-bold text-bristol-maroon text-2xl">47</div>
+                        <div className="text-gray-700 font-medium">Active Scrapes</div>
                       </div>
-                      <div className="text-center p-2 rounded bg-gray-50">
-                        <div className="font-bold text-amber-600">1.2K</div>
-                        <div className="text-gray-600">API Calls/hr</div>
+                      <div className="text-center p-4 rounded-xl bg-gradient-to-br from-amber-50 to-yellow-100 border-2 border-amber-100 shadow-md">
+                        <div className="font-bold text-amber-600 text-2xl">1.2K</div>
+                        <div className="text-gray-700 font-medium">API Calls/hr</div>
                       </div>
                     </div>
                   </div>
@@ -241,28 +262,30 @@ export default function EnterpriseDashboard() {
               </Card>
 
               {/* Quick Actions */}
-              <Card className="chrome-metallic-panel border-0">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-bristol-maroon">
-                    <Settings className="h-5 w-5" />
+              <Card className="bg-white/95 backdrop-blur-xl border-2 border-white/40 shadow-2xl ring-1 ring-black/5 hover:shadow-3xl transition-all duration-300">
+                <CardHeader className="pb-4 border-b border-gray-100">
+                  <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
+                    <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg shadow-md">
+                      <Settings className="h-6 w-6 text-white" />
+                    </div>
                     Quick Actions
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-3">
-                  <Button className="w-full chrome-metallic-button justify-start">
-                    <RefreshCw className="h-4 w-4 mr-2" />
+                <CardContent className="space-y-4 pt-6">
+                  <Button className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg border-0 p-4 justify-start text-base font-semibold transition-all duration-300">
+                    <RefreshCw className="h-5 w-5 mr-3" />
                     Refresh All Data
                   </Button>
-                  <Button className="w-full chrome-metallic-button justify-start">
-                    <Layers className="h-4 w-4 mr-2" />
+                  <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-lg border-0 p-4 justify-start text-base font-semibold transition-all duration-300">
+                    <Layers className="h-5 w-5 mr-3" />
                     Update Layers
                   </Button>
-                  <Button className="w-full chrome-metallic-button justify-start">
-                    <Target className="h-4 w-4 mr-2" />
+                  <Button className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg border-0 p-4 justify-start text-base font-semibold transition-all duration-300">
+                    <Target className="h-5 w-5 mr-3" />
                     Run Analysis
                   </Button>
-                  <Button className="w-full chrome-metallic-button justify-start">
-                    <Calendar className="h-4 w-4 mr-2" />
+                  <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-700 text-white shadow-lg border-0 p-4 justify-start text-base font-semibold transition-all duration-300">
+                    <Calendar className="h-5 w-5 mr-3" />
                     Schedule Report
                   </Button>
                 </CardContent>
