@@ -27,6 +27,7 @@ import ComparablesAnnex from "@/pages/ComparablesAnnex";
 import EnterpriseDashboard from "@/pages/EnterpriseDashboard";
 import EnhancedAgents from "@/pages/EnhancedAgents";
 import Maps2 from "@/pages/Maps2";
+import DemoOne from "@/components/demo";
 
 
 
@@ -56,6 +57,7 @@ function Router() {
           <Route path="/agents" component={EnhancedAgents} />
           <Route path="/enhanced-agents" component={EnhancedAgents} />
           <Route path="/maps2" component={Maps2} />
+          <Route path="/demo" component={DemoOne} />
 
         </>
       )}
