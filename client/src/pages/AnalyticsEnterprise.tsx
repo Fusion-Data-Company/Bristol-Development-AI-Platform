@@ -143,7 +143,7 @@ export default function AnalyticsEnterprise() {
   });
 
   // Real Market Intelligence Entries from Perplexity Agent
-  const { data: marketIntelligenceData, isLoading: marketIntelligenceLoading, refetch: refetchMarketIntelligence } = useQuery({
+  const { data: marketIntelligenceData, isLoading: marketIntelligenceLoading, refetch: refetchMarketIntelligence } = useQuery<any>({
     queryKey: ['/api/analytics/market-intelligence/entries'],
     refetchInterval: 120000, // Refetch every 2 minutes
     staleTime: 30000
@@ -232,9 +232,7 @@ export default function AnalyticsEnterprise() {
         backgroundSize: 'cover', 
         backgroundPosition: 'center', 
         backgroundRepeat: 'no-repeat',
-        imageRendering: 'crisp-edges',
-        WebkitImageRendering: 'crisp-edges',
-        msInterpolationMode: 'nearest-neighbor',
+        imageRendering: 'crisp-edges' as any,
         backgroundAttachment: 'fixed'
       }}>
         {/* Professional overlay for content readability */}
@@ -806,10 +804,10 @@ export default function AnalyticsEnterprise() {
                         <div className="flex items-center justify-center h-64">
                           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-bristol-cyan"></div>
                         </div>
-                      ) : marketIntelligenceData?.entries?.length > 0 ? (
+                      ) : (marketIntelligenceData as any)?.entries?.length > 0 ? (
                         <ScrollArea className="h-80">
                           <div className="space-y-4">
-                            {marketIntelligenceData.entries.map((entry: any) => (
+                            {(marketIntelligenceData as any).entries.map((entry: any) => (
                               <div key={entry.id} className="border border-bristol-cyan/20 rounded-lg p-4 bg-gray-50">
                                 <div className="flex items-start justify-between mb-3">
                                   <div className="flex-1">
