@@ -226,6 +226,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // ElevenLabs Webhook endpoint for direct integration
   const elevenLabsWebhookRouter = (await import('./api/elevenlabs-webhook')).default;
   app.use(elevenLabsWebhookRouter);
+  
+  // ElevenLabs SSE MCP endpoint (proper transport)
+  const elevenLabsSSERouter = (await import('./api/mcp-sse')).default;
+  app.use(elevenLabsSSERouter);
+  
+  // ElevenLabs STREAMABLE_HTTP MCP endpoint (JSON-RPC over HTTP)
+  const elevenLabsStreamRouter = (await import('./api/mcp-stream')).default;
+  app.use(elevenLabsStreamRouter);
 
   // Initialize chat health monitoring
   const { chatHealthMonitor } = await import('./services/chatHealthMonitor');

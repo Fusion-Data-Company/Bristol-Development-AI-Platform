@@ -1,0 +1,251 @@
+
+Logo
+Search or ask AI a question
+/
+Community
+Blog
+Help Center
+API Pricing
+Sign up
+
+API REFERENCE
+Introduction
+Authentication
+Streaming
+ENDPOINTS
+
+Text to Speech
+
+Speech to Text
+
+Text to Dialogue
+
+Voice Changer
+
+Sound Effects
+
+Audio Isolation
+
+Text to Voice
+
+Dubbing
+
+Audio Native
+
+Voices
+
+Forced Alignment
+ADMINISTRATION
+
+History
+
+Models
+
+Studio
+
+Pronunciation Dictionaries
+
+Samples
+
+Usage
+
+User
+
+Voice Library
+
+Service Accounts
+
+Workspace
+
+Webhooks
+CONVERSATIONAL AI
+
+Agents
+
+Conversations
+
+Tools
+
+Knowledge Base
+
+Phone Numbers
+
+Widget
+
+Workspace
+
+SIP Trunk
+
+Twilio
+
+Batch Calling
+
+LLM Usage
+
+MCP
+POST
+Create MCP server
+GET
+List MCP servers
+GET
+Get MCP server
+GET
+List MCP server tools
+
+Approval Policies
+LEGACY
+
+Voices
+
+Knowledge Base
+CONVERSATIONAL AI
+MCP
+List MCP servers
+GET
+
+https://api.elevenlabs.io
+/v1/convai/mcp-servers
+GET
+/v1/convai/mcp-servers
+
+cURL
+
+curl https://api.elevenlabs.io/v1/convai/mcp-servers \
+     -H "xi-api-key: xi-api-key"
+Try it
+200
+Retrieved
+
+{
+  "mcp_servers": [
+    {
+      "id": "foo",
+      "config": {
+        "url": "foo",
+        "name": "foo",
+        "approval_policy": "auto_approve_all",
+        "tool_approval_hashes": [
+          {
+            "tool_name": "foo",
+            "tool_hash": "foo",
+            "approval_policy": "auto_approved"
+          }
+        ],
+        "transport": "SSE",
+        "secret_token": {
+          "secret_id": "foo"
+        },
+        "request_headers": {},
+        "description": ""
+      },
+      "metadata": {
+        "created_at": 42,
+        "owner_user_id": "foo"
+      },
+      "access_info": {
+        "is_creator": true,
+        "creator_name": "foo",
+        "creator_email": "foo",
+        "role": "admin"
+      },
+      "dependent_agents": [
+        {
+          "type": "unknown"
+        }
+      ]
+    }
+  ]
+}
+Retrieve all MCP server configurations available in the workspace.
+Headers
+xi-api-key
+string
+Required
+Response
+Successful Response
+mcp_servers
+list of objects
+
+Hide 5 properties
+id
+string
+config
+object
+
+Show 8 properties
+metadata
+object
+The metadata of the MCP Server
+
+Hide 2 properties
+created_at
+integer
+owner_user_id
+string or null
+access_info
+object or null
+The access information of the MCP Server
+
+Hide 4 properties
+is_creator
+boolean
+Whether the user making the request is the creator of the agent
+creator_name
+string
+Name of the agent's creator
+creator_email
+string
+Email of the agent's creator
+role
+enum
+The role of the user making the request
+Allowed values:
+admin
+editor
+viewer
+dependent_agents
+list of objects or null
+List of agents that depend on this MCP Server.
+
+Hide 2 variants
+DependentAvailableAgentIdentifier
+object
+
+Hide 5 properties
+id
+string
+name
+string
+created_at_unix_secs
+integer
+access_level
+enum
+Allowed values:
+admin
+editor
+viewer
+type
+"available" or null
+Defaults to available
+OR
+DependentUnknownAgentIdentifier
+object
+
+Hide 1 properties
+type
+"unknown" or null
+Defaults to unknown
+Errors
+
+422
+Unprocessable Entity Error
+Was this page helpful?
+Yes
+No
+Previous
+Get MCP server
+Next
+Built with
+List MCP servers | ElevenLabs Documentation
+Need help?
+Powered by ElevenLabs Conversational AI
