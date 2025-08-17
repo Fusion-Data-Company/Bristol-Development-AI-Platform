@@ -61,7 +61,7 @@ import { Link, useLocation } from "wouter";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
-import { ModelSelector } from '@/components/ModelSelector';
+
 
 interface PremiumModel {
   id: string;
@@ -1666,7 +1666,7 @@ What property or investment can I analyze for you today?`,
           
           <div className="flex flex-wrap items-center gap-6">
             
-            {/* Clean Model Selector */}
+            {/* AI Model Selector */}
             <div className="flex-1 relative">
               <label className="block text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                 <Brain className="h-3 w-3 animate-pulse" />
@@ -1674,9 +1674,9 @@ What property or investment can I analyze for you today?`,
               </label>
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-orange-500/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
-                <ModelSelector
-                  value={model}
-                  onChange={(newModel: string) => {
+                <Select 
+                  value={model} 
+                  onValueChange={(newModel: string) => {
                     console.log(`🎯 Chat Model Change: ${model} → ${newModel}`);
                     setModel(newModel);
                     setLastConfirmedModel(newModel);
@@ -1692,39 +1692,46 @@ What property or investment can I analyze for you today?`,
                     // Show confirmation toast
                     console.log(`✅ Model successfully changed to: ${newModel}`);
                   }}
-                  onConfirmChange={async (oldModel: string, newModel: string) => {
-                    console.log(`🔄 Confirming model change: ${oldModel} → ${newModel}`);
-                    
-                    // Test model availability before confirming
-                    try {
-                      setModelLoadingStream(true);
-                      const response = await fetch('/api/openrouter-models');
-                      const models = await response.json();
-                      const targetModel = models.find((m: any) => m.id === newModel);
-                      
-                      if (!targetModel || targetModel.available === false) {
-                        console.warn(`⚠️ Model ${newModel} is not available`);
-                        return false;
-                      }
-                      
-                      console.log(`✅ Model ${newModel} confirmed available`);
-                      return true;
-                    } catch (error) {
-                      console.error('Model validation failed:', error);
-                      return false;
-                    } finally {
-                      setModelLoadingStream(false);
-                    }
-                  }}
-                  modelList={modelList}
-                  loading={modelLoadingStream || modelsLoading}
-                  error={modelError}
-                  onRefresh={() => {
-                    console.log('🔄 Refreshing models from OpenRouter...');
-                    refetchModels();
-                  }}
-                  showConfirmation={true}
-                />
+                >
+                  <SelectTrigger 
+                    className="chrome-metallic-selector w-full border-bristol-cyan/60 bg-slate-900/80 text-white hover:border-bristol-cyan/80 focus:border-bristol-cyan focus:ring-bristol-cyan/20 relative z-10"
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.95) 100%)',
+                      border: '1px solid rgba(69, 214, 202, 0.6)',
+                      boxShadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3)',
+                    }}
+                  >
+                    <SelectValue placeholder="Select AI Model" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-900 border-bristol-cyan/30 text-white">
+                    {modelList.map((model) => (
+                      <SelectItem 
+                        key={model.id} 
+                        value={model.id}
+                        className="text-white hover:bg-bristol-cyan/20 focus:bg-bristol-cyan/20 cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">
+                            {model.id.includes('gpt') || model.id.includes('openai') ? '🟢' :
+                             model.id.includes('claude') || model.id.includes('anthropic') ? '🔶' :
+                             model.id.includes('grok') || model.id.includes('x-ai') ? '⚡' :
+                             model.id.includes('gemini') || model.id.includes('google') ? '🔷' :
+                             model.id.includes('perplexity') || model.id.includes('sonar') ? '🔍' :
+                             model.id.includes('meta') || model.id.includes('llama') ? '🦙' : '🤖'}
+                          </span>
+                          <div>
+                            <div className="font-medium">{model.label}</div>
+                            {model.context && (
+                              <div className="text-xs text-slate-400">
+                                {model.context.toLocaleString()} tokens
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
