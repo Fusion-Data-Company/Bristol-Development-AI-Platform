@@ -686,6 +686,137 @@ export default function AnalyticsEnterprise() {
 
             {/* Live Intelligence */}
             <TabsContent value="intelligence" className="space-y-6">
+              {/* Live Market Intelligence from Perplexity Agent - MOVED TO TOP */}
+              <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
+                      <Activity className="h-6 w-6 text-bristol-gold" />
+                      Live Market Intelligence
+                      <Badge className="ml-3 bg-green-100 text-green-800">Perplexity AI</Badge>
+                    </CardTitle>
+                    <Button 
+                      onClick={() => refetchMarketIntelligence()}
+                      variant="outline" 
+                      size="sm"
+                      className="border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-bristol-stone text-sm">
+                    Real-time market intelligence from Perplexity Sonar Deep Research • Updates every 2 hours
+                  </p>
+                </CardHeader>
+                <CardContent>
+                  {marketIntelligenceLoading ? (
+                    <div className="flex items-center justify-center h-64">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-bristol-cyan"></div>
+                    </div>
+                  ) : (marketIntelligenceData as any)?.entries?.length > 0 ? (
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-12 gap-4 text-xs font-medium text-bristol-stone border-b pb-2">
+                        <div className="col-span-5">SUBJECT</div>
+                        <div className="col-span-2">CATEGORY</div>
+                        <div className="col-span-2">IMPACT</div>
+                        <div className="col-span-2">PRIORITY</div>
+                        <div className="col-span-1">TIME</div>
+                      </div>
+                      <ScrollArea className="h-72">
+                        <div className="space-y-1">
+                          {(marketIntelligenceData as any).entries.slice(0, 15).map((entry: any) => (
+                            <div 
+                              key={entry.id} 
+                              className="group grid grid-cols-12 gap-4 items-center p-3 hover:bg-bristol-cyan/5 rounded-lg cursor-pointer transition-all duration-200 relative"
+                              title={`Click to view details: ${entry.title}`}
+                            >
+                              {/* Hover Tooltip */}
+                              <div className="absolute left-0 top-full mt-2 w-96 bg-white border border-bristol-cyan/30 rounded-lg shadow-xl p-4 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                <div className="space-y-3">
+                                  <div>
+                                    <h4 className="font-semibold text-gray-800 mb-2">{entry.title}</h4>
+                                    <p className="text-sm text-gray-600 leading-relaxed">
+                                      {entry.description.length > 300 
+                                        ? `${entry.description.substring(0, 300)}...` 
+                                        : entry.description
+                                      }
+                                    </p>
+                                  </div>
+                                  <div className="bg-bristol-cyan/5 p-3 rounded-lg border border-bristol-cyan/20">
+                                    <div className="text-xs font-medium text-bristol-cyan mb-1">Bristol Implication:</div>
+                                    <div className="text-sm text-gray-800">{entry.bristolImplication}</div>
+                                  </div>
+                                  <div className="flex items-center justify-between text-xs text-bristol-stone">
+                                    <span>Source: {entry.source}</span>
+                                    <span>{entry.timeAgo}</span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Table Row */}
+                              <div className="col-span-5">
+                                <div className="text-sm font-medium text-gray-800 truncate">
+                                  {entry.title}
+                                </div>
+                              </div>
+                              <div className="col-span-2">
+                                <Badge 
+                                  className={cn(
+                                    "text-xs",
+                                    entry.category === 'monetary_policy' ? 'bg-red-100 text-red-800' :
+                                    entry.category === 'demographics' ? 'bg-blue-100 text-blue-800' :
+                                    entry.category === 'development' ? 'bg-green-100 text-green-800' :
+                                    entry.category === 'capital_markets' ? 'bg-purple-100 text-purple-800' :
+                                    entry.category === 'employment' ? 'bg-orange-100 text-orange-800' :
+                                    entry.category === 'regulatory' ? 'bg-indigo-100 text-indigo-800' :
+                                    'bg-gray-100 text-gray-800'
+                                  )}
+                                >
+                                  {entry.category.replace('_', ' ')}
+                                </Badge>
+                              </div>
+                              <div className="col-span-2">
+                                <Badge 
+                                  className={cn(
+                                    "text-xs",
+                                    entry.impact === 'high' ? 'bg-red-100 text-red-800' :
+                                    entry.impact === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                  )}
+                                >
+                                  {entry.impact}
+                                </Badge>
+                              </div>
+                              <div className="col-span-2">
+                                <span className="text-sm font-medium text-bristol-cyan">
+                                  {entry.priority}/10
+                                </span>
+                              </div>
+                              <div className="col-span-1">
+                                <span className="text-xs text-bristol-stone">
+                                  {entry.timeAgo.replace(' ago', '')}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </ScrollArea>
+                      <div className="pt-2 border-t text-xs text-bristol-stone">
+                        Showing {Math.min(15, (marketIntelligenceData as any).entries.length)} of {(marketIntelligenceData as any).total} entries
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Activity className="h-12 w-12 text-bristol-stone mx-auto mb-4 opacity-50" />
+                      <p className="text-bristol-stone">Loading market intelligence...</p>
+                      <p className="text-sm text-bristol-stone mt-2">
+                        Perplexity AI agent gathering real-time market data
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
               {liveLoading ? (
                 <div className="flex items-center justify-center h-64">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bristol-cyan"></div>
@@ -777,136 +908,7 @@ export default function AnalyticsEnterprise() {
                     </CardContent>
                   </Card>
 
-                  {/* Live Market Intelligence from Perplexity Agent */}
-                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
-                          <Activity className="h-6 w-6 text-bristol-gold" />
-                          Live Market Intelligence
-                          <Badge className="ml-3 bg-green-100 text-green-800">Perplexity AI</Badge>
-                        </CardTitle>
-                        <Button 
-                          onClick={() => refetchMarketIntelligence()}
-                          variant="outline" 
-                          size="sm"
-                          className="border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10"
-                        >
-                          <RefreshCw className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      <p className="text-bristol-stone text-sm">
-                        Real-time market intelligence from Perplexity Sonar Deep Research • Updates every 2 hours
-                      </p>
-                    </CardHeader>
-                    <CardContent>
-                      {marketIntelligenceLoading ? (
-                        <div className="flex items-center justify-center h-64">
-                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-bristol-cyan"></div>
-                        </div>
-                      ) : (marketIntelligenceData as any)?.entries?.length > 0 ? (
-                        <div className="space-y-2">
-                          <div className="grid grid-cols-12 gap-4 text-xs font-medium text-bristol-stone border-b pb-2">
-                            <div className="col-span-5">SUBJECT</div>
-                            <div className="col-span-2">CATEGORY</div>
-                            <div className="col-span-2">IMPACT</div>
-                            <div className="col-span-2">PRIORITY</div>
-                            <div className="col-span-1">TIME</div>
-                          </div>
-                          <ScrollArea className="h-72">
-                            <div className="space-y-1">
-                              {(marketIntelligenceData as any).entries.slice(0, 15).map((entry: any) => (
-                                <div 
-                                  key={entry.id} 
-                                  className="group grid grid-cols-12 gap-4 items-center p-3 hover:bg-bristol-cyan/5 rounded-lg cursor-pointer transition-all duration-200 relative"
-                                  title={`Click to view details: ${entry.title}`}
-                                >
-                                  {/* Hover Tooltip */}
-                                  <div className="absolute left-0 top-full mt-2 w-96 bg-white border border-bristol-cyan/30 rounded-lg shadow-xl p-4 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                                    <div className="space-y-3">
-                                      <div>
-                                        <h4 className="font-semibold text-gray-800 mb-2">{entry.title}</h4>
-                                        <p className="text-sm text-gray-600 leading-relaxed">
-                                          {entry.description.length > 300 
-                                            ? `${entry.description.substring(0, 300)}...` 
-                                            : entry.description
-                                          }
-                                        </p>
-                                      </div>
-                                      <div className="bg-bristol-cyan/5 p-3 rounded-lg border border-bristol-cyan/20">
-                                        <div className="text-xs font-medium text-bristol-cyan mb-1">Bristol Implication:</div>
-                                        <div className="text-sm text-gray-800">{entry.bristolImplication}</div>
-                                      </div>
-                                      <div className="flex items-center justify-between text-xs text-bristol-stone">
-                                        <span>Source: {entry.source}</span>
-                                        <span>{entry.timeAgo}</span>
-                                      </div>
-                                    </div>
-                                  </div>
 
-                                  {/* Table Row */}
-                                  <div className="col-span-5">
-                                    <div className="text-sm font-medium text-gray-800 truncate">
-                                      {entry.title}
-                                    </div>
-                                  </div>
-                                  <div className="col-span-2">
-                                    <Badge 
-                                      className={cn(
-                                        "text-xs",
-                                        entry.category === 'monetary_policy' ? 'bg-red-100 text-red-800' :
-                                        entry.category === 'demographics' ? 'bg-blue-100 text-blue-800' :
-                                        entry.category === 'development' ? 'bg-green-100 text-green-800' :
-                                        entry.category === 'capital_markets' ? 'bg-purple-100 text-purple-800' :
-                                        entry.category === 'employment' ? 'bg-orange-100 text-orange-800' :
-                                        entry.category === 'regulatory' ? 'bg-indigo-100 text-indigo-800' :
-                                        'bg-gray-100 text-gray-800'
-                                      )}
-                                    >
-                                      {entry.category.replace('_', ' ')}
-                                    </Badge>
-                                  </div>
-                                  <div className="col-span-2">
-                                    <Badge 
-                                      className={cn(
-                                        "text-xs",
-                                        entry.impact === 'high' ? 'bg-red-100 text-red-800' :
-                                        entry.impact === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                                        'bg-gray-100 text-gray-800'
-                                      )}
-                                    >
-                                      {entry.impact}
-                                    </Badge>
-                                  </div>
-                                  <div className="col-span-2">
-                                    <span className="text-sm font-medium text-bristol-cyan">
-                                      {entry.priority}/10
-                                    </span>
-                                  </div>
-                                  <div className="col-span-1">
-                                    <span className="text-xs text-bristol-stone">
-                                      {entry.timeAgo.replace(' ago', '')}
-                                    </span>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </ScrollArea>
-                          <div className="pt-2 border-t text-xs text-bristol-stone">
-                            Showing {Math.min(15, (marketIntelligenceData as any).entries.length)} of {(marketIntelligenceData as any).total} entries
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="text-center py-12">
-                          <Activity className="h-12 w-12 text-bristol-stone mx-auto mb-4 opacity-50" />
-                          <p className="text-bristol-stone">Loading market intelligence...</p>
-                          <p className="text-sm text-bristol-stone mt-2">
-                            Perplexity AI agent gathering real-time market data
-                          </p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
 
                   {/* Economic Calendar & Alerts */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
