@@ -1422,7 +1422,7 @@ What property or investment can I analyze for you today?`,
         <div className="h-screen w-screen flex">
         {/* Cyberpunk Glassomorphic Panel - Full Height with Fixed Layout - EXACT REPLICA OF FLOATING WIDGET */}
         <div 
-        className="w-full h-screen text-neutral-100 shadow-2xl flex flex-col chrome-metallic-panel font-cinzel"
+        className="w-full h-screen text-neutral-100 shadow-2xl flex flex-col chrome-metallic-panel font-cinzel overflow-visible"
         style={{
           background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 25%, rgba(51, 65, 85, 0.92) 50%, rgba(30, 41, 59, 0.95) 75%, rgba(15, 23, 42, 0.98) 100%)',
           backdropFilter: 'blur(25px) saturate(180%)',
@@ -1436,7 +1436,7 @@ What property or investment can I analyze for you today?`,
         }}
       >
         {/* Premium Glass Header */}
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-visible">
           {/* Ambient glow effects */}
           <div className="absolute -top-10 -left-10 w-40 h-40 bg-bristol-cyan/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute -top-5 -right-10 w-32 h-32 bg-bristol-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
@@ -1818,7 +1818,7 @@ What property or investment can I analyze for you today?`,
 
         {/* Tabbed Content Area - Exact from floating widget */}
         <div 
-          className="flex-1 min-h-0 relative flex flex-col overflow-hidden"
+          className="flex-1 min-h-0 relative flex flex-col overflow-visible"
           style={{
             background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.3) 0%, rgba(30, 41, 59, 0.2) 50%, rgba(15, 23, 42, 0.4) 100%)',
           }}
