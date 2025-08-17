@@ -76,8 +76,16 @@ export default function EnterpriseDashboard() {
         <div className="relative px-6 py-8">
           <div className="container mx-auto max-w-7xl space-y-8">
             
-            {/* Elite Header with Status - Ultra Premium Glass */}
-            <div className="bg-white/98 backdrop-blur-2xl rounded-3xl shadow-[0_32px_64px_rgba(0,0,0,0.3)] border-2 border-white/60 p-10 ring-2 ring-white/50 hover:shadow-[0_40px_80px_rgba(0,0,0,0.4)] transition-all duration-500">
+            {/* Elite Header with Status - Stucco Glass Texture */}
+            <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-[0_32px_64px_rgba(0,0,0,0.3)] border-2 border-gray-200/80 p-10 ring-2 ring-gray-100/70 hover:shadow-[0_40px_80px_rgba(0,0,0,0.4)] transition-all duration-500" style={{
+              backgroundImage: `
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.8) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(248,250,252,0.9) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(241,245,249,0.7) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%)
+              `,
+              backgroundSize: '200px 200px, 150px 150px, 180px 180px, 100% 100%'
+            }}>
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-6">
                   <div className="relative">
@@ -181,8 +189,16 @@ export default function EnterpriseDashboard() {
               </div>
             </div>
 
-            {/* Enhanced Analytics Dashboard - Ultra Premium Glass Container */}
-            <div className="bg-white/98 backdrop-blur-2xl rounded-3xl shadow-[0_32px_64px_rgba(0,0,0,0.3)] border-2 border-white/60 p-10 ring-2 ring-white/50 hover:shadow-[0_40px_80px_rgba(0,0,0,0.4)] transition-all duration-500">
+            {/* Enhanced Analytics Dashboard - Stucco Glass Container */}
+            <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-[0_32px_64px_rgba(0,0,0,0.3)] border-2 border-gray-200/80 p-10 ring-2 ring-gray-100/70 hover:shadow-[0_40px_80px_rgba(0,0,0,0.4)] transition-all duration-500" style={{
+              backgroundImage: `
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(248,250,252,0.9) 0%, transparent 50%),
+                radial-gradient(circle at 50% 20%, rgba(241,245,249,0.7) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%)
+              `,
+              backgroundSize: '180px 180px, 160px 160px, 200px 200px, 100% 100%'
+            }}>
               <EnterpriseAnalyticsDashboard />
             </div>
 
@@ -190,7 +206,14 @@ export default function EnterpriseDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               
               {/* Performance Metrics */}
-              <Card className="bg-white/98 backdrop-blur-2xl border-3 border-white/60 shadow-[0_24px_48px_rgba(0,0,0,0.3)] ring-2 ring-white/50 hover:shadow-[0_32px_64px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500">
+              <Card className="backdrop-blur-xl border-2 border-gray-200/80 shadow-[0_24px_48px_rgba(0,0,0,0.3)] ring-2 ring-gray-100/70 hover:shadow-[0_32px_64px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500" style={{
+                background: `
+                  radial-gradient(circle at 25% 25%, rgba(255,255,255,0.9) 0%, transparent 50%),
+                  radial-gradient(circle at 75% 75%, rgba(248,250,252,0.8) 0%, transparent 50%),
+                  linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.9) 100%)
+                `,
+                backgroundSize: '120px 120px, 140px 140px, 100% 100%'
+              }}>
                 <CardHeader className="pb-4 border-b border-gray-100">
                   <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
                     <div className="p-2 bg-gradient-to-r from-bristol-maroon to-amber-600 rounded-lg shadow-md">
@@ -223,7 +246,14 @@ export default function EnterpriseDashboard() {
               </Card>
 
               {/* System Health */}
-              <Card className="bg-white/98 backdrop-blur-2xl border-3 border-white/60 shadow-[0_24px_48px_rgba(0,0,0,0.3)] ring-2 ring-white/50 hover:shadow-[0_32px_64px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500">
+              <Card className="backdrop-blur-xl border-2 border-gray-200/80 shadow-[0_24px_48px_rgba(0,0,0,0.3)] ring-2 ring-gray-100/70 hover:shadow-[0_32px_64px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500" style={{
+                background: `
+                  radial-gradient(circle at 35% 35%, rgba(255,255,255,0.9) 0%, transparent 50%),
+                  radial-gradient(circle at 65% 65%, rgba(248,250,252,0.8) 0%, transparent 50%),
+                  linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.9) 100%)
+                `,
+                backgroundSize: '130px 130px, 150px 150px, 100% 100%'
+              }}>
                 <CardHeader className="pb-4 border-b border-gray-100">
                   <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
                     <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-lg shadow-md">
@@ -256,7 +286,14 @@ export default function EnterpriseDashboard() {
               </Card>
 
               {/* Quick Actions */}
-              <Card className="bg-white/98 backdrop-blur-2xl border-3 border-white/60 shadow-[0_24px_48px_rgba(0,0,0,0.3)] ring-2 ring-white/50 hover:shadow-[0_32px_64px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500">
+              <Card className="backdrop-blur-xl border-2 border-gray-200/80 shadow-[0_24px_48px_rgba(0,0,0,0.3)] ring-2 ring-gray-100/70 hover:shadow-[0_32px_64px_rgba(0,0,0,0.4)] hover:scale-105 transition-all duration-500" style={{
+                background: `
+                  radial-gradient(circle at 40% 20%, rgba(255,255,255,0.9) 0%, transparent 50%),
+                  radial-gradient(circle at 60% 80%, rgba(248,250,252,0.8) 0%, transparent 50%),
+                  linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(248,250,252,0.9) 100%)
+                `,
+                backgroundSize: '140px 140px, 160px 160px, 100% 100%'
+              }}>
                 <CardHeader className="pb-4 border-b border-gray-100">
                   <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
                     <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg shadow-md">
