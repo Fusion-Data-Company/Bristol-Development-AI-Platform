@@ -307,7 +307,7 @@ export class EliteMCPSuperserver {
         name: { type: 'string', required: true }
       },
       handler: async (params) => {
-        const searchName = params.name.toLowerCase().trim();
+        const searchName = (params.name || params.userId || '').toLowerCase().trim();
         
         // Direct match first
         let user = this.bristolTeamCache.get(searchName);
