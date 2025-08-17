@@ -3,6 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useQuery } from '@tanstack/react-query';
 import SimpleChrome from '@/components/brand/SimpleChrome';
+import bristolMapsBg from "@assets/thumbnail-1_1755405960845.jpg";
 
 // Valid Mapbox token
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtZWRnM3IwbjA3M3IybG1zNnAzeWtuZ3EifQ.mif4Tbd3ceKQh6YAS8EPDQ';
@@ -242,8 +243,19 @@ export default function Maps2() {
   return (
     <SimpleChrome>
       <div className="relative w-full h-screen">
+        {/* Bristol Background Image */}
+        <div 
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40"
+          style={{
+            backgroundImage: `url(${bristolMapsBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        ></div>
+        <div className="absolute inset-0 bg-white/20"></div>
+        
         {/* Map Container */}
-        <div ref={mapContainer} className="w-full h-full" />
+        <div ref={mapContainer} className="w-full h-full relative z-10" />
         
         {/* Bristol Intelligence Overlay */}
         <div className="absolute top-4 left-4 bg-black/90 backdrop-blur rounded-lg px-4 py-3 border border-gray-700">

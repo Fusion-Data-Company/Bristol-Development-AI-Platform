@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Settings, CheckCircle, XCircle, Loader2, Plus, Trash2, Eye, EyeOff, Plug } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
 import { apiRequest } from "@/lib/queryClient";
+import bristolIntegrationsBg from "@assets/Icon+5_1755405970384.webp";
 
 interface Tool {
   id: string;
@@ -44,7 +45,7 @@ export default function Integrations() {
     onSuccess: (data) => {
       toast({
         title: data.ok ? "OneDrive Connected" : "OneDrive Error",
-        description: data.ok ? `Found ${data.data?.value?.length || 0} items` : (data.message || "MS keys not configured"),
+        description: data.ok ? `Found ${(data as any).data?.value?.length || 0} items` : ((data as any).message || "MS keys not configured"),
         variant: data.ok ? "default" : "destructive",
       });
     },
@@ -55,7 +56,7 @@ export default function Integrations() {
     onSuccess: (data) => {
       toast({
         title: data.ok ? "Email Connected" : "Email Error", 
-        description: data.ok ? `Retrieved ${data.data?.value?.length || 0} emails` : (data.message || "MS keys not configured"),
+        description: data.ok ? `Retrieved ${(data as any).data?.value?.length || 0} emails` : ((data as any).message || "MS keys not configured"),
         variant: data.ok ? "default" : "destructive",
       });
     },
@@ -102,8 +103,20 @@ export default function Integrations() {
 
   return (
     <Chrome>
-      <div className="container mx-auto px-4 py-6 space-y-6">
-        <h1 className="text-3xl font-bold">Integrations</h1>
+      <div className="min-h-screen relative overflow-hidden">
+        {/* Bristol Background Image */}
+        <div 
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-30"
+          style={{
+            backgroundImage: `url(${bristolIntegrationsBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        ></div>
+        <div className="absolute inset-0 bg-white/20"></div>
+        
+        <div className="container mx-auto px-4 py-6 space-y-6 relative z-10">
+          <h1 className="text-3xl font-bold">Integrations</h1>
 
         {/* Microsoft 365 Section */}
         <Card>
@@ -268,6 +281,7 @@ export default function Integrations() {
           </CardContent>
         </Card>
         
+        </div>
       </div>
     </Chrome>
   );

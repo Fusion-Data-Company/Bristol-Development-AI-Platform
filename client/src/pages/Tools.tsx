@@ -9,7 +9,7 @@ import { HUDTool } from "../components/tools/HUDTool";
 import { FoursquareTool } from "../components/tools/FoursquareTool";
 import { FBITool } from "../components/tools/FBITool";
 import { NOAATool } from "../components/tools/NOAATool";
-import circuitWorldBg from "@assets/peakpx_1755125718140.jpg";
+import bristolToolsBg from "@assets/Icon+1_1755405975901.webp";
 
 export function Tools() {
   const [activeTab, setActiveTab] = useState("bls");
@@ -17,11 +17,11 @@ export function Tools() {
   return (
     <Chrome>
       <div className="min-h-screen relative overflow-hidden">
-        {/* Circuit World Map Background */}
+        {/* Bristol Background Image */}
         <div 
-          className="absolute inset-0 bg-center bg-no-repeat opacity-50"
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40"
           style={{
-            backgroundImage: `url(${circuitWorldBg})`,
+            backgroundImage: `url(${bristolToolsBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}

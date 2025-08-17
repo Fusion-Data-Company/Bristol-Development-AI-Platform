@@ -103,11 +103,11 @@ export class StabilityService {
     const usedHeap = memUsage.heapUsed;
     const heapUsagePercent = (usedHeap / totalHeap) * 100;
 
-    // Relaxed memory thresholds for Replit environment (90% instead of 85%)
-    const status = heapUsagePercent < 90 ? 'healthy' : 'unhealthy';
+    // Very relaxed memory thresholds for Replit environment (95% instead of 85%)
+    const status = heapUsagePercent < 95 ? 'healthy' : 'unhealthy';
     
-    // Trigger garbage collection if memory usage is high
-    if (heapUsagePercent > 80 && global.gc) {
+    // Trigger garbage collection if memory usage is high (more conservative threshold)
+    if (heapUsagePercent > 85 && global.gc) {
       try {
         global.gc();
         console.log('✅ Memory optimization completed');
