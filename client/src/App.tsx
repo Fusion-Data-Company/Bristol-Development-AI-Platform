@@ -116,11 +116,7 @@ function AppContent() {
             }}
           />
       )}
-      
-      {/* ElevenLabs ConvAI Widget - Global across all authenticated pages */}
-      {isAuthenticated && (
-        <ElevenLabsWidget agentId="agent_8801k2t62y9qehhsqqdmzmp10kt9" position="bottom-right" />
-      )}
+
     </>
   );
 }

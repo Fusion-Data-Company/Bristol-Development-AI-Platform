@@ -85,6 +85,7 @@ import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
 import { AIMultiModalGeneration } from '@/components/ui/ai-gen-simple';
+import ElevenLabsWidget from '@/components/ElevenLabsWidget';
 
 
 interface PremiumModel {
@@ -214,6 +215,7 @@ export default function Chat() {
   const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
   const [controlPanelExpanded, setControlPanelExpanded] = useState(false);
   const [showAIGeneration, setShowAIGeneration] = useState(false);
+  const [showElevenLabsVoice, setShowElevenLabsVoice] = useState(false);
   const [model, setModel] = useState("openai/gpt-4o");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [pendingModel, setPendingModel] = useState<string | null>(null);
@@ -1589,6 +1591,22 @@ What property or investment can I analyze for you today?`,
               >
                 <HelpCircle className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
               </button>
+
+              {/* ElevenLabs Voice Chat Toggle */}
+              <button 
+                onClick={() => setShowElevenLabsVoice(!showElevenLabsVoice)} 
+                className={cx(
+                  "p-2 rounded-xl transition-all duration-300 group relative",
+                  "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
+                  "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
+                  "hover:shadow-lg hover:shadow-bristol-cyan/20",
+                  showElevenLabsVoice && "bg-bristol-cyan/20 border-bristol-cyan/60"
+                )}
+                aria-label="ElevenLabs Voice Chat"
+                title="Voice Chat with Bristol A.I. Elite"
+              >
+                <Mic className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+              </button>
             </div>
           </div>
         </div>
@@ -2162,6 +2180,32 @@ What property or investment can I analyze for you today?`,
           onClose={() => setShowOnboarding(false)}
           appData={appData}
         />
+
+        {/* ElevenLabs Voice Chat Widget */}
+        {showElevenLabsVoice && (
+          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+            <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 m-4 max-w-md w-full">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">Bristol A.I. Elite Voice Chat</h3>
+                <button
+                  onClick={() => setShowElevenLabsVoice(false)}
+                  className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                >
+                  <X className="w-5 h-5 text-zinc-500" />
+                </button>
+              </div>
+              <div className="text-center">
+                <ElevenLabsWidget 
+                  agentId="agent_8801k2t62y9qehhsqqdmzmp10kt9" 
+                  position="bottom-right" 
+                />
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mt-4">
+                  Click the microphone button to start a voice conversation with Bristol A.I. Elite.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         </div>
       </div>
       </div>
