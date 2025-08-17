@@ -30,33 +30,92 @@
   <body>
     <div id="root"></div>
     
-    <!-- ElevenLabs ConvAI Widget - Must be placed in body -->
-    <elevenlabs-convai agent-id="agent_8801k2t62y9qehhsqqdmzmp10kt9"></elevenlabs-convai>
+    <!-- ElevenLabs ConvAI Widget Script - Original CDN -->
+    <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
     
-    <!-- ElevenLabs ConvAI Widget Script - Load after widget element -->
-    <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" type="text/javascript"></script>
+    <!-- ElevenLabs ConvAI Widget with Manual Styling -->
+    <elevenlabs-convai 
+      agent-id="agent_8801k2t62y9qehhsqqdmzmp10kt9"
+      style="position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 9999 !important; display: block !important; visibility: visible !important; opacity: 1 !important; min-width: 60px !important; min-height: 60px !important;">
+    </elevenlabs-convai>
     
-    <!-- Debug ElevenLabs Widget -->
+    <!-- Fallback Test Widget -->
+    <div id="fallback-widget" style="position: fixed; bottom: 20px; right: 20px; z-index: 9998; width: 60px; height: 60px; background: #8B1538; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; font-weight: bold;">
+      EL
+    </div>
+    
+    <!-- Enhanced Debug and Troubleshooting -->
     <script>
-      // Debug widget loading
-      console.log('ElevenLabs widget element:', document.querySelector('elevenlabs-convai'));
+      console.log('=== ElevenLabs Widget Debug v2 ===');
       
-      // Check for widget initialization
+      // Check script loading
+      let scriptLoaded = false;
+      let widgetRegistered = false;
+      
+      // Monitor script loading
       document.addEventListener('DOMContentLoaded', function() {
-        const widget = document.querySelector('elevenlabs-convai');
-        if (widget) {
-          console.log('✅ ElevenLabs widget found in DOM');
-          console.log('Agent ID:', widget.getAttribute('agent-id'));
-        } else {
-          console.log('❌ ElevenLabs widget not found');
+        console.log('DOM ready, checking script load...');
+        
+        // Check if script loaded
+        const scripts = document.querySelectorAll('script[src*="convai-widget-embed"]');
+        console.log('Widget scripts found:', scripts.length);
+        
+        // Wait and check custom element registration
+        setTimeout(function() {
+          const customElementDefined = customElements.get('elevenlabs-convai');
+          console.log('Custom element registered:', !!customElementDefined);
+          
+          const widget = document.querySelector('elevenlabs-convai');
+          const fallback = document.querySelector('#fallback-widget');
+          
+          console.log('Widget element found:', !!widget);
+          console.log('Fallback element found:', !!fallback);
+          
+          if (widget) {
+            console.log('Widget innerHTML:', widget.innerHTML);
+            console.log('Widget shadow DOM:', widget.shadowRoot);
+            console.log('Widget styles:', window.getComputedStyle(widget));
+            
+            // Try to manually trigger widget initialization
+            if (widget.connectedCallback && typeof widget.connectedCallback === 'function') {
+              console.log('Manually calling connectedCallback');
+              widget.connectedCallback();
+            }
+          }
+          
+          // Hide fallback if ElevenLabs widget is working
+          if (widget && widget.shadowRoot && fallback) {
+            fallback.style.display = 'none';
+            console.log('ElevenLabs widget appears to be working, hiding fallback');
+          } else if (fallback) {
+            console.log('ElevenLabs widget not working, showing fallback');
+            fallback.onclick = function() {
+              alert('ElevenLabs widget failed to load. Please check:\n1. Agent is public with auth disabled\n2. Domain is whitelisted\n3. Network connectivity');
+            };
+          }
+        }, 3000);
+      });
+      
+      // Monitor any errors
+      window.addEventListener('error', function(e) {
+        if (e.message && e.message.toLowerCase().includes('elevenlabs')) {
+          console.error('ElevenLabs error:', e);
         }
       });
       
-      // Listen for any widget errors
-      window.addEventListener('error', function(e) {
-        if (e.message && e.message.includes('elevenlabs')) {
-          console.log('ElevenLabs error:', e.message);
-        }
+      // Check for network failures
+      window.addEventListener('load', function() {
+        fetch('https://unpkg.com/@elevenlabs/convai-widget-embed')
+          .then(response => {
+            console.log('ElevenLabs script fetch status:', response.status);
+            return response.text();
+          })
+          .then(text => {
+            console.log('ElevenLabs script loaded successfully, size:', text.length);
+          })
+          .catch(error => {
+            console.error('Failed to fetch ElevenLabs script:', error);
+          });
       });
     </script>
     
