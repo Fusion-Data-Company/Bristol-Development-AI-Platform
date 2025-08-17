@@ -104,18 +104,17 @@ export default function Integrations() {
   return (
     <Chrome>
       <div className="min-h-screen relative overflow-hidden">
-        {/* Bristol Background Image */}
+        {/* Bristol Background Image - Super HD Clear */}
         <div 
-          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-30"
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat"
           style={{
             backgroundImage: `url(${bristolIntegrationsBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         ></div>
-        <div className="absolute inset-0 bg-white/20"></div>
         
-        <div className="container mx-auto px-4 py-6 space-y-6 relative z-10">
+        <div className="container mx-auto px-4 py-6 space-y-6 relative z-10 bg-white/85 backdrop-blur-sm min-h-screen">
           <h1 className="text-3xl font-bold">Integrations</h1>
 
         {/* Microsoft 365 Section */}

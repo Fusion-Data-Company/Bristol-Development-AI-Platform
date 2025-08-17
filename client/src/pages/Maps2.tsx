@@ -243,16 +243,15 @@ export default function Maps2() {
   return (
     <SimpleChrome>
       <div className="relative w-full h-screen">
-        {/* Bristol Background Image */}
+        {/* Bristol Background Image - Super HD Clear */}
         <div 
-          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40"
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat"
           style={{
             backgroundImage: `url(${bristolMapsBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         ></div>
-        <div className="absolute inset-0 bg-white/20"></div>
         
         {/* Map Container */}
         <div ref={mapContainer} className="w-full h-full relative z-10" />

@@ -17,18 +17,17 @@ export function Tools() {
   return (
     <Chrome>
       <div className="min-h-screen relative overflow-hidden">
-        {/* Bristol Background Image */}
+        {/* Bristol Background Image - Super HD Clear */}
         <div 
-          className="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-40"
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat"
           style={{
             backgroundImage: `url(${bristolToolsBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         ></div>
-        <div className="absolute inset-0 bg-white/10"></div>
 
-        <div className="container mx-auto px-4 py-8 relative z-10">
+        <div className="container mx-auto px-4 py-8 relative z-10 bg-white/85 backdrop-blur-sm min-h-screen">
           {/* Enterprise Elite Header */}
           <div className="mb-8 relative">
             <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/10 via-bristol-maroon/5 via-blue-600/8 to-orange-600/10 rounded-3xl blur-3xl animate-pulse"></div>
