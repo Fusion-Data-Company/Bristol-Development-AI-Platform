@@ -27,6 +27,7 @@ import ComparablesAnnex from "@/pages/ComparablesAnnex";
 import EnterpriseDashboard from "@/pages/EnterpriseDashboard";
 import EnhancedAgents from "@/pages/EnhancedAgents";
 import Maps2 from "@/pages/Maps2";
+import ThreeJSSandbox from "@/pages/ThreeJSSandbox";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -54,6 +55,7 @@ function Router() {
           <Route path="/agents" component={EnhancedAgents} />
           <Route path="/enhanced-agents" component={EnhancedAgents} />
           <Route path="/maps2" component={Maps2} />
+          <Route path="/sandbox" component={ThreeJSSandbox} />
         </>
       )}
       <Route component={NotFound} />
