@@ -48,7 +48,8 @@ import {
   FileText,
   Save,
   Trash2,
-  Map
+  Map,
+  Camera
 } from 'lucide-react';
 import { type ChatSession, type ChatMessage } from '@shared/schema';
 import { format } from 'date-fns';
@@ -61,6 +62,7 @@ import { Link, useLocation } from "wouter";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
+import { AIMultiModalGeneration } from '@/components/ui/ai-gen';
 
 
 interface PremiumModel {
@@ -189,6 +191,7 @@ export default function Chat() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
   const [controlPanelExpanded, setControlPanelExpanded] = useState(false);
+  const [showAIGeneration, setShowAIGeneration] = useState(false);
   const [model, setModel] = useState("openai/gpt-4o");
   const [modelList, setModelList] = useState<ModelOption[]>([]);
   const [pendingModel, setPendingModel] = useState<string | null>(null);
@@ -1534,6 +1537,22 @@ What property or investment can I analyze for you today?`,
                 <BarChart3 className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
               </button>
 
+              {/* AI Generation Toggle */}
+              <button 
+                onClick={() => setShowAIGeneration(!showAIGeneration)} 
+                className={cx(
+                  "p-2 rounded-xl transition-all duration-300 group relative",
+                  "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
+                  "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
+                  "hover:shadow-lg hover:shadow-bristol-cyan/20",
+                  showAIGeneration && "bg-bristol-cyan/20 border-bristol-cyan/60"
+                )}
+                aria-label="AI Content Generation"
+                title="Generate Images, Videos & Avatars"
+              >
+                <Camera className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+              </button>
+
               {/* Onboarding Guide Toggle */}
               <button 
                 onClick={() => setShowOnboarding(true)} 
@@ -1833,6 +1852,25 @@ What property or investment can I analyze for you today?`,
           {/* Chat Tab Content */}
           {activeTab === "chat" && (
             <div className="flex-1 overflow-hidden flex relative">
+              {/* AI Generation Modal Overlay */}
+              {showAIGeneration && (
+                <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                  <div className="relative w-full max-w-4xl h-full max-h-[90vh] mx-4">
+                    <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden h-full">
+                      <div className="absolute top-4 right-4 z-10">
+                        <button
+                          onClick={() => setShowAIGeneration(false)}
+                          className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+                        >
+                          <X className="w-5 h-5 text-zinc-500" />
+                        </button>
+                      </div>
+                      <AIMultiModalGeneration />
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               {/* Main chat area */}
               <div className={`overflow-hidden flex flex-col relative transition-all duration-300 ${
                 showArtifacts && artifacts.length > 0 ? 'flex-1 w-1/2' : 'flex-1 w-full'
