@@ -268,16 +268,22 @@ export function ModelSelector({
                   className={cn(
                     "w-full text-left px-3 py-2 rounded-lg transition-colors text-sm flex items-center gap-3",
                     model.id === value 
-                      ? "bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/30" 
-                      : "hover:bg-bristol-cyan/10 text-slate-300",
+                      ? "bg-bristol-cyan/20 text-white border border-bristol-cyan/30" 
+                      : "hover:bg-bristol-cyan/10 text-slate-300 hover:text-white",
                     model.available === false && "opacity-50 cursor-not-allowed"
                   )}
                 >
                   <span className="text-lg">{getProviderEmoji(model.id)}</span>
                   <div className="flex-1">
-                    <div className="font-medium">{model.label}</div>
+                    <div className={cn(
+                      "font-medium",
+                      model.id === value ? "text-white" : ""
+                    )}>{model.label}</div>
                     {model.context && (
-                      <div className="text-xs text-slate-400">
+                      <div className={cn(
+                        "text-xs",
+                        model.id === value ? "text-slate-200" : "text-slate-400"
+                      )}>
                         {model.context.toLocaleString()} tokens
                       </div>
                     )}
