@@ -259,6 +259,8 @@ class UnifiedMemoryManager {
     return Math.min(score, 10);
   }
 
+
+
   async syncAcrossAgents(userId: string): Promise<void> {
     // Ensure all agents have access to the same conversation context
     const history = await this.getConversationHistory(userId);
@@ -402,6 +404,67 @@ export class EliteMCPSuperserver {
       },
       cacheable: true,
       cacheTime: 60
+    });
+
+    this.registerTool({
+      name: 'search_conversations',
+      category: 'memory',
+      description: 'Search through conversation history with keywords',
+      parameters: {
+        userId: { type: 'string', required: true },
+        query: { type: 'string', required: true },
+        limit: { type: 'number', default: 10 }
+      },
+      handler: async (params) => {
+        try {
+          // Search through chat messages for the user
+          const sessions = await db.select()
+            .from(chatSessions)
+            .where(eq(chatSessions.userId, params.userId))
+            .orderBy(desc(chatSessions.lastMessageAt));
+
+          let allResults: any[] = [];
+          const searchTerms = params.query.toLowerCase().split(' ').filter(term => term.length > 2);
+
+          for (const session of sessions) {
+            const messages = await db.select()
+              .from(chatMessages)
+              .where(eq(chatMessages.sessionId, session.id))
+              .orderBy(desc(chatMessages.createdAt));
+
+            // Search for matching messages
+            for (const message of messages) {
+              const content = message.content.toLowerCase();
+              const hasMatch = searchTerms.some(term => content.includes(term));
+              
+              if (hasMatch) {
+                allResults.push({
+                  sessionId: session.id,
+                  role: message.role,
+                  content: message.content,
+                  timestamp: message.createdAt,
+                  metadata: message.metadata,
+                  relevanceScore: this.calculateRelevanceScore(message.content, searchTerms)
+                });
+              }
+            }
+          }
+
+          // Sort by relevance and limit
+          allResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
+          const results = allResults.slice(0, params.limit);
+
+          return {
+            results,
+            count: results.length,
+            query: params.query,
+            searchTerms
+          };
+        } catch (error) {
+          console.error('Search conversations failed:', error);
+          return { results: [], count: 0, error: error.message };
+        }
+      }
     });
 
     // Analytics Tools
@@ -886,6 +949,29 @@ export class EliteMCPSuperserver {
       }
       return results;
     }
+  }
+
+  private calculateRelevanceScore(content: string, searchTerms: string[]): number {
+    const contentLower = content.toLowerCase();
+    let relevance = 0;
+    
+    searchTerms.forEach(term => {
+      const termCount = (contentLower.match(new RegExp(term, 'g')) || []).length;
+      relevance += termCount * 2;
+      
+      // Bonus for exact matches
+      if (contentLower.includes(term)) {
+        relevance += 1;
+      }
+    });
+    
+    // Bonus for multiple term matches
+    const matchingTerms = searchTerms.filter(term => contentLower.includes(term));
+    if (matchingTerms.length > 1) {
+      relevance += matchingTerms.length * 3;
+    }
+    
+    return relevance;
   }
 
   private async performMarketResearch(query: string, depth: string): Promise<any> {
