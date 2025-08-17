@@ -30,50 +30,11 @@
   <body>
     <div id="root"></div>
     
-    <!-- ElevenLabs ConvAI Widget -->
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- ElevenLabs ConvAI Widget - Exact as specified -->
     <elevenlabs-convai agent-id="agent_8801k2t62y9qehhsqqdmzmp10kt9"></elevenlabs-convai>
     <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
-    
-    <!-- Debug script for ElevenLabs widget -->
-    <script>
-      window.addEventListener('load', function() {
-        console.log('🔍 Checking ElevenLabs widget status...');
-        
-        // Check if the custom element is defined
-        if (customElements.get('elevenlabs-convai')) {
-          console.log('✅ ElevenLabs custom element is registered');
-        } else {
-          console.log('❌ ElevenLabs custom element not registered');
-        }
-        
-        // Check if the widget element exists
-        const widget = document.querySelector('elevenlabs-convai');
-        if (widget) {
-          console.log('✅ ElevenLabs widget element found:', widget);
-          console.log('Widget agent-id:', widget.getAttribute('agent-id'));
-        } else {
-          console.log('❌ ElevenLabs widget element not found');
-        }
-        
-        // Listen for any ElevenLabs related errors
-        window.addEventListener('error', function(e) {
-          if (e.error && e.error.toString().includes('elevenlabs')) {
-            console.error('ElevenLabs error:', e.error);
-          }
-        });
-      });
-      
-      // Also check after a delay
-      setTimeout(() => {
-        const widget = document.querySelector('elevenlabs-convai');
-        console.log('🕐 ElevenLabs widget check after 3s:', widget ? 'Found' : 'Not found');
-        if (widget) {
-          console.log('Widget computed style:', window.getComputedStyle(widget));
-        }
-      }, 3000);
-    </script>
-    
-    <script type="module" src="/src/main.tsx"></script>
     <!-- Replit dev banner temporarily disabled due to map loading conflicts -->
     <!-- <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script> -->
   </body>
