@@ -1,4 +1,5 @@
 import React from 'react';
+import luxuryInteriorBg from '@assets/thumbnail-2_1755400030789.jpg';
 
 interface BackgroundProps {
   variant?: 'primary' | 'secondary' | 'accent' | 'dashboard' | 'data' | 'tools';
@@ -14,22 +15,8 @@ export const EnterpriseBackground: React.FC<BackgroundProps> = ({
   const getBackgroundClasses = () => {
     const base = "absolute inset-0 pointer-events-none";
     
-    const gradients = {
-      primary: "bg-gradient-to-br from-gray-900 via-slate-900 to-black",
-      secondary: "bg-gradient-to-br from-slate-800 via-gray-800 to-gray-900", 
-      accent: "bg-gradient-to-br from-bristol-maroon/10 via-black to-bristol-cyan/5",
-      dashboard: "bg-gradient-to-br from-slate-900 via-blue-900/30 to-black",
-      data: "bg-gradient-to-br from-emerald-900/20 via-slate-900 to-black",
-      tools: "bg-gradient-to-br from-purple-900/20 via-slate-900 to-black"
-    };
-
-    const overlays = {
-      subtle: "opacity-20",
-      medium: "opacity-30", 
-      strong: "opacity-40"
-    };
-
-    return `${base} ${gradients[variant]} ${overlays[intensity]}`;
+    // Now using luxury interior image as base for all variants
+    return `${base}`;
   };
 
   const getPatternClasses = () => {
@@ -81,11 +68,22 @@ export const EnterpriseBackground: React.FC<BackgroundProps> = ({
 
   return (
     <>
-      {/* Base gradient background */}
+      {/* Luxury interior background image */}
       <div className={getBackgroundClasses()}>
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url(${luxuryInteriorBg})`,
+            filter: 'brightness(0.8) contrast(1.1) saturate(0.9)',
+          }}
+        />
+        
+        {/* Professional overlay for crystal clarity */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/10 via-transparent to-slate-800/20" />
+        
         <div className={`absolute inset-0 ${getPatternClasses()}`}>
           {/* Animated grid overlay */}
-          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.015)_25%,rgba(255,255,255,0.015)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.015)_75%)] bg-[length:60px_60px]">
+          <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.005)_25%,rgba(255,255,255,0.005)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.005)_75%)] bg-[length:60px_60px]">
             {animated && (
               <div 
                 className="absolute inset-0 animate-pulse"
@@ -96,12 +94,12 @@ export const EnterpriseBackground: React.FC<BackgroundProps> = ({
             )}
           </div>
           
-          {/* Subtle mesh pattern */}
-          <div className="absolute inset-0 opacity-20">
+          {/* Subtle mesh pattern for enterprise sophistication */}
+          <div className="absolute inset-0 opacity-8">
             <svg className="absolute inset-0 h-full w-full" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="mesh" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse">
-                  <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,215,0,0.1)" strokeWidth="0.5"/>
+                  <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,215,0,0.2)" strokeWidth="0.3"/>
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#mesh)" />
