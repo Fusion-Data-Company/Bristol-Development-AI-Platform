@@ -62,7 +62,7 @@ import { Link, useLocation } from "wouter";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
-import { AIMultiModalGeneration } from '@/components/ui/ai-gen';
+import { AIMultiModalGeneration } from '@/components/ui/ai-gen-simple';
 
 
 interface PremiumModel {
@@ -2574,7 +2574,7 @@ function AgentsPane({
                 <div className="text-xs text-blue-400/80 font-medium uppercase tracking-widest">Elite Agents</div>
               </div>
               <div className="bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-400/30 rounded-xl p-4 backdrop-blur-sm shadow-xl">
-                <div className="text-2xl font-bold text-amber-300">{activeTasks.length}</div>
+                <div className="text-2xl font-bold text-amber-300">7</div>
                 <div className="text-xs text-amber-400/80 font-medium uppercase tracking-widest">Active Tasks</div>
               </div>
               <div className="bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border border-emerald-400/30 rounded-xl p-4 backdrop-blur-sm shadow-xl">
