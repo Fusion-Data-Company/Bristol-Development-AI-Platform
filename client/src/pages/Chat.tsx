@@ -1825,9 +1825,9 @@ What property or investment can I analyze for you today?`,
         >
           {/* Chat Tab Content */}
           {activeTab === "chat" && (
-            <div className="flex-1 overflow-hidden flex relative">
+            <div className="flex-1 overflow-visible flex relative">
               {/* Main chat area */}
-              <div className={`overflow-hidden flex flex-col relative transition-all duration-300 ${
+              <div className={`overflow-visible flex flex-col relative transition-all duration-300 ${
                 showArtifacts && artifacts.length > 0 ? 'flex-1 w-1/2' : 'flex-1 w-full'
               }`}>
               {/* Background tint overlay for chat area */}
@@ -1843,7 +1843,7 @@ What property or investment can I analyze for you today?`,
               
               {/* Chat Messages Area */}
               <div 
-                className="relative z-0 flex-1 overflow-hidden flex flex-col"
+                className="relative z-0 flex-1 overflow-visible flex flex-col"
                 style={{
                   backgroundImage: `url(${chatBackgroundImg})`,
                   backgroundSize: 'cover',
