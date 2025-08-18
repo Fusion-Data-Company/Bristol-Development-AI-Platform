@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertCircle, Building2, MapPin, Calendar, TrendingUp, Users, Activity, Play, RefreshCw } from 'lucide-react';
+import { AlertCircle, Building2, MapPin, Calendar, TrendingUp, Users, Activity, Play, RefreshCw, Brain, Shield } from 'lucide-react';
 import { BristolFooter } from '@/components/ui/BristolFooter';
 import { format } from 'date-fns';
+import Chrome from "../components/brand/SimpleChrome";
+import bristolBackgroundImage from "@assets/Screenshot 2025-08-18 at 00.30.48_1755502256595.png";
 
 interface CompetitorSignal {
   id: string;
@@ -112,62 +114,130 @@ export default function CompetitorWatch() {
 
   if (isDashboardLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="container mx-auto p-6">
-          <div className="flex items-center justify-center h-64">
-            <RefreshCw className="w-8 h-8 animate-spin text-[#8B1538]" />
+      <Chrome>
+        <div className="min-h-screen relative z-10"
+          style={{
+            backgroundImage: `url(${bristolBackgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}>
+          <div className="absolute inset-0 bg-white/80 backdrop-blur-sm"></div>
+          <div className="container mx-auto p-6 relative z-10">
+            <div className="flex items-center justify-center h-64">
+              <RefreshCw className="w-8 h-8 animate-spin text-bristol-maroon" />
+            </div>
           </div>
         </div>
-        <BristolFooter />
-      </div>
+      </Chrome>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container mx-auto p-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2 font-[Cinzel]">
-            Competitor Watch
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Real-time monitoring of competitor development activities across multiple jurisdictions
-          </p>
+    <Chrome>
+      <div className="min-h-screen relative z-10"
+        style={{
+          backgroundImage: `url(${bristolBackgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}>
+        <div className="absolute inset-0 bg-white/85 backdrop-blur-sm"></div>
+        
+        {/* Premium Intelligence Header */}
+        <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl relative z-10">
+          <div className="px-8 py-6 relative overflow-hidden">
+            {/* Enhanced ambient glow */}
+            <div className="absolute inset-0 bg-gradient-to-r from-bristol-cream/40 via-white/30 to-bristol-sky/40"></div>
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-0 left-0 w-96 h-96 bg-bristol-maroon/20 rounded-full blur-3xl animate-pulse"></div>
+              <div className="absolute bottom-0 right-0 w-96 h-96 bg-bristol-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+            </div>
+            
+            <div className="flex items-center justify-between mb-4 relative">
+              <div className="space-y-2">
+                <div className="flex items-center space-x-4">
+                  <div className="relative group">
+                    <Brain className="h-12 w-12 text-bristol-maroon drop-shadow-lg group-hover:scale-110 transition-transform duration-300" />
+                    <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
+                  </div>
+                  <div>
+                    <h1 className="text-5xl font-cinzel font-bold text-bristol-ink tracking-wide drop-shadow-lg bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
+                      Intel
+                    </h1>
+                    <p className="text-bristol-maroon mt-1 font-medium tracking-wider text-lg">
+                      Bristol Competitor Intelligence Platform
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <Badge 
+                  variant="outline" 
+                  className="px-8 py-4 text-bristol-ink border-bristol-maroon/50 bg-gradient-to-br from-white via-bristol-cream/30 to-bristol-maroon/10 backdrop-blur-sm font-bold text-xl shadow-xl shadow-bristol-maroon/25 hover:shadow-bristol-maroon/40 transition-all duration-500 hover:scale-105 border-2"
+                >
+                  <Shield className="w-6 h-6 mr-3 text-bristol-maroon" />
+                  Active Monitoring
+                </Badge>
+              </div>
+            </div>
+          </div>
         </div>
 
+        <div className="container mx-auto p-6 relative z-10">
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="signals">Signals</TabsTrigger>
-            <TabsTrigger value="competitors">Competitors</TabsTrigger>
-            <TabsTrigger value="jobs">Scrape Jobs</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4 bg-gradient-to-r from-bristol-cream/20 via-white/80 to-bristol-cream/20 backdrop-blur-md border-2 border-bristol-maroon/20 shadow-xl p-2">
+            <TabsTrigger 
+              value="dashboard" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-bristol-maroon data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-bristol-maroon/40 font-bold transition-all duration-300 hover:scale-105"
+            >
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger 
+              value="signals" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-bristol-maroon data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-bristol-maroon/40 font-bold transition-all duration-300 hover:scale-105"
+            >
+              Signals
+            </TabsTrigger>
+            <TabsTrigger 
+              value="competitors" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-bristol-maroon data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-bristol-maroon/40 font-bold transition-all duration-300 hover:scale-105"
+            >
+              Competitors
+            </TabsTrigger>
+            <TabsTrigger 
+              value="jobs" 
+              className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-bristol-maroon data-[state=active]:to-red-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-bristol-maroon/40 font-bold transition-all duration-300 hover:scale-105"
+            >
+              Scrape Jobs
+            </TabsTrigger>
           </TabsList>
 
           {/* Dashboard Tab */}
           <TabsContent value="dashboard" className="space-y-6">
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              <Card className="border-l-4 border-l-[#8B1538]">
+              <Card className="border-l-4 border-l-bristol-maroon bg-gradient-to-br from-white via-bristol-cream/20 to-white backdrop-blur-sm shadow-xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/40 transition-all duration-500 hover:scale-105 border border-bristol-maroon/20">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Total Signals</p>
-                      <p className="text-2xl font-bold text-[#8B1538]">
+                      <p className="text-sm text-bristol-maroon/70 font-medium">Total Signals</p>
+                      <p className="text-2xl font-bold text-bristol-maroon">
                         {dashboard?.summary.totalSignals || 0}
                       </p>
                     </div>
-                    <Activity className="w-8 h-8 text-[#8B1538]" />
+                    <Activity className="w-8 h-8 text-bristol-maroon" />
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-orange-500">
+              <Card className="border-l-4 border-l-orange-500 bg-gradient-to-br from-white via-orange-100/30 to-white backdrop-blur-sm shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 transition-all duration-500 hover:scale-105 border border-orange-500/20">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Competitor Matches</p>
-                      <p className="text-2xl font-bold text-orange-500">
+                      <p className="text-sm text-orange-600/70 font-medium">Competitor Matches</p>
+                      <p className="text-2xl font-bold text-orange-600">
                         {dashboard?.summary.competitorMatches || 0}
                       </p>
                     </div>
@@ -176,12 +246,12 @@ export default function CompetitorWatch() {
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-red-500">
+              <Card className="border-l-4 border-l-red-500 bg-gradient-to-br from-white via-red-100/30 to-white backdrop-blur-sm shadow-xl shadow-red-500/20 hover:shadow-red-500/40 transition-all duration-500 hover:scale-105 border border-red-500/20">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">High Priority</p>
-                      <p className="text-2xl font-bold text-red-500">
+                      <p className="text-sm text-red-600/70 font-medium">High Priority</p>
+                      <p className="text-2xl font-bold text-red-600">
                         {dashboard?.summary.highPriority || 0}
                       </p>
                     </div>
@@ -190,12 +260,12 @@ export default function CompetitorWatch() {
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-blue-500">
+              <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-white via-blue-100/30 to-white backdrop-blur-sm shadow-xl shadow-blue-500/20 hover:shadow-blue-500/40 transition-all duration-500 hover:scale-105 border border-blue-500/20">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Jurisdictions</p>
-                      <p className="text-2xl font-bold text-blue-500">
+                      <p className="text-sm text-blue-600/70 font-medium">Jurisdictions</p>
+                      <p className="text-2xl font-bold text-blue-600">
                         {dashboard?.summary.jurisdictionsActive || 0}
                       </p>
                     </div>
@@ -204,12 +274,12 @@ export default function CompetitorWatch() {
                 </CardContent>
               </Card>
 
-              <Card className="border-l-4 border-l-green-500">
+              <Card className="border-l-4 border-l-green-500 bg-gradient-to-br from-white via-green-100/30 to-white backdrop-blur-sm shadow-xl shadow-green-500/20 hover:shadow-green-500/40 transition-all duration-500 hover:scale-105 border border-green-500/20">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Competitors Tracked</p>
-                      <p className="text-2xl font-bold text-green-500">
+                      <p className="text-sm text-green-600/70 font-medium">Competitors Tracked</p>
+                      <p className="text-2xl font-bold text-green-600">
                         {dashboard?.summary.competitorsTracked || 0}
                       </p>
                     </div>
@@ -220,13 +290,13 @@ export default function CompetitorWatch() {
             </div>
 
             {/* Control Panel */}
-            <Card>
+            <Card className="bg-gradient-to-br from-white via-bristol-cream/20 to-white backdrop-blur-sm shadow-xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500 border-2 border-bristol-maroon/20">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
+                <CardTitle className="flex items-center gap-2 text-bristol-ink font-cinzel font-bold text-xl">
+                  <TrendingUp className="w-5 h-5 text-bristol-maroon" />
                   Control Panel
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-bristol-maroon/70 font-medium">
                   Monitor and control competitor intelligence scraping operations
                 </CardDescription>
               </CardHeader>
@@ -235,31 +305,46 @@ export default function CompetitorWatch() {
                   <Button
                     onClick={() => scrapeMutation.mutate()}
                     disabled={scrapeMutation.isPending}
-                    className="bg-[#8B1538] hover:bg-[#8B1538]/90"
+                    className="relative group overflow-hidden bg-gradient-to-r from-bristol-maroon via-red-600 to-bristol-maroon text-white font-bold px-6 py-3 rounded-xl shadow-2xl shadow-bristol-maroon/40 hover:shadow-bristol-maroon/60 transition-all duration-500 border-2 border-bristol-gold/30 hover:border-bristol-gold/60 hover:scale-105 transform hover:rotate-1"
                   >
-                    {scrapeMutation.isPending ? (
-                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <Play className="w-4 h-4 mr-2" />
-                    )}
-                    Run Scrape Cycle
+                    {/* Animated background glow */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/20 via-yellow-400/20 to-bristol-gold/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl blur-sm"></div>
+                    {/* Shimmer effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    <div className="relative flex items-center">
+                      {scrapeMutation.isPending ? (
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Play className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
+                      )}
+                      Run Scrape Cycle
+                    </div>
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => queryClient.invalidateQueries()}
+                    className="relative group overflow-hidden border-2 border-bristol-gold text-bristol-maroon hover:text-white bg-gradient-to-r from-bristol-gold/10 via-yellow-200/20 to-bristol-gold/10 hover:from-bristol-gold hover:via-yellow-400 hover:to-bristol-gold backdrop-blur-sm shadow-2xl shadow-bristol-gold/30 hover:shadow-bristol-gold/50 transition-all duration-500 font-bold px-5 py-2.5 rounded-lg hover:scale-105"
                   >
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Refresh Data
+                    {/* Sparkle effect */}
+                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      <div className="absolute top-1 left-2 w-1 h-1 bg-white rounded-full animate-ping"></div>
+                      <div className="absolute bottom-1 right-2 w-1 h-1 bg-white rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
+                      <div className="absolute top-2 right-4 w-0.5 h-0.5 bg-white rounded-full animate-ping" style={{animationDelay: '1s'}}></div>
+                    </div>
+                    <div className="relative flex items-center">
+                      <RefreshCw className="w-4 h-4 mr-2 group-hover:rotate-180 transition-transform duration-500" />
+                      Refresh Data
+                    </div>
                   </Button>
                 </div>
               </CardContent>
             </Card>
 
             {/* Jurisdictions Table */}
-            <Card>
+            <Card className="bg-gradient-to-br from-white via-bristol-cream/20 to-white backdrop-blur-sm shadow-xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500 border-2 border-bristol-maroon/20">
               <CardHeader>
-                <CardTitle>Active Jurisdictions</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-bristol-ink font-cinzel font-bold text-xl">Active Jurisdictions</CardTitle>
+                <CardDescription className="text-bristol-maroon/70 font-medium">
                   Monitoring {dashboard?.jurisdictions.length || 0} jurisdictions across Tennessee
                 </CardDescription>
               </CardHeader>
@@ -301,10 +386,10 @@ export default function CompetitorWatch() {
 
           {/* Signals Tab */}
           <TabsContent value="signals" className="space-y-6">
-            <Card>
+            <Card className="bg-gradient-to-br from-white via-bristol-cream/20 to-white backdrop-blur-sm shadow-xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500 border-2 border-bristol-maroon/20">
               <CardHeader>
-                <CardTitle>Recent Signals</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-bristol-ink font-cinzel font-bold text-xl">Recent Signals</CardTitle>
+                <CardDescription className="text-bristol-maroon/70 font-medium">
                   Latest competitor development activities detected
                 </CardDescription>
               </CardHeader>
@@ -361,10 +446,10 @@ export default function CompetitorWatch() {
 
           {/* Competitors Tab */}
           <TabsContent value="competitors" className="space-y-6">
-            <Card>
+            <Card className="bg-gradient-to-br from-white via-bristol-cream/20 to-white backdrop-blur-sm shadow-xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500 border-2 border-bristol-maroon/20">
               <CardHeader>
-                <CardTitle>Tracked Competitors</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-bristol-ink font-cinzel font-bold text-xl">Tracked Competitors</CardTitle>
+                <CardDescription className="text-bristol-maroon/70 font-medium">
                   {dashboard?.competitors.length || 0} competitors being monitored
                 </CardDescription>
               </CardHeader>
@@ -418,10 +503,10 @@ export default function CompetitorWatch() {
 
           {/* Jobs Tab */}
           <TabsContent value="jobs" className="space-y-6">
-            <Card>
+            <Card className="bg-gradient-to-br from-white via-bristol-cream/20 to-white backdrop-blur-sm shadow-xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500 border-2 border-bristol-maroon/20">
               <CardHeader>
-                <CardTitle>Scrape Jobs</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-bristol-ink font-cinzel font-bold text-xl">Scrape Jobs</CardTitle>
+                <CardDescription className="text-bristol-maroon/70 font-medium">
                   Monitor the status of data collection operations
                 </CardDescription>
               </CardHeader>
@@ -484,8 +569,8 @@ export default function CompetitorWatch() {
             </Card>
           </TabsContent>
         </Tabs>
+        </div>
       </div>
-      <BristolFooter />
-    </div>
+    </Chrome>
   );
 }
