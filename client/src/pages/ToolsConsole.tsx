@@ -32,10 +32,12 @@ export default function ToolsConsole() {
   const { toast } = useToast();
 
   // Fetch MCP tools
-  const { data: tools = [], isLoading: toolsLoading } = useQuery<Tool[]>({
+  const { data: toolsData, isLoading: toolsLoading } = useQuery({
     queryKey: ["/api/mcp/tools"],
     retry: false,
   });
+  
+  const tools = Array.isArray(toolsData) ? toolsData : [];
 
   // Run tool mutation
   const runToolMutation = useMutation({

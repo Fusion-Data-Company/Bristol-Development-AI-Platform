@@ -136,18 +136,6 @@ export function GlobalHeader() {
                 </button>
               </Link>
               
-              <Link href="/agents">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
-                  location === '/agents' || location === '/enhanced-agents'
-                    ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
-                    : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
-                }`}>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <Brain className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Agents</span>
-                </button>
-              </Link>
-              
               <Link href="/chat">
                 <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/chat' 
