@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0f172a"/>
+  
+  <!-- Gradient background for visual appeal -->
+  <defs>
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#1e3a8a" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Bristol Logo Circle -->
+  <circle cx="300" cy="315" r="120" fill="url(#logoGradient)" stroke="#ffffff" stroke-width="4"/>
+  
+  <!-- Bristol "B" -->
+  <text x="300" y="355" font-family="Cinzel, serif" font-size="100" font-weight="700" fill="#0f172a" text-anchor="middle" dominant-baseline="middle">B</text>
+  
+  <!-- Company Name -->
+  <text x="500" y="280" font-family="Cinzel, serif" font-size="64" font-weight="600" fill="#ffffff">BRISTOL</text>
+  <text x="500" y="340" font-family="Inter, sans-serif" font-size="32" font-weight="400" fill="#cbd5e1">DEVELOPMENT GROUP</text>
+  
+  <!-- Tagline -->
+  <text x="500" y="390" font-family="Inter, sans-serif" font-size="24" font-weight="300" fill="#94a3b8">AI-Powered Site Intelligence Platform</text>
+  
+  <!-- Decorative Elements -->
+  <line x1="500" y1="410" x2="900" y2="410" stroke="#fbbf24" stroke-width="2"/>
+  
+  <!-- Additional branding elements -->
+  <rect x="950" y="280" width="200" height="80" rx="8" fill="rgba(251, 191, 36, 0.1)" stroke="#fbbf24" stroke-width="1"/>
+  <text x="1050" y="310" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#fbbf24" text-anchor="middle">ENTERPRISE</text>
+  <text x="1050" y="330" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#fbbf24" text-anchor="middle">INTELLIGENCE</text>
+</svg>
