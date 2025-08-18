@@ -1,0 +1,71 @@
+Perfect — that was the right call. Rolling back to your last known good (LKG) commit is the safest way to guarantee that all your ElevenLabs + SUPER MCP wiring and UI are exactly as you built them.
+
+Here’s what I recommend now that you’re back on your perfect config state:
+
+⸻
+
+✅ Immediate Next Steps (Lock In Your Working State)
+	1.	Tag this commit as your “golden” snapshot
+
+git tag -a golden-LKG-$(date +%Y%m%d) -m "Golden working state with ElevenLabs + SUPER MCP intact"
+git push origin golden-LKG-$(date +%Y%m%d)
+
+This makes it trivial to redeploy this exact state again if anything goes wrong in future.
+
+	2.	Turn off auto-cleanup
+	•	In Replit AI Builder, stop giving it open-ended “make production ready” prompts.
+	•	Instead, use surgical prompts: e.g. “optimize only src/styles/Nav.css, don’t touch ElevenLabs or MCP files.”
+	3.	Add guardrails so no one deletes critical features again
+Create .protectedpaths listing files/folders that must never be removed:
+
+cat > .protectedpaths <<'EOF'
+server/api/elevenlabs.ts
+server/api/elevenlabs-webhook.ts
+server/api/mcp-elevenlabs.ts
+src/mcp/
+src/tools/
+EOF
+
+And a simple script to fail builds if those are missing:
+
+// scripts/verify-critical.js
+const fs=require('fs');let bad=false;
+for(const p of fs.readFileSync('.protectedpaths','utf8').split('\n').map(x=>x.trim()).filter(Boolean)){
+  if(!fs.existsSync(p)){console.error('[CRITICAL MISSING]',p);bad=true;}
+}
+process.exit(bad?2:0);
+
+Add to package.json:
+
+"scripts": { "verify:critical": "node scripts/verify-critical.js" }
+
+Then run it in your deploy step.
+
+	4.	Document the state
+Run:
+
+git status
+npm ls --depth=0 > docs/dependencies.txt
+npm run build
+
+Save outputs in /docs/ so you know exactly what versions/config you had in this golden state.
+
+⸻
+
+🚧 When You Want Stability Improvements Again
+
+Instead of letting the builder refactor the whole repo, do this:
+	•	Create a branch from your golden tag.
+	•	Apply one change at a time (e.g. just add a scheduler lock).
+	•	After each change, verify:
+	•	ElevenLabs endpoints respond
+	•	MCP tools register
+	•	WebSocket connects
+	•	Merge only if those checks pass.
+
+That way, you keep every feature and still get the stability benefits incrementally.
+
+⸻
+
+👉 You’re safe now.
+Would you like me to prep a step-by-step checklist for adding stability improvements one by one (without ever touching ElevenLabs or MCP), so you can try again more carefully?

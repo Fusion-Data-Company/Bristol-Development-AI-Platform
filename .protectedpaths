@@ -1,0 +1,10 @@
+server/api/elevenlabs.ts
+server/api/elevenlabs-webhook.ts
+server/api/mcp-elevenlabs.ts
+server/services/eliteMCPSuperserver.ts
+server/services/mcpService.ts
+server/api/mcp-stream.ts
+client/src/components/BristolFloatingWidget.tsx
+client/src/components/brand/SimpleChrome.tsx
+client/src/components/ui/BristolFooter.tsx
+client/src/hooks/useBristolScore.ts
