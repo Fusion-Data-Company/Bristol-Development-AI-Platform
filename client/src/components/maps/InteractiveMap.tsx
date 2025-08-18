@@ -355,7 +355,7 @@ export function InteractiveMap({
       }}
       onError={(error) => {
         // Enhanced error handling - only log critical errors
-        const errorMsg = error?.error?.message || error?.message || String(error);
+        const errorMsg = (error as any)?.error?.message || (error as any)?.message || String(error);
         const isStyleError = errorMsg.includes('style') || errorMsg.includes('Style');
         const is404 = errorMsg.includes('404') || errorMsg.includes('Not Found');
         const isNetworkError = errorMsg.includes('network') || errorMsg.includes('fetch');

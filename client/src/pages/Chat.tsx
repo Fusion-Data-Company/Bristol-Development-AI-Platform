@@ -1366,9 +1366,9 @@ What property or investment can I analyze for you today?`,
               </div>
               <div className="border-l-2 border-cyan-400/40 pl-4 lg:pl-6 hidden sm:block">
                 <div className="flex flex-col">
-                  <p className="text-cyan-400 text-xs lg:text-sm font-bold tracking-[0.15em] lg:tracking-[0.25em] uppercase drop-shadow-sm">
+                  <span className="text-cyan-400 text-xs lg:text-sm font-bold tracking-[0.15em] lg:tracking-[0.25em] uppercase drop-shadow-sm">
                     Site Intelligence Platform
-                  </p>
+                  </span>
                   <div className="w-full h-px bg-gradient-to-r from-cyan-400/60 to-transparent mt-1"></div>
                 </div>
               </div>
