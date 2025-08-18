@@ -37,23 +37,23 @@ async function testConnection() {
   }
 }
 
-// MCP Server Implementation
+// MCP Server Implementation with Enhanced Database Access
 class PostgresMCPServer {
   constructor() {
     // Test connection on startup
     testConnection();
     this.name = "postgres";
-    this.version = "1.0.0";
+    this.version = "2.0.0";
     this.tools = [
       {
         name: "query_bristol_database",
-        description: "Execute SQL queries against the Bristol Development database for comprehensive property analysis",
+        description: "Execute secure SQL queries against Bristol Development database - comprehensive property analysis with all schema access",
         inputSchema: {
           type: "object",
           properties: {
             query: {
               type: "string", 
-              description: "SQL query to execute (SELECT statements only for data safety)"
+              description: "SELECT SQL query to execute (automatically secured against injection)"
             },
             params: {
               type: "array",
@@ -65,15 +65,19 @@ class PostgresMCPServer {
         }
       },
       {
-        name: "get_bristol_portfolio",
-        description: "Get comprehensive Bristol Development Group property portfolio with metrics",
+        name: "get_bristol_portfolio_complete",
+        description: "Get comprehensive Bristol Development Group property portfolio with full analytics, metrics, comparables, and market intelligence",
         inputSchema: {
           type: "object",
           properties: {
+            includeMetrics: { type: "boolean", default: true },
+            includeComparables: { type: "boolean", default: true },
+            includeMarketIntel: { type: "boolean", default: true },
             limit: { type: "number", default: 100 },
             status: { type: "string", description: "Filter by status: Operating, Pipeline, Completed, Newest" },
             city: { type: "string", description: "Filter by city" },
-            state: { type: "string", description: "Filter by state" }
+            state: { type: "string", description: "Filter by state" },
+            minBristolScore: { type: "number", description: "Minimum Bristol score filter" }
           }
         }
       },
@@ -161,77 +165,171 @@ class PostgresMCPServer {
   }
 
   async handleToolCall(toolName, params) {
+    const startTime = Date.now();
+    
     try {
+      console.log(`🔧 Executing MCP tool: ${toolName}`);
+      
+      let result;
       switch (toolName) {
         case "query_bristol_database":
-          return await this.queryDatabase(params.query, params.params || []);
+          result = await this.queryDatabaseSecure(params.query, params.params || []);
+          break;
           
-        case "get_bristol_portfolio":
-          return await this.getBristolPortfolio(params);
+        case "get_bristol_portfolio_complete":
+          result = await this.getBristolPortfolioComplete(params);
+          break;
           
         case "get_property_analysis":
-          return await this.getPropertyAnalysis(params);
+          result = await this.getPropertyAnalysis(params);
+          break;
           
         case "analyze_market_trends":
-          return await this.analyzeMarketTrends(params);
+          result = await this.analyzeMarketTrends(params);
+          break;
           
         case "store_analysis_results":
-          return await this.storeAnalysisResults(params);
+          result = await this.storeAnalysisResults(params);
+          break;
           
         case "get_comparables_analysis":
-          return await this.getComparablesAnalysis(params);
+          result = await this.getComparablesAnalysis(params);
+          break;
           
         case "update_property_metrics":
-          return await this.updatePropertyMetrics(params);
+          result = await this.updatePropertyMetrics(params);
+          break;
           
         case "get_integration_status":
-          return await this.getIntegrationStatus(params);
+          result = await this.getIntegrationStatus(params);
+          break;
+          
+        // Legacy support
+        case "get_bristol_portfolio":
+          result = await this.getBristolPortfolioComplete(params);
+          break;
           
         default:
-          throw new Error(`Unknown tool: ${toolName}`);
+          throw new Error(`Unknown tool: ${toolName}. Available tools: ${this.tools.map(t => t.name).join(', ')}`);
       }
-    } catch (error) {
+      
+      const executionTime = Date.now() - startTime;
+      console.log(`✅ Tool ${toolName} completed in ${executionTime}ms`);
+      
       return {
-        error: error.message,
-        tool: toolName,
-        timestamp: new Date().toISOString()
+        success: true,
+        data: result,
+        metadata: {
+          tool: toolName,
+          executionTime,
+          timestamp: new Date().toISOString()
+        }
+      };
+      
+    } catch (error) {
+      const executionTime = Date.now() - startTime;
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      console.error(`❌ Tool ${toolName} failed after ${executionTime}ms:`, errorMessage);
+      
+      // Enhanced error classification for recovery
+      let errorType = 'general';
+      let recoverable = true;
+      
+      if (errorMessage.includes('connection') || errorMessage.includes('ECONNREFUSED')) {
+        errorType = 'connection';
+        recoverable = true;
+      } else if (errorMessage.includes('timeout') || errorMessage.includes('ETIMEDOUT')) {
+        errorType = 'timeout';
+        recoverable = true;
+      } else if (errorMessage.includes('unauthorized') || errorMessage.includes('permission')) {
+        errorType = 'permission';
+        recoverable = false;
+      } else if (errorMessage.includes('not found') || errorMessage.includes('does not exist')) {
+        errorType = 'not_found';
+        recoverable = false;
+      } else if (errorMessage.includes('syntax') || errorMessage.includes('invalid')) {
+        errorType = 'validation';
+        recoverable = false;
+      }
+      
+      return {
+        success: false,
+        error: errorMessage,
+        errorType,
+        recoverable,
+        metadata: {
+          tool: toolName,
+          executionTime,
+          timestamp: new Date().toISOString(),
+          params: Object.keys(params || {})
+        }
       };
     }
   }
 
-  async queryDatabase(query, params = []) {
-    // Security: Only allow SELECT statements for data safety
+  async queryDatabaseSecure(query, params = []) {
+    // Enhanced security validation
     const trimmedQuery = query.trim().toLowerCase();
     if (!trimmedQuery.startsWith('select')) {
       throw new Error('Only SELECT queries are allowed for safety. Use specific tools for data modifications.');
     }
 
-    const client = await pool.connect();
+    // Additional security checks
+    const dangerousKeywords = ['delete', 'update', 'insert', 'drop', 'alter', 'create', 'truncate', '--', ';'];
+    if (dangerousKeywords.some(keyword => trimmedQuery.includes(keyword))) {
+      throw new Error('Query contains restricted keywords for security.');
+    }
+
+    let client;
     try {
+      client = await pool.connect();
+      const startTime = Date.now();
       const result = await client.query(query, params);
+      const queryTime = Date.now() - startTime;
+      
+      console.log(`📊 Query executed in ${queryTime}ms, returned ${result.rowCount} rows`);
+      
       return {
-        success: true,
         rows: result.rows,
         rowCount: result.rowCount,
-        query: query,
+        fields: result.fields?.map(f => ({ name: f.name, type: f.dataTypeID })),
+        executionTime: queryTime,
+        query: query.length > 200 ? query.substring(0, 200) + '...' : query,
         timestamp: new Date().toISOString()
       };
+    } catch (error) {
+      console.error('Database query error:', error.message);
+      throw new Error(`Database query failed: ${error.message}`);
     } finally {
-      client.release();
+      if (client) client.release();
     }
   }
 
-  async getBristolPortfolio(params) {
-    const { limit = 100, status, city, state } = params;
+  async getBristolPortfolioComplete(params) {
+    const { 
+      limit = 100, 
+      status, 
+      city, 
+      state, 
+      minBristolScore,
+      includeMetrics = true,
+      includeComparables = true,
+      includeMarketIntel = true
+    } = params;
     
     let query = `
       SELECT 
         s.*,
-        COUNT(sm.id) as metrics_count,
+        COUNT(DISTINCT sm.id) as metrics_count,
+        COUNT(DISTINCT c.id) as comparables_count,
         AVG(CASE WHEN sm.metric_name = 'median_household_income' THEN sm.value END) as avg_income,
-        AVG(CASE WHEN sm.metric_name = 'population_density' THEN sm.value END) as population_density
+        AVG(CASE WHEN sm.metric_name = 'population_density' THEN sm.value END) as population_density,
+        AVG(c.rent_avg) as avg_comparable_rent,
+        AVG(c.occupancy_rate) as avg_occupancy_rate
       FROM sites s
       LEFT JOIN site_metrics sm ON s.id = sm.site_id
+      LEFT JOIN comps c ON s.id = c.site_id
       WHERE 1=1
     `;
     
@@ -256,9 +354,15 @@ class PostgresMCPServer {
       paramIndex++;
     }
     
+    if (minBristolScore) {
+      query += ` AND s.bristol_score >= $${paramIndex}`;
+      queryParams.push(minBristolScore);
+      paramIndex++;
+    }
+    
     query += `
       GROUP BY s.id
-      ORDER BY s.created_at DESC
+      ORDER BY s.bristol_score DESC NULLS LAST, s.created_at DESC
       LIMIT $${paramIndex}
     `;
     queryParams.push(limit);
