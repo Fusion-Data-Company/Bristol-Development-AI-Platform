@@ -59,7 +59,6 @@ function Router() {
           <Route path="/comparables-annex" component={ComparablesAnnex} />
           <Route path="/agents" component={EnhancedAgents} />
           <Route path="/enhanced-agents" component={EnhancedAgents} />
-          <Route path="/map" component={Maps2} />
           <Route path="/maps2" component={Maps2} />
           <Route path="/production-status" component={ProductionStatus} />
           <Route path="/placeholder-replace" component={() => import("./pages/PlaceholderReplace").then(m => m.default)} />

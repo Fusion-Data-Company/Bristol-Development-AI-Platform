@@ -32,11 +32,9 @@ export function useUpdateBristolScore() {
   
   return useMutation({
     mutationFn: async (siteId: string) => {
-      const response = await fetch(`/api/sites/${siteId}/update-score`, {
+      return apiRequest(`/api/sites/${siteId}/update-score`, {
         method: 'POST',
       });
-      if (!response.ok) throw new Error('Failed to update Bristol score');
-      return response.json();
     },
     onSuccess: (data, siteId) => {
       // Invalidate the specific site score
@@ -57,19 +55,16 @@ export function useUpdateAllBristolScores() {
   
   return useMutation({
     mutationFn: async () => {
-      const response = await fetch('/api/sites/update-all-scores', {
+      return apiRequest('/api/sites/update-all-scores', {
         method: 'POST',
       });
-      if (!response.ok) throw new Error('Failed to update all Bristol scores');
-      return response.json();
     },
     onSuccess: () => {
       // Invalidate all Bristol score queries
       queryClient.invalidateQueries({ 
-        predicate: (query) => {
-          const firstKey = query.queryKey[0]?.toString();
-          return Boolean(firstKey?.includes('bristol-score') || firstKey?.includes('portfolio-summary'));
-        }
+        predicate: (query) => 
+          query.queryKey[0]?.toString().includes('bristol-score') ||
+          query.queryKey[0]?.toString().includes('portfolio-summary')
       });
     },
   });
@@ -80,38 +75,5 @@ export function useBristolPortfolioSummary() {
     queryKey: ['/api/sites/portfolio-summary'],
     staleTime: 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: false,
-  });
-}
-
-// Hook to get Bristol scores for multiple sites at once (for map display)
-export function useBulkBristolScores(siteIds: string[]) {
-  return useQuery({
-    queryKey: ['/api/sites/bulk-bristol-scores', siteIds.sort().join(',')],
-    enabled: siteIds.length > 0,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      // Since we don't have a bulk endpoint yet, we'll fetch the portfolio summary
-      // which contains all site scores, then filter for the requested sites
-      const response = await fetch('/api/sites/portfolio-summary');
-      if (!response.ok) {
-        throw new Error('Failed to fetch Bristol scores');
-      }
-      const data = await response.json();
-      
-      // If no scores calculated yet, trigger bulk update
-      if (data.data?.portfolioMetrics?.scoredProperties === 0) {
-        // Trigger bulk score calculation
-        await fetch('/api/sites/update-all-scores', { method: 'POST' });
-        // Refetch after update
-        const updatedResponse = await fetch('/api/sites/portfolio-summary');
-        if (updatedResponse.ok) {
-          const updatedData = await updatedResponse.json();
-          return updatedData;
-        }
-      }
-      
-      return data;
-    },
   });
 }
