@@ -1,0 +1,66 @@
+{
+  "timestamp": "2025-08-18T18:58:23.866Z",
+  "audit_type": "critical_files",
+  "summary": {
+    "total": 9,
+    "present": 9,
+    "missing": 0,
+    "total_bytes": 43845
+  },
+  "report": [
+    {
+      "path": "server/api/elevenlabs.ts",
+      "exists": true,
+      "bytes": 11818,
+      "status": "OK"
+    },
+    {
+      "path": "server/api/elevenlabs-webhook.ts",
+      "exists": true,
+      "bytes": 3074,
+      "status": "OK"
+    },
+    {
+      "path": "server/api/mcp-elevenlabs.ts",
+      "exists": true,
+      "bytes": 3356,
+      "status": "OK"
+    },
+    {
+      "path": "src/mcp/manager.ts",
+      "exists": true,
+      "bytes": 1084,
+      "status": "OK"
+    },
+    {
+      "path": "server/services/websocketService.ts",
+      "exists": true,
+      "bytes": 12454,
+      "status": "OK"
+    },
+    {
+      "path": "server/services/schedulerService.ts",
+      "exists": true,
+      "bytes": 7419,
+      "status": "OK"
+    },
+    {
+      "path": "src/lib/singleton.ts",
+      "exists": true,
+      "bytes": 477,
+      "status": "OK"
+    },
+    {
+      "path": "src/lib/metrics.ts",
+      "exists": true,
+      "bytes": 2384,
+      "status": "OK"
+    },
+    {
+      "path": "src/lib/logger.ts",
+      "exists": true,
+      "bytes": 1779,
+      "status": "OK"
+    }
+  ]
+}

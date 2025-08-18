@@ -1,0 +1,40 @@
+{
+  "timestamp": "2025-08-18T18:58:52.901Z",
+  "base_url": "http://127.0.0.1:5000",
+  "uptime_check": "PASS",
+  "results": [
+    {
+      "url": "/healthz",
+      "status": 200
+    },
+    {
+      "url": "/api/elevenlabs",
+      "status": 200
+    },
+    {
+      "url": "/api/elevenlabs-webhook",
+      "status": 200
+    },
+    {
+      "url": "/api/mcp-elevenlabs",
+      "status": 200
+    },
+    {
+      "url": "/api/mcp-unified/models",
+      "status": 200
+    },
+    {
+      "url": "/api/sites",
+      "status": 200
+    },
+    {
+      "url": "/ws (probe)",
+      "status": 204
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "healthy": 7,
+    "failed": 0
+  }
+}
