@@ -1,4 +1,3 @@
-// PROTECTED: do not modify without owner approval
 import { Router } from 'express';
 import { eliteMCPSuperserver } from '../services/eliteMCPSuperserver';
 import { db } from '../db';

@@ -1,7 +1,5 @@
 import { marketIntelligenceAgent } from './marketIntelligenceAgent';
 import { storage } from '../storage';
-import { withDedupLock } from '../../src/scheduler/locks';
-import { assertSingleton } from '../../src/lib/singleton';
 
 class SchedulerService {
   private intervals: Map<string, NodeJS.Timeout> = new Map();
@@ -13,14 +11,6 @@ class SchedulerService {
   async initialize(): Promise<void> {
     if (this.isInitialized) {
       console.log('📅 Scheduler already initialized');
-      return;
-    }
-
-    // Ensure only one scheduler instance runs
-    try {
-      assertSingleton('scheduler');
-    } catch (error) {
-      console.log('📅 Scheduler singleton check failed, another instance running');
       return;
     }
 
@@ -77,26 +67,25 @@ class SchedulerService {
   }
 
   /**
-   * Execute market intelligence gathering with proper error handling and deduplication
+   * Execute market intelligence gathering with proper error handling
    */
   private async executeMarketIntelligenceWithErrorHandling(): Promise<void> {
-    await withDedupLock('market-intelligence', 7200, async () => { // 2 hour lock
-      try {
-        const result = await marketIntelligenceAgent.executeMarketIntelligenceGathering();
+    try {
+      const result = await marketIntelligenceAgent.executeMarketIntelligenceGathering();
+      
       if (result.success) {
         if (result.executionData?.skipped) {
           console.log('⏭️ Market intelligence skipped - no API key configured');
         } else {
           console.log(`✅ Market intelligence completed: ${result.itemsCreated} items created`);
         }
-        } else {
-          console.error(`❌ Market intelligence failed: ${result.error}`);
-        }
-      } catch (error) {
-        console.error('❌ Market intelligence agent execution error:', error);
-        // Don't let market intelligence errors crash the server
+      } else {
+        console.error(`❌ Market intelligence failed: ${result.error}`);
       }
-    });
+    } catch (error) {
+      console.error('❌ Market intelligence agent execution error:', error);
+      // Don't let market intelligence errors crash the server
+    }
   }
 
   /**

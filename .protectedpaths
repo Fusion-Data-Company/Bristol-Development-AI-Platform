@@ -1,9 +1,0 @@
-server/api/elevenlabs.ts
-server/api/elevenlabs-webhook.ts
-server/api/mcp-elevenlabs.ts
-src/mcp/manager.ts
-server/services/websocketService.ts
-server/services/schedulerService.ts
-src/lib/singleton.ts
-src/lib/metrics.ts
-src/lib/logger.ts

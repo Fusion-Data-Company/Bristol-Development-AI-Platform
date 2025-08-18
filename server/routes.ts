@@ -74,10 +74,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Elite Portfolio Insights API
   app.get('/api/analytics/elite/portfolio-insights', (await import('./api/analytics/elite-portfolio-insights')).getElitePortfolioInsights);
   
-  // Health check endpoints
-  const healthRouter = (await import('./api/healthz')).default;
-  app.use(healthRouter);
-  
   // Competitor Watch API
   const competitorRouter = (await import('./routes/competitor-routes')).default;
   app.use('/api/competitor', competitorRouter);
@@ -118,9 +114,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/tools/noaa-climate', noaaClimateRouter);
   app.use('/api/snapshots', snapshotsRouter);
 
-  // Pipeline API for data proxying
-  const pipelineRouter = (await import('./api/pipeline')).default;
-  app.use('/api/analytics/pipeline', pipelineRouter);
+  // Pipeline API for data proxying - temporarily disabled to fix startup issue
+  // const pipelineRouter = (await import('./api/pipeline')).default;
+  // app.use('/api/analytics/pipeline', pipelineRouter);
 
   // MCP Tools Service API
   const mcpToolsRouter = (await import('./api/mcp-tools')).default;
@@ -133,15 +129,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Enhanced Chat API with real AI functionality
   const chatRouter = (await import('./api/chat')).default;
   app.use('/api/chat', chatRouter);
-
-  // ElevenLabs Integration - CRITICAL: These routes were missing during stability changes
-  const elevenlabsRouter = (await import('./api/elevenlabs')).default;
-  const elevenlabsWebhookRouter = (await import('./api/elevenlabs-webhook')).default;
-  const mcpElevenlabsRouter = (await import('./api/mcp-elevenlabs')).default;
-  
-  app.use('/api/elevenlabs', elevenlabsRouter);
-  app.use('/api/elevenlabs-webhook', elevenlabsWebhookRouter);
-  app.use('/api/mcp-elevenlabs', mcpElevenlabsRouter);
 
   // Unified MCP Chat API - BULLETPROOF MODEL SELECTOR INTEGRATION
   const mcpUnifiedChatRouter = (await import('./api/mcp-unified-chat')).default;

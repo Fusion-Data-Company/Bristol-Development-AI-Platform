@@ -1,5 +1,4 @@
 {
-  "_comment": "PROTECTED: do not modify without owner approval",
   "mcpServers": {
     "filesystem": {
       "command": "npx",

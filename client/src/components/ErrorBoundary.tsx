@@ -35,7 +35,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('[Bristol Error Boundary]', error, errorInfo);
+    console.error('ErrorBoundary caught an error:', error, errorInfo);
     
     this.setState({
       error,
@@ -53,27 +53,26 @@ export class ErrorBoundary extends Component<Props, State> {
       const timeout = setTimeout(() => {
         this.handleRetry();
       }, delay);
-      
       this.retryTimeouts.push(timeout);
     }
   }
 
   componentWillUnmount() {
-    // Clear any pending retry timeouts
-    this.retryTimeouts.forEach(timeout => clearTimeout(timeout));
+    // Clean up timers
+    this.retryTimeouts.forEach(clearTimeout);
   }
 
   private isRetryableError(error: Error): boolean {
     const retryableErrors = [
-      'ChunkLoadError',
-      'Loading CSS chunk',
-      'Loading chunk',
       'NetworkError',
-      'Failed to fetch'
+      'TypeError: Failed to fetch',
+      'ChunkLoadError',
+      'Loading chunk'
     ];
     
-    return retryableErrors.some(retryableError => 
-      error.message.includes(retryableError) || error.name.includes(retryableError)
+    return retryableErrors.some(pattern => 
+      error.name.includes(pattern) || 
+      error.message.includes(pattern)
     );
   }
 
@@ -87,6 +86,10 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   private handleManualRetry = () => {
+    // Clear timeouts on manual retry
+    this.retryTimeouts.forEach(clearTimeout);
+    this.retryTimeouts = [];
+    
     this.setState({
       hasError: false,
       error: undefined,
@@ -108,60 +111,69 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // Default error UI
       return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
-          <Card className="w-full max-w-lg">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+          <Card className="w-full max-w-2xl">
             <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mb-4">
-                <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+              <div className="flex justify-center mb-4">
+                <AlertTriangle className="h-16 w-16 text-red-500" />
               </div>
-              <CardTitle className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+              <CardTitle className="text-2xl text-gray-900">
                 Something went wrong
               </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400">
-                Bristol encountered an unexpected error. You can try refreshing the page or retrying the action.
+              <CardDescription className="text-lg">
+                The Bristol application encountered an unexpected error
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="space-y-4">
-              {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg text-sm">
-                  <summary className="cursor-pointer font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Error Details (Development Only)
-                  </summary>
-                  <div className="text-red-600 dark:text-red-400 font-mono text-xs whitespace-pre-wrap">
-                    {this.state.error.name}: {this.state.error.message}
-                    {this.state.error.stack && (
-                      <div className="mt-2 text-gray-600 dark:text-gray-400">
-                        {this.state.error.stack}
-                      </div>
-                    )}
-                  </div>
-                </details>
+            <CardContent className="space-y-6">
+              {this.state.error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <h4 className="font-semibold text-red-800 mb-2">Error Details:</h4>
+                  <p className="text-sm text-red-700 font-mono">
+                    {this.state.error.message}
+                  </p>
+                  {process.env.NODE_ENV === 'development' && this.state.errorInfo && (
+                    <details className="mt-2">
+                      <summary className="cursor-pointer text-sm text-red-600 hover:text-red-800">
+                        Stack trace
+                      </summary>
+                      <pre className="mt-2 text-xs text-red-600 whitespace-pre-wrap overflow-auto max-h-40">
+                        {this.state.errorInfo.componentStack}
+                      </pre>
+                    </details>
+                  )}
+                </div>
               )}
-              
-              <div className="flex gap-3">
+
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button 
                   onClick={this.handleManualRetry}
-                  className="flex-1 flex items-center justify-center gap-2"
-                  variant="outline"
+                  className="flex items-center gap-2"
+                  variant="default"
                 >
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="h-4 w-4" />
                   Try Again
                 </Button>
                 
                 <Button 
                   onClick={this.handleReload}
-                  className="flex-1"
+                  variant="outline"
+                  className="flex items-center gap-2"
                 >
+                  <RefreshCw className="h-4 w-4" />
                   Reload Page
                 </Button>
               </div>
-              
+
               {this.state.retryCount > 0 && (
-                <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                  Retry attempts: {this.state.retryCount}/3
-                </p>
+                <div className="text-center text-sm text-gray-600">
+                  Retry attempt {this.state.retryCount} of 3
+                </div>
               )}
+
+              <div className="text-center text-sm text-gray-500">
+                If this problem persists, please contact support.
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -172,31 +184,47 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Global error handling setup
+// Higher-order component for easier usage
+export function withErrorBoundary<P extends object>(
+  Component: React.ComponentType<P>,
+  errorBoundaryProps?: Omit<Props, 'children'>
+) {
+  const WrappedComponent = (props: P) => (
+    <ErrorBoundary {...errorBoundaryProps}>
+      <Component {...props} />
+    </ErrorBoundary>
+  );
+
+  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`;
+  return WrappedComponent;
+}
+
+// Global error handler setup
 export function setupGlobalErrorHandling() {
   // Handle unhandled promise rejections
   window.addEventListener('unhandledrejection', (event) => {
-    console.error('[Bristol Unhandled Promise Rejection]', event.reason);
+    console.error('Unhandled promise rejection:', event.reason);
     
-    // Prevent the default browser error handling
+    // Prevent default browser error handling
     event.preventDefault();
     
-    // Log to external service in production
-    if (process.env.NODE_ENV === 'production') {
-      // TODO: Send to error reporting service
-    }
+    // You could send to error reporting service here
+    // reportError('unhandled_rejection', event.reason);
   });
 
-  // Handle uncaught errors
+  // Handle general JavaScript errors
   window.addEventListener('error', (event) => {
-    console.error('[Bristol Uncaught Error]', event.error);
+    console.error('Global error:', event.error);
     
-    // Log to external service in production
-    if (process.env.NODE_ENV === 'production') {
-      // TODO: Send to error reporting service
-    }
+    // You could send to error reporting service here
+    // reportError('global_error', event.error);
   });
 
-  // Handle React errors (requires ErrorBoundary)
-  console.log('[Bristol] Global error handling initialized');
+  // Handle resource loading errors
+  window.addEventListener('error', (event) => {
+    if (event.target !== window) {
+      console.error('Resource loading error:', event.target);
+      // Handle resource loading failures (images, scripts, etc.)
+    }
+  }, true);
 }

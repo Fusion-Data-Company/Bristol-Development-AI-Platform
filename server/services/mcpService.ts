@@ -1,4 +1,3 @@
-// PROTECTED: do not modify without owner approval
 import { storage } from "../storage";
 import { getWebSocketService } from "./websocketService";
 import type { McpTool, InsertIntegrationLog } from "@shared/schema";

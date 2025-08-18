@@ -4,37 +4,37 @@ import compression from 'compression';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { 
-  requestId,
-  securityHeaders,
-  smartCompression,
-  rateLimiter,
-  requestTimer
-} from "./middleware/simplifiedMiddleware";
-import { 
-  initializePerformanceMonitoring 
-} from "./middleware/performanceMiddleware";
-import { setupHeapSnapshot, logger } from "../src/lib/logger";
-import { metricsCollector } from "../src/lib/metrics";
+  securityHeaders, 
+  rateLimiters, 
+  sanitizeInput, 
+  limitRequestSize, 
+  ipProtection, 
+  enhancedLogging, 
+  validateContentType,
+  corsConfig,
+  emergencyShutdown
+} from "./middleware/securityMiddleware";
 
 const app = express();
 
 // Trust proxy for rate limiting and IP detection
 app.set('trust proxy', 1);
 
-// Simplified middleware stack (exact order matters)
-app.use(requestId);
+// Enhanced security and performance middleware
 app.use(securityHeaders);
-app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://*.replit.app', 'https://*.replit.dev']
-    : ['http://localhost:3000', 'http://localhost:5000', 'http://0.0.0.0:5000'],
-  credentials: true
-}));
-app.use(smartCompression);
+app.use(cors(corsConfig));
+app.use(compression({ threshold: 1024 })); // Compress responses > 1KB
+app.use(emergencyShutdown);
+app.use(ipProtection);
+app.use(enhancedLogging);
+app.use(limitRequestSize(50)); // 50MB max request size
+app.use(validateContentType(['application/json', 'application/x-www-form-urlencoded', 'multipart/form-data']));
+app.use(sanitizeInput);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
-app.use(rateLimiter);
-app.use(requestTimer);
+
+// Apply general rate limiting to all routes
+app.use(rateLimiters.general);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -68,16 +68,7 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
-    logger.info("Starting server initialization with crashless hardening...");
-    
-    // Setup heap snapshot capability
-    setupHeapSnapshot();
-    
-    // Initialize performance monitoring
-    initializePerformanceMonitoring();
-    
-    // Start metrics collection
-    metricsCollector.startPeriodicLogging();
+    console.log("Starting server initialization...");
     
     // Register full routes including tools API
     const server = await registerRoutes(app);
