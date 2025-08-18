@@ -8,7 +8,7 @@ import { GlobalHeader } from "@/components/GlobalHeader";
 import { ErrorBoundary, setupGlobalErrorHandling } from "@/components/ErrorBoundary";
 import { useEffect } from "react";
 
-import BristolFloatingWidget from "@/components/BristolFloatingWidget";
+import PopoutAgent from "@/components/PopoutAgent";
 import ElevenLabsWidget from "@/components/ElevenLabsWidget";
 
 import NotFound from "@/pages/not-found";
@@ -103,19 +103,19 @@ function AppContent() {
         <Router />
       </div>
       
-      {/* Hide Bristol Floating Widget on chat page */}
+      {/* Hide Bristol Floating Widget on chat page and mobile */}
       {isAuthenticated && location !== '/chat' && (
-        <BristolFloatingWidget 
+        <PopoutAgent 
             appData={appData}
             webhookUrl={import.meta.env.VITE_N8N_WEBHOOK_URL}
-            onSaveSystemPrompt={async (prompt) => {
+            onSaveSystemPrompt={async (prompt: string) => {
               try {
                 console.log("System prompt saved:", prompt.length, "characters");
               } catch (error) {
                 console.error("Error saving system prompt:", error);
               }
             }}
-            onSend={async (payload) => {
+            onSend={async (payload: any) => {
               try {
                 console.log("Chat sent:", payload.model, payload.messages.length, "messages");
               } catch (error) {

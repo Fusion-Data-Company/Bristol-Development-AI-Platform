@@ -14,6 +14,12 @@ import {
   corsConfig,
   emergencyShutdown
 } from "./middleware/securityMiddleware";
+import { 
+  intelligentCompression, 
+  requestTiming, 
+  responseCache, 
+  initializePerformanceMonitoring 
+} from "./middleware/performanceMiddleware";
 
 const app = express();
 
@@ -23,7 +29,8 @@ app.set('trust proxy', 1);
 // Enhanced security and performance middleware
 app.use(securityHeaders);
 app.use(cors(corsConfig));
-app.use(compression({ threshold: 1024 })); // Compress responses > 1KB
+app.use(intelligentCompression); // Intelligent compression with content type detection
+app.use(requestTiming); // Request performance monitoring
 app.use(emergencyShutdown);
 app.use(ipProtection);
 app.use(enhancedLogging);
@@ -33,8 +40,10 @@ app.use(sanitizeInput);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
-// Apply general rate limiting to all routes
+// Apply general rate limiting and response caching to all routes
 app.use(rateLimiters.general);
+app.use('/api/sites', responseCache(300000)); // Cache sites data for 5 minutes
+app.use('/api/analytics', responseCache(600000)); // Cache analytics for 10 minutes
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -69,6 +78,9 @@ app.use((req, res, next) => {
 (async () => {
   try {
     console.log("Starting server initialization...");
+    
+    // Initialize performance monitoring
+    initializePerformanceMonitoring();
     
     // Register full routes including tools API
     const server = await registerRoutes(app);
