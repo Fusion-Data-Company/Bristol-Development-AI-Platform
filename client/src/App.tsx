@@ -29,6 +29,7 @@ import ComparablesAnnex from "@/pages/ComparablesAnnex";
 import EnterpriseDashboard from "@/pages/EnterpriseDashboard";
 import EnhancedAgents from "@/pages/EnhancedAgents";
 import Maps2 from "@/pages/Maps2";
+import Map from "@/pages/Map";
 import ProductionStatus from "@/pages/ProductionStatus";
 
 
@@ -59,6 +60,7 @@ function Router() {
           <Route path="/comparables-annex" component={ComparablesAnnex} />
           <Route path="/agents" component={EnhancedAgents} />
           <Route path="/enhanced-agents" component={EnhancedAgents} />
+          <Route path="/map" component={Map} />
           <Route path="/maps2" component={Maps2} />
           <Route path="/production-status" component={ProductionStatus} />
           <Route path="/placeholder-replace" component={() => import("./pages/PlaceholderReplace").then(m => m.default)} />
