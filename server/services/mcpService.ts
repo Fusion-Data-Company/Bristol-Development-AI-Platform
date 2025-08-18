@@ -119,7 +119,7 @@ export class McpService {
     }
   }
 
-  async getAvailableTools(): Promise<any[]> {
+  async getAvailableTools(): Promise<McpTool[]> {
     return Array.from(this.tools.values());
   }
 
@@ -443,9 +443,7 @@ export class McpService {
     }
   }
 
-  async getAvailableTools(): Promise<McpTool[]> {
-    return Array.from(this.tools.values());
-  }
+
 
   // Enhanced error recovery hints
   private getRecoveryHint(errorType: string, toolName: string): string {
