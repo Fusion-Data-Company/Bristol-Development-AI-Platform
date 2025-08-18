@@ -10,6 +10,7 @@ import { performanceMonitoringService } from "./services/performanceMonitoringSe
 import { errorHandlingService } from "./services/errorHandlingService";
 import { stabilityService } from "./services/stabilityService";
 import { performanceMonitor } from "./services/performanceMonitor";
+import { memoryOptimizationService } from "./services/memoryOptimizationService";
 import { insertSiteSchema, insertChatSessionSchema } from "@shared/schema";
 import { z } from "zod";
 import { randomUUID } from "crypto";
@@ -56,9 +57,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const enterpriseMetricsRouter = (await import('./api/analytics/enterprise-metrics')).default;
   const realTimeIntelligenceRouter = (await import('./api/analytics/real-time-intelligence')).default;
   const marketIntelligenceRouter = (await import('./api/analytics/market-intelligence')).default;
+  const productionAnalyticsRouter = (await import('./api/analytics/production-analytics')).default;
   app.use('/api/analytics/enterprise', enterpriseMetricsRouter);
   app.use('/api/analytics/intelligence', realTimeIntelligenceRouter);
   app.use('/api/analytics/market-intelligence', marketIntelligenceRouter);
+  app.use('/api/analytics/production', productionAnalyticsRouter);
+  
+  // System Memory Status API
+  const memoryStatusRouter = (await import('./api/system/memory-status')).default;
+  app.use('/api/system/memory', memoryStatusRouter);
   
   // Elite Portfolio Insights API
   app.get('/api/analytics/elite/portfolio-insights', (await import('./api/analytics/elite-portfolio-insights')).getElitePortfolioInsights);

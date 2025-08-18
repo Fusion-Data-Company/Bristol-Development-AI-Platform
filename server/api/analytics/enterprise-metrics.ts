@@ -78,7 +78,8 @@ router.get('/market-analysis', async (req, res) => {
   try {
     // Get unique markets from sites
     const sites_data = await db.select().from(sites);
-    const uniqueMarkets = [...new Set(sites_data.map(site => `${site.city}, ${site.state}`).filter(Boolean))];
+    const marketSet = new Set(sites_data.map(site => `${site.city}, ${site.state}`).filter(Boolean));
+    const uniqueMarkets = Array.from(marketSet);
 
     const marketAnalysis = await Promise.all(
       uniqueMarkets.slice(0, 6).map(async (market) => {
@@ -119,13 +120,15 @@ router.get('/market-analysis', async (req, res) => {
           ).length;
 
           // Calculate rent growth based on market data
-          const rentGrowth = employmentResult?.employment_growth ? 
-            Math.max(2, Math.min(15, employmentResult.employment_growth * 1.5 + 4)) : 
+          const employmentGrowth = (employmentResult as any)?.employment_growth || 0;
+          const rentGrowth = employmentGrowth ? 
+            Math.max(2, Math.min(15, employmentGrowth * 1.5 + 4)) : 
             5.5 + Math.random() * 4;
 
           // Calculate demographic score
-          const demographicScore = demographicsResult?.median_income ? 
-            Math.min(100, Math.max(60, (demographicsResult.median_income / 1000) + 20)) :
+          const medianIncome = (demographicsResult as any)?.median_income || 0;
+          const demographicScore = medianIncome ? 
+            Math.min(100, Math.max(60, (medianIncome / 1000) + 20)) :
             75 + Math.random() * 20;
 
           return {
@@ -136,8 +139,8 @@ router.get('/market-analysis', async (req, res) => {
             demographicScore: Math.round(demographicScore),
             economicHealth: demographicScore > 85 ? 'Very Strong' : demographicScore > 75 ? 'Strong' : 'Moderate',
             bristolExposure: bristolProperties,
-            unemploymentRate: employmentResult?.unemployment_rate || 3.8,
-            populationGrowth: demographicsResult?.population_growth || 1.2,
+            unemploymentRate: (employmentResult as any)?.unemployment_rate || 3.8,
+            populationGrowth: (demographicsResult as any)?.population_growth || 1.2,
             recommendation: generateRecommendation(rentGrowth, demographicScore, bristolProperties)
           };
         } catch (error) {

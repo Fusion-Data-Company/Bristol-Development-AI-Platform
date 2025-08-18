@@ -17,6 +17,7 @@ import Dashboard from "@/pages/Dashboard";
 import Sites from "@/pages/Sites";
 import Analytics from "@/pages/Analytics";
 import AnalyticsEnterprise from "@/pages/AnalyticsEnterprise";
+import EnterpriseAnalytics from "@/pages/EnterpriseAnalytics";
 import Chat from "@/pages/Chat";
 import Integrations from "@/pages/Integrations";
 import MainApp from "@/pages/App";
@@ -48,6 +49,7 @@ function Router() {
           <Route path="/sites" component={Sites} />
           <Route path="/analytics" component={Analytics} />
           <Route path="/analytics-enterprise" component={AnalyticsEnterprise} />
+          <Route path="/enterprise-analytics" component={EnterpriseAnalytics} />
           <Route path="/demographics" component={Demographics} />
           <Route path="/chat" component={Chat} />
           <Route path="/integrations" component={IntegrationsNew} />
