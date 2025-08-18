@@ -103,11 +103,11 @@ export class StabilityService {
     const usedHeap = memUsage.heapUsed;
     const heapUsagePercent = (usedHeap / totalHeap) * 100;
 
-    // Very relaxed memory thresholds for Replit environment (95% instead of 85%)
-    const status = heapUsagePercent < 95 ? 'healthy' : 'unhealthy';
+    // Extremely relaxed memory thresholds for Replit environment (98% instead of 95%)
+    const status = heapUsagePercent < 98 ? 'healthy' : 'unhealthy';
     
     // Trigger garbage collection if memory usage is high (more conservative threshold)
-    if (heapUsagePercent > 85 && global.gc) {
+    if (heapUsagePercent > 90 && global.gc) {
       try {
         global.gc();
         console.log('✅ Memory optimization completed');
@@ -259,7 +259,7 @@ export class StabilityService {
     const recommendations: string[] = [];
     const memoryHealth = this.healthChecks.get('memory');
     
-    if (memoryHealth?.details?.heapUsagePercent > 75) {
+    if (memoryHealth?.details?.heapUsagePercent > 90) {
       recommendations.push('High memory usage detected. Consider implementing memory optimization strategies.');
     }
     

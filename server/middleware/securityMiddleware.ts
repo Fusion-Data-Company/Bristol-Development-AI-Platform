@@ -235,40 +235,6 @@ export const ipProtection = (req: Request, res: Response, next: NextFunction) =>
   // TEMPORARY: Disable IP protection completely to fix Access Denied issues
   // The IP blocking was preventing legitimate users from accessing the app
   next();
-  return;
-  
-  const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
-
-  // Check if IP is blocked
-  if (blockedIPs.has(clientIP)) {
-    console.warn(`Blocked IP attempted access: ${clientIP}`);
-    return res.status(403).json({ error: 'Access denied' });
-  }
-
-  // Track suspicious activity
-  const now = new Date();
-  const suspicious = suspiciousIPs.get(clientIP);
-  
-  if (suspicious) {
-    // Reset counter if more than 1 hour has passed
-    if (now.getTime() - suspicious.lastSeen.getTime() > 3600000) {
-      suspiciousIPs.set(clientIP, { count: 1, lastSeen: now });
-    } else {
-      suspicious.count++;
-      suspicious.lastSeen = now;
-      
-      // Block IP if too many suspicious requests - INCREASED THRESHOLD
-      if (suspicious.count > 1000) { // Increased from 100 to 1000
-        blockedIPs.add(clientIP);
-        console.warn(`IP blocked for suspicious activity: ${clientIP}`);
-        return res.status(403).json({ error: 'Access denied due to suspicious activity' });
-      }
-    }
-  } else {
-    suspiciousIPs.set(clientIP, { count: 1, lastSeen: now });
-  }
-
-  next();
 };
 
 // Enhanced request logging middleware

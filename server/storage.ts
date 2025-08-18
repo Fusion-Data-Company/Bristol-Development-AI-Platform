@@ -499,17 +499,20 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getMarketIntelligence(limit: number = 50, category?: string): Promise<MarketIntelligence[]> {
-    let query = db
+    if (category) {
+      return await db
+        .select()
+        .from(marketIntelligence)
+        .where(eq(marketIntelligence.category, category))
+        .orderBy(desc(marketIntelligence.priority), desc(marketIntelligence.createdAt))
+        .limit(limit);
+    }
+
+    return await db
       .select()
       .from(marketIntelligence)
       .orderBy(desc(marketIntelligence.priority), desc(marketIntelligence.createdAt))
       .limit(limit);
-
-    if (category) {
-      query = query.where(eq(marketIntelligence.category, category));
-    }
-
-    return await query;
   }
 
   async getMarketIntelligenceByPriority(minPriority: number = 7): Promise<MarketIntelligence[]> {
@@ -549,19 +552,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAgentExecutions(agentName?: string, status?: string): Promise<AgentExecution[]> {
-    let query = db
+    const conditions = [];
+    if (agentName) {
+      conditions.push(eq(agentExecutions.agentName, agentName));
+    }
+    if (status) {
+      conditions.push(eq(agentExecutions.status, status));
+    }
+
+    if (conditions.length > 0) {
+      return await db
+        .select()
+        .from(agentExecutions)
+        .where(and(...conditions))
+        .orderBy(desc(agentExecutions.startedAt));
+    }
+
+    return await db
       .select()
       .from(agentExecutions)
       .orderBy(desc(agentExecutions.startedAt));
-
-    if (agentName) {
-      query = query.where(eq(agentExecutions.agentName, agentName));
-    }
-    if (status) {
-      query = query.where(eq(agentExecutions.status, status));
-    }
-
-    return await query;
   }
 
   async updateAgentExecution(id: string, updates: Partial<InsertAgentExecution>): Promise<AgentExecution> {

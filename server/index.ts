@@ -17,6 +17,9 @@ import {
 
 const app = express();
 
+// Trust proxy for rate limiting and IP detection
+app.set('trust proxy', 1);
+
 // Enhanced security and performance middleware
 app.use(securityHeaders);
 app.use(cors(corsConfig));
