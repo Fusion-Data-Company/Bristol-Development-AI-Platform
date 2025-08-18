@@ -30,6 +30,7 @@ import EnterpriseDashboard from "@/pages/EnterpriseDashboard";
 import EnhancedAgents from "@/pages/EnhancedAgents";
 import Maps2 from "@/pages/Maps2";
 import ProductionStatus from "@/pages/ProductionStatus";
+import PlaceholderReplace from "@/pages/PlaceholderReplace";
 
 
 
@@ -61,7 +62,7 @@ function Router() {
           <Route path="/enhanced-agents" component={EnhancedAgents} />
           <Route path="/maps2" component={Maps2} />
           <Route path="/production-status" component={ProductionStatus} />
-          <Route path="/placeholder-replace" component={() => import("./pages/PlaceholderReplace").then(m => m.default)} />
+          <Route path="/placeholder-replace" component={PlaceholderReplace} />
 
         </>
       )}

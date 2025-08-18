@@ -2815,9 +2815,9 @@ function AgentsPane({
                   <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent tracking-wide">
                     BRISTOL AI ENTERPRISE
                   </h2>
-                  <p className="text-lg text-blue-300/80 font-medium mt-1">
+                  <div className="text-lg text-blue-300/80 font-medium mt-1">
                     Multi-Agent Intelligence System • Enterprise Grade
-                  </p>
+                  </div>
                 </div>
               </div>
               
