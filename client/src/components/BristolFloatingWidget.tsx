@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle, ChevronDown, CircuitBoard, HelpCircle, BarChart, PieChart, MapPin, Users, Calendar, Minimize2, Maximize2, Clock, Palette, Wrench } from "lucide-react";
 import { DataVisualizationPanel } from "./chat/DataVisualizationPanel";
+import { EnhancedLiveDataContext } from "./chat/EnhancedLiveDataContext";
 import { OnboardingGuide } from "./chat/OnboardingGuide";
 import { useMCPChat } from "@/hooks/useMCPChat";
 import { useToast } from "@/hooks/use-toast";
@@ -197,6 +198,9 @@ export default function BristolFloatingWidget({
   const [wsOptional, setWsOptional] = useState(true); // URGENT: Make WebSocket optional
   const [mcpEnabled, setMcpEnabled] = useState(true);
   const [realTimeData, setRealTimeData] = useState(true);
+  // Model state for compatibility with existing select component
+  const [model, setModel] = useState(defaultModel || 'gpt-4o');
+  const [modelList, setModelList] = useState<ModelOption[]>([]);
   // Always elite mode - no toggle needed
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -231,6 +235,25 @@ export default function BristolFloatingWidget({
       console.warn("Failed to load saved system prompt:", error);
     }
   }, []);
+
+  // Load available models from MCP chat system
+  useEffect(() => {
+    if (mcpChat.availableModels && mcpChat.availableModels.length > 0) {
+      const formattedModels: ModelOption[] = mcpChat.availableModels.map(m => ({
+        id: m.id,
+        label: m.name || m.id,
+        context: (m as any).contextLength || 4000
+      }));
+      setModelList(formattedModels);
+    }
+  }, [mcpChat.availableModels]);
+
+  // Sync model state with MCP chat
+  useEffect(() => {
+    if (model && model !== mcpChat.currentModel) {
+      mcpChat.switchModel(model);
+    }
+  }, [model]);
 
   // WebSocket connection for real-time features - URGENT: Optional
   useEffect(() => {
@@ -1476,13 +1499,17 @@ export default function BristolFloatingWidget({
         </div>
       )}
 
-      {/* Data Visualization Panel */}
-      <DataVisualizationPanel
-        appData={appData}
-        isOpen={showDataViz}
-        onClose={() => setShowDataViz(false)}
-        className="fixed bottom-6 left-[38rem] z-[9997]"
-      />
+      {/* Enhanced Data Visualization Panel - can be used for floating widget as well */}
+      {showDataViz && (
+        <div className="fixed bottom-6 left-[38rem] z-[9997] w-96">
+          <EnhancedLiveDataContext
+            appData={appData}
+            isOpen={showDataViz}
+            onClose={() => setShowDataViz(false)}
+            className=""
+          />
+        </div>
+      )}
 
       {/* Onboarding Guide */}
       <OnboardingGuide

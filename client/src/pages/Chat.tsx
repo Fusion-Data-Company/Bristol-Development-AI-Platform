@@ -79,6 +79,7 @@ import { cn } from '@/lib/utils';
 import { type ChatSession, type ChatMessage } from '@shared/schema';
 import { format } from 'date-fns';
 import { DataVisualizationPanel } from '@/components/chat/DataVisualizationPanel';
+import { EnhancedLiveDataContext } from '@/components/chat/EnhancedLiveDataContext';
 import { OnboardingGuide } from '@/components/chat/OnboardingGuide';
 import { ArtifactsPanel, extractArtifacts, type Artifact } from '@/components/chat/ArtifactsPanel';
 import { ChatBackground } from "../components/EnterpriseBackgrounds";
@@ -2154,13 +2155,16 @@ What property or investment can I analyze for you today?`,
           </div>
         )}
 
-        {/* Data Visualization Panel - Exact from floating widget */}
+        {/* Enhanced Live Data Context - Full Width with Injection Capabilities */}
         {showDataViz && (
-          <DataVisualizationPanel 
-            appData={appData}
-            isOpen={showDataViz}
-            onClose={() => setShowDataViz(false)}
-          />
+          <div className="fixed top-20 left-0 right-0 z-[9998] px-4">
+            <EnhancedLiveDataContext 
+              appData={appData}
+              isOpen={showDataViz}
+              onClose={() => setShowDataViz(false)}
+              className="w-full"
+            />
+          </div>
         )}
 
         {/* Onboarding Guide */}
