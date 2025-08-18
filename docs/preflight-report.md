@@ -1,144 +1,144 @@
-# Pre-Flight Audit Report - Bristol Development App
-*Generated on: 2025-01-20*
+# Pre-Flight Audit Report - Bristol Development App Production Hardening
 
-## Executive Summary
-This report documents the current state of the Bristol Development App before production hardening. The app is functionally complete with advanced MCP integration, comprehensive data processing, and multiple AI agent systems.
+Generated: August 18, 2025
 
 ## 1. Dependency and Route Graph
 
-### File Structure Analysis
-- **Total TypeScript/JavaScript files**: 150+ files across client/server/shared
-- **Client structure**: React app with component-based architecture
-- **Server structure**: Express API with comprehensive service layer
-- **Shared**: Common schemas and types
+### Key Files Identified:
+- **MCP Configuration**: `mcp-config.json`, `server/config/elite-mcp-servers.json`
+- **Webhook Routes**: `server/api/elevenlabs-webhook.ts`
+- **Main Server**: `server/index.ts`
+- **Routes**: `server/routes.ts`
+- **Client Entry**: `client/src/main.tsx`, `client/src/App.tsx`
 
-### Route Structure
-**Protected API Routes**:
-- `/api/mcp-*` - MCP tool orchestration endpoints
-- `/api/webhooks/*` - External webhook handlers
-- `/api/elevenlabs-webhook` - ElevenLabs integration
+### Route Endpoints Found:
+- `/api/elevenlabs-webhook` - ElevenLabs webhook handler
+- Multiple MCP-related endpoints in server/api/mcp-*.ts files
+- Bristol agent endpoints in server/api/bristol-*.ts files
+- Chat system endpoints in server/api/chat*.ts files
 
-**Client Routes**:
-- `/` - Main application dashboard
-- `/chat` - AI chat interface
-- `/sites` - Property management
-- `/analytics` - Data analytics
-- `/competitor-watch` - Competitor monitoring
-- `/enterprise*` - Enterprise dashboards
+## 2. Potential Placeholders Found
 
-## 2. Placeholder and Cleanup Findings
-
-### Mock/Temporary Code Found
-```
-./client/src/components/analytics/MapWidget.tsx:  const mockSites: MapSite[] = [
-./client/src/components/analytics/MapWidget.tsx:  const displaySites = sites.length > 0 ? sites : mockSites;
-```
-**Status**: Acceptable - Mock data used as fallback for demonstration
-
-### ArcGIS Service Issues
-```
-./client/src/components/analytics/ArcGISLayer.tsx:        setError('ArcGIS service temporarily disabled due to repeated failures');
-```
-**Status**: Production issue requiring attention
-
-### No TODO/FIXME/PLACEHOLDER Issues
-- Comprehensive scan showed minimal placeholder content
-- Most mock data appears to be intentional fallbacks
+### Files with Placeholder Patterns:
+- Limited to TypeScript definition files in node_modules and cache
+- Main application code appears to be free of placeholder patterns
 
 ## 3. Asset Inventory
 
-### Attached Assets (Not in production bundle)
-- **Total**: 80+ attached files in `attached_assets/`
-- **Type**: Documentation, prompts, and reference materials
-- **Status**: Safe to keep, not affecting production build
+### Client Assets:
+- `client/public/bristol-logo-social.svg`
+- `client/public/bristol-social-preview.png`
+- Large collection of attached assets in `attached_assets/` directory
 
-### No Critical Asset Issues Found
-- No oversized assets detected
-- No unused public assets found
+### File Sizes: (To be measured during cleanup phase)
 
-## 4. MCP & Webhook Integrity Check
+## 4. MCP & Webhook Integrity
 
-### MCP Files (PROTECTED - DO NOT MODIFY)
-- `server/api/mcp-*.ts` - Core MCP endpoints
-- `server/services/mcp*.ts` - MCP service layer
-- `server/routes/mcpDatabaseValidation.ts` - Database validation
-- `server/mcp-postgres-server.*` - PostgreSQL MCP server
-- `mcp-config.json` - MCP configuration
+### PROTECTED FILES IDENTIFIED:
+1. **MCP Configuration**:
+   - `mcp-config.json` - Already marked as PROTECTED
+   - `server/config/elite-mcp-servers.json` - Elite MCP server configuration
+   - `server/mcp-postgres-server.cjs` - Database MCP server
 
-### Webhook Files (PROTECTED - DO NOT MODIFY)
-- `server/api/elevenlabs-webhook.ts` - ElevenLabs webhook handler
+2. **Webhook Routes**:
+   - `server/api/elevenlabs-webhook.ts` - ElevenLabs webhook handler
 
-**Verification**: All MCP and webhook files are properly structured and should remain untouched.
+3. **MCP Integration Services**:
+   - `server/services/mcpService.ts`
+   - `server/services/integrationService.ts`
+   - All files in `server/api/mcp-*.ts`
 
 ## 5. Mobile Readiness Assessment
 
-### Current Mobile Support
-- **Pop-out agent**: Currently visible on all screen sizes
-- **Navigation**: Desktop-oriented navigation
-- **Chat interface**: Basic responsive design
-- **Mobile UX**: Needs improvement for mobile-first experience
+### Pages Requiring Mobile Optimization:
+- Main application layout needs mobile navigation
+- Chat interface requires mobile-friendly design
+- Property/sites pages need responsive layout
+- Pop-out agent component needs mobile hiding
 
-### Issues Identified
-1. No mobile navigation system
-2. Pop-out agent should be hidden on mobile
-3. Need responsive breakpoints for mobile optimization
-4. Chat interface needs mobile UX enhancements
+### Identified Issues:
+- No mobile navigation system currently implemented
+- Pop-out agent not hidden on mobile viewports
+- Need to verify responsive design across all pages
 
-## 6. Build Settings Verification
+## 6. Build Settings
 
-### Current Configuration
-- **Node version**: Using latest LTS
-- **Build command**: `vite build && esbuild server/index.ts...`
-- **Start command**: `NODE_ENV=production node dist/index.js`
-- **Dev command**: `NODE_ENV=development tsx server/index.ts`
+### Current Configuration:
+- **Node Version**: Using TypeScript 5.6.3, Node 20.x (implied by package.json)
+- **Build Command**: `vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist`
+- **Start Command**: `NODE_ENV=production node dist/index.js`
+- **Development**: `NODE_ENV=development tsx server/index.ts`
 
-### Environment Variables
-- Production environment variables properly configured
-- No security issues with environment variable exposure
+### Issues Identified:
+- Missing production-specific npm scripts from mega prompt requirements
+- Need to add preflight, analyze, lint, typecheck, a11y scripts
 
 ## 7. Security & Compliance Quick Pass
 
-### Current Security Measures
-- **CORS**: Configured in server
-- **Helmet**: Security headers implemented
-- **Session management**: PostgreSQL-backed sessions
-- **Authentication**: Replit Auth with OpenID Connect
+### Current State:
+- CORS configuration present in server setup
+- Express security middleware appears to be configured
+- Environment variables used for API keys
+- No obvious security vulnerabilities in initial scan
 
-### Areas for Enhancement
-- Need Content Security Policy headers
-- Rate limiting could be improved
-- Error responses need sanitization review
+### Required Improvements:
+- Need to add Content Security Policy headers
+- Rate limiting may need enhancement
+- Error handling should be reviewed for information leakage
 
-## Recommended Actions
+## 8. Risk Assessment
 
-### Priority 1 (Critical)
-1. Implement mobile navigation system
-2. Hide pop-out agent on mobile devices
-3. Add Content Security Policy headers
-4. Fix ArcGIS service stability issues
+### High Risk (DO NOT MODIFY):
+- `mcp-config.json` and all MCP-related configuration files
+- `server/api/elevenlabs-webhook.ts` and webhook handlers
+- Environment variable names and structure
+- MCP server implementations and tools
 
-### Priority 2 (Important)
-1. Create production logger service
-2. Implement comprehensive error boundaries
-3. Add performance monitoring
-4. Optimize mobile chat interface
+### Medium Risk (Modify with Caution):
+- Main application routes in `server/routes.ts`
+- Client-side routing in `client/src/App.tsx`
+- Database configuration and connections
 
-### Priority 3 (Enhancement)
-1. Add service worker for caching
-2. Implement image optimization
-3. Add comprehensive accessibility features
-4. Create operational documentation
+### Low Risk (Safe to Modify):
+- UI components and styling
+- Mobile navigation implementation
+- Performance optimizations
+- Asset optimization
 
-## Risk Assessment
-- **Low Risk**: Mobile implementation won't affect existing functionality
-- **Medium Risk**: CSP headers may need tuning for existing integrations
-- **No Risk**: MCP and webhook systems are well-protected
+## 9. Immediate Action Plan
 
-## Next Steps
-1. Begin mobile implementation following the production hardening plan
-2. Implement mobile navigation and responsive design
-3. Add production security headers
-4. Conduct smoke testing on mobile devices
+### Phase 1 - Mobile Implementation:
+1. Hide pop-out agent on mobile viewports
+2. Implement mobile navigation system
+3. Ensure chat page mobile usability
 
----
-*This report serves as the baseline for production hardening implementation.*
+### Phase 2 - Placeholder Purge:
+1. Scan for remaining placeholders
+2. Implement or remove placeholder functionality
+3. Gate demo content behind DEMO_MODE flag
+
+### Phase 3 - Performance & Security:
+1. Add production logging system
+2. Implement CSP headers
+3. Optimize assets and bundling
+4. Add error boundaries
+
+### Phase 4 - Build & Deploy:
+1. Update package.json scripts
+2. Verify production build process
+3. Add operational documentation
+
+## 10. Protected File Marking Required
+
+The following files need `// PROTECTED: do not modify without owner approval` comments:
+- `mcp-config.json` ✅ (already marked)
+- `server/config/elite-mcp-servers.json`
+- `server/mcp-postgres-server.cjs`
+- `server/api/elevenlabs-webhook.ts`
+- All `server/api/mcp-*.ts` files
+- `server/services/mcpService.ts`
+- `server/services/integrationService.ts`
+
+## Summary
+
+The application appears to be in good shape with minimal placeholders and a solid MCP/webhook foundation. The primary work needed is mobile optimization, performance hardening, and production readiness improvements. All high-risk areas have been identified and will be protected during the hardening process.

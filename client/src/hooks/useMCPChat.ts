@@ -203,7 +203,7 @@ export function useMCPChat(options: UseMCPChatOptions = {}) {
         mcpRequest
       );
 
-      return response as MCPChatResponse;
+      return await response.json() as MCPChatResponse;
     },
     onMutate: (request) => {
       setIsThinking(true);
@@ -282,11 +282,11 @@ export function useMCPChat(options: UseMCPChatOptions = {}) {
   // Model validation mutation
   const validateModelMutation = useMutation({
     mutationFn: async (modelId: string) => {
-      const response = await apiRequest('/api/mcp-unified/validate-model', 'POST', {
+      const response = await apiRequest('POST', '/api/mcp-unified/validate-model', {
         modelId,
         checkHealth: true
       });
-      return response as { success: boolean; validation: ModelValidationResult };
+      return await response.json() as { success: boolean; validation: ModelValidationResult };
     },
     onSuccess: (response, modelId) => {
       if (!response.validation.valid) {
@@ -303,12 +303,12 @@ export function useMCPChat(options: UseMCPChatOptions = {}) {
   // Model switching mutation
   const switchModelMutation = useMutation({
     mutationFn: async ({ fromModel, toModel }: { fromModel?: string; toModel: string }) => {
-      const response = await apiRequest('/api/mcp-unified/switch-model', 'POST', {
+      const response = await apiRequest('POST', '/api/mcp-unified/switch-model', {
         fromModel: fromModel || currentModel,
         toModel,
         sessionId
       });
-      return response as { success: boolean; switchResult: any };
+      return await response.json() as { success: boolean; switchResult: any };
     },
     onSuccess: (response, variables) => {
       if (response.success) {

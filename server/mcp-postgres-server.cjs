@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+// PROTECTED: do not modify without owner approval
 // PostgreSQL MCP Server for Bristol Development Group
 // Provides database access tools for the AI agent through Claude Desktop MCP integration
 

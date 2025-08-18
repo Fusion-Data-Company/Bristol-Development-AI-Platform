@@ -16,7 +16,7 @@ export function useApiWithErrorHandling() {
 
   const createQuery = useCallback(<T = any>(
     queryKey: string | string[],
-    options: UseQueryOptions<T> & ApiOptions = {}
+    options: Omit<UseQueryOptions<T>, 'queryKey'> & ApiOptions = {}
   ) => {
     const { showErrorToast = true, retries = 3, ...queryOptions } = options;
 
