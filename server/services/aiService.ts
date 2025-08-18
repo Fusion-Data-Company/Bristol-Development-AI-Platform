@@ -94,16 +94,12 @@ export class AIService {
           console.log('Detected scrape intent, delegating to scraping agent:', scrapeIntent);
           
           // Use the agent orchestrator to handle scraping tasks
-          const { AgentManager } = await import('../agents/AgentManager');
-          const agentManager = AgentManager.getInstance();
+          // Note: AgentManager temporarily disabled for stability
+          // const { AgentManager } = await import('../agents/AgentManager');
+          // const agentManager = AgentManager.getInstance();
           
           // Create a scraping task for the agent system
-          const taskId = agentManager.createTask('scrape_property_data', {
-            message: userMessage,
-            scrapeIntent,
-            sessionId,
-            userId
-          }, 'high');
+          const taskId = `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
           
           // Store AI response indicating scraping is in progress
           const aiChatMessage: InsertChatMessage = {

@@ -1,7 +1,7 @@
 # Bristol Site Intelligence Platform
 
 ## Overview
-The Bristol Site Intelligence Platform is an enterprise-grade, AI-powered real estate development analysis tool designed for multifamily development opportunities within Sunbelt markets. It provides comprehensive site analytics, interactive mapping, a proprietary 100-point Bristol scoring methodology, and real-time market intelligence. A key feature is the integrated AI assistant, Bristol A.I. Elite v5.0, which functions as a Fortune 500-grade always-on "boss agent" for advanced deal analysis. The platform aims to provide institutional-quality real estate analysis capabilities, supporting decisions related to IRR, NPV, cap rates, and LP/GP structures.
+The Bristol Site Intelligence Platform is an enterprise-grade, AI-powered real estate development analysis tool for multifamily opportunities in Sunbelt markets. It provides comprehensive site analytics, interactive mapping, a proprietary 100-point Bristol scoring methodology, and real-time market intelligence. The platform integrates Bristol A.I. Elite v5.0, an AI assistant for advanced deal analysis. Its purpose is to deliver institutional-quality real estate analysis capabilities, supporting decisions related to IRR, NPV, cap rates, and LP/GP structures, with a vision to provide a Fortune 500-grade "boss agent" for developers.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -19,27 +19,16 @@ FOOTER REQUIREMENT: All pages must include thick Bristol footers to provide scro
 - **State Management**: TanStack Query.
 - **Routing**: Wouter.
 - **Real-time Communication**: WebSocket integration.
-- **UI/UX Decisions**: All API tools feature consistent premium Bristol enterprise styling with Bristol-maroon gradients, gold borders, and Cpu icons. A high-resolution glowing digital globe background is used without overlays or filters. Mega headers feature Bristol branding and gradient backgrounds. The platform supports a dual map architecture with a Portfolio Map and an Interactive Map with a sophisticated right sidebar for analytics.
+- **UI/UX Decisions**: All API tools feature consistent premium Bristol enterprise styling with Bristol-maroon gradients, gold borders, and Cpu icons. A high-resolution glowing digital globe background is used without overlays. Mega headers feature Bristol branding and gradient backgrounds. The platform supports a dual map architecture with a Portfolio Map and an Interactive Map with a sophisticated right sidebar for analytics.
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.
 - **Database**: PostgreSQL with Neon serverless hosting via Drizzle ORM.
 - **Authentication**: Enhanced Replit Auth with bulletproof user management and OpenID Connect.
-- **AI Integration**: BULLETPROOF UNIFIED MCP ORCHESTRATOR with three-agent communication system (floating widget, main chat, ElevenLabs) enabling real-time inter-agent messaging via MCP protocol. Enhanced chat experience API with intelligent interactions, smart follow-up question generation, interactive chat tools, and comprehensive error recovery. The Bristol A.I. Elite system utilizes advanced MCP orchestration with bulletproof error handling, circuit breakers, auto-recovery mechanisms, and health monitoring across 22+ tools.
+- **AI Integration**: BULLETPROOF UNIFIED MCP ORCHESTRATOR with three-agent communication system (floating widget, main chat, ElevenLabs) enabling real-time inter-agent messaging via MCP protocol. Features advanced MCP orchestration with bulletproof error handling, circuit breakers, auto-recovery mechanisms, and health monitoring across 22+ tools. Includes enhanced chat experience API with intelligent interactions, smart follow-up question generation, and comprehensive error recovery.
 - **File Storage**: Google Cloud Storage.
 - **Real-time Features**: WebSocket server for live updates, chat, and tool execution status.
-- **System Design Choices**: The Bristol A.I. acts as a bulletproof AI orchestrator with unified three-agent communication system. Features advanced MCP orchestration with bulletproof error handling, circuit breakers, auto-recovery mechanisms, and comprehensive health monitoring. The system includes unified MCP orchestrator enabling seamless communication between floating widget, main chat, and ElevenLabs agents with production-ready resilience and comprehensive testing infrastructure.
-
-### Data Storage Solutions
-- **Primary Database**: PostgreSQL on Neon, accessed via Drizzle ORM.
-- **Session Storage**: PostgreSQL-backed session store.
-- **Memory Management**: Advanced memory system with PostgreSQL tables for long-term conversation context, user preferences, and tool integration results.
-- **Schema Structure**: Includes user management, site intelligence, unified chat system, advanced memory tables, and integration tracking for perfect memory retention and cross-session context sharing.
-
-### Authentication and Authorization
-- **Provider**: Replit Auth using OpenID Connect.
-- **Session Management**: Express-session with PostgreSQL backing.
-- **Security**: Secure HTTP-only cookies with CSRF protection.
+- **System Design Choices**: The Bristol A.I. acts as a bulletproof AI orchestrator. An advanced memory system with PostgreSQL tables is used for long-term conversation context, user preferences, and tool integration results, ensuring perfect memory retention and cross-session context sharing. The database schema includes user management, site intelligence, unified chat system, advanced memory tables, and integration tracking. Authentication utilizes Replit Auth with OpenID Connect, supported by Express-session with PostgreSQL backing and secure HTTP-only cookies with CSRF protection.
 
 ## External Dependencies
 
@@ -73,119 +62,12 @@ FOOTER REQUIREMENT: All pages must include thick Bristol footers to provide scro
 
 ### Integrated Services
 - **AI Services**: OpenRouter API (for models like GPT-5, Claude 4, Grok 4, Perplexity), Direct OpenAI BYOK.
-- **Speech Synthesis**: ElevenLabs (via @elevenlabs/react package).
-- **Enhanced Business Tools**: Property Analysis Service, Intelligent Search Service, Report Generation Service, Enhanced Tool Orchestration, Elite Memory Enhancement Service, Advanced Agent Orchestration Service, Production Readiness Service, Enhanced Chat Agent Service, MCP Integration Service, Elite MCP Orchestration Service.
+- **Speech Synthesis**: ElevenLabs.
+- **Enhanced Business Tools**: Property Analysis Service, Intelligent Search Service, Report Generation Service, Elite Memory Enhancement Service, Advanced Agent Orchestration Service.
 - **Primary Web Scraping**: Firecrawl API.
-- **Fallback Scrapers**: Enhanced scraping agent and legacy adapters (ApartmentList, Rentals.com, LoopNet, Craigslist).
+- **Fallback Scrapers**: ApartmentList, Rentals.com, LoopNet, Craigslist.
 - **Economic Data APIs**: BLS (employment), BEA (GDP/income), HUD (vacancy rates).
 - **Other Data APIs**: Foursquare, FBI, NOAA.
-- **Automation Tools**: n8n Workflows, Census Data API, HUD Fair Market Rent, Metrics Storage.
+- **Automation Tools**: n8n Workflows, Census Data API, HUD Fair Market Rent.
 - **Mapping**: MapBox GL.
 - **Productivity**: Microsoft 365 (OneDrive, Outlook connectivity foundation).
-
-## Recent Changes
-
-### August 18, 2025 - Mega MCP Database Access & HTTP Error Handling Enhancement COMPLETED
-**MAJOR ENHANCEMENT**: Deployed comprehensive MCP database access strengthening with bulletproof HTTP and MCP error handling.
-
-**MCP Database Access Enhancement:**
-- ✅ MegaMcpDatabaseAccess - Unified interface with full schema access for all talking agents
-- ✅ Enhanced PostgreSQL MCP server with 8 comprehensive database tools
-- ✅ Complete schema access: sites, metrics, chat history, memory, market intelligence, comparables
-- ✅ Advanced query capabilities with security validation and performance monitoring
-- ✅ Real-time analytics with portfolio overview, Bristol scoring, and geographic analysis
-
-**HTTP & MCP Error Handling Bulletproofing:**
-- ✅ HttpErrorEnhancement - Comprehensive HTTP call wrapper with retry logic and recovery
-- ✅ Enhanced MCP PostgreSQL server with bulletproof error classification and recovery
-- ✅ Secure database querying with injection protection and performance tracking
-- ✅ API endpoint wrappers with automatic recovery and detailed error logging
-- ✅ MCP operation wrappers with server recovery and communication healing
-
-**Database Schema Unification:**
-- All 15 database tables fully accessible through mega MCP server
-- Comprehensive analytics queries for portfolio, comparables, and market intelligence
-- Advanced search capabilities with geographic bounds and multi-criteria filtering
-- Real-time health monitoring with table counts and system diagnostics
-
-### August 18, 2025 - Comprehensive Error Handling System Deployment COMPLETED
-**MAJOR ENHANCEMENT**: Deployed enterprise-grade error handling with comprehensive automatic recovery capabilities.
-
-**Error Handling Architecture Deployed:**
-- ✅ ErrorHandlingService - Foundation layer with global middleware, circuit breakers, and structured logging
-- ✅ RobustErrorRecovery - Advanced recovery for database, API, MCP, memory, and WebSocket failures
-- ✅ EnhancedErrorHandling - Integration layer with automatic recovery wrappers for all operations
-- ✅ SystemHealthMonitor - Real-time monitoring with comprehensive health checks and auto-recovery
-
-**Recovery Capabilities Added:**
-- Database connection recovery (3 attempts with exponential backoff)
-- API service recovery with intelligent retry logic and rate limit handling
-- MCP server recovery with process restart capabilities  
-- Memory pressure recovery with garbage collection triggers
-- WebSocket recovery with automatic restart functionality
-- Comprehensive system recovery orchestrating all services
-
-**System Resilience Enhanced:**
-- All existing functionality preserved while dramatically improving error resilience
-- Circuit breaker patterns for external service failures
-- Performance monitoring with request/error rate tracking
-- Automatic cleanup preventing memory buildup in monitoring systems
-- Health status APIs for real-time system diagnostics
-
-### August 18, 2025 - Elite Analytics Buildout Phase 1 APPROVED
-**MAJOR MILESTONE**: User approved comprehensive plan to eliminate all 47 placeholder data sections and implement elite Bristol analytical functions.
-
-**Phase 1 Deployment Completed:**
-- ✅ Bristol Market Intelligence Agent - Specialized for Sunbelt market analysis with 4-model OpenRouter architecture (GPT-5, Perplexity Sonar, Gemini 2.5 Pro, Claude Opus 4.1)
-- ✅ Bristol Financial Modeling Agent - Institutional DCF, IRR, NPV analysis with Monte Carlo simulation and LP/GP waterfall calculations
-- ✅ Bristol Demographics Intelligence Agent - Deep population, economic, and migration analysis for target market identification
-- ✅ Bristol Site Analytics Agent - Proprietary 100-point Bristol scoring methodology with GIS integration and POI analysis
-
-**System Protection Protocol Active:**
-- All existing bulletproof MCP functionality preserved during enhancement
-- Comprehensive system analysis report generated documenting 100% operational status
-- Incremental deployment strategy maintains all working features
-- Real data integration pipeline architecture established
-
-**Phase 2 Deployment Started:**
-- ✅ Real Data Integration Service - Live API framework for CoStar, ApartmentList, BLS, FRED, ArcGIS, Foursquare
-- ✅ Placeholder Replacement Service - Systematic replacement of all 47 placeholder sections
-- ✅ Category 1 Framework - Property & Market Data (15 sections) - CoStar rental comps, RCA cap rates, Dodge construction pipeline
-- ✅ Category 2 Framework - Financial & Economic Data (12 sections) - BLS employment, FRED interest rates, economic indicators
-- ✅ Category 3 Framework - Site & Location Data (20 sections) - ArcGIS demographics, Foursquare POI, GIS analysis
-- ✅ Comprehensive API Endpoints - 15 new endpoints for real data integration and placeholder replacement
-
-**Phase 2 Deployment Complete:**
-- ✅ Comprehensive Placeholder Replacement System deployed - 15 new API endpoints
-- ✅ Real Data Integration Service operational with 8 external API integrations
-- ✅ Frontend dashboard for placeholder management and progress tracking
-- ✅ All 47 placeholder sections defined and mapped to live data sources
-- ✅ Batch processing capabilities for multi-site operations
-- ✅ Health monitoring and API configuration validation
-
-**System Status:** Production Ready - All 47 placeholder sections mapped to real data sources with comprehensive replacement system deployed
-
-### August 18, 2025 - PRODUCTION DEPLOYMENT COMPLETED
-**MAJOR MILESTONE**: Comprehensive real data integration system fully operational with all placeholder replacements implemented.
-
-**Production Features Deployed:**
-- ✅ RealDataService - Complete integration with Census, BLS, FBI, Perplexity APIs
-- ✅ ProductionScraper - Firecrawl-powered property scraping replacing all demo data
-- ✅ Placeholder Replacement API - 15 endpoints for systematic real data replacement
-- ✅ Production Status Dashboard - Real-time monitoring and health checks
-- ✅ Comprehensive API Health Monitoring - Multi-service validation system
-- ✅ Security Enhancements - PostgreSQL session storage, environment token management
-
-**Real Data Sources Active:**
-- US Census Bureau (demographics, income, population)
-- Bureau of Labor Statistics (employment rates, economic indicators) 
-- FBI Crime Data Explorer (safety metrics, crime indices)
-- Perplexity Sonar (market intelligence, research)
-- Firecrawl API (property data scraping)
-- Bristol Proprietary Scoring (100-point methodology)
-
-**User Interface Enhancements:**
-- Production Status page with real-time API health monitoring
-- One-click comprehensive placeholder replacement
-- Individual service status indicators
-- Automated Bristol scoring with real demographic inputs
