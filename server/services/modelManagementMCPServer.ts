@@ -505,113 +505,71 @@ class ModelManagementMCPServer {
     return model;
   }
 
-  // Private: Health check cycle
+  // Private: Start health check cycle
   private startHealthCheckCycle(): void {
-    // Run health checks every 10 minutes
-    setInterval(() => {
-      this.runHealthChecks().catch(error => {
-        console.warn(`⚠️ [ModelMCP] Health check cycle failed:`, error);
-      });
-    }, 600000); // 10 minutes
-    
     // Initial health check
     setTimeout(() => {
-      this.runHealthChecks().catch(console.warn);
+      this.runHealthChecks();
     }, 5000); // 5 seconds after startup
+
+    // Periodic health checks
+    setInterval(() => {
+      this.runHealthChecks();
+    }, 5 * 60 * 1000); // Every 5 minutes
   }
 
   // Private: Run health checks for all models
   private async runHealthChecks(): Promise<void> {
-    console.log(`🏥 [ModelMCP] Running health checks for ${this.modelCache.size} models...`);
+    console.log('🏥 [ModelMCP] Running health checks for models...');
     
-    const healthPromises = Array.from(this.modelCache.keys()).map(async (modelId) => {
-      try {
-        const startTime = Date.now();
-        
-        // Simple health check - validate model exists on OpenRouter
-        const model = this.modelCache.get(modelId);
-        if (!model) return;
-        
-        await this.getOpenRouterModelDetails(model.openrouterId);
-        
-        const latency = Date.now() - startTime;
-        
-        this.healthCheckResults.set(modelId, {
-          status: true,
-          lastCheck: new Date().toISOString(),
-          latency
-        });
-        
-      } catch (error) {
-        this.healthCheckResults.set(modelId, {
-          status: false,
-          lastCheck: new Date().toISOString(),
-          latency: undefined
-        });
-      }
-    });
+    const models = Array.from(this.modelCache.values());
+    const healthPromises = models.map(model => this.checkModelHealth(model.openrouterId));
     
-    await Promise.allSettled(healthPromises);
-    
-    const healthyCount = Array.from(this.healthCheckResults.values()).filter(h => h.status).length;
-    console.log(`✅ [ModelMCP] Health checks completed: ${healthyCount}/${this.modelCache.size} models healthy`);
+    try {
+      await Promise.allSettled(healthPromises);
+      const healthyCount = Array.from(this.healthCheckResults.values()).filter(h => h.status).length;
+      console.log(`✅ [ModelMCP] Health checks completed: ${healthyCount}/${models.length} models healthy`);
+    } catch (error) {
+      console.error('❌ [ModelMCP] Health check cycle failed:', error);
+    }
   }
 
-  // Get all MCP tools for registration
-  getMCPTools() {
-    return [
-      {
-        name: 'get_available_models',
-        description: 'Get list of available Bristol AI models with filtering options',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            category: { type: 'string', description: 'Filter by category (chat, reasoning, coding, research, multimodal)' },
-            tier: { type: 'string', description: 'Filter by tier (free, standard, premium, elite)' },
-            provider: { type: 'string', description: 'Filter by provider (OpenAI, Anthropic, etc.)' },
-            includeHealth: { type: 'boolean', description: 'Include health status information' }
-          }
-        }
-      },
-      {
-        name: 'validate_model_selection',
-        description: 'Validate a model selection and check availability/health',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            modelId: { type: 'string', description: 'Bristol model ID to validate' },
-            checkAvailability: { type: 'boolean', description: 'Check OpenRouter availability' },
-            checkHealth: { type: 'boolean', description: 'Check model health status' }
-          },
-          required: ['modelId']
-        }
-      },
-      {
-        name: 'switch_model',
-        description: 'Switch from one model to another with validation',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            fromModel: { type: 'string', description: 'Current model ID' },
-            toModel: { type: 'string', description: 'Target model ID' },
-            sessionId: { type: 'string', description: 'Session ID for tracking' },
-            validateFirst: { type: 'boolean', description: 'Validate target model first (default: true)' }
-          },
-          required: ['toModel']
-        }
-      },
-      {
-        name: 'get_model_health',
-        description: 'Get health status for specific model or all models',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            modelId: { type: 'string', description: 'Specific model ID (omit for all models)' },
-            runHealthCheck: { type: 'boolean', description: 'Run fresh health check' }
-          }
-        }
+  private async checkModelHealth(openrouterId: string): Promise<void> {
+    const startTime = Date.now();
+    
+    try {
+      if (!OPENROUTER_API_KEY) {
+        this.healthCheckResults.set(openrouterId, {
+          status: false,
+          lastCheck: new Date().toISOString()
+        });
+        return;
       }
-    ];
+
+      const response = await fetch(`${OPENROUTER_BASE_URL}/models/${openrouterId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000 // 10 second timeout
+      });
+
+      const latency = Date.now() - startTime;
+      const isHealthy = response.ok;
+
+      this.healthCheckResults.set(openrouterId, {
+        status: isHealthy,
+        lastCheck: new Date().toISOString(),
+        latency
+      });
+
+    } catch (error) {
+      this.healthCheckResults.set(openrouterId, {
+        status: false,
+        lastCheck: new Date().toISOString()
+      });
+    }
   }
 }
 

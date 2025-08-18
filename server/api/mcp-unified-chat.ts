@@ -23,13 +23,13 @@ router.get('/models', async (req, res) => {
     console.log('🔍 Fetching models via ModelManagementMCP...');
     
     // Get models from the MCP service
-    const modelsResult = await modelManagementMCPServer.executeCommand('get_available_models', {
+    const modelsResult = await modelManagementMCPServer.getModelsData({
       includeHealth: req.query.includeHealth === 'true',
       category: req.query.category as string,
       provider: req.query.provider as string
     });
 
-    if (!modelsResult.success) {
+    if (!modelsResult || !modelsResult.success) {
       console.error('❌ ModelMCP failed:', modelsResult.error);
       // Fallback models for UI continuity
       return res.json({

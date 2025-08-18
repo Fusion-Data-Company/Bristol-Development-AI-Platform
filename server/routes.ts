@@ -340,6 +340,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Agent Communication System Status and Testing
+  app.get('/api/agent-comm/status', async (req, res) => {
+    try {
+      const { agentCommunicationService } = await import('./services/agentCommunicationService');
+      const { unifiedMCPOrchestrator } = await import('./services/unifiedMCPOrchestrator');
+      
+      const healthStatus = agentCommunicationService.getHealthStatus();
+      
+      res.json({
+        success: true,
+        status: {
+          agentComm: {
+            initialized: true,
+            connectedAgents: healthStatus.connectedAgents,
+            activeConnections: healthStatus.activeConnections,
+            messageHistory: healthStatus.messageHistory,
+            status: healthStatus.status
+          },
+          mcpOrchestrator: {
+            initialized: true,
+            status: 'operational'
+          },
+          timestamp: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error('❌ Agent communication status error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'Agent communication system not initialized',
+        message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
 
 
   // OpenRouter models endpoint
