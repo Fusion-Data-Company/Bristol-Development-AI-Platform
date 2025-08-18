@@ -45,6 +45,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const sitesRouter = (await import('./api/sites')).default;
   app.use('/api/sites', sitesRouter);
 
+  // Bristol Scoring API for live rating calculations
+  const bristolScoringRouter = (await import('./api/sites/bristol-scoring')).default;
+  app.use('/api/sites', bristolScoringRouter);
+
   // Import comps API for comparable properties functionality  
   const compsRouter = (await import('./api/comps')).default;
   app.use('/api/comps', compsRouter);
