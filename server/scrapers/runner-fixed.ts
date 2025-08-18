@@ -7,7 +7,7 @@ import { db } from '../db';
 import { compsAnnex, scrapeJobsAnnex } from '../../shared/schema';
 import { eq, sql } from 'drizzle-orm';
 import { runScrapeAgent } from './agent';
-import { generateDemoData } from './demo-data';
+import { ProductionScraper } from './production-scraper';
 
 export async function runJobNow(id: string) {
   console.log(`🚀 Starting scrape job: ${id}`);
@@ -32,15 +32,41 @@ export async function runJobNow(id: string) {
   let errorMessages: string[] = [];
   
   try {
-    console.log(`📍 Scraping for: ${address} (${radius_mi}mi radius)`);
+    console.log(`📍 Starting real property scraping for: ${address} (${radius_mi}mi radius)`);
     
-    // For production testing, use demo data that represents real market conditions
-    const demoRecords = generateDemoData(address, radius_mi);
+    const scraper = new ProductionScraper();
     
-    console.log(`📊 Generated ${demoRecords.length} realistic property records`);
+    // Use real Firecrawl scraping
+    const scrapedProperties = await scraper.scrapeWithFirecrawl({
+      location: address,
+      radius: radius_mi,
+      propertyType: asset_type,
+      amenities: amenities
+    });
     
-    // Insert records into database
-    for (const record of demoRecords) {
+    console.log(`🔥 Scraped ${scrapedProperties.length} real properties from production sources`);
+    
+    // Store real scraped properties
+    if (scrapedProperties.length > 0) {
+      await scraper.storeProperties(scrapedProperties, id);
+      insertedCount = scrapedProperties.length;
+    } else {
+      console.warn('⚠️ No properties found - API may need configuration');
+      insertedCount = 0;
+    }
+    
+    // Also get market research from Perplexity
+    try {
+      const marketResearch = await scraper.scrapeWithPerplexity(
+        `Current multifamily rental market conditions in ${address}. Include rent growth, occupancy rates, new construction pipeline, and demographic trends for ${asset_type} properties.`
+      );
+      
+      console.log('📈 Market research completed:', marketResearch.citations?.length || 0, 'sources');
+    } catch (perplexityError: any) {
+      console.warn('Market research failed:', perplexityError?.message || 'Unknown error');
+    }
+    
+    console.log(`✅ Real property scraping completed: ${insertedCount} properties stored`);
       try {
         const dbRecord = {
           id: record.id,

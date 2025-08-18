@@ -3,8 +3,7 @@ import Map, { NavigationControl, Marker, Popup } from 'react-map-gl';
 import { useQuery } from '@tanstack/react-query';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// Use Rob's public token
-const MAPBOX_TOKEN = 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtZWRnM3IwbjA3M3IybG1zNnAzeWtuZ3EifQ.mif4Tbd3ceKQh6YAS8EPDQ';
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtZWRnM3IwbjA3M3IybG1zNnAzeWtuZ3EifQ.mif4Tbd3ceKQh6YAS8EPDQ';
 
 export default function WorkingMap() {
   const [viewState, setViewState] = useState({

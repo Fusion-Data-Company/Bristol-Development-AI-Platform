@@ -155,6 +155,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { mcpDatabaseValidationRouter } = await import('./routes/mcpDatabaseValidation');
   app.use('/api/mcp-database', mcpDatabaseValidationRouter);
 
+  // Real Data Integration API (replaces all placeholder data)
+  const realDataRouter = (await import('./api/real-data-integration')).default;
+  app.use('/api/real-data', realDataRouter);
+
+  // Placeholder Replacement API (comprehensive replacement system)
+  const placeholderReplacementRouter = (await import('./api/placeholder-replacement')).default;
+  app.use('/api/placeholder-replacement', placeholderReplacementRouter);
+
   // Bristol A.I. Enhanced API with MCP integration
   const bristolBrainRouter = (await import('./api/bristol-brain-enhanced')).default;
   app.use('/api/bristol-brain', bristolBrainRouter);
