@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import Map, { NavigationControl, GeolocateControl, Marker, Popup, Source, Layer, ViewStateChangeEvent } from 'react-map-gl';
 import type { MapRef } from 'react-map-gl';
 import type { Site } from '@shared/schema';
@@ -36,11 +36,14 @@ console.log('✅ Token validation:', MAPBOX_TOKEN.startsWith('pk.') ? 'VALID' : 
 const originalWarn = console.warn;
 console.warn = (...args) => {
   const message = args.join(' ');
-  // Suppress known non-critical Mapbox warnings
+  // Suppress known non-critical Mapbox warnings including data attribute warnings
   if (message.includes('style') || 
       message.includes('Style') || 
       message.includes('mapbox-gl') ||
-      message.includes('worker')) {
+      message.includes('worker') ||
+      message.includes('data-replit-metadata') ||
+      message.includes('data-component-name') ||
+      message.includes('unknown property')) {
     return; // Suppress these warnings
   }
   originalWarn.apply(console, args);
@@ -184,21 +187,23 @@ export function InteractiveMap({
     });
   }, [layerData, loading, fetchLayerData]);
 
-  // Enhanced heat map data for better visibility
-  const marketHeatData = {
+  // Enhanced heat map data for better visibility - Clean GeoJSON structure
+  const marketHeatData = useMemo(() => ({
     type: 'FeatureCollection' as const,
-    features: activeSites.map(site => ({
+    features: activeSites.map((site, index) => ({
       type: 'Feature' as const,
+      id: `site-${index}`,
       properties: {
         score: (site as any).bristolScore || 75,
-        density: Math.max(50, ((site as any).bristolScore || 75) * 1.2) // Enhanced density for visibility
+        density: Math.max(50, ((site as any).bristolScore || 75) * 1.2),
+        name: site.name
       },
       geometry: {
         type: 'Point' as const,
         coordinates: [site.longitude || -82.4572, site.latitude || 33.7490]
       }
     }))
-  };
+  }), [activeSites]);
 
   const heatmapLayer = {
     id: 'market-heat',
