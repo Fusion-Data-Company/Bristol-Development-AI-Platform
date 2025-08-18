@@ -157,10 +157,8 @@ export function useMCPChat(options: UseMCPChatOptions = {}) {
   } = useQuery({
     queryKey: ['/api/mcp-unified/models', { includeHealth: autoValidateModel }],
     queryFn: async () => {
-      const response = await apiRequest('/api/mcp-unified/models', 'GET', undefined, {
-        includeHealth: autoValidateModel
-      });
-      return response as {
+      const response = await apiRequest('GET', '/api/mcp-unified/models');
+      return await response.json() as {
         success: boolean;
         models: AvailableModel[];
         totalCount: number;
@@ -200,11 +198,9 @@ export function useMCPChat(options: UseMCPChatOptions = {}) {
       };
 
       const response = await apiRequest(
+        'POST',
         '/api/mcp-unified/chat', 
-        'POST', 
-        mcpRequest,
-        {},
-        abortControllerRef.current.signal
+        mcpRequest
       );
 
       return response as MCPChatResponse;
