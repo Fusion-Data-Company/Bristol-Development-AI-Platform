@@ -32,8 +32,8 @@ import {
 import type { Site, SiteMetric } from '@shared/schema';
 
 interface InteractiveMapDashboardProps {
-  selectedSite: Site | null;
-  onSiteSelect: (site: Site | null) => void;
+  selectedSite: any;
+  onSiteSelect: (site: any) => void;
 }
 
 export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: InteractiveMapDashboardProps) {
@@ -166,7 +166,8 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
       fipsState: null,
       fipsCounty: null,
       geoidTract: null,
-      acsYear: null
+      acsYear: null,
+      bristolScore: null
     };
     
     setClickedLocation({ lng, lat });

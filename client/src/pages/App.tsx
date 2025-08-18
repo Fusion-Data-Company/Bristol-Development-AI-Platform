@@ -25,15 +25,15 @@ export default function App() {
   }
   
   const [activeTab, setActiveTab] = useState("interactive");
-  const [selectedSite, setSelectedSite] = useState<Site | null>(null);
+  const [selectedSite, setSelectedSite] = useState<any>(null);
 
   // Fetch sites data for the Tables tab
-  const { data: sites = [] } = useQuery<Site[]>({  
+  const { data: sites = [] } = useQuery({  
     queryKey: ['/api/sites'],
     retry: false,
   });
 
-  const handleSiteSelect = (site: Site | null) => {
+  const handleSiteSelect = (site: any) => {
     setSelectedSite(site);
     // Removed automatic tab switching to prevent navigation conflicts
   };
@@ -66,8 +66,8 @@ export default function App() {
 
           <TabsContent value="tables" className="mt-6">
             <ElitePropertyAnalyticsDashboard 
-              sites={sites} 
-              selectedSite={selectedSite}
+              sites={sites as any} 
+              selectedSite={selectedSite as any}
               onSiteSelect={handleSiteSelect}
             />
           </TabsContent>

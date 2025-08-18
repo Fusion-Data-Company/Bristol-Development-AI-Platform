@@ -1,4 +1,6 @@
 import { storage } from "../storage";
+import { db } from "../db";
+import { sites } from "@shared/schema";
 
 // MCP Tools Integration for Enhanced Chat Functions
 interface MCPTool {
@@ -361,8 +363,8 @@ class MCPToolsIntegration {
   private async searchProperties(params: any) {
     // Integration with existing sites/properties APIs
     try {
-      const sites = await storage.getSites();
-      const filtered = sites.filter(site => {
+      const sitesData = await db.select().from(sites);
+      const filtered = sitesData.filter((site: any) => {
         if (params.location) {
           const locationMatch = site.city?.toLowerCase().includes(params.location.toLowerCase()) ||
                                site.state?.toLowerCase().includes(params.location.toLowerCase());
