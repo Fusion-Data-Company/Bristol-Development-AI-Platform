@@ -872,3 +872,121 @@ export type AgentTask = typeof agentTasks.$inferSelect;
 export type InsertAgentTask = z.infer<typeof insertAgentTaskSchema>;
 export type AgentCommunication = typeof agentCommunications.$inferSelect;
 export type InsertAgentCommunication = z.infer<typeof insertAgentCommunicationSchema>;
+
+// Competitor Watch Tables
+export const competitorSignals = pgTable("competitor_signals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  type: varchar("type").notNull(), // permit, agenda, sec_filing, entity_filing, news
+  jurisdiction: varchar("jurisdiction").notNull(),
+  source: varchar("source").notNull(),
+  sourceId: varchar("source_id"),
+  title: varchar("title", { length: 500 }).notNull(),
+  address: text("address"),
+  whenIso: timestamp("when_iso").notNull(),
+  link: text("link"),
+  rawData: jsonb("raw_data"),
+  competitorMatch: varchar("competitor_match"),
+  confidence: real("confidence"),
+  priority: integer("priority"),
+  analyzed: boolean("analyzed").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_competitor_signals_type").on(table.type),
+  index("idx_competitor_signals_jurisdiction").on(table.jurisdiction),
+  index("idx_competitor_signals_competitor").on(table.competitorMatch),
+  index("idx_competitor_signals_when").on(table.whenIso),
+]);
+
+export const scrapeJobs = pgTable("scrape_jobs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  status: varchar("status").notNull(), // queued, running, done, failed
+  source: varchar("source").notNull(),
+  query: jsonb("query"),
+  recordsFound: integer("records_found"),
+  recordsNew: integer("records_new"),
+  startedAt: timestamp("started_at"),
+  finishedAt: timestamp("finished_at"),
+  executionTime: integer("execution_time"), // milliseconds
+  errorMessage: text("error_message"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const competitorEntities = pgTable("competitor_entities", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: varchar("name").notNull().unique(),
+  type: varchar("type").notNull(), // company, person
+  keywords: text("keywords").array(),
+  cik: varchar("cik"), // SEC CIK number if public
+  active: boolean("active").default(true),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_competitor_entities_active").on(table.active),
+]);
+
+export const geoJurisdictions = pgTable("geo_jurisdictions", {
+  key: varchar("key").primaryKey(),
+  label: varchar("label").notNull(),
+  state: varchar("state", { length: 2 }).notNull(),
+  active: boolean("active").default(true),
+  config: jsonb("config"),
+  scrapeFrequency: integer("scrape_frequency"), // minutes
+  lastScraped: timestamp("last_scraped"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const competitorAnalysis = pgTable("competitor_analysis", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  signalId: varchar("signal_id").references(() => competitorSignals.id),
+  competitorId: varchar("competitor_id").notNull(),
+  analysis: text("analysis").notNull(),
+  impact: varchar("impact"), // low, medium, high, critical
+  confidence: real("confidence"),
+  recommendations: text("recommendations").array(),
+  createdAt: timestamp("created_at").defaultNow(),
+}, (table) => [
+  index("idx_competitor_analysis_signal").on(table.signalId),
+  index("idx_competitor_analysis_competitor").on(table.competitorId),
+]);
+
+// Competitor Watch Schema Types
+export const insertCompetitorSignalSchema = createInsertSchema(competitorSignals).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertScrapeJobSchema = createInsertSchema(scrapeJobs).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertCompetitorEntitySchema = createInsertSchema(competitorEntities).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertGeoJurisdictionSchema = createInsertSchema(geoJurisdictions).omit({
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertCompetitorAnalysisSchema = createInsertSchema(competitorAnalysis).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type CompetitorSignal = typeof competitorSignals.$inferSelect;
+export type InsertCompetitorSignal = z.infer<typeof insertCompetitorSignalSchema>;
+export type ScrapeJob = typeof scrapeJobs.$inferSelect;
+export type InsertScrapeJob = z.infer<typeof insertScrapeJobSchema>;
+export type CompetitorEntity = typeof competitorEntities.$inferSelect;
+export type InsertCompetitorEntity = z.infer<typeof insertCompetitorEntitySchema>;
+export type GeoJurisdiction = typeof geoJurisdictions.$inferSelect;
+export type InsertGeoJurisdiction = z.infer<typeof insertGeoJurisdictionSchema>;
+export type CompetitorAnalysis = typeof competitorAnalysis.$inferSelect;
+export type InsertCompetitorAnalysis = z.infer<typeof insertCompetitorAnalysisSchema>;

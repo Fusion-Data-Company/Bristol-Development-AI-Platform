@@ -3,6 +3,15 @@
 ## Overview
 The Bristol Site Intelligence Platform is an enterprise-grade, AI-powered real estate development analysis tool for multifamily opportunities in Sunbelt markets. It provides comprehensive site analytics, interactive mapping, a proprietary 100-point Bristol scoring methodology, and real-time market intelligence. The platform integrates Bristol A.I. Elite v5.0, an AI assistant for advanced deal analysis. Its purpose is to deliver institutional-quality real estate analysis capabilities, supporting decisions related to IRR, NPV, cap rates, and LP/GP structures, with a vision to provide a Fortune 500-grade "boss agent" for developers.
 
+### Competitor Watch System (Added 2025-01-20)
+Production-ready competitor monitoring system tracking real estate development activities across multiple jurisdictions:
+- **Data Sources**: Building permits (ArcGIS), planning agendas, SEC filings, TN Secretary of State
+- **Jurisdictions**: Nashville, Franklin, Williamson County, Rutherford County
+- **Competitors**: 15 major entities including Alliance Residential, Greystar, Camden, AvalonBay
+- **AI Analysis**: Perplexity Sonar Deep Research via OpenRouter API for strategic insights
+- **Database**: PostgreSQL with dedicated competitor tables (signals, entities, jurisdictions, analyses)
+- **Status**: Phase 1 & 2 complete - database infrastructure and scraper system operational
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 CRITICAL BRANDING PREFERENCE: Dark Bristol header/nav with gold logo in top right corner must NEVER be changed - user has requested this multiple times and styling should remain consistent.

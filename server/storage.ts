@@ -15,6 +15,11 @@ import {
   agentDecisions,
   marketIntelligence,
   agentExecutions,
+  competitorSignals,
+  scrapeJobs,
+  competitorEntities,
+  geoJurisdictions,
+  competitorAnalysis,
   type User,
   type UpsertUser,
   type Site,
@@ -47,9 +52,19 @@ import {
   type InsertMarketIntelligence,
   type AgentExecution,
   type InsertAgentExecution,
+  type CompetitorSignal,
+  type InsertCompetitorSignal,
+  type ScrapeJob,
+  type InsertScrapeJob,
+  type CompetitorEntity,
+  type InsertCompetitorEntity,
+  type GeoJurisdiction,
+  type InsertGeoJurisdiction,
+  type CompetitorAnalysis,
+  type InsertCompetitorAnalysis,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, sql, gte } from "drizzle-orm";
 
 export interface IStorage {
   // User operations (required for Replit Auth)
@@ -139,6 +154,34 @@ export interface IStorage {
   getAgentExecutions(agentName?: string, status?: string): Promise<AgentExecution[]>;
   updateAgentExecution(id: string, updates: Partial<InsertAgentExecution>): Promise<AgentExecution>;
   getScheduledAgentExecutions(): Promise<AgentExecution[]>;
+  
+  // Competitor intelligence operations
+  createCompetitorSignal(signal: InsertCompetitorSignal): Promise<CompetitorSignal>;
+  getCompetitorSignals(filters?: { jurisdiction?: string; type?: string; competitorMatch?: string; limit?: number }): Promise<CompetitorSignal[]>;
+  getRecentSignals(days?: number): Promise<CompetitorSignal[]>;
+  updateCompetitorSignal(id: string, updates: Partial<InsertCompetitorSignal>): Promise<CompetitorSignal>;
+  
+  // Scrape job operations
+  createScrapeJob(job: InsertScrapeJob): Promise<ScrapeJob>;
+  getScrapeJob(id: string): Promise<ScrapeJob | undefined>;
+  updateScrapeJob(id: string, updates: Partial<InsertScrapeJob>): Promise<ScrapeJob>;
+  getActiveScrapeJobs(): Promise<ScrapeJob[]>;
+  
+  // Competitor entity operations
+  createCompetitorEntity(entity: InsertCompetitorEntity): Promise<CompetitorEntity>;
+  getCompetitorEntities(active?: boolean): Promise<CompetitorEntity[]>;
+  getCompetitorEntity(id: string): Promise<CompetitorEntity | undefined>;
+  updateCompetitorEntity(id: string, updates: Partial<InsertCompetitorEntity>): Promise<CompetitorEntity>;
+  
+  // Jurisdiction operations
+  createGeoJurisdiction(jurisdiction: InsertGeoJurisdiction): Promise<GeoJurisdiction>;
+  getGeoJurisdictions(active?: boolean): Promise<GeoJurisdiction[]>;
+  getGeoJurisdiction(key: string): Promise<GeoJurisdiction | undefined>;
+  updateGeoJurisdiction(key: string, updates: Partial<InsertGeoJurisdiction>): Promise<GeoJurisdiction>;
+  
+  // Competitor analysis operations
+  createCompetitorAnalysis(analysis: InsertCompetitorAnalysis): Promise<CompetitorAnalysis>;
+  getCompetitorAnalyses(competitorId?: string, limit?: number): Promise<CompetitorAnalysis[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -589,6 +632,194 @@ export class DatabaseStorage implements IStorage {
       .from(agentExecutions)
       .where(sql`${agentExecutions.nextScheduledAt} IS NOT NULL AND ${agentExecutions.nextScheduledAt} <= NOW()`)
       .orderBy(agentExecutions.nextScheduledAt);
+  }
+
+  // Competitor intelligence operations
+  async createCompetitorSignal(signal: InsertCompetitorSignal): Promise<CompetitorSignal> {
+    const [newSignal] = await db.insert(competitorSignals).values(signal).returning();
+    return newSignal;
+  }
+
+  async getCompetitorSignals(filters?: { 
+    jurisdiction?: string; 
+    type?: string; 
+    competitorMatch?: string; 
+    limit?: number 
+  }): Promise<CompetitorSignal[]> {
+    const conditions = [];
+    if (filters?.jurisdiction) {
+      conditions.push(eq(competitorSignals.jurisdiction, filters.jurisdiction));
+    }
+    if (filters?.type) {
+      conditions.push(eq(competitorSignals.type, filters.type));
+    }
+    if (filters?.competitorMatch) {
+      conditions.push(eq(competitorSignals.competitorMatch, filters.competitorMatch));
+    }
+
+    let query = db.select().from(competitorSignals);
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions)) as any;
+    }
+    
+    query = query.orderBy(desc(competitorSignals.whenIso)) as any;
+    if (filters?.limit) {
+      query = query.limit(filters.limit) as any;
+    }
+
+    return await query;
+  }
+
+  async getRecentSignals(days: number = 7): Promise<CompetitorSignal[]> {
+    const daysAgo = new Date();
+    daysAgo.setDate(daysAgo.getDate() - days);
+    
+    return await db
+      .select()
+      .from(competitorSignals)
+      .where(gte(competitorSignals.whenIso, daysAgo))
+      .orderBy(desc(competitorSignals.whenIso));
+  }
+
+  async updateCompetitorSignal(id: string, updates: Partial<InsertCompetitorSignal>): Promise<CompetitorSignal> {
+    const [updated] = await db
+      .update(competitorSignals)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(competitorSignals.id, id))
+      .returning();
+    return updated;
+  }
+
+  // Scrape job operations
+  async createScrapeJob(job: InsertScrapeJob): Promise<ScrapeJob> {
+    const [newJob] = await db.insert(scrapeJobs).values(job).returning();
+    return newJob;
+  }
+
+  async getScrapeJob(id: string): Promise<ScrapeJob | undefined> {
+    const [job] = await db.select().from(scrapeJobs).where(eq(scrapeJobs.id, id));
+    return job;
+  }
+
+  async updateScrapeJob(id: string, updates: Partial<InsertScrapeJob>): Promise<ScrapeJob> {
+    const [updated] = await db
+      .update(scrapeJobs)
+      .set(updates)
+      .where(eq(scrapeJobs.id, id))
+      .returning();
+    return updated;
+  }
+
+  async getActiveScrapeJobs(): Promise<ScrapeJob[]> {
+    return await db
+      .select()
+      .from(scrapeJobs)
+      .where(sql`${scrapeJobs.status} IN ('queued', 'running')`)
+      .orderBy(desc(scrapeJobs.createdAt));
+  }
+
+  // Competitor entity operations
+  async createCompetitorEntity(entity: InsertCompetitorEntity): Promise<CompetitorEntity> {
+    const [newEntity] = await db.insert(competitorEntities).values(entity).returning();
+    return newEntity;
+  }
+
+  async getCompetitorEntities(active: boolean = true): Promise<CompetitorEntity[]> {
+    if (active) {
+      return await db
+        .select()
+        .from(competitorEntities)
+        .where(eq(competitorEntities.active, true))
+        .orderBy(competitorEntities.name);
+    }
+    return await db.select().from(competitorEntities).orderBy(competitorEntities.name);
+  }
+
+  async getCompetitorEntity(id: string): Promise<CompetitorEntity | undefined> {
+    const [entity] = await db.select().from(competitorEntities).where(eq(competitorEntities.id, id));
+    return entity;
+  }
+
+  async updateCompetitorEntity(id: string, updates: Partial<InsertCompetitorEntity>): Promise<CompetitorEntity> {
+    const [updated] = await db
+      .update(competitorEntities)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(competitorEntities.id, id))
+      .returning();
+    return updated;
+  }
+
+  async upsertCompetitorEntity(entity: InsertCompetitorEntity): Promise<CompetitorEntity> {
+    const [existing] = await db
+      .select()
+      .from(competitorEntities)
+      .where(eq(competitorEntities.name, entity.name));
+    
+    if (existing) {
+      return await this.updateCompetitorEntity(existing.id, entity);
+    }
+    return await this.createCompetitorEntity(entity);
+  }
+
+  // Jurisdiction operations
+  async createGeoJurisdiction(jurisdiction: InsertGeoJurisdiction): Promise<GeoJurisdiction> {
+    const [newJurisdiction] = await db.insert(geoJurisdictions).values(jurisdiction).returning();
+    return newJurisdiction;
+  }
+
+  async upsertGeoJurisdiction(jurisdiction: InsertGeoJurisdiction): Promise<GeoJurisdiction> {
+    const existing = await this.getGeoJurisdiction(jurisdiction.key);
+    if (existing) {
+      return await this.updateGeoJurisdiction(jurisdiction.key, jurisdiction);
+    }
+    return await this.createGeoJurisdiction(jurisdiction);
+  }
+
+  async getGeoJurisdictions(active: boolean = true): Promise<GeoJurisdiction[]> {
+    if (active) {
+      return await db
+        .select()
+        .from(geoJurisdictions)
+        .where(eq(geoJurisdictions.active, true))
+        .orderBy(geoJurisdictions.label);
+    }
+    return await db.select().from(geoJurisdictions).orderBy(geoJurisdictions.label);
+  }
+
+  async getGeoJurisdiction(key: string): Promise<GeoJurisdiction | undefined> {
+    const [jurisdiction] = await db.select().from(geoJurisdictions).where(eq(geoJurisdictions.key, key));
+    return jurisdiction;
+  }
+
+  async updateGeoJurisdiction(key: string, updates: Partial<InsertGeoJurisdiction>): Promise<GeoJurisdiction> {
+    const [updated] = await db
+      .update(geoJurisdictions)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(geoJurisdictions.key, key))
+      .returning();
+    return updated;
+  }
+
+  // Competitor analysis operations
+  async createCompetitorAnalysis(analysis: InsertCompetitorAnalysis): Promise<CompetitorAnalysis> {
+    const [newAnalysis] = await db.insert(competitorAnalysis).values(analysis).returning();
+    return newAnalysis;
+  }
+
+  async getCompetitorAnalyses(competitorId?: string, limit: number = 50): Promise<CompetitorAnalysis[]> {
+    if (competitorId) {
+      return await db
+        .select()
+        .from(competitorAnalysis)
+        .where(eq(competitorAnalysis.competitorId, competitorId))
+        .orderBy(desc(competitorAnalysis.createdAt))
+        .limit(limit);
+    }
+    return await db
+      .select()
+      .from(competitorAnalysis)
+      .orderBy(desc(competitorAnalysis.createdAt))
+      .limit(limit);
   }
 }
 
