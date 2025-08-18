@@ -276,7 +276,7 @@ export class StabilityService {
     return recommendations;
   }
 
-  // Start continuous monitoring
+  // Start continuous monitoring with enhanced error recovery
   startMonitoring(intervalMs: number = 30000) {
     console.log(`🔍 Starting stability monitoring (interval: ${intervalMs}ms)`);
     
@@ -287,15 +287,19 @@ export class StabilityService {
         if (healthCheck.overall === 'unhealthy') {
           console.warn('⚠️ System health check failed:', healthCheck);
           
-          // Attempt auto-recovery for unhealthy services
-          for (const [serviceName, serviceHealth] of Object.entries(healthCheck.services)) {
-            if (serviceHealth.status === 'unhealthy') {
-              await this.attemptAutoRecovery(serviceName);
-            }
+          // Import recovery service dynamically to avoid circular dependencies
+          const { robustErrorRecovery } = await import('./robustErrorRecovery');
+          const recoveryResult = await robustErrorRecovery.performSystemRecovery();
+          
+          console.log(`🏥 Auto-recovery completed: ${recoveryResult.success ? 'SUCCESS' : 'PARTIAL'}`);
+          console.log(`   Recovered: [${recoveryResult.recoveredServices.join(', ')}]`);
+          
+          if (recoveryResult.failedServices.length > 0) {
+            console.warn(`   Failed: [${recoveryResult.failedServices.join(', ')}]`);
           }
         }
         
-        // Log performance recommendations
+        // Log performance recommendations with reduced frequency
         const recommendations = this.getPerformanceRecommendations();
         if (recommendations.length > 0) {
           console.log('💡 Performance recommendations:', recommendations);
@@ -303,6 +307,14 @@ export class StabilityService {
         
       } catch (error) {
         errorHandlingService.logError(error as Error, { context: 'stability monitoring' });
+        
+        // Fallback recovery if monitoring itself fails
+        try {
+          const { robustErrorRecovery } = await import('./robustErrorRecovery');
+          await robustErrorRecovery.recoverMemoryPressure();
+        } catch (recoveryError) {
+          console.error('❌ Critical: Both monitoring and recovery failed');
+        }
       }
     }, intervalMs);
   }

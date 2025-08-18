@@ -33,7 +33,7 @@ export class ErrorHandlingService {
   }
 
   // Database connection error handler
-  handleDatabaseError(error: Error): Response | void {
+  handleDatabaseError(error: Error): any {
     this.logError(error, { type: 'database' });
     
     if (error.message.includes('ENOTFOUND') || error.message.includes('connection')) {
@@ -197,7 +197,7 @@ export class ErrorHandlingService {
         } catch (error) {
           failures++;
           lastFailureTime = Date.now();
-          this.logError(error as Error, { 
+          ErrorHandlingService.getInstance().logError(error as Error, { 
             circuitBreaker: name, 
             failures, 
             threshold: failureThreshold 

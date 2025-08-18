@@ -72,9 +72,10 @@ export class IntegrationService {
 
       return { connected: graphResponse.ok };
     } catch (error) {
+      console.error('[IntegrationService] Microsoft 365 connection test failed:', error);
       return { 
         connected: false, 
-        error: error instanceof Error ? error.message : "Connection test failed" 
+        error: error instanceof Error ? error.message : "Microsoft 365 connection test failed" 
       };
     }
   }
