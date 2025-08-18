@@ -125,13 +125,7 @@ function AppContent() {
           />
       )}
 
-      {/* ElevenLabs Voice Widget - FIXED: Now actually rendered */}
-      {isAuthenticated && (
-        <ElevenLabsWidget 
-          agentId="agent_8801k2t62y9qehhsqqdmzmp10kt9"
-          position="bottom-left"
-        />
-      )}
+
 
     </>
   );
