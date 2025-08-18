@@ -114,9 +114,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/tools/noaa-climate', noaaClimateRouter);
   app.use('/api/snapshots', snapshotsRouter);
 
-  // Pipeline API for data proxying - temporarily disabled to fix startup issue
-  // const pipelineRouter = (await import('./api/pipeline')).default;
-  // app.use('/api/analytics/pipeline', pipelineRouter);
+  // Pipeline API for data proxying
+  const pipelineRouter = (await import('./api/pipeline')).default;
+  app.use('/api/analytics/pipeline', pipelineRouter);
 
   // MCP Tools Service API
   const mcpToolsRouter = (await import('./api/mcp-tools')).default;
