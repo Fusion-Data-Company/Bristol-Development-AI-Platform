@@ -4,6 +4,7 @@ import { storage } from "../storage";
 import { realTimeSyncService } from "./realTimeSync";
 import { connectionManager } from "./connectionManager";
 import type { IntegrationLog } from "@shared/schema";
+import { attachWS } from "../../src/realtime/server";
 
 interface WebSocketClient {
   id: string;
@@ -46,7 +47,8 @@ export class WebSocketService {
   private readonly BASE_RETRY_DELAY = 1000; // 1 second
 
   constructor(server: Server) {
-    this.wss = new WebSocketServer({ server, path: '/ws' });
+    // Use the crashless WebSocket server implementation
+    this.wss = attachWS(server);
     this.setupWebSocketServer();
     this.startHeartbeat();
   }

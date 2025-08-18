@@ -1,0 +1,272 @@
+Got it. Since you’ve already maxed out Autoscale with multi-CPU machines, here’s a new, copy-paste mega prompt for Replit’s builder that assumes “all resources are on” and focuses on crashless stability, concurrency discipline, and zero-regression hardening—without giving up any functionality or touching MCP/webhook/API contracts.
+
+⸻
+
+REPLIT BUILDER PROMPT — CRASHLESS AUTOSCALE (MAXED RESOURCES) HARDENING
+
+You are a senior production engineer. The app is feature-complete and deployed on Replit Deployments (Autoscale, multi-CPU, max resources). Your job is to stop crashes and flapping under load without removing features or breaking MCP/webhooks/API behavior.
+
+0) Non-negotiables
+	•	Do not change MCP, webhook routes, payloads, env var names, or auth flows.
+	•	Keep all features (maps, agents, schedulers, analytics), but make them resource-disciplined.
+	•	No placeholders left; either implement or remove.
+	•	Mobile: hide pop-out agent entirely; chat page is the mobile UX; add mobile nav (hamburger + drawer).
+
+⸻
+
+1) Concurrency & Process Discipline (works with Autoscale)
+
+Goal: Each role runs exactly once per instance; no self-replication; no fork storms.
+	1.	Singleton guard for any long-lived role (MCP server, schedulers, market-intel worker):
+	•	Add a PID lock (filesystem) + SIGTERM cleanup so a role can’t start twice inside one instance.
+	2.	Instance role partitioning (env-driven):
+	•	Add ROLE=web, ROLE=mcp, ROLE=scheduler (but keep a single codebase/deployment if desired).
+	•	At boot, start only the role(s) indicated by env. Default is ROLE=web.
+	3.	Idempotent boot:
+	•	Wrap boot code in try/finally; ensure child processes are killed on exit.
+	4.	Graceful shutdown:
+	•	On SIGTERM/SIGINT, stop accepting new HTTP/WS connections, drain queues, close DB/Redis, and exit within 25s.
+
+Deliverables: src/lib/singleton.ts, src/boot.ts, role checks in main entry.
+
+⸻
+
+2) WebSocket Storm Control (keep realtime, stop floods)
+
+Goal: Same realtime UX, but with controlled fan-out and reconnection behavior.
+	1.	Hard auth gate: refuse connections with missing/undefined token; log and close with 4401.
+	2.	Backoff with jitter on the client (exponential, max 30s) to prevent thundering herds.
+	3.	Per-IP connection cap (server): default 3; bypass for allowlisted internal IPs if present.
+	4.	Broadcast breaker:
+	•	Wrap broadcast in a circuit breaker (timeout 1.5s, 60% error threshold, 5s reset). If open, enqueue payloads in Redis for later drain.
+	5.	Single server + WS: attach WS to the existing HTTP server (no second port) to avoid binding conflicts.
+
+Deliverables: src/realtime/server.ts (cap + breaker), src/realtime/client.ts (backoff), tests/logs confirming caps work.
+
+⸻
+
+3) MCP Spawn Taming (zero cascades, lazy init)
+
+Goal: Only one MCP server per instance, reused across requests; no spawn cascades.
+	1.	Lazy-init registry:
+	•	Export getMcp() that returns the same live instance Promise after first init.
+	2.	Health probe before spawn:
+	•	If MCP is “live” (health endpoint/TCP ping), reuse; else spawn once behind a mutex.
+	3.	Crash containment:
+	•	If MCP crashes, mark unhealthy, backoff 5–15s with jitter, then single retry.
+
+Deliverables: src/mcp/manager.ts with mutex, health check, and reuse.
+
+⸻
+
+4) Scheduler Infinite-Loop Immunity (jobs remain intact)
+
+Goal: Jobs still run on schedule, but at-most-once per window; no retry loops.
+	1.	TypeScript fix: tsconfig.json → "target": "ES2020", "downlevelIteration": true, "skipLibCheck": true.
+	2.	Window locks (Redis or PG advisory locks):
+	•	withDedupLock(jobKey, ttlSec, fn) so a job can’t re-enter during its window.
+	3.	Retry policy:
+	•	Max 3 retries with exponential backoff; on permanent failure, emit error log + metric; do not loop forever.
+	4.	Watchdog:
+	•	A lightweight monitor checks “job started but not finished after N minutes” and releases the lock.
+
+Deliverables: src/scheduler/locks.ts, src/scheduler/index.ts wrappers, config per job.
+
+⸻
+
+5) Middleware Simplification (same security, less overhead)
+
+Goal: Keep security, remove duplication and head-of-line blocking.
+	1.	Use one chain in exact order: requestId → helmet(CSP tuned) → compression → bodyParser → one rate limiter.
+	2.	Skip limiter for webhook routes (keep allowlist).
+	3.	Remove extra timing/perf middlewares; retain a single high-resolution timer per request (logs only).
+
+Deliverables: src/server/middleware.ts. Keep existing CSP/CORS rules intact; don’t broaden origins.
+
+⸻
+
+6) Memory Budget & Leak Guard (no feature loss)
+
+Goal: Stay stable under load; find leaks without OOM.
+	1.	Start Node with a sane heap cap (per instance): --max-old-space-size=4096 (adjust if instance has more memory).
+	2.	Heap snapshot on SIGUSR2 to /tmp/heap-<ts>.heapsnapshot.
+	3.	Replace stray console.log spam with leveled logger that silences debug in production.
+	4.	For heavy pages/components:
+	•	Lazy-load rarely used routes (admin, large maps).
+	•	Convert large images to WebP/AVIF; add loading="lazy"; add srcset.
+
+Deliverables: src/lib/logger.ts, heap snapshot hook, image/route optimizations.
+
+⸻
+
+7) Mobile UX: pop-out hidden, chat + nav perfect
+
+Goal: No pop-out agent on mobile; strong chat UX; proper mobile nav.
+	1.	CSS hard guard (≤1024px): .PopoutAgentContainer{ display:none!important }.
+	2.	Runtime guard in PopoutAgent component: return null on mobile width (≤1024).
+	3.	MobileNav:
+	•	Hamburger → drawer (focus trap, Escape closes, body scroll-lock).
+	4.	Chat page:
+	•	No horizontal scroll; textarea auto-grow; sticky input bar; safe-area insets on iOS.
+
+Deliverables: src/components/MobileNav.tsx, src/styles/responsive.css, minor chat tweaks.
+
+⸻
+
+8) Analytics/Maps Without Redundancy (keep both features)
+
+Goal: Keep your 5 analytics routers and dual maps, but remove duplication and cost.
+	1.	Analytics:
+	•	Mount a single /analytics router that internally dispatches by source param; share middleware; dedupe code.
+	2.	Maps:
+	•	Keep both Portfolio Map + Interactive Map. Lazy-init the heavier one with IntersectionObserver so it boots only when scrolled into view or activated by tab.
+
+Deliverables: consolidated src/routes/analytics.ts, lazy map init code.
+
+⸻
+
+9) Build/Runtime Separation (no HMR in prod)
+
+Goal: Production instances never run dev servers.
+	1.	Ensure production command uses built assets only (vite build/next build; run node dist/server.js or next start).
+	2.	Respect only one PORT and bind once.
+	3.	Add /healthz route (200 + version/uptime) for deployment health checks.
+
+Deliverables: package.json scripts, server.ts binding, /healthz route.
+
+⸻
+
+10) Telemetry & Alarms (so we catch regressions)
+
+Goal: Enough visibility to fix issues fast; very low overhead.
+	1.	Emit structured logs: level, reqId, route, latency_ms, mem_mb, ws_conn_count.
+	2.	Track p95 latency, error rate, WS open connections, heap used—print every 30s.
+	3.	Log MCP state transitions (starting, ready, crashed, restarting) and job outcomes.
+
+Deliverables: src/lib/metrics.ts + periodic ticker.
+
+⸻
+
+11) Safety Rails for Autoscale
+
+Goal: Play nice with scaling while avoiding duplicate work.
+	1.	Stateless web nodes (no in-memory session state).
+	2.	Sticky-required features (if any) must use token affinity, not LB stickiness: carry a session token; server can route to correct shard internally via Redis pub/sub if needed.
+	3.	At-most-once jobs via locks (already covered).
+	4.	Cold-start fast path: lazy-init heavy clients on first call, not at boot.
+
+⸻
+
+12) Final Clean Sweep (no junk left)
+
+Goal: Remove all dev trash without breaking references.
+	1.	Generate import graph. Delete files not imported anywhere (check for dynamic import() and string-built paths).
+	2.	Delete debug overlays, mock servers, unused images, dead feature flags, commented code.
+	3.	Keep sample data only behind DEMO_MODE flag.
+	4.	Re-scan repo for TODO|FIXME|PLACEHOLDER|WIP|lorem; must return zero (outside /docs).
+
+Deliverables: /docs/cleanup-report.md with a table of removed items and why.
+
+⸻
+
+13) Test Matrix (must pass)
+	•	HTTP/WS smoke: open/close 100 WS connections with valid tokens; exceed per-IP cap and see rejection (no crash).
+	•	MCP: concurrent 10 requests call getMcp(); confirm only one spawn occurs; health probe true; reuse works.
+	•	Scheduler: trigger two instances simultaneously; dedup lock ensures exactly one job executes.
+	•	Mobile: viewport 375×812—pop-out agent absent; mobile nav opens/closes with focus trap; chat works 100%.
+	•	Memory: run 15-minute soak; heap plateau stable (no runaway growth).
+	•	Deploy: /healthz returns 200 with version; graceful shutdown under SIGTERM.
+
+Deliverables: /docs/smoke-results.md with notes or screenshots.
+
+⸻
+
+14) Minimal Code Stubs (fill in paths to match repo)
+
+Singleton guard
+
+// src/lib/singleton.ts
+import fs from 'fs'; import path from 'path';
+export function assertSingleton(name: string) {
+  const pidFile = path.join(process.cwd(), `.lock.${name}.pid`);
+  if (fs.existsSync(pidFile)) throw new Error(`${name} already running`);
+  fs.writeFileSync(pidFile, String(process.pid));
+  const clean = () => { try { fs.unlinkSync(pidFile); } catch {} };
+  process.on('exit', clean); process.on('SIGINT', clean); process.on('SIGTERM', clean);
+}
+
+MCP manager (lazy, mutex)
+
+// src/mcp/manager.ts
+let spawning = false;
+let instance: Promise<any> | null = null;
+
+async function health(): Promise<boolean> {
+  // TODO: implement a quick MCP health probe (HTTP/TCP)
+  return false;
+}
+
+export async function getMcp() {
+  if (instance) return instance;
+  if (await health()) return (instance = Promise.resolve(globalThis.__MCP__));
+  if (spawning) {
+    return new Promise((resolve, reject) => {
+      const t = setInterval(() => { if (instance) { clearInterval(t); resolve(instance); } }, 100);
+      setTimeout(() => { clearInterval(t); reject(new Error('MCP wait timeout')); }, 15000);
+    });
+  }
+  spawning = true;
+  instance = startMcpServer() // your existing initializer
+    .then((srv: any) => (globalThis.__MCP__ = srv))
+    .finally(() => { spawning = false; });
+  return instance;
+}
+
+WS client backoff
+
+// src/realtime/client.ts
+let retries = 0;
+function backoff() { return Math.min(30000, 500 * 2 ** retries) + Math.random() * 250; }
+export function connectWS(url: string, token: string | undefined) {
+  if (!token) return setTimeout(() => connectWS(url, getToken()), 1000);
+  const ws = new WebSocket(`${url}?t=${encodeURIComponent(token)}`);
+  ws.onopen = () => { retries = 0; };
+  ws.onclose = () => { retries++; setTimeout(() => connectWS(url, token), backoff()); };
+}
+
+Per-IP cap (express + ws)
+
+// src/realtime/server.ts
+import { WebSocketServer } from 'ws'; import type { IncomingMessage } from 'http';
+const connectionsByIp = new Map<string, number>(); const MAX = 3;
+export function attachWS(server: any) {
+  const wss = new WebSocketServer({ server, path: '/ws' });
+  wss.on('connection', (socket, req: IncomingMessage) => {
+    const ip = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown';
+    const nowCount = (connectionsByIp.get(ip) || 0) + 1;
+    if (nowCount > MAX) { socket.close(4409, 'TooManyConnections'); return; }
+    connectionsByIp.set(ip, nowCount);
+    socket.on('close', () => connectionsByIp.set(ip, (connectionsByIp.get(ip) || 1) - 1));
+  });
+}
+
+Scheduler dedup
+
+// src/scheduler/locks.ts
+export async function withDedupLock(key: string, ttlSec: number, fn: () => Promise<void>) {
+  const ok = await lock.tryAcquire(key, ttlSec); // implement via Redis SET key NX EX <ttl> or PG advisory locks
+  if (!ok) return;
+  try { await fn(); } finally { await lock.release(key); }
+}
+
+
+⸻
+
+15) Docs to Ship
+	•	/docs/cleanup-report.md — what got removed.
+	•	/docs/smoke-results.md — validation matrix results.
+	•	/docs/operational-notes.md — how roles/locks/WS caps/MCP lazy init work; how to take a heap snapshot; how to toggle DEMO_MODE.
+
+⸻
+
+Execute this plan now. Prioritize (1) Concurrency & WS storm control, (2) MCP lazy-init + scheduler locks, (3) middleware simplification, (4) mobile UX guard, (5) cleanup report, (6) smoke tests. This keeps all your functionality, uses the maxed Autoscale you already have, and eliminates the crash vectors by enforcing strict process discipline, backpressure, and idempotency—not by removing features.

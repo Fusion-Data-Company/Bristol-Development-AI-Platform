@@ -4,46 +4,37 @@ import compression from 'compression';
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { 
-  securityHeaders, 
-  rateLimiters, 
-  sanitizeInput, 
-  limitRequestSize, 
-  ipProtection, 
-  enhancedLogging, 
-  validateContentType,
-  corsConfig,
-  emergencyShutdown
-} from "./middleware/securityMiddleware";
+  requestId,
+  securityHeaders,
+  smartCompression,
+  rateLimiter,
+  requestTimer
+} from "./middleware/simplifiedMiddleware";
 import { 
-  intelligentCompression, 
-  requestTiming, 
-  responseCache, 
   initializePerformanceMonitoring 
 } from "./middleware/performanceMiddleware";
+import { setupHeapSnapshot, logger } from "../src/lib/logger";
+import { metricsCollector } from "../src/lib/metrics";
 
 const app = express();
 
 // Trust proxy for rate limiting and IP detection
 app.set('trust proxy', 1);
 
-// Enhanced security and performance middleware
+// Simplified middleware stack (exact order matters)
+app.use(requestId);
 app.use(securityHeaders);
-app.use(cors(corsConfig));
-app.use(intelligentCompression); // Intelligent compression with content type detection
-app.use(requestTiming); // Request performance monitoring
-app.use(emergencyShutdown);
-app.use(ipProtection);
-app.use(enhancedLogging);
-app.use(limitRequestSize(50)); // 50MB max request size
-app.use(validateContentType(['application/json', 'application/x-www-form-urlencoded', 'multipart/form-data']));
-app.use(sanitizeInput);
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://*.replit.app', 'https://*.replit.dev']
+    : ['http://localhost:3000', 'http://localhost:5000', 'http://0.0.0.0:5000'],
+  credentials: true
+}));
+app.use(smartCompression);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
-
-// Apply general rate limiting and response caching to all routes
-app.use(rateLimiters.general);
-app.use('/api/sites', responseCache(300000)); // Cache sites data for 5 minutes
-app.use('/api/analytics', responseCache(600000)); // Cache analytics for 10 minutes
+app.use(rateLimiter);
+app.use(requestTimer);
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -77,10 +68,16 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
-    console.log("Starting server initialization...");
+    logger.info("Starting server initialization with crashless hardening...");
+    
+    // Setup heap snapshot capability
+    setupHeapSnapshot();
     
     // Initialize performance monitoring
     initializePerformanceMonitoring();
+    
+    // Start metrics collection
+    metricsCollector.startPeriodicLogging();
     
     // Register full routes including tools API
     const server = await registerRoutes(app);

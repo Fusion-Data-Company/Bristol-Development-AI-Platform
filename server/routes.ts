@@ -74,6 +74,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Elite Portfolio Insights API
   app.get('/api/analytics/elite/portfolio-insights', (await import('./api/analytics/elite-portfolio-insights')).getElitePortfolioInsights);
   
+  // Health check endpoints
+  const healthRouter = (await import('./api/healthz')).default;
+  app.use(healthRouter);
+  
   // Competitor Watch API
   const competitorRouter = (await import('./routes/competitor-routes')).default;
   app.use('/api/competitor', competitorRouter);

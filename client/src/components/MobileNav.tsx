@@ -1,134 +1,133 @@
-import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'wouter';
-import { X, Menu, Home, MessageSquare, Building, BarChart3, Zap, Settings } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'wouter';
+import { Menu, X, Home, Map, BarChart3, Users, Settings } from 'lucide-react';
 
-export default function MobileNav() {
-  const [open, setOpen] = useState(false);
-  const [location] = useLocation();
-  const panelRef = useRef<HTMLDivElement>(null);
+export function MobileNav() {
+  const [isOpen, setIsOpen] = useState(false);
 
-  // Lock body scroll when menu is open
-  useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : '';
-    return () => { 
-      document.body.style.overflow = ''; 
-    };
-  }, [open]);
+  const toggleNav = () => setIsOpen(!isOpen);
+  const closeNav = () => setIsOpen(false);
 
-  // Handle escape key
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) { 
-      if (e.key === 'Escape') setOpen(false); 
+  // Lock body scroll when drawer is open
+  if (typeof document !== 'undefined') {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
     }
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, []);
-
-  // Close menu when route changes
-  useEffect(() => {
-    setOpen(false);
-  }, [location]);
-
-  // Focus trap - move focus to panel when opened
-  useEffect(() => {
-    if (open && panelRef.current) {
-      panelRef.current.focus();
-    }
-  }, [open]);
-
-  const navigationItems = [
-    { path: '/', label: 'Home', icon: Home },
-    { path: '/chat', label: 'Chat', icon: MessageSquare },
-    { path: '/sites', label: 'Properties', icon: Building },
-    { path: '/analytics', label: 'Analytics', icon: BarChart3 },
-    { path: '/enterprise', label: 'Enterprise', icon: Zap },
-    { path: '/tools', label: 'Tools', icon: Settings },
-    { path: '/competitor-watch', label: 'Competitors', icon: BarChart3 },
-  ];
+  }
 
   return (
-    <div className="md:hidden">
+    <>
       {/* Hamburger Button */}
-      <button 
-        aria-label="Open navigation menu" 
-        onClick={() => setOpen(true)}
-        className="p-2 text-white hover:text-yellow-400 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded"
+      <button
+        onClick={toggleNav}
+        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-bristol-dark text-gold hover:bg-bristol-dark/80 transition-colors"
+        aria-label="Toggle navigation menu"
       >
-        <Menu size={24} />
+        {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
-      {/* Mobile Menu Overlay */}
-      {open && (
+      {/* Backdrop */}
+      {isOpen && (
         <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation menu"
-          className="fixed inset-0 z-50"
-          onClick={() => setOpen(false)}
-        >
-          {/* Backdrop */}
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
-          
-          {/* Menu Panel */}
-          <div
-            className="absolute left-0 top-0 h-full w-80 max-w-[85%] bg-white dark:bg-gray-900 shadow-2xl focus:outline-none border-r border-gray-200 dark:border-gray-700"
-            ref={panelRef}
-            onClick={(e) => e.stopPropagation()}
-            tabIndex={-1}
-          >
-            {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-900 text-white">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-yellow-400 rounded-md flex items-center justify-center">
-                    <Building className="w-5 h-5 text-gray-900" />
-                  </div>
-                  <span className="font-semibold text-lg">Bristol</span>
-                </div>
-                <button 
-                  aria-label="Close navigation menu" 
-                  onClick={() => setOpen(false)}
-                  className="p-1 text-gray-300 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 rounded"
-                >
-                  <X size={20} />
-                </button>
-              </div>
-            </div>
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={closeNav}
+          aria-hidden="true"
+        />
+      )}
 
-            {/* Navigation Links */}
-            <nav className="px-4 py-6 space-y-2">
-              {navigationItems.map((item) => {
-                const IconComponent = item.icon;
-                const isActive = location === item.path;
-                
-                return (
-                  <Link key={item.path} to={item.path}>
-                    <div className={`
-                      flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors cursor-pointer
-                      ${isActive 
-                        ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-900 dark:text-yellow-400 font-medium' 
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
-                      }
-                    `}>
-                      <IconComponent size={20} />
-                      <span>{item.label}</span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </nav>
+      {/* Drawer */}
+      <nav
+        className={`
+          md:hidden fixed top-0 left-0 h-full w-80 bg-white border-r border-gray-200 z-50
+          transform transition-transform duration-300 ease-in-out
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') {
+            closeNav();
+          }
+        }}
+      >
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-bristol-dark text-gold">
+            <h2 className="text-xl font-serif font-bold">Bristol Intelligence</h2>
+            <button
+              onClick={closeNav}
+              className="p-1 rounded hover:bg-white/10 transition-colors"
+              aria-label="Close navigation menu"
+            >
+              <X size={20} />
+            </button>
+          </div>
 
-            {/* Footer */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
-              <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                Bristol Development Group
-                <br />
-                Elite Intelligence Platform
-              </div>
+          {/* Navigation Links */}
+          <div className="flex-1 py-6">
+            <div className="space-y-2 px-6">
+              <NavLink
+                href="/"
+                icon={<Home size={20} />}
+                label="Dashboard"
+                onClick={closeNav}
+              />
+              <NavLink
+                href="/sites"
+                icon={<Map size={20} />}
+                label="Sites"
+                onClick={closeNav}
+              />
+              <NavLink
+                href="/analytics"
+                icon={<BarChart3 size={20} />}
+                label="Analytics"
+                onClick={closeNav}
+              />
+              <NavLink
+                href="/comparables"
+                icon={<Users size={20} />}
+                label="Comparables"
+                onClick={closeNav}
+              />
+              <NavLink
+                href="/chat"
+                icon={<Settings size={20} />}
+                label="Bristol AI Chat"
+                onClick={closeNav}
+              />
             </div>
           </div>
+
+          {/* Footer */}
+          <div className="p-6 border-t border-gray-200 bg-gray-50">
+            <p className="text-sm text-gray-600 text-center">
+              Bristol Development Group
+            </p>
+          </div>
         </div>
-      )}
-    </div>
+      </nav>
+    </>
+  );
+}
+
+interface NavLinkProps {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}
+
+function NavLink({ href, icon, label, onClick }: NavLinkProps) {
+  return (
+    <Link href={href}>
+      <button
+        onClick={onClick}
+        className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 transition-colors text-left"
+      >
+        <span className="text-bristol-dark">{icon}</span>
+        <span className="font-medium text-gray-900">{label}</span>
+      </button>
+    </Link>
   );
 }
