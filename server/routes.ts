@@ -275,6 +275,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Scraping routes for Bristol AI agent integration
   const aiScrapingRouter = (await import('./routes/ai-scraping')).default;
   app.use('/api/ai-scraping', aiScrapingRouter);
+
+  // Register Bristol Agent routes for elite analytics
+  const { registerBristolAgentRoutes } = await import("./routes/bristolAgents.js");
+  registerBristolAgentRoutes(app);
   
   // Bristol Elite Scraping routes with advanced Firecrawl capabilities
   const bristolEliteScrapingRouter = (await import('./routes/bristol-elite-scraping')).default;

@@ -66,6 +66,7 @@ export const sites = pgTable("sites", {
   acsYear: text("acs_year"),
   acsProfile: jsonb("acs_profile"),
   createdAt: timestamp("created_at").defaultNow(),
+  bristolScore: real("bristol_score"), // Bristol 100-point scoring methodology
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
   index("idx_sites_name").on(table.name),
@@ -275,7 +276,20 @@ export const insertAgentExecutionSchema = createInsertSchema(agentExecutions).om
 export type MarketIntelligence = typeof marketIntelligence.$inferSelect;
 export type InsertMarketIntelligence = typeof marketIntelligence.$inferInsert;
 export type AgentExecution = typeof agentExecutions.$inferSelect;
-export type InsertAgentExecution = typeof agentExecutions.$inferInsert;
+export type InsertAgentExecution = z.infer<typeof insertAgentExecutionSchema>;
+
+// Intelligence entries table for AI analysis results
+export const intelligenceEntries = pgTable("intelligence_entries", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: varchar("title").notNull(),
+  content: text("content").notNull(),
+  source: varchar("source").notNull(), // Bristol agents, MCP tools, etc.
+  category: varchar("category").notNull(), // market_analysis, site_analysis, financial_analysis, demographic_analysis
+  confidence: real("confidence"), // 0-1 confidence score
+  metadata: jsonb("metadata"), // Additional structured data
+  data: jsonb("data"), // Main analysis results
+  createdAt: timestamp("created_at").defaultNow(),
+});
 
 // Type exports for original tables
 export type UpsertUser = typeof users.$inferInsert;
@@ -288,6 +302,10 @@ export type ChatSession = typeof chatSessions.$inferSelect;
 export type InsertChatSession = typeof chatSessions.$inferInsert;
 export type ChatMessage = typeof chatMessages.$inferSelect;
 export type InsertChatMessage = typeof chatMessages.$inferInsert;
+export type IntelligenceEntry = typeof intelligenceEntries.$inferSelect;
+export type InsertIntelligenceEntry = typeof intelligenceEntries.$inferInsert;
+
+// Bristol score field now included in main sites table
 
 // Type exports for Cap-specific tables
 export type BristolUser = typeof bristolUsers.$inferSelect;
@@ -302,7 +320,7 @@ export type Artifact = typeof artifacts.$inferSelect;
 export type InsertArtifact = typeof artifacts.$inferInsert;
 export type Task = typeof tasks.$inferSelect;
 export type InsertTask = typeof tasks.$inferInsert;
-export type InsertAgentExecution = z.infer<typeof insertAgentExecutionSchema>;
+// Remove duplicate InsertAgentExecution type
 
 // Comps table for comparable property analysis
 export const comps = pgTable("comps", {
@@ -744,17 +762,7 @@ export const insertCompEventsAnnexSchema = createInsertSchema(compEventsAnnex).o
   createdAt: true,
 });
 
-// Types
-export type UpsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
-export type Site = typeof sites.$inferSelect;
-export type InsertSite = z.infer<typeof insertSiteSchema>;
-export type SiteMetric = typeof siteMetrics.$inferSelect;
-export type InsertSiteMetric = z.infer<typeof insertSiteMetricSchema>;
-export type ChatSession = typeof chatSessions.$inferSelect;
-export type InsertChatSession = z.infer<typeof insertChatSessionSchema>;
-export type ChatMessage = typeof chatMessages.$inferSelect;
-export type InsertChatMessage = z.infer<typeof insertChatMessageSchema>;
+// Remove duplicate type exports - they are already defined above
 export type IntegrationLog = typeof integrationLogs.$inferSelect;
 export type InsertIntegrationLog = z.infer<typeof insertIntegrationLogSchema>;
 export type McpTool = typeof mcpTools.$inferSelect;
