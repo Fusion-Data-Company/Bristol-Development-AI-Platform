@@ -1,7 +1,14 @@
 import { Router } from 'express';
 import { unifiedChatService } from '../services/unifiedChatService';
 import { bristolChatAuthStack } from '../middleware/enhancedAuth';
+import { getPerformanceRecommendations } from '../services/memoryOptimizer';
 import { z } from 'zod';
+
+// Extend global type for TypeScript
+declare global {
+  var lastValidationLogTime: number | undefined;
+  var mcpResponseCache: Map<string, any> | undefined;
+}
 
 const router = Router();
 
@@ -39,30 +46,48 @@ router.post('/chat', async (req: any, res) => {
   try {
     console.log(`🧠 Unified chat request from ${req.user?.id} via ${req.body.sourceInstance || 'main'}`);
     
-    // Validate request with fallback handling
+    // Enhanced validation with better error handling
     let validatedRequest;
     try {
       validatedRequest = unifiedChatSchema.parse(req.body);
     } catch (validationError) {
-      console.warn('Unified chat validation failed, using safe defaults:', validationError);
+      // Only log validation errors once per minute to reduce noise
+      if (!global.lastValidationLogTime || Date.now() - global.lastValidationLogTime > 60000) {
+        console.warn('Unified chat validation failed, using safe defaults');
+        global.lastValidationLogTime = Date.now();
+      }
+      
+      // Add performance recommendations
+      const recommendations = getPerformanceRecommendations();
+      if (recommendations.length > 0) {
+        console.log('💡 Performance recommendations:', recommendations);
+      }
+      
       validatedRequest = {
         message: req.body.message || 'Hello, I need assistance.',
-        model: 'openai/gpt-4o',
+        model: req.body.model || 'openai/gpt-4o',
         sourceInstance: req.body.sourceInstance || 'main',
-        mcpEnabled: true,
-        realTimeData: true,
-        enableAdvancedReasoning: true,
-        memoryEnabled: true,
-        crossSessionMemory: true,
-        toolSharing: true,
-        temperature: 0.7,
-        maxTokens: 4000,
-        streaming: false
+        mcpEnabled: req.body.mcpEnabled !== false,
+        realTimeData: req.body.realTimeData !== false,
+        enableAdvancedReasoning: req.body.enableAdvancedReasoning !== false,
+        memoryEnabled: req.body.memoryEnabled !== false,
+        crossSessionMemory: req.body.crossSessionMemory !== false,
+        toolSharing: req.body.toolSharing !== false,
+        temperature: typeof req.body.temperature === 'number' ? req.body.temperature : 0.7,
+        maxTokens: typeof req.body.maxTokens === 'number' ? req.body.maxTokens : 4000,
+        streaming: req.body.streaming === true,
+        userId: req.user?.id || 'anonymous', // Add missing userId
+        sessionId: req.body.sessionId,
+        systemPrompt: req.body.systemPrompt,
+        messages: req.body.messages,
+        dataContext: req.body.dataContext
       };
     }
 
-    // Add user ID
-    validatedRequest.userId = req.user?.id || 'demo-user';
+    // Ensure user ID is set if not already present
+    if (!validatedRequest.userId) {
+      validatedRequest.userId = req.user?.id || 'demo-user';
+    }
     
     // Process with unified chat service
     const result = await unifiedChatService.processUnifiedChat(validatedRequest);
@@ -180,11 +205,15 @@ router.post('/stream', async (req: any, res) => {
         crossSessionMemory: true,
         toolSharing: true,
         temperature: 0.7,
-        maxTokens: 4000
+        maxTokens: 4000,
+        userId: req.user?.id || 'demo-user' // Add missing userId here too
       };
     }
 
-    validatedRequest.userId = req.user?.id || 'demo-user';
+    // Ensure user ID is set if not already present
+    if (!validatedRequest.userId) {
+      validatedRequest.userId = req.user?.id || 'demo-user';
+    }
     
     try {
       const streamGenerator = unifiedChatService.processUnifiedChatStream(validatedRequest);

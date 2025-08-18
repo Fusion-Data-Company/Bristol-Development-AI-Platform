@@ -1492,7 +1492,7 @@ What property or investment can I analyze for you today?`,
                 <h1 className="font-serif font-bold text-3xl text-bristol-cyan drop-shadow-xl">
                   Bristol Development Group
                 </h1>
-                <p className="text-lg text-orange-500 font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
+                <div className="text-lg text-orange-500 font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                   Dynamic AI Analytics Platform
                   <div className="relative px-4 py-2 ml-2 group">
@@ -1510,7 +1510,7 @@ What property or investment can I analyze for you today?`,
                       <span style={{ textShadow: '0 1px 2px rgba(0, 0, 0, 0.8)' }}>PREMIUM</span>
                     </div>
                   </div>
-                </p>
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2">

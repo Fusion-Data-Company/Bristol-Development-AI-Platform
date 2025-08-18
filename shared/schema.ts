@@ -645,6 +645,32 @@ export const insertSiteSchema = createInsertSchema(sites).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  // Allow null values for optional fields to prevent validation errors
+  ownerId: z.string().nullable().optional(),
+  addrLine1: z.string().nullable().optional(),
+  addrLine2: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
+  state: z.string().nullable().optional(),
+  postalCode: z.string().nullable().optional(),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
+  acreage: z.number().nullable().optional(),
+  unitsTotal: z.number().nullable().optional(),
+  units1b: z.number().nullable().optional(),
+  units2b: z.number().nullable().optional(),
+  units3b: z.number().nullable().optional(),
+  avgSf: z.number().nullable().optional(),
+  completionYear: z.number().nullable().optional(),
+  parkingSpaces: z.number().nullable().optional(),
+  sourceUrl: z.string().nullable().optional(),
+  notes: z.string().nullable().optional(),
+  fipsState: z.string().nullable().optional(),
+  fipsCounty: z.string().nullable().optional(),
+  geoidTract: z.string().nullable().optional(),
+  acsYear: z.string().nullable().optional(),
+  acsProfile: z.any().nullable().optional(),
+  bristolScore: z.number().nullable().optional(),
 });
 
 export const updateSiteSchema = insertSiteSchema.partial();
