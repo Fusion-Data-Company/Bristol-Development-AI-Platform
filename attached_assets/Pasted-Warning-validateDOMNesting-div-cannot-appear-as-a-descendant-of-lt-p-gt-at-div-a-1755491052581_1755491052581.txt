@@ -1,0 +1,30 @@
+Warning: validateDOMNesting(...): <div> cannot appear as a descendant of &lt;p&gt;.
+    at div
+    at div
+    at p
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at div
+    at Chat (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/pages/Chat.tsx:112:41)
+    at Route (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=be89b7aa:323:16)
+    at Switch (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=be89b7aa:379:17)
+    at Router (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/App.tsx?v=usG7PUT1q8IpYI4twYu0_:47:42)
+    at div
+    at AppContent (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/App.tsx?v=usG7PUT1q8IpYI4twYu0_:176:31)
+    at ErrorBoundary (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/ErrorBoundary.tsx:10:5)
+    at Provider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-2M7HY3UG.js?v=be89b7aa:38:15)
+    at TooltipProvider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=be89b7aa:63:5)
+    at QueryClientProvider (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=be89b7aa:2805:3)
+    at ErrorBoundary (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/components/ErrorBoundary.tsx:10:5)
+    at App (https://fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev/src/App.tsx?v=usG7PUT1q8IpYI4twYu0_:245:3)
+Chat background image path: /@fs/home/runner/workspace/attached_assets/Screenshot%202025-08-15%20at%2009.54.40_1755276882073.png
+Loaded agents data: 
+Object {ok: true, agents: Array(6), count: 6}
+Chat background image path: /@fs/home/runner/workspace/attached_assets/Screenshot%202025-08-15%20at%2009.54.40_1755276882073.png
+✅ Welcome message initialized with enhanced configuration
+Chat background image path: /@fs/home/runner/workspace/attached_assets/Screenshot%202025-08-15%20at%2009.54.40_1755276882073.png
