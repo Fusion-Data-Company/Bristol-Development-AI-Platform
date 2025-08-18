@@ -287,6 +287,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register Placeholder Replacement routes for systematic data replacement
   const { registerPlaceholderReplacementRoutes } = await import("./routes/placeholderReplacement");
   registerPlaceholderReplacementRoutes(app);
+
+  // Register Placeholder Verification routes to test function replacements
+  const { registerPlaceholderVerificationRoutes } = await import("./routes/placeholderVerification");
+  registerPlaceholderVerificationRoutes(app);
   
   // Bristol Elite Scraping routes with advanced Firecrawl capabilities
   const bristolEliteScrapingRouter = (await import('./routes/bristol-elite-scraping')).default;
