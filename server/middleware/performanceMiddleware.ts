@@ -95,8 +95,10 @@ export const requestTiming = (req: Request, res: Response, next: NextFunction) =
       console.warn(`[Bristol Performance] Slow request: ${req.method} ${req.path} took ${duration.toFixed(2)}ms`);
     }
     
-    // Add timing header for monitoring
-    res.setHeader('X-Response-Time', `${duration.toFixed(2)}ms`);
+    // Add timing header for monitoring (only if headers haven't been sent)
+    if (!res.headersSent) {
+      res.setHeader('X-Response-Time', `${duration.toFixed(2)}ms`);
+    }
   });
   
   next();
@@ -182,8 +184,11 @@ export const responseCache = (duration = 300000) => { // 5 minutes default
         return res.status(304).end();
       }
       
-      res.setHeader('ETag', cached.etag);
-      res.setHeader('Cache-Control', `max-age=${Math.floor((duration - (now - cached.timestamp)) / 1000)}`);
+      // Only set headers if they haven't been sent
+      if (!res.headersSent) {
+        res.setHeader('ETag', cached.etag);
+        res.setHeader('Cache-Control', `max-age=${Math.floor((duration - (now - cached.timestamp)) / 1000)}`);
+      }
       return res.json(cached.data);
     }
     
@@ -203,11 +208,16 @@ export const responseCache = (duration = 300000) => { // 5 minutes default
       // Clean old cache entries (simple LRU)
       if (cache.size > 100) {
         const firstKey = cache.keys().next().value;
-        cache.delete(firstKey);
+        if (firstKey !== undefined) {
+          cache.delete(firstKey);
+        }
       }
       
-      res.setHeader('ETag', etag);
-      res.setHeader('Cache-Control', `max-age=${Math.floor(duration / 1000)}`);
+      // Only set headers if they haven't been sent
+      if (!res.headersSent) {
+        res.setHeader('ETag', etag);
+        res.setHeader('Cache-Control', `max-age=${Math.floor(duration / 1000)}`);
+      }
       
       return originalJson(data);
     };
