@@ -279,6 +279,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register Bristol Agent routes for elite analytics
   const { registerBristolAgentRoutes } = await import("./routes/bristolAgents.js");
   registerBristolAgentRoutes(app);
+
+  // Register Real Data Integration routes to replace all placeholders
+  const { registerRealDataRoutes } = await import("./routes/realDataIntegration");
+  registerRealDataRoutes(app);
+
+  // Register Placeholder Replacement routes for systematic data replacement
+  const { registerPlaceholderReplacementRoutes } = await import("./routes/placeholderReplacement");
+  registerPlaceholderReplacementRoutes(app);
   
   // Bristol Elite Scraping routes with advanced Firecrawl capabilities
   const bristolEliteScrapingRouter = (await import('./routes/bristol-elite-scraping')).default;

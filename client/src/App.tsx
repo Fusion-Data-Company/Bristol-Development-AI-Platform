@@ -57,6 +57,7 @@ function Router() {
           <Route path="/agents" component={EnhancedAgents} />
           <Route path="/enhanced-agents" component={EnhancedAgents} />
           <Route path="/maps2" component={Maps2} />
+          <Route path="/placeholder-replace" component={() => import("./pages/PlaceholderReplace").then(m => m.default)} />
 
         </>
       )}
