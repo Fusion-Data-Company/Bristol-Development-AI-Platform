@@ -1,0 +1,104 @@
+You’re right—the app is crashing now, and the builder’s “all good” message is nonsense. I’m going to give you a precise, surgical fix to get you back up right now, then we can add protections after.
+
+From your screenshot, the actual crash is from Vite:
+
+Pre-transform error: No matching HTML proxy module found from /api/analytics/pipeline/index.html?html-proxy&index=0.js
+
+That means something in the client bundle is trying to import an HTML file from a server route (/api/analytics/pipeline/index.html). Vite’s HTML proxy only works for real files in your repo, not for dynamic server paths, so the dev server dies before your MCP servers even matter.
+
+Do this now (copy/paste)
+
+1) Kill the current run
+
+pkill -f node || true
+
+2) Find the bad import/reference
+
+grep -RIn --exclude-dir=node_modules "/api/analytics/pipeline/index.html" .
+grep -RIn --exclude-dir=node_modules "html-proxy" .
+
+You’ll likely see it in one of:
+	•	src/main.(ts|tsx) or src/App.(ts|tsx)
+	•	an analytics component like src/**/analytics*/**
+	•	index.html importing something odd
+	•	a new “fix” the builder added
+
+3) Remove the HTML import; use fetch instead
+
+If you see something like:
+
+// ❌ wrong — importing server HTML into the client bundle
+import '/api/analytics/pipeline/index.html';
+
+Replace with:
+
+// ✅ fetch at runtime (don’t import an HTML file)
+async function loadPipelineHtml() {
+  const res = await fetch('/api/analytics/pipeline'); // or correct JSON endpoint
+  if (!res.ok) throw new Error('Failed to load analytics pipeline');
+  return await res.text(); // if it returns HTML
+}
+// then inject into the DOM when needed, or parse JSON if that endpoint returns JSON
+
+If it needs JSON:
+
+const data = await fetch('/api/analytics/pipeline').then(r => r.json());
+
+4) Revert any accidental config changes that might cause HTML proxying
+
+# Revert only build-related files to your LKG commit (replace <LKG> with your tag or hash)
+git checkout <LKG> -- vite.config.* index.html src/main.* src/entry* src/routes/**/*analytics* src/components/**/*Analytics*
+
+5) Clean Vite cache & reinstall exactly
+
+rm -rf node_modules/.vite
+npm ci
+
+6) Run again
+
+npm run build || true    # this should succeed or at least not die on the html-proxy error
+npm run start            # or your prod start; for dev: npm run dev
+
+If it starts, the right side of Replit should stop showing that Vite pre‑transform error.
+
+⸻
+
+Why this happened
+	•	The builder (or a “fix”) likely added a client-side import of a server path ending in .html. Vite saw /api/analytics/pipeline/index.html and tried to treat it like a real file, generated a ?html-proxy module, but couldn’t find a matching source → crash before the server renders anything.
+
+This is completely separate from your MCP servers (those “starting…” logs are just noise). The crash is in the frontend pre-transform stage.
+
+⸻
+
+Quick integrity checks (after it boots)
+	•	ElevenLabs endpoints exist:
+
+curl -sS "http://127.0.0.1:${PORT:-3000}/api/elevenlabs?dryRun=1" | head
+curl -sS "http://127.0.0.1:${PORT:-3000}/api/elevenlabs-webhook?dryRun=1" | head
+curl -sS "http://127.0.0.1:${PORT:-3000}/api/mcp-elevenlabs?dryRun=1" | head
+
+	•	MCP health (if you have the route):
+
+curl -sS "http://127.0.0.1:${PORT:-3000}/api/mcp/health" | jq .
+
+If any of those 404/500, we’ll restore those specific files from your golden commit exactly like this:
+
+git checkout <LKG> -- server/api/elevenlabs.ts server/api/elevenlabs-webhook.ts server/api/mcp-elevenlabs.ts
+git checkout <LKG> -- src/mcp/ src/tools/
+npm ci && npm run build && npm run start
+
+
+⸻
+
+If the crash persists after removing the import
+
+Run and share the one‑liners below so I can point at the exact file/line to fix:
+
+git status
+git diff --name-only
+grep -RIn --exclude-dir=node_modules "/api/analytics/pipeline" src public .
+grep -RIn --exclude-dir=node_modules "import .*\\.html" src
+
+But nine times out of ten, removing that HTML import of the /api/analytics/pipeline/index.html path (and reverting vite.config.*/index.html if they were touched) will immediately stop this crash.
+
+You did the right thing rolling back; this is just one bad import that snuck in after. Let’s rip it out and get you back green.

@@ -63,7 +63,23 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
 
   // Fetch development pipeline data
   const { data: pipelineData, isLoading: pipelineLoading } = useQuery({
-    queryKey: ['/api/analytics/pipeline', selectedSite?.city, selectedSite?.state],
+    queryKey: ['/api/analytics/pipeline-json', selectedSite?.city, selectedSite?.state],
+    queryFn: async () => {
+      if (!selectedSite?.city || !selectedSite?.state) return null;
+      
+      const response = await fetch('/api/analytics/pipeline', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          city: selectedSite.city,
+          state: selectedSite.state
+        })
+      });
+      
+      if (!response.ok) return null;
+      return response.json();
+    },
+    enabled: !!selectedSite?.city && !!selectedSite?.state,
     retry: false,
   });
 
