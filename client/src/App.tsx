@@ -31,6 +31,7 @@ import EnhancedAgents from "@/pages/EnhancedAgents";
 import Maps2 from "@/pages/Maps2";
 import ProductionStatus from "@/pages/ProductionStatus";
 import PlaceholderReplace from "@/pages/PlaceholderReplace";
+import CompetitorWatch from "@/pages/CompetitorWatch";
 
 
 
@@ -63,6 +64,7 @@ function Router() {
           <Route path="/maps2" component={Maps2} />
           <Route path="/production-status" component={ProductionStatus} />
           <Route path="/placeholder-replace" component={PlaceholderReplace} />
+          <Route path="/competitor-watch" component={CompetitorWatch} />
 
         </>
       )}

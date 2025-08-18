@@ -10,7 +10,8 @@ import {
   Search,
   Bell,
   User,
-  ChevronDown
+  ChevronDown,
+  Shield
 } from 'lucide-react';
 
 export function GlobalHeader() {
@@ -120,6 +121,18 @@ export function GlobalHeader() {
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <BarChart3 className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
                   <span className="text-sm font-medium relative z-10">Comparables</span>
+                </button>
+              </Link>
+              
+              <Link href="/competitor-watch">
+                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                  location === '/competitor-watch' 
+                    ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
+                    : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
+                }`}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <Shield className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-sm font-medium relative z-10">Competitor Watch</span>
                 </button>
               </Link>
               
