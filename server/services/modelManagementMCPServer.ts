@@ -379,6 +379,106 @@ class ModelManagementMCPServer {
     }
   }
 
+  /**
+   * Get comprehensive models data with filtering and health information
+   */
+  async getModelsData(options: {
+    includeHealth?: boolean;
+    category?: string;
+    tier?: string;
+    provider?: string;
+  } = {}): Promise<{
+    success: boolean;
+    models: BristolModelConfig[];
+    totalCount: number;
+    categories: string[];
+    providers: string[];
+    healthStatus?: Record<string, any>;
+    error?: string;
+  }> {
+    console.log(`📋 [ModelMCP] Getting models data with options:`, options);
+    
+    try {
+      // Ensure model cache is up to date
+      await this.refreshModelCache();
+      
+      let models = Array.from(this.modelCache.values());
+      
+      // Apply filters
+      if (options.category) {
+        models = models.filter(m => m.category === options.category);
+      }
+      
+      if (options.tier) {
+        models = models.filter(m => m.tier === options.tier);
+      }
+      
+      if (options.provider) {
+        models = models.filter(m => m.provider === options.provider);
+      }
+      
+      // Get unique categories and providers
+      const categories = [...new Set(Array.from(this.modelCache.values()).map(m => m.category))];
+      const providers = [...new Set(Array.from(this.modelCache.values()).map(m => m.provider))];
+      
+      let healthStatus = undefined;
+      if (options.includeHealth) {
+        healthStatus = Object.fromEntries(Array.from(this.healthCheckResults.entries()));
+      }
+      
+      console.log(`✅ [ModelMCP] Retrieved ${models.length} models successfully`);
+      
+      return {
+        success: true,
+        models,
+        totalCount: models.length,
+        categories,
+        providers,
+        healthStatus
+      };
+      
+    } catch (error) {
+      console.error(`❌ [ModelMCP] Error getting models data:`, error);
+      
+      // Return fallback models for UI continuity
+      const fallbackModels: BristolModelConfig[] = [
+        {
+          id: 'gpt-4o',
+          displayName: 'GPT-4o',
+          provider: 'OpenAI',
+          openrouterId: 'openai/gpt-4o',
+          tier: 'standard',
+          category: 'chat',
+          maxTokens: 8192,
+          features: ['reasoning'],
+          pricing: { prompt: 0.005, completion: 0.015 },
+          status: 'active'
+        },
+        {
+          id: 'claude-3-sonnet',
+          displayName: 'Claude 3 Sonnet',
+          provider: 'Anthropic',
+          openrouterId: 'anthropic/claude-3-sonnet',
+          tier: 'premium',
+          category: 'reasoning',
+          maxTokens: 200000,
+          features: ['analysis'],
+          pricing: { prompt: 0.003, completion: 0.015 },
+          status: 'active'
+        }
+      ];
+      
+      return {
+        success: false,
+        models: fallbackModels,
+        totalCount: fallbackModels.length,
+        categories: ['chat', 'reasoning'],
+        providers: ['OpenAI', 'Anthropic'],
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
   // MCP Tool: Get Model Health Status
   async get_model_health(params: { 
     modelId?: string;

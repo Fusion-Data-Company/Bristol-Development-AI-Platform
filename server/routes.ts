@@ -345,8 +345,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { agentCommunicationService } = await import('./services/agentCommunicationService');
       const { unifiedMCPOrchestrator } = await import('./services/unifiedMCPOrchestrator');
+      const { bulletproofErrorHandler } = await import('./services/bulletproofErrorHandler');
       
       const healthStatus = agentCommunicationService.getHealthStatus();
+      const errorStats = bulletproofErrorHandler.getErrorStats();
       
       res.json({
         success: true,
@@ -362,6 +364,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             initialized: true,
             status: 'operational'
           },
+          errorHandling: {
+            bulletproofEnabled: true,
+            errorStats
+          },
           timestamp: new Date().toISOString()
         }
       });
@@ -374,6 +380,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // Comprehensive Agent Communication Testing API
+  const testAgentCommRouter = (await import('./api/test-agent-communication')).default;
+  app.use('/api/test-agent-comm', testAgentCommRouter);
 
 
 

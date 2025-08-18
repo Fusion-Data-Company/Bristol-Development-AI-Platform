@@ -25,10 +25,10 @@ FOOTER REQUIREMENT: All pages must include thick Bristol footers to provide scro
 - **Runtime**: Node.js with Express.
 - **Database**: PostgreSQL with Neon serverless hosting via Drizzle ORM.
 - **Authentication**: Enhanced Replit Auth with bulletproof user management and OpenID Connect.
-- **AI Integration**: ELITE MCP INFRASTRUCTURE with a unified chat service, enhanced chat experience API with real-time property context and intelligent interactions, smart follow-up question generation, interactive chat tools, proactive insights, and property insights with market analysis. The Bristol A.I. Elite system utilizes advanced MCP orchestration for multi-agent synchronization and shared memory banks across 22+ tools.
+- **AI Integration**: BULLETPROOF UNIFIED MCP ORCHESTRATOR with three-agent communication system (floating widget, main chat, ElevenLabs) enabling real-time inter-agent messaging via MCP protocol. Enhanced chat experience API with intelligent interactions, smart follow-up question generation, interactive chat tools, and comprehensive error recovery. The Bristol A.I. Elite system utilizes advanced MCP orchestration with bulletproof error handling, circuit breakers, auto-recovery mechanisms, and health monitoring across 22+ tools.
 - **File Storage**: Google Cloud Storage.
 - **Real-time Features**: WebSocket server for live updates, chat, and tool execution status.
-- **System Design Choices**: The Bristol A.I. acts as a transcendent AI controller. It features advanced MCP orchestration with quantum agent synchronization and cross-dimensional intelligence processing. The system includes 6 enhanced MCP servers for efficient workflow and enhanced chat experience with real-time property context integration and interactive financial tools.
+- **System Design Choices**: The Bristol A.I. acts as a bulletproof AI orchestrator with unified three-agent communication system. Features advanced MCP orchestration with bulletproof error handling, circuit breakers, auto-recovery mechanisms, and comprehensive health monitoring. The system includes unified MCP orchestrator enabling seamless communication between floating widget, main chat, and ElevenLabs agents with production-ready resilience and comprehensive testing infrastructure.
 
 ### Data Storage Solutions
 - **Primary Database**: PostgreSQL on Neon, accessed via Drizzle ORM.
