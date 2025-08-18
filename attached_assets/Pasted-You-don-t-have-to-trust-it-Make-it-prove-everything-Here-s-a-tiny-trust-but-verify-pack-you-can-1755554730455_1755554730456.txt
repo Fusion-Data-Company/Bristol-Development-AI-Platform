@@ -1,0 +1,192 @@
+You don’t have to trust it. Make it prove everything.
+
+Here’s a tiny “trust‑but‑verify” pack you can drop in right now. It bypasses the chat agent and runs deterministic checks against your live app, printing a pass/fail matrix and writing JSON reports you can inspect. If anything is broken (e.g., Document Analysis), these scripts will tell you which tool, why, and where.
+
+⸻
+
+1) Add three proof scripts (no app refactor, zero downtime)
+
+A) Runtime endpoints + WebSocket sanity
+
+Create scripts/prove.runtime.ts:
+
+// scripts/prove.runtime.ts
+import http from 'http'; import https from 'https'; import { URL } from 'url';
+import { writeFileSync, mkdirSync } from 'fs';
+
+const BASE = process.env.PROVE_BASE || `http://127.0.0.1:${process.env.PORT||3000}`;
+const ENDPOINTS = [
+  '/healthz',
+  '/api/elevenlabs?dryRun=1',
+  '/api/elevenlabs-webhook?dryRun=1',
+  '/api/mcp-elevenlabs?dryRun=1',
+  '/api/mcp/health',           // if you mounted the health route; okay if 404
+];
+
+function get(path: string, timeout = 4000): Promise<{path:string;status:number}> {
+  return new Promise(res => {
+    const url = new URL(path, BASE); const h = url.protocol === 'https:' ? https : http;
+    const req = h.request(url, { method:'GET', timeout }, r => res({ path, status: r.statusCode || 0 }));
+    req.on('error', () => res({ path, status: 0 })); req.end();
+  });
+}
+
+(async () => {
+  const results = [];
+  for (const p of ENDPOINTS) results.push(await get(p));
+  const ok = results.every(r => r.status && r.status < 500);
+  mkdirSync('docs', { recursive: true });
+  writeFileSync('docs/prove-runtime.json', JSON.stringify({ base: BASE, ts: new Date().toISOString(), results }, null, 2));
+  console.log('\nRUNTIME CHECKS'); console.table(results);
+  process.exit(ok ? 0 : 2);
+})();
+
+B) MCP registry + tool dry‑invokes (incl. Document Analysis)
+
+Create scripts/prove.mcp.ts:
+
+// scripts/prove.mcp.ts
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
+
+// ⬇️ Adjust these imports to your actual registry:
+import { listTools, getTool } from '@/mcp/registry';
+
+type Row = { tool: string; check: string; ok: boolean; note: string; ms: number };
+
+const rows: Row[] = [];
+function now(){ return Date.now(); }
+async function run(tool: string, check: string, args: any) {
+  const t = getTool(tool); const start = now();
+  if (!t) return rows.push({ tool, check, ok:false, note:'not in registry', ms: now()-start });
+  const fn = (t as any).invoke || (t as any).run || (t as any).call;
+  if (typeof fn !== 'function') return rows.push({ tool, check, ok:false, note:'no invokable function', ms: now()-start });
+  try {
+    const out = await Promise.race([
+      Promise.resolve(fn(args)),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), 15000))
+    ]);
+    rows.push({ tool, check, ok:true, note: typeof out === 'string' ? out.slice(0,200) : 'ok', ms: now()-start });
+  } catch(e:any) {
+    rows.push({ tool, check, ok:false, note: e?.message || String(e), ms: now()-start });
+  }
+}
+
+(async () => {
+  const tools = (listTools?.() ?? []).sort();
+  // Generic dry pings for all tools
+  for (const name of tools) await run(name, 'dry ping', { dryRun:true, ping:true });
+
+  // Focused Document Analysis (rename if your id differs)
+  const TXT = 'test/fixtures/da.txt';
+  mkdirSync('test/fixtures', { recursive: true });
+  if (!existsSync(TXT)) writeFileSync(TXT, 'Hello Document Analysis. Tiny fixture.\n');
+
+  await run('document-analysis', 'analyze txt', { filePath: TXT, mime: 'text/plain', maxBytes: 128*1024 });
+
+  mkdirSync('docs', { recursive: true });
+  writeFileSync('docs/prove-mcp.json', JSON.stringify({ ts:new Date().toISOString(), rows }, null, 2));
+  console.log('\nMCP TOOL CHECKS'); console.table(rows.map(r => ({ tool:r.tool, check:r.check, ok:r.ok, ms:r.ms, note:r.note.slice(0,80) })));
+  process.exit(rows.some(r => !r.ok) ? 2 : 0);
+})();
+
+If your Document Analysis tool uses a different name than document-analysis, change it in the two run() calls.
+
+C) ElevenLabs—route presence + optional live synth
+
+Create scripts/prove.elevenlabs.ts:
+
+// scripts/prove.elevenlabs.ts
+import http from 'http'; import https from 'https'; import { URL } from 'url';
+import { writeFileSync, mkdirSync } from 'fs';
+
+const BASE = process.env.PROVE_BASE || `http://127.0.0.1:${process.env.PORT||3000}`;
+const LIVE   = process.env.E2E_ELEVENLABS === '1'; // set to 1 to run a real 1s synth via your API route
+
+function post(path:string, body:any, timeout=12000):Promise<{status:number;len?:number}>{
+  return new Promise(res=>{
+    const url = new URL(path, BASE); const h = url.protocol==='https:'?https:http;
+    const data = JSON.stringify(body);
+    const req = h.request(url, { method:'POST', timeout, headers:{'content-type':'application/json','content-length':Buffer.byteLength(data)} },
+      (r)=>{ const chunks:Buffer[]=[]; r.on('data',c=>chunks.push(c)); r.on('end',()=>res({status:r.statusCode||0,len:Buffer.concat(chunks).length}));});
+    req.on('error',()=>res({status:0})); req.write(data); req.end();
+  });
+}
+
+(async () => {
+  const dry = await post('/api/elevenlabs', { dryRun:true, text:'ping' });
+  const live = LIVE ? await post('/api/elevenlabs', { text:'Test one two', voiceId: process.env.ELEVENLABS_VOICE_ID, durationSec: 1 }) : {status: 204};
+
+  mkdirSync('docs',{recursive:true});
+  writeFileSync('docs/prove-elevenlabs.json', JSON.stringify({ ts:new Date().toISOString(), dry, live, liveEnabled: LIVE }, null, 2));
+  console.log('\nELEVENLABS'); console.table([{check:'dryRun', status:dry.status},{check:'live(1s)', status:live.status, len:live.len, enabled:LIVE}]);
+  process.exit((dry.status && dry.status < 500 && (!LIVE || (live.status && live.status < 500))) ? 0 : 2);
+})();
+
+By default it won’t hit the real ElevenLabs API. If you want a real 1‑second synthesis through your own route, run with E2E_ELEVENLABS=1 (and ensure your route proxies your existing key).
+
+⸻
+
+2) Wire up npm scripts (so you can run one command)
+
+In package.json:
+
+{
+  "scripts": {
+    "prove:runtime": "node --loader ts-node/esm scripts/prove.runtime.ts || ts-node scripts/prove.runtime.ts",
+    "prove:mcp":     "node --loader ts-node/esm scripts/prove.mcp.ts     || ts-node scripts/prove.mcp.ts",
+    "prove:11labs":  "node --loader ts-node/esm scripts/prove.elevenlabs.ts || ts-node scripts/prove.elevenlabs.ts",
+    "prove:all":     "npm run -s prove:runtime && npm run -s prove:mcp && npm run -s prove:11labs"
+  }
+}
+
+(Use whichever ts runner matches your setup; if needed, transpile first with tsc and run the JS outputs.)
+
+⸻
+
+3) Run the proofs (copy/paste)
+
+# Minimal, safe checks (no external API calls)
+npm run -s prove:runtime || true
+npm run -s prove:mcp     || true
+npm run -s prove:11labs  || true
+
+# Optional real audio through your own /api/elevenlabs route (1 second)
+E2E_ELEVENLABS=1 npm run -s prove:11labs || true
+
+Open the generated reports:
+	•	docs/prove-runtime.json
+	•	docs/prove-mcp.json
+	•	docs/prove-elevenlabs.json
+
+These are your single source of truth. If the agent’s claims don’t match these files, the agent is wrong.
+
+⸻
+
+4) How to read failures (fast triage)
+	•	Runtime: Any endpoint status >= 500 → middleware/blocker or handler crash. status 0 → not reachable/bound.
+	•	MCP:
+	•	not in registry → the tool wasn’t registered; fix your register() call.
+	•	no invokable function → export shape changed; standardize on invoke(args).
+	•	timeout → the tool hung (file I/O, network, or deadlock).
+	•	Document Analysis failing on TXT usually means missing registration or incorrect invoke signature (fix that before PDFs).
+	•	ElevenLabs:
+	•	dryRun non‑200 → your route is missing/renamed or blocked by middleware.
+	•	live non‑200 (only when E2E_ELEVENLABS=1) → env keys, voiceId, or outbound/network issues.
+
+Give me the failing rows from docs/prove-mcp.json (especially for Document Analysis), and I’ll point you to the exact file/line to fix—surgically, without touching anything else.
+
+⸻
+
+5) Optional: fail deployments if proofs fail
+
+Add to your deployment build:
+
+npm run prove:runtime
+npm run prove:mcp
+# leave out prove:11labs unless you want external traffic during build
+
+This prevents any “everything’s fine” message unless the system actually passes.
+
+⸻
+
+Bottom line: after you run these, you won’t need to believe the agent or me—you’ll have hard, timestamped evidence of what works and what doesn’t, and exactly where to fix it.

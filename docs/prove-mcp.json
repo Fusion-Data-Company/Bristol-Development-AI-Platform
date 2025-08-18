@@ -1,0 +1,59 @@
+{
+  "timestamp": "2025-08-18T22:07:21.615Z",
+  "rows": [
+    {
+      "tool": "verify_user",
+      "check": "invoke",
+      "ok": true,
+      "note": "Success",
+      "ms": 38
+    },
+    {
+      "tool": "get_bristol_team",
+      "check": "invoke",
+      "ok": true,
+      "note": "Success",
+      "ms": 9
+    },
+    {
+      "tool": "portfolio_analytics",
+      "check": "invoke",
+      "ok": true,
+      "note": "Success",
+      "ms": 10
+    },
+    {
+      "tool": "market_research",
+      "check": "invoke",
+      "ok": true,
+      "note": "Success",
+      "ms": 12
+    },
+    {
+      "tool": "web_scraping",
+      "check": "invoke",
+      "ok": true,
+      "note": "Success",
+      "ms": 10
+    },
+    {
+      "tool": "generate_image",
+      "check": "invoke",
+      "ok": true,
+      "note": "Success",
+      "ms": 11
+    },
+    {
+      "tool": "analyze_document",
+      "check": "invoke",
+      "ok": true,
+      "note": "Success",
+      "ms": 8
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passing": 7,
+    "failing": 0
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "base": "http://127.0.0.1:5000",
+  "timestamp": "2025-08-18T22:07:19.865Z",
+  "results": [
+    {
+      "path": "/api/elevenlabs?dryRun=1",
+      "status": 200
+    },
+    {
+      "path": "/api/elevenlabs-webhook?dryRun=1",
+      "status": 200
+    },
+    {
+      "path": "/api/mcp-elevenlabs?dryRun=1",
+      "status": 200
+    },
+    {
+      "path": "/api/mcp/health",
+      "status": 200
+    },
+    {
+      "path": "/api/mcp-stream",
+      "status": 200
+    },
+    {
+      "path": "/api/sites",
+      "status": 200
+    },
+    {
+      "path": "/api/sites/metrics",
+      "status": 200
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passing": 7,
+    "failing": 0
+  }
+}
