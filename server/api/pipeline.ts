@@ -1,11 +1,12 @@
 import { Router } from 'express';
+import type { Request, Response } from 'express';
 
 const router = Router();
 
 // ArcGIS FeatureServer proxy
-router.get('/arcgis/*', async (req, res) => {
+router.get('/arcgis/*', async (req: Request, res: Response) => {
   try {
-    const arcgisPath = req.params[0];
+    const arcgisPath = req.params[0] as string;
     const queryString = new URLSearchParams(req.query as any).toString();
     const arcgisUrl = `https://services.arcgis.com/${arcgisPath}${queryString ? '?' + queryString : ''}`;
     
@@ -39,9 +40,9 @@ router.get('/arcgis/*', async (req, res) => {
 });
 
 // Census Bureau proxy
-router.get('/census/*', async (req, res) => {
+router.get('/census/*', async (req: Request, res: Response) => {
   try {
-    const censusPath = req.params[0];
+    const censusPath = req.params[0] as string;
     const queryString = new URLSearchParams(req.query as any).toString();
     const censusUrl = `https://api.census.gov/${censusPath}${queryString ? '?' + queryString : ''}`;
     
@@ -75,9 +76,9 @@ router.get('/census/*', async (req, res) => {
 });
 
 // HUD proxy
-router.get('/hud/*', async (req, res) => {
+router.get('/hud/*', async (req: Request, res: Response) => {
   try {
-    const hudPath = req.params[0];
+    const hudPath = req.params[0] as string;
     const queryString = new URLSearchParams(req.query as any).toString();
     const hudUrl = `https://www.huduser.gov/hudapi/${hudPath}${queryString ? '?' + queryString : ''}`;
     
@@ -111,7 +112,7 @@ router.get('/hud/*', async (req, res) => {
 });
 
 // Generic proxy for other services
-router.post('/proxy', async (req, res) => {
+router.post('/proxy', async (req: Request, res: Response) => {
   try {
     const { url, method = 'GET', headers = {}, body } = req.body;
     
