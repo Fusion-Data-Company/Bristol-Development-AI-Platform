@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Building, Map, BarChart3, MessageSquare, Settings, Wrench, Users, Building2 } from "lucide-react";
+import { Building, Map, BarChart3, MessageSquare, Settings, Wrench, Users, Building2, Brain } from "lucide-react";
 import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 
 interface ChromeProps {
@@ -13,13 +13,14 @@ export default function SimpleChrome({ children }: ChromeProps) {
 
   const navItems = [
     { path: "/", label: "Map", icon: Map },
-    { path: "/sites", label: "Database", icon: Building },
+    { path: "/sites", label: "Data", icon: Building },
     { path: "/analytics-enterprise", label: "Analytics", icon: BarChart3 },
-    { path: "/demographics", label: "Demographics", icon: Users },
-    { path: "/comparables", label: "Comparables", icon: Building2 },
+    { path: "/demographics", label: "Demo", icon: Users },
+    { path: "/comparables", label: "Comps", icon: Building2 },
+    { path: "/competitor-watch", label: "Intel", icon: Brain },
     { path: "/chat", label: "Chat", icon: MessageSquare },
     { path: "/enterprise", label: "Dashboard", icon: Settings },
-    { path: "/integrations", label: "Integrations", icon: Settings },
+    { path: "/integrations", label: "API", icon: Settings },
     { path: "/tools", label: "Tools", icon: Wrench },
   ];
 
