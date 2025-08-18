@@ -9,7 +9,6 @@ import { ErrorBoundary, setupGlobalErrorHandling } from "@/components/ErrorBound
 import { useEffect } from "react";
 
 import PopoutAgent from "@/components/PopoutAgent";
-import ElevenLabsWidget from "@/components/ElevenLabsWidget";
 
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
