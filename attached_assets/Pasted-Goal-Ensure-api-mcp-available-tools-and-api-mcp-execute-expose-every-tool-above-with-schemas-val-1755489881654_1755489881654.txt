@@ -1,0 +1,37 @@
+Goal: Ensure /api/mcp/available-tools and /api/mcp/execute expose every tool above with schemas, validation, and stable behavior — no code guesses from Cap.
+	1.	Tools Discovery API must return schemas
+	•	GET /api/mcp/available-tools should include name, description, domain, input_schema (JSON Schema), output_schema (optional) for each tool in your list.
+	•	Ensure names exactly match what /execute expects (e.g., "property_search", not "property-search").
+	2.	Input validation at gateway
+	•	On /api/mcp/execute, validate body: { tool, args, session, meta }.
+	•	Validate args with zod/ajv against the tool’s schema; return a uniform error envelope on mismatch.
+	3.	Session threading
+	•	Require/allow session.conversation_id, session.user_id, session.ui_surface, session.continuation.
+	•	If conversation_id missing, generate one and echo back in response.
+	4.	Timeouts & retries
+	•	Default timeout_ms per tool (e.g., 12s analytics, 15s scraping).
+	•	One guarded retry with jitter for transient network/storage errors.
+	•	Return ok:false with {code,message,hint} on failure.
+	5.	Security
+	•	Enforce Authorization: Bearer on both endpoints.
+	•	Optionally scope with X-Agent-Id & X-Agent-Caps if you’ve got multiple agents.
+	•	Log tool usage with user_id, conversation_id, tool, duration_ms.
+	6.	Observability
+	•	Attach trace_id to each call and propagate it downstream.
+	•	Structured logs: {trace_id, tool, args_hash, latency_ms, ok, error_code}.
+	7.	Artifacts & memory
+	•	Make store_artifact persist to your shared memory/DB with {type, content, meta}.
+	•	Return an artifact_id so Cap can reference or update later.
+	8.	Safety on DB & scraping
+	•	query_bristol_database should be read-only unless the request includes a server-side flag.
+	•	web_scraping must sanitize URLs, whitelist domains if necessary, and cap response size.
+	9.	Smoke tests (scripts)
+	•	Provide /scripts/test_mcp.sh with curl calls for:
+	•	available-tools (assert count ≥ tools listed)
+	•	property_search, property_valuation, generate_report, store_artifact
+	•	a chained execute_tool_chain
+	•	Print helpful errors if auth missing or schema invalid.
+	10.	Docs
+
+	•	In docs/TOOLS.md, list each tool with:
+	•	purpose, args schema, example requests/responses, typical error cases, and latency expectations.
