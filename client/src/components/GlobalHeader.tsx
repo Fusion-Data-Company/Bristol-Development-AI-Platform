@@ -51,124 +51,124 @@ export function GlobalHeader() {
             </div>
 
             {/* Navigation */}
-            <nav className="hidden md:flex items-center space-x-1">
+            <nav className="hidden md:flex items-center space-x-0.5">
               <Link href="/">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/' 
                     ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
                     : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
                 }`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <Map className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Map</span>
+                  <Map className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">Map</span>
                 </button>
               </Link>
               
               <Link href="/sites">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/sites' 
                     ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
                     : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
                 }`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <BarChart3 className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Database</span>
+                  <BarChart3 className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">Data</span>
                 </button>
               </Link>
               
               <Link href="/analytics">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/analytics' 
                     ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
                     : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
                 }`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <BarChart3 className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Analytics</span>
-                </button>
-              </Link>
-              
-              <Link href="/enterprise">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
-                  location === '/enterprise' 
-                    ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
-                    : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
-                }`}>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <Settings className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Enterprise</span>
+                  <BarChart3 className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">Analytics</span>
                 </button>
               </Link>
               
               <Link href="/demographics">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/demographics' 
                     ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
                     : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
                 }`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <Users className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Demographics</span>
+                  <Users className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">Demo</span>
                 </button>
               </Link>
               
               <Link href="/comparables">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/comparables' 
                     ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
                     : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
                 }`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <BarChart3 className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Comparables</span>
+                  <BarChart3 className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">Comps</span>
                 </button>
               </Link>
               
               <Link href="/competitor-watch">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/competitor-watch' 
                     ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
                     : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
                 }`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <Shield className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Competitor Watch</span>
+                  <Brain className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">Intel</span>
                 </button>
               </Link>
               
               <Link href="/chat">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/chat' 
                     ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
                     : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
                 }`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <MessageCircle className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Chat</span>
+                  <MessageCircle className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">Chat</span>
+                </button>
+              </Link>
+              
+              <Link href="/enterprise">
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                  location === '/enterprise' 
+                    ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
+                    : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
+                }`}>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <Settings className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">Dashboard</span>
                 </button>
               </Link>
               
               <Link href="/integrations">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/integrations' 
                     ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
                     : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
                 }`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <Settings className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Integrations</span>
+                  <Settings className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">API</span>
                 </button>
               </Link>
               
               <Link href="/tools">
-                <button className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
+                <button className={`flex items-center space-x-1.5 px-3 py-2 rounded-lg transition-all duration-300 group relative overflow-hidden ${
                   location === '/tools' 
                     ? 'bg-gradient-to-r from-blue-600/20 to-cyan-600/20 text-blue-400 shadow-lg shadow-blue-500/20 border border-blue-500/30' 
                     : 'text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-slate-700/30 hover:to-slate-600/30 hover:border-slate-500/50 border border-transparent'
                 }`}>
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <Settings className="h-4 w-4 relative z-10 group-hover:scale-110 transition-transform duration-300" />
-                  <span className="text-sm font-medium relative z-10">Tools</span>
+                  <Settings className="h-3.5 w-3.5 relative z-10 group-hover:scale-110 transition-transform duration-300" />
+                  <span className="text-xs font-medium relative z-10">Tools</span>
                 </button>
               </Link>
             </nav>
