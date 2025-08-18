@@ -118,4 +118,32 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-slate-500 dark:bg-slate-500;
+}/* Navigation readability hotfix */
+.nav, .MobileNav, .mobile-nav, [data-mobile-nav="true"] {
+  color: #0b0b0b !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: saturate(100%) blur(4px);
+  -webkit-backdrop-filter: saturate(100%) blur(4px);
+  z-index: 9999 !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.nav a, .MobileNav a { 
+  color: #0b0b0b !important; 
+  font-weight: 500;
+}
+
+nav.md\:hidden {
+  background: white !important;
+  color: #0b0b0b !important;
+}
+
+nav.md\:hidden a {
+  color: #0b0b0b !important;
+}
+
+button.md\:hidden {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #0b0b0b !important;
+  border: 1px solid rgba(0,0,0,0.1);
 }

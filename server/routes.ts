@@ -134,6 +134,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const chatRouter = (await import('./api/chat')).default;
   app.use('/api/chat', chatRouter);
 
+  // ElevenLabs Integration - CRITICAL: These routes were missing during stability changes
+  const elevenlabsRouter = (await import('./api/elevenlabs')).default;
+  const elevenlabsWebhookRouter = (await import('./api/elevenlabs-webhook')).default;
+  const mcpElevenlabsRouter = (await import('./api/mcp-elevenlabs')).default;
+  
+  app.use('/api/elevenlabs', elevenlabsRouter);
+  app.use('/api/elevenlabs-webhook', elevenlabsWebhookRouter);
+  app.use('/api/mcp-elevenlabs', mcpElevenlabsRouter);
+
   // Unified MCP Chat API - BULLETPROOF MODEL SELECTOR INTEGRATION
   const mcpUnifiedChatRouter = (await import('./api/mcp-unified-chat')).default;
   app.use('/api/mcp-unified', mcpUnifiedChatRouter);
