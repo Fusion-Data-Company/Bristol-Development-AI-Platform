@@ -9,6 +9,7 @@ import { MapPin, Building, TrendingUp, Users, DollarSign, Info, Layers, Satellit
 import { cn } from '@/lib/utils';
 import { ArcGISLayer, useArcGISDemographics } from '../analytics/ArcGISLayer';
 import { KMLLayer } from './KMLLayer';
+import { useBulkBristolScores } from '@/hooks/useBristolScore';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -135,10 +136,42 @@ export function InteractiveMap({
   // Use real site data or empty array to prevent TypeScript errors
   const activeSites: Site[] = sites.length > 0 ? sites : [];
   
+  // Fetch Bristol scores for all sites
+  const siteIds = activeSites.map(site => site.id);
+  const { data: bristolData, isLoading: bristolLoading } = useBulkBristolScores(siteIds);
+  
+  // Create a map of site ID to Bristol score for easy lookup
+  const bristolScoreMap = new globalThis.Map<string, number>();
+  if (bristolData?.data?.topPerformers || bristolData?.data?.bottomPerformers) {
+    // Extract scores from top and bottom performers
+    [...(bristolData.data.topPerformers || []), ...(bristolData.data.bottomPerformers || [])]
+      .forEach((performer: any) => {
+        if (performer.id && performer.bristolScore) {
+          bristolScoreMap.set(performer.id, performer.bristolScore);
+        }
+      });
+  }
+  
+  // Function to get Bristol score for a site
+  const getBristolScore = (siteId: string): number => {
+    // First check if we have a live calculated score
+    const liveScore = bristolScoreMap.get(siteId);
+    if (liveScore) return liveScore;
+    
+    // Check if the site has a stored Bristol score
+    const site = activeSites.find(s => s.id === siteId);
+    if (site?.bristolScore) return site.bristolScore;
+    
+    // Default fallback only if no data available yet
+    return 0; // Use 0 to indicate no score calculated yet
+  };
+  
   // Debug sites data loading
   console.log('InteractiveMap: Sites data loaded:', {
     siteCount: activeSites.length,
     sitesWithCoords: activeSites.filter(s => s.latitude && s.longitude).length,
+    bristolScoresLoaded: bristolScoreMap.size,
+    bristolLoading,
     firstSite: activeSites[0] || null
   });
 
@@ -184,20 +217,29 @@ export function InteractiveMap({
     });
   }, [layerData, loading, fetchLayerData]);
 
-  // Enhanced heat map data for better visibility
+  // Enhanced heat map data with live Bristol scores
   const marketHeatData = {
     type: 'FeatureCollection' as const,
-    features: activeSites.map(site => ({
-      type: 'Feature' as const,
-      properties: {
-        score: (site as any).bristolScore || 75,
-        density: Math.max(50, ((site as any).bristolScore || 75) * 1.2) // Enhanced density for visibility
-      },
-      geometry: {
-        type: 'Point' as const,
-        coordinates: [site.longitude || -82.4572, site.latitude || 33.7490]
-      }
-    }))
+    features: activeSites.map(site => {
+      const bristolScore = getBristolScore(site.id);
+      // Only show sites on map if they have coordinates and a valid Bristol score
+      const shouldShow = site.longitude && site.latitude && bristolScore > 0;
+      
+      return {
+        type: 'Feature' as const,
+        properties: {
+          score: bristolScore,
+          density: Math.max(30, bristolScore * 1.2), // Enhanced density for visibility
+          siteId: site.id,
+          siteName: site.name,
+          shouldShow
+        },
+        geometry: {
+          type: 'Point' as const,
+          coordinates: [site.longitude || -82.4572, site.latitude || 33.7490]
+        }
+      };
+    }).filter(feature => feature.properties.shouldShow) // Only include sites with valid scores
   };
 
   const heatmapLayer = {
@@ -353,9 +395,9 @@ export function InteractiveMap({
         console.log('✅ Token valid:', MAPBOX_TOKEN.startsWith('pk.'));
         console.log('Map is ready and tiles should be loading');
       }}
-      onError={(error) => {
+      onError={(error: any) => {
         // Enhanced error handling - only log critical errors
-        const errorMsg = error?.error?.message || error?.message || String(error);
+        const errorMsg = error?.error?.message || (error as any)?.message || String(error);
         const isStyleError = errorMsg.includes('style') || errorMsg.includes('Style');
         const is404 = errorMsg.includes('404') || errorMsg.includes('Not Found');
         const isNetworkError = errorMsg.includes('network') || errorMsg.includes('fetch');
@@ -518,41 +560,47 @@ export function InteractiveMap({
       )}
 
       {/* Site Markers - This is the most important part */}
-      {activeSites.map((site) => (
-        <Marker
-          key={site.id}
-          longitude={site.longitude || -82.4572}
-          latitude={site.latitude || 33.7490}
-          anchor="bottom"
-          style={{ zIndex: 1000 }}
-          onClick={(e) => {
-            e.originalEvent.stopPropagation();
-            handleSiteClick(site);
-          }}
-        >
-          <div className="relative cursor-pointer group">
-            <div 
-              className={cn(
-                "w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center transition-all",
-                selectedSiteId === site.id ? "scale-125 ring-2 ring-bristol-gold" : "hover:scale-110",
-              )}
-              style={{ backgroundColor: getScoreColor(75) }}
-            >
-              <Building className="w-3 h-3 text-white" />
-            </div>
-            
-            {/* Score badge */}
-            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <Badge 
-                variant="secondary" 
-                className="text-xs whitespace-nowrap bg-white/90 text-bristol-ink border border-bristol-stone"
+      {activeSites.map((site) => {
+        const bristolScore = getBristolScore(site.id);
+        const hasScore = bristolScore > 0;
+        
+        return (
+          <Marker
+            key={site.id}
+            longitude={site.longitude || -82.4572}
+            latitude={site.latitude || 33.7490}
+            anchor="bottom"
+            style={{ zIndex: 1000 }}
+            onClick={(e) => {
+              e.originalEvent.stopPropagation();
+              handleSiteClick(site);
+            }}
+          >
+            <div className="relative cursor-pointer group">
+              <div 
+                className={cn(
+                  "w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center transition-all",
+                  selectedSiteId === site.id ? "scale-125 ring-2 ring-bristol-gold" : "hover:scale-110",
+                  !hasScore && "opacity-60" // Dim sites without scores
+                )}
+                style={{ backgroundColor: hasScore ? getScoreColor(bristolScore) : '#94a3b8' }}
               >
-                {75}
-              </Badge>
+                <Building className="w-3 h-3 text-white" />
+              </div>
+              
+              {/* Score badge */}
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs whitespace-nowrap bg-white/90 text-bristol-ink border border-bristol-stone"
+                >
+                  {hasScore ? bristolScore : 'Loading...'}
+                </Badge>
+              </div>
             </div>
-          </div>
-        </Marker>
-      ))}
+          </Marker>
+        );
+      })}
 
       {/* Site Info Popup */}
       {selectedSite && selectedSite.longitude && selectedSite.latitude && (
@@ -576,9 +624,9 @@ export function InteractiveMap({
               </div>
               <Badge 
                 className="ml-2"
-                style={{ backgroundColor: getScoreColor(75) }}
+                style={{ backgroundColor: getScoreColor(getBristolScore(selectedSite.id)) }}
               >
-                {75}
+                {getBristolScore(selectedSite.id) || 'Loading...'}
               </Badge>
             </div>
             
@@ -587,7 +635,7 @@ export function InteractiveMap({
                 <TrendingUp className="w-4 h-4 text-bristol-maroon" />
                 <span className="text-bristol-stone">Score:</span>
                 <span className="font-medium text-bristol-ink">
-                  {getScoreLabel(75)}
+                  {getBristolScore(selectedSite.id) > 0 ? getScoreLabel(getBristolScore(selectedSite.id)) : 'Calculating...'}
                 </span>
               </div>
               
