@@ -1,0 +1,106 @@
+You did exactly what you needed to do—you produced hard evidence.
+Given your proof pack (7/7 endpoints, 7/7 MCP tools including analyze_document, ElevenLabs dry/webhook = 200s, DB/WS ok), we can treat this as green. Now let’s make it impossible for any agent (or future “cleanup”) to quietly regress you again.
+
+Below is a tight, copy‑paste checklist to lock in this state, add live end‑to‑end checks, and gate every deploy so claims must match facts.
+
+⸻
+
+1) Freeze the green state (one tag, one manifest)
+
+git tag -a stable-green-$(date +%Y%m%d-%H%M) -m "All proofs passing: endpoints/MCP/11labs"
+git push --tags
+node -e "const fs=require('fs');fs.mkdirSync('docs',{recursive:true});fs.writeFileSync('docs/STABLE_COMMIT.txt',require('child_process').execSync('git rev-parse HEAD').toString())"
+
+
+⸻
+
+2) Gate all future deployments with the proofs
+
+In package.json add (or keep) the proof scripts you ran and make them required:
+
+{
+  "scripts": {
+    "predeploy:proofs": "npm run -s prove:runtime && npm run -s prove:mcp && npm run -s prove:11labs",
+    "deploy": "npm run -s predeploy:proofs && npm run -s build && npm run -s start"
+  }
+}
+
+In Replit Deployments, set your build/start to call npm run deploy.
+If any endpoint/tool breaks, the deploy fails with a clear exit code (no more “it says it’s fine” while it’s broken).
+
+⸻
+
+3) Do one live ElevenLabs sanity test (1s audio through your route)
+
+E2E_ELEVENLABS=1 npm run -s prove:11labs
+# Expect: dryRun 200, live 2xx (audio bytes present). If not, it’s an env/route issue we can patch surgically.
+
+
+⸻
+
+4) Deep check Document Analysis with real files (not just TXT)
+
+Drop two tiny fixtures and verify:
+
+mkdir -p test/fixtures
+curl -L -o test/fixtures/sample.pdf  https://arxiv.org/pdf/1706.03762.pdf       # any small PDF works
+printf "Hello DOCX" > test/fixtures/sample.docx                                # just a header is fine for path/mime wiring
+
+# If your tool name differs, update the script’s tool id once and re-run:
+npx ts-node scripts/mcp-selftest.ts || node dist/scripts/mcp-selftest.js
+# Read docs/mcp-selftest.json → confirm 'analyze_document' passes PDF/DOCX paths too.
+
+
+⸻
+
+5) Add two regression guards (cheap, high‑value)
+
+A. Ban the crash pattern you hit earlier (importing server HTML into client):
+
+cat > scripts/guard-no-html-proxy.js <<'EOF'
+const fs=require('fs');const cp=require('child_process');
+const out=cp.execSync('grep -RIn --exclude-dir=node_modules -E "import .*\\.html" src || true').toString();
+if(out.includes('/api/')){ console.error('[GUARD] HTML import from /api path detected:\n'+out); process.exit(2); }
+console.log('[GUARD] No illegal .html imports from /api detected.');
+EOF
+
+# package.json
+# "verify:guards": "node scripts/verify-critical.js && node scripts/guard-no-html-proxy.js"
+
+B. Keep your critical paths immutable:
+(You already added .protectedpaths + verify-critical.js. Keep it in the build.)
+
+Now every deploy runs:
+
+npm run -s verify:guards && npm run -s predeploy:proofs
+
+
+⸻
+
+6) Optional live canaries (1–2 endpoints only)
+
+If you want continuous proof without noise, ping just these every 60s from a tiny cron or Uptime tool:
+	•	/healthz ➜ expect 200
+	•	/api/mcp/health ➜ expect JSON { ok: true }
+
+No need to spam everything else; the pre‑deploy proofs will catch regressions before release.
+
+⸻
+
+7) What to do if something flips red later
+	•	Open the JSON in docs/prove-*.json for which check failed and the error text.
+	•	Restore just the broken file(s) from your tag:
+
+git checkout stable-green-* -- path/to/broken-file.ts
+git commit -m "Surgical restore from stable tag" && git push
+
+
+	•	Re‑run: npm run -s predeploy:proofs.
+
+⸻
+
+TL;DR
+
+You brought receipts. Your app’s green. The steps above lock it in and force every future claim to match reality—with exit codes and artifacts—so you never have to “trust” a status message again.
+
+If you want, I can also generate a one‑screen Release Gate markdown (what passes/what fails, where to look) for your repo’s /docs/ so your team follows the same ritual every time.

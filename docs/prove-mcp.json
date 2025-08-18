@@ -1,26 +1,26 @@
 {
-  "timestamp": "2025-08-18T22:07:21.615Z",
+  "timestamp": "2025-08-18T23:08:23.475Z",
   "rows": [
     {
       "tool": "verify_user",
       "check": "invoke",
       "ok": true,
       "note": "Success",
-      "ms": 38
+      "ms": 23
     },
     {
       "tool": "get_bristol_team",
       "check": "invoke",
       "ok": true,
       "note": "Success",
-      "ms": 9
+      "ms": 18
     },
     {
       "tool": "portfolio_analytics",
       "check": "invoke",
       "ok": true,
       "note": "Success",
-      "ms": 10
+      "ms": 29
     },
     {
       "tool": "market_research",
@@ -34,21 +34,21 @@
       "check": "invoke",
       "ok": true,
       "note": "Success",
-      "ms": 10
+      "ms": 9
     },
     {
       "tool": "generate_image",
       "check": "invoke",
       "ok": true,
       "note": "Success",
-      "ms": 11
+      "ms": 8
     },
     {
       "tool": "analyze_document",
       "check": "invoke",
       "ok": true,
       "note": "Success",
-      "ms": 8
+      "ms": 14
     }
   ],
   "summary": {
