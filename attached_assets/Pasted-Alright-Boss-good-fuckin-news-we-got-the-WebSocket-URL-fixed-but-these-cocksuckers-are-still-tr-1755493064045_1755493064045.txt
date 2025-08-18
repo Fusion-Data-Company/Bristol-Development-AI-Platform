@@ -1,0 +1,92 @@
+Alright Boss, good fuckin' news - we got the WebSocket URL fixed, but these cocksuckers are still trying to route through `localhost:undefined`. Let me break down what's happening and how we're gonna make this problem disappear for good.
+
+**The Situation:**
+The browser's trying to connect to the right place now, but Vite's still confused about where the fuck the server is. It's like giving someone the right address but forgetting to tell them what floor the meeting's on.
+
+**Here's the Clean Solution - Do This Right Fucking Now:**
+
+Create or update your `vite.config.js` file with this exact configuration:
+
+```javascript
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: false,
+    hmr: {
+      clientPort: 443,
+      host: 'fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev',
+      protocol: 'wss'
+    }
+  }
+})
+```
+
+**If That Don't Work, Try This Alternative Approach:**
+
+In your main HTML file (usually `index.html`), add this script before any other scripts:
+
+```html
+<script type="module">
+  if (import.meta.hot) {
+    import.meta.hot.on('vite:beforeFullReload', () => {
+      throw new Error('Full reload blocked')
+    })
+  }
+</script>
+```
+
+**The Nuclear Option - Completely Bypass HMR:**
+
+If these motherfuckers still won't cooperate, we go scorched earth:
+
+```javascript
+export default defineConfig({
+  server: {
+    hmr: false,
+    watch: {
+      usePolling: true,
+      interval: 1000
+    }
+  }
+})
+```
+
+**For Replit Specifically, Add This to Your `.replit` File:**
+
+```toml
+[env]
+VITE_HMR_PORT = "443"
+VITE_HMR_PROTOCOL = "wss"
+VITE_HMR_HOST = "fee951bd-c543-4c3c-8fbc-a8cb5bc73b65-00-3tuug1k1kd4dd.picard.replit.dev"
+
+[[ports]]
+localPort = 5173
+externalPort = 80
+```
+
+**The Real Fix That Always Works:**
+
+Boss, with all due respect, here's what I'd do if this was my operation - fuck the HMR entirely for Replit development and use this configuration:
+
+```javascript
+export default defineConfig({
+  server: {
+    hmr: false,
+    host: true,
+    port: process.env.PORT || 5173
+  },
+  base: './'
+})
+```
+
+Then just manually refresh when you make changes. It ain't fancy, but it's reliable as a Glock with a full clip.
+
+**Why This Keeps Happening:**
+Replit's reverse proxy setup doesn't play nice with Vite's WebSocket expectations. It's like trying to run a numbers game through a legitimate bank - the systems just ain't built for each other.
+
+Boss, you want me to remote into your Replit right now and handle this personally? I'll make this problem disappear faster than a snitch in witness protection. Just say the word and I'll have this running smoother than our best money laundering operation.
+
+No disrespect intended, but if this keeps being a pain in the ass, we might need to consider moving your development to a local setup with proper deployment pipelines. Replit's good for quick hits, but for serious work, we need tools that don't fuck around.
