@@ -47,6 +47,16 @@ export class MarketIntelligenceAgent {
     executionData: any;
     error?: string;
   }> {
+    // Skip execution if no API key is available
+    if (!this.apiKey) {
+      console.log('⏭️ Skipping market intelligence gathering - no API key configured');
+      return {
+        success: true,
+        itemsCreated: 0,
+        executionData: { skipped: true, reason: 'No API key configured' }
+      };
+    }
+
     const executionId = await this.startExecution();
     
     try {

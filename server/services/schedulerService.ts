@@ -74,12 +74,17 @@ class SchedulerService {
       const result = await marketIntelligenceAgent.executeMarketIntelligenceGathering();
       
       if (result.success) {
-        console.log(`✅ Market intelligence completed: ${result.itemsCreated} items created`);
+        if (result.executionData?.skipped) {
+          console.log('⏭️ Market intelligence skipped - no API key configured');
+        } else {
+          console.log(`✅ Market intelligence completed: ${result.itemsCreated} items created`);
+        }
       } else {
         console.error(`❌ Market intelligence failed: ${result.error}`);
       }
     } catch (error) {
       console.error('❌ Market intelligence agent execution error:', error);
+      // Don't let market intelligence errors crash the server
     }
   }
 

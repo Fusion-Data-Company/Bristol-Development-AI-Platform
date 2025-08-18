@@ -1,0 +1,440 @@
+Below is a single, copy-paste-ready instruction file for your Replit Builder to extend the “Competitor New-Dev Watch” so it can add geographies beyond Tennessee (your #13), fully production-ready inside Replit. It includes exact tasks, file diffs, code templates, dependencies, environment variables, and acceptance tests. It assumes the codebase from my last message is present.
+
+⸻
+
+📦 Replit Builder — Feature Add-On Plan (Multi-Geo, Production-Ready)
+
+GOAL
+
+Extend the existing Bristol “Competitor New-Dev Watch” so it can monitor any U.S. city/county using:
+	1.	ArcGIS / Socrata permit datasets (structured API first; fall back to HTML).
+	2.	Planning/Agenda sources (CivicClerk, Granicus/Legistar, CivicPlus AgendaCenter).
+	3.	State SoS entity search (optional Puppeteer for form sites).
+	4.	State environmental/DEQ/DEP notices.
+	5.	Centralized geo + competitor registry.
+	6.	One command to add a new city with zero code duplication.
+
+Do this entirely in Replit, using the same storage, scheduler, and OpenRouter Sonar Deep Research.
+
+⸻
+
+0) Dependencies (add)
+
+Update package.json:
+
+{
+  "dependencies": {
+    "openai": "^4.58.1",
+    "better-sqlite3": "^9.6.0",
+    "node-cron": "^3.0.3",
+    "cheerio": "^1.0.0",
+    "pdf-parse": "^1.1.1",
+    "undici": "^6.19.8",
+    "zod": "^3.23.8",
+    "puppeteer": "^23.3.0",            // for State SoS sites that require forms
+    "fast-xml-parser": "^4.5.0",       // for RSS/Atom agendas where available
+    "pino": "^9.4.0"                   // structured logging
+  }
+}
+
+In Replit Secrets:
+
+OPENROUTER_API_KEY=...
+HTTP_REFERER=https://bristol-research.app
+HTTP_TITLE=Bristol Dev — Competitor Watch
+CHROME_PATH=/usr/bin/chromium-browser      # puppeteer on Replit (if needed)
+
+
+⸻
+
+1) Config-first architecture
+
+Create /config/geo.ts:
+
+export type Jurisdiction = {
+  key: string;                        // "tn_nashville", "ga_atlanta"
+  label: string;                      // "Nashville/Davidson County, TN"
+  bbox?: [number, number, number, number]; // optional lon/lat bbox
+  // ArcGIS / Socrata datasets (permits, plan reviews, etc.)
+  datasets?: Array<{
+    type: "arcgis" | "socrata";
+    label: string;
+    url: string;                      // FeatureServer layer or Socrata API
+    dateField: string;                // e.g., "Date_Entered", "issued_date"
+    idField?: string;                 // stable id if available
+    addressField?: string;
+    parcelField?: string;
+    titleTemplate?: string;           // e.g. "${Permit_Type} — ${WorkClass}"
+  }>;
+  // Planning/Agenda feeds (pick any available)
+  agendas?: Array<{
+    type: "civicclerk" | "civicplus" | "granicus" | "rss" | "html";
+    url: string;
+    label: string;
+  }>;
+  // Environmental notices pages (state specific)
+  envNotices?: string[];
+};
+
+export const JURISDICTIONS: Jurisdiction[] = [
+  {
+    key: "tn_nashville",
+    label: "Nashville/Davidson County, TN",
+    datasets: [
+      {
+        type: "arcgis",
+        label: "Building Permit Applications",
+        url: "https://services8.arcgis.com/.../FeatureServer/0", // put real FeatureServer
+        dateField: "Date_Entered",
+        addressField: "Address",
+        parcelField: "Parcel",
+        titleTemplate: "${Permit_Type} — ${Project_Description}"
+      }
+    ],
+    agendas: [
+      { type: "html", url: "https://www.nashville.gov/departments/planning/boards/planning-commission/meeting-documents", label: "Metro Planning Commission" }
+    ],
+    envNotices: [
+      "https://www.tn.gov/environment/ppo-public-participation/ppo-public-participation/ppo-air.html",
+      "https://www.tn.gov/environment/ppo-public-participation/ppo-public-participation/ppo-general.html"
+    ]
+  },
+  // 👇 Add new cities here following the same structure
+];
+
+Create /config/competitors.ts:
+
+export const COMPETITORS = [
+  "Alliance Residential", "Greystar", "Chartwell", "Harlan", "Lincoln Property Company",
+  "Hines", "Trammell Crow", "Related", "Wood Partners", "Camden"
+];
+
+
+⸻
+
+2) Reusable scraper factories
+
+Create /lib/scraper-core.ts:
+
+import { fetch } from "undici";
+import * as cheerio from "cheerio";
+import { upsertSignal } from "./db.js";
+
+export async function queryArcgisFeatureServer(opts: {
+  layerUrl: string; dateField: string; days?: number;
+  idField?: string; addressField?: string; parcelField?: string; titleTemplate?: string;
+  jurisdiction: string; sourceKey: string;
+}) {
+  const { layerUrl, dateField, days=3, idField, addressField, parcelField, titleTemplate, jurisdiction, sourceKey } = opts;
+  const qp = new URLSearchParams({
+    where: `${dateField} > CURRENT_TIMESTAMP - ${days}`,
+    outFields: "*", f: "json",
+    orderByFields: `${dateField} DESC`
+  });
+  const res = await fetch(`${layerUrl}/query?${qp}`);
+  if (!res.ok) throw new Error(`${sourceKey} arcgis query failed`);
+  const json = await res.json();
+  for (const f of json.features || []) {
+    const a = f.attributes || {};
+    const id = `${sourceKey}_${a[idField||"OBJECTID"]}`;
+    const title = renderTemplate(titleTemplate || "Permit — ${WorkClass||Project_Description||Permit_Type}", a);
+    upsertSignal({
+      id,
+      source: sourceKey,
+      when_iso: new Date(a[dateField]).toISOString(),
+      jurisdiction,
+      type: "Permit",
+      title,
+      address: a[addressField||"Address"] || "",
+      parcel: a[parcelField||"Parcel"] || "",
+      url: layerUrl,
+      raw: a
+    });
+  }
+}
+
+export async function parseCivicPlusAgendaList(url: string, jurisdiction: string, sourceKey: string) {
+  const html = await (await fetch(url)).text();
+  const $ = cheerio.load(html);
+  $(".catAgendaRow").each((_, row) => {
+    const title = ($(row).find(".catAgendaTitle").text().trim()) || "Planning Meeting";
+    const date  = $(row).find(".catAgendaDate").text().trim();
+    $(row).find("a").each((__, a) => {
+      const text = $(a).text().trim(); const href = $(a).attr("href");
+      if (!href || !text) return;
+      if (/HTML|PDF|Packet|Agenda/i.test(text)) {
+        upsertSignal({
+          id: `${sourceKey}_${href}`,
+          source: sourceKey,
+          when_iso: date ? new Date(date).toISOString() : new Date().toISOString(),
+          jurisdiction, type: "Agenda",
+          title: `${title} — ${text}`,
+          url: new URL(href, url).toString(),
+          raw: { title, text, href, date }
+        });
+      }
+    });
+  });
+}
+
+export async function parseGenericHtmlLinks(url: string, jurisdiction: string, sourceKey: string, keyword=/Agenda|Staff Report|Notice|Hearing|Permit/i) {
+  const html = await (await fetch(url)).text();
+  const $ = cheerio.load(html);
+  $("a").each((_, a) => {
+    const text = $(a).text().trim(); const href = $(a).attr("href");
+    if (!href || !text) return;
+    if (keyword.test(text)) {
+      upsertSignal({
+        id: `${sourceKey}_${href}`,
+        source: sourceKey,
+        when_iso: new Date().toISOString(),
+        jurisdiction, type: "Agenda",
+        title: text,
+        url: new URL(href, url).toString(),
+        raw: { text, href }
+      });
+    }
+  });
+}
+
+function renderTemplate(tpl: string, obj: Record<string, any>) {
+  return tpl.replace(/\$\{([^}]+)\}/g, (_, expr) => {
+    try {
+      // allow a||b||c style fallbacks
+      const parts = String(expr).split("||").map(s=>s.trim());
+      for (const p of parts) { const v = obj[p]; if (v!=null && v!=="") return String(v); }
+      return "";
+    } catch { return ""; }
+  });
+}
+
+
+⸻
+
+3) Multi-geo orchestrator
+
+Create /jobs/ingest-geo.ts:
+
+import { JURISDICTIONS } from "../config/geo.js";
+import { queryArcgisFeatureServer, parseCivicPlusAgendaList, parseGenericHtmlLinks } from "../lib/scraper-core.js";
+
+export async function ingestAllGeos() {
+  for (const j of JURISDICTIONS) {
+    await ingestGeo(j.key);
+  }
+}
+
+export async function ingestGeo(geoKey: string) {
+  const j = JURISDICTIONS.find(x=>x.key===geoKey);
+  if (!j) return;
+
+  // 1) Datasets (ArcGIS/Socrata)
+  for (const d of j.datasets || []) {
+    if (d.type === "arcgis") {
+      await queryArcgisFeatureServer({
+        layerUrl: d.url,
+        dateField: d.dateField,
+        idField: d.idField,
+        addressField: d.addressField,
+        parcelField: d.parcelField,
+        titleTemplate: d.titleTemplate,
+        jurisdiction: j.label,
+        sourceKey: `${geoKey}_dataset`
+      });
+    }
+    // Socrata handler can be added similarly using their SODA API
+  }
+
+  // 2) Agendas
+  for (const a of j.agendas || []) {
+    if (a.type === "civicplus") await parseCivicPlusAgendaList(a.url, j.label, `${geoKey}_agenda`);
+    else await parseGenericHtmlLinks(a.url, j.label, `${geoKey}_agenda`);
+  }
+
+  // 3) Environmental notices (generic link harvest)
+  for (const url of j.envNotices || []) {
+    await parseGenericHtmlLinks(url, j.label, `${geoKey}_env`, /Notice|Hearing|Meeting|Permit|Draft/i);
+  }
+}
+
+Update scheduler /jobs/scheduler.ts to call ingestAllGeos() instead of per-city functions:
+
+import cron from "node-cron";
+import { ingestAllGeos } from "./ingest-geo.js";
+import { scrapeSecSubmissions } from "../lib/scrapers/sec_filings.js";
+import { COMPETITORS } from "../config/competitors.js";
+
+(async()=>{ await runAll(); })();
+cron.schedule("15 6 * * *", runAll, { timezone: "America/Chicago" });
+cron.schedule("0 * * * *", runFast, { timezone: "America/Chicago" });
+
+async function runAll() {
+  await safe(ingestAllGeos);
+  await safe(()=>scrapeSecSubmissions([
+    "0000906107","0000898173" // replace with real CIKs for your competitor list
+  ]));
+}
+async function runFast() { await safe(ingestAllGeos); }
+async function safe(fn: ()=>Promise<any>) { try { await fn(); } catch(e){ console.error(e); } }
+
+
+⸻
+
+4) Optional: State SoS full automation (Puppeteer)
+
+Create /lib/scrapers/sos_puppeteer.ts:
+
+import puppeteer from "puppeteer";
+import { upsertSignal } from "../db.js";
+
+export async function tnSosFormSearch(queries: string[]) {
+  const browser = await puppeteer.launch({
+    headless: "new",
+    executablePath: process.env.CHROME_PATH || undefined,
+    args: ["--no-sandbox","--disable-setuid-sandbox"]
+  });
+  const page = await browser.newPage();
+  await page.setDefaultNavigationTimeout(60000);
+
+  for (const q of queries) {
+    await page.goto("https://tncab.tnsos.gov/business-entity-search", { waitUntil: "domcontentloaded" });
+    // TODO: Select the correct form fields; this is framework-dependent.
+    // Example (pseudo):
+    // await page.type("#SearchTerm", q);
+    // await page.click("#SearchButton");
+    // await page.waitForSelector(".result-row");
+
+    // MVP: Log a signal for manual verification (upgrade selectors when confirmed)
+    upsertSignal({
+      id: `tnsos_${encodeURIComponent(q)}_${Date.now()}`,
+      source: "tnsos_puppet",
+      when_iso: new Date().toISOString(),
+      jurisdiction: "Tennessee",
+      type: "Filing",
+      title: `TN SoS automated check for "${q}" (verify results parsing)`,
+      url: "https://tncab.tnsos.gov/business-entity-search",
+      raw: { query: q }
+    });
+  }
+
+  await browser.close();
+}
+
+Hook this into the scheduler if/when you confirm selectors for the form results.
+
+⸻
+
+5) Add “Add a City” CLI
+
+Create /scripts/add-city.ts:
+
+#!/usr/bin/env node
+import fs from "node:fs";
+import path from "node:path";
+import { JURISDICTIONS } from "../config/geo.js";
+
+const [,, key, label] = process.argv;
+if (!key || !label) {
+  console.error("Usage: pnpm city:add <key> \"Label\"");
+  process.exit(1);
+}
+const file = path.resolve("config/geo.ts");
+const txt = fs.readFileSync(file, "utf8");
+
+// naive insert: append a new skeleton entry
+const skeleton = `,{
+  key: "${key}",
+  label: "${label}",
+  datasets: [
+    // { type: "arcgis", label: "Permits", url: "FEATURESERVER_URL", dateField: "issued_date" }
+  ],
+  agendas: [
+    // { type: "civicplus", url: "https://.../AgendaCenter/Planning-Commission-123/", label: "Planning Commission" }
+  ],
+  envNotices: []
+}`;
+
+const updated = txt.replace(/(export const JURISDICTIONS: Jurisdiction\[\] = \[)([\s\S]*?)(\];)/, (_, a, b, c) => a + b + skeleton + c);
+fs.writeFileSync(file, updated);
+console.log(`Added city ${label} (${key}). Edit config/geo.ts to fill URLs.`);
+
+Add to package.json scripts:
+
+{
+  "scripts": {
+    "city:add": "ts-node scripts/add-city.ts",
+    "ingest:once": "ts-node jobs/ingest-geo.ts",
+    "start": "node index.js"
+  }
+}
+
+
+⸻
+
+6) Robustness upgrades
+	•	Dedup & change detection: already handled via id primary key. Keep title/address/parcel updates via upsert.
+	•	Rate limiting & retries: wrap fetch with small delays (50–150ms) per record; exponential backoff on 429/5xx.
+	•	Logging: add pino logger /lib/log.ts and replace console with structured logs.
+	•	Health endpoint: add /api/health returning last run times and counts per source.
+	•	Backfill command: add ingest:backfill --days=30 to pass a days param to ArcGIS queries.
+	•	Admin UI: small /app/admin/sources page that lists configured jurisdictions, last success, last error, and a “Run Now” button (call /api/run-source?key=...).
+
+⸻
+
+7) API updates
+
+Add /api/health.ts:
+
+import type { IncomingMessage, ServerResponse } from "http";
+import db from "../lib/db.js";
+export default async function handler(_req:IncomingMessage, res:ServerResponse) {
+  const rows = db.prepare("SELECT source, COUNT(*) as n FROM signals GROUP BY source ORDER BY n DESC").all();
+  res.setHeader("Content-Type","application/json");
+  res.end(JSON.stringify({ ok: true, sources: rows }));
+}
+
+Optional /api/run-source.ts that calls ingestGeo(req.query.key) for on-demand runs.
+
+⸻
+
+8) Acceptance tests (manual)
+	1.	Boot: server starts; /api/health returns { ok:true }.
+	2.	Ingest TN: pnpm ingest:once runs without errors; /api/signals shows entries for permits/agendas/notices.
+	3.	Add City: pnpm city:add ca_san_diego "San Diego, CA" → edit config/geo.ts with:
+	•	An ArcGIS FeatureServer or Socrata building permits URL and date field.
+	•	One Agenda feed (CivicClerk/Granicus/CivicPlus/RSS).
+	•	Optional state DEQ notices URLs.
+Run pnpm ingest:once; confirm signals appear with jurisdiction = San Diego, CA.
+	4.	Report: open /competitor-watch → Run Deep Research. You get a streaming Sonar report clustering new signals and citing URLs.
+	5.	Stability: leave running for 24h; verify cron runs (hourly + daily) append new rows and no duplicate floods.
+
+⸻
+
+9) What to hand-tune per city (10–20 minutes each)
+	•	Locate permit dataset (ArcGIS/Socrata) and set dateField.
+	•	Add agenda source (CivicClerk, CivicPlus AgendaCenter, Granicus/Legistar, or RSS).
+	•	Add state environmental notices page(s).
+	•	If the SoS site is form-gated, plug in Puppeteer selectors (IDs/classes) in sos_puppeteer.ts.
+
+⸻
+
+10) Production notes (Replit)
+	•	Keep a single process; node-cron handles schedules.
+	•	Store DB at repo root; enable WAL (already set).
+	•	Protect keys in Secrets.
+	•	Set Replit Always-On (if on Hacker plan) or use a small external ping if needed.
+
+⸻
+
+11) Developer Checklist (Do now)
+	•	Add deps & secrets.
+	•	Create config/geo.ts and seed with TN Nashville + one extra city.
+	•	Drop in scraper-core.ts, ingest-geo.ts, update scheduler.ts.
+	•	Wire /api/health and test.
+	•	Run pnpm ingest:once; inspect /api/signals.
+	•	Open /competitor-watch; run Sonar report.
+	•	Add 2–3 more geos (Atlanta, Charlotte, Tampa) to prove repeatability.
+
+⸻
+
+When you’re ready, tell me the next three cities to add and I’ll give you the exact FeatureServer/Socrata endpoints and recommended agenda URLs, plus the one-line config/geo.ts entries so you can paste and go.
