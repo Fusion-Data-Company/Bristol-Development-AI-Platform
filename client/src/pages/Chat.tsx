@@ -587,12 +587,13 @@ export default function Chat() {
     });
   };
 
-  // WebSocket connection for real-time Elite features - URGENT: Optional
+  // WebSocket connection for real-time Elite features - URGENT: DISABLED to fix connection loop
   useEffect(() => {
-    if (wsOptional) {
-      connectWebSocket();
-    }
-    return () => disconnectWebSocket();
+    // DISABLED: Manual WebSocket causing connection loop with useWebSocket hook
+    // if (wsOptional) {
+    //   connectWebSocket();
+    // }
+    // return () => disconnectWebSocket();
   }, [wsOptional]);
 
   const connectWebSocket = () => {

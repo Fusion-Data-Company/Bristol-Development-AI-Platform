@@ -104,7 +104,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
       ws.current.onerror = (error) => {
         setConnectionStatus('error');
         onError?.(error);
-        console.warn('WebSocket error (non-critical):', error.type || 'connection failed');
+        console.warn('Legacy WebSocket error (non-critical):', error.type || 'error');
         // URGENT: Don't spam console with WebSocket errors
       };
 
@@ -113,7 +113,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
       console.warn('WebSocket connection failed (non-critical):', error instanceof Error ? error.message : 'unknown error');
       // URGENT: Don't treat WebSocket failures as critical errors
     }
-  }, [maxReconnectAttempts, reconnectInterval, onConnect, onDisconnect, onMessage, onError]);
+  }, [autoReconnect, maxReconnectAttempts, reconnectInterval, onConnect, onDisconnect, onMessage, onError]);
 
   const disconnect = useCallback(() => {
     if (reconnectTimeoutId.current) {
@@ -167,7 +167,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
     return () => {
       disconnect();
     };
-  }, [connect, disconnect]);
+  }, []); // FIXED: Empty dependency array to prevent connection loops
 
   return {
     isConnected,
