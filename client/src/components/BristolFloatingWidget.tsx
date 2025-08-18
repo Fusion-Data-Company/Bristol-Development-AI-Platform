@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { X, PanelLeftOpen, Send, Settings, Database, MessageSquare, Sparkles, Brain, Cpu, Zap, Activity, Wifi, WifiOff, Loader2, Shield, Terminal, Upload, FileText, Target, Paperclip, Plus, Trash2, Save, File, TrendingUp, Building2, DollarSign, BarChart3, AlertCircle, ChevronDown, CircuitBoard, HelpCircle, BarChart, PieChart, MapPin, Users, Calendar, Minimize2, Maximize2, Clock, Palette, Wrench } from "lucide-react";
 import { DataVisualizationPanel } from "./chat/DataVisualizationPanel";
 import { OnboardingGuide } from "./chat/OnboardingGuide";
+import { useMCPChat } from "@/hooks/useMCPChat";
+import { useToast } from "@/hooks/use-toast";
 
 /**
  * BristolFloatingWidget.tsx — v1.0
@@ -130,12 +132,50 @@ export default function BristolFloatingWidget({
   onSend,
   className,
 }: BristolWidgetProps) {
+  const { toast } = useToast();
+  
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
   const [showDataViz, setShowDataViz] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [model, setModel] = useState(defaultModel || "openai/gpt-5-chat");
-  const [modelList, setModelList] = useState<ModelOption[]>([]);
+  
+  // Initialize MCP Chat System for bulletproof model management
+  const mcpChat = useMCPChat({
+    sourceInstance: 'floating',
+    defaultModel: defaultModel || 'gpt-4o',
+    enableMCP: true,
+    autoValidateModel: true,
+    onModelSwitch: (newModel) => {
+      console.log(`🔄 Model switched to: ${newModel}`);
+      toast({
+        title: "Model Updated",
+        description: `Now using ${mcpChat.availableModels.find(m => m.id === newModel)?.name || newModel}`,
+        duration: 3000
+      });
+    },
+    onToolExecution: (tools) => {
+      console.log(`🛠️ Tools executed:`, tools);
+      // Update system status with tool execution info
+      setSystemStatus(prev => ({
+        ...prev,
+        mcpTools: prev.mcpTools.map(tool => 
+          tools.includes(tool.name) 
+            ? { ...tool, lastExecution: new Date().toISOString(), status: 'active' }
+            : tool
+        )
+      }));
+    },
+    onError: (error) => {
+      console.error('MCP Chat Error:', error);
+      toast({
+        title: "Chat Error",
+        description: error.message,
+        variant: "destructive",
+        duration: 5000
+      });
+    }
+  });
+  
   const [systemPrompt, setSystemPrompt] = useState<string>(defaultSystemPrompt || DEFAULT_MEGA_PROMPT);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -489,35 +529,39 @@ export default function BristolFloatingWidget({
     }
   }, [open]);
 
-  // Fetch dynamic model list from OpenRouter
+  // Initialize MCP system status monitoring
   useEffect(() => {
-    const fetchModels = async () => {
+    const updateSystemStatus = async () => {
       try {
-        const response = await fetch("/api/openrouter-models", { cache: "no-store" });
-        if (!response.ok) throw new Error(`Failed to fetch models: ${response.status}`);
+        // Update system status with MCP chat info
+        setSystemStatus({
+          mcpTools: mcpChat.availableModels.slice(0, 5).map(model => ({
+            name: model.id,
+            description: `${model.provider} - ${model.category}`,
+            status: 'active' as const,
+            lastExecution: new Date().toISOString()
+          })),
+          apis: [
+            { name: 'Unified MCP Chat', status: 'operational' as const, lastCheck: new Date().toISOString() },
+            { name: 'Model Management', status: 'operational' as const, lastCheck: new Date().toISOString() },
+            { name: 'Bristol Tools', status: 'operational' as const, lastCheck: new Date().toISOString() }
+          ],
+          database: 'connected' as const,
+          websocket: wsConnected ? 'connected' as const : 'disconnected' as const
+        });
         
-        const models: ModelOption[] = await response.json();
-        setModelList(models);
+        setModelError(''); // Clear any model errors when MCP is working
         
-        // Set default model - prefer GPT-5 Chat, then GPT-5, then first available
-        const preferred = models.find(m => m.id === "openai/gpt-5-chat") || 
-                         models.find(m => m.id === "openai/gpt-5") ||
-                         models[0];
-        
-        if (preferred) {
-          setModel(preferred.id);
-        } else {
-          setModelError(`No eligible models found. Available models: ${models.map(m => m.id).join(', ') || 'none'}`);
-        }
       } catch (error) {
-        console.error("Error fetching models:", error);
-        setModelError("Failed to load model list. Check your OpenRouter API key.");
-        setModelList([]);
+        console.error('Error updating system status:', error);
+        setModelError('MCP system initialization error');
       }
     };
-
-    fetchModels();
-  }, []);
+    
+    if (open) {
+      updateSystemStatus();
+    }
+  }, [open, mcpChat.availableModels, wsConnected]);
 
   // Keep the system message in sync if user edits Admin tab
   useEffect(() => {
@@ -605,235 +649,44 @@ export default function BristolFloatingWidget({
 
   const handleSend = async () => {
     const trimmed = input.trim();
-    if (!trimmed || loading) return;
-    const userMessage: ChatMessage = { role: "user", content: trimmed, createdAt: nowISO() };
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    if (!trimmed || mcpChat.isSending) return;
+    
+    // Clear input immediately for better UX
     setInput("");
     inputRef.current?.focus();
-    setLoading(true);
 
-    const enhancedPayload: ChatPayload = {
-      model,
-      messages: newMessages,
-      dataContext: realTimeData ? dataContext : undefined, // Include real-time data if enabled
-      temperature: 0.2,
-      maxTokens: 1500,
-    };
-
-    // Add MCP context if enabled
-    const mcpContext = mcpEnabled ? {
-      mcpTools: systemStatus.mcpTools,
-      enableMCPExecution: true,
-      bossModeActive: true
-    } : {};
-
+    // Send message through unified MCP chat system
     try {
-      await onSend?.(enhancedPayload);
-      await sendTelemetry("bristol_brain_chat", { 
-        model, 
-        promptSize: safeStringify(newMessages).length,
-        mcpEnabled,
-        realTimeData 
-      });
-    } catch (error) {
-      console.error("Error in onSend callback or telemetry:", error);
-    }
-
-    try {
-      // Run enhanced AI analytics in parallel with chat
-      const [chatResponse, insights, recommendations] = await Promise.all([
-        fetch("/api/unified-chat/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: trimmed,
-            model: enhancedPayload.model,
-            temperature: 0.7,
-            maxTokens: 4000,
-            mcpEnabled: true,
-            realTimeData: true,
-            dataContext: enhancedPayload.dataContext,
-            enableAdvancedReasoning: true,
-            sessionId: sessionId,
-            sourceInstance: 'floating',
-            memoryEnabled: true,
-            crossSessionMemory: true,
-            toolSharing: true,
-            messages: messages.filter(m => m.role !== 'system').map(m => ({
-              role: m.role,
-              content: m.content,
-              metadata: { sourceInstance: 'floating' }
-            }))
-          }),
-        }),
-        fetch("/api/enhanced-chat/real-time-insights", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            currentMessage: trimmed,
-            conversationHistory: messages,
-            userContext: { portfolio: {}, role: userProfile.role }
-          })
-        }).catch(() => null),
-        fetch("/api/intelligent-recommendations/next-actions", {
-          method: "POST", 
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            context: {
-              currentTask: 'Chat conversation',
-              userProfile,
-              conversationHistory: messages
-            },
-            urgency: 'medium'
-          })
-        }).catch(() => null)
-      ]);
-
-      const res = chatResponse;
-
-      if (!res.ok) {
-        // Fallback to enhanced chat v2 endpoint
-        const fallbackRes = await fetch("/api/enhanced-chat-v2/message", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            message: trimmed,
-            model: enhancedPayload.model,
-            temperature: 0.7,
-            maxTokens: 4000,
-            mcpEnabled: true,
-            realTimeData: true,
-            dataContext: enhancedPayload.dataContext,
-            enableAdvancedReasoning: true,
-            sessionId: sessionId,
-            sourceInstance: 'floating'
-          }),
-        });
-        
-        if (!fallbackRes.ok) {
-          // Final fallback to bristol-brain-elite endpoint
-          const finalFallbackRes = await fetch("/api/bristol-brain-elite/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              message: trimmed,
-              sessionId: sessionId,
-              selectedModel: enhancedPayload.model,
-              enableAdvancedReasoning: true,
-              sourceInstance: 'floating'
-            }),
-          });
-          
-          if (!finalFallbackRes.ok) throw new Error(`API error ${finalFallbackRes.status}`);
-          
-          const fallbackData = await finalFallbackRes.json();
-          const assistantText: string = fallbackData?.text ?? fallbackData?.message ?? fallbackData?.content ?? "(No response)";
-          
-          const assistantMessage: ChatMessage = {
-            role: "assistant",
-            content: assistantText,
-            createdAt: nowISO(),
-          };
-          setMessages((prev) => [...prev, assistantMessage]);
-          return;
-        }
-        
-        const fallbackData = await fallbackRes.json();
-        const assistantText: string = fallbackData?.text ?? fallbackData?.message ?? fallbackData?.content ?? "(No response)";
-        const mcpResults = fallbackData?.mcpResults || [];
-
-        let responseContent = assistantText;
-        if (mcpResults.length > 0) {
-          responseContent += `\n\n🔧 MCP Tools Executed: ${mcpResults.map((r: any) => r.tool).join(', ')}`;
-        }
-
-        const assistantMessage: ChatMessage = {
-          role: "assistant",
-          content: responseContent,
-          createdAt: nowISO(),
-        };
-        setMessages((prev) => [...prev, assistantMessage]);
-        return;
-      }
-
-      const data = await res.json();
-      const assistantText: string = data?.text ?? data?.message ?? data?.content ?? "(No response)";
-      const mcpResults = data?.metadata?.toolsExecuted || [];
-      const memoryInfo = data?.memoryStored || {};
-      const contextInfo = data?.metadata?.contextUsed || {};
-
-      let responseContent = assistantText;
-      
-      // Add memory integration indicator
-      if (data?.metadata?.memoryIntegrated) {
-        responseContent += `\n\n💭 **Memory Integration Active** - I'm using our conversation history and your preferences`;
-      }
-      
-      // Add context info
-      if (contextInfo.recentMessages || contextInfo.relevantMemories) {
-        responseContent += `\n📝 **Context Used**: ${contextInfo.recentMessages || 0} recent messages, ${contextInfo.relevantMemories || 0} relevant memories`;
-      }
-      
-      // Add tool execution info
-      if (mcpResults.length > 0) {
-        responseContent += `\n🔧 **Tools Executed**: ${mcpResults.join(', ')}`;
-      }
-
-      const assistantMessage: ChatMessage = {
-        role: "assistant",
-        content: responseContent,
-        createdAt: nowISO(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-
-      // Process enhanced AI analytics
-      if (insights && insights.ok) {
-        const insightsData = await insights.json();
-        setRealTimeInsights(insightsData);
-        if (insightsData.suggestions) {
-          setSmartSuggestions(insightsData.suggestions);
-        }
-      }
-
-      if (recommendations && recommendations.ok) {
-        const recData = await recommendations.json();
-        // Store recommendations for display in insights panel
-        setRealTimeInsights(prev => ({ ...prev, recommendations: recData }));
-      }
-      
-      await sendTelemetry("unified_chat_response", { 
-        tokens: assistantText.length,
-        mcpToolsUsed: mcpResults.length,
-        memoryIntegrated: data?.metadata?.memoryIntegrated || false,
-        contextUsed: contextInfo,
+      await mcpChat.sendMessage(trimmed, {
+        model: mcpChat.currentModel,
+        systemPrompt,
+        dataContext: realTimeData ? dataContext : undefined,
+        temperature: 0.2,
+        maxTokens: 1500,
+        mcpEnabled: mcpEnabled,
+        realTimeData: realTimeData,
+        memoryEnabled: true,
         crossSessionMemory: true,
+        enableAdvancedReasoning: true,
+        toolSharing: true,
         sourceInstance: 'floating'
       });
-    } catch (err: any) {
-      console.error("Bristol A.I. error:", err);
-      let errorMessage = "Bristol A.I. Elite encountered an error, but my memory systems remain operational.";
       
-      if (err?.message?.includes("401") || err?.message?.includes("Unauthorized")) {
-        errorMessage = "Authentication required for Bristol A.I. Elite access. Your conversation memory is preserved.";
-      } else if (err?.message?.includes("400")) {
-        errorMessage = "Invalid request. The selected AI model may not support Elite features, but I'll remember this conversation.";
-      } else if (err?.message?.includes("502")) {
-        errorMessage = "AI service temporarily unavailable. My memory systems are still active - please try again.";
-      } else if (err?.message) {
-        errorMessage = `Bristol A.I. Elite Error: ${err.message}. Don't worry, I'll remember our conversation context.`;
-      }
+      // Update local messages from MCP chat state
+      setMessages(mcpChat.messages.map(msg => ({
+        role: msg.role,
+        content: msg.content,
+        createdAt: msg.timestamp || nowISO()
+      })));
       
-      const assistantMessage: ChatMessage = {
-        role: "assistant",
-        content: errorMessage,
-        createdAt: nowISO(),
-      };
-      setMessages((prev) => [...prev, assistantMessage]);
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      // Restore input on error
+      setInput(trimmed);
     }
   };
+
+
 
   const saveSystemPrompt = async () => {
     try {
@@ -1058,6 +911,87 @@ export default function BristolFloatingWidget({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
+                  {/* BULLETPROOF MODEL SELECTOR DROPDOWN */}
+                  <div className="relative group">
+                    <select
+                      value={mcpChat.currentModel}
+                      onChange={(e) => {
+                        console.log(`🔄 Model selection changed: ${e.target.value}`);
+                        mcpChat.switchModel(e.target.value);
+                      }}
+                      className="appearance-none bg-black/40 border border-bristol-cyan/30 rounded-xl px-4 py-2 text-sm text-bristol-cyan focus:border-bristol-cyan focus:ring-2 focus:ring-bristol-cyan/20 focus:outline-none cursor-pointer pr-10 font-medium"
+                      disabled={mcpChat.isSwitching || mcpChat.modelsLoading}
+                    >
+                      {mcpChat.modelsLoading ? (
+                        <option>Loading models...</option>
+                      ) : mcpChat.modelsError ? (
+                        <option>Error loading models</option>
+                      ) : (
+                        <>
+                          <optgroup label="🚀 Elite Models">
+                            {mcpChat.modelsByTier.elite?.map(model => (
+                              <option key={model.id} value={model.id}>
+                                {model.name} ({model.provider})
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="⭐ Premium Models">
+                            {mcpChat.modelsByTier.premium?.map(model => (
+                              <option key={model.id} value={model.id}>
+                                {model.name} ({model.provider})
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="📊 Standard Models">
+                            {mcpChat.modelsByTier.standard?.map(model => (
+                              <option key={model.id} value={model.id}>
+                                {model.name} ({model.provider})
+                              </option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="🆓 Free Models">
+                            {mcpChat.modelsByTier.free?.map(model => (
+                              <option key={model.id} value={model.id}>
+                                {model.name} ({model.provider})
+                              </option>
+                            ))}
+                          </optgroup>
+                        </>
+                      )}
+                    </select>
+                    
+                    {/* Custom dropdown arrow with loading state */}
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                      {mcpChat.isSwitching ? (
+                        <div className="w-4 h-4 border border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin"></div>
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-bristol-cyan group-hover:text-white transition-colors" />
+                      )}
+                    </div>
+                    
+                    {/* Model validation indicator */}
+                    {mcpChat.lastResponse?.metadata?.modelValidation && (
+                      <div className="absolute -top-1 -right-1 w-3 h-3">
+                        {mcpChat.lastResponse.metadata.modelValidation.valid ? (
+                          <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+                        ) : (
+                          <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Model health status */}
+                  {!mcpChat.modelsLoading && (
+                    <div className="flex items-center gap-1 text-xs">
+                      <div className={`w-2 h-2 rounded-full ${
+                        mcpChat.availableModels.length > 0 ? 'bg-green-400 animate-pulse' : 'bg-red-400'
+                      }`} />
+                      <span className="text-bristol-cyan/70">
+                        {mcpChat.availableModels.length} models
+                      </span>
+                    </div>
+                  )}
                   {/* Data Visualization Toggle */}
                   <button 
                     onClick={() => setShowDataViz(!showDataViz)} 

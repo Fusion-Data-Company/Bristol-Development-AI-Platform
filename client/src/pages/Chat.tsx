@@ -73,9 +73,11 @@ import {
   MicOff,
   MessageSquarePlus
 } from 'lucide-react';
+import { useMCPChat } from '@/hooks/useMCPChat';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import { type ChatSession, type ChatMessage } from '@shared/schema';
 import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
 import { DataVisualizationPanel } from '@/components/chat/DataVisualizationPanel';
 import { OnboardingGuide } from '@/components/chat/OnboardingGuide';
 import { ArtifactsPanel, extractArtifacts, type Artifact } from '@/components/chat/ArtifactsPanel';

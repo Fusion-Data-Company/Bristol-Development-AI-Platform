@@ -111,6 +111,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const chatRouter = (await import('./api/chat')).default;
   app.use('/api/chat', chatRouter);
 
+  // Unified MCP Chat API - BULLETPROOF MODEL SELECTOR INTEGRATION
+  const mcpUnifiedChatRouter = (await import('./api/mcp-unified-chat')).default;
+  app.use('/api/mcp-unified', mcpUnifiedChatRouter);
+
   // Elite Chat API with premium model integration
   const eliteChatRouter = (await import('./api/elite-chat')).default;
   app.use('/api/elite-chat', eliteChatRouter);
