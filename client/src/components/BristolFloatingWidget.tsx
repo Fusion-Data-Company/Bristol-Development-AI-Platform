@@ -135,6 +135,18 @@ export default function BristolFloatingWidget({
 }: BristolWidgetProps) {
   const { toast } = useToast();
   
+  // Mobile guard: hide floating widget on mobile screens
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 1024);
+    check(); 
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  
+  // Don't render on mobile
+  if (isMobile) return null;
+  
   const [open, setOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("chat");
   const [showDataViz, setShowDataViz] = useState(false);

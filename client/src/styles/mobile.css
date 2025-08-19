@@ -1,0 +1,41 @@
+/* --- Mobile Layer (safe: CSS only) --- */
+
+/* 1) Hide pop-out agent on small screens */
+@media (max-width: 1024px) {
+  .PopoutAgentContainer { display: none !important; }
+}
+
+/* 2) Mobile layout hygiene */
+@media (max-width: 768px) {
+  html, body { overflow-x: hidden; }
+  .container, .page, .screen { padding-left: 12px; padding-right: 12px; }
+  .card, .panel { border-radius: 16px; }
+
+/* buttons big enough for touch */
+  button, .btn, [role="button"] { min-height: 44px; min-width: 44px; }
+
+/* map and dashboards fit the viewport */
+  .map-wrapper, #map, .MapboxContainer { height: calc(100vh - 140px) !important; }
+
+/* right rail cards stack vertically */
+  .right-rail, .sidebar { width: 100% !important; position: static !important; }
+
+/* tables scroll horizontally with snap */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
+}
+
+/* 3) Chat page mobile experience */
+@media (max-width: 768px) {
+  .ChatShell { padding-bottom: env(safe-area-inset-bottom); }
+  .ChatInputBar {
+    position: sticky; bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,.96); backdrop-filter: blur(8px);
+    padding: 8px 12px; border-top: 1px solid rgba(0,0,0,.08);
+  }
+  .ChatTextarea { width: 100%; resize: none; min-height: 44px; line-height: 1.35; }
+}
+
+/* 4) Mobile nav visual defaults (if you use the component below) */
+.mobile-nav-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); }
+.mobile-nav-panel   { position: fixed; top: 0; left: 0; height: 100%; width: 82vw; max-width: 380px;
+                      background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.2); }

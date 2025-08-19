@@ -1,0 +1,211 @@
+Awesome—let’s add a clean, reversible mobile layer that won’t touch MCP, webhooks, or your existing desktop UI.
+
+Below is a tiny, surgical set of changes: we add two files and make two one‑line hooks into your app. If you ever want to undo, just remove the two files and the two import/usages.
+
+⸻
+
+1) CSS-only mobile layer (imported last)
+
+Create: src/styles/mobile.css
+
+/* --- Mobile Layer (safe: CSS only) --- */
+
+/* 1) Hide pop-out agent on small screens */
+@media (max-width: 1024px) {
+  .PopoutAgentContainer { display: none !important; }
+}
+
+/* 2) Mobile layout hygiene */
+@media (max-width: 768px) {
+  html, body { overflow-x: hidden; }
+  .container, .page, .screen { padding-left: 12px; padding-right: 12px; }
+  .card, .panel { border-radius: 16px; }
+
+/* buttons big enough for touch */
+  button, .btn, [role="button"] { min-height: 44px; min-width: 44px; }
+
+/* map and dashboards fit the viewport */
+  .map-wrapper, #map, .MapboxContainer { height: calc(100vh - 140px) !important; }
+
+/* right rail cards stack vertically */
+  .right-rail, .sidebar { width: 100% !important; position: static !important; }
+
+/* tables scroll horizontally with snap */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory; }
+}
+
+/* 3) Chat page mobile experience */
+@media (max-width: 768px) {
+  .ChatShell { padding-bottom: env(safe-area-inset-bottom); }
+  .ChatInputBar {
+    position: sticky; bottom: 0; left: 0; right: 0;
+    background: rgba(255,255,255,.96); backdrop-filter: blur(8px);
+    padding: 8px 12px; border-top: 1px solid rgba(0,0,0,.08);
+  }
+  .ChatTextarea { width: 100%; resize: none; min-height: 44px; line-height: 1.35; }
+}
+
+/* 4) Mobile nav visual defaults (if you use the component below) */
+.mobile-nav-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); }
+.mobile-nav-panel   { position: fixed; top: 0; left: 0; height: 100%; width: 82vw; max-width: 380px;
+                      background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+
+Hook #1 (one line): import it last so it never overrides desktop styles.
+
+/* src/main.(ts|tsx) or your global CSS entry */
+import './styles/mobile.css';
+
+
+⸻
+
+2) Drop‑in Mobile Navigation (only shows on mobile)
+
+Create: src/components/MobileNav.tsx (React; if you’re not using React, I’ll give a vanilla version—just say the word)
+
+import { useEffect, useRef, useState } from 'react';
+
+export default function MobileNav() {
+  const [open, setOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // open only on mobile screens
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 1024);
+    check(); window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // trap focus + scroll lock
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    panelRef.current?.focus();
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey); };
+  }, [open]);
+
+  if (!isMobile) return null;
+
+  return (
+    <div className="MobileNavRoot">
+      <button
+        aria-label="Open menu"
+        onClick={() => setOpen(true)}
+        style={{ height: 44, minWidth: 44 }}
+      >☰</button>
+
+      {open && (
+        <>
+          <div className="mobile-nav-overlay" onClick={() => setOpen(false)} />
+          <div
+            className="mobile-nav-panel"
+            ref={panelRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 16px' }}>
+              <strong>Menu</strong>
+              <button aria-label="Close" onClick={() => setOpen(false)}>✕</button>
+            </div>
+            <nav style={{ display:'grid', gap: 8, padding: '8px 16px 16px' }}>
+              {/* Update links to match your app’s routes */}
+              <a href="/" onClick={()=>setOpen(false)}>Home</a>
+              <a href="/map" onClick={()=>setOpen(false)}>Map</a>
+              <a href="/data" onClick={()=>setOpen(false)}>Data</a>
+              <a href="/analytics" onClick={()=>setOpen(false)}>Analytics</a>
+              <a href="/intel" onClick={()=>setOpen(false)}>Intel</a>
+              <a href="/chat" onClick={()=>setOpen(false)}>Chat</a>
+              <a href="/dashboard" onClick={()=>setOpen(false)}>Dashboard</a>
+              <a href="/api" onClick={()=>setOpen(false)}>API</a>
+            </nav>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+Hook #2: mount it beside your existing desktop nav (desktop remains untouched).
+
+/* In your top layout/header component (e.g., src/components/Header.tsx or App layout) */
+import MobileNav from '@/components/MobileNav';
+
+export function Header() {
+  return (
+    <header className="Header">
+      {/* Existing desktop nav stays as-is */}
+      <div className="DesktopNav">{/* ... */}</div>
+      {/* New: renders only on ≤1024px */}
+      <MobileNav />
+    </header>
+  );
+}
+
+
+⸻
+
+3) Ensure the pop‑out agent is gone on mobile (runtime guard)
+
+If your pop‑out is a component (e.g., PopoutAgent), add a mobile guard inside it so even if CSS fails, it returns null on small screens:
+
+// src/components/PopoutAgent.tsx
+import { useEffect, useState } from 'react';
+
+export default function PopoutAgent(props:any) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 1024);
+    check(); window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  if (isMobile) return null;
+  return <div className="PopoutAgentContainer">{/* existing agent */}</div>;
+}
+
+If your agent is mounted elsewhere, keep your mount as-is; this check lives inside the component so you don’t touch callers.
+
+⸻
+
+4) Chat page: auto‑grow input (optional 10‑line enhancement)
+
+// src/components/ChatInput.tsx (or wherever your textarea lives)
+import { useRef, useEffect } from 'react';
+export function AutoGrowTextarea(props:any) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    const el = ref.current!; if (!el) return;
+    const resize = () => { el.style.height = '0px'; el.style.height = Math.min(el.scrollHeight, 200) + 'px'; };
+    el.addEventListener('input', resize); resize();
+    return () => el.removeEventListener('input', resize);
+  }, []);
+  return <textarea ref={ref} className="ChatTextarea" {...props} />;
+}
+
+Use it inside your chat input bar and keep your existing send logic unchanged.
+
+⸻
+
+5) Zero‑risk preview & rollback
+	•	These changes add files and one import + one usage.
+	•	To preview safely: create a branch, add the files, run npm run dev, open DevTools mobile viewport (375×812).
+	•	If anything looks off, delete src/styles/mobile.css and src/components/MobileNav.tsx, remove the two lines you added. Desktop returns instantly.
+
+⸻
+
+6) Quick QA checklist (5 minutes)
+
+On mobile widths (375×812 and 414×896):
+	•	Pop‑out agent is not visible.
+	•	Hamburger opens/closes; focus stays trapped; body scroll is locked.
+	•	Map page has no horizontal scroll; map controls usable.
+	•	Chat input sticks to bottom, textarea grows with input, send button reachable.
+	•	Cards/tables fit; tables scroll horizontally if wide.
+
+⸻
+
+If your stack isn’t React, say what it is and I’ll swap the MobileNav for a vanilla or Vue/Svelte snippet. Otherwise, drop these in and you’ll have a fully configured mobile experience without touching any of your MCP/ElevenLabs work.

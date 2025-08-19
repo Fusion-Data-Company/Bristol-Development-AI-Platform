@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
+import "./styles/mobile.css";
 
 // Suppress Replit-specific errors and non-critical map warnings
 const originalError = console.error;

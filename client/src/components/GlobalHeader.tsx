@@ -13,6 +13,7 @@ import {
   ChevronDown,
   Shield
 } from 'lucide-react';
+import MobileNav from './MobileNav';
 
 export function GlobalHeader() {
   const [location] = useLocation();
@@ -174,8 +175,11 @@ export function GlobalHeader() {
             </nav>
           </div>
 
-          {/* Right side - Search, Notifications, User */}
+          {/* Right side - Mobile Nav, Search, Notifications, User */}
           <div className="flex items-center space-x-4">
+            {/* Mobile Navigation - only shows on ≤1024px */}
+            <MobileNav />
+            
             {/* Search */}
             <div className="hidden md:flex items-center">
               <div className="relative">
