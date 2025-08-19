@@ -33,11 +33,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Auth routes - temporary demo user for development
   app.get('/api/auth/user', async (req: any, res) => {
+    res.setHeader('Content-Type', 'application/json');
     res.json({
       id: "demo-user",
       email: "demo@bristol.dev", 
       firstName: "Demo",
       lastName: "User"
+    });
+  });
+
+  // Add the missing /api/auth/me route that the frontend expects
+  app.get('/api/auth/me', async (req: any, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.json({
+      id: "demo-user",
+      email: "demo@bristol.dev", 
+      firstName: "Demo",
+      lastName: "User",
+      isAuthenticated: true
     });
   });
 
