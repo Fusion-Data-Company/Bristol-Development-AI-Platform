@@ -187,7 +187,7 @@ export class RealDataService {
       if (!site) throw new Error('Site not found');
 
       // Get real demographic data
-      const censusData = await this.getCensusData(site.latitude, site.longitude);
+      const censusData = await this.getCensusData(site.latitude || 0, site.longitude || 0);
       
       // Get real employment data - handle null values
       const stateCode = site.fipsState || '47';
@@ -323,6 +323,7 @@ export class RealDataService {
   async updateSiteCompanyScore(siteId: string): Promise<void> {
     try {
       const companyScore = await this.calculateCompanyScore(siteId);
+      const [site] = await db.select().from(sites).where(eq(sites.id, siteId));
       
       await db.update(sites)
         .set({
@@ -334,11 +335,11 @@ export class RealDataService {
       // Store detailed scoring in market intelligence  
       await db.insert(marketIntelligence).values({
         source: 'company_scoring',
-        title: `Company Score Analysis - ${site.name}`,
+        title: `Company Score Analysis - ${site?.name || 'Unknown Site'}`,
         description: `Automated Company scoring: ${companyScore.total}/100`,
         category: 'scoring',
         analysisData: companyScore.details,
-        location: `${site.city}, ${site.state}`,
+        location: `${site?.city || 'Unknown'}, ${site?.state || 'Unknown'}`,
         dataQuality: 'high',
         createdAt: new Date()
       });
@@ -368,7 +369,7 @@ export class RealDataService {
           await new Promise(resolve => setTimeout(resolve, 1000));
         } catch (error) {
           console.error(`Failed to score site ${site.id}:`, error);
-          results.push({ id: site.id, status: 'failed', error: error.message });
+          results.push({ id: site.id, status: 'failed', error: error instanceof Error ? error.message : String(error) });
         }
       }
       

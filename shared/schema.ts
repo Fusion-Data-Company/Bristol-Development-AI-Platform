@@ -67,6 +67,7 @@ export const sites = pgTable("sites", {
   acsProfile: jsonb("acs_profile"),
   createdAt: timestamp("created_at").defaultNow(),
   propertyScore: real("property_score"), // Proprietary 100-point scoring methodology
+  companyScore: real("company_score"), // Company AI Elite scoring methodology
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
   index("idx_sites_name").on(table.name),

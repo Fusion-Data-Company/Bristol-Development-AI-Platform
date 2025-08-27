@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Building, Map, BarChart3, MessageSquare, Settings, Wrench, Users, Building2, Brain } from "lucide-react";
-import companyLogoPath from "@assets/company-logo.gif";
+import companyLogoPath from "@assets/bristol-logo_1754934306711.gif";
 
 interface ChromeProps {
   children: ReactNode;

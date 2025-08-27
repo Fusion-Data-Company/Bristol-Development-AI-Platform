@@ -49,7 +49,8 @@ router.post('/chat', async (req: any, res) => {
         sourceInstance: 'main' as const,
         mcpEnabled: false,
         realTimeData: false,
-        enableAdvancedReasoning: false
+        enableAdvancedReasoning: false,
+        retryCount: 0
       };
     }
 
