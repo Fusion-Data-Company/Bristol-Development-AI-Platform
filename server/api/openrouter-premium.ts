@@ -193,11 +193,11 @@ router.post('/chat', async (req, res) => {
 
     // Add Company context for premium models
     if (modelConfig.tier === 'premium') {
-      const bristolContext = {
+      const companyContext = {
         role: 'system' as const,
         content: `COMPANY ELITE MODE ACTIVATED: You are operating in premium mode with enhanced capabilities. Provide institutional-grade analysis with precise financial modeling, risk assessment, and strategic recommendations. Focus on IRR, NPV, cap rates, and comprehensive market intelligence.`
       };
-      enhancedMessages.splice(1, 0, bristolContext);
+      enhancedMessages.splice(1, 0, companyContext);
     }
 
     const completion = await openRouter.chat.completions.create({

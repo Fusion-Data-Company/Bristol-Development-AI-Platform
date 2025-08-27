@@ -99,7 +99,7 @@ export async function getElitePortfolioInsights(req: Request, res: Response) {
     const marketComparatives: MarketComparative[] = [
       {
         market: 'Tampa Bay',
-        bristol_performance: 112.4,
+        company_performance: 112.4,
         market_average: 100.0,
         competitive_advantage: 12.4,
         risk_factors: ['New supply concentration in downtown', 'Insurance cost inflation'],
@@ -107,7 +107,7 @@ export async function getElitePortfolioInsights(req: Request, res: Response) {
       },
       {
         market: 'Nashville',
-        bristol_performance: 127.3,
+        company_performance: 127.3,
         market_average: 100.0,
         competitive_advantage: 27.3,
         risk_factors: ['Music industry cyclicality', 'Traffic congestion impact'],
@@ -115,7 +115,7 @@ export async function getElitePortfolioInsights(req: Request, res: Response) {
       },
       {
         market: 'Charlotte',
-        bristol_performance: 108.9,
+        company_performance: 108.9,
         market_average: 100.0,
         competitive_advantage: 8.9,
         risk_factors: ['Banking sector concentration', 'Rising property taxes'],

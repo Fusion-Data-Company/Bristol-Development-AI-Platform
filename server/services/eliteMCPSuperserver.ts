@@ -46,7 +46,7 @@ const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 interface SuperTool {
   name: string;
   description: string;
-  category: 'bristol' | 'analysis' | 'data' | 'ai' | 'memory' | 'integration' | 'utility';
+  category: 'company' | 'analysis' | 'data' | 'ai' | 'memory' | 'integration' | 'utility';
   parameters: Record<string, any>;
   handler: (params: any, context?: ToolContext) => Promise<any>;
   requiresAuth?: boolean;
@@ -301,7 +301,7 @@ export class EliteMCPSuperserver {
     // Company Core Tools
     this.registerTool({
       name: 'verify_user',
-      category: 'bristol',
+      category: 'company',
       description: 'Verify Company team member with role-based access',
       parameters: {
         name: { type: 'string', required: true }
@@ -860,8 +860,8 @@ export class EliteMCPSuperserver {
 
     // Database Query Tools - CRITICAL FOR ELEVENLABS ACCESS
     this.registerTool({
-      name: 'query_bristol_database',
-      category: 'bristol',
+      name: 'query_company_database',
+      category: 'company',
       description: 'Execute SQL queries against the Company Development database for comprehensive property and team analysis',
       parameters: {
         query: { type: 'string', required: true },
@@ -890,8 +890,8 @@ export class EliteMCPSuperserver {
     });
 
     this.registerTool({
-      name: 'get_bristol_team',
-      category: 'bristol',
+      name: 'get_company_team',
+      category: 'company',
       description: 'Get all Company Development team members with full details',
       parameters: {
         searchName: { type: 'string', required: false }
@@ -1109,8 +1109,8 @@ export class EliteMCPSuperserver {
     return {
       status: 'healthy',
       totalTools: this.tools.size,
-      categories: ['bristol', 'analysis', 'data', 'ai', 'memory', 'integration', 'utility'],
-      bristolTeamLoaded: this.teamCache.size,
+      categories: ['company', 'analysis', 'data', 'ai', 'memory', 'integration', 'utility'],
+      companyTeamLoaded: this.teamCache.size,
       recentErrors: this.errorHandler.getRecentErrors(5)
     };
   }

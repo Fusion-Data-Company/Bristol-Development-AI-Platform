@@ -561,16 +561,16 @@ class ModelManagementMCPServer {
       const modelList = ModelListSchema.parse(data);
       
       // Update Company models with OpenRouter data
-      for (const bristolModel of this.COMPANY_MODEL_CONFIGS) {
-        const openrouterModel = modelList.data.find(m => m.id === bristolModel.openrouterId);
+      for (const companyModel of this.COMPANY_MODEL_CONFIGS) {
+        const openrouterModel = modelList.data.find(m => m.id === companyModel.openrouterId);
         if (openrouterModel) {
-          bristolModel.maxTokens = openrouterModel.context_length;
-          bristolModel.pricing = {
+          companyModel.maxTokens = openrouterModel.context_length;
+          companyModel.pricing = {
             prompt: parseFloat(openrouterModel.pricing.prompt),
             completion: parseFloat(openrouterModel.pricing.completion)
           };
         }
-        this.modelCache.set(bristolModel.id, bristolModel);
+        this.modelCache.set(companyModel.id, companyModel);
       }
       
       this.lastCacheUpdate = now;

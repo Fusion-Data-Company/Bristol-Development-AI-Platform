@@ -48,7 +48,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import SimpleChrome from '@/components/brand/SimpleChrome';
-import bristolBackground from '@assets/tapestry+clubhouse_1755367516748.webp';
+import companyBackground from '@assets/tapestry+clubhouse_1755367516748.webp';
 import { cn } from '@/lib/utils';
 import { EnterpriseMetricCard, PerformanceGauge, MarketHeatmap, AlertsPanel } from '@/components/analytics/EnterpriseMetricsWidget';
 import { EliteTrendChart } from '@/components/analytics/EliteTrendChart';
@@ -82,7 +82,7 @@ interface MarketIntelligence {
   supplyPipeline: number;
   demographicScore: number;
   economicHealth: string;
-  bristolExposure: number;
+  companyExposure: number;
   unemploymentRate: number;
   populationGrowth: number;
   recommendation: string;
@@ -188,7 +188,7 @@ export default function AnalyticsEnterprise() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           query: agentQuery,
-          context: 'bristol_portfolio_analysis',
+          context: 'company_portfolio_analysis',
           include_mcp_tools: true
         })
       });
@@ -228,7 +228,7 @@ export default function AnalyticsEnterprise() {
   return (
     <SimpleChrome>
       <div className="min-h-screen relative overflow-hidden" style={{
-        backgroundImage: `url(${bristolBackground})`, 
+        backgroundImage: `url(${companyBackground})`, 
         backgroundSize: 'cover', 
         backgroundPosition: 'center', 
         backgroundRepeat: 'no-repeat',
@@ -604,7 +604,7 @@ export default function AnalyticsEnterprise() {
                     markets={marketIntelligence.map(market => ({
                       name: market.market,
                       performance: market.demographicScore,
-                      exposure: market.bristolExposure,
+                      exposure: market.companyExposure,
                       risk: market.unemploymentRate > 5 ? 'high' : market.unemploymentRate > 3.5 ? 'medium' : 'low'
                     }))}
                   />
@@ -655,7 +655,7 @@ export default function AnalyticsEnterprise() {
                           <div className="text-center">
                             <div className="text-sm text-brand-stone mb-1">Company Exposure</div>
                             <div className="text-2xl font-bold text-brand-maroon">
-                              {market.bristolExposure}
+                              {market.companyExposure}
                             </div>
                           </div>
                           <div className="text-center">

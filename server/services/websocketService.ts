@@ -13,7 +13,7 @@ interface WebSocketClient {
 }
 
 interface WebSocketMessage {
-  type: "ping" | "pong" | "subscribe" | "unsubscribe" | "tool_status" | "chat_typing" | "integration_update" | "bristol_sync" | "instance_register";
+  type: "ping" | "pong" | "subscribe" | "unsubscribe" | "tool_status" | "chat_typing" | "integration_update" | "company_sync" | "instance_register";
   data?: any;
   timestamp: number;
   instance?: 'main' | 'floating';
@@ -155,13 +155,13 @@ export class WebSocketService {
             realTimeSyncService.registerConnection(clientId, client.socket, message.instance);
             this.sendToClient(clientId, {
               type: "tool_status",
-              data: { status: "bristol_sync_registered", instance: message.instance },
+              data: { status: "company_sync_registered", instance: message.instance },
               timestamp: Date.now()
             });
           }
           break;
           
-        case "bristol_sync":
+        case "company_sync":
           // Handle Company AI memory synchronization
           if (message.sessionId && message.instance && message.data) {
             realTimeSyncService.triggerCrossInstanceSync(

@@ -47,7 +47,7 @@ interface MarketAnalysis {
   supplyPipeline: number;
   demographicScore: number;
   economicHealth: string;
-  bristolExposure: number;
+  companyExposure: number;
   unemploymentRate: number;
   populationGrowth: number;
   recommendation: string;
@@ -378,7 +378,7 @@ export default function EnterpriseAnalytics() {
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Company Properties</p>
-                        <p className="text-lg font-semibold">{market.bristolExposure}</p>
+                        <p className="text-lg font-semibold">{market.companyExposure}</p>
                       </div>
                       <div>
                         <p className="text-sm text-gray-600">Unemployment</p>

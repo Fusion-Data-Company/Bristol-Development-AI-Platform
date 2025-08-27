@@ -9,7 +9,7 @@ import { HUDTool } from "../components/tools/HUDTool";
 import { FoursquareTool } from "../components/tools/FoursquareTool";
 import { FBITool } from "../components/tools/FBITool";
 import { NOAATool } from "../components/tools/NOAATool";
-import bristolToolsBg from "@assets/Icon+1_1755405975901.webp";
+import toolsBg from "@assets/Icon+1_1755405975901.webp";
 
 export function Tools() {
   const [activeTab, setActiveTab] = useState("bls");
@@ -21,7 +21,7 @@ export function Tools() {
         <div 
           className="absolute inset-0 bg-center bg-cover bg-no-repeat"
           style={{
-            backgroundImage: `url(${bristolToolsBg})`,
+            backgroundImage: `url(${toolsBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}

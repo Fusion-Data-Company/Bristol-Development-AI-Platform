@@ -188,7 +188,7 @@ router.get('/market-comparison', async (req, res) => {
 
           return {
             market: marketLocation,
-            bristolPresence: {
+            companyPresence: {
               properties: market.siteCount,
               totalUnits: market.totalUnits || 0,
               avgCompanyScore: Math.round((Number(market.avgCompanyScore) || 0) * 10) / 10
@@ -206,7 +206,7 @@ router.get('/market-comparison', async (req, res) => {
           console.error(`Market analysis failed for ${market.city}:`, error);
           return {
             market: `${market.city}, ${market.state}`,
-            bristolPresence: {
+            companyPresence: {
               properties: market.siteCount,
               totalUnits: market.totalUnits || 0,
               avgCompanyScore: Math.round((market.avgCompanyScore || 0) * 10) / 10
@@ -220,8 +220,8 @@ router.get('/market-comparison', async (req, res) => {
 
     res.json({
       totalMarkets: sitesByMarket.length,
-      primaryMarkets: enhancedMarkets.filter(m => m.bristolPresence.properties >= 3),
-      secondaryMarkets: enhancedMarkets.filter(m => m.bristolPresence.properties < 3),
+      primaryMarkets: enhancedMarkets.filter(m => m.companyPresence.properties >= 3),
+      secondaryMarkets: enhancedMarkets.filter(m => m.companyPresence.properties < 3),
       marketAnalysis: enhancedMarkets,
       expansionOpportunities: enhancedMarkets
         .filter(m => m.marketData?.populationGrowth > 2)

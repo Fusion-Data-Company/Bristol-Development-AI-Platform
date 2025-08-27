@@ -391,17 +391,17 @@ export class EnhancedChatAgentService {
       );
       
       // Add Company-specific insights
-      const bristolEnhancedResponse = await this.addCompanyInsights(
+      const companyEnhancedResponse = await this.addCompanyInsights(
         synthesizedResponse,
         chatContext
       );
       
       return {
         perspectives,
-        synthesizedResponse: bristolEnhancedResponse,
+        synthesizedResponse: companyEnhancedResponse,
         confidence: this.calculateResponseConfidence(perspectives),
-        actionItems: await this.extractActionItems(bristolEnhancedResponse),
-        followUp: await this.generateIntelligentFollowUp(bristolEnhancedResponse, chatContext)
+        actionItems: await this.extractActionItems(companyEnhancedResponse),
+        followUp: await this.generateIntelligentFollowUp(companyEnhancedResponse, chatContext)
       };
 
     } catch (error) {
@@ -602,9 +602,9 @@ export class EnhancedChatAgentService {
     );
     
     // Add Company-specific tone and insights
-    const bristolResponse = await this.addCompanyTone(personalizedResponse, chatContext);
+    const companyResponse = await this.addCompanyTone(personalizedResponse, chatContext);
     
-    return bristolResponse;
+    return companyResponse;
   }
 
   private async learnFromInteraction(
@@ -809,10 +809,10 @@ export class EnhancedChatAgentService {
     chatContext: ChatContext
   ): Promise<string> {
     // Add Company Development Group professional tone and expertise
-    const bristolPrefix = "Based on Company Development Group's institutional expertise, ";
+    const companyPrefix = "Based on Company Development Group's institutional expertise, ";
     
-    if (!response.toLowerCase().includes('bristol')) {
-      return bristolPrefix + response.charAt(0).toLowerCase() + response.slice(1);
+    if (!response.toLowerCase().includes('company')) {
+      return companyPrefix + response.charAt(0).toLowerCase() + response.slice(1);
     }
     
     return response;

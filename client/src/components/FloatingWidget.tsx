@@ -3518,7 +3518,7 @@ function AdminPane({
           command: "npx",
           args: ["@modelcontextprotocol/server-postgres"],
           env: {
-            DATABASE_URL: "postgresql://localhost:5432/bristol"
+            DATABASE_URL: "postgresql://localhost:5432/company"
           }
         },
         memory: {

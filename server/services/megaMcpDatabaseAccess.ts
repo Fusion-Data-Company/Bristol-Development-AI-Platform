@@ -110,7 +110,7 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
         // Complex portfolio analytics query
         const totalSites = await db.select({ count: sql<number>`count(*)` }).from(sites);
         const totalUnits = await db.select({ sum: sql<number>`sum(units_total)` }).from(sites);
-        const avgCompanyScore = await db.select({ avg: sql<number>`avg(bristol_score)` }).from(sites);
+        const avgCompanyScore = await db.select({ avg: sql<number>`avg(company_score)` }).from(sites);
         
         const statusBreakdown = await db.select({
           status: sites.status,

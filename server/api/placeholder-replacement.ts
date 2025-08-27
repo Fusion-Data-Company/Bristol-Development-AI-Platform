@@ -22,7 +22,7 @@ router.get('/health', async (req, res) => {
       perplexityAPI: false,
       firecrawlAPI: false,
       database: false,
-      bristolScoring: false
+      companyScoring: false
     };
 
     // Test Census API
@@ -103,7 +103,7 @@ router.get('/health', async (req, res) => {
       const testSites = await db.select().from(sites).limit(1);
       if (testSites.length > 0) {
         await realDataService.calculateCompanyScore(testSites[0].id);
-        healthChecks.bristolScoring = true;
+        healthChecks.companyScoring = true;
       }
     } catch (e) {
       console.warn('Company scoring test failed');

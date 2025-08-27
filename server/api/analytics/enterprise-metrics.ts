@@ -114,7 +114,7 @@ router.get('/market-analysis', async (req, res) => {
           }
 
           // Calculate Company exposure in this market
-          const bristolProperties = sites_data.filter(site => 
+          const companyProperties = sites_data.filter(site => 
             site.city?.toLowerCase() === city.toLowerCase() && 
             site.state?.toLowerCase() === state.toLowerCase()
           ).length;
@@ -138,10 +138,10 @@ router.get('/market-analysis', async (req, res) => {
             supplyPipeline: Math.floor(1000 + Math.random() * 5000),
             demographicScore: Math.round(demographicScore),
             economicHealth: demographicScore > 85 ? 'Very Strong' : demographicScore > 75 ? 'Strong' : 'Moderate',
-            bristolExposure: bristolProperties,
+            companyExposure: companyProperties,
             unemploymentRate: (employmentResult as any)?.unemployment_rate || 3.8,
             populationGrowth: (demographicsResult as any)?.population_growth || 1.2,
-            recommendation: generateRecommendation(rentGrowth, demographicScore, bristolProperties)
+            recommendation: generateRecommendation(rentGrowth, demographicScore, companyProperties)
           };
         } catch (error) {
           console.error(`Error analyzing market ${market}:`, error);
@@ -174,7 +174,7 @@ router.post('/agent-query', async (req, res) => {
       // Economic analysis
       mcpService.executeTool('economic_analysis', {
         query,
-        context: 'bristol_portfolio',
+        context: 'company_portfolio',
         include_forecasts: true
       }),
       // Market intelligence
@@ -285,9 +285,9 @@ router.get('/performance', async (req, res) => {
   }
 });
 
-function generateRecommendation(rentGrowth: number, demographicScore: number, bristolExposure: number): string {
+function generateRecommendation(rentGrowth: number, demographicScore: number, companyExposure: number): string {
   if (rentGrowth > 10 && demographicScore > 80) {
-    return bristolExposure < 5 ? 
+    return companyExposure < 5 ? 
       'Strong expansion target - exceptional fundamentals with limited exposure' :
       'Monitor for additional opportunities - strong market with existing exposure';
   } else if (rentGrowth > 7 && demographicScore > 75) {

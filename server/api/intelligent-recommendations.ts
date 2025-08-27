@@ -328,10 +328,10 @@ async function enhanceWithCompanyData(recommendations: any, portfolioContext: an
   if (recommendations.immediateActions) {
     recommendations.immediateActions.forEach((action: any) => {
       if (action.action.toLowerCase().includes('market')) {
-        action.bristolContext = `Current market growth: ${marketContext.currentData?.sunbeltMarkets?.growth}%`;
+        action.companyContext = `Current market growth: ${marketContext.currentData?.sunbeltMarkets?.growth}%`;
       }
       if (action.action.toLowerCase().includes('portfolio')) {
-        action.bristolContext = `Portfolio: ${portfolioContext.sitesCount} sites, avg score: ${portfolioContext.avgCompanyScore.toFixed(1)}`;
+        action.companyContext = `Portfolio: ${portfolioContext.sitesCount} sites, avg score: ${portfolioContext.avgCompanyScore.toFixed(1)}`;
       }
     });
   }

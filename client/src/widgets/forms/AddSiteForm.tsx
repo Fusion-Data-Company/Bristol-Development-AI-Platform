@@ -297,7 +297,7 @@ export function AddSiteForm({ onSuccess, onCancel }: AddSiteFormProps) {
               type="url"
               value={formData.sourceUrl}
               onChange={(e) => handleChange('sourceUrl', e.target.value)}
-              placeholder="https://www.bristoldevelopment.com/project"
+              placeholder="https://www.company-example.com/project"
             />
           </div>
 

@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useQuery } from '@tanstack/react-query';
 import SimpleChrome from '@/components/brand/SimpleChrome';
-import bristolMapsBg from "@assets/thumbnail-1_1755405960845.jpg";
+import mapsBg from "@assets/thumbnail-1_1755405960845.jpg";
 
 // Valid Mapbox token
 mapboxgl.accessToken = 'pk.eyJ1Ijoicm9iZXJ0eWVhZ2VyIiwiYSI6ImNtZWRnM3IwbjA3M3IybG1zNnAzeWtuZ3EifQ.mif4Tbd3ceKQh6YAS8EPDQ';
@@ -247,7 +247,7 @@ export default function Maps2() {
         <div 
           className="absolute inset-0 bg-center bg-cover bg-no-repeat"
           style={{
-            backgroundImage: `url(${bristolMapsBg})`,
+            backgroundImage: `url(${mapsBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}

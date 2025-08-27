@@ -60,7 +60,7 @@ interface MarketAnalysis {
   supplyPipeline: number;
   demographicScore: number;
   economicHealth: string;
-  bristolExposure: number;
+  companyExposure: number;
   recommendation: string;
 }
 
@@ -124,7 +124,7 @@ export function AnalyticsOld() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           query: agentQuery,
-          context: 'bristol_portfolio_analysis'
+          context: 'company_portfolio_analysis'
         })
       });
       
@@ -193,7 +193,7 @@ export function AnalyticsOld() {
       supplyPipeline: 4200,
       demographicScore: 87,
       economicHealth: 'Strong',
-      bristolExposure: 12,
+      companyExposure: 12,
       recommendation: 'Increase allocation - favorable demographics and job growth'
     },
     {
@@ -203,7 +203,7 @@ export function AnalyticsOld() {
       supplyPipeline: 6800,
       demographicScore: 82,
       economicHealth: 'Strong',
-      bristolExposure: 8,
+      companyExposure: 8,
       recommendation: 'Maintain exposure - banking sector growth driving demand'
     },
     {
@@ -213,7 +213,7 @@ export function AnalyticsOld() {
       supplyPipeline: 3400,
       demographicScore: 91,
       economicHealth: 'Very Strong',
-      bristolExposure: 6,
+      companyExposure: 6,
       recommendation: 'Target for expansion - limited supply, strong in-migration'
     }
   ];
@@ -434,7 +434,7 @@ export function AnalyticsOld() {
                         <div>
                           <div className="text-sm text-gray-600">Company Exposure</div>
                           <div className="text-2xl font-bold text-brand-maroon">
-                            {market.bristolExposure} properties
+                            {market.companyExposure} properties
                           </div>
                         </div>
                       </div>

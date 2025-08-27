@@ -430,7 +430,7 @@ function calculateContextRelevance(message: string, propertyContext: any): numbe
   let relevance = 0.5; // Base relevance
   
   if (propertyContext.sitesCount > 0) relevance += 0.2;
-  if (message.toLowerCase().includes('bristol')) relevance += 0.1;
+  if (message.toLowerCase().includes('company')) relevance += 0.1;
   if (message.toLowerCase().includes('site') || message.toLowerCase().includes('property')) relevance += 0.1;
   if (message.toLowerCase().includes('market') || message.toLowerCase().includes('analysis')) relevance += 0.1;
   

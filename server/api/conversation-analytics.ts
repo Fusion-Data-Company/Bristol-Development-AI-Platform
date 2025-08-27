@@ -102,12 +102,12 @@ Provide a JSON response with:
     const topicAnalysis = JSON.parse(response.choices[0].message.content || '{}');
     
     // Add Company-specific topic categorization
-    const bristolCategories = categorizeCompanyTopics(topicAnalysis.primaryTopics || []);
+    const companyCategories = categorizeCompanyTopics(topicAnalysis.primaryTopics || []);
     
     res.json({
       success: true,
       topics: topicAnalysis,
-      bristolCategories,
+      companyCategories,
       analysisTime: new Date().toISOString(),
       recommendations: generateTopicRecommendations(topicAnalysis)
     });
@@ -568,7 +568,7 @@ function assessDataQuality(history: any[]) {
     completeness: history.length > 5 ? 'high' : history.length > 2 ? 'medium' : 'low',
     recency: 'current', // Assuming real-time data
     relevance: history.some(msg => 
-      /bristol|development|market|financial/i.test(msg.content)
+      /company|development|market|financial/i.test(msg.content)
     ) ? 'high' : 'medium'
   };
 }

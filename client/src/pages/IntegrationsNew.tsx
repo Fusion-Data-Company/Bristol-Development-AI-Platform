@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Settings, CheckCircle, XCircle, Loader2, Plus, Trash2, Eye, EyeOff, Plug } from "lucide-react";
 import Chrome from "../components/brand/SimpleChrome";
 import { apiRequest } from "@/lib/queryClient";
-import bristolIntegrationsBg from "@assets/Icon+5_1755405970384.webp";
+import integrationsBg from "@assets/Icon+5_1755405970384.webp";
 
 interface Tool {
   id: string;
@@ -108,7 +108,7 @@ export default function Integrations() {
         <div 
           className="absolute inset-0 bg-center bg-cover bg-no-repeat"
           style={{
-            backgroundImage: `url(${bristolIntegrationsBg})`,
+            backgroundImage: `url(${integrationsBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}

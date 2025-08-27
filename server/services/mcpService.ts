@@ -172,7 +172,7 @@ export class McpService {
         case "hud.fmr":
           result = await this.executeHudFmr(payload);
           break;
-        case "bristol_property_scraper":
+        case "company_property_scraper":
           result = await this.executeCompanyPropertyScraper(payload);
           break;
         default:
@@ -428,7 +428,7 @@ export class McpService {
           properties: result.properties || [],
           metadata: {
             ...result.metadata,
-            mcpTool: 'bristol_property_scraper',
+            mcpTool: 'company_property_scraper',
             comparablesAnnexUrl: '/comparables-annex'
           }
         }
