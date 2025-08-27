@@ -1,8 +1,8 @@
-# Bristol AI Integration Test Plan
+# Your Company AI Integration Test Plan
 
 ## Objective
-Verify that the Bristol AI agent can perform web scraping through MCP with results appearing in both:
-1. AI chat interface (Bristol AI agent response)
+Verify that the Your Company AI agent can perform web scraping through MCP with results appearing in both:
+1. AI chat interface (Your Company AI agent response)
 2. Comparables Annex page (database storage)
 
 ## Test Scenarios
@@ -19,19 +19,19 @@ Verify that the Bristol AI agent can perform web scraping through MCP with resul
 - **Status**: 🔄 Testing now
 
 ### 3. MCP Tool Integration (Next)
-- **Component**: Bristol AI agent calls through MCP
-- **Tool**: `bristol_property_scraper`
+- **Component**: Your Company AI agent calls through MCP
+- **Tool**: `company_property_scraper`
 - **Expected**: AI can scrape properties and show results in chat
 
 ### 4. End-to-End User Test (Final)
-- **Flow**: User asks Bristol AI to "find properties in Austin"
+- **Flow**: User asks Your Company AI to "find properties in Austin"
 - **Expected**: AI scrapes data, stores in database, shows in chat and Comparables Annex
 - **Verification**: Dual display functionality
 
 ## Architecture Overview
 
 ```
-User Request → Bristol AI Agent → MCP Tool → AI Scraping API → Firecrawl → Database Storage
+User Request → Your Company AI Agent → MCP Tool → AI Scraping API → Firecrawl → Database Storage
                      ↓                                                           ↓
               Chat Response with Results                              Comparables Annex Display
 ```
@@ -42,7 +42,7 @@ User Request → Bristol AI Agent → MCP Tool → AI Scraping API → Firecrawl
 - ✅ Bristol Elite API endpoints created (search, crawl, extract, research)
 - ✅ Elite search endpoint tested (200 response)
 - ✅ Elite extract endpoint tested (working)
-- ✅ MCP tool bristol_property_scraper integrated
+- ✅ MCP tool company_property_scraper integrated
 - ✅ Advanced extraction prompts and schemas configured
 - ✅ Database storage with elite property schema
 
@@ -61,7 +61,7 @@ User Request → Bristol AI Agent → MCP Tool → AI Scraping API → Firecrawl
 ✅ **Elite Extraction Engine**: Functional - processed 2 URLs with financial focus
 ✅ **Deep Crawl Analyzer**: Ready for comprehensive website analysis
 ✅ **Bristol Elite API**: All four endpoints now use REAL implementations
-✅ **MCP Integration**: bristol_property_scraper tool connected to real backend
+✅ **MCP Integration**: company_property_scraper tool connected to real backend
 
 ## Real Functions Replaced Placeholders
 
@@ -78,4 +78,4 @@ User Request → Bristol AI Agent → MCP Tool → AI Scraping API → Firecrawl
 - Elite extraction engine: Processed financial data from 2 property URLs
 - All results stored in Comparables Annex with proper source tracking
 
-The Bristol AI agent now has fully functional, non-placeholder scraping capabilities.
+The Your Company AI agent now has fully functional, non-placeholder scraping capabilities.

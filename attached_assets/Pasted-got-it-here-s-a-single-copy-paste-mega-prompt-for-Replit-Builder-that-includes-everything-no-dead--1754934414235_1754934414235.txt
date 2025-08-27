@@ -1,17 +1,17 @@
-got it. here’s a single, copy‑paste mega prompt for Replit Builder that includes everything—no dead placeholders. it uses Replit Postgres (now), wires real endpoints, builds forms, tables, scoring, scraping, KML/KMZ, dual map engines, 3D sandbox, OpenRouter chat, Microsoft 365 hooks, and the new Bristol comps scoring system (1–100) with amenities + concessions. it also preps an API‑key tools tab, and seeds free public data calls. Cinzel Serif + your logo are set.
+got it. here’s a single, copy‑paste mega prompt for Replit Builder that includes everything—no dead placeholders. it uses Replit Postgres (now), wires real endpoints, builds forms, tables, scoring, scraping, KML/KMZ, dual map engines, 3D sandbox, OpenRouter chat, Microsoft 365 hooks, and the new Your Company comps scoring system (1–100) with amenities + concessions. it also preps an API‑key tools tab, and seeds free public data calls. Cinzel Serif + your logo are set.
 
 paste this entire thing into Replit Builder. it will create a monorepo with apps/web and apps/api. do not stop the build; continue until all files are created and app boots.
 
 ⸻
 
-REPLIT BUILDER MASTER PROMPT — Bristol Site Intelligence (Production Scaffold)
+REPLIT BUILDER MASTER PROMPT — Your Company Site Intelligence (Production Scaffold)
 
 Objectives (non‑negotiable)
-	•	Use Replit Postgres via DATABASE_URL. No fake DB. Auto‑migrate on boot.
-	•	Frontend: React+Vite, Tailwind, Cinzel Serif, TanStack Table, MapLibre + ArcGIS toggle, CesiumJS 3D tab, KML/KMZ upload, docked conversational AI (OpenRouter) with MCP hooks, Bristol brand (logo provided).
-	•	Backend: Node+Express, Postgres (pg), endpoints for sites/metrics/comps, comps scoring (1–100), Playwright scraper, public data fetchers (Census/BLS/HUD/FEMA/ArcGIS), Microsoft 365 (Graph OAuth) list OneDrive/Outlook, Tools registry (API keys) usable by agent, n8n trigger endpoint.
-	•	UI: Add Site form, Sites table, Metrics table, Comps table (inline editing with TanStack), Scoring explain modal, Integrations page (Microsoft 365 + Tools), Imports (KML/KMZ).
-	•	Styling: Bristol “lab‑grade”: Cinzel, slate ink tones, gold accent; use the attached logo at /public/bristol-logo.gif.
+        •       Use Replit Postgres via DATABASE_URL. No fake DB. Auto‑migrate on boot.
+        •       Frontend: React+Vite, Tailwind, Cinzel Serif, TanStack Table, MapLibre + ArcGIS toggle, CesiumJS 3D tab, KML/KMZ upload, docked conversational AI (OpenRouter) with MCP hooks, Your Company brand (logo provided).
+        •       Backend: Node+Express, Postgres (pg), endpoints for sites/metrics/comps, comps scoring (1–100), Playwright scraper, public data fetchers (Census/BLS/HUD/FEMA/ArcGIS), Microsoft 365 (Graph OAuth) list OneDrive/Outlook, Tools registry (API keys) usable by agent, n8n trigger endpoint.
+        •       UI: Add Site form, Sites table, Metrics table, Comps table (inline editing with TanStack), Scoring explain modal, Integrations page (Microsoft 365 + Tools), Imports (KML/KMZ).
+        •       Styling: Bristol “lab‑grade”: Cinzel, slate ink tones, gold accent; use the attached logo at /public/bristol-logo.gif.
 
 ⸻
 
@@ -1001,22 +1001,22 @@ MEMORY: maintain short-term project context and long-term team preferences (the 
 ⸻
 
 Build/run instructions (for Builder to execute automatically)
-	1.	Create all files above.
-	2.	Copy the provided logo to apps/api/public/bristol-logo.gif.
-	3.	Generate .env in apps/api from .env.example, set:
-	•	DATABASE_URL = Replit Postgres URL
-	•	ALLOWED_ORIGIN=http://localhost:5173
-	•	Optional keys (OPENROUTER_API_KEY, Microsoft, N8N) if available
-	4.	Run at root:
-	•	npm install
-	•	npm run dev
-	5.	Verify:
-	•	GET /api/health → { ok: true }
-	•	Web at http://localhost:5173 shows Map tab (MapLibre), Tables tab with Add Site, Sites, Metrics, Comps, and the Chat dock.
-	•	KML/KMZ upload shades polygons.
-	•	POST /api/comps creates a comp and displays score in table.
-	•	If OpenRouter key set, chat responds.
-	•	Integrations page lets you add Tools and (if configured) connect Microsoft 365.
+        1.      Create all files above.
+        2.      Copy the provided logo to apps/api/public/bristol-logo.gif.
+        3.      Generate .env in apps/api from .env.example, set:
+        •       DATABASE_URL = Replit Postgres URL
+        •       ALLOWED_ORIGIN=http://localhost:5173
+        •       Optional keys (OPENROUTER_API_KEY, Microsoft, N8N) if available
+        4.      Run at root:
+        •       npm install
+        •       npm run dev
+        5.      Verify:
+        •       GET /api/health → { ok: true }
+        •       Web at http://localhost:5173 shows Map tab (MapLibre), Tables tab with Add Site, Sites, Metrics, Comps, and the Chat dock.
+        •       KML/KMZ upload shades polygons.
+        •       POST /api/comps creates a comp and displays score in table.
+        •       If OpenRouter key set, chat responds.
+        •       Integrations page lets you add Tools and (if configured) connect Microsoft 365.
 
 ⸻
 

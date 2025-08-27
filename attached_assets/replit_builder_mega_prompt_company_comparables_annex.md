@@ -1,6 +1,6 @@
-# REPLIT BUILDER — MEGA PROMPT (Bristol Comparables Annex)
+# REPLIT BUILDER — MEGA PROMPT (Your Company Comparables Annex)
 
-**Goal:** Build a **flagship Comparables Annex** for Bristol Development Group. This is a Google‑Sheets‑scale page with inline editing, virtualization, tactical web scraping, storage, CSV import/export, and AI tool access so the Bristol Agent can launch scrapes and reuse comps on demand.
+**Goal:** Build a **flagship Comparables Annex** for Your Company Name. This is a Google‑Sheets‑scale page with inline editing, virtualization, tactical web scraping, storage, CSV import/export, and AI tool access so the Your Company Agent can launch scrapes and reuse comps on demand.
 
 **Stack (use existing project conventions):** Express + TypeScript server, Drizzle ORM + Neon (Postgres), Vite + React 18 on the client, TanStack Table v8 + React Query, free‑first scraping (Cheerio/undici), optional Playwright via env flag. Router on client is **wouter**.
 

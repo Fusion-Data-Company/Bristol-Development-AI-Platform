@@ -1,34 +1,34 @@
-got it. here’s a second, copy‑paste “Brand + Memory SUPERPROMPT” you can run right after the first mega prompt. it upgrades the build so the agent, UI, copy tone, colors, assets, and memory all feel 100% Bristol from day one—and it auto‑ingests public pages from bristoldevelopment.com into the on‑board memory store, without you doing anything.
+got it. here’s a second, copy‑paste “Brand + Memory SUPERPROMPT” you can run right after the first mega prompt. it upgrades the build so the agent, UI, copy tone, colors, assets, and memory all feel 100% Your Company from day one—and it auto‑ingests public pages from your company website into the on‑board memory store, without you doing anything.
 
 paste this whole block into Replit Builder. it modifies/extends the existing repo the first prompt created. it does not break anything, and it won’t leave dead placeholders.
 
 ⸻
 
-REPLIT BUILDER SUPERPROMPT — Bristol Brand + Memory + Vibe Upgrade
+REPLIT BUILDER SUPERPROMPT — Your Company Brand + Memory + Vibe Upgrade
 
 Goals
-	•	Infuse Bristol voice & aesthetics (Cinzel serif, palette, logo, hero imagery).
-	•	Auto‑ingest public Bristol site content as long‑term memory (on‑board DB).
-	•	Expand the Head of Data system prompt with Bristol context & team vibe.
-	•	Add seed data (projects, amenities dictionary, comps scoring weights).
-	•	Add Bristol Mode switch that biases the agent to house style.
-	•	Add property gallery and brand components so the app looks “science‑lab pro.”
-	•	Add Upcoming Pipeline search endpoint (public sources) and UI stub that works now.
-	•	Tighten MS 365 UX: one‑click test calls for OneDrive + Outlook list.
-	•	Keep everything working offline if keys are missing; auto‑hide what’s not configured.
+        •       Infuse Your Company voice & aesthetics (Cinzel serif, palette, logo, hero imagery).
+        •       Auto‑ingest public Your Company site content as long‑term memory (on‑board DB).
+        •       Expand the Head of Data system prompt with Your Company context & team vibe.
+        •       Add seed data (projects, amenities dictionary, comps scoring weights).
+        •       Add Your Company Mode switch that biases the agent to house style.
+        •       Add property gallery and brand components so the app looks “science‑lab pro.”
+        •       Add Upcoming Pipeline search endpoint (public sources) and UI stub that works now.
+        •       Tighten MS 365 UX: one‑click test calls for OneDrive + Outlook list.
+        •       Keep everything working offline if keys are missing; auto‑hide what’s not configured.
 
 ⸻
 
 0) Brand tokens (colors, fonts, imagery)
 
 Update apps/web/tailwind.config.js — extend palette/typography
-	•	Keep Cinzel serif.
-	•	Add refined tokens:
+        •       Keep Cinzel serif.
+        •       Add refined tokens:
 
 extend: {
   fontFamily: { serif: ['"Cinzel"', "serif"] },
   colors: {
-    bristol: {
+    company: {
       ink: "#0f172a",   // deep slate
       stone: "#334155", // cool gray
       gold: "#c9a968",  // accent
@@ -48,9 +48,9 @@ import React from "react";
 
 export function PageFrame({ title, children, right=null }) {
   return (
-    <div className="bg-bristol-fog min-h-screen">
-      <div className="bg-bristol-ink text-white px-4 py-3 flex items-center gap-3">
-        <img src="/public/bristol-logo.gif" className="h-10" />
+    <div className="bg-company-fog min-h-screen">
+      <div className="bg-company-ink text-white px-4 py-3 flex items-center gap-3">
+        <img src="/public/company-logo.gif" className="h-10" />
         <div className="font-serif text-2xl">{title}</div>
         <div className="ml-auto flex items-center gap-3">{right}</div>
       </div>
@@ -74,7 +74,7 @@ export function Section({ heading, children, actions=null }){
 Refactor App.jsx and Integrations.jsx to wrap with PageFrame (not required to paste—Builder can update accordingly).
 
 Add hero backdrop (optional now)
-	•	Create /apps/api/public/brand/hero1.jpg (placeholder).
+        •       Create /apps/api/public/brand/hero1.jpg (placeholder).
 If you upload real Bristol property photos later, drop them into this folder; UI will auto‑rotate.
 
 Add apps/web/src/widgets/HeroStrip.jsx:
@@ -287,18 +287,18 @@ import { router as pipelineApi } from "./routes/pipeline.js";
 app.use("/api", pipelineApi);
 
 Add a small UI stub button in Apps/web/src/pages/App.jsx Tables view header:
-	•	Button “Find Pipeline (ArcGIS)” → opens prompt for FeatureServer URL; on submit, calls /api/pipeline/search and shows count in an alert. (Builder can implement—tiny addition.)
+        •       Button “Find Pipeline (ArcGIS)” → opens prompt for FeatureServer URL; on submit, calls /api/pipeline/search and shows count in an alert. (Builder can implement—tiny addition.)
 
 ⸻
 
 5) Microsoft 365 UX polish (works now)
 
 Update apps/web/src/pages/Integrations.jsx:
-	•	If access_token is in query string, store it in sessionStorage.ms_token.
-	•	Add two test buttons:
-	•	“List OneDrive Root” → GET /api/graph/list-drive with Authorization: Bearer <token>.
-	•	“List 10 Emails” → GET /api/graph/list-mail with the same header.
-	•	Render JSON results under buttons.
+        •       If access_token is in query string, store it in sessionStorage.ms_token.
+        •       Add two test buttons:
+        •       “List OneDrive Root” → GET /api/graph/list-drive with Authorization: Bearer <token>.
+        •       “List 10 Emails” → GET /api/graph/list-mail with the same header.
+        •       Render JSON results under buttons.
 
 (This uses your existing route code; just add small UI bits.)
 
@@ -307,7 +307,7 @@ Update apps/web/src/pages/Integrations.jsx:
 6) Add a Bristol Mode toggle in chat
 
 Update ChatDock.jsx header: add a checkbox “Bristol Mode”.
-	•	When on, prepend an extra system message:
+        •       When on, prepend an extra system message:
 “Bristol Mode ON: Prefer Bristol phrasing, house standards, and prior decisions; be extra concise and numbers‑first.”
 
 ⸻
@@ -320,26 +320,26 @@ Add a nav link in header next to Integrations. Auto‑hide if folder empty.
 ⸻
 
 8) Quality gates (Builder, do this)
-	•	After creating files, run:
-	•	npm install at root
-	•	npm run dev
-	•	Verify:
-	•	POST /api/ingest/bristol → returns {ok:true, pages: N}
-	•	POST /api/seed/amenities → {ok:true}
-	•	/api/bristol-context with {query:"Bristol projects Franklin"} returns hits
-	•	Chat answers; with Bristol Mode ON, tone is concise and “executive”
-	•	Integrations page: Microsoft connect works if keys set; otherwise shows “not configured” note gracefully
-	•	Pipeline search button calls /api/pipeline/search and returns a count
-	•	Comps table shows score and explain modal
-	•	KML/KMZ still imports
-	•	No dead placeholders on first boot
+        •       After creating files, run:
+        •       npm install at root
+        •       npm run dev
+        •       Verify:
+        •       POST /api/ingest/bristol → returns {ok:true, pages: N}
+        •       POST /api/seed/amenities → {ok:true}
+        •       /api/bristol-context with {query:"Bristol projects Franklin"} returns hits
+        •       Chat answers; with Bristol Mode ON, tone is concise and “executive”
+        •       Integrations page: Microsoft connect works if keys set; otherwise shows “not configured” note gracefully
+        •       Pipeline search button calls /api/pipeline/search and returns a count
+        •       Comps table shows score and explain modal
+        •       KML/KMZ still imports
+        •       No dead placeholders on first boot
 
 ⸻
 
 9) Notes for later (already paved)
-	•	When you want pgvector, we’ll migrate memory_long.embedding from JSON to vector, keep same schema fields.
-	•	When you want PostGIS, we’ll convert sites.geom (GeoJSON) to geometry.
-	•	For voice, we already have MCP hook; adding ElevenLabs key will light it up.
+        •       When you want pgvector, we’ll migrate memory_long.embedding from JSON to vector, keep same schema fields.
+        •       When you want PostGIS, we’ll convert sites.geom (GeoJSON) to geometry.
+        •       For voice, we already have MCP hook; adding ElevenLabs key will light it up.
 
 ⸻
 

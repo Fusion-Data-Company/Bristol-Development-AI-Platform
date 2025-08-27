@@ -1,53 +1,53 @@
-# Bristol Agents Elite Analytics Deployment Report
+# Your Company Agents Elite Analytics Deployment Report
 
 ## Executive Summary
-✅ **DEPLOYMENT COMPLETE**: All four Bristol agents successfully deployed with full OpenRouter API integration and bulletproof error handling.
+✅ **DEPLOYMENT COMPLETE**: All four Your Company agents successfully deployed with full OpenRouter API integration and bulletproof error handling.
 
-## Bristol Agent Architecture Deployed
+## Your Company Agent Architecture Deployed
 
-### 1. Bristol Market Intelligence Agent
+### 1. Your Company Market Intelligence Agent
 - **OpenRouter Models**: GPT-5, Perplexity Sonar Deep Research, Gemini 2.5 Pro, Claude Opus 4
 - **Capabilities**: Sunbelt market analysis, rental trends, cap rate analysis, institutional activity tracking
 - **API Endpoint**: `/api/bristol/market-analysis`
 - **Status**: ✅ Operational
 
-### 2. Bristol Financial Modeling Agent  
+### 2. Your Company Financial Modeling Agent  
 - **OpenRouter Models**: GPT-5, Claude Opus 4, Gemini 2.5 Pro
 - **Capabilities**: DCF analysis, IRR calculations, NPV modeling, Monte Carlo simulations, LP/GP waterfall structures
 - **API Endpoint**: `/api/bristol/financial-analysis`
 - **Status**: ✅ Operational
 
-### 3. Bristol Demographics Intelligence Agent
+### 3. Your Company Demographics Intelligence Agent
 - **OpenRouter Models**: Gemini 2.5 Pro, GPT-5, Perplexity Sonar
 - **Capabilities**: Census ACS integration, migration patterns, economic indicators, target market identification
 - **API Endpoint**: `/api/bristol/demographics-analysis`
 - **Status**: ✅ Operational
 
-### 4. Bristol Site Analytics Agent
+### 4. Your Company Site Analytics Agent
 - **OpenRouter Models**: GPT-5, Gemini 2.5 Pro
-- **Capabilities**: Proprietary 100-point Bristol scoring, GIS analysis, POI evaluation, site feasibility
-- **API Endpoint**: `/api/bristol/site-analysis`
+- **Capabilities**: Proprietary 100-point Your Company scoring, GIS analysis, POI evaluation, site feasibility
+- **API Endpoint**: `/api/company/site-analysis`
 - **Status**: ✅ Operational
 
 ## Comprehensive API Endpoints Deployed
 
 ### Individual Agent Analysis
-- `POST /api/bristol/market-analysis` - Market intelligence for specific markets
-- `POST /api/bristol/financial-analysis` - Financial modeling and projections  
-- `POST /api/bristol/demographics-analysis` - Demographic and economic analysis
+- `POST /api/company/market-analysis` - Market intelligence for specific markets
+- `POST /api/company/financial-analysis` - Financial modeling and projections  
+- `POST /api/company/demographics-analysis` - Demographic and economic analysis
 - `POST /api/bristol/site-analysis` - Site evaluation and Bristol scoring
 
 ### Unified Analysis
-- `POST /api/bristol/comprehensive-analysis` - All agents in parallel with comprehensive scoring
+- `POST /api/company/comprehensive-analysis` - All agents in parallel with comprehensive scoring
 
 ### System Monitoring
-- `GET /api/bristol/agent-status` - Health status of all Bristol agents
+- `GET /api/company/agent-status` - Health status of all Your Company agents
 
 ## Technical Implementation Details
 
 ### Database Schema Enhancements
 - ✅ Added `intelligenceEntries` table for AI analysis results storage
-- ✅ Added `bristolScore` field to sites table for 100-point methodology
+- ✅ Added `companyScore` field to sites table for 100-point methodology
 - ✅ Enhanced error handling across all agent services
 - ✅ Fixed TypeScript type safety issues
 
