@@ -16,7 +16,7 @@ export interface AuthenticatedRequest extends Request {
     errorRecovery?: boolean;
   };
   session?: any;
-  isAuthenticated?: () => boolean;
+  isAuthenticated?: any;
   dbUnavailable?: boolean;
 }
 

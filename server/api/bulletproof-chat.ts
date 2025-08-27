@@ -36,7 +36,10 @@ router.post('/chat', async (req: any, res) => {
     // Validate request with comprehensive error handling
     let validatedRequest;
     try {
-      validatedRequest = chatRequestSchema.parse(req.body);
+      validatedRequest = { 
+        ...chatRequestSchema.parse(req.body),
+        retryCount: req.body.retryCount || 0
+      };
     } catch (validationError) {
       // If validation fails, create a minimal working request
       console.warn('Chat request validation failed, using fallback:', validationError);

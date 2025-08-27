@@ -338,10 +338,9 @@ export class RealDataService {
         title: `Company Score Analysis - ${site?.name || 'Unknown Site'}`,
         description: `Automated Company scoring: ${companyScore.total}/100`,
         category: 'scoring',
-        analysisData: companyScore.details,
-        location: `${site?.city || 'Unknown'}, ${site?.state || 'Unknown'}`,
-        dataQuality: 'high',
-        createdAt: new Date()
+        impact: 'medium',
+        priority: 5,
+        actionRequired: false
       });
 
       console.log(`✅ Updated Company score for site ${siteId}: ${companyScore.total}/100`);

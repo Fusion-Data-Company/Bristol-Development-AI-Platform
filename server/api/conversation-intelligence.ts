@@ -637,7 +637,7 @@ function analyzeComplexityProgression(history: any[]): 'increasing' | 'decreasin
 }
 
 function predictTopicProgression(currentTopic: string, patterns: any) {
-  const progressions = {
+  const progressions: Record<string, string[]> = {
     'market': ['analysis', 'trends', 'opportunities', 'strategy'],
     'financial': ['metrics', 'analysis', 'projections', 'optimization'],
     'development': ['planning', 'feasibility', 'execution', 'management'],

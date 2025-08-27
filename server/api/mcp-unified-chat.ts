@@ -197,8 +197,8 @@ router.post('/chat', async (req: any, res) => {
         // Get all Company MCP tools
         const companyTools = await eliteMCPSuperserver.getAvailableTools();
         
-        // Add model management tools
-        const modelTools = modelManagementMCPServer.getMCPTools();
+        // Add model management tools (placeholder for now)
+        const modelTools: any[] = [];
         
         availableTools = [...companyTools, ...modelTools];
         
