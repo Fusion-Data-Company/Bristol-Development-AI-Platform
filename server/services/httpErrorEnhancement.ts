@@ -53,7 +53,7 @@ export class HttpErrorEnhancement {
         const response = await fetch(url, {
           ...fetchOptions,
           headers: {
-            'User-Agent': 'Bristol-AI-Agent/2.0',
+            'User-Agent': 'Company-AI-Agent/2.0',
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             ...headers

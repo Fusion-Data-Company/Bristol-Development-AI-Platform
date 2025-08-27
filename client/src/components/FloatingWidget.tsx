@@ -74,7 +74,7 @@ export type ChatPayload = {
   maxTokens?: number;
 };
 
-// ---------- Default Bristol A.I. System Prompt ----------
+// ---------- Default Company A.I. System Prompt ----------
 const DEFAULT_MEGA_PROMPT = `I'm the Real Estate Intelligence AI – the proprietary AI intelligence system engineered for real estate development analysis. Drawing on decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
 
 ## CORE CAPABILITIES
@@ -292,7 +292,7 @@ export default function FloatingWidget({
       
       wsRef.current.onopen = () => {
         setWsConnected(true);
-        console.log("Bristol A.I. WebSocket connected");
+        console.log("Company A.I. WebSocket connected");
         
         // Send periodic ping to keep connection alive
         const pingInterval = setInterval(() => {
@@ -318,7 +318,7 @@ export default function FloatingWidget({
       
       wsRef.current.onclose = (event) => {
         setWsConnected(false);
-        console.log("Bristol A.I. WebSocket disconnected");
+        console.log("Company A.I. WebSocket disconnected");
         
         // URGENT: Disable auto-reconnect to prevent performance issues
         // Widget functionality continues without WebSocket
@@ -579,7 +579,7 @@ export default function FloatingWidget({
           apis: [
             { name: 'Unified MCP Chat', status: 'operational' as const, lastCheck: new Date().toISOString() },
             { name: 'Model Management', status: 'operational' as const, lastCheck: new Date().toISOString() },
-            { name: 'Bristol Tools', status: 'operational' as const, lastCheck: new Date().toISOString() }
+            { name: 'Company Tools', status: 'operational' as const, lastCheck: new Date().toISOString() }
           ],
           database: 'connected' as const,
           websocket: wsConnected ? 'connected' as const : 'disconnected' as const
@@ -772,7 +772,7 @@ export default function FloatingWidget({
         // Add system message about multi-agent analysis
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: `🚀 **Multi-Agent Analysis Initiated**\n\nI've activated the Bristol A.I. Elite multi-agent system for comprehensive property analysis:\n\n${result.agents.map((agent: string) => `• **${agent}**: Processing specialized analysis`).join('\n')}\n\nAll agents are now processing the property data in parallel. You'll see real-time updates as each agent completes their specialized analysis.`,
+          content: `🚀 **Multi-Agent Analysis Initiated**\n\nI've activated the Company A.I. Elite multi-agent system for comprehensive property analysis:\n\n${result.agents.map((agent: string) => `• **${agent}**: Processing specialized analysis`).join('\n')}\n\nAll agents are now processing the property data in parallel. You'll see real-time updates as each agent completes their specialized analysis.`,
           createdAt: nowISO()
         }]);
       }
@@ -799,17 +799,17 @@ export default function FloatingWidget({
 
   return (
     <>
-      {/* Elite Bristol A.I. Launcher - Enterprise Style */}
+      {/* Elite Company A.I. Launcher - Enterprise Style */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
           className="fixed bottom-6 left-6 z-[9997] group"
-          aria-label="Launch Bristol A.I. Elite Intelligence System"
+          aria-label="Launch Company A.I. Elite Intelligence System"
         >
           {/* Dramatic glow effects - always visible */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-bristol-cyan/80 via-bristol-electric/60 to-bristol-gold/70 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
-          <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/90 to-bristol-electric/90 rounded-3xl blur-lg opacity-100 group-hover:opacity-100 transition-all duration-300" />
-          <div className="absolute -inset-1 bg-bristol-cyan/40 rounded-3xl blur-md opacity-100 animate-pulse" />
+          <div className="absolute -inset-4 bg-gradient-to-r from-brand-cyan/80 via-brand-electric/60 to-brand-gold/70 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
+          <div className="absolute -inset-2 bg-gradient-to-r from-brand-cyan/90 to-brand-electric/90 rounded-3xl blur-lg opacity-100 group-hover:opacity-100 transition-all duration-300" />
+          <div className="absolute -inset-1 bg-brand-cyan/40 rounded-3xl blur-md opacity-100 animate-pulse" />
           
           {/* Metallic glass button - completely solid */}
           <div 
@@ -840,7 +840,7 @@ export default function FloatingWidget({
             </div>
             {/* Brain icon with metallic finish */}
             <div className="relative z-10">
-              <div className="absolute inset-0 bg-bristol-cyan blur-lg opacity-80 animate-pulse" />
+              <div className="absolute inset-0 bg-brand-cyan blur-lg opacity-80 animate-pulse" />
               <div 
                 className="relative w-12 h-12 rounded-2xl border-2 flex items-center justify-center shadow-2xl overflow-hidden"
                 style={{
@@ -850,8 +850,8 @@ export default function FloatingWidget({
                 }}
               >
                 {/* Glass overlay on icon */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-bristol-cyan/20 rounded-2xl" />
-                <Brain className="w-6 h-6 text-bristol-cyan relative z-10 drop-shadow-lg animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-brand-cyan/20 rounded-2xl" />
+                <Brain className="w-6 h-6 text-brand-cyan relative z-10 drop-shadow-lg animate-pulse" />
               </div>
             </div>
             
@@ -867,16 +867,16 @@ export default function FloatingWidget({
                   textShadow: '0 0 10px rgba(69, 214, 202, 0.5)',
                 }}
               >
-                BRISTOL A.I.
+                COMPANY A.I.
               </span>
-              <span className="text-sm font-bold text-bristol-cyan drop-shadow-md text-center">
+              <span className="text-sm font-bold text-brand-cyan drop-shadow-md text-center">
                 AI Real Estate Intelligence
               </span>
             </div>
             
             {/* CPU chip icon */}
             <div className="relative z-10">
-              <div className="absolute inset-0 bg-bristol-cyan blur-lg opacity-80 animate-pulse" />
+              <div className="absolute inset-0 bg-brand-cyan blur-lg opacity-80 animate-pulse" />
               <div 
                 className="relative w-12 h-12 rounded-xl border-2 flex items-center justify-center shadow-2xl overflow-hidden"
                 style={{
@@ -886,8 +886,8 @@ export default function FloatingWidget({
                 }}
               >
                 {/* Glass overlay on CPU icon */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-bristol-cyan/20 rounded-xl" />
-                <Cpu className="w-6 h-6 text-bristol-cyan relative z-10 drop-shadow-lg animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-brand-cyan/20 rounded-xl" />
+                <Cpu className="w-6 h-6 text-brand-cyan relative z-10 drop-shadow-lg animate-pulse" />
               </div>
             </div>
           </div>
@@ -916,8 +916,8 @@ export default function FloatingWidget({
             {/* Premium Glass Header */}
             <div className="relative overflow-hidden">
               {/* Ambient glow effects */}
-              <div className="absolute -top-10 -left-10 w-40 h-40 bg-bristol-cyan/10 rounded-full blur-3xl animate-pulse" />
-              <div className="absolute -top-5 -right-10 w-32 h-32 bg-bristol-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
+              <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-cyan/10 rounded-full blur-3xl animate-pulse" />
+              <div className="absolute -top-5 -right-10 w-32 h-32 bg-brand-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
               
               {/* Glass header background */}
               <div 
@@ -928,19 +928,19 @@ export default function FloatingWidget({
               />
               
               {/* Header content */}
-              <div className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-bristol-cyan/30">
+              <div className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-brand-cyan/30">
                 <div className="flex items-center gap-4">
                   <div className="relative group">
-                    <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-full blur-sm opacity-75 group-hover:opacity-100 animate-pulse" />
-                    <div className="relative bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 p-2 rounded-full border border-bristol-cyan/30">
-                      <Brain className="h-7 w-7 text-bristol-cyan" />
+                    <div className="absolute -inset-2 bg-gradient-to-r from-brand-cyan/20 to-brand-electric/20 rounded-full blur-sm opacity-75 group-hover:opacity-100 animate-pulse" />
+                    <div className="relative bg-gradient-to-r from-brand-cyan/20 to-brand-electric/20 p-2 rounded-full border border-brand-cyan/30">
+                      <Brain className="h-7 w-7 text-brand-cyan" />
                     </div>
                   </div>
                   <div>
-                    <h1 className="font-serif font-bold text-2xl bg-gradient-to-r from-bristol-cyan via-white to-bristol-gold bg-clip-text text-transparent drop-shadow-lg">
-                      BRISTOL A.I.
+                    <h1 className="font-serif font-bold text-2xl bg-gradient-to-r from-brand-cyan via-white to-brand-gold bg-clip-text text-transparent drop-shadow-lg">
+                      COMPANY A.I.
                     </h1>
-                    <p className="text-lg text-bristol-cyan font-bold tracking-wide uppercase mt-1 drop-shadow-lg">
+                    <p className="text-lg text-brand-cyan font-bold tracking-wide uppercase mt-1 drop-shadow-lg">
                       AI Real Estate Intelligence
                     </p>
                   </div>
@@ -954,7 +954,7 @@ export default function FloatingWidget({
                         console.log(`🔄 Model selection changed: ${e.target.value}`);
                         mcpChat.switchModel(e.target.value);
                       }}
-                      className="appearance-none bg-black/40 border border-bristol-cyan/30 rounded-xl px-4 py-2 text-sm text-bristol-cyan focus:border-bristol-cyan focus:ring-2 focus:ring-bristol-cyan/20 focus:outline-none cursor-pointer pr-10 font-medium"
+                      className="appearance-none bg-black/40 border border-brand-cyan/30 rounded-xl px-4 py-2 text-sm text-brand-cyan focus:border-brand-cyan focus:ring-2 focus:ring-brand-cyan/20 focus:outline-none cursor-pointer pr-10 font-medium"
                       disabled={mcpChat.isSwitching || mcpChat.modelsLoading}
                     >
                       {mcpChat.modelsLoading ? (
@@ -998,9 +998,9 @@ export default function FloatingWidget({
                     {/* Custom dropdown arrow with loading state */}
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                       {mcpChat.isSwitching ? (
-                        <div className="w-4 h-4 border border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border border-brand-cyan/40 border-t-brand-cyan rounded-full animate-spin"></div>
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-bristol-cyan group-hover:text-white transition-colors" />
+                        <ChevronDown className="w-4 h-4 text-brand-cyan group-hover:text-white transition-colors" />
                       )}
                     </div>
                     
@@ -1022,7 +1022,7 @@ export default function FloatingWidget({
                       <div className={`w-2 h-2 rounded-full ${
                         mcpChat.availableModels.length > 0 ? 'bg-green-400 animate-pulse' : 'bg-red-400'
                       }`} />
-                      <span className="text-bristol-cyan/70">
+                      <span className="text-brand-cyan/70">
                         {mcpChat.availableModels.length} models
                       </span>
                     </div>
@@ -1032,15 +1032,15 @@ export default function FloatingWidget({
                     onClick={() => setShowDataViz(!showDataViz)} 
                     className={cx(
                       "p-2 rounded-xl transition-all duration-300 group relative",
-                      "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
-                      "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
-                      "hover:shadow-lg hover:shadow-bristol-cyan/20",
-                      showDataViz && "bg-bristol-cyan/20 border-bristol-cyan/60"
+                      "bg-white/5 hover:bg-brand-cyan/10 backdrop-blur-sm",
+                      "border border-brand-cyan/20 hover:border-brand-cyan/50",
+                      "hover:shadow-lg hover:shadow-brand-cyan/20",
+                      showDataViz && "bg-brand-cyan/20 border-brand-cyan/60"
                     )}
                     aria-label="Toggle Data Visualization"
                     title="View Live Data Context"
                   >
-                    <BarChart3 className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                    <BarChart3 className="h-4 w-4 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
                   </button>
 
                   {/* Onboarding Guide Toggle */}
@@ -1048,33 +1048,33 @@ export default function FloatingWidget({
                     onClick={() => setShowOnboarding(true)} 
                     className={cx(
                       "p-2 rounded-xl transition-all duration-300 group relative",
-                      "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
-                      "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
-                      "hover:shadow-lg hover:shadow-bristol-cyan/20"
+                      "bg-white/5 hover:bg-brand-cyan/10 backdrop-blur-sm",
+                      "border border-brand-cyan/20 hover:border-brand-cyan/50",
+                      "hover:shadow-lg hover:shadow-brand-cyan/20"
                     )}
                     aria-label="Open AI Guide"
-                    title="Learn How to Use Bristol A.I."
+                    title="Learn How to Use Company A.I."
                   >
-                    <HelpCircle className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                    <HelpCircle className="h-4 w-4 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
                   </button>
 
                   <button 
                     onClick={() => setOpen(false)} 
                     className={cx(
                       "p-3 rounded-2xl transition-all duration-300 group relative",
-                      "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
-                      "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
-                      "hover:shadow-lg hover:shadow-bristol-cyan/20"
+                      "bg-white/5 hover:bg-brand-cyan/10 backdrop-blur-sm",
+                      "border border-brand-cyan/20 hover:border-brand-cyan/50",
+                      "hover:shadow-lg hover:shadow-brand-cyan/20"
                     )}
                     aria-label="Close"
                   >
-                    <X className="h-5 w-5 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                    <X className="h-5 w-5 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
                   </button>
                 </div>
               </div>
               
               {/* Navigation Tabs */}
-              <div className="border-b border-bristol-cyan/30 bg-bristol-ink/20 relative z-20">
+              <div className="border-b border-brand-cyan/30 bg-brand-ink/20 relative z-20">
                 <div className="flex">
                   <button
                     onClick={(e) => {
@@ -1086,8 +1086,8 @@ export default function FloatingWidget({
                     className={cx(
                       "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                       activeTab === "chat"
-                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                        ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                        : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
                     )}
                   >
                     AI Chat
@@ -1102,8 +1102,8 @@ export default function FloatingWidget({
                     className={cx(
                       "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                       activeTab === "data"
-                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                        ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                        : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
                     )}
                   >
                     Data
@@ -1118,8 +1118,8 @@ export default function FloatingWidget({
                     className={cx(
                       "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                       activeTab === "tools"
-                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                        ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                        : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
                     )}
                   >
                     Tools
@@ -1134,8 +1134,8 @@ export default function FloatingWidget({
                     className={cx(
                       "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                       activeTab === "agents"
-                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                        ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                        : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
                     )}
                   >
                     🤖 Agents
@@ -1150,8 +1150,8 @@ export default function FloatingWidget({
                     className={cx(
                       "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                       activeTab === "admin"
-                        ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                        : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                        ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                        : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
                     )}
                   >
                     Admin
@@ -1162,14 +1162,14 @@ export default function FloatingWidget({
 
             {/* Compact Model Selector */}
             <div 
-              className="px-6 py-3 border-b border-bristol-cyan/30 relative"
+              className="px-6 py-3 border-b border-brand-cyan/30 relative"
               style={{
                 background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(69, 214, 202, 0.05) 50%, rgba(168, 85, 247, 0.02) 100%)',
                 backdropFilter: 'blur(12px)',
               }}
             >
               {/* Ambient glow */}
-              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-bristol-cyan/10 rounded-full blur-2xl" />
+              <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-brand-cyan/10 rounded-full blur-2xl" />
               
               {modelError && (
                 <div 
@@ -1190,15 +1190,15 @@ export default function FloatingWidget({
                 
                 {/* Elite Model Selector - Fully Styled */}
                 <div className="flex-1 max-w-md">
-                  <label className="block text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <label className="block text-xs text-brand-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                     <Brain className="h-3 w-3 animate-pulse" />
                     AI Engine Selection
                   </label>
                   <div className="relative group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-bristol-gold/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/5 to-bristol-electric/5 rounded-2xl" />
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-cyan/30 via-brand-electric/20 to-brand-gold/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-brand-cyan/5 to-brand-electric/5 rounded-2xl" />
                     <select
-                      className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-bristol-cyan hover:text-white focus:text-white focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/40 disabled:opacity-50"
+                      className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-brand-cyan hover:text-white focus:text-white focus:outline-none focus:border-brand-electric focus:ring-2 focus:ring-brand-electric/40 disabled:opacity-50"
                       style={{
                         background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
                         borderColor: 'rgba(69, 214, 202, 0.6)',
@@ -1224,7 +1224,7 @@ export default function FloatingWidget({
                           };
                           
                           return (
-                            <option key={m.id} value={m.id} className="bg-bristol-ink text-bristol-cyan py-2 font-bold">
+                            <option key={m.id} value={m.id} className="bg-brand-ink text-brand-cyan py-2 font-bold">
                               {getProviderEmoji(m.id)} {m.label}
                             </option>
                           );
@@ -1232,7 +1232,7 @@ export default function FloatingWidget({
                       )}
                     </select>
                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                      <ChevronDown className="h-4 w-4 text-bristol-cyan" />
+                      <ChevronDown className="h-4 w-4 text-brand-cyan" />
                     </div>
                   </div>
                 </div>
@@ -1300,20 +1300,20 @@ export default function FloatingWidget({
                       backdropFilter: 'blur(8px)',
                     }}
                   />
-                  <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
-                  <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
+                  <div className="absolute top-10 right-10 w-24 h-24 bg-brand-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
+                  <div className="absolute bottom-20 left-10 w-32 h-32 bg-brand-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
                   
                   {/* Enhanced AI Features Panel */}
                   {(realTimeInsights || smartSuggestions.length > 0 || conversationAnalytics) && (
-                    <div className="relative z-20 p-4 border-b border-bristol-cyan/30 bg-gradient-to-r from-bristol-gold/5 to-bristol-maroon/5">
+                    <div className="relative z-20 p-4 border-b border-brand-cyan/30 bg-gradient-to-r from-brand-gold/5 to-brand-maroon/5">
                       <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-sm font-semibold text-bristol-cyan flex items-center gap-2">
-                          <Brain className="h-4 w-4 text-bristol-maroon" />
+                        <h4 className="text-sm font-semibold text-brand-cyan flex items-center gap-2">
+                          <Brain className="h-4 w-4 text-brand-maroon" />
                           AI Insights
                         </h4>
                         <button
                           onClick={() => setShowInsightsPanel(!showInsightsPanel)}
-                          className="text-bristol-stone hover:text-bristol-cyan transition-colors"
+                          className="text-brand-stone hover:text-brand-cyan transition-colors"
                         >
                           {showInsightsPanel ? 'Hide' : 'Show'}
                         </button>
@@ -1323,21 +1323,21 @@ export default function FloatingWidget({
                         <div className="space-y-3">
                           {/* Real-time Insights */}
                           {realTimeInsights && (
-                            <div className="p-3 bg-bristol-ink/20 rounded-lg border border-bristol-cyan/20">
+                            <div className="p-3 bg-brand-ink/20 rounded-lg border border-brand-cyan/20">
                               <div className="flex items-center gap-2 mb-2">
-                                <Sparkles className="h-4 w-4 text-bristol-gold" />
-                                <span className="text-sm font-medium text-bristol-cyan">Real-time Analysis</span>
+                                <Sparkles className="h-4 w-4 text-brand-gold" />
+                                <span className="text-sm font-medium text-brand-cyan">Real-time Analysis</span>
                               </div>
-                              <div className="text-sm text-bristol-stone">
+                              <div className="text-sm text-brand-stone">
                                 <div className="flex items-center gap-2 mb-1">
                                   <span>Urgency:</span>
-                                  <div className={`px-2 py-1 rounded text-xs ${realTimeInsights.urgency === 'critical' ? 'bg-red-900/50 text-red-300' : 'bg-bristol-cyan/20 text-bristol-cyan'}`}>
+                                  <div className={`px-2 py-1 rounded text-xs ${realTimeInsights.urgency === 'critical' ? 'bg-red-900/50 text-red-300' : 'bg-brand-cyan/20 text-brand-cyan'}`}>
                                     {realTimeInsights.urgency}
                                   </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span>Complexity:</span>
-                                  <div className="px-2 py-1 rounded text-xs bg-bristol-electric/20 text-bristol-electric border border-bristol-electric/30">
+                                  <div className="px-2 py-1 rounded text-xs bg-brand-electric/20 text-brand-electric border border-brand-electric/30">
                                     {realTimeInsights.complexity}
                                   </div>
                                 </div>
@@ -1347,20 +1347,20 @@ export default function FloatingWidget({
 
                           {/* Smart Suggestions */}
                           {smartSuggestions.length > 0 && (
-                            <div className="p-3 bg-bristol-ink/20 rounded-lg border border-bristol-cyan/20">
+                            <div className="p-3 bg-brand-ink/20 rounded-lg border border-brand-cyan/20">
                               <div className="flex items-center gap-2 mb-2">
-                                <Target className="h-4 w-4 text-bristol-maroon" />
-                                <span className="text-sm font-medium text-bristol-cyan">Smart Suggestions</span>
+                                <Target className="h-4 w-4 text-brand-maroon" />
+                                <span className="text-sm font-medium text-brand-cyan">Smart Suggestions</span>
                               </div>
                               <div className="space-y-2">
                                 {smartSuggestions.slice(0, 2).map((suggestion, index) => (
                                   <button
                                     key={index}
                                     onClick={() => setInput(suggestion.text)}
-                                    className="w-full text-left text-xs p-2 h-auto bg-bristol-sky/50 hover:bg-bristol-maroon hover:text-white text-bristol-stone rounded transition-colors"
+                                    className="w-full text-left text-xs p-2 h-auto bg-brand-sky/50 hover:bg-brand-maroon hover:text-white text-brand-stone rounded transition-colors"
                                   >
                                     <div className="flex items-start gap-2">
-                                      <div className="px-2 py-1 rounded text-xs bg-bristol-gold/20 text-bristol-gold border border-bristol-gold/30">
+                                      <div className="px-2 py-1 rounded text-xs bg-brand-gold/20 text-brand-gold border border-brand-gold/30">
                                         {suggestion.priority}
                                       </div>
                                       <span className="flex-1">{suggestion.text}</span>
@@ -1440,7 +1440,7 @@ export default function FloatingWidget({
             {/* Glass Chat Composer - Fixed at Bottom - Only show on chat tab */}
             {activeTab === "chat" && (
             <div 
-                className="border-t border-bristol-cyan/40 relative flex-shrink-0"
+                className="border-t border-brand-cyan/40 relative flex-shrink-0"
                 style={{
                   background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.95) 100%)',
                   backdropFilter: 'blur(20px) saturate(1.2)',
@@ -1448,19 +1448,19 @@ export default function FloatingWidget({
                 }}
               >
                 {/* Ambient glow */}
-                <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-40 h-6 bg-bristol-cyan/10 rounded-full blur-2xl" />
+                <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-40 h-6 bg-brand-cyan/10 rounded-full blur-2xl" />
                 
                 <div className="px-6 py-5 flex items-end gap-4">
                   <div className="flex-1 relative group">
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-3xl blur opacity-0 group-focus-within:opacity-100 transition duration-300 pointer-events-none" />
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-cyan/20 to-brand-electric/20 rounded-3xl blur opacity-0 group-focus-within:opacity-100 transition duration-300 pointer-events-none" />
                     <input
                       ref={inputRef}
                       value={input}
                       onChange={(e) => handleInputChange(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && !e.shiftKey ? handleSend() : null}
-                      placeholder={loading ? "Bristol A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
+                      placeholder={loading ? "Company A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
                       disabled={loading}
-                      className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-bristol-cyan/60 disabled:opacity-60 relative z-10"
+                      className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-brand-cyan/60 disabled:opacity-60 relative z-10"
                       style={{
                         background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
                         border: '1px solid rgba(69, 214, 202, 0.6)',
@@ -1470,7 +1470,7 @@ export default function FloatingWidget({
                     />
                     {loading && (
                       <div className="absolute right-5 top-1/2 transform -translate-y-1/2">
-                        <div className="w-5 h-5 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin" />
+                        <div className="w-5 h-5 border-2 border-brand-cyan/30 border-t-brand-cyan rounded-full animate-spin" />
                       </div>
                     )}
                   </div>
@@ -1491,13 +1491,13 @@ export default function FloatingWidget({
                     <div className="relative z-10 flex items-center gap-2">
                       {loading ? (
                         <>
-                          <div className="w-5 h-5 border-2 border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin" />
-                          <span className="text-bristol-cyan/80 font-bold">Processing</span>
+                          <div className="w-5 h-5 border-2 border-brand-cyan/40 border-t-brand-cyan rounded-full animate-spin" />
+                          <span className="text-brand-cyan/80 font-bold">Processing</span>
                         </>
                       ) : (
                         <>
-                          <Brain className="h-5 w-5 text-bristol-cyan group-hover:text-white transition-colors duration-300" />
-                          <span className="text-bristol-cyan group-hover:text-white transition-colors duration-300 font-bold">
+                          <Brain className="h-5 w-5 text-brand-cyan group-hover:text-white transition-colors duration-300" />
+                          <span className="text-brand-cyan group-hover:text-white transition-colors duration-300 font-bold">
                             ANALYZE
                           </span>
                         </>
@@ -1533,7 +1533,7 @@ export default function FloatingWidget({
   );
 }
 
-// Enhanced UI Components for Bristol A.I. Boss Agent
+// Enhanced UI Components for Company A.I. Boss Agent
 
 function DataPane({ data }: { data: any }) {
   const [selectedTool, setSelectedTool] = useState<string>("overview");
@@ -1630,27 +1630,27 @@ function DataPane({ data }: { data: any }) {
     <div className="flex-1 p-6">
       <div className="space-y-6">
         {/* MCP Server Status */}
-        <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-2xl p-4">
-          <h4 className="text-bristol-cyan font-semibold mb-3 flex items-center gap-2">
+        <div className="bg-brand-cyan/10 border border-brand-cyan/30 rounded-2xl p-4">
+          <h4 className="text-brand-cyan font-semibold mb-3 flex items-center gap-2">
             <Cpu className="h-4 w-4 animate-pulse" />
             MCP Server Integration
           </h4>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-bristol-cyan">PostgreSQL Server</span>
+              <span className="text-brand-cyan">PostgreSQL Server</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-bristol-cyan">Web Search</span>
+              <span className="text-brand-cyan">Web Search</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-bristol-cyan">File System</span>
+              <span className="text-brand-cyan">File System</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-bristol-cyan">Memory Store</span>
+              <span className="text-brand-cyan">Memory Store</span>
             </div>
           </div>
         </div>
@@ -1668,15 +1668,15 @@ function DataPane({ data }: { data: any }) {
               }}
               className={`p-3 rounded-xl border transition-all duration-300 text-left ${
                 selectedTool === key
-                  ? 'bg-bristol-cyan/20 border-bristol-cyan/50 text-bristol-cyan'
-                  : 'bg-black/40 border-gray-700 text-white hover:border-bristol-cyan/30 hover:bg-bristol-cyan/10'
+                  ? 'bg-brand-cyan/20 border-brand-cyan/50 text-brand-cyan'
+                  : 'bg-black/40 border-gray-700 text-white hover:border-brand-cyan/30 hover:bg-brand-cyan/10'
               }`}
             >
               <div className="flex items-center gap-2 mb-2">
                 {tool.icon}
                 <span className="text-sm font-semibold">{tool.name}</span>
                 {loadingTool === key && (
-                  <div className="w-3 h-3 border border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin"></div>
+                  <div className="w-3 h-3 border border-brand-cyan/40 border-t-brand-cyan rounded-full animate-spin"></div>
                 )}
               </div>
               <p className="text-xs opacity-80">{tool.description}</p>
@@ -1685,16 +1685,16 @@ function DataPane({ data }: { data: any }) {
         </div>
 
         {/* Tool Results Display */}
-        <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-4">
+        <div className="bg-black/40 border border-brand-cyan/30 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
+            <h4 className="text-brand-cyan font-semibold flex items-center gap-2">
               <Terminal className="h-4 w-4" />
               {dataTools[selectedTool as keyof typeof dataTools]?.name || "Select Tool"}
             </h4>
             <button
               onClick={() => executeTool(selectedTool)}
               disabled={loadingTool === selectedTool}
-              className="px-3 py-1 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+              className="px-3 py-1 bg-brand-cyan/20 hover:bg-brand-cyan/30 text-brand-cyan rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
             >
               {loadingTool === selectedTool ? "Loading..." : "Refresh"}
             </button>
@@ -1712,9 +1712,9 @@ function DataPane({ data }: { data: any }) {
                     {/* Summary Cards for Key Metrics */}
                     {selectedTool === "overview" && currentResult.totalProperties && (
                       <div className="grid grid-cols-3 gap-2 mb-4">
-                        <div className="bg-bristol-gold/10 border border-bristol-gold/20 rounded-lg p-2">
-                          <div className="text-lg font-bold text-bristol-gold">{currentResult.totalProperties}</div>
-                          <div className="text-xs text-bristol-gold/80">Properties</div>
+                        <div className="bg-brand-gold/10 border border-brand-gold/20 rounded-lg p-2">
+                          <div className="text-lg font-bold text-brand-gold">{currentResult.totalProperties}</div>
+                          <div className="text-xs text-brand-gold/80">Properties</div>
                         </div>
                         <div className="bg-green-400/10 border border-green-400/20 rounded-lg p-2">
                           <div className="text-lg font-bold text-green-400">${currentResult.totalValue?.toLocaleString() || "N/A"}</div>
@@ -1735,7 +1735,7 @@ function DataPane({ data }: { data: any }) {
                 )}
               </div>
             ) : (
-              <div className="text-bristol-cyan/60 text-sm text-center py-8">
+              <div className="text-brand-cyan/60 text-sm text-center py-8">
                 Select a data tool to view real-time information
               </div>
             )}
@@ -1743,47 +1743,47 @@ function DataPane({ data }: { data: any }) {
         </div>
 
         {/* Live Data Context */}
-        <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-2xl p-4">
-          <h4 className="text-bristol-gold font-semibold mb-3 flex items-center gap-2">
+        <div className="bg-brand-gold/10 border border-brand-gold/30 rounded-2xl p-4">
+          <h4 className="text-brand-gold font-semibold mb-3 flex items-center gap-2">
             <Activity className="h-4 w-4 animate-pulse" />
             Live Data Context
           </h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="text-bristol-gold/80">Portfolio Properties:</span>
+              <span className="text-brand-gold/80">Portfolio Properties:</span>
               <span className="text-white font-semibold ml-2">{data?.sites?.length || 0}</span>
             </div>
             <div>
-              <span className="text-bristol-gold/80">Active Markets:</span>
+              <span className="text-brand-gold/80">Active Markets:</span>
               <span className="text-white font-semibold ml-2">{Object.keys(data?.analytics?.stateDistribution || {}).length}</span>
             </div>
             <div>
-              <span className="text-bristol-gold/80">Total Units:</span>
+              <span className="text-brand-gold/80">Total Units:</span>
               <span className="text-white font-semibold ml-2">{data?.analytics?.totalUnits || 0}</span>
             </div>
             <div>
-              <span className="text-bristol-gold/80">Last Updated:</span>
+              <span className="text-brand-gold/80">Last Updated:</span>
               <span className="text-white font-semibold ml-2">{new Date().toLocaleTimeString()}</span>
             </div>
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="bg-bristol-electric/10 border border-bristol-electric/30 rounded-2xl p-4">
-          <h4 className="text-bristol-electric font-semibold mb-3 flex items-center gap-2">
+        <div className="bg-brand-electric/10 border border-brand-electric/30 rounded-2xl p-4">
+          <h4 className="text-brand-electric font-semibold mb-3 flex items-center gap-2">
             <Zap className="h-4 w-4 animate-pulse" />
             Quick Actions
           </h4>
           <div className="grid grid-cols-2 gap-2">
             <button 
               onClick={() => executeTool("overview")}
-              className="p-2 bg-bristol-cyan/10 hover:bg-bristol-cyan/20 border border-bristol-cyan/30 rounded-lg text-xs text-bristol-cyan transition-colors"
+              className="p-2 bg-brand-cyan/10 hover:bg-brand-cyan/20 border border-brand-cyan/30 rounded-lg text-xs text-brand-cyan transition-colors"
             >
               Refresh Portfolio
             </button>
             <button 
               onClick={() => executeTool("employment")}
-              className="p-2 bg-bristol-gold/10 hover:bg-bristol-gold/20 border border-bristol-gold/30 rounded-lg text-xs text-bristol-gold transition-colors"
+              className="p-2 bg-brand-gold/10 hover:bg-brand-gold/20 border border-brand-gold/30 rounded-lg text-xs text-brand-gold transition-colors"
             >
               Get Employment Data
             </button>
@@ -1922,15 +1922,15 @@ function AgentsPane({
   // Agent status colors and icons
   const getAgentStatus = (agentId: string) => {
     const task = activeTasks.find(t => t.agentId === agentId);
-    if (task?.status === 'running') return { color: 'bg-bristol-cyan', icon: '🔄', text: 'ACTIVE' };
+    if (task?.status === 'running') return { color: 'bg-brand-cyan', icon: '🔄', text: 'ACTIVE' };
     if (task?.status === 'completed') return { color: 'bg-green-400', icon: '✅', text: 'COMPLETE' };
     if (task?.status === 'error') return { color: 'bg-red-400', icon: '❌', text: 'ERROR' };
-    return { color: 'bg-bristol-gold', icon: '⚡', text: 'READY' };
+    return { color: 'bg-brand-gold', icon: '⚡', text: 'READY' };
   };
 
   const agentColors = {
-    'bristol-master': 'bristol-cyan',
-    'data-processor': 'bristol-gold',
+    'brand-master': 'brand-cyan',
+    'data-processor': 'brand-gold',
     'financial-analyst': 'emerald-400',
     'market-intelligence': 'purple-400',
     'lead-manager': 'pink-400'
@@ -1940,15 +1940,15 @@ function AgentsPane({
     <div className="flex-1 overflow-y-auto cyberpunk-scrollbar">
       <div className="p-6 space-y-6">
         {/* Multi-Agent System Header */}
-        <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-6">
+        <div className="bg-brand-maroon/10 border border-brand-gold/30 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-bristol-gold/20 border border-bristol-gold/40 rounded-lg flex items-center justify-center">
-                <Brain className="h-5 w-5 text-bristol-gold" />
+              <div className="w-10 h-10 bg-brand-gold/20 border border-brand-gold/40 rounded-lg flex items-center justify-center">
+                <Brain className="h-5 w-5 text-brand-gold" />
               </div>
               <div>
-                <h4 className="text-bristol-gold font-bold text-xl tracking-wide">BRISTOL AI AGENTS</h4>
-                <p className="text-bristol-gold/70 text-sm">5-Agent Intelligence System • Parallel Processing</p>
+                <h4 className="text-brand-gold font-bold text-xl tracking-wide">COMPANY AI AGENTS</h4>
+                <p className="text-brand-gold/70 text-sm">5-Agent Intelligence System • Parallel Processing</p>
               </div>
             </div>
             
@@ -1966,8 +1966,8 @@ function AgentsPane({
                 onClick={() => setOrchestrationMode(orchestrationMode === 'parallel' ? 'sequential' : 'parallel')}
                 className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
                   orchestrationMode === 'parallel'
-                    ? 'bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/30'
-                    : 'bg-bristol-gold/20 text-bristol-gold border border-bristol-gold/30'
+                    ? 'bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30'
+                    : 'bg-brand-gold/20 text-brand-gold border border-brand-gold/30'
                 }`}
               >
                 <Zap className="h-3 w-3" />
@@ -1978,13 +1978,13 @@ function AgentsPane({
 
           {/* System Status Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="bg-bristol-cyan/10 border border-bristol-cyan/20 rounded-lg p-3">
-              <div className="text-lg font-bold text-bristol-cyan">{agents.length}</div>
-              <div className="text-xs text-bristol-cyan/80">Active Agents</div>
+            <div className="bg-brand-cyan/10 border border-brand-cyan/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-brand-cyan">{agents.length}</div>
+              <div className="text-xs text-brand-cyan/80">Active Agents</div>
             </div>
-            <div className="bg-bristol-gold/10 border border-bristol-gold/20 rounded-lg p-3">
-              <div className="text-lg font-bold text-bristol-gold">{activeTasks.length}</div>
-              <div className="text-xs text-bristol-gold/80">Running Tasks</div>
+            <div className="bg-brand-gold/10 border border-brand-gold/20 rounded-lg p-3">
+              <div className="text-lg font-bold text-brand-gold">{activeTasks.length}</div>
+              <div className="text-xs text-brand-gold/80">Running Tasks</div>
             </div>
             <div className="bg-green-400/10 border border-green-400/20 rounded-lg p-3">
               <div className="text-lg font-bold text-green-400">{agentCommunication.length}</div>
@@ -2002,7 +2002,7 @@ function AgentsPane({
           {/* Master Coordination Agent */}
             {agents.filter(agent => agent.id === 'master').map((agent, index) => {
               const status = getAgentStatus(agent.id);
-              const colorClass = 'bristol-cyan';
+              const colorClass = 'brand-cyan';
               const task = activeTasks.find(t => t.agentId === agent.id);
               const progress = taskProgress[agent.id] || 0;
 
@@ -2079,7 +2079,7 @@ function AgentsPane({
           {/* Data & Market Intelligence Agents */}
           {agents.filter(agent => agent.id === 'data-processing' || agent.id === 'market-intelligence').map((agent, index) => {
               const status = getAgentStatus(agent.id);
-              const colorClass = agent.id === 'data-processing' ? 'bristol-gold' : 'purple-400';
+              const colorClass = agent.id === 'data-processing' ? 'brand-gold' : 'purple-400';
               const task = activeTasks.find(t => t.agentId === agent.id);
               const progress = taskProgress[agent.id] || 0;
 
@@ -2233,7 +2233,7 @@ function AgentsPane({
           {/* Legacy Agent Grid (fallback for any remaining agents) */}
           {agents.filter(agent => !['master', 'data-processing', 'market-intelligence', 'financial-analysis', 'lead-management'].includes(agent.id)).map((agent, index) => {
             const status = getAgentStatus(agent.id);
-            const colorClass = agentColors[agent.id as keyof typeof agentColors] || 'bristol-cyan';
+            const colorClass = agentColors[agent.id as keyof typeof agentColors] || 'brand-cyan';
             const task = activeTasks.find(t => t.agentId === agent.id);
             const progress = taskProgress[agent.id] || 0;
 
@@ -2312,52 +2312,52 @@ function AgentsPane({
         </div>
 
         {/* Property Analysis Test */}
-        <div className="bg-bristol-electric/10 border border-bristol-electric/30 rounded-2xl p-6">
+        <div className="bg-brand-electric/10 border border-brand-electric/30 rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-bristol-electric/20 border border-bristol-electric/40 rounded-lg flex items-center justify-center">
-              <Target className="h-4 w-4 text-bristol-electric" />
+            <div className="w-8 h-8 bg-brand-electric/20 border border-brand-electric/40 rounded-lg flex items-center justify-center">
+              <Target className="h-4 w-4 text-brand-electric" />
             </div>
             <div>
-              <h4 className="text-bristol-electric font-bold text-lg">COORDINATED ANALYSIS</h4>
-              <p className="text-bristol-electric/70 text-sm">Test multi-agent property evaluation</p>
+              <h4 className="text-brand-electric font-bold text-lg">COORDINATED ANALYSIS</h4>
+              <p className="text-brand-electric/70 text-sm">Test multi-agent property evaluation</p>
             </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-bristol-electric/80 text-sm font-medium mb-2">Property Name</label>
+              <label className="block text-brand-electric/80 text-sm font-medium mb-2">Property Name</label>
               <input
                 type="text"
                 value={testProperty.name}
                 onChange={(e) => setTestProperty({...testProperty, name: e.target.value})}
-                className="w-full bg-black/40 border border-bristol-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-bristol-electric/60"
+                className="w-full bg-black/40 border border-brand-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-electric/60"
               />
             </div>
             <div>
-              <label className="block text-bristol-electric/80 text-sm font-medium mb-2">Address</label>
+              <label className="block text-brand-electric/80 text-sm font-medium mb-2">Address</label>
               <input
                 type="text"
                 value={testProperty.address}
                 onChange={(e) => setTestProperty({...testProperty, address: e.target.value})}
-                className="w-full bg-black/40 border border-bristol-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-bristol-electric/60"
+                className="w-full bg-black/40 border border-brand-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-electric/60"
               />
             </div>
             <div>
-              <label className="block text-bristol-electric/80 text-sm font-medium mb-2">Units</label>
+              <label className="block text-brand-electric/80 text-sm font-medium mb-2">Units</label>
               <input
                 type="number"
                 value={testProperty.units}
                 onChange={(e) => setTestProperty({...testProperty, units: parseInt(e.target.value)})}
-                className="w-full bg-black/40 border border-bristol-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-bristol-electric/60"
+                className="w-full bg-black/40 border border-brand-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-electric/60"
               />
             </div>
             <div>
-              <label className="block text-bristol-electric/80 text-sm font-medium mb-2">Square Feet</label>
+              <label className="block text-brand-electric/80 text-sm font-medium mb-2">Square Feet</label>
               <input
                 type="number"
                 value={testProperty.sqft}
                 onChange={(e) => setTestProperty({...testProperty, sqft: parseInt(e.target.value)})}
-                className="w-full bg-black/40 border border-bristol-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-bristol-electric/60"
+                className="w-full bg-black/40 border border-brand-electric/30 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-brand-electric/60"
               />
             </div>
           </div>
@@ -2394,7 +2394,7 @@ function AgentsPane({
           >
             {/* Animated background gradient for active state */}
             {activeTasks.length > 0 && (
-              <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/30 to-bristol-gold/20 animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/20 via-brand-gold/30 to-brand-gold/20 animate-pulse" />
             )}
             
             {/* Glass shimmer effect */}
@@ -2405,7 +2405,7 @@ function AgentsPane({
             <div className="relative z-10 flex items-center justify-center gap-3">
               {activeTasks.length > 0 ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-bristol-gold/40 border-t-bristol-gold rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-brand-gold/40 border-t-brand-gold rounded-full animate-spin" />
                   <span className="font-bold tracking-wide">AGENTS ANALYZING...</span>
                 </>
               ) : (
@@ -2420,30 +2420,30 @@ function AgentsPane({
 
         {/* Real-time Agent Output Windows */}
         {activeTasks.length > 0 && (
-          <div className="bg-black/60 border border-bristol-cyan/30 rounded-2xl p-6" id="agent-output-section">
+          <div className="bg-black/60 border border-brand-cyan/30 rounded-2xl p-6" id="agent-output-section">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-bristol-cyan/20 border border-bristol-cyan/40 rounded-lg flex items-center justify-center">
-                <Terminal className="h-4 w-4 text-bristol-cyan animate-pulse" />
+              <div className="w-8 h-8 bg-brand-cyan/20 border border-brand-cyan/40 rounded-lg flex items-center justify-center">
+                <Terminal className="h-4 w-4 text-brand-cyan animate-pulse" />
               </div>
               <div>
-                <h4 className="text-bristol-cyan font-bold text-lg">LIVE AGENT OUTPUT</h4>
-                <p className="text-bristol-cyan/70 text-sm">Real-time analysis streams from all active agents</p>
+                <h4 className="text-brand-cyan font-bold text-lg">LIVE AGENT OUTPUT</h4>
+                <p className="text-brand-cyan/70 text-sm">Real-time analysis streams from all active agents</p>
               </div>
             </div>
             
             <div className="grid gap-4">
               {activeTasks.map((task, index) => {
                 const agent = agents.find(a => a.id === task.agentId);
-                const colorClass = agentColors[task.agentId as keyof typeof agentColors] || 'bristol-cyan';
+                const colorClass = agentColors[task.agentId as keyof typeof agentColors] || 'brand-cyan';
                 const progress = taskProgress[task.agentId] || 0;
 
                 // Get agent specialization info
                 const getAgentSpecialization = (agentId: string) => {
                   switch(agentId) {
-                    case 'bristol-master':
+                    case 'brand-master':
                       return {
                         category: 'MASTER COORDINATION',
-                        description: 'Bristol Master Agent - Orchestrates analysis & synthesizes insights',
+                        description: 'Company Master Agent - Orchestrates analysis & synthesizes insights',
                         icon: '🧠'
                       };
                     case 'data-processor':
@@ -2604,16 +2604,16 @@ function AgentsPane({
             </div>
             
             {/* Overall Progress */}
-            <div className="mt-4 p-4 bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-xl">
+            <div className="mt-4 p-4 bg-brand-maroon/10 border border-brand-maroon/30 rounded-xl">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-bristol-maroon font-semibold text-sm">OVERALL PROGRESS</span>
-                <span className="text-bristol-maroon text-sm">
+                <span className="text-brand-maroon font-semibold text-sm">OVERALL PROGRESS</span>
+                <span className="text-brand-maroon text-sm">
                   {Math.round(Object.values(taskProgress).reduce((a: number, b: unknown) => a + (b as number), 0) / Object.keys(taskProgress).length || 0)}%
                 </span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2">
                 <div 
-                  className="bg-gradient-to-r from-bristol-maroon to-bristol-gold h-2 rounded-full transition-all duration-500"
+                  className="bg-gradient-to-r from-brand-maroon to-brand-gold h-2 rounded-full transition-all duration-500"
                   style={{ 
                     width: `${Math.round(Object.values(taskProgress).reduce((a: number, b: unknown) => a + (b as number), 0) / Object.keys(taskProgress).length || 0)}%` 
                   }}
@@ -2628,14 +2628,14 @@ function AgentsPane({
 
         {/* Agent Communication Log */}
         {agentCommunication.length > 0 && (
-          <div className="bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-2xl p-6">
+          <div className="bg-brand-maroon/10 border border-brand-maroon/30 rounded-2xl p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-bristol-maroon/20 border border-bristol-maroon/40 rounded-lg flex items-center justify-center">
-                <MessageSquare className="h-4 w-4 text-bristol-maroon" />
+              <div className="w-8 h-8 bg-brand-maroon/20 border border-brand-maroon/40 rounded-lg flex items-center justify-center">
+                <MessageSquare className="h-4 w-4 text-brand-maroon" />
               </div>
               <div>
-                <h4 className="text-bristol-maroon font-bold text-lg">INTER-AGENT COMMUNICATION</h4>
-                <p className="text-bristol-maroon/70 text-sm">Real-time agent coordination messages</p>
+                <h4 className="text-brand-maroon font-bold text-lg">INTER-AGENT COMMUNICATION</h4>
+                <p className="text-brand-maroon/70 text-sm">Real-time agent coordination messages</p>
               </div>
             </div>
             
@@ -2644,9 +2644,9 @@ function AgentsPane({
                 <div key={index} className="bg-black/40 border border-gray-700 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-bristol-cyan text-sm font-medium">{msg.from}</span>
+                      <span className="text-brand-cyan text-sm font-medium">{msg.from}</span>
                       <span className="text-gray-500">→</span>
-                      <span className="text-bristol-gold text-sm font-medium">{msg.to}</span>
+                      <span className="text-brand-gold text-sm font-medium">{msg.to}</span>
                     </div>
                     <span className="text-xs text-gray-400">{new Date(msg.timestamp).toLocaleTimeString()}</span>
                   </div>
@@ -2775,12 +2775,12 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
     <div className="flex-1 p-6">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h4 className="text-bristol-gold font-semibold flex items-center gap-2">
+          <h4 className="text-brand-gold font-semibold flex items-center gap-2">
             <Zap className="h-4 w-4" />
             MCP BOSS AGENT TOOLS
           </h4>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-bristol-cyan">Enable MCP</span>
+            <span className="text-xs text-brand-cyan">Enable MCP</span>
             <button
               onClick={() => setMcpEnabled(!mcpEnabled)}
               className={`
@@ -2817,14 +2817,14 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
         <div className="space-y-4">
           {loadingMcp ? (
             <div className="flex items-center justify-center py-8">
-              <div className="w-6 h-6 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin"></div>
-              <span className="ml-3 text-bristol-cyan">Loading MCP Tools...</span>
+              <div className="w-6 h-6 border-2 border-brand-cyan/30 border-t-brand-cyan rounded-full animate-spin"></div>
+              <span className="ml-3 text-brand-cyan">Loading MCP Tools...</span>
             </div>
           ) : (
             <>
               {/* Data Tools */}
-              <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-2xl p-4">
-                <h5 className="text-bristol-cyan font-semibold mb-3 text-sm">Data Access Tools</h5>
+              <div className="bg-brand-cyan/10 border border-brand-cyan/30 rounded-2xl p-4">
+                <h5 className="text-brand-cyan font-semibold mb-3 text-sm">Data Access Tools</h5>
                 <div className="grid gap-2">
                   {mcpTools.filter(tool => tool.category === 'data').map((tool, index) => (
                     <div key={index} className="space-y-2">
@@ -2836,18 +2836,18 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                         disabled={executingTool === tool.name}
                         className={`w-full flex items-center justify-between p-3 border rounded-xl transition-all duration-300 ${
                           executingTool === tool.name
-                            ? 'bg-bristol-cyan/20 border-bristol-cyan/60 cursor-not-allowed'
+                            ? 'bg-brand-cyan/20 border-brand-cyan/60 cursor-not-allowed'
                             : selectedTool === tool.name
-                              ? 'bg-bristol-cyan/15 border-bristol-cyan/50'
-                              : 'bg-black/40 hover:bg-bristol-cyan/10 border-gray-700 hover:border-bristol-cyan/50'
+                              ? 'bg-brand-cyan/15 border-brand-cyan/50'
+                              : 'bg-black/40 hover:bg-brand-cyan/10 border-gray-700 hover:border-brand-cyan/50'
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           <div className={`transition-transform duration-300 ${executingTool === tool.name ? 'animate-spin' : ''}`}>
                             {executingTool === tool.name ? (
-                              <div className="h-4 w-4 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin" />
+                              <div className="h-4 w-4 border-2 border-brand-cyan/30 border-t-brand-cyan rounded-full animate-spin" />
                             ) : (
-                              <Database className="h-4 w-4 text-bristol-cyan" />
+                              <Database className="h-4 w-4 text-brand-cyan" />
                             )}
                           </div>
                           <div className="text-left">
@@ -2862,17 +2862,17 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                                 e.stopPropagation();
                                 injectDataToChat(toolResults[tool.name], tool.name);
                               }}
-                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                              className="px-2 py-1 bg-brand-gold/20 hover:bg-brand-gold/30 text-brand-gold text-xs rounded-md transition-colors"
                             >
                               Inject
                             </button>
                           )}
                           <div className={`h-2 w-2 rounded-full ${
-                            executingTool === tool.name ? 'bg-bristol-cyan animate-pulse' :
+                            executingTool === tool.name ? 'bg-brand-cyan animate-pulse' :
                             toolResults[tool.name] ? 'bg-green-400' : 'bg-green-400 animate-pulse'
                           }`} />
                           <span className={`text-xs font-semibold ${
-                            executingTool === tool.name ? 'text-bristol-cyan' :
+                            executingTool === tool.name ? 'text-brand-cyan' :
                             toolResults[tool.name] ? 'text-green-400' : 'text-green-400'
                           }`}>
                             {executingTool === tool.name ? 'RUNNING' : toolResults[tool.name] ? 'READY' : 'READY'}
@@ -2882,16 +2882,16 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                       
                       {/* Show result preview if available */}
                       {toolResults[tool.name] && selectedTool === tool.name && (
-                        <div className="ml-6 p-3 bg-bristol-cyan/5 border border-bristol-cyan/20 rounded-lg">
+                        <div className="ml-6 p-3 bg-brand-cyan/5 border border-brand-cyan/20 rounded-lg">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs text-bristol-cyan font-semibold">RESULT PREVIEW</span>
+                            <span className="text-xs text-brand-cyan font-semibold">RESULT PREVIEW</span>
                             <div className="flex gap-2">
                               <button
                                 onClick={() => {
                                   navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
                                   alert('Copied to clipboard!');
                                 }}
-                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                                className="text-xs text-brand-gold hover:text-brand-gold/70"
                               >
                                 📋 Copy
                               </button>
@@ -2915,17 +2915,17 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
               </div>
 
               {/* External API Tools */}
-              <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-2xl p-4">
-                <h5 className="text-bristol-gold font-semibold mb-3 text-sm">External API Tools</h5>
+              <div className="bg-brand-gold/10 border border-brand-gold/30 rounded-2xl p-4">
+                <h5 className="text-brand-gold font-semibold mb-3 text-sm">External API Tools</h5>
                 <div className="grid gap-2">
                   {mcpTools.filter(tool => tool.category === 'external').map((tool, index) => (
                     <button
                       key={index}
                       onClick={() => executeMcpTool(tool.name)}
-                      className="flex items-center justify-between p-3 bg-black/40 hover:bg-bristol-gold/10 border border-gray-700 hover:border-bristol-gold/50 rounded-xl transition-all duration-300"
+                      className="flex items-center justify-between p-3 bg-black/40 hover:bg-brand-gold/10 border border-gray-700 hover:border-brand-gold/50 rounded-xl transition-all duration-300"
                     >
                       <div className="flex items-center gap-3">
-                        <Zap className="h-4 w-4 text-bristol-gold" />
+                        <Zap className="h-4 w-4 text-brand-gold" />
                         <div className="text-left">
                           <div className="text-white font-medium text-sm">{tool.name.replace(/_/g, ' ').replace(/get /g, '').toUpperCase()}</div>
                           <div className="text-xs text-gray-400">{tool.description}</div>
@@ -2980,7 +2980,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                                 e.stopPropagation();
                                 injectDataToChat(toolResults[tool.name], tool.name);
                               }}
-                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                              className="px-2 py-1 bg-brand-gold/20 hover:bg-brand-gold/30 text-brand-gold text-xs rounded-md transition-colors"
                             >
                               Inject
                             </button>
@@ -3009,7 +3009,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                                   navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
                                   alert('Copied to clipboard!');
                                 }}
-                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                                className="text-xs text-brand-gold hover:text-brand-gold/70"
                               >
                                 📋 Copy
                               </button>
@@ -3072,7 +3072,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                                 e.stopPropagation();
                                 injectDataToChat(toolResults[tool.name], tool.name);
                               }}
-                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                              className="px-2 py-1 bg-brand-gold/20 hover:bg-brand-gold/30 text-brand-gold text-xs rounded-md transition-colors"
                             >
                               Inject
                             </button>
@@ -3100,7 +3100,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                                   navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
                                   alert('Copied to clipboard!');
                                 }}
-                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                                className="text-xs text-brand-gold hover:text-brand-gold/70"
                               >
                                 📋 Copy
                               </button>
@@ -3163,7 +3163,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                                 e.stopPropagation();
                                 injectDataToChat(toolResults[tool.name], tool.name);
                               }}
-                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                              className="px-2 py-1 bg-brand-gold/20 hover:bg-brand-gold/30 text-brand-gold text-xs rounded-md transition-colors"
                             >
                               Inject
                             </button>
@@ -3191,7 +3191,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                                   navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
                                   alert('Copied to clipboard!');
                                 }}
-                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                                className="text-xs text-brand-gold hover:text-brand-gold/70"
                               >
                                 📋 Copy
                               </button>
@@ -3254,7 +3254,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                                 e.stopPropagation();
                                 injectDataToChat(toolResults[tool.name], tool.name);
                               }}
-                              className="px-2 py-1 bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold text-xs rounded-md transition-colors"
+                              className="px-2 py-1 bg-brand-gold/20 hover:bg-brand-gold/30 text-brand-gold text-xs rounded-md transition-colors"
                             >
                               Inject
                             </button>
@@ -3282,7 +3282,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
                                   navigator.clipboard.writeText(formatToolResult(toolResults[tool.name].result));
                                   alert('Copied to clipboard!');
                                 }}
-                                className="text-xs text-bristol-gold hover:text-bristol-gold/70"
+                                className="text-xs text-brand-gold hover:text-brand-gold/70"
                               >
                                 📋 Copy
                               </button>
@@ -3310,11 +3310,11 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
         
         {/* Execution History */}
         {executionHistory.length > 0 && (
-          <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-4">
+          <div className="bg-brand-maroon/10 border border-brand-gold/30 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Terminal className="h-4 w-4 text-bristol-gold" />
-              <span className="text-sm font-semibold text-bristol-gold">EXECUTION HISTORY</span>
-              <span className="text-xs text-bristol-gold/70">({executionHistory.length}/10)</span>
+              <Terminal className="h-4 w-4 text-brand-gold" />
+              <span className="text-sm font-semibold text-brand-gold">EXECUTION HISTORY</span>
+              <span className="text-xs text-brand-gold/70">({executionHistory.length}/10)</span>
             </div>
             <div className="space-y-2 max-h-48 overflow-y-auto">
               {executionHistory.map((entry, index) => (
@@ -3347,17 +3347,17 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
           </div>
         )}
 
-        <div className="bg-bristol-maroon/10 border border-bristol-gold/30 rounded-2xl p-4">
+        <div className="bg-brand-maroon/10 border border-brand-gold/30 rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Terminal className="h-4 w-4 text-bristol-gold" />
-            <span className="text-sm font-semibold text-bristol-gold">BOSS AGENT STATUS</span>
+            <Terminal className="h-4 w-4 text-brand-gold" />
+            <span className="text-sm font-semibold text-brand-gold">BOSS AGENT STATUS</span>
           </div>
           <div className="text-sm text-white">
             MCP Server: <span className="text-green-400">Connected</span><br />
             API Access: <span className="text-green-400">Full Permissions</span><br />
             Real-time Data: <span className="text-green-400">Active</span><br />
-            Tool Execution: <span className="text-bristol-gold">Authorized</span><br />
-            Tools Executed: <span className="text-bristol-cyan">{executionHistory.length}</span>
+            Tool Execution: <span className="text-brand-gold">Authorized</span><br />
+            Tools Executed: <span className="text-brand-cyan">{executionHistory.length}</span>
           </div>
         </div>
       </div>
@@ -3536,15 +3536,15 @@ function AdminPane({
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* System Configuration Navigation */}
-      <div className="flex-shrink-0 p-4 border-b border-bristol-gold/20">
+      <div className="flex-shrink-0 p-4 border-b border-brand-gold/20">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-bristol-gold/20 border border-bristol-gold/40 rounded-lg flex items-center justify-center">
-              <Settings className="h-4 w-4 text-bristol-gold" />
+            <div className="w-8 h-8 bg-brand-gold/20 border border-brand-gold/40 rounded-lg flex items-center justify-center">
+              <Settings className="h-4 w-4 text-brand-gold" />
             </div>
             <div>
-              <h4 className="text-bristol-gold font-bold text-lg tracking-wide">SYSTEM CONFIG</h4>
-              <p className="text-bristol-gold/70 text-xs">Enterprise Admin Controls</p>
+              <h4 className="text-brand-gold font-bold text-lg tracking-wide">SYSTEM CONFIG</h4>
+              <p className="text-brand-gold/70 text-xs">Enterprise Admin Controls</p>
             </div>
           </div>
           
@@ -3553,8 +3553,8 @@ function AdminPane({
               onClick={() => setShowMcpConfig(!showMcpConfig)}
               className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2 ${
                 showMcpConfig 
-                  ? 'bg-bristol-cyan text-black border border-bristol-cyan/50' 
-                  : 'bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan border border-bristol-cyan/30'
+                  ? 'bg-brand-cyan text-black border border-brand-cyan/50' 
+                  : 'bg-brand-cyan/20 hover:bg-brand-cyan/30 text-brand-cyan border border-brand-cyan/30'
               }`}
             >
               <CircuitBoard className="h-3 w-3" />
@@ -3588,16 +3588,16 @@ function AdminPane({
               className={`
                 px-3 py-1.5 rounded-lg font-medium text-sm transition-all duration-300 flex items-center gap-2 relative overflow-hidden
                 ${savingSettings 
-                  ? 'bg-bristol-gold/40 text-bristol-gold/70 cursor-not-allowed' 
+                  ? 'bg-brand-gold/40 text-brand-gold/70 cursor-not-allowed' 
                   : saveSuccess
                     ? 'bg-green-500/30 text-green-400 border-green-400/50'
-                    : 'bg-bristol-gold/20 hover:bg-bristol-gold/30 text-bristol-gold border border-bristol-gold/30 hover:scale-105 hover:shadow-lg hover:shadow-bristol-gold/20'
+                    : 'bg-brand-gold/20 hover:bg-brand-gold/30 text-brand-gold border border-brand-gold/30 hover:scale-105 hover:shadow-lg hover:shadow-brand-gold/20'
                 }
               `}
             >
               <div className={`transition-transform duration-300 ${savingSettings ? 'animate-spin' : saveSuccess ? 'animate-bounce' : ''}`}>
                 {savingSettings ? (
-                  <div className="h-3 w-3 border-2 border-bristol-gold/30 border-t-bristol-gold rounded-full animate-spin" />
+                  <div className="h-3 w-3 border-2 border-brand-gold/30 border-t-brand-gold rounded-full animate-spin" />
                 ) : saveSuccess ? (
                   <div className="h-3 w-3 flex items-center justify-center">
                     <div className="h-2 w-1 bg-green-400 rounded-full transform rotate-45 origin-bottom"></div>
@@ -3613,7 +3613,7 @@ function AdminPane({
               
               {/* Shimmer effect on hover */}
               {!savingSettings && !saveSuccess && (
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bristol-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -skew-x-12 animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-gold/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -skew-x-12 animate-pulse"></div>
               )}
               
               {/* Success ripple effect */}
@@ -3630,7 +3630,7 @@ function AdminPane({
         
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-bristol-cyan font-medium">Real-time Data Injection</span>
+            <span className="text-brand-cyan font-medium">Real-time Data Injection</span>
             <button
               onClick={() => setRealTimeData(!realTimeData)}
               className={`
@@ -3664,15 +3664,15 @@ function AdminPane({
         </div>
         
         <div>
-          <label className="block text-bristol-cyan font-semibold mb-3">
-            BRISTOL A.I. SYSTEM PROMPT
+          <label className="block text-brand-cyan font-semibold mb-3">
+            COMPANY A.I. SYSTEM PROMPT
           </label>
           <textarea
             value={systemPrompt}
             onChange={(e) => setSystemPrompt(e.target.value)}
             rows={12}
             className="cyberpunk-input w-full text-sm font-mono resize-none"
-            placeholder="Enter the Bristol A.I. system prompt..."
+            placeholder="Enter the Company A.I. system prompt..."
           />
           
           <div className="flex gap-2 mt-3">
@@ -3792,30 +3792,30 @@ function AdminPane({
 
         {/* MCP Configuration Window */}
         {showMcpConfig && (
-          <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl overflow-hidden max-h-[75vh] flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b border-bristol-cyan/20 flex-shrink-0 bg-black/60">
-              <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
+          <div className="bg-black/40 border border-brand-cyan/30 rounded-2xl overflow-hidden max-h-[75vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-brand-cyan/20 flex-shrink-0 bg-black/60">
+              <h4 className="text-brand-cyan font-semibold flex items-center gap-2">
                 <CircuitBoard className="h-4 w-4 animate-pulse" />
                 MCP SERVER CONFIGURATION
               </h4>
               <button
                 onClick={() => setShowMcpConfig(false)}
-                className="p-2 hover:bg-bristol-cyan/10 rounded-lg transition-colors"
+                className="p-2 hover:bg-brand-cyan/10 rounded-lg transition-colors"
               >
-                <X className="h-4 w-4 text-bristol-cyan" />
+                <X className="h-4 w-4 text-brand-cyan" />
               </button>
             </div>
 
             <div className="p-4 space-y-4 overflow-y-auto custom-scrollbar flex-1" style={{ maxHeight: 'calc(75vh - 80px)' }}>
               {/* MCP Status Indicator */}
-              <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-xl p-3">
+              <div className="bg-brand-gold/10 border border-brand-gold/30 rounded-xl p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className={`w-3 h-3 rounded-full ${
                       mcpStatus?.runningCount > 0 ? 'bg-green-500 animate-pulse' : 
                       Object.keys(mcpServers).length > 0 ? 'bg-yellow-500' : 'bg-gray-500'
                     }`}></div>
-                    <span className="text-bristol-gold font-semibold text-sm">MCP System Status</span>
+                    <span className="text-brand-gold font-semibold text-sm">MCP System Status</span>
                   </div>
                   <span className={`text-sm font-bold ${
                     mcpStatus?.runningCount > 0 ? 'text-green-400' : 
@@ -3827,11 +3827,11 @@ function AdminPane({
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-3 text-xs">
                   <div>
-                    <span className="text-bristol-gold/80">Configured Servers:</span>
+                    <span className="text-brand-gold/80">Configured Servers:</span>
                     <span className="text-white font-semibold ml-2">{Object.keys(mcpServers).length}</span>
                   </div>
                   <div>
-                    <span className="text-bristol-gold/80">Active Connections:</span>
+                    <span className="text-brand-gold/80">Active Connections:</span>
                     <span className={`font-semibold ml-2 ${
                       mcpStatus?.runningCount > 0 ? 'text-green-400' : 'text-yellow-500'
                     }`}>
@@ -3843,8 +3843,8 @@ function AdminPane({
 
               {/* Configured MCP Servers */}
               {Object.keys(mcpServers).length > 0 && (
-                <div className="bg-bristol-electric/10 border border-bristol-electric/30 rounded-xl p-4">
-                  <h5 className="text-bristol-electric font-semibold mb-3 text-sm">Configured MCP Servers</h5>
+                <div className="bg-brand-electric/10 border border-brand-electric/30 rounded-xl p-4">
+                  <h5 className="text-brand-electric font-semibold mb-3 text-sm">Configured MCP Servers</h5>
                   <div className="grid gap-2">
                     {Object.entries(mcpServers).map(([name, config]: [string, any]) => {
                       const serverStatus = mcpStatus?.servers?.[name];
@@ -3892,7 +3892,7 @@ function AdminPane({
                   {mcpStatus?.runningCount > 0 && (
                     <div className="mt-3 p-3 bg-green-900/20 border border-green-600/30 rounded-lg">
                       <div className="text-xs text-green-400">
-                        ✅ <strong>Active:</strong> {mcpStatus.runningCount} MCP server{mcpStatus.runningCount > 1 ? 's' : ''} running successfully. Bristol AI now has real-time access to configured tools.
+                        ✅ <strong>Active:</strong> {mcpStatus.runningCount} MCP server{mcpStatus.runningCount > 1 ? 's' : ''} running successfully. Company AI now has real-time access to configured tools.
                       </div>
                     </div>
                   )}
@@ -3900,8 +3900,8 @@ function AdminPane({
               )}
 
               {/* Configuration Instructions */}
-              <div className="bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-xl p-4">
-                <h5 className="text-bristol-maroon font-semibold mb-2 text-sm">Configuration Instructions</h5>
+              <div className="bg-brand-maroon/10 border border-brand-maroon/30 rounded-xl p-4">
+                <h5 className="text-brand-maroon font-semibold mb-2 text-sm">Configuration Instructions</h5>
                 <div className="text-xs text-gray-300 space-y-2">
                   <p>• Paste your Claude Desktop MCP configuration below</p>
                   <p>• Config format must include "mcpServers" object</p>
@@ -3912,14 +3912,14 @@ function AdminPane({
 
               {/* Config Text Area */}
               <div>
-                <label className="block text-bristol-cyan font-semibold mb-2 text-sm">
+                <label className="block text-brand-cyan font-semibold mb-2 text-sm">
                   MCP Configuration JSON
                 </label>
                 <textarea
                   value={mcpConfigText}
                   onChange={(e) => setMcpConfigText(e.target.value)}
                   rows={8}
-                  className="w-full bg-black/60 border border-bristol-cyan/30 rounded-xl p-4 text-sm font-mono text-white resize-none focus:outline-none focus:border-bristol-cyan/60 transition-colors"
+                  className="w-full bg-black/60 border border-brand-cyan/30 rounded-xl p-4 text-sm font-mono text-white resize-none focus:outline-none focus:border-brand-cyan/60 transition-colors"
                   placeholder='{"mcpServers": { ... }}'
                   style={{
                     backgroundImage: 'linear-gradient(rgba(20, 184, 166, 0.05) 0%, rgba(20, 184, 166, 0.02) 100%)',
@@ -3932,7 +3932,7 @@ function AdminPane({
                   <button
                     onClick={handleMcpConfigSave}
                     disabled={loadingMcp}
-                    className="px-3 py-2 bg-bristol-cyan hover:bg-bristol-cyan/80 disabled:opacity-50 text-black rounded-lg font-medium transition-colors flex items-center gap-2 text-sm"
+                    className="px-3 py-2 bg-brand-cyan hover:bg-brand-cyan/80 disabled:opacity-50 text-black rounded-lg font-medium transition-colors flex items-center gap-2 text-sm"
                   >
                     {loadingMcp ? (
                       <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
@@ -3944,7 +3944,7 @@ function AdminPane({
                   
                   <button
                     onClick={handleMcpConfigReset}
-                    className="px-3 py-2 bg-bristol-gold hover:bg-bristol-gold/80 text-black rounded-lg font-medium transition-colors flex items-center gap-2 text-sm"
+                    className="px-3 py-2 bg-brand-gold hover:bg-brand-gold/80 text-black rounded-lg font-medium transition-colors flex items-center gap-2 text-sm"
                   >
                     <Target className="h-3 w-3" />
                     Reset
@@ -4072,7 +4072,7 @@ function AdminPane({
   );
 }
 
-// Enhanced UI Components for Bristol A.I. Boss Agent
+// Enhanced UI Components for Company A.I. Boss Agent
 function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; label: string; active?: boolean; onClick: () => void }) {
   return (
     <button
@@ -4080,8 +4080,8 @@ function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; la
       className={`
         flex items-center gap-2 px-4 py-3 rounded-2xl font-semibold text-sm transition-all duration-300
         ${active 
-          ? 'bg-gradient-to-r from-bristol-cyan/30 to-bristol-electric/30 text-white border border-bristol-cyan/50' 
-          : 'text-bristol-cyan/70 hover:text-white hover:bg-white/5 border border-transparent hover:border-bristol-cyan/30'
+          ? 'bg-gradient-to-r from-brand-cyan/30 to-brand-electric/30 text-white border border-brand-cyan/50' 
+          : 'text-brand-cyan/70 hover:text-white hover:bg-white/5 border border-transparent hover:border-brand-cyan/30'
         }
       `}
     >
@@ -4108,7 +4108,7 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
   return (
     <div 
       ref={scrollRef}
-      className="flex-1 overflow-y-auto custom-scrollbar px-6 py-4 space-y-4 bg-gradient-to-b from-transparent via-bristol-ink/10 to-bristol-ink/20" 
+      className="flex-1 overflow-y-auto custom-scrollbar px-6 py-4 space-y-4 bg-gradient-to-b from-transparent via-brand-ink/10 to-brand-ink/20" 
       style={{ 
         scrollBehavior: 'smooth'
       }}
@@ -4116,31 +4116,31 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
       {/* Smart Context Panel - Show available data only once per session */}
       {messages.length <= 1 && appData && (
         <div className="mb-4">
-          <div className="bg-bristol-cyan/5 border border-bristol-cyan/20 rounded-2xl p-4">
+          <div className="bg-brand-cyan/5 border border-brand-cyan/20 rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Brain className="h-4 w-4 text-bristol-cyan animate-pulse" />
-              <span className="text-sm font-bold text-bristol-cyan">Live Data Intelligence</span>
+              <Brain className="h-4 w-4 text-brand-cyan animate-pulse" />
+              <span className="text-sm font-bold text-brand-cyan">Live Data Intelligence</span>
             </div>
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="flex items-center gap-2">
-                <Building2 className="h-3 w-3 text-bristol-gold" />
-                <span className="text-bristol-cyan">{appData.sites?.length || 0} Properties</span>
+                <Building2 className="h-3 w-3 text-brand-gold" />
+                <span className="text-brand-cyan">{appData.sites?.length || 0} Properties</span>
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="h-3 w-3 text-bristol-gold" />
-                <span className="text-bristol-cyan">{Object.keys(appData.analytics?.stateDistribution || {}).length} Markets</span>
+                <MapPin className="h-3 w-3 text-brand-gold" />
+                <span className="text-brand-cyan">{Object.keys(appData.analytics?.stateDistribution || {}).length} Markets</span>
               </div>
               <div className="flex items-center gap-2">
-                <Users className="h-3 w-3 text-bristol-gold" />
-                <span className="text-bristol-cyan">{appData.analytics?.totalUnits || 0} Total Units</span>
+                <Users className="h-3 w-3 text-brand-gold" />
+                <span className="text-brand-cyan">{appData.analytics?.totalUnits || 0} Total Units</span>
               </div>
               <div className="flex items-center gap-2">
-                <Database className="h-3 w-3 text-bristol-gold" />
-                <span className="text-bristol-cyan">BLS, HUD, FBI, NOAA APIs</span>
+                <Database className="h-3 w-3 text-brand-gold" />
+                <span className="text-brand-cyan">BLS, HUD, FBI, NOAA APIs</span>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-bristol-cyan/20">
-              <div className="text-xs text-bristol-cyan/80 font-medium mb-2">Try asking:</div>
+            <div className="mt-3 pt-3 border-t border-brand-cyan/20">
+              <div className="text-xs text-brand-cyan/80 font-medium mb-2">Try asking:</div>
               <div className="flex flex-wrap gap-1">
                 {[
                   "Analyze our portfolio performance",
@@ -4150,7 +4150,7 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
                 ].map((suggestion, idx) => (
                   <span
                     key={idx}
-                    className="text-xs px-2 py-1 bg-bristol-cyan/10 text-bristol-cyan rounded-full border border-bristol-cyan/30"
+                    className="text-xs px-2 py-1 bg-brand-cyan/10 text-brand-cyan rounded-full border border-brand-cyan/30"
                   >
                     {suggestion}
                   </span>
@@ -4163,31 +4163,31 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
 
       {showWelcome && (
         <div className="animate-fade-in">
-          <div className="relative rounded-3xl border bg-gradient-to-br from-bristol-cyan/20 via-bristol-electric/10 to-bristol-gold/5 border-bristol-cyan/40 backdrop-blur p-6 shadow-2xl">
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-bristol-cyan rounded-full animate-pulse" />
-            <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-bristol-gold rounded-full animate-pulse animation-delay-500" />
+          <div className="relative rounded-3xl border bg-gradient-to-br from-brand-cyan/20 via-brand-electric/10 to-brand-gold/5 border-brand-cyan/40 backdrop-blur p-6 shadow-2xl">
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-brand-cyan rounded-full animate-pulse" />
+            <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-brand-gold rounded-full animate-pulse animation-delay-500" />
             
             <div className="flex items-center gap-3 mb-4">
               <div className="relative">
-                <div className="absolute inset-0 bg-bristol-cyan blur-xl opacity-50 animate-pulse" />
-                <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-bristol-cyan via-bristol-electric to-bristol-cyan flex items-center justify-center">
+                <div className="absolute inset-0 bg-brand-cyan blur-xl opacity-50 animate-pulse" />
+                <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-cyan via-brand-electric to-brand-cyan flex items-center justify-center">
                   <Brain className="w-6 h-6 text-white" />
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">Bristol A.I. Elite v5.0</h3>
-                <p className="text-xs text-bristol-cyan/80">Enterprise-Grade AI Intelligence Platform</p>
+                <h3 className="text-lg font-bold text-white">Company A.I. Elite v5.0</h3>
+                <p className="text-xs text-brand-cyan/80">Enterprise-Grade AI Intelligence Platform</p>
               </div>
             </div>
             
             <div className="space-y-3 text-sm text-white/90">
               <p className="leading-relaxed">
-                <strong>BRISTOL A.I. ELITE v5.0 ACTIVATED</strong> - Enterprise-grade AI system operational with comprehensive property intelligence capabilities.
+                <strong>COMPANY A.I. ELITE v5.0 ACTIVATED</strong> - Enterprise-grade AI system operational with comprehensive property intelligence capabilities.
               </p>
               
               <div className="grid grid-cols-2 gap-2 mt-4">
-                <div className="bg-bristol-ink/40 rounded-xl p-3 border border-bristol-cyan/20">
-                  <div className="text-bristol-cyan text-xs font-semibold mb-1">CAPABILITIES</div>
+                <div className="bg-brand-ink/40 rounded-xl p-3 border border-brand-cyan/20">
+                  <div className="text-brand-cyan text-xs font-semibold mb-1">CAPABILITIES</div>
                   <ul className="text-xs space-y-1 text-white/80">
                     <li>• $200M+ Deal Analysis</li>
                     <li>• IRR/NPV Modeling</li>
@@ -4195,8 +4195,8 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
                     <li>• Risk Assessment</li>
                   </ul>
                 </div>
-                <div className="bg-bristol-ink/40 rounded-xl p-3 border border-bristol-gold/20">
-                  <div className="text-bristol-gold text-xs font-semibold mb-1">QUICK START</div>
+                <div className="bg-brand-ink/40 rounded-xl p-3 border border-brand-gold/20">
+                  <div className="text-brand-gold text-xs font-semibold mb-1">QUICK START</div>
                   <ul className="text-xs space-y-1 text-white/80">
                     <li>• "Analyze this property"</li>
                     <li>• "Show market trends"</li>
@@ -4206,8 +4206,8 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
                 </div>
               </div>
               
-              <div className="mt-4 p-3 bg-gradient-to-r from-bristol-cyan/10 to-bristol-electric/10 rounded-xl border border-bristol-cyan/30">
-                <p className="text-xs text-bristol-cyan font-semibold mb-1 flex items-center gap-2">
+              <div className="mt-4 p-3 bg-gradient-to-r from-brand-cyan/10 to-brand-electric/10 rounded-xl border border-brand-cyan/30">
+                <p className="text-xs text-brand-cyan font-semibold mb-1 flex items-center gap-2">
                   <Activity className="w-3 h-3 animate-pulse" />
                   SYSTEM STATUS: FULLY OPERATIONAL
                 </p>
@@ -4217,10 +4217,10 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
               </div>
               
               <div className="flex gap-2 mt-4">
-                <div className="flex-1 p-2 bg-gradient-to-r from-bristol-gold/10 to-transparent rounded-lg border border-bristol-gold/20">
+                <div className="flex-1 p-2 bg-gradient-to-r from-brand-gold/10 to-transparent rounded-lg border border-brand-gold/20">
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-bristol-gold" />
-                    <span className="text-xs text-bristol-gold font-bold">PRO TIP</span>
+                    <TrendingUp className="w-4 h-4 text-brand-gold" />
+                    <span className="text-xs text-brand-gold font-bold">PRO TIP</span>
                   </div>
                   <p className="text-xs text-white/70 mt-1">
                     Try: "Analyze 123 Main St" or "Show portfolio performance metrics"
@@ -4238,8 +4238,8 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
           className={`
             relative rounded-2xl border backdrop-blur transition-all duration-200 hover:shadow-lg p-4
             ${m.role === "assistant" 
-              ? "bg-gradient-to-br from-bristol-cyan/10 to-bristol-electric/5 border-bristol-cyan/30 hover:border-bristol-cyan/50" 
-              : "bg-gradient-to-br from-bristol-ink/60 to-black/40 border-bristol-maroon/30 hover:border-bristol-maroon/50 ml-4"
+              ? "bg-gradient-to-br from-brand-cyan/10 to-brand-electric/5 border-brand-cyan/30 hover:border-brand-cyan/50" 
+              : "bg-gradient-to-br from-brand-ink/60 to-black/40 border-brand-maroon/30 hover:border-brand-maroon/50 ml-4"
             }
           `}
         >
@@ -4248,15 +4248,15 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
               <span className={`
                 text-[10px] uppercase tracking-wider font-semibold px-2 py-1 rounded-full
                 ${m.role === "assistant"
-                  ? "bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/30"
-                  : "bg-bristol-maroon/20 text-bristol-gold border border-bristol-maroon/30"
+                  ? "bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30"
+                  : "bg-brand-maroon/20 text-brand-gold border border-brand-maroon/30"
                 }
               `}>
-                {m.role === "assistant" ? "🤖 Bristol A.I." : "👤 You"}
+                {m.role === "assistant" ? "🤖 Company A.I." : "👤 You"}
               </span>
             </div>
             {m.createdAt && (
-              <span className="text-xs text-bristol-cyan/50">
+              <span className="text-xs text-brand-cyan/50">
                 {new Date(m.createdAt).toLocaleTimeString()}
               </span>
             )}
@@ -4264,7 +4264,7 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
           
           <div className={`
             whitespace-pre-wrap text-sm leading-relaxed
-            ${m.role === "assistant" ? "text-white/90" : "text-bristol-cyan/90"}
+            ${m.role === "assistant" ? "text-white/90" : "text-brand-cyan/90"}
           `}>
             {/* Check if content has property analysis data */}
             {m.role === "assistant" && m.content.includes("PROPERTY ANALYSIS") ? (
@@ -4272,7 +4272,7 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
                 {m.content.split('\n').map((line, idx) => {
                   if (line.startsWith('##')) {
                     return (
-                      <h3 key={idx} className="text-bristol-cyan font-bold text-base mt-4 mb-2 flex items-center gap-2">
+                      <h3 key={idx} className="text-brand-cyan font-bold text-base mt-4 mb-2 flex items-center gap-2">
                         <Building2 className="w-4 h-4" />
                         {line.replace('##', '').trim()}
                       </h3>
@@ -4280,15 +4280,15 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
                   } else if (line.startsWith('•')) {
                     return (
                       <div key={idx} className="flex items-start gap-2 ml-4">
-                        <div className="w-1 h-1 bg-bristol-gold rounded-full mt-2" />
+                        <div className="w-1 h-1 bg-brand-gold rounded-full mt-2" />
                         <span className="flex-1">{line.replace('•', '').trim()}</span>
                       </div>
                     );
                   } else if (line.includes('IRR:') || line.includes('NPV:') || line.includes('Cap Rate:')) {
                     return (
-                      <div key={idx} className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-lg p-3 flex items-center gap-2">
-                        <DollarSign className="w-4 h-4 text-bristol-gold" />
-                        <span className="font-mono text-bristol-gold">{line}</span>
+                      <div key={idx} className="bg-brand-cyan/10 border border-brand-cyan/30 rounded-lg p-3 flex items-center gap-2">
+                        <DollarSign className="w-4 h-4 text-brand-gold" />
+                        <span className="font-mono text-brand-gold">{line}</span>
                       </div>
                     );
                   } else if (line.includes('RISK:') || line.includes('WARNING:')) {
@@ -4300,9 +4300,9 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
                     );
                   } else if (line.includes('RECOMMENDATION:')) {
                     return (
-                      <div key={idx} className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-lg p-3 flex items-center gap-2">
-                        <TrendingUp className="w-4 h-4 text-bristol-gold" />
-                        <span className="text-bristol-gold font-semibold">{line}</span>
+                      <div key={idx} className="bg-brand-gold/10 border border-brand-gold/30 rounded-lg p-3 flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-brand-gold" />
+                        <span className="text-brand-gold font-semibold">{line}</span>
                       </div>
                     );
                   }
@@ -4317,15 +4317,15 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
       ))}
       
       {loading && (
-        <div className="relative rounded-2xl border bg-gradient-to-br from-bristol-cyan/10 to-bristol-electric/5 border-bristol-cyan/30 backdrop-blur animate-pulse p-4">
+        <div className="relative rounded-2xl border bg-gradient-to-br from-brand-cyan/10 to-brand-electric/5 border-brand-cyan/30 backdrop-blur animate-pulse p-4">
           <div className="flex items-center gap-3">
             <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.3s]" />
-              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce [animation-delay:-0.15s]" />
-              <div className="w-2 h-2 bg-bristol-cyan rounded-full animate-bounce" />
+              <div className="w-2 h-2 bg-brand-cyan rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <div className="w-2 h-2 bg-brand-cyan rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <div className="w-2 h-2 bg-brand-cyan rounded-full animate-bounce" />
             </div>
-            <span className="text-sm text-bristol-cyan/80">
-              Bristol A.I. Boss Agent is analyzing your request...
+            <span className="text-sm text-brand-cyan/80">
+              Company A.I. Boss Agent is analyzing your request...
             </span>
           </div>
         </div>

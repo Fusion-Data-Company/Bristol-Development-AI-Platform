@@ -46,11 +46,11 @@ const artifactIcons = {
 };
 
 const artifactColors = {
-  code: 'text-bristol-cyan bg-bristol-cyan/10 border-bristol-cyan/30',
-  document: 'text-bristol-cyan bg-bristol-cyan/15 border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/20',
+  code: 'text-brand-cyan bg-brand-cyan/10 border-brand-cyan/30',
+  document: 'text-brand-cyan bg-brand-cyan/15 border-brand-cyan/40 shadow-lg shadow-brand-cyan/20',
   image: 'text-purple-400 bg-purple-400/10 border-purple-400/30',
   data: 'text-orange-400 bg-orange-400/10 border-orange-400/30',
-  chart: 'text-bristol-cyan bg-bristol-cyan/10 border-bristol-cyan/30',
+  chart: 'text-brand-cyan bg-brand-cyan/10 border-brand-cyan/30',
   other: 'text-slate-300 bg-slate-200/10 border-slate-300/30'
 };
 
@@ -95,7 +95,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
   const ArtifactContent = ({ artifact }: { artifact: Artifact }) => (
     <div className="h-full flex flex-col">
       {/* Artifact Header */}
-      <div className="flex-shrink-0 border-b border-bristol-cyan/20 px-8 py-6 bg-gradient-to-r from-slate-900/40 via-slate-800/50 to-slate-900/40 backdrop-blur-md">
+      <div className="flex-shrink-0 border-b border-brand-cyan/20 px-8 py-6 bg-gradient-to-r from-slate-900/40 via-slate-800/50 to-slate-900/40 backdrop-blur-md">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className={cn("p-3 rounded-xl backdrop-blur-sm shadow-lg", artifactColors[artifact.type])}>
@@ -104,7 +104,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
             <div>
               <h3 className="font-semibold text-white text-lg">{artifact.title}</h3>
               <div className="flex items-center gap-3 text-sm text-slate-300 mt-2">
-                <Badge variant="secondary" className="text-sm bg-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/20 px-3 py-1">
+                <Badge variant="secondary" className="text-sm bg-brand-cyan/20 text-brand-cyan border-brand-cyan/40 shadow-lg shadow-brand-cyan/20 px-3 py-1">
                   {artifact.type.toUpperCase()}
                 </Badge>
                 {artifact.language && (
@@ -126,7 +126,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
               size="default"
               variant="outline"
               onClick={() => handleCopy(artifact.content)}
-              className="gap-2 bg-slate-800/60 border-bristol-cyan/50 text-bristol-cyan hover:bg-bristol-cyan/15 hover:border-bristol-cyan/70 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
+              className="gap-2 bg-slate-800/60 border-brand-cyan/50 text-brand-cyan hover:bg-brand-cyan/15 hover:border-brand-cyan/70 hover:shadow-xl hover:shadow-brand-cyan/20 transition-all duration-300 px-4 py-2"
             >
               <Copy className="h-4 w-4" />
               Copy
@@ -136,7 +136,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
                 size="default"
                 variant="outline"
                 onClick={() => onDownload(artifact)}
-                className="gap-2 bg-slate-800/60 border-bristol-cyan/50 text-bristol-cyan hover:bg-bristol-cyan/15 hover:border-bristol-cyan/70 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
+                className="gap-2 bg-slate-800/60 border-brand-cyan/50 text-brand-cyan hover:bg-brand-cyan/15 hover:border-brand-cyan/70 hover:shadow-xl hover:shadow-brand-cyan/20 transition-all duration-300 px-4 py-2"
               >
                 <Download className="h-4 w-4" />
                 Download
@@ -146,7 +146,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
               size="default"
               variant="outline"
               onClick={() => setFullscreen(!fullscreen)}
-              className="bg-slate-800/60 border-bristol-cyan/50 text-bristol-cyan hover:bg-bristol-cyan/15 hover:border-bristol-cyan/70 hover:shadow-xl hover:shadow-bristol-cyan/20 transition-all duration-300 px-4 py-2"
+              className="bg-slate-800/60 border-brand-cyan/50 text-brand-cyan hover:bg-brand-cyan/15 hover:border-brand-cyan/70 hover:shadow-xl hover:shadow-brand-cyan/20 transition-all duration-300 px-4 py-2"
             >
               <Maximize2 className="h-4 w-4" />
             </Button>
@@ -159,7 +159,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
         <ScrollArea className="h-full">
           <div className="p-8">
             {artifact.type === 'code' ? (
-              <pre className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-bristol-cyan p-8 rounded-xl overflow-x-auto text-base font-mono whitespace-pre-wrap border border-bristol-cyan/30 shadow-2xl shadow-bristol-cyan/20 backdrop-blur-sm">
+              <pre className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-brand-cyan p-8 rounded-xl overflow-x-auto text-base font-mono whitespace-pre-wrap border border-brand-cyan/30 shadow-2xl shadow-brand-cyan/20 backdrop-blur-sm">
                 <code>{artifact.content}</code>
               </pre>
             ) : artifact.type === 'image' ? (
@@ -167,12 +167,12 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
                 <img 
                   src={artifact.content} 
                   alt={artifact.title}
-                  className="max-w-full h-auto rounded-xl shadow-2xl border border-bristol-cyan/20"
+                  className="max-w-full h-auto rounded-xl shadow-2xl border border-brand-cyan/20"
                 />
               </div>
             ) : (
               <div className="prose prose-slate max-w-none">
-                <div className="whitespace-pre-wrap text-base leading-loose text-slate-800 bg-gradient-to-br from-white via-slate-50/90 to-white/95 p-8 rounded-xl border border-bristol-cyan/20 shadow-2xl backdrop-blur-sm">
+                <div className="whitespace-pre-wrap text-base leading-loose text-slate-800 bg-gradient-to-br from-white via-slate-50/90 to-white/95 p-8 rounded-xl border border-brand-cyan/20 shadow-2xl backdrop-blur-sm">
                   {artifact.content}
                 </div>
               </div>
@@ -187,17 +187,17 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
     <>
       {/* Half-Screen Artifacts Panel */}
       <div className={cn(
-        "flex flex-col bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl border border-bristol-cyan/20 shadow-2xl shadow-bristol-cyan/10",
+        "flex flex-col bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95 backdrop-blur-xl border border-brand-cyan/20 shadow-2xl shadow-brand-cyan/10",
         fullscreen ? "fixed inset-4 z-50 rounded-xl" : "h-full min-w-0 flex-1",
         className
       )}>
         {/* Panel Header with Navigation Tabs */}
-        <div className="flex-shrink-0 border-b border-bristol-cyan/30 backdrop-blur-sm">
+        <div className="flex-shrink-0 border-b border-brand-cyan/30 backdrop-blur-sm">
           <div className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-slate-900/60 via-slate-800/70 to-slate-900/60">
             <div className="flex items-center gap-4">
-              <FileText className="h-7 w-7 text-bristol-cyan" />
-              <h2 className="font-semibold text-bristol-cyan text-xl">Artifacts</h2>
-              <Badge variant="secondary" className="text-sm bg-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/40 shadow-lg shadow-bristol-cyan/20 px-3 py-1">
+              <FileText className="h-7 w-7 text-brand-cyan" />
+              <h2 className="font-semibold text-brand-cyan text-xl">Artifacts</h2>
+              <Badge variant="secondary" className="text-sm bg-brand-cyan/20 text-brand-cyan border-brand-cyan/40 shadow-lg shadow-brand-cyan/20 px-3 py-1">
                 {artifacts.length}
               </Badge>
             </div>
@@ -206,7 +206,7 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
                 size="sm"
                 variant="ghost"
                 onClick={() => setFullscreen(false)}
-                className="text-bristol-cyan hover:bg-bristol-cyan/10 hover:shadow-lg hover:shadow-bristol-cyan/20 transition-all duration-300"
+                className="text-brand-cyan hover:bg-brand-cyan/10 hover:shadow-lg hover:shadow-brand-cyan/20 transition-all duration-300"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -227,15 +227,15 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
                       "flex items-center gap-3 px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap min-w-fit",
                       "border backdrop-blur-sm shadow-lg",
                       isSelected 
-                        ? "bg-gradient-to-r from-bristol-cyan/25 via-bristol-cyan/20 to-bristol-cyan/25 text-bristol-cyan border-bristol-cyan/50 shadow-xl shadow-bristol-cyan/30" 
-                        : "bg-slate-800/60 text-slate-300 border-slate-600/40 hover:bg-slate-700/70 hover:text-white hover:border-bristol-cyan/40 hover:shadow-xl hover:shadow-bristol-cyan/20 hover:scale-105"
+                        ? "bg-gradient-to-r from-brand-cyan/25 via-brand-cyan/20 to-brand-cyan/25 text-brand-cyan border-brand-cyan/50 shadow-xl shadow-brand-cyan/30" 
+                        : "bg-slate-800/60 text-slate-300 border-slate-600/40 hover:bg-slate-700/70 hover:text-white hover:border-brand-cyan/40 hover:shadow-xl hover:shadow-brand-cyan/20 hover:scale-105"
                     )}
                   >
                     <div className={cn("p-2 rounded-lg", artifactColors[artifact.type])}>
                       {artifactIcons[artifact.type]}
                     </div>
                     <span className="truncate max-w-40 font-medium">{artifact.title}</span>
-                    <Badge variant="outline" className="text-xs bg-bristol-cyan/20 text-bristol-cyan border-bristol-cyan/50 shadow-md shadow-bristol-cyan/20 px-2 py-1">
+                    <Badge variant="outline" className="text-xs bg-brand-cyan/20 text-brand-cyan border-brand-cyan/50 shadow-md shadow-brand-cyan/20 px-2 py-1">
                       {artifact.type.toUpperCase()}
                     </Badge>
                     {artifact.modelUsed && (
@@ -257,9 +257,9 @@ export function ArtifactsPanel({ artifacts, onCopy, onDownload, className }: Art
           ) : (
             <div className="h-full flex items-center justify-center text-slate-400 bg-gradient-to-br from-slate-900/40 via-slate-800/50 to-slate-900/40 backdrop-blur-sm">
               <div className="text-center p-12">
-                <FileText className="h-20 w-20 text-bristol-cyan/50 mx-auto mb-8" />
+                <FileText className="h-20 w-20 text-brand-cyan/50 mx-auto mb-8" />
                 <p className="text-slate-300 text-xl font-medium mb-4">Select an artifact to view its content</p>
-                <p className="text-sm text-bristol-cyan/70 leading-relaxed">Generated content will appear here with full-width display for optimal readability</p>
+                <p className="text-sm text-brand-cyan/70 leading-relaxed">Generated content will appear here with full-width display for optimal readability</p>
               </div>
             </div>
           )}

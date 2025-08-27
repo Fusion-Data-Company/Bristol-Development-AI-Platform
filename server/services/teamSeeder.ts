@@ -2,7 +2,7 @@ import { db } from '../db';
 import { teamUsers, type InsertTeamUser } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
-// Bristol team members from https://www.bristoldevelopment.com/bristol-team
+// Company team members from https://www.bristoldevelopment.com/brand-team
 const teamData: InsertTeamUser[] = [
   // Leadership
   {
@@ -195,9 +195,9 @@ const teamData: InsertTeamUser[] = [
   }
 ];
 
-export async function seedBristolTeam() {
+export async function seedCompanyTeam() {
   try {
-    console.log('🌱 Starting Bristol team seeding...');
+    console.log('🌱 Starting Company team seeding...');
     
     for (const member of teamData) {
       // Check if member already exists
@@ -225,13 +225,13 @@ export async function seedBristolTeam() {
       }
     }
     
-    console.log(`✅ Bristol team seeding completed! Total members: ${teamData.length}`);
+    console.log(`✅ Company team seeding completed! Total members: ${teamData.length}`);
     return true;
   } catch (error) {
-    console.error('❌ Failed to seed Bristol team:', error);
+    console.error('❌ Failed to seed Company team:', error);
     return false;
   }
 }
 
 // Export for initialization
-export default seedBristolTeam;
+export default seedCompanyTeam;

@@ -1,4 +1,4 @@
-// Master Enterprise Orchestrator for Bristol Development Group
+// Master Enterprise Orchestrator for Company Development Group
 // Coordinates all enterprise systems and provides unified management interface
 
 import { dataAnalyticsEngine } from "./dataAnalytics";

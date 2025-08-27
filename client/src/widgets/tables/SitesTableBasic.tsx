@@ -144,14 +144,14 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       
       return (
         <div 
-          className="cursor-pointer hover:bg-gradient-to-r hover:from-bristol-gold/10 hover:to-bristol-maroon/10 p-2 rounded-lg transition-all duration-300 hover:shadow-lg border-2 border-transparent hover:border-bristol-gold/30"
+          className="cursor-pointer hover:bg-gradient-to-r hover:from-brand-gold/10 hover:to-brand-maroon/10 p-2 rounded-lg transition-all duration-300 hover:shadow-lg border-2 border-transparent hover:border-brand-gold/30"
           onClick={() => {
             setEditingCell({ rowId: site.id, columnId: column.id });
             setEditValue(value?.toString() || '');
           }}
         >
-          <span className="font-medium text-bristol-ink hover:text-bristol-maroon transition-colors duration-200">
-            {value || <span className="text-bristol-stone/60 italic">—</span>}
+          <span className="font-medium text-brand-ink hover:text-brand-maroon transition-colors duration-200">
+            {value || <span className="text-brand-stone/60 italic">—</span>}
           </span>
         </div>
       );
@@ -171,7 +171,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
               relative font-bold text-xs px-3 py-1.5 border-2 rounded-full shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl
               ${status === 'Operating' ? 'bg-gradient-to-r from-emerald-500 to-green-600 text-white border-emerald-400 shadow-emerald-500/30 hover:shadow-emerald-500/50' :
               status === 'Completed' ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-green-400 shadow-green-500/30 hover:shadow-green-500/50' :
-              status === 'Newest' ? 'bg-gradient-to-r from-bristol-gold to-yellow-500 text-bristol-ink border-bristol-gold shadow-bristol-gold/40 hover:shadow-bristol-gold/60' :
+              status === 'Newest' ? 'bg-gradient-to-r from-brand-gold to-yellow-500 text-brand-ink border-brand-gold shadow-brand-gold/40 hover:shadow-brand-gold/60' :
               status === 'Pipeline' ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white border-blue-400 shadow-blue-500/30 hover:shadow-blue-500/50' :
               'bg-gradient-to-r from-gray-500 to-slate-600 text-white border-gray-400 shadow-gray-500/30 hover:shadow-gray-500/50'}
             `}
@@ -200,8 +200,8 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
           className="group cursor-pointer relative overflow-hidden"
           onClick={() => onSelectSite(row.original)}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-bristol-maroon/0 via-bristol-gold/10 to-bristol-maroon/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
-          <div className="relative font-bold text-bristol-ink group-hover:text-bristol-maroon transition-all duration-300 p-2 rounded-lg group-hover:bg-gradient-to-r group-hover:from-bristol-gold/5 group-hover:to-bristol-maroon/5 group-hover:shadow-lg">
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-maroon/0 via-brand-gold/10 to-brand-maroon/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg"></div>
+          <div className="relative font-bold text-brand-ink group-hover:text-brand-maroon transition-all duration-300 p-2 rounded-lg group-hover:bg-gradient-to-r group-hover:from-brand-gold/5 group-hover:to-brand-maroon/5 group-hover:shadow-lg">
             {row.getValue('name')}
           </div>
         </div>
@@ -316,7 +316,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                 variant="ghost"
                 size="sm"
                 onClick={() => onSelectSite(site)}
-                className="h-8 w-8 p-0 text-bristol-maroon hover:text-white hover:bg-gradient-to-r hover:from-bristol-maroon hover:to-bristol-maroon/80 hover:shadow-lg hover:shadow-bristol-maroon/30 transition-all duration-300 hover:scale-110"
+                className="h-8 w-8 p-0 text-brand-maroon hover:text-white hover:bg-gradient-to-r hover:from-brand-maroon hover:to-brand-maroon/80 hover:shadow-lg hover:shadow-brand-maroon/30 transition-all duration-300 hover:scale-110"
                 title="View on Map"
               >
                 <MapPin className="h-4 w-4" />
@@ -371,7 +371,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="flex items-center gap-2 text-bristol-stone">
+        <div className="flex items-center gap-2 text-brand-stone">
           <Loader2 className="h-4 w-4 animate-spin" />
           Loading sites...
         </div>
@@ -384,13 +384,13 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       <div className="rounded-md border bg-white overflow-visible">
         <div className="min-w-full">
           <Table className="w-full">
-            <TableHeader className="sticky top-0 bg-gradient-to-r from-bristol-maroon via-bristol-maroon/95 to-bristol-maroon z-10 shadow-xl">
+            <TableHeader className="sticky top-0 bg-gradient-to-r from-brand-maroon via-brand-maroon/95 to-brand-maroon z-10 shadow-xl">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="hover:bg-transparent border-b-2 border-bristol-gold/50">
+                <TableRow key={headerGroup.id} className="hover:bg-transparent border-b-2 border-brand-gold/50">
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id} 
-                      className="font-cinzel font-bold text-white whitespace-nowrap px-4 py-4 border-r border-bristol-gold/30 text-shadow-lg hover:bg-bristol-gold/20 transition-all duration-300"
+                      className="font-cinzel font-bold text-white whitespace-nowrap px-4 py-4 border-r border-brand-gold/30 text-shadow-lg hover:bg-brand-gold/20 transition-all duration-300"
                       style={{ width: header.getSize() }}
                     >
                       {header.isPlaceholder
@@ -408,10 +408,10 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
                     className={`
-                      transition-all duration-300 border-b border-bristol-stone/10
-                      ${row.index % 2 === 0 ? 'bg-gradient-to-r from-white to-bristol-cream/20' : 'bg-gradient-to-r from-bristol-cream/10 to-white'}
-                      ${selectedSite?.id === row.original.id ? 'bg-gradient-to-r from-bristol-gold/20 via-bristol-gold/10 to-bristol-gold/20 shadow-lg shadow-bristol-gold/20 border-bristol-gold/30' : ''}
-                      hover:bg-gradient-to-r hover:from-bristol-maroon/5 hover:via-bristol-gold/5 hover:to-bristol-maroon/5 hover:shadow-lg hover:shadow-bristol-maroon/10
+                      transition-all duration-300 border-b border-brand-stone/10
+                      ${row.index % 2 === 0 ? 'bg-gradient-to-r from-white to-brand-cream/20' : 'bg-gradient-to-r from-brand-cream/10 to-white'}
+                      ${selectedSite?.id === row.original.id ? 'bg-gradient-to-r from-brand-gold/20 via-brand-gold/10 to-brand-gold/20 shadow-lg shadow-brand-gold/20 border-brand-gold/30' : ''}
+                      hover:bg-gradient-to-r hover:from-brand-maroon/5 hover:via-brand-gold/5 hover:to-brand-maroon/5 hover:shadow-lg hover:shadow-brand-maroon/10
                     `}
                   >
                     {row.getVisibleCells().map((cell) => (
@@ -427,7 +427,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center text-bristol-stone">
+                  <TableCell colSpan={columns.length} className="h-24 text-center text-brand-stone">
                     No sites found.
                   </TableCell>
                 </TableRow>
@@ -439,7 +439,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
 
       <div className="flex items-center justify-between space-x-2 py-4">
         <div className="flex items-center gap-4">
-          <div className="text-sm text-bristol-stone">
+          <div className="text-sm text-brand-stone">
             {table.getFilteredRowModel().rows.length} site(s) total
           </div>
           <select

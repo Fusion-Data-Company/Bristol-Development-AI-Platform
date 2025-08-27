@@ -21,7 +21,7 @@ async function geocodeAddress(address: string): Promise<{ lat?: number; lng?: nu
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodedAddress}&limit=3`,
         {
           headers: {
-            'User-Agent': 'Bristol-Site-Intelligence/1.0',
+            'User-Agent': 'Company-Site-Intelligence/1.0',
           },
         }
       );
@@ -419,7 +419,7 @@ router.get('/export.csv', async (req, res) => {
       .join('\n');
     
     res.setHeader('Content-Type', 'text/csv');
-    res.setHeader('Content-Disposition', 'attachment; filename="bristol-sites.csv"');
+    res.setHeader('Content-Disposition', 'attachment; filename="brand-sites.csv"');
     res.send(csvContent);
   } catch (error) {
     console.error('Error exporting sites:', error);
@@ -559,7 +559,7 @@ router.get('/metrics', async (req, res) => {
     // Get real site data directly from database - no auth required for metrics
     const sitesData = await db.select().from(sites);
     
-    // Calculate real Bristol portfolio metrics
+    // Calculate real Company portfolio metrics
     const totalSites = sitesData.length;
     const totalUnits = sitesData.reduce((sum: number, site: any) => sum + (site.unitsTotal || 0), 0);
     const operatingSites = sitesData.filter((site: any) => site.status === 'Operating').length;
@@ -582,8 +582,8 @@ router.get('/metrics', async (req, res) => {
       return acc;
     }, {});
     
-    // Calculate average Bristol Score based on property characteristics
-    const avgBristolScore = sitesData.length > 0 
+    // Calculate average Company Score based on property characteristics
+    const avgCompanyScore = sitesData.length > 0 
       ? sitesData.reduce((sum: number, site: any) => {
           const units = site.unitsTotal || 0;
           const baseScore = 72; // Base institutional score
@@ -599,7 +599,7 @@ router.get('/metrics', async (req, res) => {
       totalUnits,
       operatingSites,
       pipelineSites,
-      avgBristolScore: Number(avgBristolScore.toFixed(1)),
+      avgCompanyScore: Number(avgCompanyScore.toFixed(1)),
       avgUnitsPerSite: totalSites > 0 ? Math.round(totalUnits / totalSites) : 0,
       occupancyRate: 91.2, // Enterprise-grade occupancy
       portfolioValue: totalUnits * 185000, // $185k per unit market value

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 const router = express.Router();
 
-// Mock market analysis data for Bristol Development
+// Mock market analysis data for Company Development
 const marketAnalysisData = {
   sunbeltMarkets: {
     growth: 12.5, // YoY rent growth
@@ -29,7 +29,7 @@ const marketAnalysisData = {
   }
 };
 
-// GET /api/bristol-agent/market-analysis
+// GET /api/brand-agent/market-analysis
 router.get('/market-analysis', async (req, res) => {
   try {
     // Simulate real-time market analysis
@@ -42,12 +42,12 @@ router.get('/market-analysis', async (req, res) => {
 
     res.json(analysis);
   } catch (error) {
-    console.error('Error fetching Bristol market analysis:', error);
+    console.error('Error fetching Company market analysis:', error);
     res.status(500).json({ error: 'Failed to fetch market analysis' });
   }
 });
 
-// POST /api/bristol-agent/portfolio-analysis
+// POST /api/brand-agent/portfolio-analysis
 router.post('/portfolio-analysis', async (req, res) => {
   try {
     const { siteIds, analysisType } = req.body;
@@ -57,7 +57,7 @@ router.post('/portfolio-analysis', async (req, res) => {
       portfolioMetrics: {
         totalSites: 46,
         totalUnits: 9953,
-        avgBristolScore: 78,
+        avgCompanyScore: 78,
         marketPosition: 'premium-sunbelt'
       },
       recommendations: [
@@ -81,12 +81,12 @@ router.post('/portfolio-analysis', async (req, res) => {
   }
 });
 
-// POST /api/bristol-agent/web-search
+// POST /api/brand-agent/web-search
 router.post('/web-search', async (req, res) => {
   try {
     const { query, category } = req.body;
     
-    // Simulate web search results for Bristol development context
+    // Simulate web search results for Company development context
     const mockResults = {
       market: [
         {

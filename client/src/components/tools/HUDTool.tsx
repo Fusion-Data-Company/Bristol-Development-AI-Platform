@@ -133,7 +133,7 @@ export function HUDTool() {
       {
         label: 'Residential Ratio',
         data: data.rows.map(row => row.res_ratio || 0),
-        borderColor: '#D97706', // Gold for Bristol branding
+        borderColor: '#D97706', // Gold for Company branding
         backgroundColor: '#D97706',
         tension: 0.1,
         fill: false,
@@ -194,14 +194,14 @@ export function HUDTool() {
   return (
     <div className="space-y-8">
       {/* MEGA HEADER */}
-      <div className="text-center space-y-6 bristol-enterprise-card p-8 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-indigo-50/50 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-indigo-500/5 to-bristol-gold/10 animate-pulse"></div>
+      <div className="text-center space-y-6 brand-enterprise-card p-8 rounded-3xl border-4 border-brand-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-indigo-50/50 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-indigo-500/5 to-brand-gold/10 animate-pulse"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 shadow-xl animate-bounce">
               <Home className="h-16 w-16 text-blue-600 drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-blue-800 via-bristol-gold to-indigo-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+            <h1 className="text-5xl font-black bg-gradient-to-r from-blue-800 via-brand-gold to-indigo-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
               🏠 HUD Vacancy Data
             </h1>
           </div>
@@ -210,7 +210,7 @@ export function HUDTool() {
               ✨ Real-Time Property Vacancy Intelligence Platform
             </h2>
             <div className="flex items-center justify-center gap-8 text-lg font-bold text-blue-700/90">
-              <span>📊 Live Vacancy Data • 🏘️ USPS Tracking • 🔍 Residential Intelligence • 🎯 Bristol-Powered Analytics</span>
+              <span>📊 Live Vacancy Data • 🏘️ USPS Tracking • 🔍 Residential Intelligence • 🎯 Company-Powered Analytics</span>
             </div>
           </div>
         </div>
@@ -221,7 +221,7 @@ export function HUDTool() {
         <div>
           <Label htmlFor="mode" className="text-gray-900">Data Mode</Label>
           <Select value={mode} onValueChange={setMode}>
-            <SelectTrigger className="bristol-form-enhanced">
+            <SelectTrigger className="brand-form-enhanced">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-300">
@@ -237,14 +237,14 @@ export function HUDTool() {
             value={zip}
             onChange={(e) => setZip(e.target.value)}
             placeholder="28202"
-            className="bristol-form-enhanced"
+            className="brand-form-enhanced"
           />
         </div>
 
         <div>
           <Label htmlFor="lookbackQ" className="text-gray-900">Quarters to Include</Label>
           <Select value={lookbackQ} onValueChange={setLookbackQ}>
-            <SelectTrigger className="bristol-form-enhanced">
+            <SelectTrigger className="brand-form-enhanced">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-300">
@@ -262,7 +262,7 @@ export function HUDTool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bristol-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
+          className="brand-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
         >
           <div className="flex items-center gap-3">
             {isLoading ? (
@@ -280,7 +280,7 @@ export function HUDTool() {
                 RUN ANALYSIS
               </div>
               <div className="text-xs text-amber-300 font-medium -mt-1">
-                Bristol Intelligence
+                Company Intelligence
               </div>
             </div>
             <Cpu className="h-4 w-4 text-amber-300/70" />

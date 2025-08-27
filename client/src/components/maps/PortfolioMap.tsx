@@ -80,7 +80,7 @@ function KMLLayer({ kmlData, visible, name }: { kmlData: KMLData | null; visible
   const getColor = (feature: any) => {
     if (feature.properties.name?.toLowerCase().includes('pipeline')) return '#d97706';
     if (feature.properties.name?.toLowerCase().includes('operating')) return '#2563eb';
-    return '#8B1538'; // Bristol maroon
+    return '#8B1538'; // Company maroon
   };
 
   return (
@@ -105,9 +105,9 @@ function KMLLayer({ kmlData, visible, name }: { kmlData: KMLData | null; visible
         if (feature.properties) {
           const popupContent = `
             <div class="p-2">
-              <h3 class="font-semibold text-bristol-ink">${feature.properties.name || 'Feature'}</h3>
-              ${feature.properties.description ? `<p class="text-sm text-bristol-stone mt-1">${feature.properties.description}</p>` : ''}
-              <p class="text-xs text-bristol-stone mt-1">Layer: ${name}</p>
+              <h3 class="font-semibold text-brand-ink">${feature.properties.name || 'Feature'}</h3>
+              ${feature.properties.description ? `<p class="text-sm text-brand-stone mt-1">${feature.properties.description}</p>` : ''}
+              <p class="text-xs text-brand-stone mt-1">Layer: ${name}</p>
             </div>
           `;
           layer.bindPopup(popupContent);
@@ -314,9 +314,9 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
                   >
                     <Popup>
                       <div className="p-2">
-                        <h3 className="font-semibold text-bristol-ink">{feature.properties.name}</h3>
-                        <p className="text-sm text-bristol-stone mt-1">{feature.properties.address}</p>
-                        <p className="text-sm text-bristol-stone">{feature.properties.cityState}</p>
+                        <h3 className="font-semibold text-brand-ink">{feature.properties.name}</h3>
+                        <p className="text-sm text-brand-stone mt-1">{feature.properties.address}</p>
+                        <p className="text-sm text-brand-stone">{feature.properties.cityState}</p>
                         <div className="mt-2">
                           <Badge variant="outline" className="text-xs">
                             {feature.properties.status || "Operating"}
@@ -328,7 +328,7 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
                           )}
                         </div>
                         {feature.properties.completionYear && (
-                          <p className="text-xs text-bristol-stone mt-1">
+                          <p className="text-xs text-brand-stone mt-1">
                             Completed: {feature.properties.completionYear}
                           </p>
                         )}
@@ -353,9 +353,9 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
                   >
                     <Popup>
                       <div className="p-2">
-                        <h3 className="font-semibold text-bristol-ink">{feature.properties.name}</h3>
-                        <p className="text-sm text-bristol-stone mt-1">{feature.properties.address}</p>
-                        <p className="text-sm text-bristol-stone">{feature.properties.cityState}</p>
+                        <h3 className="font-semibold text-brand-ink">{feature.properties.name}</h3>
+                        <p className="text-sm text-brand-stone mt-1">{feature.properties.address}</p>
+                        <p className="text-sm text-brand-stone">{feature.properties.cityState}</p>
                         <div className="mt-2">
                           <Badge variant="outline" className="text-xs">
                             {feature.properties.status}
@@ -396,7 +396,7 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
       {/* Control panels */}
       <div className="absolute top-3 left-3 z-[1000] flex gap-2">
         {/* Quick toggles */}
-        <Card className="bg-white/95 backdrop-blur-sm shadow-lg border border-bristol-stone/20">
+        <Card className="bg-white/95 backdrop-blur-sm shadow-lg border border-brand-stone/20">
           <CardContent className="p-3">
             <div className="flex gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -459,7 +459,7 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
                     {isProcessingFiles ? 'Processing...' : 'Choose Files'}
                   </Button>
                 </div>
-                <p className="text-xs text-bristol-stone mt-1">
+                <p className="text-xs text-brand-stone mt-1">
                   Supports .kml and .kmz files
                 </p>
               </div>
@@ -479,7 +479,7 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
                           />
                           <div>
                             <p className="text-sm font-medium">{layer.name}</p>
-                            <p className="text-xs text-bristol-stone">
+                            <p className="text-xs text-brand-stone">
                               {layer.data.features.length} features
                             </p>
                           </div>
@@ -504,9 +504,9 @@ export function PortfolioMap({ selectedSiteId, onSiteSelect, className }: Portfo
 
       {/* Map info */}
       <div className="absolute bottom-3 left-3 z-[1000]">
-        <Card className="bg-white/95 backdrop-blur-sm shadow-lg border border-bristol-stone/20">
+        <Card className="bg-white/95 backdrop-blur-sm shadow-lg border border-brand-stone/20">
           <CardContent className="p-2">
-            <div className="flex items-center gap-2 text-xs text-bristol-stone">
+            <div className="flex items-center gap-2 text-xs text-brand-stone">
               <MapPin className="h-3 w-3" />
               <span>
                 {isLoading ? 'Loading...' : `${allShownFeatures.length} sites shown`}

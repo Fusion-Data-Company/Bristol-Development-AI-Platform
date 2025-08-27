@@ -157,7 +157,7 @@ export function EnhancedAgentManagement({ className }: EnhancedAgentManagementPr
       <Card className={cn("w-full", className)}>
         <CardContent className="flex items-center justify-center py-12">
           <div className="flex items-center gap-2">
-            <RefreshCw className="h-5 w-5 animate-spin text-bristol-maroon" />
+            <RefreshCw className="h-5 w-5 animate-spin text-brand-maroon" />
             <span>Loading enhanced agent system...</span>
           </div>
         </CardContent>
@@ -168,7 +168,7 @@ export function EnhancedAgentManagement({ className }: EnhancedAgentManagementPr
   if (!agents || agents.length === 0) {
     return (
       <Card className={cn("w-full", className)}>
-        <CardHeader className="bg-gradient-to-r from-bristol-maroon via-bristol-ink to-bristol-maroon text-white">
+        <CardHeader className="bg-gradient-to-r from-brand-maroon via-brand-ink to-brand-maroon text-white">
           <CardTitle className="flex items-center gap-2">
             <Bot className="h-6 w-6" />
             Enhanced Multi-Agent System
@@ -176,16 +176,16 @@ export function EnhancedAgentManagement({ className }: EnhancedAgentManagementPr
         </CardHeader>
         <CardContent className="text-center py-12">
           <div className="space-y-4">
-            <Bot className="h-16 w-16 text-bristol-maroon mx-auto opacity-50" />
+            <Bot className="h-16 w-16 text-brand-maroon mx-auto opacity-50" />
             <div>
-              <h3 className="text-lg font-semibold text-bristol-ink mb-2">No Agents Initialized</h3>
+              <h3 className="text-lg font-semibold text-brand-ink mb-2">No Agents Initialized</h3>
               <p className="text-muted-foreground mb-4">
-                Initialize the default Bristol agent swarm to get started with the enhanced multi-agent system.
+                Initialize the default Company agent swarm to get started with the enhanced multi-agent system.
               </p>
               <Button 
                 onClick={() => initializeAgents.mutate()} 
                 disabled={initializeAgents.isPending}
-                className="bg-bristol-maroon hover:bg-bristol-ink text-white"
+                className="bg-brand-maroon hover:bg-brand-ink text-white"
               >
                 {initializeAgents.isPending ? (
                   <>
@@ -210,12 +210,12 @@ export function EnhancedAgentManagement({ className }: EnhancedAgentManagementPr
     <div className={cn("w-full space-y-6", className)}>
       {/* Agent Swarm Overview */}
       <Card className="w-full">
-        <CardHeader className="bg-gradient-to-r from-bristol-maroon via-bristol-ink to-bristol-maroon text-white">
+        <CardHeader className="bg-gradient-to-r from-brand-maroon via-brand-ink to-brand-maroon text-white">
           <CardTitle className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Network className="h-6 w-6" />
-              Bristol Enhanced Agent Swarm
-              <Badge variant="secondary" className="bg-bristol-gold text-bristol-ink">
+              Company Enhanced Agent Swarm
+              <Badge variant="secondary" className="bg-brand-gold text-brand-ink">
                 {agents.length} Agents Active
               </Badge>
             </div>
@@ -239,21 +239,21 @@ export function EnhancedAgentManagement({ className }: EnhancedAgentManagementPr
                   className={cn(
                     "cursor-pointer transition-all duration-200 hover:shadow-lg border-2",
                     selectedAgent === agent.id 
-                      ? "border-bristol-maroon bg-bristol-maroon/5" 
-                      : "border-gray-200 hover:border-bristol-sky"
+                      ? "border-brand-maroon bg-brand-maroon/5" 
+                      : "border-gray-200 hover:border-brand-sky"
                   )}
                   onClick={() => setSelectedAgent(agent.id)}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <Brain className="h-5 w-5 text-bristol-maroon" />
+                        <Brain className="h-5 w-5 text-brand-maroon" />
                         <div className={cn("w-2 h-2 rounded-full", getStatusColor(agent.status))} />
                       </div>
                       <StatusIcon className="h-4 w-4 text-muted-foreground" />
                     </div>
                     
-                    <h3 className="font-semibold text-sm mb-1 text-bristol-ink">{agent.name}</h3>
+                    <h3 className="font-semibold text-sm mb-1 text-brand-ink">{agent.name}</h3>
                     <p className="text-xs text-muted-foreground mb-3 capitalize">{agent.role.replace('-', ' ')}</p>
                     
                     <div className="space-y-2">
@@ -273,7 +273,7 @@ export function EnhancedAgentManagement({ className }: EnhancedAgentManagementPr
                             </Badge>
                           )}
                           {agent.stats.runningTasks > 0 && (
-                            <Badge variant="default" className="text-xs bg-bristol-maroon">
+                            <Badge variant="default" className="text-xs bg-brand-maroon">
                               {agent.stats.runningTasks} running
                             </Badge>
                           )}
@@ -298,7 +298,7 @@ export function EnhancedAgentManagement({ className }: EnhancedAgentManagementPr
       {/* Agent Details Panel */}
       {selectedAgent && agentDetails && (
         <Card className="w-full">
-          <CardHeader className="bg-gradient-to-r from-bristol-sky via-bristol-gold to-bristol-sky text-white">
+          <CardHeader className="bg-gradient-to-r from-brand-sky via-brand-gold to-brand-sky text-white">
             <CardTitle className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Brain className="h-6 w-6" />
@@ -361,7 +361,7 @@ export function EnhancedAgentManagement({ className }: EnhancedAgentManagementPr
                           size="sm"
                           onClick={handleSavePrompt}
                           disabled={updatePrompt.isPending}
-                          className="bg-bristol-maroon hover:bg-bristol-ink"
+                          className="bg-brand-maroon hover:bg-brand-ink"
                         >
                           {updatePrompt.isPending ? (
                             <RefreshCw className="h-4 w-4 animate-spin" />
@@ -561,7 +561,7 @@ export function EnhancedAgentManagement({ className }: EnhancedAgentManagementPr
                     <h4 className="font-semibold mb-2">Tool Usage Statistics</h4>
                     <div className="space-y-2 text-sm text-muted-foreground">
                       <p>Real-time MCP tool usage metrics will be displayed here.</p>
-                      <p>Integration with the Bristol MCP system provides comprehensive tool tracking.</p>
+                      <p>Integration with the Company MCP system provides comprehensive tool tracking.</p>
                     </div>
                   </Card>
                 </div>

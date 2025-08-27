@@ -33,7 +33,7 @@ export function ParallaxBackground({
       {/* Parallax Background */}
       <div
         ref={backgroundRef}
-        className="absolute inset-0 w-full h-[120%] bg-gradient-to-br from-bristol-maroon/5 via-bristol-sky/10 to-bristol-gold/5"
+        className="absolute inset-0 w-full h-[120%] bg-gradient-to-br from-brand-maroon/5 via-brand-sky/10 to-brand-gold/5"
         style={{
           backgroundImage: `
             radial-gradient(circle at 20% 80%, rgba(139, 21, 56, 0.1) 0%, transparent 50%),
@@ -58,19 +58,19 @@ export function ParallaxBackground({
       {/* Animated Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating geometric shapes */}
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-bristol-maroon/5 rounded-full animate-float" />
-        <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-bristol-gold/10 rounded-lg rotate-45 animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-3/4 w-20 h-20 bg-bristol-sky/8 rounded-full animate-float" style={{ animationDelay: '4s' }} />
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-brand-maroon/5 rounded-full animate-float" />
+        <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-brand-gold/10 rounded-lg rotate-45 animate-float" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-3/4 w-20 h-20 bg-brand-sky/8 rounded-full animate-float" style={{ animationDelay: '4s' }} />
         
-        {/* Bristol Development Pattern */}
+        {/* Company Development Pattern */}
         <div className="absolute top-0 left-0 w-full h-full">
           <svg className="w-full h-full opacity-5" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
-              <pattern id="bristol-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-bristol-maroon"/>
+              <pattern id="brand-grid" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-brand-maroon"/>
               </pattern>
             </defs>
-            <rect width="100%" height="100%" fill="url(#bristol-grid)" />
+            <rect width="100%" height="100%" fill="url(#brand-grid)" />
           </svg>
         </div>
       </div>
@@ -123,7 +123,7 @@ export function ParallaxHero({
         }}
       >
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-bristol-ink/80 via-bristol-maroon/60 to-bristol-ink/90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-ink/80 via-brand-maroon/60 to-brand-ink/90" />
         
         {/* Luxury property aesthetic overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />

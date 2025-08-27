@@ -147,12 +147,12 @@ export function FinancialModelingDashboard() {
   return (
     <div className="space-y-6">
       {/* DCF Header */}
-      <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+      <Card className="bg-white border-brand-cyan/30 shadow-lg">
         <CardHeader>
-          <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
-            <Calculator className="h-6 w-6 text-bristol-gold" />
+          <CardTitle className="text-brand-cyan text-xl flex items-center gap-3">
+            <Calculator className="h-6 w-6 text-brand-gold" />
             Elite Financial Modeling Suite
-            <Badge className="bg-bristol-maroon text-white border-bristol-gold">
+            <Badge className="bg-brand-maroon text-white border-brand-gold">
               <Zap className="h-3 w-3 mr-1" />
               Real-Time DCF
             </Badge>
@@ -162,95 +162,95 @@ export function FinancialModelingDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Input Parameters */}
-        <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+        <Card className="bg-white border-brand-cyan/30 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-bristol-cyan flex items-center gap-3">
-              <Building2 className="h-5 w-5 text-bristol-gold" />
+            <CardTitle className="text-brand-cyan flex items-center gap-3">
+              <Building2 className="h-5 w-5 text-brand-gold" />
               Investment Parameters
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-sm font-medium text-bristol-cyan mb-2 block">Property Value</label>
+                <label className="text-sm font-medium text-brand-cyan mb-2 block">Property Value</label>
                 <Input
                   type="number"
                   value={dcfInputs.propertyValue}
                   onChange={(e) => setDCFInputs({...dcfInputs, propertyValue: Number(e.target.value)})}
-                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
+                  className="bg-white border-brand-cyan/30 text-brand-maroon"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-bristol-cyan mb-2 block">Down Payment (%)</label>
+                <label className="text-sm font-medium text-brand-cyan mb-2 block">Down Payment (%)</label>
                 <Input
                   type="number"
                   value={dcfInputs.downPayment}
                   onChange={(e) => setDCFInputs({...dcfInputs, downPayment: Number(e.target.value)})}
-                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
+                  className="bg-white border-brand-cyan/30 text-brand-maroon"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-bristol-cyan mb-2 block">Interest Rate (%)</label>
+                <label className="text-sm font-medium text-brand-cyan mb-2 block">Interest Rate (%)</label>
                 <Input
                   type="number"
                   step="0.1"
                   value={dcfInputs.interestRate}
                   onChange={(e) => setDCFInputs({...dcfInputs, interestRate: Number(e.target.value)})}
-                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
+                  className="bg-white border-brand-cyan/30 text-brand-maroon"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-bristol-cyan mb-2 block">Loan Term (years)</label>
+                <label className="text-sm font-medium text-brand-cyan mb-2 block">Loan Term (years)</label>
                 <Input
                   type="number"
                   value={dcfInputs.loanTerm}
                   onChange={(e) => setDCFInputs({...dcfInputs, loanTerm: Number(e.target.value)})}
-                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
+                  className="bg-white border-brand-cyan/30 text-brand-maroon"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-bristol-cyan mb-2 block">Annual Rent</label>
+                <label className="text-sm font-medium text-brand-cyan mb-2 block">Annual Rent</label>
                 <Input
                   type="number"
                   value={dcfInputs.currentRent}
                   onChange={(e) => setDCFInputs({...dcfInputs, currentRent: Number(e.target.value)})}
-                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
+                  className="bg-white border-brand-cyan/30 text-brand-maroon"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-bristol-cyan mb-2 block">Rent Growth (%)</label>
+                <label className="text-sm font-medium text-brand-cyan mb-2 block">Rent Growth (%)</label>
                 <Input
                   type="number"
                   step="0.1"
                   value={dcfInputs.rentGrowth}
                   onChange={(e) => setDCFInputs({...dcfInputs, rentGrowth: Number(e.target.value)})}
-                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
+                  className="bg-white border-brand-cyan/30 text-brand-maroon"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-bristol-cyan mb-2 block">Annual Expenses</label>
+                <label className="text-sm font-medium text-brand-cyan mb-2 block">Annual Expenses</label>
                 <Input
                   type="number"
                   value={dcfInputs.expenses}
                   onChange={(e) => setDCFInputs({...dcfInputs, expenses: Number(e.target.value)})}
-                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
+                  className="bg-white border-brand-cyan/30 text-brand-maroon"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-bristol-cyan mb-2 block">Exit Cap Rate (%)</label>
+                <label className="text-sm font-medium text-brand-cyan mb-2 block">Exit Cap Rate (%)</label>
                 <Input
                   type="number"
                   step="0.1"
                   value={dcfInputs.exitCapRate}
                   onChange={(e) => setDCFInputs({...dcfInputs, exitCapRate: Number(e.target.value)})}
-                  className="bg-white border-bristol-cyan/30 text-bristol-maroon"
+                  className="bg-white border-brand-cyan/30 text-brand-maroon"
                 />
               </div>
             </div>
             
             <Button 
               onClick={calculateDCF}
-              className="w-full bg-gradient-to-r from-bristol-maroon to-bristol-cyan hover:from-bristol-cyan hover:to-bristol-gold"
+              className="w-full bg-gradient-to-r from-brand-maroon to-brand-cyan hover:from-brand-cyan hover:to-brand-gold"
             >
               <Calculator className="h-4 w-4 mr-2" />
               Calculate DCF Analysis
@@ -260,20 +260,20 @@ export function FinancialModelingDashboard() {
 
         {/* Results Dashboard */}
         {results && (
-          <Card className="bg-white border-bristol-gold/30 shadow-lg">
+          <Card className="bg-white border-brand-gold/30 shadow-lg">
             <CardHeader>
-              <CardTitle className="text-bristol-gold flex items-center gap-3">
+              <CardTitle className="text-brand-gold flex items-center gap-3">
                 <Target className="h-5 w-5" />
                 Investment Returns Analysis
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
-                  <div className="text-2xl font-bold text-bristol-cyan mb-1">
+                <div className="text-center p-4 bg-gray-100 rounded-xl border border-brand-cyan/20">
+                  <div className="text-2xl font-bold text-brand-cyan mb-1">
                     {formatCurrency(results.netPresentValue)}
                   </div>
-                  <div className="text-xs text-bristol-stone">Net Present Value</div>
+                  <div className="text-xs text-brand-stone">Net Present Value</div>
                   <div className="flex items-center justify-center mt-2">
                     {results.netPresentValue > 0 ? (
                       <ArrowUpRight className="h-4 w-4 text-green-400" />
@@ -283,11 +283,11 @@ export function FinancialModelingDashboard() {
                   </div>
                 </div>
                 
-                <div className="text-center p-4 bg-bristol-ink/60 rounded-xl border border-bristol-gold/20">
-                  <div className="text-2xl font-bold text-bristol-gold mb-1">
+                <div className="text-center p-4 bg-brand-ink/60 rounded-xl border border-brand-gold/20">
+                  <div className="text-2xl font-bold text-brand-gold mb-1">
                     {formatPercentage(results.internalRateOfReturn)}
                   </div>
-                  <div className="text-xs text-bristol-stone">Internal Rate of Return</div>
+                  <div className="text-xs text-brand-stone">Internal Rate of Return</div>
                   <div className="flex items-center justify-center mt-2">
                     {results.internalRateOfReturn > 15 ? (
                       <ArrowUpRight className="h-4 w-4 text-green-400" />
@@ -297,21 +297,21 @@ export function FinancialModelingDashboard() {
                   </div>
                 </div>
                 
-                <div className="text-center p-4 bg-bristol-ink/60 rounded-xl border border-bristol-maroon/20">
-                  <div className="text-2xl font-bold text-bristol-maroon mb-1">
+                <div className="text-center p-4 bg-brand-ink/60 rounded-xl border border-brand-maroon/20">
+                  <div className="text-2xl font-bold text-brand-maroon mb-1">
                     {formatPercentage(results.cashOnCashReturn)}
                   </div>
-                  <div className="text-xs text-bristol-stone">Cash-on-Cash Return</div>
+                  <div className="text-xs text-brand-stone">Cash-on-Cash Return</div>
                   <div className="flex items-center justify-center mt-2">
-                    <Percent className="h-4 w-4 text-bristol-maroon" />
+                    <Percent className="h-4 w-4 text-brand-maroon" />
                   </div>
                 </div>
                 
-                <div className="text-center p-4 bg-bristol-ink/60 rounded-xl border border-green-600/20">
+                <div className="text-center p-4 bg-brand-ink/60 rounded-xl border border-green-600/20">
                   <div className="text-2xl font-bold text-green-400 mb-1">
                     {results.equityMultiple.toFixed(2)}x
                   </div>
-                  <div className="text-xs text-bristol-stone">Equity Multiple</div>
+                  <div className="text-xs text-brand-stone">Equity Multiple</div>
                   <div className="flex items-center justify-center mt-2">
                     <TrendingUp className="h-4 w-4 text-green-400" />
                   </div>
@@ -319,12 +319,12 @@ export function FinancialModelingDashboard() {
               </div>
               
               {/* Cash Flow Projection */}
-              <div className="mt-6 p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
-                <div className="text-bristol-cyan font-medium mb-3">Annual Cash Flow Projection</div>
+              <div className="mt-6 p-4 bg-gray-100 rounded-xl border border-brand-cyan/20">
+                <div className="text-brand-cyan font-medium mb-3">Annual Cash Flow Projection</div>
                 <div className="space-y-2">
                   {results.cashFlow.map((cf, index) => (
                     <div key={index} className="flex justify-between items-center">
-                      <span className="text-bristol-stone text-sm">Year {index + 1}:</span>
+                      <span className="text-brand-stone text-sm">Year {index + 1}:</span>
                       <span className={cn(
                         "font-medium",
                         cf > 0 ? "text-green-400" : "text-red-400"
@@ -342,10 +342,10 @@ export function FinancialModelingDashboard() {
 
       {/* Investment Decision Matrix */}
       {results && (
-        <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+        <Card className="bg-white border-brand-cyan/30 shadow-lg">
           <CardHeader>
-            <CardTitle className="text-bristol-cyan flex items-center gap-3">
-              <BarChart3 className="h-5 w-5 text-bristol-gold" />
+            <CardTitle className="text-brand-cyan flex items-center gap-3">
+              <BarChart3 className="h-5 w-5 text-brand-gold" />
               Investment Decision Matrix
             </CardTitle>
           </CardHeader>
@@ -353,7 +353,7 @@ export function FinancialModelingDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-4">
                 <div className="text-center">
-                  <h4 className="text-bristol-maroon font-medium">Profitability Assessment</h4>
+                  <h4 className="text-brand-maroon font-medium">Profitability Assessment</h4>
                   <div className="mt-4">
                     <Badge className={cn(
                       "text-lg px-4 py-2",
@@ -376,19 +376,19 @@ export function FinancialModelingDashboard() {
               
               <div className="space-y-3">
                 <div className="text-center">
-                  <h4 className="text-bristol-maroon font-medium mb-3">Key Metrics</h4>
+                  <h4 className="text-brand-maroon font-medium mb-3">Key Metrics</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-bristol-stone">Monthly Payment:</span>
-                      <span className="text-bristol-maroon">{formatCurrency(results.monthlyPayment)}</span>
+                      <span className="text-brand-stone">Monthly Payment:</span>
+                      <span className="text-brand-maroon">{formatCurrency(results.monthlyPayment)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-bristol-stone">Profitability Index:</span>
-                      <span className="text-bristol-gold">{results.profitabilityIndex.toFixed(2)}</span>
+                      <span className="text-brand-stone">Profitability Index:</span>
+                      <span className="text-brand-gold">{results.profitabilityIndex.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-bristol-stone">Break-even IRR:</span>
-                      <span className="text-bristol-cyan">12.0%</span>
+                      <span className="text-brand-stone">Break-even IRR:</span>
+                      <span className="text-brand-cyan">12.0%</span>
                     </div>
                   </div>
                 </div>
@@ -396,16 +396,16 @@ export function FinancialModelingDashboard() {
               
               <div className="space-y-3">
                 <div className="text-center">
-                  <h4 className="text-bristol-maroon font-medium mb-3">Risk Assessment</h4>
+                  <h4 className="text-brand-maroon font-medium mb-3">Risk Assessment</h4>
                   <div className="space-y-2">
                     <div className="p-2 bg-gray-100 rounded-lg border-l-4 border-green-400">
                       <div className="text-xs text-green-300">Interest Rate: Favorable</div>
                     </div>
-                    <div className="p-2 bg-bristol-ink/60 rounded-lg border-l-4 border-yellow-400">
+                    <div className="p-2 bg-brand-ink/60 rounded-lg border-l-4 border-yellow-400">
                       <div className="text-xs text-yellow-300">Market: Moderate Risk</div>
                     </div>
-                    <div className="p-2 bg-bristol-ink/60 rounded-lg border-l-4 border-bristol-cyan">
-                      <div className="text-xs text-bristol-cyan">Liquidity: Good</div>
+                    <div className="p-2 bg-brand-ink/60 rounded-lg border-l-4 border-brand-cyan">
+                      <div className="text-xs text-brand-cyan">Liquidity: Good</div>
                     </div>
                   </div>
                 </div>

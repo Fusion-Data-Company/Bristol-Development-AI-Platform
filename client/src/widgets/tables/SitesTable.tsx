@@ -117,7 +117,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       
       return (
         <div 
-          className="cursor-pointer hover:bg-bristol-cream/20 p-1 rounded min-w-[80px]"
+          className="cursor-pointer hover:bg-brand-cream/20 p-1 rounded min-w-[80px]"
           onClick={() => {
             setEditingCell({ rowId: site.id, columnId: column.id });
             setEditValue(value?.toString() || '');
@@ -176,16 +176,16 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-8 p-0 font-cinzel font-bold text-white hover:text-bristol-gold hover:bg-bristol-gold/20 transition-all duration-300"
+          className="h-8 p-0 font-cinzel font-bold text-white hover:text-brand-gold hover:bg-brand-gold/20 transition-all duration-300"
         >
           PROPERTY NAME
-          <ArrowUpDown className="ml-2 h-4 w-4 text-bristol-gold" />
+          <ArrowUpDown className="ml-2 h-4 w-4 text-brand-gold" />
         </Button>
       ),
       size: 200,
       cell: ({ row }) => (
         <div 
-          className="font-bold text-bristol-ink cursor-pointer hover:text-bristol-maroon min-w-[200px] transition-all duration-300 hover:scale-105"
+          className="font-bold text-brand-ink cursor-pointer hover:text-brand-maroon min-w-[200px] transition-all duration-300 hover:scale-105"
           onClick={() => onSelectSite(row.original)}
         >
           {row.getValue('name')}
@@ -200,9 +200,9 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         const city = row.original.city as string;
         const state = row.original.state as string;
         return (
-          <div className="font-medium text-bristol-ink">
+          <div className="font-medium text-brand-ink">
             <div className="font-bold">{city || 'Unknown City'}</div>
-            <div className="text-sm text-bristol-stone">{state || 'Unknown State'}</div>
+            <div className="text-sm text-brand-stone">{state || 'Unknown State'}</div>
           </div>
         );
       },
@@ -215,9 +215,9 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         const addr1 = row.original.addrLine1 as string;
         const addr2 = row.original.addrLine2 as string;
         return (
-          <div className="font-medium text-bristol-ink text-sm">
+          <div className="font-medium text-brand-ink text-sm">
             <div>{addr1 || 'Address Not Available'}</div>
-            {addr2 && <div className="text-bristol-stone">{addr2}</div>}
+            {addr2 && <div className="text-brand-stone">{addr2}</div>}
           </div>
         );
       },
@@ -230,10 +230,10 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         const units = row.getValue('unitsTotal') as number;
         return (
           <div className="text-center">
-            <div className="font-bold text-bristol-maroon text-lg">
+            <div className="font-bold text-brand-maroon text-lg">
               {units?.toLocaleString() || '—'}
             </div>
-            <div className="text-xs text-bristol-stone">Total Units</div>
+            <div className="text-xs text-brand-stone">Total Units</div>
           </div>
         );
       },
@@ -248,11 +248,11 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         const age = year ? currentYear - year : null;
         return (
           <div className="text-center">
-            <div className="font-bold text-bristol-ink">
+            <div className="font-bold text-brand-ink">
               {year || '—'}
             </div>
             {age && (
-              <div className="text-xs text-bristol-stone">
+              <div className="text-xs text-brand-stone">
                 {age} years old
               </div>
             )}
@@ -265,7 +265,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       header: 'ZIP CODE',
       size: 100,
       cell: ({ row }) => (
-        <div className="text-center font-medium text-bristol-ink">
+        <div className="text-center font-medium text-brand-ink">
           {row.getValue('postalCode') || '—'}
         </div>
       ),
@@ -277,7 +277,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       cell: ({ row }) => {
         const lat = row.getValue('latitude') as number;
         return (
-          <div className="text-center text-sm font-mono text-bristol-ink">
+          <div className="text-center text-sm font-mono text-brand-ink">
             {lat ? lat.toFixed(6) : '—'}
           </div>
         );
@@ -290,7 +290,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       cell: ({ row }) => {
         const lng = row.getValue('longitude') as number;
         return (
-          <div className="text-center text-sm font-mono text-bristol-ink">
+          <div className="text-center text-sm font-mono text-brand-ink">
             {lng ? lng.toFixed(6) : '—'}
           </div>
         );
@@ -304,11 +304,11 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         const acreage = row.getValue('acreage') as number;
         return (
           <div className="text-center">
-            <div className="font-bold text-bristol-maroon">
+            <div className="font-bold text-brand-maroon">
               {acreage ? `${acreage.toFixed(1)}` : '—'}
             </div>
             {acreage && (
-              <div className="text-xs text-bristol-stone">acres</div>
+              <div className="text-xs text-brand-stone">acres</div>
             )}
           </div>
         );
@@ -319,7 +319,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       header: '1BR UNITS',
       size: 100,
       cell: ({ row }) => (
-        <div className="text-center font-medium text-bristol-ink">
+        <div className="text-center font-medium text-brand-ink">
           {row.getValue('units1b') || '—'}
         </div>
       ),
@@ -329,7 +329,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       header: '2BR UNITS',
       size: 100,
       cell: ({ row }) => (
-        <div className="text-center font-medium text-bristol-ink">
+        <div className="text-center font-medium text-brand-ink">
           {row.getValue('units2b') || '—'}
         </div>
       ),
@@ -339,7 +339,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       header: '3BR UNITS',
       size: 100,
       cell: ({ row }) => (
-        <div className="text-center font-medium text-bristol-ink">
+        <div className="text-center font-medium text-brand-ink">
           {row.getValue('units3b') || '—'}
         </div>
       ),
@@ -352,11 +352,11 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         const avgSf = row.getValue('avgSf') as number;
         return (
           <div className="text-center">
-            <div className="font-bold text-bristol-maroon">
+            <div className="font-bold text-brand-maroon">
               {avgSf ? avgSf.toLocaleString() : '—'}
             </div>
             {avgSf && (
-              <div className="text-xs text-bristol-stone">sq ft</div>
+              <div className="text-xs text-brand-stone">sq ft</div>
             )}
           </div>
         );
@@ -370,11 +370,11 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         const parking = row.getValue('parkingSpaces') as number;
         return (
           <div className="text-center">
-            <div className="font-medium text-bristol-ink">
+            <div className="font-medium text-brand-ink">
               {parking || '—'}
             </div>
             {parking && (
-              <div className="text-xs text-bristol-stone">spaces</div>
+              <div className="text-xs text-brand-stone">spaces</div>
             )}
           </div>
         );
@@ -391,13 +391,13 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
             variant="ghost"
             size="sm"
             onClick={() => window.open(url, '_blank')}
-            className="h-8 w-8 p-0 text-bristol-gold hover:text-white hover:bg-bristol-gold/80 transition-all duration-300"
+            className="h-8 w-8 p-0 text-brand-gold hover:text-white hover:bg-brand-gold/80 transition-all duration-300"
             title="View Source URL"
           >
             <ExternalLink className="h-4 w-4" />
           </Button>
         ) : (
-          <div className="text-center text-bristol-stone">—</div>
+          <div className="text-center text-brand-stone">—</div>
         );
       },
     },
@@ -409,17 +409,17 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         const notes = row.getValue('notes') as string;
         return notes ? (
           <div className="relative group">
-            <div className="text-sm text-bristol-ink max-w-[200px] truncate cursor-help">
+            <div className="text-sm text-brand-ink max-w-[200px] truncate cursor-help">
               {notes}
             </div>
-            <div className="absolute bottom-full left-0 mb-2 p-3 bg-white border-2 border-bristol-gold shadow-xl rounded-lg text-sm text-bristol-ink max-w-xs z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-normal">
-              <div className="font-medium text-bristol-maroon mb-1">Notes:</div>
+            <div className="absolute bottom-full left-0 mb-2 p-3 bg-white border-2 border-brand-gold shadow-xl rounded-lg text-sm text-brand-ink max-w-xs z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-normal">
+              <div className="font-medium text-brand-maroon mb-1">Notes:</div>
               {notes}
-              <div className="absolute top-full left-4 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-bristol-gold"></div>
+              <div className="absolute top-full left-4 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-brand-gold"></div>
             </div>
           </div>
         ) : (
-          <div className="text-center text-bristol-stone">—</div>
+          <div className="text-center text-brand-stone">—</div>
         );
       },
     },
@@ -436,7 +436,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                 variant="ghost"
                 size="sm"
                 onClick={() => onSelectSite(site)}
-                className="h-8 w-8 p-0 text-bristol-maroon hover:text-white hover:bg-bristol-maroon/80 transition-all duration-300 rounded-full shadow-lg shadow-bristol-maroon/20"
+                className="h-8 w-8 p-0 text-brand-maroon hover:text-white hover:bg-brand-maroon/80 transition-all duration-300 rounded-full shadow-lg shadow-brand-maroon/20"
                 title="View on Map"
               >
                 <MapPin className="h-4 w-4" />
@@ -447,7 +447,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                 variant="ghost"
                 size="sm"
                 onClick={() => site.sourceUrl && window.open(site.sourceUrl, '_blank')}
-                className="h-8 w-8 p-0 text-bristol-gold hover:text-white hover:bg-bristol-gold/80 transition-all duration-300 rounded-full shadow-lg shadow-bristol-gold/20"
+                className="h-8 w-8 p-0 text-brand-gold hover:text-white hover:bg-brand-gold/80 transition-all duration-300 rounded-full shadow-lg shadow-brand-gold/20"
                 title="View Source"
               >
                 <ExternalLink className="h-4 w-4" />
@@ -490,13 +490,13 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64 bg-gradient-to-br from-white to-bristol-cream/30">
-        <div className="flex items-center gap-3 text-bristol-ink">
+      <div className="flex items-center justify-center h-64 bg-gradient-to-br from-white to-brand-cream/30">
+        <div className="flex items-center gap-3 text-brand-ink">
           <div className="relative">
-            <Loader2 className="h-6 w-6 animate-spin text-bristol-maroon" />
-            <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-lg animate-pulse"></div>
+            <Loader2 className="h-6 w-6 animate-spin text-brand-maroon" />
+            <div className="absolute -inset-2 bg-brand-maroon/20 rounded-full blur-lg animate-pulse"></div>
           </div>
-          <span className="font-cinzel text-lg">Loading Bristol Portfolio Intelligence...</span>
+          <span className="font-cinzel text-lg">Loading Company Portfolio Intelligence...</span>
         </div>
       </div>
     );
@@ -511,23 +511,23 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
             placeholder="Search properties by name, location, or status..."
             value={globalFilter ?? ''}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="pl-12 pr-4 py-3 bg-gradient-to-r from-white to-bristol-cream/30 border-bristol-maroon/30 focus:border-bristol-maroon focus:ring-bristol-maroon/20 font-medium text-bristol-ink placeholder:text-bristol-stone/60 shadow-lg shadow-bristol-maroon/10"
+            className="pl-12 pr-4 py-3 bg-gradient-to-r from-white to-brand-cream/30 border-brand-maroon/30 focus:border-brand-maroon focus:ring-brand-maroon/20 font-medium text-brand-ink placeholder:text-brand-stone/60 shadow-lg shadow-brand-maroon/10"
           />
           <div className="absolute left-4 top-1/2 -translate-y-1/2">
             <div className="relative group">
-              <MapPin className="h-5 w-5 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
-              <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
+              <MapPin className="h-5 w-5 text-brand-maroon group-hover:scale-110 transition-transform duration-300" />
+              <div className="absolute -inset-2 bg-brand-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="rounded-lg border-2 border-bristol-maroon/20 bg-gradient-to-br from-white via-bristol-cream/20 to-white flex-1 shadow-2xl shadow-bristol-maroon/15 flex flex-col min-h-0">
+      <div className="rounded-lg border-2 border-brand-maroon/20 bg-gradient-to-br from-white via-brand-cream/20 to-white flex-1 shadow-2xl shadow-brand-maroon/15 flex flex-col min-h-0">
         <div className="flex-1 overflow-x-auto overflow-y-auto">
           <Table className="w-full relative min-w-[2000px]">
-            <TableHeader className="sticky top-0 bg-gradient-to-r from-bristol-ink via-slate-800 to-bristol-ink z-10 shadow-lg shadow-bristol-ink/30">
+            <TableHeader className="sticky top-0 bg-gradient-to-r from-brand-ink via-slate-800 to-brand-ink z-10 shadow-lg shadow-brand-ink/30">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-bristol-gold/50">
+                <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-brand-gold/50">
                   {headerGroup.headers.map((header) => (
                     <TableHead 
                       key={header.id} 
@@ -551,18 +551,18 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
                     className={`
                       transition-all duration-300 cursor-pointer
                       ${selectedSite?.id === row.original.id ? 
-                        'bg-gradient-to-r from-bristol-gold/20 via-bristol-cream/40 to-bristol-gold/20 shadow-lg shadow-bristol-gold/20 border-l-4 border-bristol-gold' : 
-                        index % 2 === 0 ? 'bg-white hover:bg-gradient-to-r hover:from-bristol-cream/30 hover:to-bristol-gold/10' : 
-                        'bg-bristol-cream/10 hover:bg-gradient-to-r hover:from-bristol-cream/40 hover:to-bristol-gold/15'
+                        'bg-gradient-to-r from-brand-gold/20 via-brand-cream/40 to-brand-gold/20 shadow-lg shadow-brand-gold/20 border-l-4 border-brand-gold' : 
+                        index % 2 === 0 ? 'bg-white hover:bg-gradient-to-r hover:from-brand-cream/30 hover:to-brand-gold/10' : 
+                        'bg-brand-cream/10 hover:bg-gradient-to-r hover:from-brand-cream/40 hover:to-brand-gold/15'
                       }
-                      hover:shadow-lg hover:shadow-bristol-maroon/10
+                      hover:shadow-lg hover:shadow-brand-maroon/10
                     `}
                     onClick={() => onSelectSite(row.original)}
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell 
                         key={cell.id} 
-                        className="px-6 py-4 whitespace-nowrap font-medium text-bristol-ink"
+                        className="px-6 py-4 whitespace-nowrap font-medium text-brand-ink"
                         style={{ width: cell.column.getSize() }}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -573,14 +573,14 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-32 text-center">
-                    <div className="flex flex-col items-center gap-4 text-bristol-stone py-8">
+                    <div className="flex flex-col items-center gap-4 text-brand-stone py-8">
                       <div className="relative group">
-                        <Building className="h-12 w-12 text-bristol-maroon/40 group-hover:text-bristol-maroon/60 transition-colors duration-300" />
-                        <div className="absolute -inset-3 bg-bristol-maroon/10 rounded-full blur-xl group-hover:bg-bristol-maroon/20 transition-all duration-300"></div>
+                        <Building className="h-12 w-12 text-brand-maroon/40 group-hover:text-brand-maroon/60 transition-colors duration-300" />
+                        <div className="absolute -inset-3 bg-brand-maroon/10 rounded-full blur-xl group-hover:bg-brand-maroon/20 transition-all duration-300"></div>
                       </div>
                       <div className="space-y-2">
-                        <p className="font-cinzel text-lg text-bristol-ink">No Properties Found</p>
-                        <p className="text-sm text-bristol-stone">Refine your search criteria or add new properties to your portfolio</p>
+                        <p className="font-cinzel text-lg text-brand-ink">No Properties Found</p>
+                        <p className="text-sm text-brand-stone">Refine your search criteria or add new properties to your portfolio</p>
                       </div>
                     </div>
                   </TableCell>
@@ -592,21 +592,21 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
       </div>
 
       {/* Premium Pagination & Controls */}
-      <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-white via-bristol-cream/30 to-white border-t-2 border-bristol-maroon/20">
+      <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-white via-brand-cream/30 to-white border-t-2 border-brand-maroon/20">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="px-3 py-1 bg-bristol-maroon text-white border-bristol-maroon font-cinzel font-bold">
+            <Badge variant="outline" className="px-3 py-1 bg-brand-maroon text-white border-brand-maroon font-cinzel font-bold">
               {table.getFilteredRowModel().rows.length}
             </Badge>
-            <span className="text-sm font-medium text-bristol-ink">Properties in Portfolio</span>
+            <span className="text-sm font-medium text-brand-ink">Properties in Portfolio</span>
           </div>
           
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-bristol-ink">Show:</span>
+            <span className="text-sm font-medium text-brand-ink">Show:</span>
             <select
               value={table.getState().pagination.pageSize}
               onChange={(e) => table.setPageSize(Number(e.target.value))}
-              className="text-sm border-bristol-maroon/30 rounded-lg px-3 py-1 bg-gradient-to-r from-white to-bristol-cream/50 font-medium text-bristol-ink focus:border-bristol-maroon focus:ring-bristol-maroon/20"
+              className="text-sm border-brand-maroon/30 rounded-lg px-3 py-1 bg-gradient-to-r from-white to-brand-cream/50 font-medium text-brand-ink focus:border-brand-maroon focus:ring-brand-maroon/20"
             >
               {[10, 20, 30, 50, 100].map(size => (
                 <option key={size} value={size}>{size} properties</option>
@@ -616,7 +616,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-bristol-stone mr-2">
+          <span className="text-sm font-medium text-brand-stone mr-2">
             Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
           </span>
           
@@ -625,7 +625,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
             size="sm"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="bg-gradient-to-r from-white to-bristol-cream/30 border-bristol-maroon/30 text-bristol-ink hover:bg-gradient-to-r hover:from-bristol-cream/40 hover:to-bristol-gold/20 hover:border-bristol-maroon font-medium"
+            className="bg-gradient-to-r from-white to-brand-cream/30 border-brand-maroon/30 text-brand-ink hover:bg-gradient-to-r hover:from-brand-cream/40 hover:to-brand-gold/20 hover:border-brand-maroon font-medium"
           >
             Previous
           </Button>
@@ -634,7 +634,7 @@ export function SitesTable({ data, isLoading, onSelectSite, selectedSite, onRefr
             size="sm"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="bg-gradient-to-r from-white to-bristol-cream/30 border-bristol-maroon/30 text-bristol-ink hover:bg-gradient-to-r hover:from-bristol-cream/40 hover:to-bristol-gold/20 hover:border-bristol-maroon font-medium"
+            className="bg-gradient-to-r from-white to-brand-cream/30 border-brand-maroon/30 text-brand-ink hover:bg-gradient-to-r hover:from-brand-cream/40 hover:to-brand-gold/20 hover:border-brand-maroon font-medium"
           >
             Next
           </Button>

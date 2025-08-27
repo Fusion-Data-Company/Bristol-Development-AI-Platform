@@ -1,4 +1,4 @@
-// Enterprise API Endpoints for Bristol Development Group
+// Enterprise API Endpoints for Company Development Group
 // Provides comprehensive enterprise-grade endpoints for all business functions
 
 import { Router } from "express";

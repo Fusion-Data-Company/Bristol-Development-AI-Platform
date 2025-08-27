@@ -48,7 +48,7 @@ export default function ProductionStatus() {
       },
     }),
     bristolScores: useMutation({
-      mutationFn: () => apiRequest('/api/placeholder-replacement/replace-bristol-scores', { method: 'POST' }),
+      mutationFn: () => apiRequest('/api/placeholder-replacement/replace-brand-scores', { method: 'POST' }),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['/api/placeholder-replacement/health'] });
         setActiveReplacement(null);
@@ -228,9 +228,9 @@ export default function ProductionStatus() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Bristol Scores Replacement</CardTitle>
+                <CardTitle>Company Scores Replacement</CardTitle>
                 <CardDescription>
-                  Calculate real Bristol scores using proprietary 100-point methodology
+                  Calculate real Company scores using proprietary 100-point methodology
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -242,7 +242,7 @@ export default function ProductionStatus() {
                   {(activeReplacement === 'bristolScores' || replacementMutations.bristolScores.isPending) && (
                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                   )}
-                  Calculate Bristol Scores
+                  Calculate Company Scores
                 </Button>
                 {replacementMutations.bristolScores.data && (
                   <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">

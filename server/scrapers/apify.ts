@@ -16,7 +16,7 @@ export async function scrapeApify(query: ScrapeQuery): Promise<ScrapeResult> {
       try {
         const response = await fetch(url, {
           headers: {
-            'User-Agent': 'Mozilla/5.0 (compatible; Bristol Property Scraper/1.0)'
+            'User-Agent': 'Mozilla/5.0 (compatible; Company Property Scraper/1.0)'
           }
         });
         

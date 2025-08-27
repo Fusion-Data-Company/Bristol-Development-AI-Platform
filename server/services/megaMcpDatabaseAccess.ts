@@ -45,7 +45,7 @@ interface MegaMcpDatabaseInterface {
   getPropertyDetails(siteId: string): Promise<any>;
   
   // Analytics & Insights
-  getBristolScoring(siteId?: string): Promise<any>;
+  getCompanyScoring(siteId?: string): Promise<any>;
   getRunsHistory(type?: string, limit?: number): Promise<any[]>;
   getIntegrationLogs(service?: string, status?: string): Promise<any[]>;
   
@@ -110,7 +110,7 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
         // Complex portfolio analytics query
         const totalSites = await db.select({ count: sql<number>`count(*)` }).from(sites);
         const totalUnits = await db.select({ sum: sql<number>`sum(units_total)` }).from(sites);
-        const avgBristolScore = await db.select({ avg: sql<number>`avg(bristol_score)` }).from(sites);
+        const avgCompanyScore = await db.select({ avg: sql<number>`avg(bristol_score)` }).from(sites);
         
         const statusBreakdown = await db.select({
           status: sites.status,
@@ -131,7 +131,7 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
           overview: {
             totalSites: totalSites[0]?.count || 0,
             totalUnits: totalUnits[0]?.sum || 0,
-            avgBristolScore: avgBristolScore[0]?.avg || 0
+            avgCompanyScore: avgCompanyScore[0]?.avg || 0
           },
           statusBreakdown,
           stateBreakdown: stateBreakdown.slice(0, 10) // Top 10 states
@@ -273,7 +273,7 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
 
   // ANALYTICS & INSIGHTS METHODS
 
-  async getBristolScoring(siteId?: string): Promise<any> {
+  async getCompanyScoring(siteId?: string): Promise<any> {
     return this.errorHandler.wrapDatabaseOperation(
       async () => {
         let query = db.select({
@@ -324,7 +324,7 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
 
         return results[0];
       },
-      { operation: 'getBristolScoring', table: 'sites', siteId }
+      { operation: 'getCompanyScoring', table: 'sites', siteId }
     );
   }
 
@@ -418,8 +418,8 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
           conditions.push(sql`units_total <= ${criteria.maxUnits}`);
         }
         
-        if (criteria.minBristolScore) {
-          conditions.push(sql`bristol_score >= ${criteria.minBristolScore}`);
+        if (criteria.minCompanyScore) {
+          conditions.push(sql`bristol_score >= ${criteria.minCompanyScore}`);
         }
 
         let query = db.select().from(sites);
@@ -451,7 +451,7 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
           state: sites.state,
           count: sql<number>`count(*)`,
           totalUnits: sql<number>`sum(units_total)`,
-          avgBristolScore: sql<number>`avg(bristol_score)`
+          avgCompanyScore: sql<number>`avg(bristol_score)`
         })
         .from(sites)
         .where(

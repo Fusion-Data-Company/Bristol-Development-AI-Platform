@@ -231,7 +231,7 @@ export class McpDatabaseAccessValidator {
     try {
       // Test multiple MCP-style operations
       const operations = [
-        () => megaMcpDatabaseAccess.getBristolScoring(),
+        () => megaMcpDatabaseAccess.getCompanyScoring(),
         () => megaMcpDatabaseAccess.getRunsHistory('analysis', 10),
         () => megaMcpDatabaseAccess.getIntegrationLogs(undefined, undefined)
       ];
@@ -374,7 +374,7 @@ export class McpDatabaseAccessValidator {
       const { overview } = analytics;
       const hasRequiredFields = overview.totalSites !== undefined && 
                                overview.totalUnits !== undefined &&
-                               overview.avgBristolScore !== undefined;
+                               overview.avgCompanyScore !== undefined;
 
       if (!hasRequiredFields) {
         return {

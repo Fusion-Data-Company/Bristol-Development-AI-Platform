@@ -152,21 +152,21 @@ export function ScraperJobManager() {
   };
 
   return (
-    <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-xl">
-      <CardHeader className="bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 border-b border-bristol-gold/20">
+    <Card className="bg-gradient-to-br from-white to-brand-cream/30 border-brand-gold/30 shadow-xl">
+      <CardHeader className="bg-gradient-to-r from-brand-maroon/5 to-brand-gold/5 border-b border-brand-gold/20">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-3 text-xl">
-            <div className="p-2 bg-bristol-maroon/10 rounded-lg">
-              <Settings className="h-6 w-6 text-bristol-maroon" />
+            <div className="p-2 bg-brand-maroon/10 rounded-lg">
+              <Settings className="h-6 w-6 text-brand-maroon" />
             </div>
-            <span className="text-bristol-maroon font-cinzel">Scraper Job Manager</span>
-            <Badge variant="secondary" className="ml-2 text-bristol-maroon bg-bristol-gold/20">
+            <span className="text-brand-maroon font-cinzel">Scraper Job Manager</span>
+            <Badge variant="secondary" className="ml-2 text-brand-maroon bg-brand-gold/20">
               {jobs.length} jobs
             </Badge>
           </CardTitle>
           <Dialog open={isLaunchDialogOpen} onOpenChange={setIsLaunchDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-bristol-maroon hover:bg-bristol-maroon/90 text-white border-bristol-gold/20">
+              <Button className="bg-brand-maroon hover:bg-brand-maroon/90 text-white border-brand-gold/20">
                 <Play className="h-4 w-4 mr-2" />
                 Launch Scrape
               </Button>

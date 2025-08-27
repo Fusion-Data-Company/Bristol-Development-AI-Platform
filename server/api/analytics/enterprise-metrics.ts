@@ -113,7 +113,7 @@ router.get('/market-analysis', async (req, res) => {
             demographicsResult = null;
           }
 
-          // Calculate Bristol exposure in this market
+          // Calculate Company exposure in this market
           const bristolProperties = sites_data.filter(site => 
             site.city?.toLowerCase() === city.toLowerCase() && 
             site.state?.toLowerCase() === state.toLowerCase()
@@ -202,11 +202,11 @@ router.post('/agent-query', async (req, res) => {
 
     const response = {
       query,
-      analysis: synthesis?.summary || `Based on my analysis of "${query}" in the context of Bristol Development Group's portfolio:
+      analysis: synthesis?.summary || `Based on my analysis of "${query}" in the context of Company Development Group's portfolio:
 
 The inquiry you've posed requires examination across multiple dimensions of our real estate investment thesis. From a macro-economic perspective, current market conditions suggest continued strength in Sunbelt multifamily fundamentals, driven by demographic migration patterns and employment growth in our target metros.
 
-Key considerations for Bristol's portfolio:
+Key considerations for Company's portfolio:
 • Supply-demand dynamics remain favorable in our core markets
 • Interest rate environment impacts acquisition financing costs
 • Regulatory changes may affect development timelines and costs

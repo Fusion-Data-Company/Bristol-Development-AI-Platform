@@ -104,7 +104,7 @@ export default function Integrations() {
   return (
     <Chrome>
       <div className="min-h-screen relative overflow-hidden">
-        {/* Bristol Background Image - Super HD Clear */}
+        {/* Company Background Image - Super HD Clear */}
         <div 
           className="absolute inset-0 bg-center bg-cover bg-no-repeat"
           style={{

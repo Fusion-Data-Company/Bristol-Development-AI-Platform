@@ -2,7 +2,7 @@ import { ErrorHandlingService } from './errorHandlingService';
 import { robustErrorRecovery } from './robustErrorRecovery';
 import type { Request, Response, NextFunction } from 'express';
 
-// Enhanced error handler for Bristol platform with comprehensive recovery
+// Enhanced error handler for Company platform with comprehensive recovery
 export class EnhancedErrorHandling {
   private errorHandler = ErrorHandlingService.getInstance();
   private recovery = robustErrorRecovery;

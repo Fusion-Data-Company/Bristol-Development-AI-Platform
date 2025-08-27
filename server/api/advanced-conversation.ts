@@ -43,7 +43,7 @@ router.post('/chat', async (req: any, res) => {
     }
 
     // Enhanced system prompt with conversation context
-    let enhancedSystemPrompt = `You are the Bristol Site Intelligence AI, an elite real estate investment analysis system. You have access to comprehensive MCP tools and conversation memory.`;
+    let enhancedSystemPrompt = `You are the Company Site Intelligence AI, an elite real estate investment analysis system. You have access to comprehensive MCP tools and conversation memory.`;
     
     if (conversationContext) {
       enhancedSystemPrompt += conversationMemory.generateContextPrompt(conversationContext);

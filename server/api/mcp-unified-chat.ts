@@ -1,6 +1,6 @@
 /**
  * Unified MCP Chat API
- * Single endpoint for all Bristol AI agents (pop-out widget, chat page, ElevenLabs)
+ * Single endpoint for all Company AI agents (pop-out widget, chat page, ElevenLabs)
  * Provides consistent MCP tool access and conversation persistence
  */
 
@@ -194,7 +194,7 @@ router.post('/chat', async (req: any, res) => {
       console.log(`🛠️ [UnifiedMCP] Preparing MCP tools for ${validatedRequest.sourceInstance}`);
       
       try {
-        // Get all Bristol MCP tools
+        // Get all Company MCP tools
         const bristolTools = await eliteMCPSuperserver.getAvailableTools();
         
         // Add model management tools

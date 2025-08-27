@@ -18,12 +18,12 @@ import { PortfolioAgent } from "@/components/agents/PortfolioAgent";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import type { Site } from "@shared/schema";
-// Bristol seed data
-const bristolSeedData = `status,name,addr_line1,addr_line2,city,state,postal_code,country,latitude,longitude,acreage,units_total,units_1b,units_2b,units_3b,avg_sf,completion_year,parking_spaces,source_url,notes
+// Company seed data
+const companySeedData = `status,name,addr_line1,addr_line2,city,state,postal_code,country,latitude,longitude,acreage,units_total,units_1b,units_2b,units_3b,avg_sf,completion_year,parking_spaces,source_url,notes
 "Completed","Vista Germantown","515 Madison St","","Nashville","TN","37208","USA","","","","242","","","","834","2012","316","https://www.bristoldevelopment.com/vista-germantown",""
 "Completed","1700 Midtown","1700 State St","","Nashville","TN","37203","USA","","","","170","","","","776","2010","227","https://www.bristoldevelopment.com/1700-midtown",""
-"Completed","Bristol Heights","","","Austin","TX","","USA","","","","351","","","","1056","2004","","https://www.bristoldevelopment.com/bristol-heights","22 acres per page"
-"Completed","Bristol Park Oak Ridge","","","Oak Ridge","TN","","USA","","","","208","","","","916","2007","","https://www.bristoldevelopment.com/bristol-park-oak-ridge","11.08 acres per page"
+"Completed","Company Heights","","","Austin","TX","","USA","","","","351","","","","1056","2004","","https://www.bristoldevelopment.com/brand-heights","22 acres per page"
+"Completed","Company Park Oak Ridge","","","Oak Ridge","TN","","USA","","","","208","","","","916","2007","","https://www.bristoldevelopment.com/brand-park-oak-ridge","11.08 acres per page"
 "Newest","Mural at Stovehouse","2900 4th Ave NW","","Huntsville","AL","35805","USA","","","","","","","","","","","https://www.bristoldevelopment.com/new",""
 "Pipeline","Jewel at Santa Rosa","","","Santa Rosa","FL","","USA","","","","","","","","","","","https://www.bristoldevelopment.com/new",""
 "Pipeline","Telegraph Road","","","","","","USA","","","","","","","","","","","https://www.bristoldevelopment.com/new",""
@@ -107,19 +107,19 @@ export default function Sites() {
   const handleLoadSeed = async () => {
     setIsImporting(true);
     try {
-      const response = await apiRequest('POST', '/api/sites/import', { csvData: bristolSeedData });
+      const response = await apiRequest('POST', '/api/sites/import', { csvData: companySeedData });
       const result = await response.json();
 
       toast({
         title: "Seed Data Loaded",
-        description: `${result.inserted} Bristol sites added, ${result.updated} updated`,
+        description: `${result.inserted} Company sites added, ${result.updated} updated`,
       });
 
       refetch();
     } catch (error) {
       toast({
         title: "Failed to Load Seed Data",
-        description: "Could not load Bristol seed data",
+        description: "Could not load Company seed data",
         variant: "destructive",
       });
     } finally {
@@ -137,7 +137,7 @@ export default function Sites() {
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = 'bristol-sites.csv';
+      a.download = 'brand-sites.csv';
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -185,28 +185,28 @@ export default function Sites() {
     <Chrome>
       <div className="min-h-screen relative z-10">
         {/* Premium Sites Intelligence Header */}
-        <div className="bg-white/90 backdrop-blur-md border-b-2 border-bristol-maroon/20 shadow-xl">
+        <div className="bg-white/90 backdrop-blur-md border-b-2 border-brand-maroon/20 shadow-xl">
         <div className="px-8 py-6 relative overflow-hidden">
           {/* Enhanced ambient glow - Static for Header */}
-          <div className="absolute inset-0 bg-gradient-to-r from-bristol-cream/40 via-white/30 to-bristol-sky/40"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-brand-cream/40 via-white/30 to-brand-sky/40"></div>
           <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-0 left-0 w-96 h-96 bg-bristol-maroon/20 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-bristol-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+            <div className="absolute top-0 left-0 w-96 h-96 bg-brand-maroon/20 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-brand-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
           </div>
           
           <div className="flex items-center justify-between mb-4 relative">
             <div className="space-y-2">
               <div className="flex items-center space-x-4">
                 <div className="relative group">
-                  <Building className="h-12 w-12 text-bristol-maroon drop-shadow-lg group-hover:scale-110 transition-transform duration-300" />
-                  <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
+                  <Building className="h-12 w-12 text-brand-maroon drop-shadow-lg group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute -inset-2 bg-brand-maroon/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
                 </div>
                 <div>
-                  <h1 className="text-5xl font-cinzel font-bold text-bristol-ink tracking-wide drop-shadow-lg bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
+                  <h1 className="text-5xl font-cinzel font-bold text-brand-ink tracking-wide drop-shadow-lg bg-gradient-to-r from-brand-ink to-brand-maroon bg-clip-text text-transparent">
                     Database
                   </h1>
-                  <p className="text-bristol-maroon mt-1 font-medium tracking-wider text-lg">
-                    Bristol Development Portfolio Management
+                  <p className="text-brand-maroon mt-1 font-medium tracking-wider text-lg">
+                    Company Development Portfolio Management
                   </p>
                 </div>
               </div>
@@ -214,16 +214,16 @@ export default function Sites() {
             <div className="flex items-center gap-4">
               <Badge 
                 variant="outline" 
-                className="px-8 py-4 text-bristol-ink border-bristol-maroon/50 bg-gradient-to-br from-white via-bristol-cream/30 to-bristol-maroon/10 backdrop-blur-sm font-bold text-2xl shadow-xl shadow-bristol-maroon/25 hover:shadow-bristol-maroon/40 transition-all duration-500 hover:scale-105 border-2"
+                className="px-8 py-4 text-brand-ink border-brand-maroon/50 bg-gradient-to-br from-white via-brand-cream/30 to-brand-maroon/10 backdrop-blur-sm font-bold text-2xl shadow-xl shadow-brand-maroon/25 hover:shadow-brand-maroon/40 transition-all duration-500 hover:scale-105 border-2"
               >
-                <Building className="w-6 h-6 mr-3 text-bristol-maroon" />
+                <Building className="w-6 h-6 mr-3 text-brand-maroon" />
                 {liveMetrics.totalProperties} Properties
               </Badge>
               <Badge 
                 variant="outline" 
-                className="px-8 py-4 text-bristol-maroon border-bristol-gold/50 bg-gradient-to-br from-bristol-gold/20 via-bristol-cream/40 to-white backdrop-blur-sm font-bold text-xl shadow-xl shadow-bristol-gold/25 hover:shadow-bristol-gold/40 transition-all duration-500 hover:scale-105 border-2"
+                className="px-8 py-4 text-brand-maroon border-brand-gold/50 bg-gradient-to-br from-brand-gold/20 via-brand-cream/40 to-white backdrop-blur-sm font-bold text-xl shadow-xl shadow-brand-gold/25 hover:shadow-brand-gold/40 transition-all duration-500 hover:scale-105 border-2"
               >
-                <Users className="w-6 h-6 mr-3 text-bristol-gold" />
+                <Users className="w-6 h-6 mr-3 text-brand-gold" />
                 {liveMetrics.totalUnits.toLocaleString()} Total Units
               </Badge>
             </div>
@@ -233,10 +233,10 @@ export default function Sites() {
           <div className="flex flex-wrap items-center gap-4 relative">
             <Button 
               onClick={() => setShowAddForm(true)} 
-              className="relative group overflow-hidden bg-gradient-to-r from-bristol-maroon via-red-600 to-bristol-maroon text-white font-bold px-6 py-3 rounded-xl shadow-2xl shadow-bristol-maroon/40 hover:shadow-bristol-maroon/60 transition-all duration-500 border-2 border-bristol-gold/30 hover:border-bristol-gold/60 hover:scale-110 transform hover:rotate-1"
+              className="relative group overflow-hidden bg-gradient-to-r from-brand-maroon via-red-600 to-brand-maroon text-white font-bold px-6 py-3 rounded-xl shadow-2xl shadow-brand-maroon/40 hover:shadow-brand-maroon/60 transition-all duration-500 border-2 border-brand-gold/30 hover:border-brand-gold/60 hover:scale-110 transform hover:rotate-1"
             >
               {/* Animated background glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-bristol-gold/20 via-yellow-400/20 to-bristol-gold/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl blur-sm"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-gold/20 via-yellow-400/20 to-brand-gold/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl blur-sm"></div>
               {/* Shimmer effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
               <div className="relative flex items-center">
@@ -288,7 +288,7 @@ export default function Sites() {
               variant="outline" 
               onClick={handleLoadSeed}
               disabled={isImporting}
-              className="relative group overflow-hidden border-2 border-bristol-gold text-bristol-maroon hover:text-white bg-gradient-to-r from-bristol-gold/10 via-yellow-200/20 to-bristol-gold/10 hover:from-bristol-gold hover:via-yellow-400 hover:to-bristol-gold backdrop-blur-sm shadow-2xl shadow-bristol-gold/30 hover:shadow-bristol-gold/50 transition-all duration-500 font-bold px-5 py-2.5 rounded-lg hover:scale-105"
+              className="relative group overflow-hidden border-2 border-brand-gold text-brand-maroon hover:text-white bg-gradient-to-r from-brand-gold/10 via-yellow-200/20 to-brand-gold/10 hover:from-brand-gold hover:via-yellow-400 hover:to-brand-gold backdrop-blur-sm shadow-2xl shadow-brand-gold/30 hover:shadow-brand-gold/50 transition-all duration-500 font-bold px-5 py-2.5 rounded-lg hover:scale-105"
             >
               {/* Sparkle effect */}
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
@@ -319,12 +319,12 @@ export default function Sites() {
             {/* Premium Search with Light Theme */}
             <div className="flex-1 max-w-xl">
               <div className="relative group">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-bristol-maroon/60 w-5 h-5 group-focus-within:text-bristol-maroon transition-colors" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-brand-maroon/60 w-5 h-5 group-focus-within:text-brand-maroon transition-colors" />
                 <Input
-                  placeholder="Search Bristol properties..."
+                  placeholder="Search Company properties..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 pr-4 py-3 bg-white/80 border-bristol-maroon/30 text-bristol-ink placeholder:text-bristol-stone focus:border-bristol-maroon focus:ring-bristol-maroon/20 backdrop-blur-sm rounded-xl shadow-lg shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-300"
+                  className="pl-12 pr-4 py-3 bg-white/80 border-brand-maroon/30 text-brand-ink placeholder:text-brand-stone focus:border-brand-maroon focus:ring-brand-maroon/20 backdrop-blur-sm rounded-xl shadow-lg shadow-brand-maroon/10 hover:shadow-brand-maroon/20 transition-all duration-300"
                 />
               </div>
             </div>
@@ -337,8 +337,8 @@ export default function Sites() {
                   variant="outline"
                   className={`cursor-pointer px-4 py-2 rounded-xl font-medium transition-all duration-300 backdrop-blur-sm border-2 hover:scale-105 ${
                     statusFilter.includes(status) 
-                      ? 'bg-gradient-to-r from-bristol-maroon to-bristol-maroon/90 text-white border-bristol-maroon shadow-xl shadow-bristol-maroon/30 hover:shadow-bristol-maroon/50' 
-                      : 'bg-white/60 text-bristol-ink border-bristol-maroon/30 hover:bg-bristol-maroon/5 hover:text-bristol-maroon hover:border-bristol-maroon/60 shadow-lg shadow-bristol-maroon/10'
+                      ? 'bg-gradient-to-r from-brand-maroon to-brand-maroon/90 text-white border-brand-maroon shadow-xl shadow-brand-maroon/30 hover:shadow-brand-maroon/50' 
+                      : 'bg-white/60 text-brand-ink border-brand-maroon/30 hover:bg-brand-maroon/5 hover:text-brand-maroon hover:border-brand-maroon/60 shadow-lg shadow-brand-maroon/10'
                   }`}
                   onClick={() => {
                     setStatusFilter(prev => 
@@ -368,38 +368,38 @@ export default function Sites() {
           }}
         />
         {/* Background Overlay for Content Readability - Positioned below header */}
-        <div className="fixed top-[200px] left-0 right-0 bottom-0 bg-gradient-to-br from-bristol-cream/70 via-white/60 to-bristol-sky/50 z-0" />
+        <div className="fixed top-[200px] left-0 right-0 bottom-0 bg-gradient-to-br from-brand-cream/70 via-white/60 to-brand-sky/50 z-0" />
 
         {/* Premium Content Area */}
         <div className="flex-1 p-8 relative mb-16 z-10">
           {/* Enhanced ambient glows */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-bristol-maroon/15 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-bristol-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
-            <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-bristol-sky/15 rounded-full blur-2xl animate-pulse" style={{animationDelay: '3s'}}></div>
+            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-maroon/15 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-gold/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+            <div className="absolute top-3/4 left-3/4 w-64 h-64 bg-brand-sky/15 rounded-full blur-2xl animate-pulse" style={{animationDelay: '3s'}}></div>
           </div>
           
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 relative pb-4 min-h-[80vh]">
             {/* Premium Sites Database Table */}
-            <Card className="xl:col-span-2 bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500">
-              <CardHeader className="pb-4 bg-gradient-to-r from-white/90 to-bristol-cream/60 border-b-2 border-bristol-maroon/30 backdrop-blur-sm">
+            <Card className="xl:col-span-2 bg-white/85 border-brand-maroon/30 backdrop-blur-lg shadow-2xl shadow-brand-maroon/20 hover:shadow-brand-maroon/30 transition-all duration-500">
+              <CardHeader className="pb-4 bg-gradient-to-r from-white/90 to-brand-cream/60 border-b-2 border-brand-maroon/30 backdrop-blur-sm">
                 <div className="flex items-center space-x-3">
                   <div className="relative group">
-                    <Building className="h-6 w-6 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
-                    <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
+                    <Building className="h-6 w-6 text-brand-maroon group-hover:scale-110 transition-transform duration-300" />
+                    <div className="absolute -inset-2 bg-brand-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
                   </div>
-                  <CardTitle className="font-cinzel text-bristol-ink text-xl tracking-wide bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
-                    Bristol Portfolio Database
+                  <CardTitle className="font-cinzel text-brand-ink text-xl tracking-wide bg-gradient-to-r from-brand-ink to-brand-maroon bg-clip-text text-transparent">
+                    Company Portfolio Database
                   </CardTitle>
                   <Badge 
                     variant="outline" 
-                    className="ml-auto px-4 py-2 text-bristol-maroon border-bristol-maroon/40 bg-gradient-to-r from-bristol-cream to-white font-bold shadow-lg shadow-bristol-maroon/20"
+                    className="ml-auto px-4 py-2 text-brand-maroon border-brand-maroon/40 bg-gradient-to-r from-brand-cream to-white font-bold shadow-lg shadow-brand-maroon/20"
                   >
                     {liveMetrics.totalProperties} Properties
                   </Badge>
                 </div>
               </CardHeader>
-              <CardContent className="p-2 bg-gradient-to-br from-white/90 to-bristol-cream/40 backdrop-blur-sm">
+              <CardContent className="p-2 bg-gradient-to-br from-white/90 to-brand-cream/40 backdrop-blur-sm">
                 <SitesTable 
                   data={(sites || []) as any[]}
                   isLoading={isLoading}
@@ -413,34 +413,34 @@ export default function Sites() {
             {/* Premium Details & Analytics Sidebar */}
             <div className="space-y-6">
               {/* Site Details Card */}
-              <Card className="bg-white/85 border-bristol-maroon/30 backdrop-blur-lg shadow-2xl shadow-bristol-maroon/20 hover:shadow-bristol-maroon/30 transition-all duration-500">
-                <CardHeader className="pb-4 bg-gradient-to-r from-white/90 to-bristol-cream/60 border-b-2 border-bristol-maroon/30 backdrop-blur-sm">
+              <Card className="bg-white/85 border-brand-maroon/30 backdrop-blur-lg shadow-2xl shadow-brand-maroon/20 hover:shadow-brand-maroon/30 transition-all duration-500">
+                <CardHeader className="pb-4 bg-gradient-to-r from-white/90 to-brand-cream/60 border-b-2 border-brand-maroon/30 backdrop-blur-sm">
                   <div className="flex items-center space-x-3">
                     <div className="relative group">
-                      <Building className="h-5 w-5 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
-                      <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
+                      <Building className="h-5 w-5 text-brand-maroon group-hover:scale-110 transition-transform duration-300" />
+                      <div className="absolute -inset-2 bg-brand-maroon/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300"></div>
                     </div>
-                    <CardTitle className="font-cinzel text-bristol-ink text-lg bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
+                    <CardTitle className="font-cinzel text-brand-ink text-lg bg-gradient-to-r from-brand-ink to-brand-maroon bg-clip-text text-transparent">
                       {selectedSite ? selectedSite.name : 'Property Details'}
                     </CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="bg-gradient-to-br from-white/90 to-bristol-cream/40 text-bristol-ink backdrop-blur-sm">
+                <CardContent className="bg-gradient-to-br from-white/90 to-brand-cream/40 text-brand-ink backdrop-blur-sm">
                   {selectedSite ? (
                     <SiteDetails site={selectedSite as any} onRefresh={refetch} />
                   ) : (
                     <div className="flex flex-col items-center justify-center py-12 space-y-4">
                       <div className="relative group">
-                        <Building className="h-16 w-16 text-bristol-stone/40 group-hover:text-bristol-maroon/60 transition-colors duration-300" />
-                        <div className="absolute -inset-3 bg-bristol-stone/10 rounded-full blur-xl group-hover:bg-bristol-maroon/10 transition-all duration-300"></div>
+                        <Building className="h-16 w-16 text-brand-stone/40 group-hover:text-brand-maroon/60 transition-colors duration-300" />
+                        <div className="absolute -inset-3 bg-brand-stone/10 rounded-full blur-xl group-hover:bg-brand-maroon/10 transition-all duration-300"></div>
                       </div>
-                      <p className="text-bristol-stone font-medium text-center">Select a property to view details</p>
+                      <p className="text-brand-stone font-medium text-center">Select a property to view details</p>
                     </div>
                   )}
                 </CardContent>
               </Card>
 
-              {/* Bristol Portfolio Analysis Agent */}
+              {/* Company Portfolio Analysis Agent */}
               <div>
                 <PortfolioAgent 
                   selectedSite={selectedSite}
@@ -455,15 +455,15 @@ export default function Sites() {
         <Sheet open={showAddForm} onOpenChange={setShowAddForm}>
           <SheetContent 
             side="right" 
-            className="w-[600px] sm:max-w-[600px] bg-gradient-to-br from-white via-bristol-cream/50 to-white border-l-2 border-bristol-maroon/30 backdrop-blur-md shadow-2xl"
+            className="w-[600px] sm:max-w-[600px] bg-gradient-to-br from-white via-brand-cream/50 to-white border-l-2 border-brand-maroon/30 backdrop-blur-md shadow-2xl"
           >
-            <SheetHeader className="pb-6 border-b-2 border-bristol-maroon/20">
+            <SheetHeader className="pb-6 border-b-2 border-brand-maroon/20">
               <div className="flex items-center space-x-3">
                 <div className="relative group">
-                  <Plus className="h-6 w-6 text-bristol-maroon group-hover:scale-110 transition-transform duration-300" />
-                  <div className="absolute -inset-2 bg-bristol-maroon/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
+                  <Plus className="h-6 w-6 text-brand-maroon group-hover:scale-110 transition-transform duration-300" />
+                  <div className="absolute -inset-2 bg-brand-maroon/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
                 </div>
-                <SheetTitle className="font-cinzel text-bristol-ink text-2xl tracking-wide bg-gradient-to-r from-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
+                <SheetTitle className="font-cinzel text-brand-ink text-2xl tracking-wide bg-gradient-to-r from-brand-ink to-brand-maroon bg-clip-text text-transparent">
                   Add New Property
                 </SheetTitle>
               </div>

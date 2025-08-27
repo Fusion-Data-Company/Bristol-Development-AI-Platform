@@ -273,9 +273,9 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
       ctx.fillStyle = `rgba(0, 0, 0, ${shadowAlpha * 0.3})`;
       ctx.fillRect(x - scaledWidth/2 + shadowOffset + 2, y + shadowOffset + 2, scaledWidth, baseHeight + scaledHeight/4);
       
-      // Professional foundation with Bristol colors
+      // Professional foundation with Company colors
       const baseGradient = ctx.createRadialGradient(x, y, 0, x, y, scaledWidth);
-      baseGradient.addColorStop(0, '#8B1538'); // Bristol Maroon
+      baseGradient.addColorStop(0, '#8B1538'); // Company Maroon
       baseGradient.addColorStop(0.6, '#6B1126');
       baseGradient.addColorStop(1, '#4A0C1A');
       ctx.fillStyle = baseGradient;
@@ -496,7 +496,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
     // Center focal point
     ctx.beginPath();
     ctx.arc(centerX, centerY, 5, 0, Math.PI * 2);
-    ctx.fillStyle = '#fbbf24'; // Bristol gold
+    ctx.fillStyle = '#fbbf24'; // Company gold
     ctx.fill();
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 2;
@@ -508,7 +508,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
       ctx.font = 'bold 18px Arial';
       ctx.fillStyle = colors.accent;
       ctx.textAlign = 'left';
-      ctx.fillText('Bristol Elite 3D Portfolio', 20, 35);
+      ctx.fillText('Company Elite 3D Portfolio', 20, 35);
       
       // Dynamic subtitle based on lighting mode
       ctx.font = '12px Arial';
@@ -594,17 +594,17 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
         />
         
         {/* Control Panel Overlay */}
-        <Card className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm shadow-xl border-bristol-maroon/20 w-80">
+        <Card className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm shadow-xl border-brand-maroon/20 w-80">
           <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-bristol-ink">
-              <Box className="w-5 h-5 text-bristol-maroon" />
+            <CardTitle className="flex items-center gap-2 text-brand-ink">
+              <Box className="w-5 h-5 text-brand-maroon" />
               3D Visualization Controls
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Enhanced View Mode */}
             <div>
-              <label className="text-sm font-medium text-bristol-stone mb-2 block flex items-center gap-2">
+              <label className="text-sm font-medium text-brand-stone mb-2 block flex items-center gap-2">
                 <Camera className="w-4 h-4" />
                 View Mode
               </label>
@@ -615,7 +615,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
                     variant={viewMode === mode ? "default" : "outline"}
                     size="sm"
                     onClick={() => setViewMode(mode as any)}
-                    className={`text-xs ${viewMode === mode ? 'bg-bristol-maroon text-white' : ''}`}
+                    className={`text-xs ${viewMode === mode ? 'bg-brand-maroon text-white' : ''}`}
                   >
                     {mode.charAt(0).toUpperCase() + mode.slice(1)}
                   </Button>
@@ -627,7 +627,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
 
             {/* Enhanced Animation Controls */}
             <div>
-              <label className="text-sm font-medium text-bristol-stone mb-2 block flex items-center gap-2">
+              <label className="text-sm font-medium text-brand-stone mb-2 block flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 Animation Mode
               </label>
@@ -669,7 +669,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
               </div>
 
               <div>
-                <Label className="text-xs text-bristol-stone">Speed: {rotationSpeed[0].toFixed(1)}x</Label>
+                <Label className="text-xs text-brand-stone">Speed: {rotationSpeed[0].toFixed(1)}x</Label>
                 <Slider
                   value={rotationSpeed}
                   onValueChange={setRotationSpeed}
@@ -685,13 +685,13 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
 
             {/* Camera & Perspective Controls */}
             <div>
-              <label className="text-sm font-medium text-bristol-stone mb-2 block flex items-center gap-2">
+              <label className="text-sm font-medium text-brand-stone mb-2 block flex items-center gap-2">
                 <Eye className="w-4 h-4" />
                 Camera & View
               </label>
               <div className="space-y-3">
                 <div>
-                  <Label className="text-xs text-bristol-stone">Camera Angle: {cameraAngle[0].toFixed(1)}°</Label>
+                  <Label className="text-xs text-brand-stone">Camera Angle: {cameraAngle[0].toFixed(1)}°</Label>
                   <Slider
                     value={cameraAngle}
                     onValueChange={setCameraAngle}
@@ -702,7 +702,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
                   />
                 </div>
                 <div>
-                  <Label className="text-xs text-bristol-stone">Perspective: {perspective[0].toFixed(1)}</Label>
+                  <Label className="text-xs text-brand-stone">Perspective: {perspective[0].toFixed(1)}</Label>
                   <Slider
                     value={perspective}
                     onValueChange={setPerspective}
@@ -713,7 +713,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
                   />
                 </div>
                 <div>
-                  <Label className="text-xs text-bristol-stone">Building Scale: {buildingScale[0].toFixed(1)}x</Label>
+                  <Label className="text-xs text-brand-stone">Building Scale: {buildingScale[0].toFixed(1)}x</Label>
                   <Slider
                     value={buildingScale}
                     onValueChange={setBuildingScale}
@@ -730,7 +730,7 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
 
             {/* Lighting & Effects */}
             <div>
-              <label className="text-sm font-medium text-bristol-stone mb-2 block flex items-center gap-2">
+              <label className="text-sm font-medium text-brand-stone mb-2 block flex items-center gap-2">
                 <Sun className="w-4 h-4" />
                 Lighting & Effects
               </label>
@@ -754,12 +754,12 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
               </div>
               
               <div className="flex items-center justify-between mb-2">
-                <Label className="text-xs text-bristol-stone">Particles</Label>
+                <Label className="text-xs text-brand-stone">Particles</Label>
                 <Switch checked={showParticles} onCheckedChange={setShowParticles} />
               </div>
               
               <div className="flex items-center justify-between">
-                <Label className="text-xs text-bristol-stone">Statistics</Label>
+                <Label className="text-xs text-brand-stone">Statistics</Label>
                 <Switch checked={showStats} onCheckedChange={setShowStats} />
               </div>
             </div>
@@ -768,24 +768,24 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
 
             {/* Site Information */}
             <div>
-              <label className="text-sm font-medium text-bristol-stone mb-2 block">Portfolio Stats</label>
+              <label className="text-sm font-medium text-brand-stone mb-2 block">Portfolio Stats</label>
               <div className="grid grid-cols-2 gap-2">
-                <div className="text-center p-2 bg-bristol-cream/20 rounded">
-                  <div className="text-lg font-bold text-bristol-maroon">{sites.length}</div>
-                  <div className="text-xs text-bristol-stone">Total Sites</div>
+                <div className="text-center p-2 bg-brand-cream/20 rounded">
+                  <div className="text-lg font-bold text-brand-maroon">{sites.length}</div>
+                  <div className="text-xs text-brand-stone">Total Sites</div>
                 </div>
-                <div className="text-center p-2 bg-bristol-gold/20 rounded">
-                  <div className="text-lg font-bold text-bristol-maroon">
+                <div className="text-center p-2 bg-brand-gold/20 rounded">
+                  <div className="text-lg font-bold text-brand-maroon">
                     {sites.reduce((sum, site) => sum + (site.unitsTotal || 0), 0).toLocaleString()}
                   </div>
-                  <div className="text-xs text-bristol-stone">Total Units</div>
+                  <div className="text-xs text-brand-stone">Total Units</div>
                 </div>
               </div>
             </div>
 
             {/* Status Legend */}
             <div>
-              <label className="text-sm font-medium text-bristol-stone mb-2 block">Legend</label>
+              <label className="text-sm font-medium text-brand-stone mb-2 block">Legend</label>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-cyan-500 rounded"></div>
@@ -805,13 +805,13 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
             <Separator />
 
             {/* Instructions */}
-            <div className="text-xs text-bristol-stone bg-blue-50 p-3 rounded border border-blue-200">
+            <div className="text-xs text-brand-stone bg-blue-50 p-3 rounded border border-blue-200">
               <div className="flex items-start gap-2">
                 <Eye className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <strong className="text-blue-800">How to Use:</strong>
                   <ul className="mt-1 space-y-1 list-disc list-inside">
-                    <li>Buildings represent Bristol properties in 3D space</li>
+                    <li>Buildings represent Company properties in 3D space</li>
                     <li>Height corresponds to unit count</li>
                     <li>Colors indicate property status</li>
                     <li>Auto-rotation provides 360° portfolio view</li>
@@ -824,13 +824,13 @@ export function ThreeJSSandbox({ selectedSite, onSiteSelect }: ThreeJSSandboxPro
 
         {/* Selected Site Info */}
         {selectedSite && (
-          <Card className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm shadow-xl border-bristol-maroon/20">
+          <Card className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm shadow-xl border-brand-maroon/20">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <Building className="w-5 h-5 text-bristol-maroon" />
+                <Building className="w-5 h-5 text-brand-maroon" />
                 <div>
-                  <h3 className="font-semibold text-bristol-ink">{selectedSite.name}</h3>
-                  <p className="text-sm text-bristol-stone">{selectedSite.city}, {selectedSite.state}</p>
+                  <h3 className="font-semibold text-brand-ink">{selectedSite.name}</h3>
+                  <p className="text-sm text-brand-stone">{selectedSite.city}, {selectedSite.state}</p>
                   <div className="flex gap-2 mt-1">
                     <Badge variant="outline" className="text-xs">
                       {selectedSite.unitsTotal || 'TBD'} units

@@ -5,7 +5,7 @@ const router = express.Router();
 // FBI Crime Data API
 router.get('/', async (req, res) => {
   try {
-    // FBI Crime Data for Bristol markets
+    // FBI Crime Data for Company markets
     const crimeData = {
       nationalData: {
         violentCrimeRate: 366.7, // per 100k population

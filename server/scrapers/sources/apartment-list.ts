@@ -25,7 +25,7 @@ export const apartmentListAdapter: ScrapingAdapter = {
       // For demo purposes, generate realistic sample data
       const sampleProperties = [
         {
-          name: "Bristol Commons",
+          name: "Company Commons",
           address: "1200 Main Street",
           city: "Charlotte",
           state: "NC",

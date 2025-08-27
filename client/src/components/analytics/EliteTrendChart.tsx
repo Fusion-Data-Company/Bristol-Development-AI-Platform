@@ -24,8 +24,8 @@ interface EliteTrendChartProps {
 export function EliteTrendChart({ 
   title, 
   data, 
-  primaryColor = 'bristol-cyan',
-  secondaryColor = 'bristol-gold', 
+  primaryColor = 'brand-cyan',
+  secondaryColor = 'brand-gold', 
   showSecondary = false,
   primaryLabel = 'Primary',
   secondaryLabel = 'Secondary',
@@ -34,10 +34,10 @@ export function EliteTrendChart({
   
   if (!data || data.length === 0) {
     return (
-      <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl">
+      <Card className="bg-brand-ink/40 border-brand-cyan/30 backdrop-blur-xl">
         <CardContent className="text-center py-12">
-          <BarChart3 className="h-12 w-12 text-bristol-stone mx-auto mb-4" />
-          <p className="text-bristol-stone">No trend data available</p>
+          <BarChart3 className="h-12 w-12 text-brand-stone mx-auto mb-4" />
+          <p className="text-brand-stone">No trend data available</p>
         </CardContent>
       </Card>
     );
@@ -84,14 +84,14 @@ export function EliteTrendChart({
   const isPositive = change >= 0;
 
   return (
-    <Card className="bg-bristol-ink/40 border-bristol-cyan/30 backdrop-blur-xl relative overflow-hidden group">
+    <Card className="bg-brand-ink/40 border-brand-cyan/30 backdrop-blur-xl relative overflow-hidden group">
       {/* Animated glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/5 via-transparent to-bristol-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-cyan/5 via-transparent to-brand-gold/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
       <CardHeader className="relative">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-bristol-cyan flex items-center gap-3">
-            <TrendingUp className="h-5 w-5 text-bristol-gold" />
+          <CardTitle className="text-brand-cyan flex items-center gap-3">
+            <TrendingUp className="h-5 w-5 text-brand-gold" />
             {title}
           </CardTitle>
           
@@ -110,11 +110,11 @@ export function EliteTrendChart({
               <div className="flex items-center gap-2 text-xs">
                 <div className="flex items-center gap-1">
                   <div className={`w-2 h-2 rounded-full bg-${primaryColor}`} />
-                  <span className="text-bristol-stone">{primaryLabel}</span>
+                  <span className="text-brand-stone">{primaryLabel}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className={`w-2 h-2 rounded-full bg-${secondaryColor}`} />
-                  <span className="text-bristol-stone">{secondaryLabel}</span>
+                  <span className="text-brand-stone">{secondaryLabel}</span>
                 </div>
               </div>
             )}
@@ -204,7 +204,7 @@ export function EliteTrendChart({
                     cy={y}
                     r="4"
                     fill="transparent"
-                    className="hover:fill-bristol-cyan/20 cursor-pointer"
+                    className="hover:fill-brand-cyan/20 cursor-pointer"
                   >
                     <title>{`${point.month}: ${point.value.toLocaleString()}`}</title>
                   </circle>
@@ -215,20 +215,20 @@ export function EliteTrendChart({
         </div>
         
         {/* X-axis labels */}
-        <div className="flex justify-between mt-4 text-xs text-bristol-stone">
+        <div className="flex justify-between mt-4 text-xs text-brand-stone">
           {data?.length > 0 && data.filter((_, index) => index % Math.ceil(data.length / 6) === 0).map((point, index) => (
             <span key={index}>{point?.month || `Period ${index + 1}`}</span>
           ))}
         </div>
         
         {/* Current value display */}
-        <div className="mt-4 p-3 bg-bristol-ink/60 rounded-lg border border-bristol-cyan/20">
+        <div className="mt-4 p-3 bg-brand-ink/60 rounded-lg border border-brand-cyan/20">
           <div className="flex items-center justify-between">
             <div>
               <div className="text-2xl font-bold text-white">
                 {(latestValue || 0).toLocaleString()}
               </div>
-              <div className="text-xs text-bristol-stone">Current Value</div>
+              <div className="text-xs text-brand-stone">Current Value</div>
             </div>
             
             <div className="text-right">
@@ -238,7 +238,7 @@ export function EliteTrendChart({
               )}>
                 {isPositive ? '+' : ''}{change.toFixed(1)}%
               </div>
-              <div className="text-xs text-bristol-stone">vs Previous</div>
+              <div className="text-xs text-brand-stone">vs Previous</div>
             </div>
           </div>
         </div>

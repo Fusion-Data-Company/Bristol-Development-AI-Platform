@@ -87,7 +87,7 @@ export function AnalyticsOld() {
   const [agentResponse, setAgentResponse] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Real Bristol portfolio data
+  // Real Company portfolio data
   const { data: portfolioData } = useQuery<PortfolioMetrics>({
     queryKey: ['/api/analytics/portfolio-metrics'],
     refetchInterval: 300000 // 5 minutes
@@ -105,8 +105,8 @@ export function AnalyticsOld() {
 
   // Analytics agent data
   const analyticsAgent: AnalyticsAgent = {
-    id: 'bristol-analytics-ai',
-    name: 'Bristol Portfolio Analytics AI',
+    id: 'brand-analytics-ai',
+    name: 'Company Portfolio Analytics AI',
     status: 'active',
     specialty: 'Commercial Real Estate Economics & Market Analysis',
     lastAnalysis: '2 minutes ago',
@@ -226,11 +226,11 @@ export function AnalyticsOld() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-bristol-maroon to-red-800 flex items-center justify-center">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-brand-maroon to-red-800 flex items-center justify-center">
                 <BarChart3 className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Bristol Portfolio Analytics</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Company Portfolio Analytics</h1>
                 <p className="text-gray-600">Comprehensive multifamily real estate intelligence and economic analysis</p>
               </div>
             </div>
@@ -261,15 +261,15 @@ export function AnalyticsOld() {
                 <>
                   {/* Key Metrics Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <Card className="bg-gradient-to-br from-bristol-maroon/5 to-bristol-maroon/10 border-bristol-maroon/20">
+                    <Card className="bg-gradient-to-br from-brand-maroon/5 to-brand-maroon/10 border-brand-maroon/20">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium flex items-center gap-2">
-                          <Building2 className="h-4 w-4 text-bristol-maroon" />
+                          <Building2 className="h-4 w-4 text-brand-maroon" />
                           Total Properties
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="text-3xl font-bold text-bristol-maroon">
+                        <div className="text-3xl font-bold text-brand-maroon">
                           {metrics.totalProperties}
                         </div>
                         <div className="text-xs text-gray-600 mt-1">
@@ -335,7 +335,7 @@ export function AnalyticsOld() {
                     <Card>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                          <MapPin className="h-5 w-5 text-bristol-maroon" />
+                          <MapPin className="h-5 w-5 text-brand-maroon" />
                           Geographic Distribution
                         </CardTitle>
                       </CardHeader>
@@ -345,7 +345,7 @@ export function AnalyticsOld() {
                             <div key={state} className="flex justify-between items-center">
                               <span className="font-medium">{state}</span>
                               <div className="flex items-center gap-2">
-                                <div className="bg-bristol-maroon/10 px-2 py-1 rounded text-sm font-bold text-bristol-maroon">
+                                <div className="bg-brand-maroon/10 px-2 py-1 rounded text-sm font-bold text-brand-maroon">
                                   {count} properties
                                 </div>
                                 <span className="text-sm text-gray-600">
@@ -361,7 +361,7 @@ export function AnalyticsOld() {
                     <Card>
                       <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                          <BarChart3 className="h-5 w-5 text-bristol-maroon" />
+                          <BarChart3 className="h-5 w-5 text-brand-maroon" />
                           Asset Class Breakdown
                         </CardTitle>
                       </CardHeader>
@@ -393,7 +393,7 @@ export function AnalyticsOld() {
               <div className="grid grid-cols-1 gap-6">
                 {sampleMarketAnalysis.map((market, index) => (
                   <Card key={index} className="relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-bristol-maroon to-red-800"></div>
+                    <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-brand-maroon to-red-800"></div>
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-xl">{market.market}</CardTitle>
@@ -432,8 +432,8 @@ export function AnalyticsOld() {
                           </div>
                         </div>
                         <div>
-                          <div className="text-sm text-gray-600">Bristol Exposure</div>
-                          <div className="text-2xl font-bold text-bristol-maroon">
+                          <div className="text-sm text-gray-600">Company Exposure</div>
+                          <div className="text-2xl font-bold text-brand-maroon">
                             {market.bristolExposure} properties
                           </div>
                         </div>
@@ -489,18 +489,18 @@ export function AnalyticsOld() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-bristol-maroon" />
-                    Ask the Bristol Analytics Expert
+                    <Lightbulb className="h-5 w-5 text-brand-maroon" />
+                    Ask the Company Analytics Expert
                   </CardTitle>
                   <p className="text-sm text-gray-600">
-                    Get doctoral-level analysis on how any market factor, economic trend, or data point affects Bristol Development Group's portfolio and investment strategy.
+                    Get doctoral-level analysis on how any market factor, economic trend, or data point affects Company Development Group's portfolio and investment strategy.
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Query or Market Factor</label>
                     <Textarea
-                      placeholder="Example: How does the Federal Reserve's recent rate decision impact Bristol's acquisition strategy in secondary Sunbelt markets? Or: Analyze the effect of Nashville's new zoning ordinance on Bristol's Class B+ portfolio value..."
+                      placeholder="Example: How does the Federal Reserve's recent rate decision impact Company's acquisition strategy in secondary Sunbelt markets? Or: Analyze the effect of Nashville's new zoning ordinance on Company's Class B+ portfolio value..."
                       value={agentQuery}
                       onChange={(e) => setAgentQuery(e.target.value)}
                       className="min-h-[100px]"
@@ -509,7 +509,7 @@ export function AnalyticsOld() {
                   <Button 
                     onClick={handleAgentQuery}
                     disabled={isProcessing || !agentQuery.trim()}
-                    className="bg-bristol-maroon hover:bg-red-800"
+                    className="bg-brand-maroon hover:bg-red-800"
                   >
                     {isProcessing ? (
                       <>
@@ -528,10 +528,10 @@ export function AnalyticsOld() {
 
               {/* Agent Response */}
               {agentResponse && (
-                <Card className="bg-gradient-to-br from-slate-50 to-white border-bristol-maroon/20">
+                <Card className="bg-gradient-to-br from-slate-50 to-white border-brand-maroon/20">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Brain className="h-5 w-5 text-bristol-maroon" />
+                      <Brain className="h-5 w-5 text-brand-maroon" />
                       Expert Analysis
                     </CardTitle>
                   </CardHeader>
@@ -553,12 +553,12 @@ export function AnalyticsOld() {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {[
-                      "How do rising construction costs in the Sunbelt affect Bristol's development pipeline IRR projections?",
-                      "Analyze the impact of remote work trends on Bristol's suburban multifamily positioning",
-                      "What does the current yield curve inversion mean for Bristol's acquisition financing strategy?",
-                      "How should Bristol adjust rent growth assumptions given current inflation dynamics?",
-                      "Evaluate the competitive landscape implications of institutional capital flows into Bristol's target markets",
-                      "Assess how demographic migration patterns affect Bristol's 5-year portfolio optimization strategy"
+                      "How do rising construction costs in the Sunbelt affect Company's development pipeline IRR projections?",
+                      "Analyze the impact of remote work trends on Company's suburban multifamily positioning",
+                      "What does the current yield curve inversion mean for Company's acquisition financing strategy?",
+                      "How should Company adjust rent growth assumptions given current inflation dynamics?",
+                      "Evaluate the competitive landscape implications of institutional capital flows into Company's target markets",
+                      "Assess how demographic migration patterns affect Company's 5-year portfolio optimization strategy"
                     ].map((query, index) => (
                       <Button
                         key={index}
@@ -600,7 +600,7 @@ export function AnalyticsOld() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Value-Add Uplift</span>
-                        <span className="text-lg font-bold text-bristol-maroon">23.8%</span>
+                        <span className="text-lg font-bold text-brand-maroon">23.8%</span>
                       </div>
                     </div>
                   </CardContent>
@@ -609,7 +609,7 @@ export function AnalyticsOld() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Calculator className="h-5 w-5 text-bristol-maroon" />
+                      <Calculator className="h-5 w-5 text-brand-maroon" />
                       Risk Metrics
                     </CardTitle>
                   </CardHeader>

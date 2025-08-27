@@ -134,7 +134,7 @@ export function BLSTool() {
       {
         label: data.meta.label,
         data: data.rows.map((row: { value: number }) => row.value),
-        borderColor: '#D4A574', // Bristol gold
+        borderColor: '#D4A574', // Company gold
         backgroundColor: '#D4A574',
         tension: 0.1,
         fill: false
@@ -180,35 +180,35 @@ export function BLSTool() {
   return (
     <div className="space-y-8">
       {/* MEGA HEADER */}
-      <div className="text-center space-y-6 bristol-enterprise-card p-8 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-orange-50/50 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-orange-500/5 to-bristol-gold/10 animate-pulse"></div>
+      <div className="text-center space-y-6 brand-enterprise-card p-8 rounded-3xl border-4 border-brand-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-orange-50/50 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-orange-500/5 to-brand-gold/10 animate-pulse"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-orange-500/20 shadow-xl animate-bounce">
               <Briefcase className="h-16 w-16 text-blue-600 drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-blue-800 via-bristol-gold to-orange-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+            <h1 className="text-5xl font-black bg-gradient-to-r from-blue-800 via-brand-gold to-orange-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
               📊 Bureau of Labor Statistics
             </h1>
           </div>
           <div className="space-y-4">
             <p className="text-slate-800 text-3xl font-black max-w-5xl mx-auto leading-relaxed">
-              🚀 <span className="bg-gradient-to-r from-bristol-gold to-amber-600 bg-clip-text text-transparent">Real-Time Employment Intelligence Platform</span>
+              🚀 <span className="bg-gradient-to-r from-brand-gold to-amber-600 bg-clip-text text-transparent">Real-Time Employment Intelligence Platform</span>
             </p>
             <p className="text-slate-700 text-xl font-bold max-w-4xl mx-auto leading-relaxed">
               💼 Live Employment Data • 📈 Unemployment Rates • 🎯 Labor Market Intelligence 
               <br />
-              ⚡ Workforce Analysis • 🔍 Economic Insights • 📊 Bristol-Powered Analytics
+              ⚡ Workforce Analysis • 🔍 Economic Insights • 📊 Company-Powered Analytics
             </p>
           </div>
         </div>
       </div>
 
       {/* ENHANCED Controls */}
-      <div className="bristol-enterprise-card rounded-3xl p-12 shadow-2xl border-4 border-bristol-gold/40 bg-gradient-to-br from-white/98 via-blue-50/30 to-bristol-gold/10 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-bristol-gold/5 to-transparent animate-pulse"></div>
+      <div className="brand-enterprise-card rounded-3xl p-12 shadow-2xl border-4 border-brand-gold/40 bg-gradient-to-br from-white/98 via-blue-50/30 to-brand-gold/10 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-brand-gold/5 to-transparent animate-pulse"></div>
         <div className="relative z-10">
-          <h3 className="text-3xl font-black text-slate-900 mb-8 text-center bg-gradient-to-r from-bristol-maroon to-bristol-gold bg-clip-text text-transparent">
+          <h3 className="text-3xl font-black text-slate-900 mb-8 text-center bg-gradient-to-r from-brand-maroon to-brand-gold bg-clip-text text-transparent">
             🎛️ Intelligence Configuration Panel
           </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -217,10 +217,10 @@ export function BLSTool() {
               📍 Geographic Level
             </Label>
             <Select value={level} onValueChange={setLevel}>
-              <SelectTrigger className="bg-gradient-to-r from-bristol-gold/10 via-white/95 to-amber-50/80 border-3 border-bristol-gold/40 text-slate-900 font-black shadow-xl hover:border-bristol-gold/70 hover:scale-105 hover:shadow-2xl transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm">
+              <SelectTrigger className="bg-gradient-to-r from-brand-gold/10 via-white/95 to-amber-50/80 border-3 border-brand-gold/40 text-slate-900 font-black shadow-xl hover:border-brand-gold/70 hover:scale-105 hover:shadow-2xl transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-gradient-to-br from-white/98 to-bristol-gold/10 border-3 border-bristol-gold/50 rounded-2xl shadow-2xl backdrop-blur-xl p-2">
+              <SelectContent className="bg-gradient-to-br from-white/98 to-brand-gold/10 border-3 border-brand-gold/50 rounded-2xl shadow-2xl backdrop-blur-xl p-2">
                 <SelectItem value="county">County</SelectItem>
                 <SelectItem value="msa">Metropolitan Area</SelectItem>
               </SelectContent>
@@ -238,7 +238,7 @@ export function BLSTool() {
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="37 (NC) 🌟"
-                className="bg-gradient-to-r from-red-50/80 via-white/95 to-blue-50/80 border-3 border-red-400/50 text-slate-900 font-black shadow-xl hover:border-red-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
+                className="bg-gradient-to-r from-red-50/80 via-white/95 to-blue-50/80 border-3 border-red-400/50 text-slate-900 font-black shadow-xl hover:border-red-500/70 hover:scale-105 hover:shadow-2xl focus:border-brand-gold/70 focus:ring-4 focus:ring-brand-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
               />
             </div>
             <div>
@@ -250,7 +250,7 @@ export function BLSTool() {
                 value={county}
                 onChange={(e) => setCounty(e.target.value)}
                 placeholder="119 (Mecklenburg) ✨"
-                className="bg-gradient-to-r from-green-50/80 via-white/95 to-emerald-50/80 border-3 border-green-400/50 text-slate-900 font-black shadow-xl hover:border-green-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
+                className="bg-gradient-to-r from-green-50/80 via-white/95 to-emerald-50/80 border-3 border-green-400/50 text-slate-900 font-black shadow-xl hover:border-green-500/70 hover:scale-105 hover:shadow-2xl focus:border-brand-gold/70 focus:ring-4 focus:ring-brand-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
               />
             </div>
           </>
@@ -266,7 +266,7 @@ export function BLSTool() {
                 value={msa}
                 onChange={(e) => setMsa(e.target.value)}
                 placeholder="16740 (Charlotte) 🚀"
-                className="bg-gradient-to-r from-purple-50/80 via-white/95 to-indigo-50/80 border-3 border-purple-400/50 text-slate-900 font-black shadow-xl hover:border-purple-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
+                className="bg-gradient-to-r from-purple-50/80 via-white/95 to-indigo-50/80 border-3 border-purple-400/50 text-slate-900 font-black shadow-xl hover:border-purple-500/70 hover:scale-105 hover:shadow-2xl focus:border-brand-gold/70 focus:ring-4 focus:ring-brand-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
               />
             </div>
         )}
@@ -280,7 +280,7 @@ export function BLSTool() {
               type="month"
               value={start}
               onChange={(e) => setStart(e.target.value)}
-              className="bg-gradient-to-r from-orange-50/80 via-white/95 to-amber-50/80 border-3 border-orange-400/50 text-slate-900 font-black shadow-xl hover:border-orange-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
+              className="bg-gradient-to-r from-orange-50/80 via-white/95 to-amber-50/80 border-3 border-orange-400/50 text-slate-900 font-black shadow-xl hover:border-orange-500/70 hover:scale-105 hover:shadow-2xl focus:border-brand-gold/70 focus:ring-4 focus:ring-brand-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
             />
           </div>
 
@@ -293,7 +293,7 @@ export function BLSTool() {
               type="month"
               value={end}
               onChange={(e) => setEnd(e.target.value)}
-              className="bg-gradient-to-r from-teal-50/80 via-white/95 to-cyan-50/80 border-3 border-teal-400/50 text-slate-900 font-black shadow-xl hover:border-teal-500/70 hover:scale-105 hover:shadow-2xl focus:border-bristol-gold/70 focus:ring-4 focus:ring-bristol-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
+              className="bg-gradient-to-r from-teal-50/80 via-white/95 to-cyan-50/80 border-3 border-teal-400/50 text-slate-900 font-black shadow-xl hover:border-teal-500/70 hover:scale-105 hover:shadow-2xl focus:border-brand-gold/70 focus:ring-4 focus:ring-brand-gold/20 transition-all duration-300 rounded-2xl h-16 text-lg backdrop-blur-sm"
             />
           </div>
         </div>
@@ -305,7 +305,7 @@ export function BLSTool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bristol-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
+          className="brand-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
         >
           <div className="flex items-center gap-3">
             {isLoading ? (
@@ -323,7 +323,7 @@ export function BLSTool() {
                 RUN ANALYSIS
               </div>
               <div className="text-xs text-amber-300 font-medium -mt-1">
-                Bristol Intelligence
+                Company Intelligence
               </div>
             </div>
             <Cpu className="h-4 w-4 text-amber-300/70" />
@@ -336,19 +336,19 @@ export function BLSTool() {
               onClick={handleSaveSnapshot}
               disabled={isSubmitting}
               variant="outline"
-              className="bristol-enterprise-card border-2 border-bristol-gold/30 text-slate-800 font-bold hover:bg-bristol-gold/10 hover:border-bristol-gold/60 hover:scale-105 rounded-2xl px-8 py-4 shadow-lg transition-all duration-300"
+              className="brand-enterprise-card border-2 border-brand-gold/30 text-slate-800 font-bold hover:bg-brand-gold/10 hover:border-brand-gold/60 hover:scale-105 rounded-2xl px-8 py-4 shadow-lg transition-all duration-300"
             >
-              {isSubmitting && <Loader2 className="mr-2 h-5 w-5 animate-spin text-bristol-gold" />}
-              <Save className="mr-2 h-5 w-5 text-bristol-gold" />
+              {isSubmitting && <Loader2 className="mr-2 h-5 w-5 animate-spin text-brand-gold" />}
+              <Save className="mr-2 h-5 w-5 text-brand-gold" />
               Save Snapshot
             </Button>
             
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="bristol-enterprise-card border-2 border-bristol-gold/30 text-slate-800 font-bold hover:bg-bristol-gold/10 hover:border-bristol-gold/60 hover:scale-105 rounded-2xl px-8 py-4 shadow-lg transition-all duration-300"
+              className="brand-enterprise-card border-2 border-brand-gold/30 text-slate-800 font-bold hover:bg-brand-gold/10 hover:border-brand-gold/60 hover:scale-105 rounded-2xl px-8 py-4 shadow-lg transition-all duration-300"
             >
-              <Download className="mr-2 h-5 w-5 text-bristol-gold" />
+              <Download className="mr-2 h-5 w-5 text-brand-gold" />
               Export CSV
             </Button>
           </>
@@ -365,27 +365,27 @@ export function BLSTool() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* KPI Cards */}
           <div className="lg:col-span-1 space-y-4">
-            <Card className="bristol-enterprise-card border-3 border-bristol-gold/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/95 via-bristol-gold/5 to-amber-50/80">
+            <Card className="brand-enterprise-card border-3 border-brand-gold/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/95 via-brand-gold/5 to-amber-50/80">
               <CardHeader className="pb-3 relative">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bristol-gold to-amber-400 rounded-t-2xl"></div>
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-gold to-amber-400 rounded-t-2xl"></div>
                 <CardTitle className="text-lg text-slate-800 font-black flex items-center gap-3 mt-2">
-                  <div className="p-2 rounded-xl bg-gradient-to-br from-bristol-gold/20 to-amber-400/20 shadow-lg">
-                    <BarChart3 className="h-6 w-6 text-bristol-gold drop-shadow-md" />
+                  <div className="p-2 rounded-xl bg-gradient-to-br from-brand-gold/20 to-amber-400/20 shadow-lg">
+                    <BarChart3 className="h-6 w-6 text-brand-gold drop-shadow-md" />
                   </div>
                   <div>
-                    <span className="bg-gradient-to-r from-bristol-maroon to-bristol-gold bg-clip-text text-transparent">Employment Rate</span>
+                    <span className="bg-gradient-to-r from-brand-maroon to-brand-gold bg-clip-text text-transparent">Employment Rate</span>
                   </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-4xl font-black bg-gradient-to-r from-bristol-maroon via-bristol-gold to-amber-600 bg-clip-text text-transparent drop-shadow-lg">
+                <div className="text-4xl font-black bg-gradient-to-r from-brand-maroon via-brand-gold to-amber-600 bg-clip-text text-transparent drop-shadow-lg">
                   {data.rows.length > 0 ? `${data.rows[data.rows.length - 1].value.toFixed(1)}%` : 'N/A'}
                 </div>
                 <div className="text-sm text-slate-700 font-bold mt-2 tracking-wide">Current Labor Market Status</div>
               </CardContent>
             </Card>
 
-            <Card className="bristol-enterprise-card border-3 border-emerald-400/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/95 via-emerald-50/20 to-green-50/80">
+            <Card className="brand-enterprise-card border-3 border-emerald-400/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/95 via-emerald-50/20 to-green-50/80">
               <CardHeader className="pb-3 relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-green-400 rounded-t-2xl"></div>
                 <CardTitle className="text-lg text-slate-800 font-black flex items-center gap-3 mt-2">
@@ -409,7 +409,7 @@ export function BLSTool() {
               </CardContent>
             </Card>
 
-            <Card className="bristol-enterprise-card border-3 border-purple-400/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/95 via-purple-50/20 to-indigo-50/80">
+            <Card className="brand-enterprise-card border-3 border-purple-400/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/95 via-purple-50/20 to-indigo-50/80">
               <CardHeader className="pb-3 relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-400 rounded-t-2xl"></div>
                 <CardTitle className="text-lg text-slate-800 font-black flex items-center gap-3 mt-2">
@@ -432,20 +432,20 @@ export function BLSTool() {
 
           {/* Chart */}
           <div className="lg:col-span-2">
-            <Card className="bristol-enterprise-card border-3 border-bristol-gold/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/98 via-blue-50/30 to-bristol-gold/10">
+            <Card className="brand-enterprise-card border-3 border-brand-gold/40 shadow-2xl rounded-2xl backdrop-blur-lg bg-gradient-to-br from-white/98 via-blue-50/30 to-brand-gold/10">
               <CardHeader className="relative">
-                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-bristol-gold via-blue-500 to-purple-600 rounded-t-2xl"></div>
+                <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-gold via-blue-500 to-purple-600 rounded-t-2xl"></div>
                 <CardTitle className="text-2xl text-slate-800 font-black flex items-center gap-4 mt-3">
-                  <div className="p-3 rounded-2xl bg-gradient-to-br from-bristol-gold/20 to-blue-400/20 shadow-xl">
-                    <BarChart3 className="h-8 w-8 text-bristol-gold drop-shadow-lg" />
+                  <div className="p-3 rounded-2xl bg-gradient-to-br from-brand-gold/20 to-blue-400/20 shadow-xl">
+                    <BarChart3 className="h-8 w-8 text-brand-gold drop-shadow-lg" />
                   </div>
                   <div>
-                    <span className="bg-gradient-to-r from-bristol-maroon via-bristol-gold to-blue-600 bg-clip-text text-transparent">Employment Intelligence</span>
+                    <span className="bg-gradient-to-r from-brand-maroon via-brand-gold to-blue-600 bg-clip-text text-transparent">Employment Intelligence</span>
                     <div className="text-lg font-bold text-slate-700 mt-1">{data.meta.label}</div>
                   </div>
                 </CardTitle>
                 <CardDescription className="text-slate-700 font-bold text-lg mt-4 leading-relaxed">
-                  <span className="bg-gradient-to-r from-bristol-gold to-amber-600 bg-clip-text text-transparent">Real-time Labor Market Data</span> • {data.meta.source}
+                  <span className="bg-gradient-to-r from-brand-gold to-amber-600 bg-clip-text text-transparent">Real-time Labor Market Data</span> • {data.meta.source}
                 </CardDescription>
               </CardHeader>
               <CardContent>

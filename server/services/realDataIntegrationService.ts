@@ -4,7 +4,7 @@ import { eq, and, gte, lte } from "drizzle-orm";
 
 /**
  * Real Data Integration Service
- * Replaces placeholder data with live API integrations for Bristol agents
+ * Replaces placeholder data with live API integrations for Company agents
  */
 export class RealDataIntegrationService {
   

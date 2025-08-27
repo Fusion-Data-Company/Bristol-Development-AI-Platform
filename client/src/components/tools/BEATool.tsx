@@ -136,7 +136,7 @@ export function BEATool() {
       {
         label: data.meta.label,
         data: data.rows.map((row: { value: number }) => row.value),
-        borderColor: '#D4A574', // Bristol gold
+        borderColor: '#D4A574', // Company gold
         backgroundColor: '#D4A574',
         tension: 0.1,
         fill: false
@@ -196,14 +196,14 @@ export function BEATool() {
   return (
     <div className="space-y-8">
       {/* MEGA HEADER */}
-      <div className="text-center space-y-6 bristol-enterprise-card p-8 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-emerald-50/50 to-green-50/50 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-green-500/5 to-bristol-gold/10 animate-pulse"></div>
+      <div className="text-center space-y-6 brand-enterprise-card p-8 rounded-3xl border-4 border-brand-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-emerald-50/50 to-green-50/50 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 via-green-500/5 to-brand-gold/10 animate-pulse"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-green-500/20 shadow-xl animate-bounce">
               <TrendingUp className="h-16 w-16 text-emerald-600 drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-emerald-800 via-bristol-gold to-green-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+            <h1 className="text-5xl font-black bg-gradient-to-r from-emerald-800 via-brand-gold to-green-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
               💰 Bureau of Economic Analysis
             </h1>
           </div>
@@ -212,7 +212,7 @@ export function BEATool() {
               ✨ Real-Time GDP & Income Intelligence Platform
             </h2>
             <div className="flex items-center justify-center gap-8 text-lg font-bold text-emerald-700/90">
-              <span>📈 Live GDP Data • 💼 Regional Income • 📊 Economic Insights • 🎯 Bristol-Powered Analytics</span>
+              <span>📈 Live GDP Data • 💼 Regional Income • 📊 Economic Insights • 🎯 Company-Powered Analytics</span>
             </div>
           </div>
         </div>
@@ -223,7 +223,7 @@ export function BEATool() {
         <div>
           <Label htmlFor="geo" className="text-gray-900">Geographic Level</Label>
           <Select value={geo} onValueChange={setGeo}>
-            <SelectTrigger className="bristol-form-enhanced">
+            <SelectTrigger className="brand-form-enhanced">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-300">
@@ -242,7 +242,7 @@ export function BEATool() {
                 value={state}
                 onChange={(e) => setState(e.target.value)}
                 placeholder="37 (NC)"
-                className="bristol-form-enhanced"
+                className="brand-form-enhanced"
               />
             </div>
             <div>
@@ -252,7 +252,7 @@ export function BEATool() {
                 value={county}
                 onChange={(e) => setCounty(e.target.value)}
                 placeholder="119 (Mecklenburg)"
-                className="bristol-form-enhanced"
+                className="brand-form-enhanced"
               />
             </div>
           </>
@@ -266,7 +266,7 @@ export function BEATool() {
               value={msa}
               onChange={(e) => setMsa(e.target.value)}
               placeholder="16740 (Charlotte)"
-              className="bristol-form-enhanced"
+              className="brand-form-enhanced"
             />
           </div>
         )}
@@ -280,7 +280,7 @@ export function BEATool() {
             onChange={(e) => setStartYear(e.target.value)}
             min="2005"
             max="2030"
-            className="bristol-form-enhanced"
+            className="brand-form-enhanced"
           />
         </div>
 
@@ -293,7 +293,7 @@ export function BEATool() {
             onChange={(e) => setEndYear(e.target.value)}
             min="2005"
             max="2030"
-            className="bristol-form-enhanced"
+            className="brand-form-enhanced"
           />
         </div>
       </div>
@@ -303,7 +303,7 @@ export function BEATool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bristol-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
+          className="brand-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
         >
           <div className="flex items-center gap-3">
             {isLoading ? (
@@ -321,7 +321,7 @@ export function BEATool() {
                 RUN ANALYSIS
               </div>
               <div className="text-xs text-amber-300 font-medium -mt-1">
-                Bristol Intelligence
+                Company Intelligence
               </div>
             </div>
             <Cpu className="h-4 w-4 text-amber-300/70" />

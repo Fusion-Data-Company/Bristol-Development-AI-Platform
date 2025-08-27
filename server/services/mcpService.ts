@@ -173,7 +173,7 @@ export class McpService {
           result = await this.executeHudFmr(payload);
           break;
         case "bristol_property_scraper":
-          result = await this.executeBristolPropertyScraper(payload);
+          result = await this.executeCompanyPropertyScraper(payload);
           break;
         default:
           throw new Error(`Tool execution not implemented: ${toolName}`);
@@ -394,12 +394,12 @@ export class McpService {
     }
   }
 
-  private async executeBristolPropertyScraper(payload: any): Promise<ToolResult> {
+  private async executeCompanyPropertyScraper(payload: any): Promise<ToolResult> {
     try {
-      console.log(`🏢 Bristol AI property scraper executing: ${payload.urls?.length || 0} URLs`);
+      console.log(`🏢 Company AI property scraper executing: ${payload.urls?.length || 0} URLs`);
       
       // Call the elite search API endpoint
-      const response = await fetch('http://localhost:5000/api/bristol-elite/elite-search', {
+      const response = await fetch('http://localhost:5000/api/brand-elite/elite-search', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -409,8 +409,8 @@ export class McpService {
           location: payload.location,
           propertyType: payload.propertyType || 'multifamily',
           limit: 15,
-          sessionId: 'bristol-ai-mcp',
-          userId: 'bristol-ai-agent'
+          sessionId: 'brand-ai-mcp',
+          userId: 'brand-ai-agent'
         })
       });
 
@@ -435,10 +435,10 @@ export class McpService {
       };
 
     } catch (error) {
-      console.error('Bristol property scraper failed:', error);
+      console.error('Company property scraper failed:', error);
       return { 
         success: false, 
-        error: error instanceof Error ? error.message : 'Bristol property scraper failed' 
+        error: error instanceof Error ? error.message : 'Company property scraper failed' 
       };
     }
   }

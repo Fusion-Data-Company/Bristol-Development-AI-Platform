@@ -22,7 +22,7 @@ export default function ChatDock() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [selectedModel, setSelectedModel] = useState("claude-3-5-sonnet");
-  const [bristolMode, setBristolMode] = useState(false);
+  const [bristolMode, setCompanyMode] = useState(false);
 
   const chatMutation = useMutation({
     mutationFn: async (data: { message: string; model: string; bristolMode: boolean }) => {
@@ -137,11 +137,11 @@ export default function ChatDock() {
               
               <div className="flex items-center gap-2">
                 <Switch 
-                  id="bristol-mode" 
+                  id="brand-mode" 
                   checked={bristolMode} 
-                  onCheckedChange={setBristolMode}
+                  onCheckedChange={setCompanyMode}
                 />
-                <Label htmlFor="bristol-mode" className="text-xs">Bristol Mode</Label>
+                <Label htmlFor="brand-mode" className="text-xs">Company Mode</Label>
               </div>
             </div>
           )}

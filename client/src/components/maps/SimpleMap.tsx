@@ -64,7 +64,7 @@ export default function SimpleMap() {
         onClick={handleMapClick}
       />
       
-      {/* Bristol branding overlay */}
+      {/* Company branding overlay */}
       <div style={{
         position: 'absolute',
         top: '16px',
@@ -75,7 +75,7 @@ export default function SimpleMap() {
         borderRadius: '8px',
         zIndex: 1000
       }}>
-        <div style={{ fontWeight: 'bold' }}>Bristol Development</div>
+        <div style={{ fontWeight: 'bold' }}>Company Development</div>
         <div style={{ color: '#22d3ee', fontSize: '14px' }}>
           {Array.isArray(sites) ? sites.length : 0} Properties
         </div>

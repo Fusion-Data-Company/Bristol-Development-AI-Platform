@@ -15,7 +15,7 @@ router.get('/arcgis/*', async (req: Request, res: Response) => {
     const response = await fetch(arcgisUrl, {
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Bristol AI Platform/1.0'
+        'User-Agent': 'Company AI Platform/1.0'
       }
     });
 
@@ -51,7 +51,7 @@ router.get('/census/*', async (req: Request, res: Response) => {
     const response = await fetch(censusUrl, {
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Bristol AI Platform/1.0'
+        'User-Agent': 'Company AI Platform/1.0'
       }
     });
 
@@ -87,7 +87,7 @@ router.get('/hud/*', async (req: Request, res: Response) => {
     const response = await fetch(hudUrl, {
       headers: {
         'Accept': 'application/json',
-        'User-Agent': 'Bristol AI Platform/1.0'
+        'User-Agent': 'Company AI Platform/1.0'
       }
     });
 
@@ -124,7 +124,7 @@ router.post('/proxy', async (req: Request, res: Response) => {
       method,
       headers: {
         ...headers,
-        'User-Agent': 'Bristol AI Platform/1.0'
+        'User-Agent': 'Company AI Platform/1.0'
       }
     };
 

@@ -1,5 +1,5 @@
 // server/agent/tools.ts
-export const BRISTOL_TOOLS = [
+export const COMPANY_TOOLS = [
   {
     name: "comps_agent_scrape",
     description: "Launch the Scraping Agent with address ground zero, radius, property type, amenities, and keywords.",

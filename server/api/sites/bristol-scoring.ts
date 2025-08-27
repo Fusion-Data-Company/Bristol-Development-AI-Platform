@@ -7,16 +7,16 @@ import { eq } from 'drizzle-orm';
 const router = Router();
 
 /**
- * Bristol Scoring API
- * Provides live Bristol rating calculations aligned with development strategy
+ * Company Scoring API
+ * Provides live Company rating calculations aligned with development strategy
  */
 
-// Get Bristol score for a specific property
-router.get('/:siteId/bristol-score', async (req, res) => {
+// Get Company score for a specific property
+router.get('/:siteId/brand-score', async (req, res) => {
   try {
     const { siteId } = req.params;
     
-    const scoreResult = await bristolScoringService.getBristolScoreDetailed(siteId);
+    const scoreResult = await bristolScoringService.getCompanyScoreDetailed(siteId);
     
     res.json({
       success: true,
@@ -24,20 +24,20 @@ router.get('/:siteId/bristol-score', async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Bristol score calculation error:', error);
+    console.error('Company score calculation error:', error);
     res.status(500).json({ 
-      error: 'Failed to calculate Bristol score',
+      error: 'Failed to calculate Company score',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
 
-// Update Bristol scores for all properties
+// Update Company scores for all properties
 router.post('/update-all-scores', async (req, res) => {
   try {
-    console.log('🎯 Starting comprehensive Bristol score update...');
+    console.log('🎯 Starting comprehensive Company score update...');
     
-    await bristolScoringService.updateAllBristolScores();
+    await bristolScoringService.updateAllCompanyScores();
     
     // Get updated statistics
     const allSites = await db.select().from(sites);
@@ -53,7 +53,7 @@ router.post('/update-all-scores', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'Bristol scores updated for all properties',
+      message: 'Company scores updated for all properties',
       statistics: {
         totalProperties: allSites.length,
         propertiesScored: sitesWithScores.length,
@@ -63,15 +63,15 @@ router.post('/update-all-scores', async (req, res) => {
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Bulk Bristol score update error:', error);
+    console.error('Bulk Company score update error:', error);
     res.status(500).json({ 
-      error: 'Failed to update Bristol scores',
+      error: 'Failed to update Company scores',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 });
 
-// Get portfolio Bristol score summary
+// Get portfolio Company score summary
 router.get('/portfolio-summary', async (req, res) => {
   try {
     const allSites = await db.select().from(sites);
@@ -81,7 +81,7 @@ router.get('/portfolio-summary', async (req, res) => {
       return res.json({
         success: true,
         data: {
-          message: 'No Bristol scores calculated yet. Run score update first.',
+          message: 'No Company scores calculated yet. Run score update first.',
           totalProperties: allSites.length,
           scoredProperties: 0
         }
@@ -167,7 +167,7 @@ router.post('/:siteId/update-score', async (req, res) => {
   try {
     const { siteId } = req.params;
     
-    const scoreResult = await bristolScoringService.calculateBristolScore(siteId);
+    const scoreResult = await bristolScoringService.calculateCompanyScore(siteId);
     
     // Update the database
     await db.update(sites)
@@ -179,14 +179,14 @@ router.post('/:siteId/update-score', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'Bristol score updated successfully',
+      message: 'Company score updated successfully',
       data: scoreResult,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
     console.error('Single property score update error:', error);
     res.status(500).json({ 
-      error: 'Failed to update Bristol score',
+      error: 'Failed to update Company score',
       message: error instanceof Error ? error.message : 'Unknown error'
     });
   }

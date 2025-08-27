@@ -62,7 +62,7 @@ export function CompsTable({
     return (
       <div className="flex items-center justify-center py-8">
         <div className="flex items-center gap-2">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-bristol-maroon"></div>
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-brand-maroon"></div>
           Loading comparable properties...
         </div>
       </div>

@@ -163,7 +163,7 @@ export function DataVisualization({ data }: DataVisualizationProps) {
                   <div className="flex items-center gap-2">
                     <div className="bg-gray-200 rounded-full h-2 w-32">
                       <div 
-                        className="bg-bristol-maroon h-2 rounded-full"
+                        className="bg-brand-maroon h-2 rounded-full"
                         style={{ width: `${(count / maxValue) * 100}%` }}
                       />
                     </div>

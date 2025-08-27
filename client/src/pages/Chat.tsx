@@ -84,7 +84,7 @@ import { OnboardingGuide } from '@/components/chat/OnboardingGuide';
 import { ArtifactsPanel, extractArtifacts, type Artifact } from '@/components/chat/ArtifactsPanel';
 import { ChatBackground } from "../components/EnterpriseBackgrounds";
 import { Link, useLocation } from "wouter";
-import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
+import bristolLogoPath from "@assets/brand-logo_1754934306711.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
 import { AIMultiModalGeneration } from '@/components/ui/ai-gen-simple';
@@ -104,7 +104,7 @@ interface PremiumModel {
   status: 'active' | 'byok-required';
 }
 
-// Enhanced types for the unified Bristol A.I. Elite system
+// Enhanced types for the unified Company A.I. Elite system
 type ModelOption = { id: string; label: string; context?: number };
 
 export type MCPTool = {
@@ -137,8 +137,8 @@ export type AgentTask = {
   completedAt?: Date;
 };
 
-// Bristol A.I. Elite System Prompt - Professional identity from the popout
-const DEFAULT_BRISTOL_PROMPT = `I'm the Bristol Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
+// Company A.I. Elite System Prompt - Professional identity from the popout
+const DEFAULT_COMPANY_PROMPT = `I'm the Company Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Company Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Company Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
 
 ## CORE CAPABILITIES
 - **Deal Analysis**: Comprehensive property underwriting with IRR/NPV modeling
@@ -154,7 +154,7 @@ const DEFAULT_BRISTOL_PROMPT = `I'm the Bristol Site Intelligence AI – the pro
 - Use provided property data, demographic information, and external API data for comprehensive analysis
 
 ## AVAILABLE DATA CONTEXT
-- Bristol property portfolio with addresses, status, and financial metrics
+- Company property portfolio with addresses, status, and financial metrics
 - Demographics data from Census API, BLS employment data, HUD fair market rents
 - FBI crime statistics, NOAA climate data, BEA economic indicators
 - Foursquare location insights and market trend analysis
@@ -163,11 +163,11 @@ const DEFAULT_BRISTOL_PROMPT = `I'm the Bristol Site Intelligence AI – the pro
 - Professional and authoritative tone reflecting 30+ years of institutional experience
 - Data-driven insights with specific metrics and financial projections
 - Clear investment recommendations with risk assessments
-- Use Bristol branding: "Bristol A.I." not "Bristol Brain"
+- Use Company branding: "Company A.I." not "Company Brain"
 
 Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated, results-oriented approach expected from a Fortune 500-grade AI system.`;
 
-// Utility functions for the Bristol A.I. Elite system
+// Utility functions for the Company A.I. Elite system
 const nowISO = () => new Date().toISOString();
 const cx = (...classes: (string | undefined | false)[]) => classes.filter(Boolean).join(" ");
 
@@ -211,7 +211,7 @@ export default function Chat() {
   const [isThinking, setIsThinking] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Bristol A.I. Elite unified state - from BristolFloatingWidget
+  // Company A.I. Elite unified state - from CompanyFloatingWidget
   const [activeTab, setActiveTab] = useState("chat");
   const [showDataViz, setShowDataViz] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -340,7 +340,7 @@ export default function Chat() {
   
   // Multi-Agent System States - VERIFIED OPENROUTER MODELS ONLY
   const [agents, setAgents] = useState<any[]>([
-    { id: 'master', name: 'Bristol Master Agent', model: 'openai/gpt-4o', description: 'Orchestrates multi-agent coordination and final synthesis' },
+    { id: 'master', name: 'Company Master Agent', model: 'openai/gpt-4o', description: 'Orchestrates multi-agent coordination and final synthesis' },
     { id: 'data-processing', name: 'Data Processor', model: 'anthropic/claude-3.5-sonnet', description: 'Handles demographic and employment data analysis' },
     { id: 'financial-analysis', name: 'Financial Analyst', model: 'openai/gpt-4o', description: 'Performs DCF modeling and investment calculations' },
     { id: 'market-intelligence', name: 'Market Intelligence', model: 'anthropic/claude-3.5-sonnet', description: 'Analyzes comparable properties and market trends' },
@@ -443,7 +443,7 @@ export default function Chat() {
         '/api/unified-chat/chat',
         '/api/bulletproof-chat/chat',
         '/api/enhanced-chat-v2/message',
-        '/api/bristol-brain-elite',
+        '/api/brand-brain-elite',
         `/api/chat/sessions/${selectedSession}/messages`
       ];
 
@@ -611,7 +611,7 @@ export default function Chat() {
       
       wsRef.current.onopen = () => {
         setWsConnected(true);
-        console.log("Bristol A.I. Elite WebSocket connected");
+        console.log("Company A.I. Elite WebSocket connected");
         
         // Send periodic ping to keep connection alive
         const pingInterval = setInterval(() => {
@@ -636,7 +636,7 @@ export default function Chat() {
       
       wsRef.current.onclose = (event) => {
         setWsConnected(false);
-        console.log("Bristol A.I. Elite WebSocket disconnected");
+        console.log("Company A.I. Elite WebSocket disconnected");
         
         // URGENT: Disable auto-reconnect to prevent spam
         // Only reconnect on user action or manual retry
@@ -933,7 +933,7 @@ export default function Chat() {
             
             const welcomeMessage = {
               role: "assistant" as const,
-              content: `🚀 **Bristol A.I. Elite v5.0** - *Enterprise Intelligence Platform*
+              content: `🚀 **Company A.I. Elite v5.0** - *Enterprise Intelligence Platform*
 
 **🏢 Current Configuration:**
 • **AI Engine:** ${currentModel?.label || 'Loading...'}${isPremium ? ' 💎 **PREMIUM TIER**' : ' 🔧 **STANDARD**'}
@@ -952,7 +952,7 @@ ${isPremium ? '💎 **PREMIUM MODE ACTIVATED** - Full Enterprise Features' : '�
 
 🏙️ **Market Intelligence:**
 • Live demographic & employment data feeds
-• Property analysis & Bristol scoring algorithms
+• Property analysis & Company scoring algorithms
 • Multi-agent deal coordination with WebSocket integration
 
 🔗 **Data Integration:**
@@ -1034,7 +1034,7 @@ What property or investment can I analyze for you today?`,
     setShowArtifacts(!showArtifacts);
   };
 
-  // Bristol A.I. Elite chat functionality - the advanced chat handler with STREAMING
+  // Company A.I. Elite chat functionality - the advanced chat handler with STREAMING
   const handleEliteSend = async () => {
     if (!eliteInput.trim() || eliteLoading) return;
 
@@ -1218,7 +1218,7 @@ What property or investment can I analyze for you today?`,
     } catch (error) {
       console.error("Ultra-bulletproof chat error:", error);
       // Emergency response if even the bulletproof endpoint fails
-      const emergencyResponse = `I received your message: "${userMessage}". While experiencing a technical issue, I can still provide Bristol Development expertise. For real estate analysis, I focus on: location assessment, market trends, financial modeling (IRR/NPV), cap rates, and risk evaluation. What specific aspect interests you most?`;
+      const emergencyResponse = `I received your message: "${userMessage}". While experiencing a technical issue, I can still provide Company Development expertise. For real estate analysis, I focus on: location assessment, market trends, financial modeling (IRR/NPV), cap rates, and risk evaluation. What specific aspect interests you most?`;
       setEliteMessages(prev => [...prev, {
         role: "assistant",
         content: emergencyResponse,
@@ -1293,8 +1293,8 @@ What property or investment can I analyze for you today?`,
   ];
 
   return (
-    <div className="min-h-screen bg-bristol-ink">
-      {/* Premium Bristol Header with Real Stucco Texture - Only Header, No Footer */}
+    <div className="min-h-screen bg-brand-ink">
+      {/* Premium Company Header with Real Stucco Texture - Only Header, No Footer */}
       <header className="relative overflow-hidden shadow-2xl border-b-2 border-cyan-400/50 bg-slate-800" style={{
         backgroundImage: `
           radial-gradient(circle at 12% 34%, #374151 0%, transparent 20%),
@@ -1346,7 +1346,7 @@ What property or investment can I analyze for you today?`,
         
         <div className="pl-0 pr-6 lg:pr-8 py-4 lg:py-6 relative">
           <div className="flex items-center justify-start w-full space-x-6 lg:space-x-8">
-            {/* Bristol Logo & Brand - Aligned to left edge */}
+            {/* Company Logo & Brand - Aligned to left edge */}
             <div className="flex items-center space-x-4 lg:space-x-6 pl-6">
               <div className="relative flex-shrink-0 group">
                 <div className="absolute inset-0 rounded-lg blur-sm transition-all duration-300" style={{
@@ -1356,7 +1356,7 @@ What property or investment can I analyze for you today?`,
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(157, 23, 77, 0.2)'}></div>
                 <img 
                   src={bristolLogoPath} 
-                  alt="Bristol Development Group" 
+                  alt="Company Development Group" 
                   className="relative h-10 lg:h-12 w-auto max-w-none object-contain drop-shadow-xl hover:drop-shadow-2xl transition-all duration-300 filter brightness-110 hover:brightness-125"
                   style={{ 
                     imageRendering: 'crisp-edges',
@@ -1410,15 +1410,15 @@ What property or investment can I analyze for you today?`,
                     className={`
                       group flex items-center space-x-2 px-3 lg:px-4 py-2 lg:py-3 rounded-xl font-medium transition-all duration-300 relative overflow-hidden backdrop-blur-sm
                       ${location === path 
-                        ? 'bg-gradient-to-r from-cyan-400 to-cyan-500 text-bristol-ink shadow-xl shadow-cyan-400/40 font-bold border border-cyan-400/50' 
-                        : 'text-bristol-fog hover:text-white hover:bg-white/8 border border-transparent hover:border-cyan-400/20'
+                        ? 'bg-gradient-to-r from-cyan-400 to-cyan-500 text-brand-ink shadow-xl shadow-cyan-400/40 font-bold border border-cyan-400/50' 
+                        : 'text-brand-fog hover:text-white hover:bg-white/8 border border-transparent hover:border-cyan-400/20'
                       }
                     `}
                   >
                     {location === path && (
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/95 via-cyan-500 to-cyan-400/95 animate-pulse"></div>
                     )}
-                    <Icon className={`h-3.5 lg:h-4 w-3.5 lg:w-4 relative z-10 ${location === path ? 'text-bristol-ink drop-shadow-sm' : 'group-hover:text-cyan-400'} transition-all duration-300`} />
+                    <Icon className={`h-3.5 lg:h-4 w-3.5 lg:w-4 relative z-10 ${location === path ? 'text-brand-ink drop-shadow-sm' : 'group-hover:text-cyan-400'} transition-all duration-300`} />
                     <span className="text-xs lg:text-sm tracking-wide relative z-10 hidden sm:inline">{label}</span>
                     {location !== path && (
                       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-cyan-400/3 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -1469,8 +1469,8 @@ What property or investment can I analyze for you today?`,
         {/* Premium Glass Header */}
         <div className="relative overflow-visible">
           {/* Ambient glow effects */}
-          <div className="absolute -top-10 -left-10 w-40 h-40 bg-bristol-cyan/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute -top-5 -right-10 w-32 h-32 bg-bristol-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
+          <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-cyan/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -top-5 -right-10 w-32 h-32 bg-brand-electric/8 rounded-full blur-2xl animate-pulse delay-1000" />
           
           {/* Fortune 500 Elite header background */}
           <div 
@@ -1481,17 +1481,17 @@ What property or investment can I analyze for you today?`,
           />
           
           {/* Header content */}
-          <div className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-bristol-cyan/30">
+          <div className="relative z-10 flex items-center justify-between px-6 py-5 border-b border-brand-cyan/30">
             <div className="flex items-center gap-4">
               <div className="relative group">
-                <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-full blur-sm opacity-75 group-hover:opacity-100 animate-pulse" />
-                <div className="relative bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 p-2 rounded-full border border-bristol-cyan/30">
-                  <Brain className="h-7 w-7 text-bristol-cyan" />
+                <div className="absolute -inset-2 bg-gradient-to-r from-brand-cyan/20 to-brand-electric/20 rounded-full blur-sm opacity-75 group-hover:opacity-100 animate-pulse" />
+                <div className="relative bg-gradient-to-r from-brand-cyan/20 to-brand-electric/20 p-2 rounded-full border border-brand-cyan/30">
+                  <Brain className="h-7 w-7 text-brand-cyan" />
                 </div>
               </div>
               <div>
-                <h1 className="font-serif font-bold text-3xl text-bristol-cyan drop-shadow-xl">
-                  Bristol Development Group
+                <h1 className="font-serif font-bold text-3xl text-brand-cyan drop-shadow-xl">
+                  Company Development Group
                 </h1>
                 <div className="text-lg text-orange-500 font-bold tracking-widest uppercase mt-1 drop-shadow-lg flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
@@ -1534,18 +1534,18 @@ What property or investment can I analyze for you today?`,
                 }} 
                 className={cx(
                   "p-2 rounded-xl transition-all duration-300 group relative",
-                  "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
-                  "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
-                  "hover:shadow-lg hover:shadow-bristol-cyan/20",
-                  showQuickActions && "bg-bristol-cyan/20 border-bristol-cyan/60"
+                  "bg-white/5 hover:bg-brand-cyan/10 backdrop-blur-sm",
+                  "border border-brand-cyan/20 hover:border-brand-cyan/50",
+                  "hover:shadow-lg hover:shadow-brand-cyan/20",
+                  showQuickActions && "bg-brand-cyan/20 border-brand-cyan/60"
                 )}
                 aria-label="Toggle Quick Actions"
                 title={showQuickActions ? "Return to Chat" : "Show Quick Actions"}
               >
                 {showQuickActions ? (
-                  <X className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                  <X className="h-4 w-4 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
                 ) : (
-                  <Plus className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                  <Plus className="h-4 w-4 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
                 )}
               </button>
               
@@ -1554,15 +1554,15 @@ What property or investment can I analyze for you today?`,
                 onClick={() => setShowDataViz(!showDataViz)} 
                 className={cx(
                   "p-2 rounded-xl transition-all duration-300 group relative",
-                  "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
-                  "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
-                  "hover:shadow-lg hover:shadow-bristol-cyan/20",
-                  showDataViz && "bg-bristol-cyan/20 border-bristol-cyan/60"
+                  "bg-white/5 hover:bg-brand-cyan/10 backdrop-blur-sm",
+                  "border border-brand-cyan/20 hover:border-brand-cyan/50",
+                  "hover:shadow-lg hover:shadow-brand-cyan/20",
+                  showDataViz && "bg-brand-cyan/20 border-brand-cyan/60"
                 )}
                 aria-label="Toggle Data Visualization"
                 title="View Live Data Context"
               >
-                <BarChart3 className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                <BarChart3 className="h-4 w-4 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
               </button>
 
               {/* AI Generation Toggle */}
@@ -1570,15 +1570,15 @@ What property or investment can I analyze for you today?`,
                 onClick={() => setShowAIGeneration(!showAIGeneration)} 
                 className={cx(
                   "p-2 rounded-xl transition-all duration-300 group relative",
-                  "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
-                  "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
-                  "hover:shadow-lg hover:shadow-bristol-cyan/20",
-                  showAIGeneration && "bg-bristol-cyan/20 border-bristol-cyan/60"
+                  "bg-white/5 hover:bg-brand-cyan/10 backdrop-blur-sm",
+                  "border border-brand-cyan/20 hover:border-brand-cyan/50",
+                  "hover:shadow-lg hover:shadow-brand-cyan/20",
+                  showAIGeneration && "bg-brand-cyan/20 border-brand-cyan/60"
                 )}
                 aria-label="AI Content Generation"
                 title="Generate Images, Videos & Avatars"
               >
-                <Camera className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                <Camera className="h-4 w-4 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
               </button>
 
               {/* Onboarding Guide Toggle */}
@@ -1586,14 +1586,14 @@ What property or investment can I analyze for you today?`,
                 onClick={() => setShowOnboarding(true)} 
                 className={cx(
                   "p-2 rounded-xl transition-all duration-300 group relative",
-                  "bg-white/5 hover:bg-bristol-cyan/10 backdrop-blur-sm",
-                  "border border-bristol-cyan/20 hover:border-bristol-cyan/50",
-                  "hover:shadow-lg hover:shadow-bristol-cyan/20"
+                  "bg-white/5 hover:bg-brand-cyan/10 backdrop-blur-sm",
+                  "border border-brand-cyan/20 hover:border-brand-cyan/50",
+                  "hover:shadow-lg hover:shadow-brand-cyan/20"
                 )}
                 aria-label="Open AI Guide"
-                title="Learn How to Use Bristol A.I."
+                title="Learn How to Use Company A.I."
               >
-                <HelpCircle className="h-4 w-4 text-bristol-cyan/70 group-hover:text-bristol-cyan transition-colors" />
+                <HelpCircle className="h-4 w-4 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
               </button>
 
 
@@ -1602,7 +1602,7 @@ What property or investment can I analyze for you today?`,
         </div>
 
         {/* Navigation Tabs - Exact from floating widget */}
-        <div className="border-b border-bristol-cyan/30 bg-bristol-ink/20 relative z-20">
+        <div className="border-b border-brand-cyan/30 bg-brand-ink/20 relative z-20">
           <div className="flex">
             <button
               onClick={(e) => {
@@ -1614,8 +1614,8 @@ What property or investment can I analyze for you today?`,
               className={cx(
                 "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                 activeTab === "chat"
-                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                  ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                  : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
               )}
             >
               AI Chat
@@ -1630,8 +1630,8 @@ What property or investment can I analyze for you today?`,
               className={cx(
                 "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                 activeTab === "data"
-                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                  ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                  : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
               )}
             >
               Data
@@ -1646,8 +1646,8 @@ What property or investment can I analyze for you today?`,
               className={cx(
                 "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                 activeTab === "tools"
-                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                  ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                  : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
               )}
             >
               Tools
@@ -1662,8 +1662,8 @@ What property or investment can I analyze for you today?`,
               className={cx(
                 "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                 activeTab === "agents"
-                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                  ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                  : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
               )}
             >
               🤖 Agents
@@ -1678,8 +1678,8 @@ What property or investment can I analyze for you today?`,
               className={cx(
                 "px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer relative z-30",
                 activeTab === "admin"
-                  ? "bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan"
-                  : "text-bristol-cyan/70 hover:text-bristol-cyan hover:bg-bristol-cyan/10"
+                  ? "bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan"
+                  : "text-brand-cyan/70 hover:text-brand-cyan hover:bg-brand-cyan/10"
               )}
             >
               Admin
@@ -1689,14 +1689,14 @@ What property or investment can I analyze for you today?`,
 
         {/* Compact Model Selector - Exact from floating widget */}
         <div 
-          className="px-6 py-3 border-b border-bristol-cyan/30 relative"
+          className="px-6 py-3 border-b border-brand-cyan/30 relative"
           style={{
             background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(69, 214, 202, 0.05) 50%, rgba(168, 85, 247, 0.02) 100%)',
             backdropFilter: 'blur(12px)',
           }}
         >
           {/* Ambient glow */}
-          <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-bristol-cyan/10 rounded-full blur-2xl" />
+          <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-brand-cyan/10 rounded-full blur-2xl" />
           
           {modelError && (
             <div 
@@ -1717,12 +1717,12 @@ What property or investment can I analyze for you today?`,
             
             {/* AI Model Selector */}
             <div className="flex-1 relative">
-              <label className="block text-xs text-bristol-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+              <label className="block text-xs text-brand-cyan/90 font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
                 <Brain className="h-3 w-3 animate-pulse" />
                 AI Model
               </label>
               <div className="relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/30 via-bristol-electric/20 to-orange-500/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-cyan/30 via-brand-electric/20 to-orange-500/30 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-500" />
                 <Select 
                   value={model} 
                   onValueChange={(newModel: string) => {
@@ -1743,7 +1743,7 @@ What property or investment can I analyze for you today?`,
                   }}
                 >
                   <SelectTrigger 
-                    className="chrome-metallic-selector w-full border-bristol-cyan/60 bg-slate-900/80 text-white hover:border-bristol-cyan/80 focus:border-bristol-cyan focus:ring-bristol-cyan/20 relative z-10"
+                    className="chrome-metallic-selector w-full border-brand-cyan/60 bg-slate-900/80 text-white hover:border-brand-cyan/80 focus:border-brand-cyan focus:ring-brand-cyan/20 relative z-10"
                     style={{
                       background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.95) 100%)',
                       border: '1px solid rgba(69, 214, 202, 0.6)',
@@ -1752,12 +1752,12 @@ What property or investment can I analyze for you today?`,
                   >
                     <SelectValue placeholder="Select AI Model" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-bristol-cyan/30 text-white">
+                  <SelectContent className="bg-slate-900 border-brand-cyan/30 text-white">
                     {modelList.map((model) => (
                       <SelectItem 
                         key={model.id} 
                         value={model.id}
-                        className="text-white hover:bg-bristol-cyan/20 focus:bg-bristol-cyan/20 cursor-pointer"
+                        className="text-white hover:bg-brand-cyan/20 focus:bg-brand-cyan/20 cursor-pointer"
                       >
                         <div className="flex items-center gap-2">
                           <span className="text-lg">
@@ -1820,7 +1820,7 @@ What property or investment can I analyze for you today?`,
                   className={cx(
                     "px-2 py-1 rounded-full text-xs font-bold transition-all duration-300",
                     realTimeData
-                      ? "bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/40"
+                      ? "bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/40"
                       : "bg-white/10 text-white/50 border border-white/20"
                   )}
                 >
@@ -1913,8 +1913,8 @@ What property or investment can I analyze for you today?`,
                   backdropFilter: 'blur(8px)',
                 }}
               />
-              <div className="absolute top-10 right-10 w-24 h-24 bg-bristol-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
-              <div className="absolute bottom-20 left-10 w-32 h-32 bg-bristol-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
+              <div className="absolute top-10 right-10 w-24 h-24 bg-brand-electric/5 rounded-full blur-2xl animate-pulse delay-500" />
+              <div className="absolute bottom-20 left-10 w-32 h-32 bg-brand-cyan/5 rounded-full blur-3xl animate-pulse delay-1000" />
               
               {/* Chat Messages Area */}
               <div 
@@ -1939,7 +1939,7 @@ What property or investment can I analyze for you today?`,
                       
                       {/* Real Estate Quick Action Buttons */}
                       <div className="mb-8">
-                        <h3 className="text-xl font-bold text-bristol-cyan mb-6">Quick Actions</h3>
+                        <h3 className="text-xl font-bold text-brand-cyan mb-6">Quick Actions</h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
                           {realEstateQuickActions.map((action, index) => {
                             const Icon = action.icon;
@@ -1950,9 +1950,9 @@ What property or investment can I analyze for you today?`,
                                   setEliteInput(action.prompt);
                                   eliteInputRef.current?.focus();
                                 }}
-                                className="flex flex-col items-center gap-2 p-4 bg-gradient-to-r from-bristol-cyan/30 to-bristol-cyan/20 hover:from-bristol-cyan/40 hover:to-bristol-cyan/30 border border-bristol-cyan/50 hover:border-bristol-cyan/70 rounded-xl transition-all duration-300 group shadow-lg backdrop-blur-sm"
+                                className="flex flex-col items-center gap-2 p-4 bg-gradient-to-r from-brand-cyan/30 to-brand-cyan/20 hover:from-brand-cyan/40 hover:to-brand-cyan/30 border border-brand-cyan/50 hover:border-brand-cyan/70 rounded-xl transition-all duration-300 group shadow-lg backdrop-blur-sm"
                               >
-                                <Icon className="h-8 w-8 text-bristol-cyan group-hover:text-orange-500 transition-colors" />
+                                <Icon className="h-8 w-8 text-brand-cyan group-hover:text-orange-500 transition-colors" />
                                 <span className="text-sm font-bold text-white group-hover:text-orange-500">{action.label}</span>
                               </button>
                             );
@@ -1962,7 +1962,7 @@ What property or investment can I analyze for you today?`,
                       
                       <button
                         onClick={() => setShowOnboarding(true)}
-                        className="mt-4 px-6 py-3 bg-gradient-to-r from-bristol-cyan/20 to-bristol-cyan/10 hover:from-bristol-cyan/30 hover:to-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/50 rounded-2xl transition-all duration-300 font-bold text-sm backdrop-blur-sm shadow-bristol-cyan/20 shadow-lg hover:shadow-bristol-cyan/30 hover:shadow-xl"
+                        className="mt-4 px-6 py-3 bg-gradient-to-r from-brand-cyan/20 to-brand-cyan/10 hover:from-brand-cyan/30 hover:to-brand-cyan/20 text-brand-cyan border border-brand-cyan/50 rounded-2xl transition-all duration-300 font-bold text-sm backdrop-blur-sm shadow-brand-cyan/20 shadow-lg hover:shadow-brand-cyan/30 hover:shadow-xl"
                       >
                         <HelpCircle className="h-4 w-4 mr-2 inline" />
                         Show Getting Started Guide
@@ -1979,7 +1979,7 @@ What property or investment can I analyze for you today?`,
                         className={cx(
                           "max-w-[65%] rounded-2xl px-4 py-3 border relative",
                           msg.role === "user" 
-                            ? "text-bristol-cyan"
+                            ? "text-brand-cyan"
                             : "text-white"
                         )}
                         style={{
@@ -2000,12 +2000,12 @@ What property or investment can I analyze for you today?`,
                             </div>
                           )}
                           
-                          {/* Bristol AI Mode badge for assistant messages */}
+                          {/* Company AI Mode badge for assistant messages */}
                           {msg.role === "assistant" && (msg as any).metadata && (
                             <div className="flex items-center gap-1">
                               {(msg as any).metadata.provider && (
-                                <span className="text-xs font-extrabold tracking-wider text-bristol-cyan bg-gradient-to-r from-bristol-cyan/25 via-bristol-cyan/20 to-bristol-cyan/25 border-2 border-bristol-cyan/60 px-4 py-2 rounded-xl shadow-xl shadow-bristol-cyan/30 backdrop-blur-sm hover:shadow-2xl hover:shadow-bristol-cyan/40 transition-all duration-300 transform hover:scale-105">
-                                  BRISTOL-AI-MODE
+                                <span className="text-xs font-extrabold tracking-wider text-brand-cyan bg-gradient-to-r from-brand-cyan/25 via-brand-cyan/20 to-brand-cyan/25 border-2 border-brand-cyan/60 px-4 py-2 rounded-xl shadow-xl shadow-brand-cyan/30 backdrop-blur-sm hover:shadow-2xl hover:shadow-brand-cyan/40 transition-all duration-300 transform hover:scale-105">
+                                  COMPANY-AI-MODE
                                 </span>
                               )}
                             </div>
@@ -2022,7 +2022,7 @@ What property or investment can I analyze for you today?`,
               
               {/* Artifacts Panel */}
               {showArtifacts && artifacts.length > 0 && (
-                <div className="w-1/2 flex-shrink-0 border-l border-bristol-cyan/20 bg-white/95 backdrop-blur-sm">
+                <div className="w-1/2 flex-shrink-0 border-l border-brand-cyan/20 bg-white/95 backdrop-blur-sm">
                   <ArtifactsPanel 
                     artifacts={artifacts}
                     onCopy={(content) => {
@@ -2098,7 +2098,7 @@ What property or investment can I analyze for you today?`,
         {/* Glass Chat Composer - Fixed at Bottom - Only show on chat tab - EXACT FROM FLOATING WIDGET */}
         {activeTab === "chat" && (
           <div 
-            className="border-t border-bristol-cyan/40 relative flex-shrink-0"
+            className="border-t border-brand-cyan/40 relative flex-shrink-0"
             style={{
               background: 'transparent',
               backdropFilter: 'blur(20px) saturate(1.2)',
@@ -2106,18 +2106,18 @@ What property or investment can I analyze for you today?`,
             }}
           >
             {/* Ambient glow */}
-            <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-40 h-6 bg-bristol-cyan/10 rounded-full blur-2xl" />
+            <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 w-40 h-6 bg-brand-cyan/10 rounded-full blur-2xl" />
             
             <div className="px-6 py-5 flex items-end gap-4">
               <div className="flex-1 relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-bristol-cyan/20 to-bristol-electric/20 rounded-3xl blur opacity-0 group-focus-within:opacity-100 transition duration-300 pointer-events-none" />
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-cyan/20 to-brand-electric/20 rounded-3xl blur opacity-0 group-focus-within:opacity-100 transition duration-300 pointer-events-none" />
                 <input
                   ref={eliteInputRef}
                   value={eliteInput}
                   onChange={(e) => setEliteInput(e.target.value)}
                   onKeyDown={handleEliteKeyPress}
                   placeholder="Ask about properties, market trends, demographics, investment opportunities..."
-                  className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-bristol-cyan/60 disabled:opacity-60 relative z-10"
+                  className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-brand-cyan/60 disabled:opacity-60 relative z-10"
                   style={{
                     background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
                     border: '1px solid rgba(69, 214, 202, 0.6)',
@@ -2182,7 +2182,7 @@ What property or investment can I analyze for you today?`,
   );
 };
 
-// Mirror all component functions from BristolFloatingWidget.tsx
+// Mirror all component functions from CompanyFloatingWidget.tsx
 
 function DataPane({ data }: { data: any }) {
   const [selectedTool, setSelectedTool] = useState<string>("overview");
@@ -2297,9 +2297,9 @@ function DataPane({ data }: { data: any }) {
     <div className="flex-1 p-6">
       <div className="space-y-6">
         {/* Live Data Control Panel */}
-        <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-2xl p-4">
+        <div className="bg-brand-cyan/10 border border-brand-cyan/30 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
+            <h4 className="text-brand-cyan font-semibold flex items-center gap-2">
               <Activity className="h-4 w-4 animate-pulse" />
               Live Data Context Panel
             </h4>
@@ -2308,14 +2308,14 @@ function DataPane({ data }: { data: any }) {
                 <Switch
                   checked={autoRefresh}
                   onCheckedChange={setAutoRefresh}
-                  className="data-[state=checked]:bg-bristol-cyan"
+                  className="data-[state=checked]:bg-brand-cyan"
                 />
-                <Label htmlFor="auto-refresh" className="text-xs text-bristol-cyan">
+                <Label htmlFor="auto-refresh" className="text-xs text-brand-cyan">
                   Auto-refresh ({refreshInterval}s)
                 </Label>
               </div>
               <Select value={refreshInterval.toString()} onValueChange={(value) => setRefreshInterval(parseInt(value))}>
-                <SelectTrigger className="w-16 h-6 text-xs border-bristol-cyan/30">
+                <SelectTrigger className="w-16 h-6 text-xs border-brand-cyan/30">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -2331,15 +2331,15 @@ function DataPane({ data }: { data: any }) {
           <div className="grid grid-cols-3 gap-2 text-xs">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-bristol-cyan">MCP Online</span>
+              <span className="text-brand-cyan">MCP Online</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-bristol-cyan">APIs Active</span>
+              <span className="text-brand-cyan">APIs Active</span>
             </div>
             <div className="flex items-center gap-2">
-              <Clock className="h-3 w-3 text-bristol-cyan" />
-              <span className="text-bristol-cyan">
+              <Clock className="h-3 w-3 text-brand-cyan" />
+              <span className="text-brand-cyan">
                 {format(lastRefresh, 'HH:mm:ss')}
               </span>
             </div>
@@ -2359,15 +2359,15 @@ function DataPane({ data }: { data: any }) {
               }}
               className={`p-3 rounded-xl border transition-all duration-300 text-left ${
                 selectedTool === key
-                  ? 'bg-bristol-cyan/20 border-bristol-cyan/50 text-bristol-cyan'
-                  : 'bg-black/40 border-gray-700 text-white hover:border-bristol-cyan/30 hover:bg-bristol-cyan/10'
+                  ? 'bg-brand-cyan/20 border-brand-cyan/50 text-brand-cyan'
+                  : 'bg-black/40 border-gray-700 text-white hover:border-brand-cyan/30 hover:bg-brand-cyan/10'
               }`}
             >
               <div className="flex items-center gap-2 mb-2">
                 {tool.icon}
                 <span className="text-sm font-semibold">{tool.name}</span>
                 {loadingTool === key && (
-                  <div className="w-3 h-3 border border-bristol-cyan/40 border-t-bristol-cyan rounded-full animate-spin"></div>
+                  <div className="w-3 h-3 border border-brand-cyan/40 border-t-brand-cyan rounded-full animate-spin"></div>
                 )}
               </div>
               <p className="text-xs opacity-80">{tool.description}</p>
@@ -2376,9 +2376,9 @@ function DataPane({ data }: { data: any }) {
         </div>
 
         {/* Tool Results Display - Enhanced */}
-        <div className="bg-black/40 border border-bristol-cyan/30 rounded-2xl p-4">
+        <div className="bg-black/40 border border-brand-cyan/30 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="text-bristol-cyan font-semibold flex items-center gap-2">
+            <h4 className="text-brand-cyan font-semibold flex items-center gap-2">
               <Terminal className="h-4 w-4" />
               {dataTools[selectedTool as keyof typeof dataTools]?.name || "Select Tool"}
             </h4>
@@ -2386,7 +2386,7 @@ function DataPane({ data }: { data: any }) {
               <button
                 onClick={() => executeTool(selectedTool)}
                 disabled={loadingTool === selectedTool}
-                className="px-3 py-1 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
+                className="px-3 py-1 bg-brand-cyan/20 hover:bg-brand-cyan/30 text-brand-cyan rounded-lg text-xs font-medium transition-colors disabled:opacity-50"
               >
                 {loadingTool === selectedTool ? 'RUNNING...' : 'EXECUTE'}
               </button>
@@ -2407,8 +2407,8 @@ function DataPane({ data }: { data: any }) {
             {loadingTool === selectedTool ? (
               <div className="flex items-center justify-center h-40">
                 <div className="flex items-center gap-3">
-                  <div className="w-5 h-5 border-2 border-bristol-cyan/30 border-t-bristol-cyan rounded-full animate-spin"></div>
-                  <span className="text-bristol-cyan font-medium">Fetching {dataTools[selectedTool as keyof typeof dataTools]?.name}...</span>
+                  <div className="w-5 h-5 border-2 border-brand-cyan/30 border-t-brand-cyan rounded-full animate-spin"></div>
+                  <span className="text-brand-cyan font-medium">Fetching {dataTools[selectedTool as keyof typeof dataTools]?.name}...</span>
                 </div>
               </div>
             ) : currentResult ? (
@@ -2423,9 +2423,9 @@ function DataPane({ data }: { data: any }) {
                     {/* Success metrics summary */}
                     {currentResult.totalSites !== undefined && (
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        <div className="bg-bristol-cyan/10 border border-bristol-cyan/20 rounded-lg p-2">
-                          <div className="text-bristol-cyan font-bold text-lg">{currentResult.totalSites}</div>
-                          <div className="text-bristol-cyan/80 text-xs">Total Sites</div>
+                        <div className="bg-brand-cyan/10 border border-brand-cyan/20 rounded-lg p-2">
+                          <div className="text-brand-cyan font-bold text-lg">{currentResult.totalSites}</div>
+                          <div className="text-brand-cyan/80 text-xs">Total Sites</div>
                         </div>
                         <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-2">
                           <div className="text-orange-500 font-bold text-lg">{currentResult.totalUnits}</div>
@@ -2436,7 +2436,7 @@ function DataPane({ data }: { data: any }) {
                           <div className="text-green-400/80 text-xs">Portfolio Value</div>
                         </div>
                         <div className="bg-purple-400/10 border border-purple-400/20 rounded-lg p-2">
-                          <div className="text-purple-400 font-bold text-lg">{currentResult.avgBristolScore?.toFixed(1) || 'N/A'}</div>
+                          <div className="text-purple-400 font-bold text-lg">{currentResult.avgCompanyScore?.toFixed(1) || 'N/A'}</div>
                           <div className="text-purple-400/80 text-xs">Avg Score</div>
                         </div>
                       </div>
@@ -2467,8 +2467,8 @@ function DataPane({ data }: { data: any }) {
         
         {/* Enhanced Results Visualization */}
         {currentResult && !currentResult.error && (
-          <div className="bg-gradient-to-br from-bristol-cyan/5 to-orange-500/5 border border-bristol-cyan/20 rounded-2xl p-4">
-            <h4 className="text-bristol-cyan font-semibold mb-4 flex items-center gap-2">
+          <div className="bg-gradient-to-br from-brand-cyan/5 to-orange-500/5 border border-brand-cyan/20 rounded-2xl p-4">
+            <h4 className="text-brand-cyan font-semibold mb-4 flex items-center gap-2">
               <PieChart className="h-4 w-4" />
               Data Analytics Dashboard
             </h4>
@@ -2476,11 +2476,11 @@ function DataPane({ data }: { data: any }) {
             {/* Key Performance Indicators */}
             {currentResult.totalSites !== undefined && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                <div className="bg-white/5 border border-bristol-cyan/20 rounded-xl p-3 text-center">
-                  <div className="text-2xl font-bold text-bristol-cyan">{currentResult.totalSites}</div>
-                  <div className="text-xs text-bristol-cyan/70">Active Sites</div>
-                  <div className="w-full bg-bristol-cyan/20 rounded-full h-1 mt-2">
-                    <div className="bg-bristol-cyan h-1 rounded-full" style={{width: '85%'}}></div>
+                <div className="bg-white/5 border border-brand-cyan/20 rounded-xl p-3 text-center">
+                  <div className="text-2xl font-bold text-brand-cyan">{currentResult.totalSites}</div>
+                  <div className="text-xs text-brand-cyan/70">Active Sites</div>
+                  <div className="w-full bg-brand-cyan/20 rounded-full h-1 mt-2">
+                    <div className="bg-brand-cyan h-1 rounded-full" style={{width: '85%'}}></div>
                   </div>
                 </div>
                 <div className="bg-white/5 border border-orange-500/20 rounded-xl p-3 text-center">
@@ -2500,8 +2500,8 @@ function DataPane({ data }: { data: any }) {
                   </div>
                 </div>
                 <div className="bg-white/5 border border-purple-400/20 rounded-xl p-3 text-center">
-                  <div className="text-2xl font-bold text-purple-400">{currentResult.avgBristolScore?.toFixed(1) || '85.2'}</div>
-                  <div className="text-xs text-purple-400/70">Bristol Score</div>
+                  <div className="text-2xl font-bold text-purple-400">{currentResult.avgCompanyScore?.toFixed(1) || '85.2'}</div>
+                  <div className="text-xs text-purple-400/70">Company Score</div>
                   <div className="w-full bg-purple-400/20 rounded-full h-1 mt-2">
                     <div className="bg-purple-400 h-1 rounded-full" style={{width: '85%'}}></div>
                   </div>
@@ -2524,9 +2524,9 @@ function DataPane({ data }: { data: any }) {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-sm font-medium text-white">Occupancy</div>
-                    <div className="text-lg font-bold text-bristol-cyan">94.2%</div>
+                    <div className="text-lg font-bold text-brand-cyan">94.2%</div>
                   </div>
-                  <Building className="h-6 w-6 text-bristol-cyan" />
+                  <Building className="h-6 w-6 text-brand-cyan" />
                 </div>
               </div>
               <div className="bg-black/20 border border-white/10 rounded-lg p-3">
@@ -2543,7 +2543,7 @@ function DataPane({ data }: { data: any }) {
         )}
 
         {/* Real-time Data Feeds */}
-        <div className="bg-bristol-maroon/10 border border-orange-500/30 rounded-2xl p-4">
+        <div className="bg-brand-maroon/10 border border-orange-500/30 rounded-2xl p-4">
           <h4 className="text-orange-500 font-semibold mb-3 flex items-center gap-2">
             <Globe className="h-4 w-4 animate-pulse" />
             Live Market Intelligence
@@ -2601,10 +2601,10 @@ function DataPane({ data }: { data: any }) {
             </h5>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
               <div className="text-center">
-                <div className="text-bristol-cyan font-semibold">GDP Growth</div>
+                <div className="text-brand-cyan font-semibold">GDP Growth</div>
                 <div className="text-white text-lg">2.1%</div>
                 <div className="w-full bg-white/10 rounded-full h-1 mt-1">
-                  <div className="bg-bristol-cyan h-1 rounded-full" style={{width: '65%'}}></div>
+                  <div className="bg-brand-cyan h-1 rounded-full" style={{width: '65%'}}></div>
                 </div>
               </div>
               <div className="text-center">
@@ -2650,7 +2650,7 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
             MCP BOSS AGENT TOOLS
           </h4>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-bristol-cyan">Enable MCP</span>
+            <span className="text-xs text-brand-cyan">Enable MCP</span>
             <button
               onClick={() => setMcpEnabled(!mcpEnabled)}
               className={`
@@ -2673,8 +2673,8 @@ function ToolsPane({ systemStatus, mcpEnabled, setMcpEnabled }: {
           </div>
         </div>
         
-        <div className="bg-bristol-cyan/10 border border-bristol-cyan/30 rounded-2xl p-4">
-          <h5 className="text-bristol-cyan font-semibold mb-3 text-sm">Core MCP Tools</h5>
+        <div className="bg-brand-cyan/10 border border-brand-cyan/30 rounded-2xl p-4">
+          <h5 className="text-brand-cyan font-semibold mb-3 text-sm">Core MCP Tools</h5>
           <div className="grid gap-2">
             <div className="bg-black/40 border border-gray-700 rounded-lg p-3">
               <div className="text-white font-medium text-sm">PostgreSQL Database</div>
@@ -2718,8 +2718,8 @@ function AgentsPane({
 }) {
   const enterpriseAgents = [
     {
-      id: 'bristol-master',
-      name: 'Bristol Master Agent',
+      id: 'brand-master',
+      name: 'Company Master Agent',
       model: 'GPT-4o',
       role: 'Executive Decision Intelligence',
       status: 'active',
@@ -2817,7 +2817,7 @@ function AgentsPane({
                 </div>
                 <div>
                   <h2 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent tracking-wide">
-                    BRISTOL AI ENTERPRISE
+                    COMPANY AI ENTERPRISE
                   </h2>
                   <div className="text-lg text-blue-300/80 font-medium mt-1">
                     Multi-Agent Intelligence System • Enterprise Grade
@@ -2974,18 +2974,18 @@ function AdminPane({
   return (
     <ChatBackground>
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        <div className="bg-bristol-maroon/10 border border-bristol-maroon/30 rounded-2xl p-6">
-          <h4 className="text-bristol-maroon font-bold text-xl mb-4">System Administration</h4>
+        <div className="bg-brand-maroon/10 border border-brand-maroon/30 rounded-2xl p-6">
+          <h4 className="text-brand-maroon font-bold text-xl mb-4">System Administration</h4>
           
           <div className="space-y-4">
             <div>
-              <label className="block text-bristol-cyan text-sm font-semibold mb-2">
+              <label className="block text-brand-cyan text-sm font-semibold mb-2">
                 System Prompt Configuration
               </label>
               <textarea
                 value={systemPrompt}
                 onChange={(e) => setSystemPrompt(e.target.value)}
-                className="w-full h-40 bg-black/40 border border-bristol-cyan/30 rounded-lg p-3 text-white resize-none"
+                className="w-full h-40 bg-black/40 border border-brand-cyan/30 rounded-lg p-3 text-white resize-none"
                 placeholder="Enter system prompt..."
               />
             </div>
@@ -2998,11 +2998,11 @@ function AdminPane({
                   onChange={(e) => setRealTimeData(e.target.checked)}
                   className="rounded"
                 />
-                <span className="text-bristol-cyan text-sm">Enable Real-time Data</span>
+                <span className="text-brand-cyan text-sm">Enable Real-time Data</span>
               </div>
               <button
                 onClick={onSave}
-                className="px-4 py-2 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan rounded-lg text-sm font-medium transition-colors"
+                className="px-4 py-2 bg-brand-cyan/20 hover:bg-brand-cyan/30 text-brand-cyan rounded-lg text-sm font-medium transition-colors"
               >
                 Save Configuration
               </button>
@@ -3161,7 +3161,7 @@ function EnterpriseControlPanel({
                 <div className="text-xs text-slate-400">Active Agents</div>
               </div>
               <div className="bg-slate-800/50 border border-slate-600/30 rounded-lg p-3">
-                <div className="text-sm font-bold text-bristol-cyan">
+                <div className="text-sm font-bold text-brand-cyan">
                   {0}
                 </div>
                 <div className="text-xs text-slate-400">Active Tasks</div>

@@ -4,8 +4,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Elite Bristol Chrome Metallic Animations */
-@keyframes bristol-elite-pulse {
+/* Elite Company Chrome Metallic Animations */
+@keyframes brand-elite-pulse {
   0%, 100% { 
     filter: brightness(1.0) saturate(1.0);
     border-color: rgba(139, 38, 53, 0.4);
@@ -35,7 +35,7 @@
   }
 }
 
-@keyframes bristol-cyber-float {
+@keyframes brand-cyber-float {
   0%, 100% { 
     transform: translateY(0px) scale(1.0);
   }
@@ -89,7 +89,7 @@
   }
 }
 
-/* Elite Chrome Metallic Panel Styles - Bristol Edition */
+/* Elite Chrome Metallic Panel Styles - Company Edition */
 .chrome-metallic-panel {
   position: relative;
   background: linear-gradient(135deg, 
@@ -110,7 +110,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
     inset 0 -1px 0 rgba(139, 38, 53, 0.03);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: bristol-elite-pulse 8s ease-in-out infinite;
+  animation: brand-elite-pulse 8s ease-in-out infinite;
 }
 
 .chrome-metallic-panel:hover {
@@ -227,19 +227,19 @@
 }
 
 /* Elite Utility Classes */
-.bristol-elite-pulse {
-  animation: bristol-elite-pulse 6s ease-in-out infinite;
+.brand-elite-pulse {
+  animation: brand-elite-pulse 6s ease-in-out infinite;
 }
 
 .animate-float {
-  animation: bristol-cyber-float 8s ease-in-out infinite;
+  animation: brand-cyber-float 8s ease-in-out infinite;
 }
 
 .elite-glow {
   animation: elite-glow 4s ease-in-out infinite;
 }
 
-.gradient-text-bristol {
+.gradient-text-brand {
   background: linear-gradient(135deg, #8B2635, #D4A574, #8B2635);
   background-size: 200% 200%;
   -webkit-background-clip: text;
@@ -262,7 +262,7 @@
   height: 8px;
   background: #10B981;
   border-radius: 50%;
-  animation: bristol-elite-pulse 2s ease-in-out infinite;
+  animation: brand-elite-pulse 2s ease-in-out infinite;
 }
 
 /* Elite Data Cards */
@@ -290,13 +290,13 @@
   transform: translateY(-4px) scale(1.02);
 }
 
-/* Bristol Brand Colors */
+/* Company Brand Colors */
 :root {
-  --bristol-maroon: #8B2635;
-  --bristol-gold: #D4A574;
-  --bristol-dark: #2C3E50;
-  --bristol-light: #F8FAFC;
-  --bristol-accent: #10B981;
+  --red-800: #8B2635;
+  --yellow-500: #D4A574;
+  --gray-900: #2C3E50;
+  --brand-light: #F8FAFC;
+  --brand-accent: #10B981;
 }
 
 /* Elite Enterprise Animations */
@@ -342,17 +342,17 @@
 /* Elite Status Indicators */
 .status-critical::before {
   background: #EF4444;
-  animation: bristol-elite-pulse 1s ease-in-out infinite;
+  animation: brand-elite-pulse 1s ease-in-out infinite;
 }
 
 .status-warning::before {
   background: #F59E0B;
-  animation: bristol-elite-pulse 2s ease-in-out infinite;
+  animation: brand-elite-pulse 2s ease-in-out infinite;
 }
 
 .status-success::before {
   background: #10B981;
-  animation: bristol-elite-pulse 3s ease-in-out infinite;
+  animation: brand-elite-pulse 3s ease-in-out infinite;
 }
 
 /* Chrome input styling - Dark Theme Compatible */
@@ -633,21 +633,21 @@
   --tracking-normal: 0em;
   --spacing: 0.25rem;
   
-  /* Bristol Brand Colors */
-  --bristol-maroon: hsl(339 100% 31%);
-  --bristol-ink: hsl(217 32% 8%);
-  --bristol-stone: hsl(215 16% 47%);
-  --bristol-gold: hsl(45 58% 60%);
-  --bristol-fog: hsl(210 17% 97%);
-  --bristol-sky: hsl(210 40% 94%);
-  --bristol-night: hsl(217 58% 8%);
-  --bristol-cyan: hsl(189 85% 67%);
-  --bristol-electric: hsl(267 87% 67%);
-  --bristol-amber: hsl(43 96% 56%);
+  /* Company Brand Colors */
+  --red-800: hsl(339 100% 31%);
+  --brand-ink: hsl(217 32% 8%);
+  --brand-stone: hsl(215 16% 47%);
+  --yellow-500: hsl(45 58% 60%);
+  --brand-fog: hsl(210 17% 97%);
+  --brand-sky: hsl(210 40% 94%);
+  --brand-night: hsl(217 58% 8%);
+  --brand-cyan: hsl(189 85% 67%);
+  --brand-electric: hsl(267 87% 67%);
+  --brand-amber: hsl(43 96% 56%);
   
-  /* Bristol Floating Widget Animations */
-  --bristol-glow: drop-shadow(0 0 20px hsl(189 85% 67% / 0.3));
-  --bristol-glow-strong: drop-shadow(0 0 30px hsl(189 85% 67% / 0.5));
+  /* Company Floating Widget Animations */
+  --brand-glow: drop-shadow(0 0 20px hsl(189 85% 67% / 0.3));
+  --brand-glow-strong: drop-shadow(0 0 30px hsl(189 85% 67% / 0.5));
 }
 
 /* Enterprise Elite Tools Styling */
@@ -688,8 +688,8 @@
   filter: brightness(1.1) saturate(1.2);
 }
 
-/* Bristol A.I. Elite Button Styling */
-.bristol-elite-button {
+/* Company A.I. Elite Button Styling */
+.brand-elite-button {
   background: linear-gradient(135deg, hsl(217 32% 8%) 0%, hsl(217 58% 12%) 50%, hsl(217 32% 8%) 100%);
   border: 2px solid rgba(0, 191, 255, 0.3);
   background-clip: padding-box;
@@ -700,7 +700,7 @@
   filter: drop-shadow(0 0 20px rgba(0, 191, 255, 0.4));
 }
 
-.bristol-elite-button:before {
+.brand-elite-button:before {
   content: '';
   position: absolute;
   top: 0;
@@ -711,11 +711,11 @@
   transition: left 0.5s;
 }
 
-.bristol-elite-button:hover:before {
+.brand-elite-button:hover:before {
   left: 100%;
 }
 
-.bristol-elite-button:after {
+.brand-elite-button:after {
   content: '';
   position: absolute;
   inset: -8px;
@@ -726,7 +726,7 @@
   pointer-events: none;
 }
 
-.bristol-elite-button:hover {
+.brand-elite-button:hover {
   transform: translateY(-1px);
   box-shadow: 
     0 20px 25px -5px rgba(0, 191, 255, 0.3),
@@ -735,12 +735,12 @@
   border-color: rgba(0, 191, 255, 0.5);
 }
 
-.bristol-elite-button:hover:after {
+.brand-elite-button:hover:after {
   opacity: 1;
 }
 
 /* Enterprise Card Styling */
-.bristol-enterprise-card {
+.brand-enterprise-card {
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95));
   border: 3px solid rgba(212, 175, 55, 0.4);
   backdrop-filter: blur(16px);
@@ -752,7 +752,7 @@
     inset 0 -2px 4px rgba(212, 175, 55, 0.1);
 }
 
-.bristol-enterprise-card:hover {
+.brand-enterprise-card:hover {
   transform: translateY(-2px);
   border-color: rgba(212, 175, 55, 0.6);
   box-shadow: 
@@ -763,48 +763,48 @@
     inset 0 -2px 6px rgba(212, 175, 55, 0.15);
 }
 
-/* Bristol AI Widget Custom Animations */
-@keyframes bristol-pulse {
+/* Company AI Widget Custom Animations */
+@keyframes brand-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.7; transform: scale(1.05); }
 }
 
-@keyframes bristol-shimmer {
+@keyframes brand-shimmer {
   0% { background-position: -200px 0; }
   100% { background-position: calc(200px + 100%) 0; }
 }
 
-.bristol-pulse {
-  animation: bristol-pulse 2s ease-in-out infinite;
+.brand-pulse {
+  animation: brand-pulse 2s ease-in-out infinite;
 }
 
-.bristol-shimmer {
+.brand-shimmer {
   background: linear-gradient(90deg, transparent, hsl(189 85% 67% / 0.2), transparent);
   background-size: 200px 100%;
-  animation: bristol-shimmer 2s infinite;
+  animation: brand-shimmer 2s infinite;
 }
 
-/* Bristol Glass Effects */
-.bristol-glass {
+/* Company Glass Effects */
+.brand-glass {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.bristol-glow-hover:hover {
+.brand-glow-hover:hover {
   filter: drop-shadow(0 0 30px hsl(189 85% 67% / 0.6)) drop-shadow(0 0 60px hsl(267 87% 67% / 0.3));
 }
 
 /* DARK MODE REMOVED - Light mode only per user requirement */
 
-/* Bristol Enterprise Animations */
+/* Company Enterprise Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
   33% { transform: translateY(-10px) rotate(1deg); }
   66% { transform: translateY(5px) rotate(-1deg); }
 }
 
-@keyframes pulse-bristol {
+@keyframes pulse-brand {
   0%, 100% { 
     box-shadow: 0 0 0 0 rgba(139, 21, 56, 0.7);
     transform: scale(1);
@@ -830,8 +830,8 @@
   animation: float 6s ease-in-out infinite;
 }
 
-.animate-pulse-bristol {
-  animation: pulse-bristol 2s infinite;
+.animate-pulse-brand {
+  animation: pulse-brand 2s infinite;
 }
 
 .animate-shimmer {
@@ -857,7 +857,7 @@
   animation-delay: 0.4s;
 }
 
-/* Bristol A.I. Elite - Custom Scrollbar Styling */
+/* Company A.I. Elite - Custom Scrollbar Styling */
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 255, 255, 0.3) rgba(15, 23, 42, 0.1);
@@ -911,7 +911,7 @@
 }
 
 /* Mapbox Popup Styling */
-.bristol-popup .mapboxgl-popup-content {
+.brand-popup .mapboxgl-popup-content {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(139, 21, 56, 0.1);
@@ -920,7 +920,7 @@
 }
 
 /* Enhanced Metallic Demographics Popup */
-.bristol-demographic-popup .mapboxgl-popup-content {
+.brand-demographic-popup .mapboxgl-popup-content {
   padding: 0 !important;
   background: transparent !important;
   box-shadow: 
@@ -951,7 +951,7 @@
   }
 }
 
-.bristol-demographic-popup .mapboxgl-popup-close-button {
+.brand-demographic-popup .mapboxgl-popup-close-button {
   color: rgba(6, 182, 212, 0.9);
   font-size: 22px;
   padding: 10px;
@@ -965,14 +965,14 @@
   z-index: 10;
 }
 
-.bristol-demographic-popup .mapboxgl-popup-close-button:hover {
+.brand-demographic-popup .mapboxgl-popup-close-button:hover {
   background: rgba(6, 182, 212, 0.2);
   color: rgb(34, 211, 238);
   transform: rotate(90deg) scale(1.1);
   box-shadow: 0 4px 16px rgba(6, 182, 212, 0.5);
 }
 
-.bristol-demographic-popup .mapboxgl-popup-tip {
+.brand-demographic-popup .mapboxgl-popup-tip {
   border-top-color: rgb(15, 23, 42) !important;
   filter: drop-shadow(0 6px 12px rgba(6, 182, 212, 0.4));
   border-width: 12px !important;
@@ -992,8 +992,8 @@
   }
 }
 
-/* Enhanced Bristol data table styling */
-.bristol-data-table {
+/* Enhanced Company data table styling */
+.brand-data-table {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9));
   border: 2px solid rgba(212, 165, 116, 0.3);
   border-radius: 1.5rem;
@@ -1001,7 +1001,7 @@
   overflow: hidden;
 }
 
-.bristol-data-table th {
+.brand-data-table th {
   background: linear-gradient(135deg, rgba(212, 165, 116, 0.2), rgba(255, 255, 255, 0.9));
   color: #1e293b !important;
   font-weight: 900 !important;
@@ -1012,21 +1012,21 @@
   letter-spacing: 0.05em !important;
 }
 
-.bristol-data-table td {
+.brand-data-table td {
   padding: 1rem !important;
   border-bottom: 1px solid rgba(212, 165, 116, 0.15) !important;
   font-weight: 600 !important;
   color: #334155 !important;
 }
 
-.bristol-data-table tbody tr:hover {
+.brand-data-table tbody tr:hover {
   background: rgba(212, 165, 116, 0.08) !important;
   transform: scale(1.01);
   transition: all 0.2s ease;
 }
 
 /* Enhanced form controls styling */
-.bristol-form-enhanced {
+.brand-form-enhanced {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.9)) !important;
   border: 3px solid rgba(212, 165, 116, 0.4) !important;
   border-radius: 1rem !important;
@@ -1037,22 +1037,22 @@
   transition: all 0.3s ease !important;
 }
 
-.bristol-form-enhanced:hover {
+.brand-form-enhanced:hover {
   border-color: rgba(212, 165, 116, 0.6) !important;
   box-shadow: 0 6px 16px rgba(212, 165, 116, 0.15) !important;
 }
 
-.bristol-form-enhanced:focus {
+.brand-form-enhanced:focus {
   border-color: rgba(212, 165, 116, 0.9) !important;
   box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.25) !important;
   transform: translateY(-1px);
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95)) !important;
 }
 
-/* Bristol specific animations and effects */
+/* Company specific animations and effects */
 @layer utilities {
   .thinking-ring {
-    background: conic-gradient(from 0deg, transparent, var(--bristol-maroon), transparent);
+    background: conic-gradient(from 0deg, transparent, var(--red-800), transparent);
     border-radius: 50%;
     animation: thinking 2s linear infinite;
   }
@@ -1074,7 +1074,7 @@
   }
   
   .gradient-text {
-    background: linear-gradient(135deg, var(--bristol-maroon), var(--bristol-gold));
+    background: linear-gradient(135deg, var(--red-800), var(--yellow-500));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1133,34 +1133,34 @@
   50% { transform: translateY(-20px); }
 }
 
-/* Bristol brand utility classes */
-.bristol-maroon { @apply text-bristol-maroon; }
-.bristol-ink { @apply text-bristol-ink; }
-.bristol-stone { @apply text-bristol-stone; }
-.bristol-gold { @apply text-bristol-gold; }
-.bristol-fog { @apply text-bristol-fog; }
-.bristol-sky { @apply text-bristol-sky; }
+/* Company brand utility classes */
+.text-brand-maroon { color: hsl(340 82% 31%); }
+.text-brand-ink { color: hsl(220 13% 18%); }
+.text-brand-stone { color: hsl(39 11% 69%); }
+.text-brand-gold { color: hsl(43 74% 66%); }
+.text-brand-fog { color: hsl(40 23% 97%); }
+.text-brand-sky { color: hsl(196 100% 97%); }
 
-.bg-bristol-maroon { background-color: hsl(var(--bristol-maroon)); }
-.bg-bristol-ink { background-color: hsl(var(--bristol-ink)); }
-.bg-bristol-stone { background-color: hsl(var(--bristol-stone)); }
-.bg-bristol-gold { background-color: hsl(var(--bristol-gold)); }
-.bg-bristol-fog { background-color: hsl(var(--bristol-fog)); }
-.bg-bristol-sky { background-color: hsl(var(--bristol-sky)); }
+.bg-brand-maroon { background-color: hsl(340 82% 31%); }
+.bg-brand-ink { background-color: hsl(220 13% 18%); }
+.bg-brand-stone { background-color: hsl(39 11% 69%); }
+.bg-brand-gold { background-color: hsl(43 74% 66%); }
+.bg-brand-fog { background-color: hsl(40 23% 97%); }
+.bg-brand-sky { background-color: hsl(196 100% 97%); }
 
-.border-bristol-maroon { border-color: hsl(var(--bristol-maroon)); }
-.border-bristol-ink { border-color: hsl(var(--bristol-ink)); }
-.border-bristol-stone { border-color: hsl(var(--bristol-stone)); }
-.border-bristol-gold { border-color: hsl(var(--bristol-gold)); }
-.border-bristol-fog { border-color: hsl(var(--bristol-fog)); }
-.border-bristol-sky { border-color: hsl(var(--bristol-sky)); }
+.border-brand-maroon { border-color: hsl(340 82% 31%); }
+.border-brand-ink { border-color: hsl(220 13% 18%); }
+.border-brand-stone { border-color: hsl(39 11% 69%); }
+.border-brand-gold { border-color: hsl(43 74% 66%); }
+.border-brand-fog { border-color: hsl(40 23% 97%); }
+.border-brand-sky { border-color: hsl(196 100% 97%); }
 
 /* Enterprise styling enhancements */
-.shadow-bristol {
+.shadow-brand {
   box-shadow: 0 25px 50px -12px rgba(139, 21, 56, 0.25);
 }
 
-.shadow-bristol-lg {
+.shadow-brand-lg {
   box-shadow: 0 35px 60px -12px rgba(139, 21, 56, 0.35);
 }
 
@@ -1170,8 +1170,8 @@ html {
 }
 
 /* Focus states for accessibility */
-.focus-bristol:focus {
-  outline: 2px solid var(--bristol-maroon);
+.focus-brand:focus {
+  outline: 2px solid var(--red-800);
   outline-offset: 2px;
 }
 
@@ -1189,8 +1189,8 @@ html {
   }
 }
 
-/* Bristol A.I. Button Force Override - Bottom Right Floating */
-.bristol-brain-button {
+/* Company A.I. Button Force Override - Bottom Right Floating */
+.brand-brain-button {
   position: fixed !important;
   bottom: 24px !important;
   right: 24px !important;
@@ -1219,7 +1219,7 @@ html {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5) !important;
 }
 
-.bristol-brain-button:hover {
+.brand-brain-button:hover {
   transform: scale(1.05) translateY(-2px) translateZ(0) !important;
   box-shadow: 
     0 30px 60px -12px rgba(0, 0, 0, 0.8), 
@@ -1229,19 +1229,19 @@ html {
   border-color: rgba(0, 191, 255, 0.8) !important;
 }
 
-.bristol-brain-button * {
+.brand-brain-button * {
   color: inherit !important;
 }
 
-.bristol-brain-button svg {
+.brand-brain-button svg {
   color: #00bfff !important;
 }
 
-.bristol-brain-button:hover svg {
+.brand-brain-button:hover svg {
   color: white !important;
 }
 
-/* Bristol A.I. Boss Agent Cyberpunk Styling */
+/* Company A.I. Boss Agent Cyberpunk Styling */
 .cyberpunk-glow {
   box-shadow: 
     0 0 10px rgba(139, 21, 56, 0.3),
@@ -1284,14 +1284,14 @@ html {
   background: linear-gradient(to bottom, rgba(69, 214, 202, 0.8), rgba(168, 85, 247, 0.8));
 }
 
-/* Bristol A.I. Button Animation */
-@keyframes bristol-pulse {
+/* Company A.I. Button Animation */
+@keyframes brand-pulse {
   0%, 100% { opacity: 0.5; transform: scale(1); }
   50% { opacity: 1; transform: scale(1.05); }
 }
 
-.bristol-brain-pulse {
-  animation: bristol-pulse 2s infinite;
+.brand-brain-pulse {
+  animation: brand-pulse 2s infinite;
 }
 
 

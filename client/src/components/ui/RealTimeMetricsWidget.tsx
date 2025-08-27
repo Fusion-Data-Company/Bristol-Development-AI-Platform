@@ -108,7 +108,7 @@ export function RealTimeMetricsWidget() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bristol-maroon"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-maroon"></div>
           </div>
         </CardContent>
       </Card>
@@ -137,7 +137,7 @@ export function RealTimeMetricsWidget() {
               </div>
               {getTrendIcon(metrics.responseTime, previousMetrics?.responseTime)}
             </div>
-            <div className="text-2xl font-bold text-bristol-maroon">
+            <div className="text-2xl font-bold text-brand-maroon">
               {metrics.responseTime}ms
             </div>
           </div>
@@ -150,7 +150,7 @@ export function RealTimeMetricsWidget() {
               </div>
               {getTrendIcon(metrics.apiCalls, previousMetrics?.apiCalls)}
             </div>
-            <div className="text-2xl font-bold text-bristol-maroon">
+            <div className="text-2xl font-bold text-brand-maroon">
               {metrics.apiCalls.toLocaleString()}
             </div>
           </div>
@@ -188,7 +188,7 @@ export function RealTimeMetricsWidget() {
         {/* Connection Status */}
         <div className="flex items-center justify-between p-2 rounded bg-gray-50">
           <span className="text-sm font-medium">Active Connections</span>
-          <span className="text-sm font-bold text-bristol-maroon">
+          <span className="text-sm font-bold text-brand-maroon">
             {metrics.activeConnections}
           </span>
         </div>

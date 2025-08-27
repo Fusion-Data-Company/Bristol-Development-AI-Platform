@@ -1,16 +1,16 @@
 import type { Express, Request, Response } from "express";
-import { BristolMarketAgent } from "../services/bristolMarketAgent";
-import { BristolFinancialAgent } from "../services/bristolFinancialAgent";
-import { BristolDemographicsAgent } from "../services/bristolDemographicsAgent";
-import { BristolSiteAgent } from "../services/bristolSiteAgent";
+import { CompanyMarketAgent } from "../services/bristolMarketAgent";
+import { CompanyFinancialAgent } from "../services/bristolFinancialAgent";
+import { CompanyDemographicsAgent } from "../services/bristolDemographicsAgent";
+import { CompanySiteAgent } from "../services/bristolSiteAgent";
 
-// Initialize Bristol Agents
-const marketAgent = new BristolMarketAgent();
-const financialAgent = new BristolFinancialAgent();
-const demographicsAgent = new BristolDemographicsAgent();
-const siteAgent = new BristolSiteAgent();
+// Initialize Company Agents
+const marketAgent = new CompanyMarketAgent();
+const financialAgent = new CompanyFinancialAgent();
+const demographicsAgent = new CompanyDemographicsAgent();
+const siteAgent = new CompanySiteAgent();
 
-export function registerBristolAgentRoutes(app: Express) {
+export function registerCompanyAgentRoutes(app: Express) {
   
   // Market Intelligence Agent
   app.post('/api/bristol/market-analysis', async (req: Request, res: Response) => {
@@ -30,7 +30,7 @@ export function registerBristolAgentRoutes(app: Express) {
 
       res.json({
         success: true,
-        agent: 'Bristol Market Intelligence',
+        agent: 'Company Market Intelligence',
         data: result,
         timestamp: new Date().toISOString()
       });
@@ -72,7 +72,7 @@ export function registerBristolAgentRoutes(app: Express) {
 
       res.json({
         success: true,
-        agent: 'Bristol Financial Modeling',
+        agent: 'Company Financial Modeling',
         data: result,
         timestamp: new Date().toISOString()
       });
@@ -104,7 +104,7 @@ export function registerBristolAgentRoutes(app: Express) {
 
       res.json({
         success: true,
-        agent: 'Bristol Demographics Intelligence',
+        agent: 'Company Demographics Intelligence',
         data: result,
         timestamp: new Date().toISOString()
       });
@@ -137,7 +137,7 @@ export function registerBristolAgentRoutes(app: Express) {
 
       res.json({
         success: true,
-        agent: 'Bristol Site Analytics',
+        agent: 'Company Site Analytics',
         data: result,
         timestamp: new Date().toISOString()
       });
@@ -170,7 +170,7 @@ export function registerBristolAgentRoutes(app: Express) {
         });
       }
 
-      // Run all Bristol agents in parallel for maximum efficiency
+      // Run all Company agents in parallel for maximum efficiency
       const [
         marketAnalysis,
         financialAnalysis,
@@ -190,7 +190,7 @@ export function registerBristolAgentRoutes(app: Express) {
 
       res.json({
         success: true,
-        agents: 'All Bristol Intelligence Agents',
+        agents: 'All Company Intelligence Agents',
         data: {
           market: marketAnalysis,
           financial: financialAnalysis,
@@ -220,7 +220,7 @@ export function registerBristolAgentRoutes(app: Express) {
     }
   });
 
-  // Bristol Agent Health Status
+  // Company Agent Health Status
   app.get('/api/bristol/agent-status', async (req: Request, res: Response) => {
     try {
       const marketStatus = { status: 'healthy', details: { models: 'operational' } };
@@ -252,7 +252,7 @@ export function registerBristolAgentRoutes(app: Express) {
   });
 }
 
-// Calculate comprehensive Bristol score across all agents
+// Calculate comprehensive Company score across all agents
 function calculateComprehensiveScore(analyses: {
   marketAnalysis?: any;
   financialAnalysis?: any;

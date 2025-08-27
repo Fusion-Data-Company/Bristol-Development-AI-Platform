@@ -102,7 +102,7 @@ export const prepareMessages = (
   if (realTimeData) {
     const contextMessage = {
       role: 'system' as const,
-      content: `Real-time context: Current timestamp: ${new Date().toISOString()}. You are Bristol AI Elite with access to live market data and MCP tools. Provide accurate, data-driven insights.`
+      content: `Real-time context: Current timestamp: ${new Date().toISOString()}. You are Company AI Elite with access to live market data and MCP tools. Provide accurate, data-driven insights.`
     };
     
     // Insert after system prompt but before other messages

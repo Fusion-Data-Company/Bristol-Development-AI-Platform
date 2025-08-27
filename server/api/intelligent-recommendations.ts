@@ -42,12 +42,12 @@ router.post('/next-actions', async (req, res) => {
   try {
     const { context, urgency, includeRationale } = recommendationSchema.parse(req.body);
     
-    // Get real Bristol portfolio data
+    // Get real Company portfolio data
     const portfolioContext = await fetchPortfolioContext();
     const marketContext = await fetchMarketContext();
     
     // Generate AI-powered recommendations
-    const prompt = `As the Bristol Site Intelligence AI, analyze the current context and provide specific next action recommendations:
+    const prompt = `As the Company Site Intelligence AI, analyze the current context and provide specific next action recommendations:
 
 Context:
 - Current Task: ${context.currentTask || 'General portfolio management'}
@@ -88,8 +88,8 @@ Provide JSON response with actionable recommendations:
 
     const recommendations = JSON.parse(response.choices[0].message.content || '{}');
     
-    // Enhance with real Bristol data
-    const enhancedRecommendations = await enhanceWithBristolData(recommendations, portfolioContext, marketContext);
+    // Enhance with real Company data
+    const enhancedRecommendations = await enhanceWithCompanyData(recommendations, portfolioContext, marketContext);
     
     res.json({
       success: true,
@@ -294,7 +294,7 @@ async function fetchPortfolioContext() {
       return {
         sitesCount: sites.length,
         totalUnits: sites.reduce((sum: number, site: any) => sum + (site.totalUnits || 0), 0),
-        avgBristolScore: sites.reduce((sum: number, site: any) => sum + (site.bristolScore || 0), 0) / sites.length,
+        avgCompanyScore: sites.reduce((sum: number, site: any) => sum + (site.bristolScore || 0), 0) / sites.length,
         sites: sites.slice(0, 5) // Sample sites for context
       };
     }
@@ -302,12 +302,12 @@ async function fetchPortfolioContext() {
     console.warn('Could not fetch portfolio context:', error);
   }
   
-  return { sitesCount: 0, totalUnits: 0, avgBristolScore: 0, sites: [] };
+  return { sitesCount: 0, totalUnits: 0, avgCompanyScore: 0, sites: [] };
 }
 
 async function fetchMarketContext() {
   try {
-    const response = await fetch('http://localhost:5000/api/bristol-agent/market-analysis');
+    const response = await fetch('http://localhost:5000/api/brand-agent/market-analysis');
     if (response.ok) {
       const marketData = await response.json();
       return {
@@ -323,15 +323,15 @@ async function fetchMarketContext() {
   return { currentData: null, confidence: 0, lastUpdated: new Date().toISOString() };
 }
 
-async function enhanceWithBristolData(recommendations: any, portfolioContext: any, marketContext: any) {
-  // Add Bristol-specific context to recommendations
+async function enhanceWithCompanyData(recommendations: any, portfolioContext: any, marketContext: any) {
+  // Add Company-specific context to recommendations
   if (recommendations.immediateActions) {
     recommendations.immediateActions.forEach((action: any) => {
       if (action.action.toLowerCase().includes('market')) {
         action.bristolContext = `Current market growth: ${marketContext.currentData?.sunbeltMarkets?.growth}%`;
       }
       if (action.action.toLowerCase().includes('portfolio')) {
-        action.bristolContext = `Portfolio: ${portfolioContext.sitesCount} sites, avg score: ${portfolioContext.avgBristolScore.toFixed(1)}`;
+        action.bristolContext = `Portfolio: ${portfolioContext.sitesCount} sites, avg score: ${portfolioContext.avgCompanyScore.toFixed(1)}`;
       }
     });
   }
@@ -395,7 +395,7 @@ async function identifyMarketOpportunities(marketData: any, context: any) {
 }
 
 async function generateOpportunityInsight(opportunity: any, marketData: any) {
-  const prompt = `Provide strategic insights for this Bristol Development opportunity:
+  const prompt = `Provide strategic insights for this Company Development opportunity:
 
 Opportunity: ${opportunity.title}
 Description: ${opportunity.description}
@@ -413,7 +413,7 @@ Provide specific actionable insights and implementation strategies.`;
 
     return response.choices[0].message.content || 'Insight generation unavailable';
   } catch (error) {
-    return 'Strategic opportunity with high potential for Bristol portfolio expansion';
+    return 'Strategic opportunity with high potential for Company portfolio expansion';
   }
 }
 
@@ -455,11 +455,11 @@ function assessOpportunityRisks(opportunities: any[]) {
 async function analyzePortfolioOptimizations(portfolioData: any, marketData: any, context: any) {
   const optimizations = [];
   
-  if (portfolioData.avgBristolScore < 75) {
+  if (portfolioData.avgCompanyScore < 75) {
     optimizations.push({
       type: 'scoring-improvement',
-      title: 'Bristol Score Enhancement',
-      description: `Current average score of ${portfolioData.avgBristolScore.toFixed(1)} indicates optimization potential`,
+      title: 'Company Score Enhancement',
+      description: `Current average score of ${portfolioData.avgCompanyScore.toFixed(1)} indicates optimization potential`,
       impact: 'high',
       effort: 'medium',
       timeframe: '6-12 months'
@@ -791,7 +791,7 @@ function generateExecutionTimeline(actionPlan: any) {
 function defineSuccessMetrics(recommendations: any) {
   return {
     financial: ['Portfolio IRR > 20%', 'NOI growth > 10%', 'Occupancy > 95%'],
-    operational: ['Bristol scores > 80', 'Project completion on time', 'Cost efficiency gains'],
+    operational: ['Company scores > 80', 'Project completion on time', 'Cost efficiency gains'],
     strategic: ['Market expansion targets met', 'Risk mitigation implemented', 'Portfolio optimization achieved']
   };
 }

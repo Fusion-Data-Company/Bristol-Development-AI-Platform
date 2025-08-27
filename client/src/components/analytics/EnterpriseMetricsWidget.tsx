@@ -45,7 +45,7 @@ export function EnterpriseMetricCard({ title, value, change, trend, icon, descri
   const getTrendColor = () => {
     if (trend === 'up') return 'text-green-400';
     if (trend === 'down') return 'text-red-400';
-    return 'text-bristol-cyan';
+    return 'text-brand-cyan';
   };
 
   const getTrendIcon = () => {
@@ -55,20 +55,20 @@ export function EnterpriseMetricCard({ title, value, change, trend, icon, descri
   };
 
   return (
-    <Card className="bg-white border-bristol-cyan/30 shadow-lg relative overflow-hidden group hover:border-bristol-gold/40 transition-all duration-300">
+    <Card className="bg-white border-brand-cyan/30 shadow-lg relative overflow-hidden group hover:border-brand-gold/40 transition-all duration-300">
       {/* Animated gradient border effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/10 via-transparent to-bristol-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-r from-brand-cyan/10 via-transparent to-brand-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       <CardHeader className="pb-3 relative">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-bristol-cyan font-medium text-sm">{title}</CardTitle>
-          <div className="text-bristol-gold">{icon}</div>
+          <CardTitle className="text-brand-cyan font-medium text-sm">{title}</CardTitle>
+          <div className="text-brand-gold">{icon}</div>
         </div>
       </CardHeader>
       
       <CardContent className="relative">
         <div className="space-y-2">
-          <div className="text-3xl font-bold text-bristol-maroon">
+          <div className="text-3xl font-bold text-brand-maroon">
             {formatValue(value)}
           </div>
           
@@ -76,12 +76,12 @@ export function EnterpriseMetricCard({ title, value, change, trend, icon, descri
             <div className={cn("flex items-center gap-1 text-sm", getTrendColor())}>
               {getTrendIcon()}
               <span>{Math.abs(change).toFixed(1)}%</span>
-              <span className="text-bristol-stone text-xs">vs last period</span>
+              <span className="text-brand-stone text-xs">vs last period</span>
             </div>
           )}
           
           {description && (
-            <p className="text-bristol-stone text-xs leading-relaxed">{description}</p>
+            <p className="text-brand-stone text-xs leading-relaxed">{description}</p>
           )}
         </div>
       </CardContent>
@@ -104,17 +104,17 @@ export function PerformanceGauge({ title, value, max, target, unit = '', color =
   
   const getColorClasses = () => {
     switch (color) {
-      case 'gold': return 'from-bristol-gold to-yellow-400';
+      case 'gold': return 'from-brand-gold to-yellow-400';
       case 'green': return 'from-green-400 to-emerald-400';
       case 'red': return 'from-red-400 to-pink-400';
-      default: return 'from-bristol-cyan to-blue-400';
+      default: return 'from-brand-cyan to-blue-400';
     }
   };
 
   return (
-    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+    <Card className="bg-white border-brand-cyan/30 shadow-lg">
       <CardHeader className="pb-3">
-        <CardTitle className="text-bristol-cyan text-sm">{title}</CardTitle>
+        <CardTitle className="text-brand-cyan text-sm">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -135,16 +135,16 @@ export function PerformanceGauge({ title, value, max, target, unit = '', color =
           </div>
           
           <div className="flex items-center justify-between text-sm">
-            <span className="text-bristol-maroon font-medium">
+            <span className="text-brand-maroon font-medium">
               {value.toLocaleString()}{unit}
             </span>
-            <span className="text-bristol-stone">
+            <span className="text-brand-stone">
               {percentage.toFixed(1)}%
             </span>
           </div>
           
           {target && (
-            <div className="text-xs text-bristol-stone">
+            <div className="text-xs text-brand-stone">
               Target: {target.toLocaleString()}{unit}
             </div>
           )}
@@ -166,7 +166,7 @@ interface MarketHeatmapProps {
 export function MarketHeatmap({ markets }: MarketHeatmapProps) {
   const getPerformanceColor = (performance: number) => {
     if (performance >= 80) return 'bg-green-100 border-green-500 text-green-800';
-    if (performance >= 60) return 'bg-cyan-100 border-bristol-cyan text-bristol-maroon';
+    if (performance >= 60) return 'bg-cyan-100 border-brand-cyan text-brand-maroon';
     if (performance >= 40) return 'bg-yellow-100 border-yellow-500 text-yellow-800';
     return 'bg-red-100 border-red-500 text-red-800';
   };
@@ -176,15 +176,15 @@ export function MarketHeatmap({ markets }: MarketHeatmapProps) {
       case 'low': return <div className="w-2 h-2 rounded-full bg-green-400" />;
       case 'medium': return <div className="w-2 h-2 rounded-full bg-yellow-400" />;
       case 'high': return <div className="w-2 h-2 rounded-full bg-red-400" />;
-      default: return <div className="w-2 h-2 rounded-full bg-bristol-stone" />;
+      default: return <div className="w-2 h-2 rounded-full bg-brand-stone" />;
     }
   };
 
   return (
-    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+    <Card className="bg-white border-brand-cyan/30 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-bristol-cyan flex items-center gap-3">
-          <Target className="h-5 w-5 text-bristol-gold" />
+        <CardTitle className="text-brand-cyan flex items-center gap-3">
+          <Target className="h-5 w-5 text-brand-gold" />
           Market Performance Heatmap
         </CardTitle>
       </CardHeader>
@@ -235,20 +235,20 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
     if (type === 'opportunity') return 'border-l-green-400 bg-green-100';
     if (type === 'risk' && severity === 'high') return 'border-l-red-400 bg-red-100';
     if (type === 'risk') return 'border-l-yellow-400 bg-yellow-100';
-    return 'border-l-bristol-cyan bg-gray-100';
+    return 'border-l-brand-cyan bg-gray-100';
   };
 
   const getAlertIcon = (type: string) => {
     if (type === 'opportunity') return <TrendingUp className="h-4 w-4 text-green-400" />;
     if (type === 'risk') return <TrendingDown className="h-4 w-4 text-red-400" />;
-    return <Activity className="h-4 w-4 text-bristol-cyan" />;
+    return <Activity className="h-4 w-4 text-brand-cyan" />;
   };
 
   return (
-    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+    <Card className="bg-white border-brand-cyan/30 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-bristol-cyan flex items-center gap-3">
-          <Activity className="h-5 w-5 text-bristol-gold" />
+        <CardTitle className="text-brand-cyan flex items-center gap-3">
+          <Activity className="h-5 w-5 text-brand-gold" />
           Real-time Alerts
         </CardTitle>
       </CardHeader>
@@ -267,29 +267,29 @@ export function AlertsPanel({ alerts }: AlertsPanelProps) {
                   {getAlertIcon(alert.type)}
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
-                      <div className="text-sm font-medium text-bristol-maroon">{alert.title}</div>
+                      <div className="text-sm font-medium text-brand-maroon">{alert.title}</div>
                       <Badge 
                         variant="outline" 
                         className={cn(
                           "text-xs",
                           alert.severity === 'high' ? 'border-red-400 text-red-300' :
                           alert.severity === 'medium' ? 'border-yellow-400 text-yellow-300' :
-                          'border-bristol-cyan text-bristol-cyan'
+                          'border-brand-cyan text-brand-cyan'
                         )}
                       >
                         {alert.severity}
                       </Badge>
                     </div>
-                    <div className="text-xs text-bristol-stone">{alert.message}</div>
-                    <div className="text-xs text-bristol-stone/60">{alert.timestamp}</div>
+                    <div className="text-xs text-brand-stone">{alert.message}</div>
+                    <div className="text-xs text-brand-stone/60">{alert.timestamp}</div>
                   </div>
                 </div>
               </div>
             ))
           ) : (
             <div className="text-center py-8">
-              <Activity className="h-12 w-12 text-bristol-stone mx-auto mb-2" />
-              <p className="text-bristol-stone">No active alerts</p>
+              <Activity className="h-12 w-12 text-brand-stone mx-auto mb-2" />
+              <p className="text-brand-stone">No active alerts</p>
             </div>
           )}
         </div>

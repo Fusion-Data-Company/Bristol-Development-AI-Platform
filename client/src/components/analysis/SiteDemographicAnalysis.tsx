@@ -87,7 +87,7 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
 
   if (error) {
     return (
-      <Card className={cn("bg-white border-bristol-stone/20", className)}>
+      <Card className={cn("bg-white border-brand-stone/20", className)}>
         <CardContent className="p-6 text-center">
           <div className="text-red-500 mb-4">
             Failed to load demographic analysis
@@ -102,10 +102,10 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
 
   if (isLoading && !data) {
     return (
-      <Card className={cn("bg-white border-bristol-stone/20", className)}>
+      <Card className={cn("bg-white border-brand-stone/20", className)}>
         <CardContent className="p-6 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bristol-maroon mx-auto mb-4"></div>
-          <p className="text-bristol-stone">Loading demographic analysis...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-maroon mx-auto mb-4"></div>
+          <p className="text-brand-stone">Loading demographic analysis...</p>
         </CardContent>
       </Card>
     );
@@ -113,20 +113,20 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
 
   if (!data) {
     return (
-      <Card className={cn("bg-white border-bristol-stone/20", className)}>
+      <Card className={cn("bg-white border-brand-stone/20", className)}>
         <CardHeader>
-          <CardTitle className="text-bristol-ink font-serif">
+          <CardTitle className="text-brand-ink font-serif">
             Site Demographics
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center py-8">
-          <p className="text-bristol-stone mb-4">
+          <p className="text-brand-stone mb-4">
             Click analyze to get detailed demographic insights for this site and surrounding area
           </p>
           <Button 
             onClick={handleAnalyze}
             disabled={isAnalyzing}
-            className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+            className="bg-brand-maroon hover:bg-brand-maroon/90"
           >
             {isAnalyzing ? (
               <>
@@ -152,14 +152,14 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
   return (
     <div className={cn("space-y-6", className)}>
       {/* Header */}
-      <Card className="bg-white border-bristol-stone/20">
+      <Card className="bg-white border-brand-stone/20">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-bristol-ink font-serif">
+              <CardTitle className="text-brand-ink font-serif">
                 {siteName || site.name} Demographics
               </CardTitle>
-              <p className="text-bristol-stone text-sm mt-1">
+              <p className="text-brand-stone text-sm mt-1">
                 Census Tract {site.fips.geoid} • ACS {metadata.acs_year} • {area.tract_count} tracts analyzed
               </p>
             </div>
@@ -191,54 +191,54 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
         <TabsContent value="overview" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Population */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <Users className="h-4 w-4" />
                   Population
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatNumber(demo.total_population)}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   Area avg: {formatNumber(avg.total_population)}
                 </div>
               </CardContent>
             </Card>
 
             {/* Median Age */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <TrendingUp className="h-4 w-4" />
                   Median Age
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatNumber(demo.median_age)}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   Area avg: {formatNumber(avg.median_age)}
                 </div>
               </CardContent>
             </Card>
 
             {/* Education */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <GraduationCap className="h-4 w-4" />
                   Bachelor's+
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatNumber((demo.bachelor_degree_or_higher / demo.total_population) * 100, 'percent')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   Area avg: {formatNumber((avg.bachelor_degree_or_higher / avg.total_population) * 100, 'percent')}
                 </div>
               </CardContent>
@@ -246,15 +246,15 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
           </div>
 
           {/* Demographics Breakdown */}
-          <Card className="bg-white border-bristol-stone/20">
+          <Card className="bg-white border-brand-stone/20">
             <CardHeader>
-              <CardTitle className="text-bristol-ink font-serif">Population Breakdown</CardTitle>
+              <CardTitle className="text-brand-ink font-serif">Population Breakdown</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm text-bristol-stone">Male</span>
+                    <span className="text-sm text-brand-stone">Male</span>
                     <span className="text-sm font-medium">
                       {formatNumber((demo.male_population / demo.total_population) * 100, 'percent')}
                     </span>
@@ -263,7 +263,7 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
                 </div>
                 <div>
                   <div className="flex justify-between mb-2">
-                    <span className="text-sm text-bristol-stone">Female</span>
+                    <span className="text-sm text-brand-stone">Female</span>
                     <span className="text-sm font-medium">
                       {formatNumber((demo.female_population / demo.total_population) * 100, 'percent')}
                     </span>
@@ -278,18 +278,18 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
         <TabsContent value="economics" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Median Household Income */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Median Household Income
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatNumber(demo.median_household_income, 'currency')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   Area avg: {formatNumber(avg.median_household_income, 'currency')}
                 </div>
                 {(() => {
@@ -307,36 +307,36 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
             </Card>
 
             {/* Per Capita Income */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <TrendingUp className="h-4 w-4" />
                   Per Capita Income
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatNumber(demo.per_capita_income, 'currency')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   Area avg: {formatNumber(avg.per_capita_income, 'currency')}
                 </div>
               </CardContent>
             </Card>
 
             {/* Employment */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <Briefcase className="h-4 w-4" />
                   Employment Rate
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatNumber(((demo.labor_force - demo.unemployment_rate) / demo.labor_force) * 100, 'percent')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   Labor force: {formatNumber(demo.labor_force)}
                 </div>
               </CardContent>
@@ -347,54 +347,54 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
         <TabsContent value="housing" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Median Home Value */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <Home className="h-4 w-4" />
                   Median Home Value
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatNumber(demo.median_home_value, 'currency')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   Area avg: {formatNumber(avg.median_home_value, 'currency')}
                 </div>
               </CardContent>
             </Card>
 
             {/* Median Rent */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Median Gross Rent
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatNumber(demo.median_gross_rent, 'currency')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   Area avg: {formatNumber(avg.median_gross_rent, 'currency')}
                 </div>
               </CardContent>
             </Card>
 
             {/* Homeownership Rate */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <Home className="h-4 w-4" />
                   Homeownership Rate
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatNumber((demo.owner_occupied_units / (demo.owner_occupied_units + demo.renter_occupied_units)) * 100, 'percent')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   {formatNumber(demo.owner_occupied_units)} owned, {formatNumber(demo.renter_occupied_units)} rented
                 </div>
               </CardContent>
@@ -405,9 +405,9 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
         <TabsContent value="lifestyle" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Commute Times */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader>
-                <CardTitle className="text-bristol-ink font-serif flex items-center gap-2">
+                <CardTitle className="text-brand-ink font-serif flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   Commute Times
                 </CardTitle>
@@ -435,9 +435,9 @@ export function SiteDemographicAnalysis({ siteId, siteName, className }: SiteDem
             </Card>
 
             {/* Family Structure */}
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader>
-                <CardTitle className="text-bristol-ink font-serif flex items-center gap-2">
+                <CardTitle className="text-brand-ink font-serif flex items-center gap-2">
                   <Baby className="h-4 w-4" />
                   Family Structure
                 </CardTitle>

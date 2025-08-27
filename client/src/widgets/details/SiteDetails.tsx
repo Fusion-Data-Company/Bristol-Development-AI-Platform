@@ -84,7 +84,7 @@ export function SiteDetails({ site, onRefresh }: SiteDetailsProps) {
       case 'Completed':
         return 'bg-green-100 text-green-800';
       case 'Newest':
-        return 'bg-bristol-gold/20 text-bristol-maroon';
+        return 'bg-brand-gold/20 text-brand-maroon';
       case 'Pipeline':
         return 'bg-blue-100 text-blue-800';
       default:
@@ -116,12 +116,12 @@ export function SiteDetails({ site, onRefresh }: SiteDetailsProps) {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-bristol-maroon mt-1 flex-shrink-0" />
+              <MapPin className="w-5 h-5 text-brand-maroon mt-1 flex-shrink-0" />
               <div className="flex-1">
-                <p className="text-sm font-medium text-bristol-ink">Address</p>
-                <p className="text-sm text-bristol-stone mt-1">{buildFullAddress()}</p>
+                <p className="text-sm font-medium text-brand-ink">Address</p>
+                <p className="text-sm text-brand-stone mt-1">{buildFullAddress()}</p>
                 {site.country && site.country !== 'USA' && (
-                  <p className="text-sm text-bristol-stone">{site.country}</p>
+                  <p className="text-sm text-brand-stone">{site.country}</p>
                 )}
                 
                 {!site.latitude || !site.longitude ? (
@@ -145,7 +145,7 @@ export function SiteDetails({ site, onRefresh }: SiteDetailsProps) {
                     )}
                   </Button>
                 ) : (
-                  <div className="mt-2 text-xs text-bristol-stone">
+                  <div className="mt-2 text-xs text-brand-stone">
                     {site.latitude?.toFixed(6)}, {site.longitude?.toFixed(6)}
                   </div>
                 )}
@@ -159,30 +159,30 @@ export function SiteDetails({ site, onRefresh }: SiteDetailsProps) {
       <div className="space-y-4">
         {site.acreage && (
           <div className="flex items-center gap-3">
-            <Ruler className="w-5 h-5 text-bristol-maroon" />
+            <Ruler className="w-5 h-5 text-brand-maroon" />
             <div>
-              <p className="text-sm font-medium text-bristol-ink">Site Size</p>
-              <p className="text-sm text-bristol-stone">{site.acreage} acres</p>
+              <p className="text-sm font-medium text-brand-ink">Site Size</p>
+              <p className="text-sm text-brand-stone">{site.acreage} acres</p>
             </div>
           </div>
         )}
 
         {site.unitsTotal && (
           <div className="flex items-center gap-3">
-            <Building className="w-5 h-5 text-bristol-maroon" />
+            <Building className="w-5 h-5 text-brand-maroon" />
             <div>
-              <p className="text-sm font-medium text-bristol-ink">Total Units</p>
-              <p className="text-sm text-bristol-stone">{site.unitsTotal} units</p>
+              <p className="text-sm font-medium text-brand-ink">Total Units</p>
+              <p className="text-sm text-brand-stone">{site.unitsTotal} units</p>
             </div>
           </div>
         )}
 
         {(site.units1b || site.units2b || site.units3b) && (
           <div className="flex items-center gap-3">
-            <Home className="w-5 h-5 text-bristol-maroon" />
+            <Home className="w-5 h-5 text-brand-maroon" />
             <div>
-              <p className="text-sm font-medium text-bristol-ink">Unit Mix</p>
-              <div className="text-sm text-bristol-stone space-y-1">
+              <p className="text-sm font-medium text-brand-ink">Unit Mix</p>
+              <div className="text-sm text-brand-stone space-y-1">
                 {site.units1b && <div>1BR: {site.units1b} units</div>}
                 {site.units2b && <div>2BR: {site.units2b} units</div>}
                 {site.units3b && <div>3BR: {site.units3b} units</div>}
@@ -193,30 +193,30 @@ export function SiteDetails({ site, onRefresh }: SiteDetailsProps) {
 
         {site.avgSf && (
           <div className="flex items-center gap-3">
-            <Users className="w-5 h-5 text-bristol-maroon" />
+            <Users className="w-5 h-5 text-brand-maroon" />
             <div>
-              <p className="text-sm font-medium text-bristol-ink">Average Size</p>
-              <p className="text-sm text-bristol-stone">{site.avgSf} sq ft</p>
+              <p className="text-sm font-medium text-brand-ink">Average Size</p>
+              <p className="text-sm text-brand-stone">{site.avgSf} sq ft</p>
             </div>
           </div>
         )}
 
         {site.completionYear && (
           <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-bristol-maroon" />
+            <Calendar className="w-5 h-5 text-brand-maroon" />
             <div>
-              <p className="text-sm font-medium text-bristol-ink">Completion Year</p>
-              <p className="text-sm text-bristol-stone">{site.completionYear}</p>
+              <p className="text-sm font-medium text-brand-ink">Completion Year</p>
+              <p className="text-sm text-brand-stone">{site.completionYear}</p>
             </div>
           </div>
         )}
 
         {site.parkingSpaces && (
           <div className="flex items-center gap-3">
-            <Car className="w-5 h-5 text-bristol-maroon" />
+            <Car className="w-5 h-5 text-brand-maroon" />
             <div>
-              <p className="text-sm font-medium text-bristol-ink">Parking</p>
-              <p className="text-sm text-bristol-stone">{site.parkingSpaces} spaces</p>
+              <p className="text-sm font-medium text-brand-ink">Parking</p>
+              <p className="text-sm text-brand-stone">{site.parkingSpaces} spaces</p>
             </div>
           </div>
         )}
@@ -226,8 +226,8 @@ export function SiteDetails({ site, onRefresh }: SiteDetailsProps) {
       {site.notes && (
         <>
           <div className="border-t pt-4">
-            <p className="text-sm font-medium text-bristol-ink mb-2">Notes</p>
-            <p className="text-sm text-bristol-stone whitespace-pre-wrap">{site.notes}</p>
+            <p className="text-sm font-medium text-brand-ink mb-2">Notes</p>
+            <p className="text-sm text-brand-stone whitespace-pre-wrap">{site.notes}</p>
           </div>
         </>
       )}
@@ -236,7 +236,7 @@ export function SiteDetails({ site, onRefresh }: SiteDetailsProps) {
       {(site.createdAt || site.updatedAt) && (
         <>
           <div className="border-t pt-4">
-            <div className="text-xs text-bristol-stone space-y-1">
+            <div className="text-xs text-brand-stone space-y-1">
               {site.createdAt && (
                 <div>Created: {new Date(site.createdAt).toLocaleDateString()}</div>
               )}

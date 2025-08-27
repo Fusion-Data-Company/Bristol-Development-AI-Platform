@@ -168,7 +168,7 @@ class BulletproofChatService {
         await storage.upsertUser({
           id: normalizedUserId,
           email: `${normalizedUserId}@company.dev`,
-          firstName: 'Bristol',
+          firstName: 'Company',
           lastName: 'User'
         });
       } catch (error) {
@@ -185,7 +185,7 @@ class BulletproofChatService {
       try {
         await storage.createChatSession({
           userId: normalizedUserId,
-          title: 'Bristol A.I. Elite Session'
+          title: 'Company A.I. Elite Session'
         });
       } catch (error) {
         // Session might already exist, that's okay

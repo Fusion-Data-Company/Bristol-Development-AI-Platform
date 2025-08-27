@@ -90,7 +90,7 @@ const DATA_SOURCES = {
   }
 };
 
-// Bristol Site Scoring Color Scale
+// Company Site Scoring Color Scale
 const getScoreColor = (score: number): string => {
   if (score >= 85) return '#22c55e'; // Green - Excellent
   if (score >= 70) return '#84cc16'; // Light Green - Good
@@ -539,7 +539,7 @@ export function InteractiveMap({
             <div 
               className={cn(
                 "w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center transition-all",
-                selectedSiteId === site.id ? "scale-125 ring-2 ring-bristol-gold" : "hover:scale-110",
+                selectedSiteId === site.id ? "scale-125 ring-2 ring-brand-gold" : "hover:scale-110",
               )}
               style={{ backgroundColor: getScoreColor(75) }}
             >
@@ -550,7 +550,7 @@ export function InteractiveMap({
             <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
               <Badge 
                 variant="secondary" 
-                className="text-xs whitespace-nowrap bg-white/90 text-bristol-ink border border-bristol-stone"
+                className="text-xs whitespace-nowrap bg-white/90 text-brand-ink border border-brand-stone"
               >
                 {75}
               </Badge>
@@ -567,15 +567,15 @@ export function InteractiveMap({
           anchor="top"
           onClose={() => setSelectedSite(null)}
           closeButton={true}
-          className="bristol-popup"
+          className="brand-popup"
         >
           <div className="p-4 min-w-[300px]">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="font-serif text-lg font-semibold text-bristol-ink">
+                <h3 className="font-serif text-lg font-semibold text-brand-ink">
                   {selectedSite.name}
                 </h3>
-                <p className="text-sm text-bristol-stone">
+                <p className="text-sm text-brand-stone">
                   {selectedSite.addrLine1}, {selectedSite.city}, {selectedSite.state}
                 </p>
               </div>
@@ -589,26 +589,26 @@ export function InteractiveMap({
             
             <div className="space-y-2 mb-4">
               <div className="flex items-center gap-2 text-sm">
-                <TrendingUp className="w-4 h-4 text-bristol-maroon" />
-                <span className="text-bristol-stone">Score:</span>
-                <span className="font-medium text-bristol-ink">
+                <TrendingUp className="w-4 h-4 text-brand-maroon" />
+                <span className="text-brand-stone">Score:</span>
+                <span className="font-medium text-brand-ink">
                   {getScoreLabel(75)}
                 </span>
               </div>
               
               <div className="flex items-center gap-2 text-sm">
-                <Building className="w-4 h-4 text-bristol-maroon" />
-                <span className="text-bristol-stone">Zoning:</span>
-                <span className="font-medium text-bristol-ink">
+                <Building className="w-4 h-4 text-brand-maroon" />
+                <span className="text-brand-stone">Zoning:</span>
+                <span className="font-medium text-brand-ink">
                   Mixed Use
                 </span>
               </div>
               
               {selectedSite.acreage && (
                 <div className="flex items-center gap-2 text-sm">
-                  <Info className="w-4 h-4 text-bristol-maroon" />
-                  <span className="text-bristol-stone">Acreage:</span>
-                  <span className="font-medium text-bristol-ink">
+                  <Info className="w-4 h-4 text-brand-maroon" />
+                  <span className="text-brand-stone">Acreage:</span>
+                  <span className="font-medium text-brand-ink">
                     {selectedSite.acreage} acres
                   </span>
                 </div>
@@ -617,7 +617,7 @@ export function InteractiveMap({
             
             <Button 
               size="sm" 
-              className="w-full bg-bristol-maroon hover:bg-bristol-maroon/90"
+              className="w-full bg-brand-maroon hover:bg-brand-maroon/90"
               onClick={() => onSiteSelect?.(selectedSite)}
             >
               View Full Analysis
@@ -634,17 +634,17 @@ export function InteractiveMap({
           anchor="top"
           onClose={() => setLocationPopup(null)}
           closeButton={true}
-          className="bristol-popup"
+          className="brand-popup"
         >
           <div className="p-4 min-w-[250px]">
             <div className="mb-3">
-              <h3 className="font-serif text-lg font-semibold text-bristol-ink">
+              <h3 className="font-serif text-lg font-semibold text-brand-ink">
                 Selected Location
               </h3>
               {locationPopup.loading ? (
-                <p className="text-sm text-bristol-stone">Loading address...</p>
+                <p className="text-sm text-brand-stone">Loading address...</p>
               ) : (
-                <p className="text-sm text-bristol-stone">
+                <p className="text-sm text-brand-stone">
                   {locationPopup.address}
                 </p>
               )}
@@ -652,9 +652,9 @@ export function InteractiveMap({
             
             <div className="space-y-2 mb-4">
               <div className="flex items-center gap-2 text-sm">
-                <MapPin className="w-4 h-4 text-bristol-maroon" />
-                <span className="text-bristol-stone">Coordinates:</span>
-                <span className="font-mono text-bristol-ink text-xs">
+                <MapPin className="w-4 h-4 text-brand-maroon" />
+                <span className="text-brand-stone">Coordinates:</span>
+                <span className="font-mono text-brand-ink text-xs">
                   {locationPopup.lat.toFixed(6)}, {locationPopup.lng.toFixed(6)}
                 </span>
               </div>
@@ -679,8 +679,8 @@ export function InteractiveMap({
         {mapComponent}
 
         {/* Layer Controls - REMOVED TO CLEAR MAP */}
-        <div style={{display: 'none'}} className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">
-          <h4 className="font-semibold text-sm text-bristol-ink mb-3">Map Layers</h4>
+        <div style={{display: 'none'}} className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-brand-stone">
+          <h4 className="font-semibold text-sm text-brand-ink mb-3">Map Layers</h4>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <input
@@ -688,9 +688,9 @@ export function InteractiveMap({
                 id="heatmap"
                 checked={showHeatmap}
                 onChange={(e) => setShowHeatmap(e.target.checked)}
-                className="w-4 h-4 text-bristol-maroon"
+                className="w-4 h-4 text-brand-maroon"
               />
-              <label htmlFor="heatmap" className="text-sm text-bristol-ink">Market Heat Map</label>
+              <label htmlFor="heatmap" className="text-sm text-brand-ink">Market Heat Map</label>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -698,9 +698,9 @@ export function InteractiveMap({
                 id="demographics"
                 checked={showDemographics}
                 onChange={(e) => setShowDemographics(e.target.checked)}
-                className="w-4 h-4 text-bristol-maroon"
+                className="w-4 h-4 text-brand-maroon"
               />
-              <label htmlFor="demographics" className="text-sm text-bristol-ink">Demographics (ArcGIS)</label>
+              <label htmlFor="demographics" className="text-sm text-brand-ink">Demographics (ArcGIS)</label>
             </div>
             <div className="flex items-center gap-2">
               <input
@@ -708,13 +708,13 @@ export function InteractiveMap({
                 id="housing"
                 checked={showHousing}
                 onChange={(e) => setShowHousing(e.target.checked)}
-                className="w-4 h-4 text-bristol-maroon"
+                className="w-4 h-4 text-brand-maroon"
               />
-              <label htmlFor="housing" className="text-sm text-bristol-ink">Housing Density</label>
+              <label htmlFor="housing" className="text-sm text-brand-ink">Housing Density</label>
             </div>
           </div>
           
-          <div className="mt-3 pt-3 border-t border-bristol-stone">
+          <div className="mt-3 pt-3 border-t border-brand-stone">
             <div className="flex gap-1">
               <Button
                 size="sm"
@@ -739,8 +739,8 @@ export function InteractiveMap({
         </div>
 
         {/* Map Legend - REMOVED TO CLEAR MAP */}
-        <div style={{display: 'none'}} className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-bristol-stone">
-          <h4 className="font-semibold text-sm text-bristol-ink mb-2">Bristol Score Legend</h4>
+        <div style={{display: 'none'}} className="absolute bottom-4 left-4 bg-white/95 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-brand-stone">
+          <h4 className="font-semibold text-sm text-brand-ink mb-2">Company Score Legend</h4>
           <div className="space-y-1">
             {[
               { range: '85-100', label: 'Excellent', color: '#22c55e' },
@@ -754,8 +754,8 @@ export function InteractiveMap({
                   className="w-3 h-3 rounded-full border border-white shadow-sm"
                   style={{ backgroundColor: color }}
                 />
-                <span className="text-bristol-stone">{range}</span>
-                <span className="text-bristol-ink font-medium">{label}</span>
+                <span className="text-brand-stone">{range}</span>
+                <span className="text-brand-ink font-medium">{label}</span>
               </div>
             ))}
           </div>

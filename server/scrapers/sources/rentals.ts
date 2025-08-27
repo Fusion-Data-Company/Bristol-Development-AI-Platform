@@ -18,7 +18,7 @@ export const rentalsAdapter: ScrapingAdapter = {
     const { address, radius_mi, asset_type } = query;
     
     try {
-      // Simulate rentals.com search with realistic Bristol market data
+      // Simulate rentals.com search with realistic Company market data
       const sampleProperties = [
         {
           name: "The Metropolitan",

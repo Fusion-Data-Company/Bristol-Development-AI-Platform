@@ -89,7 +89,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
     }
   });
 
-  // State for messages - using local state since Bristol A.I. Elite handles persistence 
+  // State for messages - using local state since Company A.I. Elite handles persistence 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentSessionId] = useState(() => 
     sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -109,7 +109,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
     mutationFn: async (content: string) => {
       // Run enhanced chat analysis in parallel
       const [chatResponse, insights, recommendations] = await Promise.all([
-        apiRequest('/api/bristol-brain-elite/chat', 'POST', {
+        apiRequest('/api/brand-brain-elite/chat', 'POST', {
           sessionId: currentSessionId,
           message: content,
           enableAdvancedReasoning: true,
@@ -185,7 +185,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
       });
     },
     onError: (error) => {
-      console.error('Bristol A.I. Error:', error);
+      console.error('Company A.I. Error:', error);
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
         role: 'assistant',
@@ -272,14 +272,14 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
   };
 
   return (
-    <Card className={cn("flex flex-col h-full bg-white/90 backdrop-blur-sm border-bristol-sky shadow-xl", className)}>
+    <Card className={cn("flex flex-col h-full bg-white/90 backdrop-blur-sm border-brand-sky shadow-xl", className)}>
       {/* Chat Header */}
-      <div className="flex items-center justify-between p-6 border-b border-bristol-sky bg-bristol-ink text-white rounded-t-xl">
+      <div className="flex items-center justify-between p-6 border-b border-brand-sky bg-brand-ink text-white rounded-t-xl">
         <div className="flex items-center gap-3">
           <ThinkingIndicator isThinking={isThinking} />
           <div>
-            <h3 className="font-serif text-xl font-semibold">Bristol Site Intelligence</h3>
-            <p className="text-sm text-bristol-stone">
+            <h3 className="font-serif text-xl font-semibold">Company Site Intelligence</h3>
+            <p className="text-sm text-brand-stone">
               {isConnected ? "Live connection active" : "Connecting..."}
             </p>
           </div>
@@ -301,12 +301,12 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
           {messages.length === 0 ? (
             <div className="text-center py-12">
               <div className="relative mb-4">
-                <Brain className="h-16 w-16 text-bristol-maroon mx-auto" />
-                <div className="absolute -top-2 -right-2 w-4 h-4 bg-bristol-gold rounded-full animate-pulse" />
+                <Brain className="h-16 w-16 text-brand-maroon mx-auto" />
+                <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-gold rounded-full animate-pulse" />
               </div>
-              <h4 className="font-bold text-bristol-ink mb-2">Bristol Site Intelligence AI</h4>
+              <h4 className="font-bold text-brand-ink mb-2">Company Site Intelligence AI</h4>
               <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
-                I'm the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects.
+                I'm the proprietary AI intelligence system engineered exclusively for Company Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Company Development projects.
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Think of me as your elite senior partner: I model complex financial scenarios (DCF, IRR waterfalls, stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor. What's the opportunity on the table?
@@ -326,8 +326,8 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
                     className={cn(
                       "max-w-[80%] rounded-xl px-4 py-3",
                       msg.role === "user"
-                        ? "bg-bristol-maroon text-white"
-                        : "bg-bristol-sky text-bristol-ink border border-bristol-sky"
+                        ? "bg-brand-maroon text-white"
+                        : "bg-brand-sky text-brand-ink border border-brand-sky"
                     )}
                   >
                     <div className="whitespace-pre-wrap text-sm leading-relaxed">
@@ -335,7 +335,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
                     </div>
                     <div className={cn(
                       "text-xs mt-2 opacity-70",
-                      msg.role === "user" ? "text-white/70" : "text-bristol-stone"
+                      msg.role === "user" ? "text-white/70" : "text-brand-stone"
                     )}>
                       {new Date(msg.createdAt).toLocaleTimeString()}
                     </div>
@@ -344,9 +344,9 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
               ))}
               {isThinking && (
                 <div className="flex justify-start">
-                  <div className="bg-bristol-sky border border-bristol-sky rounded-xl px-4 py-3">
+                  <div className="bg-brand-sky border border-brand-sky rounded-xl px-4 py-3">
                     <ThinkingIndicator isThinking={true} />
-                    <span className="text-sm text-bristol-stone ml-2">
+                    <span className="text-sm text-brand-stone ml-2">
                       Analyzing your request...
                     </span>
                   </div>
@@ -359,16 +359,16 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
       </CardContent>
 
       {/* Input Area */}
-      <div className="border-t border-bristol-sky bg-white">
+      <div className="border-t border-brand-sky bg-white">
         {/* Uploaded Files */}
         {uploadedFiles.length > 0 && (
           <div className="px-6 pt-4">
             <div className="flex flex-wrap gap-2">
               {uploadedFiles.map((file, index) => (
-                <div key={index} className="flex items-center gap-2 bg-bristol-sky py-2 px-3 rounded-lg border">
-                  <Paperclip className="w-4 h-4 text-bristol-maroon" />
-                  <span className="text-sm text-bristol-ink">{file.name}</span>
-                  <button onClick={() => removeFile(index)} className="text-bristol-stone hover:text-bristol-maroon">
+                <div key={index} className="flex items-center gap-2 bg-brand-sky py-2 px-3 rounded-lg border">
+                  <Paperclip className="w-4 h-4 text-brand-maroon" />
+                  <span className="text-sm text-brand-ink">{file.name}</span>
+                  <button onClick={() => removeFile(index)} className="text-brand-stone hover:text-brand-maroon">
                     <X className="w-3 h-3" />
                   </button>
                 </div>
@@ -378,13 +378,13 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
         )}
 
         {/* AI Engine Selector */}
-        <div className="px-6 py-4 border-b border-bristol-sky">
-          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 rounded-xl border border-bristol-maroon/20">
-            <Cpu className="h-5 w-5 text-bristol-maroon" />
+        <div className="px-6 py-4 border-b border-brand-sky">
+          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-brand-maroon/5 to-brand-gold/5 rounded-xl border border-brand-maroon/20">
+            <Cpu className="h-5 w-5 text-brand-maroon" />
             <div className="flex-1">
-              <label className="text-sm font-medium text-bristol-ink mb-1 block">AI Engine</label>
+              <label className="text-sm font-medium text-brand-ink mb-1 block">AI Engine</label>
               <Select value={selectedModel} onValueChange={setSelectedModel}>
-                <SelectTrigger className="w-full bg-white border-bristol-maroon/20 text-bristol-ink">
+                <SelectTrigger className="w-full bg-white border-brand-maroon/20 text-brand-ink">
                   <SelectValue placeholder="Select AI model..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -419,17 +419,17 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
 
         {/* Enhanced AI Features Panel */}
         {(realTimeInsights || smartSuggestions.length > 0 || conversationAnalytics) && (
-          <div className="px-6 py-4 border-b border-bristol-sky bg-gradient-to-r from-bristol-gold/5 to-bristol-maroon/5">
+          <div className="px-6 py-4 border-b border-brand-sky bg-gradient-to-r from-brand-gold/5 to-brand-maroon/5">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-bristol-ink flex items-center gap-2">
-                <Brain className="h-4 w-4 text-bristol-maroon" />
+              <h4 className="text-sm font-semibold text-brand-ink flex items-center gap-2">
+                <Brain className="h-4 w-4 text-brand-maroon" />
                 AI Insights
               </h4>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowInsightsPanel(!showInsightsPanel)}
-                className="text-bristol-stone hover:text-bristol-maroon"
+                className="text-brand-stone hover:text-brand-maroon"
               >
                 {showInsightsPanel ? 'Hide' : 'Show'}
               </Button>
@@ -439,12 +439,12 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
               <div className="space-y-3">
                 {/* Real-time Insights */}
                 {realTimeInsights && (
-                  <div className="p-3 bg-white rounded-lg border border-bristol-sky">
+                  <div className="p-3 bg-white rounded-lg border border-brand-sky">
                     <div className="flex items-center gap-2 mb-2">
-                      <Lightbulb className="h-4 w-4 text-bristol-gold" />
-                      <span className="text-sm font-medium text-bristol-ink">Real-time Analysis</span>
+                      <Lightbulb className="h-4 w-4 text-brand-gold" />
+                      <span className="text-sm font-medium text-brand-ink">Real-time Analysis</span>
                     </div>
-                    <div className="text-sm text-bristol-stone">
+                    <div className="text-sm text-brand-stone">
                       <div className="flex items-center gap-2 mb-1">
                         <span>Urgency:</span>
                         <Badge variant={realTimeInsights.urgency === 'critical' ? 'destructive' : 'secondary'}>
@@ -461,10 +461,10 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
 
                 {/* Smart Suggestions */}
                 {smartSuggestions.length > 0 && (
-                  <div className="p-3 bg-white rounded-lg border border-bristol-sky">
+                  <div className="p-3 bg-white rounded-lg border border-brand-sky">
                     <div className="flex items-center gap-2 mb-2">
-                      <Target className="h-4 w-4 text-bristol-maroon" />
-                      <span className="text-sm font-medium text-bristol-ink">Smart Suggestions</span>
+                      <Target className="h-4 w-4 text-brand-maroon" />
+                      <span className="text-sm font-medium text-brand-ink">Smart Suggestions</span>
                     </div>
                     <div className="space-y-2">
                       {smartSuggestions.slice(0, 3).map((suggestion, index) => (
@@ -473,7 +473,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
                           variant="ghost"
                           size="sm"
                           onClick={() => handleSuggestionClick(suggestion.text)}
-                          className="w-full text-left text-xs p-2 h-auto bg-bristol-sky/50 hover:bg-bristol-maroon hover:text-white text-bristol-stone"
+                          className="w-full text-left text-xs p-2 h-auto bg-brand-sky/50 hover:bg-brand-maroon hover:text-white text-brand-stone"
                         >
                           <div className="flex items-start gap-2">
                             <Badge variant="outline" className="text-xs">
@@ -489,19 +489,19 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
 
                 {/* Conversation Analytics */}
                 {conversationAnalytics && (
-                  <div className="p-3 bg-white rounded-lg border border-bristol-sky">
+                  <div className="p-3 bg-white rounded-lg border border-brand-sky">
                     <div className="flex items-center gap-2 mb-2">
-                      <TrendingUp className="h-4 w-4 text-bristol-gold" />
-                      <span className="text-sm font-medium text-bristol-ink">Conversation Analytics</span>
+                      <TrendingUp className="h-4 w-4 text-brand-gold" />
+                      <span className="text-sm font-medium text-brand-ink">Conversation Analytics</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="flex items-center gap-1">
-                        <span className="text-bristol-stone">Engagement:</span>
+                        <span className="text-brand-stone">Engagement:</span>
                         <Badge variant="secondary">{conversationAnalytics.comprehensive?.metrics?.engagementScore > 0.7 ? 'High' : 'Medium'}</Badge>
                       </div>
                       <div className="flex items-center gap-1">
-                        <span className="text-bristol-stone">Topics:</span>
-                        <span className="text-bristol-ink">{conversationAnalytics.comprehensive?.topics?.primaryTopics?.[0] || 'General'}</span>
+                        <span className="text-brand-stone">Topics:</span>
+                        <span className="text-brand-ink">{conversationAnalytics.comprehensive?.topics?.primaryTopics?.[0] || 'General'}</span>
                       </div>
                     </div>
                   </div>
@@ -512,14 +512,14 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
         )}
 
         {/* Function Toggles */}
-        <div className="px-6 py-4 flex items-center gap-3 border-b border-bristol-sky">
+        <div className="px-6 py-4 flex items-center gap-3 border-b border-brand-sky">
           <button
             onClick={() => toggleTool("search")}
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all",
               activeTools.includes("search")
-                ? "bg-bristol-maroon text-white hover:bg-bristol-maroon/90"
-                : "bg-bristol-sky text-bristol-stone hover:bg-bristol-maroon hover:text-white"
+                ? "bg-brand-maroon text-white hover:bg-brand-maroon/90"
+                : "bg-brand-sky text-brand-stone hover:bg-brand-maroon hover:text-white"
             )}
           >
             <MapPin className="w-4 h-4" />
@@ -531,8 +531,8 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all",
               activeTools.includes("analysis")
-                ? "bg-bristol-maroon text-white hover:bg-bristol-maroon/90"
-                : "bg-bristol-sky text-bristol-stone hover:bg-bristol-maroon hover:text-white"
+                ? "bg-brand-maroon text-white hover:bg-brand-maroon/90"
+                : "bg-brand-sky text-brand-stone hover:bg-brand-maroon hover:text-white"
             )}
           >
             <BarChart className="w-4 h-4" />
@@ -544,12 +544,12 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all",
               activeTools.includes("bristol")
-                ? "bg-bristol-maroon text-white hover:bg-bristol-maroon/90"
-                : "bg-bristol-sky text-bristol-stone hover:bg-bristol-maroon hover:text-white"
+                ? "bg-brand-maroon text-white hover:bg-brand-maroon/90"
+                : "bg-brand-sky text-brand-stone hover:bg-brand-maroon hover:text-white"
             )}
           >
             <Brain className="w-4 h-4" />
-            <span>Bristol Mode</span>
+            <span>Company Mode</span>
           </button>
         </div>
 
@@ -561,7 +561,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
                 value={message}
                 onChange={(e) => handleMessageChange(e.target.value)}
                 placeholder="Ask about properties, market trends, demographics, investment opportunities..."
-                className="pr-4 py-3 text-lg border-bristol-sky focus:ring-bristol-maroon focus:border-bristol-maroon bg-white text-bristol-ink cursor-text"
+                className="pr-4 py-3 text-lg border-brand-sky focus:ring-brand-maroon focus:border-brand-maroon bg-white text-brand-ink cursor-text"
                 disabled={sendMessageMutation.isPending}
                 autoFocus
                 tabIndex={0}
@@ -574,7 +574,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="text-bristol-stone hover:text-bristol-maroon"
+                className="text-brand-stone hover:text-brand-maroon"
               >
                 <Mic className="w-5 h-5" />
               </Button>
@@ -583,7 +583,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="text-bristol-stone hover:text-bristol-maroon"
+                className="text-brand-stone hover:text-brand-maroon"
               >
                 <Paperclip className="w-5 h-5" />
               </Button>
@@ -591,7 +591,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
               <Button
                 type="submit"
                 disabled={!message.trim() || sendMessageMutation.isPending}
-                className="w-12 h-12 bg-bristol-maroon text-white rounded-full hover:bg-bristol-maroon/90 disabled:opacity-50"
+                className="w-12 h-12 bg-brand-maroon text-white rounded-full hover:bg-brand-maroon/90 disabled:opacity-50"
               >
                 <Send className="w-5 h-5" />
               </Button>

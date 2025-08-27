@@ -73,7 +73,7 @@ export function MapContainer({ sites, onSiteSelect, selectedSite, className }: M
                   </p>
                   ${(site as any).bristolScore ? `
                     <p style="margin: 4px 0 0 0; font-size: 14px;">
-                      <strong>Bristol Score:</strong> ${(site as any).bristolScore}
+                      <strong>Company Score:</strong> ${(site as any).bristolScore}
                     </p>
                   ` : ''}
                 </div>

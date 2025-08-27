@@ -278,31 +278,31 @@ export class EliteMCPSuperserver {
   private errorHandler = new EliteErrorHandler();
   private memoryManager = new UnifiedMemoryManager();
   private cache = new Map<string, { data: any; expires: number }>();
-  private bristolTeamCache = new Map<string, any>();
+  private teamCache = new Map<string, any>();
 
   constructor() {
     this.initializeAllTools();
-    this.loadBristolTeam();
+    this.loadCompanyTeam();
   }
 
-  private async loadBristolTeam() {
+  private async loadCompanyTeam() {
     try {
       const users = await db.select().from(teamUsers);
       users.forEach(user => {
-        this.bristolTeamCache.set(user.name.toLowerCase(), user);
+        this.teamCache.set(user.name.toLowerCase(), user);
       });
-      console.log(`✅ Loaded ${users.length} Bristol team members into superserver cache`);
+      console.log(`✅ Loaded ${users.length} Company team members into superserver cache`);
     } catch (error) {
-      console.error('Failed to load Bristol team:', error);
+      console.error('Failed to load Company team:', error);
     }
   }
 
   private initializeAllTools() {
-    // Bristol Core Tools
+    // Company Core Tools
     this.registerTool({
       name: 'verify_user',
       category: 'bristol',
-      description: 'Verify Bristol team member with role-based access',
+      description: 'Verify Company team member with role-based access',
       parameters: {
         name: { type: 'string', required: true }
       },
@@ -310,11 +310,11 @@ export class EliteMCPSuperserver {
         const searchName = (params.name || params.userId || '').toLowerCase().trim();
         
         // Direct match first
-        let user = this.bristolTeamCache.get(searchName);
+        let user = this.teamCache.get(searchName);
         
         // If no direct match, try variations and partial matches
         if (!user) {
-          for (const [cachedName, cachedUser] of this.bristolTeamCache) {
+          for (const [cachedName, cachedUser] of this.teamCache) {
             // Check if search name contains the cached name or vice versa
             if (cachedName.includes(searchName) || searchName.includes(cachedName)) {
               user = cachedUser;
@@ -363,7 +363,7 @@ export class EliteMCPSuperserver {
         if (user) {
           return { verified: true, user, accessLevel: user.accessLevel };
         }
-        return { verified: false, message: 'User not found in Bristol roster' };
+        return { verified: false, message: 'User not found in Company roster' };
       },
       cacheable: true,
       cacheTime: 300
@@ -471,7 +471,7 @@ export class EliteMCPSuperserver {
     this.registerTool({
       name: 'portfolio_analytics',
       category: 'analysis',
-      description: 'Get comprehensive Bristol portfolio analytics',
+      description: 'Get comprehensive Company portfolio analytics',
       parameters: {
         type: { type: 'string', enum: ['overview', 'detailed', 'performance'] },
         timeframe: { type: 'string', default: '30d' }
@@ -610,7 +610,7 @@ export class EliteMCPSuperserver {
             summary: 'No previous conversation found',
             user_id: userId,
             conversation_found: false,
-            message: 'This appears to be your first conversation with Bristol A.I.'
+            message: 'This appears to be your first conversation with Company A.I.'
           };
           
         } catch (error) {
@@ -655,7 +655,7 @@ export class EliteMCPSuperserver {
     this.registerTool({
       name: 'query_analytics',
       category: 'analysis',
-      description: 'Query Bristol portfolio analytics - KPIs, financials, metrics',
+      description: 'Query Company portfolio analytics - KPIs, financials, metrics',
       parameters: {
         query: { type: 'string', required: false },
         project: { type: 'string', required: false },
@@ -766,7 +766,7 @@ export class EliteMCPSuperserver {
     this.registerTool({
       name: 'property_search',
       category: 'analysis',
-      description: 'Search Bristol properties with natural language',
+      description: 'Search Company properties with natural language',
       parameters: {
         query: { type: 'string', required: true },
         filters: { type: 'object', default: {} }
@@ -861,7 +861,7 @@ export class EliteMCPSuperserver {
     this.registerTool({
       name: 'query_bristol_database',
       category: 'bristol',
-      description: 'Execute SQL queries against the Bristol Development database for comprehensive property and team analysis',
+      description: 'Execute SQL queries against the Company Development database for comprehensive property and team analysis',
       parameters: {
         query: { type: 'string', required: true },
         params: { type: 'array', default: [] }
@@ -891,7 +891,7 @@ export class EliteMCPSuperserver {
     this.registerTool({
       name: 'get_bristol_team',
       category: 'bristol',
-      description: 'Get all Bristol Development team members with full details',
+      description: 'Get all Company Development team members with full details',
       parameters: {
         searchName: { type: 'string', required: false }
       },

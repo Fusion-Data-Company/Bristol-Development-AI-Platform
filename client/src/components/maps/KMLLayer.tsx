@@ -154,7 +154,7 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
             'case',
             ['==', ['get', 'source'], 'PARLAY'],
             '#00FFFF', // Cyan for PARLAY parcels
-            '#8B1538'  // Bristol maroon for others
+            '#8B1538'  // Company maroon for others
           ],
           'fill-opacity': [
             'case',
@@ -175,7 +175,7 @@ export function KMLLayer({ kmlData, kmlUrl, visible, onFeaturesLoad }: KMLLayerP
             'case',
             ['==', ['get', 'source'], 'PARLAY'],
             '#00FFFF', // Cyan border for PARLAY
-            '#8B1538'  // Bristol maroon border for others
+            '#8B1538'  // Company maroon border for others
           ],
           'line-width': [
             'case',

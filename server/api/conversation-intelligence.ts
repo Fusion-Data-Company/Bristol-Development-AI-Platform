@@ -502,7 +502,7 @@ async function generateBaseResponse(message: string, conversationState: any) {
       messages: [
         {
           role: 'system',
-          content: 'You are the Bristol Site Intelligence AI. Provide helpful, accurate responses about real estate development and portfolio management.'
+          content: 'You are the Company Site Intelligence AI. Provide helpful, accurate responses about real estate development and portfolio management.'
         },
         {
           role: 'user',

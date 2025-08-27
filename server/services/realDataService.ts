@@ -18,7 +18,7 @@ export interface RealMarketData {
   walkabilityScore: number;
 }
 
-export interface BristolScore {
+export interface CompanyScore {
   total: number;
   demographic: number;
   location: number;
@@ -179,9 +179,9 @@ export class RealDataService {
   }
 
   /**
-   * Calculate Bristol Score using real data
+   * Calculate Company Score using real data
    */
-  async calculateBristolScore(siteId: string): Promise<BristolScore> {
+  async calculateCompanyScore(siteId: string): Promise<CompanyScore> {
     try {
       const [site] = await db.select().from(sites).where(eq(sites.id, siteId));
       if (!site) throw new Error('Site not found');
@@ -225,7 +225,7 @@ export class RealDataService {
         }
       };
     } catch (error) {
-      console.error('Bristol scoring error:', error);
+      console.error('Company scoring error:', error);
       throw error;
     }
   }
@@ -318,11 +318,11 @@ export class RealDataService {
   }
 
   /**
-   * Update site with real Bristol score
+   * Update site with real Company score
    */
-  async updateSiteBristolScore(siteId: string): Promise<void> {
+  async updateSiteCompanyScore(siteId: string): Promise<void> {
     try {
-      const bristolScore = await this.calculateBristolScore(siteId);
+      const bristolScore = await this.calculateCompanyScore(siteId);
       
       await db.update(sites)
         .set({
@@ -334,8 +334,8 @@ export class RealDataService {
       // Store detailed scoring in market intelligence  
       await db.insert(marketIntelligence).values({
         source: 'bristol_scoring',
-        title: `Bristol Score Analysis - ${site.name}`,
-        description: `Automated Bristol scoring: ${bristolScore.total}/100`,
+        title: `Company Score Analysis - ${site.name}`,
+        description: `Automated Company scoring: ${bristolScore.total}/100`,
         category: 'scoring',
         analysisData: bristolScore.details,
         location: `${site.city}, ${site.state}`,
@@ -343,25 +343,25 @@ export class RealDataService {
         createdAt: new Date()
       });
 
-      console.log(`✅ Updated Bristol score for site ${siteId}: ${bristolScore.total}/100`);
+      console.log(`✅ Updated Company score for site ${siteId}: ${bristolScore.total}/100`);
     } catch (error) {
-      console.error(`❌ Failed to update Bristol score for site ${siteId}:`, error);
+      console.error(`❌ Failed to update Company score for site ${siteId}:`, error);
       throw error;
     }
   }
 
   /**
-   * Batch update all sites with real Bristol scores
+   * Batch update all sites with real Company scores
    */
   async updateAllSitesWithRealScores(): Promise<void> {
     try {
       const allSites = await db.select().from(sites);
-      console.log(`🚀 Starting Bristol scoring for ${allSites.length} sites...`);
+      console.log(`🚀 Starting Company scoring for ${allSites.length} sites...`);
       
       const results = [];
       for (const site of allSites) {
         try {
-          await this.updateSiteBristolScore(site.id);
+          await this.updateSiteCompanyScore(site.id);
           results.push({ id: site.id, status: 'success' });
           
           // Rate limiting - wait 1 second between API calls
@@ -373,10 +373,10 @@ export class RealDataService {
       }
       
       const successful = results.filter(r => r.status === 'success').length;
-      console.log(`✅ Bristol scoring completed: ${successful}/${allSites.length} sites updated`);
+      console.log(`✅ Company scoring completed: ${successful}/${allSites.length} sites updated`);
       
     } catch (error: any) {
-      console.error('Batch Bristol scoring error:', error);
+      console.error('Batch Company scoring error:', error);
       throw error;
     }
   }

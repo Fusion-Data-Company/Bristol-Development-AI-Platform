@@ -44,8 +44,8 @@ router.post('/enhanced-chat', async (req: any, res) => {
     const marketContext = await buildMarketContext(request);
     const toolContext = await buildToolContext(request);
     
-    // Create enhanced system prompt with Bristol context
-    const systemPrompt = buildBristolSystemPrompt(propertyContext, marketContext, toolContext);
+    // Create enhanced system prompt with Company context
+    const systemPrompt = buildCompanySystemPrompt(propertyContext, marketContext, toolContext);
     
     // Process with enhanced features
     const chatResponse = await processEnhancedChat({
@@ -258,20 +258,20 @@ async function buildPropertyContext(request: any) {
         sitesCount: sites.length,
         recentSites: sites.slice(0, 5),
         totalUnits: sites.reduce((sum: number, site: any) => sum + (site.totalUnits || 0), 0),
-        avgBristolScore: sites.reduce((sum: number, site: any) => sum + (site.bristolScore || 0), 0) / sites.length
+        avgCompanyScore: sites.reduce((sum: number, site: any) => sum + (site.bristolScore || 0), 0) / sites.length
       };
     }
   } catch (error) {
     console.warn('Could not fetch property context:', error);
   }
   
-  return { sitesCount: 0, recentSites: [], totalUnits: 0, avgBristolScore: 0 };
+  return { sitesCount: 0, recentSites: [], totalUnits: 0, avgCompanyScore: 0 };
 }
 
 async function buildMarketContext(request: any) {
   try {
     // Fetch real market analysis
-    const response = await fetch('http://localhost:5000/api/bristol-agent/market-analysis');
+    const response = await fetch('http://localhost:5000/api/brand-agent/market-analysis');
     
     if (response.ok) {
       const marketData = await response.json();
@@ -304,12 +304,12 @@ async function buildToolContext(request: any) {
   };
 }
 
-function buildBristolSystemPrompt(propertyContext: any, marketContext: any, toolContext: any) {
-  return `You are the Bristol Site Intelligence AI, the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, you underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects.
+function buildCompanySystemPrompt(propertyContext: any, marketContext: any, toolContext: any) {
+  return `You are the Company Site Intelligence AI, the proprietary AI intelligence system engineered exclusively for Company Development Group. Drawing on over three decades of institutional real estate expertise, you underwrite deals, assess markets, and drive strategic decisions for Company Development projects.
 
 Current Context:
 - Portfolio: ${propertyContext.sitesCount} sites with ${propertyContext.totalUnits} total units
-- Average Bristol Score: ${propertyContext.avgBristolScore.toFixed(1)}/100
+- Average Company Score: ${propertyContext.avgCompanyScore.toFixed(1)}/100
 - Market Confidence: ${marketContext.confidence}%
 - Available Tools: ${toolContext.availableTools.join(', ')}
 
@@ -363,7 +363,7 @@ async function generateProactiveInsights(message: string, propertyContext: any, 
       insights.push({
         type: 'financial-opportunity',
         title: 'Above-Target IRR Environment',
-        description: `Market IRR at ${marketContext.currentData.multifamilyDevelopment.avgIrr}% exceeds Bristol target range`,
+        description: `Market IRR at ${marketContext.currentData.multifamilyDevelopment.avgIrr}% exceeds Company target range`,
         priority: 'medium',
         actionable: true
       });
@@ -372,11 +372,11 @@ async function generateProactiveInsights(message: string, propertyContext: any, 
   
   // Portfolio insights
   if (propertyContext.sitesCount > 0) {
-    if (propertyContext.avgBristolScore < 75) {
+    if (propertyContext.avgCompanyScore < 75) {
       insights.push({
         type: 'portfolio-optimization',
         title: 'Portfolio Score Enhancement Opportunity',
-        description: `Average Bristol Score of ${propertyContext.avgBristolScore.toFixed(1)} suggests room for site optimization`,
+        description: `Average Company Score of ${propertyContext.avgCompanyScore.toFixed(1)} suggests room for site optimization`,
         priority: 'medium',
         actionable: true
       });
@@ -401,7 +401,7 @@ async function generateVisualizationSuggestions(message: string, propertyContext
     suggestions.push({
       type: 'portfolio-map',
       title: 'Geographic Portfolio View',
-      description: 'Interactive map showing all sites with Bristol scores and performance metrics'
+      description: 'Interactive map showing all sites with Company scores and performance metrics'
     });
   }
   
@@ -614,7 +614,7 @@ async function generateSmartFollowups(lastMessage: string, context: any, intent:
   }
   
   if (lastMessage.toLowerCase().includes('site') || lastMessage.toLowerCase().includes('property')) {
-    followups.push('Would you like to see the Bristol scoring breakdown?');
+    followups.push('Would you like to see the Company scoring breakdown?');
     followups.push('Should I generate a development timeline?');
   }
   

@@ -34,7 +34,7 @@ export default function Map() {
         <div className="bg-white rounded-lg px-3 py-2 shadow-md">
           <div className="flex items-center gap-2">
             <Layers className="h-4 w-4 text-gray-500" />
-            <span className="text-sm font-medium">Bristol Analytics</span>
+            <span className="text-sm font-medium">Company Analytics</span>
           </div>
         </div>
       </div>

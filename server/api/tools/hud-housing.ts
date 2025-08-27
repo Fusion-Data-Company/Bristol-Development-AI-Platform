@@ -5,7 +5,7 @@ const router = express.Router();
 // HUD Fair Market Rent API
 router.get('/', async (req, res) => {
   try {
-    // HUD Fair Market Rent data for major Bristol markets
+    // HUD Fair Market Rent data for major Company markets
     const hudData = {
       fairMarketRents: [
         {

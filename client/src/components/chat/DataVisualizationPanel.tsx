@@ -20,7 +20,7 @@ export function DataVisualizationPanel({ appData, isOpen, onClose, className }: 
       data: {
         totalProperties: appData?.sites?.length || 0,
         totalUnits: appData?.analytics?.totalUnits || 0,
-        avgBristolScore: appData?.analytics?.avgBristolScore || 0,
+        avgCompanyScore: appData?.analytics?.avgCompanyScore || 0,
         markets: Object.keys(appData?.analytics?.stateDistribution || {}).length
       }
     },
@@ -71,29 +71,29 @@ export function DataVisualizationPanel({ appData, isOpen, onClose, className }: 
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-bristol-cyan/30">
+        <div className="flex items-center justify-between p-4 border-b border-brand-cyan/30">
           <div className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-bristol-cyan animate-pulse" />
-            <h3 className="font-bold text-bristol-cyan">Live Data Context</h3>
+            <BarChart3 className="h-5 w-5 text-brand-cyan animate-pulse" />
+            <h3 className="font-bold text-brand-cyan">Live Data Context</h3>
           </div>
           <button 
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-bristol-cyan/10 transition-colors"
+            className="p-1 rounded-lg hover:bg-brand-cyan/10 transition-colors"
           >
-            <X className="h-4 w-4 text-bristol-cyan/70" />
+            <X className="h-4 w-4 text-brand-cyan/70" />
           </button>
         </div>
 
         {/* Metric Tabs */}
-        <div className="flex p-2 space-x-1 border-b border-bristol-cyan/20">
+        <div className="flex p-2 space-x-1 border-b border-brand-cyan/20">
           {Object.entries(metrics).map(([key, metric]) => (
             <button
               key={key}
               onClick={() => setSelectedMetric(key)}
               className={`flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                 selectedMetric === key
-                  ? 'bg-bristol-cyan/20 text-bristol-cyan border border-bristol-cyan/30'
-                  : 'text-bristol-cyan/60 hover:text-bristol-cyan hover:bg-bristol-cyan/10'
+                  ? 'bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30'
+                  : 'text-brand-cyan/60 hover:text-brand-cyan hover:bg-brand-cyan/10'
               }`}
             >
               {metric.icon}
@@ -104,23 +104,23 @@ export function DataVisualizationPanel({ appData, isOpen, onClose, className }: 
 
         {/* Content */}
         <div className="flex-1 p-4">
-          <h4 className="text-bristol-cyan font-semibold mb-4 flex items-center gap-2">
+          <h4 className="text-brand-cyan font-semibold mb-4 flex items-center gap-2">
             {currentMetric.icon}
             {currentMetric.title}
           </h4>
 
           {selectedMetric === "overview" && (
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-bristol-cyan/10 rounded-xl p-3 border border-bristol-cyan/20">
-                <div className="text-2xl font-bold text-bristol-cyan">{currentMetric.data.totalProperties}</div>
-                <div className="text-xs text-bristol-cyan/80">Properties</div>
+              <div className="bg-brand-cyan/10 rounded-xl p-3 border border-brand-cyan/20">
+                <div className="text-2xl font-bold text-brand-cyan">{currentMetric.data.totalProperties}</div>
+                <div className="text-xs text-brand-cyan/80">Properties</div>
               </div>
-              <div className="bg-bristol-gold/10 rounded-xl p-3 border border-bristol-gold/20">
-                <div className="text-2xl font-bold text-bristol-gold">{currentMetric.data.totalUnits}</div>
-                <div className="text-xs text-bristol-gold/80">Total Units</div>
+              <div className="bg-brand-gold/10 rounded-xl p-3 border border-brand-gold/20">
+                <div className="text-2xl font-bold text-brand-gold">{currentMetric.data.totalUnits}</div>
+                <div className="text-xs text-brand-gold/80">Total Units</div>
               </div>
               <div className="bg-green-400/10 rounded-xl p-3 border border-green-400/20">
-                <div className="text-2xl font-bold text-green-400">{currentMetric.data.avgBristolScore}</div>
+                <div className="text-2xl font-bold text-green-400">{currentMetric.data.avgCompanyScore}</div>
                 <div className="text-xs text-green-400/80">Avg Score</div>
               </div>
               <div className="bg-purple-400/10 rounded-xl p-3 border border-purple-400/20">
@@ -133,9 +133,9 @@ export function DataVisualizationPanel({ appData, isOpen, onClose, className }: 
           {selectedMetric === "markets" && (
             <div className="space-y-2">
               {Object.entries(currentMetric.data).map(([state, count]) => (
-                <div key={state} className="flex items-center justify-between p-2 bg-bristol-cyan/5 rounded-lg border border-bristol-cyan/20">
-                  <span className="text-bristol-cyan text-sm font-medium">{state}</span>
-                  <span className="text-bristol-gold font-bold">{count as number}</span>
+                <div key={state} className="flex items-center justify-between p-2 bg-brand-cyan/5 rounded-lg border border-brand-cyan/20">
+                  <span className="text-brand-cyan text-sm font-medium">{state}</span>
+                  <span className="text-brand-gold font-bold">{count as number}</span>
                 </div>
               ))}
             </div>
@@ -144,9 +144,9 @@ export function DataVisualizationPanel({ appData, isOpen, onClose, className }: 
           {(selectedMetric === "demographics" || selectedMetric === "performance") && (
             <div className="grid grid-cols-2 gap-2">
               {Object.entries(currentMetric.data).map(([key, value]) => (
-                <div key={key} className="bg-bristol-cyan/5 rounded-lg p-3 border border-bristol-cyan/20">
-                  <div className="text-lg font-bold text-bristol-cyan">{value as string}</div>
-                  <div className="text-xs text-bristol-cyan/80 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
+                <div key={key} className="bg-brand-cyan/5 rounded-lg p-3 border border-brand-cyan/20">
+                  <div className="text-lg font-bold text-brand-cyan">{value as string}</div>
+                  <div className="text-xs text-brand-cyan/80 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</div>
                 </div>
               ))}
             </div>
@@ -154,10 +154,10 @@ export function DataVisualizationPanel({ appData, isOpen, onClose, className }: 
         </div>
 
         {/* Real-time Status */}
-        <div className="p-3 border-t border-bristol-cyan/20 bg-bristol-cyan/5">
+        <div className="p-3 border-t border-brand-cyan/20 bg-brand-cyan/5">
           <div className="flex items-center gap-2">
             <Activity className="h-3 w-3 text-green-400 animate-pulse" />
-            <span className="text-xs text-bristol-cyan font-medium">Live Data • Updated {new Date().toLocaleTimeString()}</span>
+            <span className="text-xs text-brand-cyan font-medium">Live Data • Updated {new Date().toLocaleTimeString()}</span>
           </div>
         </div>
       </div>

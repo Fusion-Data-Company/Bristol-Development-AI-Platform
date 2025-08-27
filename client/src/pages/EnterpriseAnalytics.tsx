@@ -53,7 +53,7 @@ interface MarketAnalysis {
   recommendation: string;
 }
 
-interface BristolIntelligence {
+interface CompanyIntelligence {
   summary: {
     totalInsights: number;
     avgConfidence: number;
@@ -90,9 +90,9 @@ export default function EnterpriseAnalytics() {
     refetchInterval: 300000, // Refresh every 5 minutes
   });
 
-  // Bristol intelligence query
-  const { data: intelligenceData, isLoading: intelligenceLoading } = useQuery<BristolIntelligence>({
-    queryKey: ['/api/analytics/production/bristol-intelligence'],
+  // Company intelligence query
+  const { data: intelligenceData, isLoading: intelligenceLoading } = useQuery<CompanyIntelligence>({
+    queryKey: ['/api/analytics/production/brand-intelligence'],
     refetchInterval: 180000, // Refresh every 3 minutes
   });
 
@@ -107,7 +107,7 @@ export default function EnterpriseAnalytics() {
     await Promise.all([
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/enterprise/portfolio'] }),
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/enterprise/market-analysis'] }),
-      queryClient.invalidateQueries({ queryKey: ['/api/analytics/production/bristol-intelligence'] }),
+      queryClient.invalidateQueries({ queryKey: ['/api/analytics/production/brand-intelligence'] }),
       queryClient.invalidateQueries({ queryKey: ['/api/analytics/production/portfolio-performance'] })
     ]);
     setRefreshing(false);
@@ -128,13 +128,13 @@ export default function EnterpriseAnalytics() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Bristol Header */}
+      {/* Company Header */}
       <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600">
-                Bristol Enterprise Analytics
+                Company Enterprise Analytics
               </h1>
               <p className="text-gray-300 mt-2 text-lg">
                 Institutional-Grade Portfolio Intelligence & Market Analysis
@@ -236,7 +236,7 @@ export default function EnterpriseAnalytics() {
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Portfolio Overview</TabsTrigger>
             <TabsTrigger value="markets">Market Analysis</TabsTrigger>
-            <TabsTrigger value="intelligence">Bristol Intelligence</TabsTrigger>
+            <TabsTrigger value="intelligence">Company Intelligence</TabsTrigger>
             <TabsTrigger value="performance">Performance</TabsTrigger>
           </TabsList>
 
@@ -377,7 +377,7 @@ export default function EnterpriseAnalytics() {
                         <p className="text-lg font-semibold text-green-600">{market.rentGrowth}%</p>
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600">Bristol Properties</p>
+                        <p className="text-sm text-gray-600">Company Properties</p>
                         <p className="text-lg font-semibold">{market.bristolExposure}</p>
                       </div>
                       <div>
@@ -398,7 +398,7 @@ export default function EnterpriseAnalytics() {
             </div>
           </TabsContent>
 
-          {/* Bristol Intelligence Tab */}
+          {/* Company Intelligence Tab */}
           <TabsContent value="intelligence" className="space-y-6">
             {intelligenceData && (
               <>
@@ -485,8 +485,8 @@ export default function EnterpriseAnalytics() {
                         <p className="text-sm text-gray-600">Total Units</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-2xl font-bold">{((productionData as any).portfolioKPIs?.avgBristolScore || 0).toFixed(1)}</p>
-                        <p className="text-sm text-gray-600">Avg Bristol Score</p>
+                        <p className="text-2xl font-bold">{((productionData as any).portfolioKPIs?.avgCompanyScore || 0).toFixed(1)}</p>
+                        <p className="text-sm text-gray-600">Avg Company Score</p>
                       </div>
                       <div className="text-center">
                         <p className="text-2xl font-bold">{formatCurrency((productionData as any).portfolioKPIs?.estimatedValue || 0)}</p>
@@ -501,12 +501,12 @@ export default function EnterpriseAnalytics() {
         </Tabs>
       </div>
 
-      {/* Bristol Footer */}
+      {/* Company Footer */}
       <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white mt-16">
         <div className="container mx-auto px-6 py-12">
           <div className="text-center">
             <h3 className="text-2xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 mb-4">
-              Bristol Development Group
+              Company Development Group
             </h3>
             <p className="text-gray-300 max-w-2xl mx-auto">
               Institutional-quality multifamily development and investment platform powered by 

@@ -98,15 +98,15 @@ router.get('/health', async (req, res) => {
       console.warn('Database test failed');
     }
 
-    // Test Bristol Scoring
+    // Test Company Scoring
     try {
       const testSites = await db.select().from(sites).limit(1);
       if (testSites.length > 0) {
-        await realDataService.calculateBristolScore(testSites[0].id);
+        await realDataService.calculateCompanyScore(testSites[0].id);
         healthChecks.bristolScoring = true;
       }
     } catch (e) {
-      console.warn('Bristol scoring test failed');
+      console.warn('Company scoring test failed');
     }
 
     const healthyServices = Object.values(healthChecks).filter(Boolean).length;
@@ -237,10 +237,10 @@ router.post('/replace-demographics', async (req, res) => {
   }
 });
 
-// Replace ALL placeholder Bristol scores with real calculations
-router.post('/replace-bristol-scores', async (req, res) => {
+// Replace ALL placeholder Company scores with real calculations
+router.post('/replace-brand-scores', async (req, res) => {
   try {
-    console.log('🚀 Starting comprehensive Bristol score replacement...');
+    console.log('🚀 Starting comprehensive Company score replacement...');
     
     await realDataService.updateAllSitesWithRealScores();
     
@@ -250,7 +250,7 @@ router.post('/replace-bristol-scores', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'Bristol score replacement completed',
+      message: 'Company score replacement completed',
       summary: {
         total: updatedSites.length,
         scored: scoredSites.length,
@@ -267,9 +267,9 @@ router.post('/replace-bristol-scores', async (req, res) => {
     
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    console.error('Bristol scores replacement error:', error);
+    console.error('Company scores replacement error:', error);
     res.status(500).json({
-      error: 'Failed to replace Bristol scores',
+      error: 'Failed to replace Company scores',
       details: errorMessage
     });
   }
@@ -371,15 +371,15 @@ router.post('/replace-all-placeholders', async (req, res) => {
       results.errors.push(`Demographics replacement failed: ${error.message}`);
     }
     
-    // Step 2: Replace Bristol scores (depends on demographics)
+    // Step 2: Replace Company scores (depends on demographics)
     try {
-      const scoresResponse = await fetch(`${req.protocol}://${req.get('host')}/api/placeholder-replacement/replace-bristol-scores`, {
+      const scoresResponse = await fetch(`${req.protocol}://${req.get('host')}/api/placeholder-replacement/replace-brand-scores`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
       results.bristolScores = await scoresResponse.json();
     } catch (error: any) {
-      results.errors.push(`Bristol scores replacement failed: ${error.message}`);
+      results.errors.push(`Company scores replacement failed: ${error.message}`);
     }
     
     // Step 3: Replace market data

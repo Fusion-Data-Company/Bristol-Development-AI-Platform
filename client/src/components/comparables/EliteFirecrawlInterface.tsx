@@ -20,7 +20,7 @@ const SimpleCheckbox = ({ checked, onCheckedChange, id }: { checked: boolean; on
     id={id}
     checked={checked}
     onChange={(e) => onCheckedChange(e.target.checked)}
-    className="w-4 h-4 text-bristol-maroon border-gray-300 rounded focus:ring-bristol-maroon"
+    className="w-4 h-4 text-brand-maroon border-gray-300 rounded focus:ring-brand-maroon"
   />
 );
 import { 
@@ -157,7 +157,7 @@ export function EliteFirecrawlInterface() {
   // Elite Search Mutation
   const eliteSearchMutation = useMutation({
     mutationFn: async (config: EliteSearchConfig) => {
-      const response = await fetch('/api/bristol-elite/elite-search', {
+      const response = await fetch('/api/brand-elite/elite-search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -193,7 +193,7 @@ export function EliteFirecrawlInterface() {
   // Elite Crawl Mutation
   const eliteCrawlMutation = useMutation({
     mutationFn: async (config: EliteCrawlConfig) => {
-      const response = await fetch('/api/bristol-elite/elite-crawl', {
+      const response = await fetch('/api/brand-elite/elite-crawl', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -226,7 +226,7 @@ export function EliteFirecrawlInterface() {
   // Elite Extract Mutation
   const eliteExtractMutation = useMutation({
     mutationFn: async (config: EliteExtractConfig) => {
-      const response = await fetch('/api/bristol-elite/elite-extract', {
+      const response = await fetch('/api/brand-elite/elite-extract', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -258,7 +258,7 @@ export function EliteFirecrawlInterface() {
   // Elite Map Mutation
   const eliteMapMutation = useMutation({
     mutationFn: async (config: EliteMapConfig) => {
-      const response = await fetch('/api/bristol-elite/elite-research', {
+      const response = await fetch('/api/brand-elite/elite-research', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -315,7 +315,7 @@ export function EliteFirecrawlInterface() {
   return (
     <div className="w-full">
       {/* Elite Header */}
-      <div className="bg-gradient-to-r from-bristol-maroon via-bristol-gold to-bristol-maroon p-6 rounded-t-lg">
+      <div className="bg-gradient-to-r from-brand-maroon via-brand-gold to-brand-maroon p-6 rounded-t-lg">
         <h2 className="text-2xl font-bold text-white mb-2">Elite Firecrawl Operations Center</h2>
         <p className="text-white/90">Enterprise-grade property intelligence with precision targeting</p>
       </div>
@@ -335,8 +335,8 @@ export function EliteFirecrawlInterface() {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-6 py-3 font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'border-b-2 border-bristol-gold text-bristol-maroon bg-bristol-gold/10'
-                  : 'text-gray-600 hover:text-bristol-maroon hover:bg-gray-50'
+                  ? 'border-b-2 border-brand-gold text-brand-maroon bg-brand-gold/10'
+                  : 'text-gray-600 hover:text-brand-maroon hover:bg-gray-50'
               }`}
             >
               <Icon className="w-4 h-4" />
@@ -535,7 +535,7 @@ export function EliteFirecrawlInterface() {
                           variant="outline"
                           size="sm"
                           onClick={() => setSearchConfig(prev => ({ ...prev, limit: num }))}
-                          className={searchConfig.limit === num ? 'bg-bristol-maroon text-white' : ''}
+                          className={searchConfig.limit === num ? 'bg-brand-maroon text-white' : ''}
                         >
                           {num}
                         </Button>
@@ -552,7 +552,7 @@ export function EliteFirecrawlInterface() {
             <Button 
               onClick={() => eliteSearchMutation.mutate(searchConfig)}
               disabled={eliteSearchMutation.isPending}
-              className="w-full bg-gradient-to-r from-bristol-maroon to-bristol-gold hover:from-bristol-gold hover:to-bristol-maroon"
+              className="w-full bg-gradient-to-r from-brand-maroon to-brand-gold hover:from-brand-gold hover:to-brand-maroon"
             >
               <Search className="w-4 h-4 mr-2" />
               {eliteSearchMutation.isPending ? 'Executing Elite Search...' : 'Launch Elite Property Search'}
@@ -615,7 +615,7 @@ export function EliteFirecrawlInterface() {
                           variant="outline"
                           size="sm"
                           onClick={() => setCrawlConfig(prev => ({ ...prev, maxUrls: num }))}
-                          className={crawlConfig.maxUrls === num ? 'bg-bristol-maroon text-white' : ''}
+                          className={crawlConfig.maxUrls === num ? 'bg-brand-maroon text-white' : ''}
                         >
                           {num}
                         </Button>
@@ -664,7 +664,7 @@ export function EliteFirecrawlInterface() {
             <Button 
               onClick={() => eliteCrawlMutation.mutate(crawlConfig)}
               disabled={eliteCrawlMutation.isPending}
-              className="w-full bg-gradient-to-r from-bristol-maroon to-bristol-gold hover:from-bristol-gold hover:to-bristol-maroon"
+              className="w-full bg-gradient-to-r from-brand-maroon to-brand-gold hover:from-brand-gold hover:to-brand-maroon"
             >
               <Globe className="w-4 h-4 mr-2" />
               {eliteCrawlMutation.isPending ? 'Executing Deep Crawl...' : 'Launch Deep Property Crawl'}
@@ -757,7 +757,7 @@ export function EliteFirecrawlInterface() {
             <Button 
               onClick={() => eliteExtractMutation.mutate(extractConfig)}
               disabled={eliteExtractMutation.isPending || extractConfig.urls.length === 0}
-              className="w-full bg-gradient-to-r from-bristol-maroon to-bristol-gold hover:from-bristol-gold hover:to-bristol-maroon"
+              className="w-full bg-gradient-to-r from-brand-maroon to-brand-gold hover:from-brand-gold hover:to-brand-maroon"
             >
               <Target className="w-4 h-4 mr-2" />
               {eliteExtractMutation.isPending ? 'Executing Data Extraction...' : `Extract Data from ${extractConfig.urls.length} URLs`}
@@ -805,7 +805,7 @@ export function EliteFirecrawlInterface() {
                           variant="outline"
                           size="sm"
                           onClick={() => setMapConfig(prev => ({ ...prev, radius: miles }))}
-                          className={mapConfig.radius === miles ? 'bg-bristol-maroon text-white' : ''}
+                          className={mapConfig.radius === miles ? 'bg-brand-maroon text-white' : ''}
                         >
                           {miles}mi
                         </Button>
@@ -833,8 +833,8 @@ export function EliteFirecrawlInterface() {
               </div>
               
               <div className="space-y-4">
-                <div className="p-4 bg-bristol-gold/10 rounded-lg">
-                  <h4 className="font-medium text-bristol-maroon mb-2">Map Research Features</h4>
+                <div className="p-4 bg-brand-gold/10 rounded-lg">
+                  <h4 className="font-medium text-brand-maroon mb-2">Map Research Features</h4>
                   <ul className="text-sm space-y-1 text-gray-600">
                     <li>• Comprehensive market mapping</li>
                     <li>• Property density analysis</li>
@@ -849,7 +849,7 @@ export function EliteFirecrawlInterface() {
             <Button 
               onClick={() => eliteMapMutation.mutate(mapConfig)}
               disabled={eliteMapMutation.isPending}
-              className="w-full bg-gradient-to-r from-bristol-maroon to-bristol-gold hover:from-bristol-gold hover:to-bristol-maroon"
+              className="w-full bg-gradient-to-r from-brand-maroon to-brand-gold hover:from-brand-gold hover:to-brand-maroon"
             >
               <MapPin className="w-4 h-4 mr-2" />
               {eliteMapMutation.isPending ? 'Executing Map Research...' : 'Launch Elite Map Research'}

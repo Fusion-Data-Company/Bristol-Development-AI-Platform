@@ -39,8 +39,8 @@ const ModelListSchema = z.object({
   data: z.array(OpenRouterModelSchema)
 });
 
-// Bristol model configuration with OpenRouter mapping
-interface BristolModelConfig {
+// Company model configuration with OpenRouter mapping
+interface CompanyModelConfig {
   id: string;
   displayName: string;
   provider: string;
@@ -59,13 +59,13 @@ interface BristolModelConfig {
 }
 
 class ModelManagementMCPServer {
-  private modelCache: Map<string, BristolModelConfig> = new Map();
+  private modelCache: Map<string, CompanyModelConfig> = new Map();
   private lastCacheUpdate = 0;
   private readonly CACHE_TTL = 300000; // 5 minutes
   private healthCheckResults: Map<string, { status: boolean; lastCheck: string; latency?: number }> = new Map();
 
-  // Bristol elite model configurations mapped to OpenRouter
-  private readonly BRISTOL_MODEL_CONFIGS: BristolModelConfig[] = [
+  // Company elite model configurations mapped to OpenRouter
+  private readonly COMPANY_MODEL_CONFIGS: CompanyModelConfig[] = [
     // GPT Models
     {
       id: 'gpt-5',
@@ -183,7 +183,7 @@ class ModelManagementMCPServer {
 
   constructor() {
     // Initialize model cache
-    this.BRISTOL_MODEL_CONFIGS.forEach(config => {
+    this.COMPANY_MODEL_CONFIGS.forEach(config => {
       this.modelCache.set(config.id, config);
     });
     
@@ -198,7 +198,7 @@ class ModelManagementMCPServer {
     provider?: string;
     includeHealth?: boolean;
   } = {}): Promise<{
-    models: BristolModelConfig[];
+    models: CompanyModelConfig[];
     totalCount: number;
     categories: string[];
     providers: string[];
@@ -258,7 +258,7 @@ class ModelManagementMCPServer {
     checkHealth?: boolean;
   }): Promise<{
     valid: boolean;
-    model?: BristolModelConfig;
+    model?: CompanyModelConfig;
     openrouterModel?: any;
     healthStatus?: any;
     issues?: string[];
@@ -272,7 +272,7 @@ class ModelManagementMCPServer {
       if (!model) {
         return {
           valid: false,
-          issues: [`Model '${params.modelId}' not found in Bristol model registry`],
+          issues: [`Model '${params.modelId}' not found in Company model registry`],
           recommendation: 'Use get_available_models to see valid options'
         };
       }
@@ -322,8 +322,8 @@ class ModelManagementMCPServer {
     validateFirst?: boolean;
   }): Promise<{
     success: boolean;
-    fromModel?: BristolModelConfig;
-    toModel: BristolModelConfig;
+    fromModel?: CompanyModelConfig;
+    toModel: CompanyModelConfig;
     switchTime: string;
     sessionId?: string;
     validation?: any;
@@ -389,7 +389,7 @@ class ModelManagementMCPServer {
     provider?: string;
   } = {}): Promise<{
     success: boolean;
-    models: BristolModelConfig[];
+    models: CompanyModelConfig[];
     totalCount: number;
     categories: string[];
     providers: string[];
@@ -441,7 +441,7 @@ class ModelManagementMCPServer {
       console.error(`❌ [ModelMCP] Error getting models data:`, error);
       
       // Return fallback models for UI continuity
-      const fallbackModels: BristolModelConfig[] = [
+      const fallbackModels: CompanyModelConfig[] = [
         {
           id: 'gpt-4o',
           displayName: 'GPT-4o',
@@ -560,8 +560,8 @@ class ModelManagementMCPServer {
       const data = await response.json();
       const modelList = ModelListSchema.parse(data);
       
-      // Update Bristol models with OpenRouter data
-      for (const bristolModel of this.BRISTOL_MODEL_CONFIGS) {
+      // Update Company models with OpenRouter data
+      for (const bristolModel of this.COMPANY_MODEL_CONFIGS) {
         const openrouterModel = modelList.data.find(m => m.id === bristolModel.openrouterId);
         if (openrouterModel) {
           bristolModel.maxTokens = openrouterModel.context_length;

@@ -57,14 +57,14 @@ export function SiteMapPreview({ site }: SiteMapPreviewProps) {
     if (site && site.latitude && site.longitude) {
       const popup = new maplibregl.Popup({ offset: 25 }).setHTML(`
         <div class="p-2">
-          <h3 class="font-semibold text-bristol-ink">${site.name}</h3>
-          ${site.addrLine1 ? `<p class="text-sm text-bristol-stone mt-1">${site.addrLine1}</p>` : ''}
-          ${site.city && site.state ? `<p class="text-sm text-bristol-stone">${site.city}, ${site.state}</p>` : ''}
+          <h3 class="font-semibold text-brand-ink">${site.name}</h3>
+          ${site.addrLine1 ? `<p class="text-sm text-brand-stone mt-1">${site.addrLine1}</p>` : ''}
+          ${site.city && site.state ? `<p class="text-sm text-brand-stone">${site.city}, ${site.state}</p>` : ''}
         </div>
       `);
 
       markerRef.current = new maplibregl.Marker({
-        color: '#8B0000' // bristol-maroon
+        color: '#8B0000' // brand-maroon
       })
         .setLngLat([site.longitude, site.latitude])
         .setPopup(popup)
@@ -82,8 +82,8 @@ export function SiteMapPreview({ site }: SiteMapPreviewProps) {
   // If MapLibre GL is not available, show fallback
   if (!maplibregl) {
     return (
-      <div className="h-64 bg-bristol-cream/10 rounded-lg flex items-center justify-center">
-        <div className="text-center text-bristol-stone">
+      <div className="h-64 bg-brand-cream/10 rounded-lg flex items-center justify-center">
+        <div className="text-center text-brand-stone">
           <p className="text-sm">Map Preview</p>
           <p className="text-xs mt-1">MapLibre GL not available</p>
           {site && site.latitude && site.longitude && (
@@ -105,13 +105,13 @@ export function SiteMapPreview({ site }: SiteMapPreviewProps) {
         style={{ minHeight: '256px' }}
       />
       {!site && (
-        <div className="absolute inset-0 bg-bristol-cream/80 rounded-lg flex items-center justify-center">
-          <p className="text-bristol-stone text-sm">Select a site to view location</p>
+        <div className="absolute inset-0 bg-brand-cream/80 rounded-lg flex items-center justify-center">
+          <p className="text-brand-stone text-sm">Select a site to view location</p>
         </div>
       )}
       {site && (!site.latitude || !site.longitude) && (
-        <div className="absolute inset-0 bg-bristol-cream/80 rounded-lg flex items-center justify-center">
-          <div className="text-center text-bristol-stone">
+        <div className="absolute inset-0 bg-brand-cream/80 rounded-lg flex items-center justify-center">
+          <div className="text-center text-brand-stone">
             <p className="text-sm font-medium">{site.name}</p>
             <p className="text-xs mt-1">No coordinates available</p>
             <p className="text-xs">Use "Geocode Address" to add location</p>

@@ -31,7 +31,7 @@ class MCPToolsIntegration {
   }
 
   private initializeTools() {
-    // Define comprehensive MCP tools for Bristol AI agents
+    // Define comprehensive MCP tools for Company AI agents
     const tools: MCPTool[] = [
       {
         name: "search_properties",

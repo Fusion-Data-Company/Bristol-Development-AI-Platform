@@ -347,7 +347,7 @@ class AdvancedMemoryService {
     // Extract potential entities (capitalized words, numbers, etc.)
     const entities = content.match(/[A-Z][a-z]+|[\$\€\£][\d,]+|\d+\.?\d*%?/g) || [];
     
-    // Extract topics based on Bristol context
+    // Extract topics based on Company context
     const bristolTopics = ['development', 'real estate', 'investment', 'property', 'market', 'analysis', 'finance', 'demographics'];
     const topics = bristolTopics.filter(topic => content.toLowerCase().includes(topic));
 
@@ -429,7 +429,7 @@ class AdvancedMemoryService {
     const allContent = messages.map(m => m.content || '').join(' ');
     const topics = new Set<string>();
     
-    // Bristol-specific topics
+    // Company-specific topics
     const bristolTopics = [
       'development', 'real estate', 'investment', 'property', 'market', 
       'analysis', 'finance', 'demographics', 'IRR', 'NPV', 'cap rate',
@@ -525,7 +525,7 @@ class AdvancedMemoryService {
   // Database operations (simplified for now)
   private async saveMemoryToDatabase(memory: MemoryContext): Promise<void> {
     try {
-      // Store in Bristol's memory system (could be enhanced with proper schema)
+      // Store in Company's memory system (could be enhanced with proper schema)
       console.log(`📝 Storing memory: ${memory.id} for user ${memory.userId}`);
     } catch (error) {
       console.error('Error saving memory to database:', error);

@@ -77,7 +77,7 @@ function AppContent() {
   const { isAuthenticated } = useAuth();
   const [location] = useLocation();
   
-  // Aggregate app data for Bristol Floating Widget
+  // Aggregate app data for Company Floating Widget
   const { data: sites } = useQuery({
     queryKey: ['/api/sites'],
     enabled: isAuthenticated,
@@ -139,7 +139,7 @@ function App() {
     <ErrorBoundary
       onError={(error, errorInfo) => {
         // Enhanced error reporting
-        console.error('Bristol App Error:', {
+        console.error('Company App Error:', {
           error: error.message,
           stack: error.stack,
           componentStack: errorInfo.componentStack,

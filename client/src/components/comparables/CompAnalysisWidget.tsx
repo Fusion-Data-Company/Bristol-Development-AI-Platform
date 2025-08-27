@@ -87,7 +87,7 @@ export function CompAnalysisWidget({ data }: CompAnalysisWidgetProps) {
 
   if (!analysis) {
     return (
-      <Card className="border-bristol-gold/20">
+      <Card className="border-brand-gold/20">
         <CardContent className="p-4">
           <div className="text-center text-gray-500">
             <Calculator className="h-8 w-8 mx-auto mb-2 text-gray-300" />
@@ -99,11 +99,11 @@ export function CompAnalysisWidget({ data }: CompAnalysisWidgetProps) {
   }
 
   return (
-    <Card className="border-bristol-gold/20 bg-gradient-to-br from-bristol-gold/5 to-bristol-maroon/5">
+    <Card className="border-brand-gold/20 bg-gradient-to-br from-brand-gold/5 to-brand-maroon/5">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
-            <Calculator className="h-4 w-4 text-bristol-maroon" />
+            <Calculator className="h-4 w-4 text-brand-maroon" />
             Market Analysis
           </div>
           <Badge variant="secondary" className="text-xs">
@@ -115,13 +115,13 @@ export function CompAnalysisWidget({ data }: CompAnalysisWidgetProps) {
         {/* Key Metrics */}
         <div className="grid grid-cols-2 gap-3">
           <div className="text-center p-2 bg-white/50 rounded">
-            <div className="text-lg font-bold text-bristol-maroon">
+            <div className="text-lg font-bold text-brand-maroon">
               ${analysis.rent.median.toFixed(2)}
             </div>
             <div className="text-xs text-gray-600">Median Rent/SF</div>
           </div>
           <div className="text-center p-2 bg-white/50 rounded">
-            <div className="text-lg font-bold text-bristol-maroon">
+            <div className="text-lg font-bold text-brand-maroon">
               {analysis.occupancy.avg.toFixed(1)}%
             </div>
             <div className="text-xs text-gray-600">Avg Occupancy</div>
@@ -186,7 +186,7 @@ export function CompAnalysisWidget({ data }: CompAnalysisWidgetProps) {
                     </div>
                     <div>
                       <div className="font-medium">Median</div>
-                      <div className="text-bristol-maroon font-bold">${analysis.rent.median.toFixed(2)}</div>
+                      <div className="text-brand-maroon font-bold">${analysis.rent.median.toFixed(2)}</div>
                     </div>
                     <div>
                       <div className="font-medium">Q3</div>
@@ -260,9 +260,9 @@ export function CompAnalysisWidget({ data }: CompAnalysisWidgetProps) {
               </div>
 
               {/* Market Insights */}
-              <div className="bg-gradient-to-r from-bristol-gold/10 to-bristol-maroon/10 p-4 rounded-lg border border-bristol-gold/20">
+              <div className="bg-gradient-to-r from-brand-gold/10 to-brand-maroon/10 p-4 rounded-lg border border-brand-gold/20">
                 <h4 className="font-semibold mb-2 flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-bristol-maroon" />
+                  <Zap className="h-4 w-4 text-brand-maroon" />
                   Key Insights
                 </h4>
                 <div className="space-y-2 text-sm">

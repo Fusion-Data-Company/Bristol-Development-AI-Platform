@@ -183,14 +183,14 @@ export function FBITool() {
   return (
     <div className="space-y-8">
       {/* MEGA HEADER */}
-      <div className="text-center space-y-6 bristol-enterprise-card p-8 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-amber-50/50 to-orange-50/50 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-orange-500/5 to-bristol-gold/10 animate-pulse"></div>
+      <div className="text-center space-y-6 brand-enterprise-card p-8 rounded-3xl border-4 border-brand-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-amber-50/50 to-orange-50/50 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-orange-500/5 to-brand-gold/10 animate-pulse"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="p-4 rounded-2xl bg-gradient-to-br from-amber-500/20 to-orange-500/20 shadow-xl animate-bounce">
               <Shield className="h-16 w-16 text-amber-600 drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-amber-800 via-bristol-gold to-orange-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+            <h1 className="text-5xl font-black bg-gradient-to-r from-amber-800 via-brand-gold to-orange-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
               🚔 FBI Crime Statistics
             </h1>
           </div>
@@ -199,7 +199,7 @@ export function FBITool() {
               ✨ Real-Time Crime Intelligence Platform
             </h2>
             <div className="flex items-center justify-center gap-8 text-lg font-bold text-amber-700/90">
-              <span>🚨 Live Crime Data • 📊 Safety Analytics • 🔍 Trend Analysis • 🎯 Bristol-Powered Analytics</span>
+              <span>🚨 Live Crime Data • 📊 Safety Analytics • 🔍 Trend Analysis • 🎯 Company-Powered Analytics</span>
             </div>
           </div>
         </div>
@@ -211,7 +211,7 @@ export function FBITool() {
           <div>
             <Label htmlFor="geo" className="text-slate-700 font-medium">Geographic Level</Label>
             <Select value={geo} onValueChange={setGeo}>
-              <SelectTrigger className="bristol-form-enhanced">
+              <SelectTrigger className="brand-form-enhanced">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white/95 backdrop-blur-sm border-amber-200/60">
@@ -227,7 +227,7 @@ export function FBITool() {
               value={state}
               onChange={(e) => setState(e.target.value.toUpperCase())}
               placeholder="NC"
-              className="bristol-form-enhanced"
+              className="brand-form-enhanced"
               maxLength={2}
             />
           </div>
@@ -235,7 +235,7 @@ export function FBITool() {
           <div>
             <Label htmlFor="offense" className="text-slate-700 font-medium">Crime Type</Label>
             <Select value={offense} onValueChange={setOffense}>
-              <SelectTrigger className="bristol-form-enhanced">
+              <SelectTrigger className="brand-form-enhanced">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white/95 backdrop-blur-sm border-amber-200/60">
@@ -258,7 +258,7 @@ export function FBITool() {
               onChange={(e) => setFrom(e.target.value)}
               min="2000"
               max="2030"
-              className="bristol-form-enhanced"
+              className="brand-form-enhanced"
             />
           </div>
 
@@ -271,7 +271,7 @@ export function FBITool() {
               onChange={(e) => setTo(e.target.value)}
               min="2000"
               max="2030"
-              className="bristol-form-enhanced"
+              className="brand-form-enhanced"
             />
           </div>
         </div>
@@ -282,7 +282,7 @@ export function FBITool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bristol-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
+          className="brand-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
         >
           <div className="flex items-center gap-3">
             {isLoading ? (
@@ -300,7 +300,7 @@ export function FBITool() {
                 RUN ANALYSIS
               </div>
               <div className="text-xs text-amber-300 font-medium -mt-1">
-                Bristol Intelligence
+                Company Intelligence
               </div>
             </div>
             <Cpu className="h-4 w-4 text-amber-300/70" />
@@ -313,7 +313,7 @@ export function FBITool() {
               onClick={handleSaveSnapshot}
               disabled={isSubmitting}
               variant="outline"
-              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-brand-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <Save className="mr-2 h-4 w-4" />
@@ -323,7 +323,7 @@ export function FBITool() {
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-brand-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV

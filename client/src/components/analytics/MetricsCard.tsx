@@ -26,7 +26,7 @@ export function MetricsCard({ title, metrics, className }: MetricsCardProps) {
     red: "bg-red-100 text-red-600", 
     yellow: "bg-yellow-100 text-yellow-600",
     blue: "bg-blue-100 text-blue-600",
-    maroon: "bg-bristol-maroon/10 text-bristol-maroon"
+    maroon: "bg-brand-maroon/10 text-brand-maroon"
   };
 
   const getTrendIcon = (trend?: string) => {
@@ -47,23 +47,23 @@ export function MetricsCard({ title, metrics, className }: MetricsCardProps) {
       case "down":
         return "text-red-600";
       default:
-        return "text-bristol-stone";
+        return "text-brand-stone";
     }
   };
 
   return (
-    <Card className={cn("bg-white border-bristol-sky shadow-lg hover:shadow-xl transition-all", className)}>
+    <Card className={cn("bg-white border-brand-sky shadow-lg hover:shadow-xl transition-all", className)}>
       <CardHeader className="pb-3">
-        <CardTitle className="font-serif text-lg font-semibold text-bristol-ink">
+        <CardTitle className="font-serif text-lg font-semibold text-brand-ink">
           {title}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {metrics.map((metric, index) => (
-          <div key={index} className="flex items-center justify-between p-4 bg-bristol-fog rounded-lg">
+          <div key={index} className="flex items-center justify-between p-4 bg-brand-fog rounded-lg">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-sm text-bristol-stone">{metric.label}</p>
+                <p className="text-sm text-brand-stone">{metric.label}</p>
                 {metric.trend && (
                   <Badge variant="outline" className={cn("text-xs", getTrendColor(metric.trend))}>
                     {getTrendIcon(metric.trend)}
@@ -73,26 +73,26 @@ export function MetricsCard({ title, metrics, className }: MetricsCardProps) {
               </div>
               
               <div className="flex items-baseline gap-1">
-                <p className="text-2xl font-bold text-bristol-ink">
+                <p className="text-2xl font-bold text-brand-ink">
                   {typeof metric.value === 'number' 
                     ? metric.value.toLocaleString() 
                     : metric.value
                   }
                 </p>
                 {metric.unit && (
-                  <span className="text-sm text-bristol-stone">{metric.unit}</span>
+                  <span className="text-sm text-brand-stone">{metric.unit}</span>
                 )}
               </div>
               
               {metric.description && (
-                <p className="text-xs text-bristol-stone mt-1">{metric.description}</p>
+                <p className="text-xs text-brand-stone mt-1">{metric.description}</p>
               )}
             </div>
 
             {metric.icon && (
               <div className={cn(
                 "w-12 h-12 rounded-lg flex items-center justify-center",
-                metric.color ? colorClasses[metric.color] : "bg-bristol-maroon/10 text-bristol-maroon"
+                metric.color ? colorClasses[metric.color] : "bg-brand-maroon/10 text-brand-maroon"
               )}>
                 {metric.icon}
               </div>
@@ -104,7 +104,7 @@ export function MetricsCard({ title, metrics, className }: MetricsCardProps) {
   );
 }
 
-// Preset metric configurations for common Bristol use cases
+// Preset metric configurations for common Company use cases
 export const bristolMetrics = {
   demographics: (data: any) => [
     {

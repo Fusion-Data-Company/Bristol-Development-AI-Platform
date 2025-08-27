@@ -45,7 +45,7 @@ const sampleDataAdapter: Adapter = {
     const sampleProperties = [
       {
         source: 'sample-data',
-        name: 'Bristol Commons',
+        name: 'Company Commons',
         address: '1234 Peachtree St',
         city: 'Atlanta',
         state: 'GA',

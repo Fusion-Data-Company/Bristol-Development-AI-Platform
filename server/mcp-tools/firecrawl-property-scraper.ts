@@ -1,5 +1,5 @@
 /**
- * Bristol AI Agent MCP Tool: Firecrawl Property Scraper
+ * Company AI Agent MCP Tool: Firecrawl Property Scraper
  * Provides web scraping capabilities for property data extraction
  * Results are stored in Comparables Annex and returned to the AI agent
  */
@@ -33,12 +33,12 @@ interface ScrapeResult {
   error?: string;
 }
 
-// MCP Tool Definition for Bristol AI Agent
+// MCP Tool Definition for Company AI Agent
 export const bristolPropertyScraperTool: PropertyScrapeTool = {
   name: 'bristol_property_scraper',
   description: `Professional property data scraper using Firecrawl for comprehensive real estate analysis. 
 
-This tool extracts detailed property information from websites and automatically stores results in the Bristol Comparables Annex database for analysis. Perfect for comp analysis, market research, and property intelligence.
+This tool extracts detailed property information from websites and automatically stores results in the Company Comparables Annex database for analysis. Perfect for comp analysis, market research, and property intelligence.
 
 Key capabilities:
 - Extracts property names, addresses, rent prices, unit counts, amenities
@@ -98,7 +98,7 @@ Results appear in both this chat and the Comparables Annex page.`,
 // MCP Tool Handler Function
 export async function handlePropertyScraping(args: ScrapeRequest): Promise<ScrapeResult> {
   try {
-    console.log(`🤖 Bristol AI initiated property scraping: ${args.urls?.length || 0} URLs`);
+    console.log(`🤖 Company AI initiated property scraping: ${args.urls?.length || 0} URLs`);
     
     // Call the AI scraping API endpoint
     const response = await fetch('http://localhost:5000/api/ai-scraping/ai-scrape', {
@@ -111,7 +111,7 @@ export async function handlePropertyScraping(args: ScrapeRequest): Promise<Scrap
         query: args.query || `Property scraping for ${args.location || 'multiple locations'}`,
         extractSchema: buildPropertyExtractionSchema(args.propertyType),
         sessionId: randomUUID(),
-        userId: 'bristol-ai-agent'
+        userId: 'brand-ai-agent'
       })
     });
 
@@ -121,7 +121,7 @@ export async function handlePropertyScraping(args: ScrapeRequest): Promise<Scrap
 
     const result = await response.json();
     
-    console.log(`✅ Bristol AI scraping completed: ${result.propertiesFound || 0} properties`);
+    console.log(`✅ Company AI scraping completed: ${result.propertiesFound || 0} properties`);
     
     return {
       success: result.success || false,
@@ -130,14 +130,14 @@ export async function handlePropertyScraping(args: ScrapeRequest): Promise<Scrap
       properties: result.properties || [],
       metadata: {
         ...result.metadata,
-        aiAgent: 'Bristol AI Elite v5.0',
+        aiAgent: 'Company AI Elite v5.0',
         integrationLevel: 'MCP + Database',
         comparablesAnnexUrl: '/comparables-annex'
       }
     };
 
   } catch (error) {
-    console.error('Bristol AI property scraping failed:', error);
+    console.error('Company AI property scraping failed:', error);
     
     return {
       success: false,
@@ -145,7 +145,7 @@ export async function handlePropertyScraping(args: ScrapeRequest): Promise<Scrap
       propertiesFound: 0,
       properties: [],
       metadata: {
-        error: 'Bristol AI scraping failed',
+        error: 'Company AI scraping failed',
         details: error instanceof Error ? error.message : 'Unknown error'
       },
       error: error instanceof Error ? error.message : 'Unknown error occurred'

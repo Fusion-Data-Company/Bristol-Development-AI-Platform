@@ -150,7 +150,7 @@ export class WebSocketService {
 
       switch (message.type) {
         case "instance_register":
-          // Register this client for Bristol AI sync
+          // Register this client for Company AI sync
           if (message.instance && (message.instance === 'main' || message.instance === 'floating')) {
             realTimeSyncService.registerConnection(clientId, client.socket, message.instance);
             this.sendToClient(clientId, {
@@ -162,7 +162,7 @@ export class WebSocketService {
           break;
           
         case "bristol_sync":
-          // Handle Bristol AI memory synchronization
+          // Handle Company AI memory synchronization
           if (message.sessionId && message.instance && message.data) {
             realTimeSyncService.triggerCrossInstanceSync(
               message.sessionId,

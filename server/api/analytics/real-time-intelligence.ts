@@ -63,7 +63,7 @@ router.get('/market-intelligence', async (req, res) => {
       },
       risk_factors: generateRiskFactors(marketData),
       opportunities: generateOpportunities(marketData),
-      bristol_impact: await calculateBristolImpact(marketData)
+      bristol_impact: await calculateCompanyImpact(marketData)
     };
 
     res.json(intelligence);
@@ -280,8 +280,8 @@ function generateOpportunities(marketData: any[]): string[] {
   return opportunities.length ? opportunities : ['market_stability'];
 }
 
-async function calculateBristolImpact(marketData: any[]): Promise<any> {
-  // Calculate how market conditions impact Bristol's portfolio
+async function calculateCompanyImpact(marketData: any[]): Promise<any> {
+  // Calculate how market conditions impact Company's portfolio
   const sites_data = await db.select().from(sites);
   
   return {

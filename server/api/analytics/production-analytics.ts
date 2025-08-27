@@ -14,8 +14,8 @@ const placeholderService = new PlaceholderReplacementService();
  * Enterprise-grade analytics with real data integration
  */
 
-// Bristol Elite Market Intelligence Dashboard
-router.get('/bristol-intelligence', async (req, res) => {
+// Company Elite Market Intelligence Dashboard
+router.get('/brand-intelligence', async (req, res) => {
   try {
     const intelligence = await db
       .select({
@@ -58,8 +58,8 @@ router.get('/bristol-intelligence', async (req, res) => {
       systemStatus: 'OPERATIONAL'
     });
   } catch (error) {
-    console.error('Bristol intelligence dashboard error:', error);
-    res.status(500).json({ error: 'Failed to load Bristol intelligence dashboard' });
+    console.error('Company intelligence dashboard error:', error);
+    res.status(500).json({ error: 'Failed to load Company intelligence dashboard' });
   }
 });
 
@@ -107,7 +107,7 @@ router.get('/portfolio-performance', async (req, res) => {
     // Calculate portfolio-level KPIs
     const allSites = Object.values(sitePerformance);
     const totalUnits = allSites.reduce((sum, site: any) => sum + site.totalUnits, 0);
-    const avgBristolScore = allSites.reduce((sum, site: any) => sum + site.bristolScore, 0) / allSites.length || 0;
+    const avgCompanyScore = allSites.reduce((sum, site: any) => sum + site.bristolScore, 0) / allSites.length || 0;
     
     // Calculate estimated portfolio value and NOI
     const estimatedValue = totalUnits * 200000; // Conservative $200k per unit
@@ -128,7 +128,7 @@ router.get('/portfolio-performance', async (req, res) => {
         totalProperties: allSites.length,
         totalUnits,
         estimatedValue,
-        avgBristolScore: Math.round(avgBristolScore * 10) / 10,
+        avgCompanyScore: Math.round(avgCompanyScore * 10) / 10,
         targetNOI,
         projectedIRR: 14.2,
         avgCapRate: 6.3,
@@ -155,7 +155,7 @@ router.get('/market-comparison', async (req, res) => {
         state: sites.state,
         siteCount: count(sites.id),
         totalUnits: sum(sites.unitsTotal),
-        avgBristolScore: avg(sites.bristolScore)
+        avgCompanyScore: avg(sites.bristolScore)
       })
       .from(sites)
       .where(and(
@@ -191,7 +191,7 @@ router.get('/market-comparison', async (req, res) => {
             bristolPresence: {
               properties: market.siteCount,
               totalUnits: market.totalUnits || 0,
-              avgBristolScore: Math.round((Number(market.avgBristolScore) || 0) * 10) / 10
+              avgCompanyScore: Math.round((Number(market.avgCompanyScore) || 0) * 10) / 10
             },
             marketData: realMarketData ? {
               medianIncome: realMarketData.medianIncome,
@@ -199,8 +199,8 @@ router.get('/market-comparison', async (req, res) => {
               employmentRate: realMarketData.employmentRate,
               rentGrowth: realMarketData.rentGrowth
             } : null,
-            competitivePosition: (Number(market.avgBristolScore) || 0) > 75 ? 'STRONG' : 
-                               (Number(market.avgBristolScore) || 0) > 60 ? 'MODERATE' : 'NEEDS_IMPROVEMENT'
+            competitivePosition: (Number(market.avgCompanyScore) || 0) > 75 ? 'STRONG' : 
+                               (Number(market.avgCompanyScore) || 0) > 60 ? 'MODERATE' : 'NEEDS_IMPROVEMENT'
           };
         } catch (error) {
           console.error(`Market analysis failed for ${market.city}:`, error);
@@ -209,7 +209,7 @@ router.get('/market-comparison', async (req, res) => {
             bristolPresence: {
               properties: market.siteCount,
               totalUnits: market.totalUnits || 0,
-              avgBristolScore: Math.round((market.avgBristolScore || 0) * 10) / 10
+              avgCompanyScore: Math.round((market.avgCompanyScore || 0) * 10) / 10
             },
             marketData: null,
             competitivePosition: 'DATA_UNAVAILABLE'

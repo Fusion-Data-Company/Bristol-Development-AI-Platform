@@ -31,7 +31,7 @@ export class KMLResolver {
       console.log('Fetching KML from URL:', kmlUrl);
       const response = await fetch(kmlUrl, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)',
+          'User-Agent': 'Mozilla/5.0 (compatible; Company Site Intelligence Platform)',
           'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
         }
       });
@@ -136,7 +136,7 @@ export class KMLResolver {
     // First try: Original URL as-is
     let response = await fetch(href, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Bristol Site Intelligence Platform)',
+        'User-Agent': 'Mozilla/5.0 (compatible; Company Site Intelligence Platform)',
         'Accept': 'application/vnd.google-earth.kmz, application/xml, text/xml, */*'
       }
     });

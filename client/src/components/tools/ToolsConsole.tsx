@@ -185,7 +185,7 @@ export function ToolsConsole() {
       case "pending":
         return <Clock className="w-4 h-4 text-yellow-600" />;
       default:
-        return <Activity className="w-4 h-4 text-bristol-stone" />;
+        return <Activity className="w-4 h-4 text-brand-stone" />;
     }
   };
 
@@ -194,12 +194,12 @@ export function ToolsConsole() {
   };
 
   return (
-    <Card className="bg-white border-bristol-sky shadow-lg">
-      <CardHeader className="p-6 border-b border-bristol-sky bg-bristol-ink text-white">
+    <Card className="bg-white border-brand-sky shadow-lg">
+      <CardHeader className="p-6 border-b border-brand-sky bg-brand-ink text-white">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="font-serif text-xl font-semibold">MCP Tools Console</CardTitle>
-            <p className="text-bristol-stone text-sm">Universal webhook integration and real-time processing</p>
+            <p className="text-brand-stone text-sm">Universal webhook integration and real-time processing</p>
           </div>
           <div className="flex items-center gap-2">
             <div className={cn(
@@ -215,7 +215,7 @@ export function ToolsConsole() {
 
       <CardContent className="p-0">
         <Tabs defaultValue="tools" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-bristol-fog">
+          <TabsList className="grid w-full grid-cols-3 bg-brand-fog">
             <TabsTrigger value="tools" className="data-[state=active]:bg-white">Available Tools</TabsTrigger>
             <TabsTrigger value="execute" className="data-[state=active]:bg-white">Execute</TabsTrigger>
             <TabsTrigger value="events" className="data-[state=active]:bg-white">Live Events</TabsTrigger>
@@ -223,31 +223,31 @@ export function ToolsConsole() {
 
           <TabsContent value="tools" className="p-6">
             <div className="space-y-3">
-              <h4 className="font-semibold text-bristol-ink mb-3">Available Tools</h4>
+              <h4 className="font-semibold text-brand-ink mb-3">Available Tools</h4>
               {toolsLoading ? (
-                <div className="text-center py-8 text-bristol-stone">Loading tools...</div>
+                <div className="text-center py-8 text-brand-stone">Loading tools...</div>
               ) : tools.length === 0 ? (
-                <div className="text-center py-8 text-bristol-stone">No tools available</div>
+                <div className="text-center py-8 text-brand-stone">No tools available</div>
               ) : (
                 tools.map((tool: McpTool) => (
                   <button
                     key={tool.id}
                     onClick={() => setSelectedTool(tool.name)}
                     className={cn(
-                      "w-full p-3 border rounded-lg hover:bg-bristol-sky transition-colors text-left",
-                      selectedTool === tool.name ? "border-bristol-maroon bg-bristol-sky" : "border-bristol-sky"
+                      "w-full p-3 border rounded-lg hover:bg-brand-sky transition-colors text-left",
+                      selectedTool === tool.name ? "border-brand-maroon bg-brand-sky" : "border-brand-sky"
                     )}
                   >
                     <div className="flex items-start gap-3">
                       <div className={cn(
                         "p-2 rounded-lg",
-                        selectedTool === tool.name ? "bg-bristol-maroon text-white" : "bg-bristol-fog text-bristol-maroon"
+                        selectedTool === tool.name ? "bg-brand-maroon text-white" : "bg-brand-fog text-brand-maroon"
                       )}>
                         {getToolIcon(tool.name)}
                       </div>
                       <div className="flex-1">
-                        <div className="font-medium text-bristol-ink">{tool.name}</div>
-                        <div className="text-xs text-bristol-stone">{tool.description}</div>
+                        <div className="font-medium text-brand-ink">{tool.name}</div>
+                        <div className="text-xs text-brand-stone">{tool.description}</div>
                         <div className="flex items-center gap-2 mt-1">
                           <Badge 
                             variant={tool.enabled ? "default" : "secondary"}
@@ -270,29 +270,29 @@ export function ToolsConsole() {
           <TabsContent value="execute" className="p-6">
             <div className="space-y-4">
               <div>
-                <h4 className="font-semibold text-bristol-ink mb-3">Tool Execution</h4>
-                <p className="text-sm text-bristol-stone mb-4">
+                <h4 className="font-semibold text-brand-ink mb-3">Tool Execution</h4>
+                <p className="text-sm text-brand-stone mb-4">
                   Select a tool and provide the payload to execute
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-bristol-ink mb-2">
+                <label className="block text-sm font-medium text-brand-ink mb-2">
                   Selected Tool
                 </label>
-                <div className="p-3 bg-bristol-fog rounded-lg border border-bristol-sky">
+                <div className="p-3 bg-brand-fog rounded-lg border border-brand-sky">
                   {selectedTool || "No tool selected"}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-bristol-ink mb-2">
+                <label className="block text-sm font-medium text-brand-ink mb-2">
                   Payload (JSON)
                 </label>
                 <Textarea
                   value={payload}
                   onChange={(e) => setPayload(e.target.value)}
-                  className="h-32 font-mono text-sm border-bristol-sky focus:ring-bristol-maroon focus:border-bristol-maroon"
+                  className="h-32 font-mono text-sm border-brand-sky focus:ring-brand-maroon focus:border-brand-maroon"
                   placeholder='{\n  "site_id": "franklin-main",\n  "task": "pull-acs"\n}'
                 />
               </div>
@@ -300,7 +300,7 @@ export function ToolsConsole() {
               <Button
                 onClick={handleExecuteTool}
                 disabled={!selectedTool || !payload.trim() || executeToolMutation.isPending}
-                className="w-full bg-bristol-maroon text-white hover:bg-bristol-maroon/90"
+                className="w-full bg-brand-maroon text-white hover:bg-brand-maroon/90"
               >
                 <Play className="w-4 h-4 mr-2" />
                 {executeToolMutation.isPending ? "Executing..." : "Execute Tool"}
@@ -309,11 +309,11 @@ export function ToolsConsole() {
               {/* Recent Executions */}
               {executions.length > 0 && (
                 <div className="mt-6">
-                  <h5 className="font-medium text-bristol-ink mb-3">Recent Executions</h5>
+                  <h5 className="font-medium text-brand-ink mb-3">Recent Executions</h5>
                   <ScrollArea className="h-48">
                     <div className="space-y-2">
                       {executions.map((execution) => (
-                        <div key={execution.id} className="p-3 bg-bristol-fog rounded-lg border border-bristol-sky">
+                        <div key={execution.id} className="p-3 bg-brand-fog rounded-lg border border-brand-sky">
                           <div className="flex items-center justify-between mb-1">
                             <div className="flex items-center gap-2">
                               {getStatusIcon(execution.status)}
@@ -322,7 +322,7 @@ export function ToolsConsole() {
                                 {execution.status}
                               </Badge>
                             </div>
-                            <span className="text-xs text-bristol-stone">
+                            <span className="text-xs text-brand-stone">
                               {formatTimestamp(execution.timestamp)}
                             </span>
                           </div>
@@ -340,10 +340,10 @@ export function ToolsConsole() {
 
           <TabsContent value="events" className="p-6">
             <div>
-              <h4 className="font-semibold text-bristol-ink mb-3">Live Events</h4>
-              <div className="h-64 p-3 bg-bristol-fog rounded-lg overflow-auto font-mono text-xs">
+              <h4 className="font-semibold text-brand-ink mb-3">Live Events</h4>
+              <div className="h-64 p-3 bg-brand-fog rounded-lg overflow-auto font-mono text-xs">
                 {liveEvents.length === 0 ? (
-                  <div className="text-bristol-stone text-center py-8">
+                  <div className="text-brand-stone text-center py-8">
                     No events yet. Start executing tools to see live updates.
                   </div>
                 ) : (
@@ -354,7 +354,7 @@ export function ToolsConsole() {
                         <span className={cn(
                           event.status === "error" ? "text-red-600" :
                           event.status === "success" ? "text-green-600" :
-                          "text-bristol-stone"
+                          "text-brand-stone"
                         )}>
                           {formatTimestamp(event.timestamp)} - {event.message}
                         </span>

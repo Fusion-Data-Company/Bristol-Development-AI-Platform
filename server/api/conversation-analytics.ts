@@ -101,8 +101,8 @@ Provide a JSON response with:
 
     const topicAnalysis = JSON.parse(response.choices[0].message.content || '{}');
     
-    // Add Bristol-specific topic categorization
-    const bristolCategories = categorizeBristolTopics(topicAnalysis.primaryTopics || []);
+    // Add Company-specific topic categorization
+    const bristolCategories = categorizeCompanyTopics(topicAnalysis.primaryTopics || []);
     
     res.json({
       success: true,
@@ -137,7 +137,7 @@ router.post('/performance-metrics', async (req, res) => {
         calculatedAt: new Date().toISOString()
       },
       insights,
-      benchmarks: getBristolBenchmarks(),
+      benchmarks: getCompanyBenchmarks(),
       recommendations: generatePerformanceRecommendations(metrics)
     });
 
@@ -206,7 +206,7 @@ router.post('/optimization-suggestions', async (req, res) => {
   try {
     const { conversationHistory } = conversationAnalyticsSchema.parse(req.body);
     
-    const optimizationPrompt = `Analyze this Bristol Development conversation and suggest optimizations:
+    const optimizationPrompt = `Analyze this Company Development conversation and suggest optimizations:
 
 ${conversationHistory.slice(-10).map(msg => `${msg.role}: ${msg.content}`).join('\n')}
 
@@ -253,7 +253,7 @@ Provide JSON with:
 
 // Helper functions
 
-function categorizeBristolTopics(topics: string[]) {
+function categorizeCompanyTopics(topics: string[]) {
   const categories = {
     'Market Analysis': topics.filter(t => 
       /market|trend|growth|demographic|economic/i.test(t)
@@ -356,7 +356,7 @@ async function generatePerformanceInsights(history: any[], metrics: any) {
   return insights;
 }
 
-function getBristolBenchmarks() {
+function getCompanyBenchmarks() {
   return {
     averageConversationLength: 12,
     targetEngagementScore: 0.7,

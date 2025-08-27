@@ -195,7 +195,7 @@ export class MarketIntelligenceAgent {
           messages: [
             {
               role: 'system',
-              content: `You are a market intelligence analyst for Bristol Development Group, a real estate investment firm. Analyze recent news and provide specific, actionable insights for real estate investment decisions. Focus on concrete data, trends, and implications for multifamily real estate investments. Include specific dates, numbers, and sources when available.`
+              content: `You are a market intelligence analyst for Company Development Group, a real estate investment firm. Analyze recent news and provide specific, actionable insights for real estate investment decisions. Focus on concrete data, trends, and implications for multifamily real estate investments. Include specific dates, numbers, and sources when available.`
             },
             {
               role: 'user',
@@ -330,7 +330,7 @@ export class MarketIntelligenceAgent {
       // Only create insights for medium/high impact items
       if (impact !== 'low' && paragraph.length > 50) {
         const title = this.extractTitle(paragraph, category);
-        const bristolImplication = this.generateBristolImplication(paragraph, category);
+        const bristolImplication = this.generateCompanyImplication(paragraph, category);
         
         insights.push({
           title,
@@ -395,9 +395,9 @@ export class MarketIntelligenceAgent {
   }
 
   /**
-   * Generate Bristol-specific implications
+   * Generate Company-specific implications
    */
-  private generateBristolImplication(content: string, category: string): string {
+  private generateCompanyImplication(content: string, category: string): string {
     const lowerContent = content.toLowerCase();
 
     if (category === 'monetary_policy') {
@@ -546,7 +546,7 @@ export class MarketIntelligenceAgent {
         category: 'demographics',
         impact: 'medium' as const,
         priority: 6,
-        bristolImplication: 'Strong demographic tailwinds support rental demand and rent growth in core Bristol markets',
+        bristolImplication: 'Strong demographic tailwinds support rental demand and rent growth in core Company markets',
         actionRequired: false,
         agentSource: this.agentName,
         metadata: {

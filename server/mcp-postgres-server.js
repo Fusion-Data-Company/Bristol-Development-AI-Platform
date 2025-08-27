@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Bristol PostgreSQL MCP Server
- * Provides database access to the Bristol AI agent
+ * Company PostgreSQL MCP Server
+ * Provides database access to the Company AI agent
  */
 
 const { Pool } = require('pg');
@@ -20,7 +20,7 @@ class PostgresMCPServer {
     this.tools = [
       {
         name: "query_bristol_data",
-        description: "Query Bristol database for sites, metrics, and analytics",
+        description: "Query Company database for sites, metrics, and analytics",
         inputSchema: {
           type: "object",
           properties: {
@@ -39,7 +39,7 @@ class PostgresMCPServer {
       },
       {
         name: "get_bristol_sites",
-        description: "Get all property sites in Bristol database",
+        description: "Get all property sites in Company database",
         inputSchema: {
           type: "object",
           properties: {
@@ -81,7 +81,7 @@ class PostgresMCPServer {
           return await this.queryDatabase(params.query, params.params || []);
           
         case "get_bristol_sites":
-          return await this.getBristolSites(params.limit || 50);
+          return await this.getCompanySites(params.limit || 50);
           
         case "get_site_metrics":
           return await this.getSiteMetrics(params.siteId);
@@ -113,7 +113,7 @@ class PostgresMCPServer {
     }
   }
 
-  async getBristolSites(limit) {
+  async getCompanySites(limit) {
     const query = `
       SELECT 
         id, name, address, latitude, longitude, 
@@ -193,7 +193,7 @@ if (require.main === module) {
     }
   });
 
-  console.log("Bristol PostgreSQL MCP Server running on STDIO");
+  console.log("Company PostgreSQL MCP Server running on STDIO");
 }
 
 module.exports = PostgresMCPServer;

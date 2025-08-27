@@ -24,16 +24,16 @@ router.get('/overview', async (req, res) => {
       return acc;
     }, {} as Record<string, number>);
 
-    // Bristol scoring analytics
+    // Company scoring analytics
     const bristolScores = sites.map(site => Math.floor(Math.random() * 25) + 75); // 75-100 range
-    const avgBristolScore = bristolScores.reduce((sum, score) => sum + score, 0) / bristolScores.length || 0;
+    const avgCompanyScore = bristolScores.reduce((sum, score) => sum + score, 0) / bristolScores.length || 0;
 
     const overview = {
       portfolio: {
         totalProperties,
         totalUnits,
         totalValue: estimatedValue,
-        avgBristolScore: Math.round(avgBristolScore),
+        avgCompanyScore: Math.round(avgCompanyScore),
         occupancyRate: 94.2,
         avgRentPsf: 1.85
       },
@@ -195,9 +195,9 @@ router.post('/agent-query', async (req, res) => {
     };
 
     // Enhanced prompt for doctoral-level analysis
-    const systemPrompt = `You are the Bristol Portfolio Analytics AI - a world-class commercial real estate economics expert with a doctorate in Real Estate Finance and specialization in multifamily asset optimization. You combine the analytical rigor of an economics professor with the practical insights of a seasoned institutional investor.
+    const systemPrompt = `You are the Company Portfolio Analytics AI - a world-class commercial real estate economics expert with a doctorate in Real Estate Finance and specialization in multifamily asset optimization. You combine the analytical rigor of an economics professor with the practical insights of a seasoned institutional investor.
 
-Bristol Development Group Portfolio Context:
+Company Development Group Portfolio Context:
 - Total Properties: ${portfolioContext.totalProperties}
 - Total Units: ${portfolioContext.totalUnits.toLocaleString()}
 - Primary Markets: ${portfolioContext.markets.slice(0, 5).join(', ')}
@@ -207,7 +207,7 @@ Bristol Development Group Portfolio Context:
 
 Your Analysis Standards:
 1. Provide doctoral-level economic analysis with quantitative backing
-2. Connect macro trends to specific Bristol portfolio implications
+2. Connect macro trends to specific Company portfolio implications
 3. Include risk assessment and scenario modeling
 4. Reference relevant market data, cap rate trends, and financing conditions
 5. Recommend specific actions with timeline and success metrics
@@ -221,14 +221,14 @@ Maintain intellectual rigor while being actionable. Think like a principal makin
 Query: ${query}
 
 Provide a comprehensive analysis addressing:
-1. Direct impact on Bristol Development Group's portfolio
+1. Direct impact on Company Development Group's portfolio
 2. Economic fundamentals and market dynamics
 3. Quantitative risk/return implications
 4. Strategic recommendations with specific actions
 5. Timeline and monitoring metrics`;
 
     // Call AI service for analysis
-    const response = "Comprehensive portfolio analysis based on Bristol Development Group's investment criteria and market conditions. The portfolio demonstrates strong fundamentals with diversified geographic exposure across key Sunbelt markets.";
+    const response = "Comprehensive portfolio analysis based on Company Development Group's investment criteria and market conditions. The portfolio demonstrates strong fundamentals with diversified geographic exposure across key Sunbelt markets.";
     
     // Record the query for analytics agent monitoring
     enterpriseHealthService.recordRequest('Analytics Agent', Date.now() - Date.now(), true);
@@ -236,7 +236,7 @@ Provide a comprehensive analysis addressing:
     res.json({
       analysis: response,
       timestamp: new Date().toISOString(),
-      agent: 'bristol-analytics-ai'
+      agent: 'brand-analytics-ai'
     });
     
   } catch (error) {
@@ -254,7 +254,7 @@ router.get('/enterprise-metrics', async (req, res) => {
     const metrics = {
       totalSites: appData.analytics.totalSites,
       totalUnits: appData.analytics.totalUnits,
-      avgBristolScore: 78.5, // Calculate from actual data
+      avgCompanyScore: 78.5, // Calculate from actual data
       portfolioValue: appData.analytics.totalUnits * 285000, // Estimated value per unit
       activeScrapes: 12, // From integration service
       completedAnalyses: appData.snapshots.length,
@@ -286,7 +286,7 @@ router.get('/market-insights', async (req, res) => {
       {
         id: '2',
         title: 'Sunbelt Migration Accelerating',
-        description: 'Q4 2023 data shows net migration to Bristol target markets up 3.2% YoY, driven by corporate relocations and remote work flexibility.',
+        description: 'Q4 2023 data shows net migration to Company target markets up 3.2% YoY, driven by corporate relocations and remote work flexibility.',
         impact: 'high',
         category: 'demographics',
         timestamp: '4 hours ago',
@@ -333,7 +333,7 @@ router.get('/active-projects', async (req, res) => {
       name: site.name || 'Unnamed Property',
       location: `${site.city || 'Unknown'}, ${site.state || 'Unknown'}`,
       status: site.status === 'Operating' ? 'stabilized' : 'value-add',
-      bristolScore: Math.floor(Math.random() * 25) + 75, // 75-100 range for Bristol quality
+      bristolScore: Math.floor(Math.random() * 25) + 75, // 75-100 range for Company quality
       units: site.unitsTotal || 0,
       irr: Math.round((Math.random() * 8 + 12) * 100) / 100, // 12-20% range
       cocReturn: Math.round((Math.random() * 4 + 6) * 100) / 100, // 6-10% range
@@ -395,7 +395,7 @@ router.get('/export-metrics', async (req, res) => {
     
     const contentType = format === 'csv' ? 'text/csv' : 'application/json';
     res.setHeader('Content-Type', contentType);
-    res.setHeader('Content-Disposition', `attachment; filename=bristol-metrics.${format}`);
+    res.setHeader('Content-Disposition', `attachment; filename=brand-metrics.${format}`);
     res.send(data);
   } catch (error) {
     console.error('Error exporting metrics:', error);

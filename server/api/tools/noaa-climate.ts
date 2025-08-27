@@ -5,7 +5,7 @@ const router = express.Router();
 // NOAA Climate Data API
 router.get('/', async (req, res) => {
   try {
-    // NOAA Climate data for Bristol markets
+    // NOAA Climate data for Company markets
     const climateData = {
       currentConditions: [
         {

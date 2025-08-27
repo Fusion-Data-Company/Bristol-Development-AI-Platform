@@ -1,4 +1,4 @@
-// Enterprise Compliance & Regulatory Engine for Bristol Development Group
+// Enterprise Compliance & Regulatory Engine for Company Development Group
 // Provides comprehensive compliance monitoring, regulatory tracking, and audit capabilities
 
 import { db } from "../db";

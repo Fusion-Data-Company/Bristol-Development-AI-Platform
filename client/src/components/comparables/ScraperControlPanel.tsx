@@ -127,12 +127,12 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
   };
 
   return (
-    <Card className="mb-6 bg-gradient-to-br from-bristol-cream via-white to-bristol-sky/10 border-2 border-bristol-gold/30 shadow-xl">
-      <CardHeader className="bg-gradient-to-r from-bristol-maroon/10 to-bristol-gold/10 border-b border-bristol-gold/20">
-        <CardTitle className="flex items-center gap-2 text-bristol-maroon">
+    <Card className="mb-6 bg-gradient-to-br from-brand-cream via-white to-brand-sky/10 border-2 border-brand-gold/30 shadow-xl">
+      <CardHeader className="bg-gradient-to-r from-brand-maroon/10 to-brand-gold/10 border-b border-brand-gold/20">
+        <CardTitle className="flex items-center gap-2 text-brand-maroon">
           <Search className="h-5 w-5" />
           Elite Scraping Agent
-          <Badge variant="secondary" className="bg-bristol-gold/20 text-bristol-maroon">
+          <Badge variant="secondary" className="bg-brand-gold/20 text-brand-maroon">
             Firecrawl + Apify + Fallback
           </Badge>
         </CardTitle>
@@ -142,7 +142,7 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
         {/* Primary Search Controls */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="address" className="text-bristol-maroon font-semibold">
+            <Label htmlFor="address" className="text-brand-maroon font-semibold">
               <MapPin className="h-4 w-4 inline mr-1" />
               Target Address
             </Label>
@@ -151,12 +151,12 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
               placeholder="123 Main St, Nashville, TN"
               value={scrapeQuery.address}
               onChange={(e) => setScrapeQuery(prev => ({ ...prev, address: e.target.value }))}
-              className="border-bristol-gold/30 focus:border-bristol-maroon"
+              className="border-brand-gold/30 focus:border-brand-maroon"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="radius" className="text-bristol-maroon font-semibold">
+            <Label htmlFor="radius" className="text-brand-maroon font-semibold">
               Search Radius (miles)
             </Label>
             <Input
@@ -166,12 +166,12 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
               max="50"
               value={scrapeQuery.radius_mi}
               onChange={(e) => setScrapeQuery(prev => ({ ...prev, radius_mi: parseInt(e.target.value) || 5 }))}
-              className="border-bristol-gold/30 focus:border-bristol-maroon"
+              className="border-brand-gold/30 focus:border-brand-maroon"
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="asset-type" className="text-bristol-maroon font-semibold">
+            <Label htmlFor="asset-type" className="text-brand-maroon font-semibold">
               <Building2 className="h-4 w-4 inline mr-1" />
               Asset Type
             </Label>
@@ -179,7 +179,7 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
               value={scrapeQuery.asset_type}
               onValueChange={(value) => setScrapeQuery(prev => ({ ...prev, asset_type: value }))}
             >
-              <SelectTrigger className="border-bristol-gold/30 focus:border-bristol-maroon">
+              <SelectTrigger className="border-brand-gold/30 focus:border-brand-maroon">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -193,7 +193,7 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
 
         {/* Amenities Selection */}
         <div className="space-y-2">
-          <Label className="text-bristol-maroon font-semibold">Target Amenities</Label>
+          <Label className="text-brand-maroon font-semibold">Target Amenities</Label>
           <div className="flex flex-wrap gap-2">
             {AMENITY_OPTIONS.map(amenity => (
               <Badge
@@ -201,8 +201,8 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
                 variant={scrapeQuery.amenities.includes(amenity) ? "default" : "outline"}
                 className={`cursor-pointer transition-all ${
                   scrapeQuery.amenities.includes(amenity)
-                    ? 'bg-bristol-maroon text-white'
-                    : 'border-bristol-gold/30 hover:bg-bristol-gold/10'
+                    ? 'bg-brand-maroon text-white'
+                    : 'border-brand-gold/30 hover:bg-brand-gold/10'
                 }`}
                 onClick={() => handleAmenityToggle(amenity)}
               >
@@ -214,7 +214,7 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
 
         {/* Keywords */}
         <div className="space-y-2">
-          <Label htmlFor="keywords" className="text-bristol-maroon font-semibold">
+          <Label htmlFor="keywords" className="text-brand-maroon font-semibold">
             Keywords (comma-separated)
           </Label>
           <Textarea
@@ -222,7 +222,7 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
             placeholder="luxury, downtown, waterfront, new construction"
             value={keywordsInput}
             onChange={(e) => setKeywordsInput(e.target.value)}
-            className="border-bristol-gold/30 focus:border-bristol-maroon h-20"
+            className="border-brand-gold/30 focus:border-brand-maroon h-20"
           />
         </div>
 
@@ -231,7 +231,7 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
           <Button
             onClick={handleScrape}
             disabled={scrapeMutation.isPending || !scrapeQuery.address.trim()}
-            className="bg-gradient-to-r from-bristol-maroon to-bristol-gold hover:from-bristol-maroon/90 hover:to-bristol-gold/90 text-white px-8 py-2 font-semibold"
+            className="bg-gradient-to-r from-brand-maroon to-brand-gold hover:from-brand-maroon/90 hover:to-brand-gold/90 text-white px-8 py-2 font-semibold"
           >
             {scrapeMutation.isPending ? (
               <>
@@ -252,7 +252,7 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
                 <CheckCircle className="h-4 w-4" />
                 Last: {lastScrapeResult.inserted} records
               </div>
-              <Badge variant="outline" className="text-bristol-maroon border-bristol-gold/30">
+              <Badge variant="outline" className="text-brand-maroon border-brand-gold/30">
                 Source: {lastScrapeResult.source}
               </Badge>
             </div>
@@ -277,8 +277,8 @@ export default function ScraperControlPanel({ onScrapeComplete }: ScraperControl
         )}
 
         {/* API Configuration Status */}
-        <div className="bg-bristol-sky/10 border border-bristol-gold/20 rounded-lg p-3">
-          <div className="text-xs text-bristol-maroon/70">
+        <div className="bg-brand-sky/10 border border-brand-gold/20 rounded-lg p-3">
+          <div className="text-xs text-brand-maroon/70">
             <p className="font-medium mb-1">Scraping Sources Available:</p>
             <div className="flex gap-4">
               <span className="flex items-center gap-1">

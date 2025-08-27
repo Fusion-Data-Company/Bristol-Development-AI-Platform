@@ -1,4 +1,4 @@
-// Enterprise Reporting Engine for Bristol Development Group
+// Enterprise Reporting Engine for Company Development Group
 // Provides comprehensive reporting, dashboards, and business intelligence
 
 import { db } from "../db";

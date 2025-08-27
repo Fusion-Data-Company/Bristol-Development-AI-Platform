@@ -84,24 +84,24 @@ const AVAILABLE_MODELS = {
   }
 };
 
-// Bristol Development Group Elite Deal Intelligence Agent System Prompt - Hidden from users but injected into every conversation
-const BRISTOL_SYSTEM_PROMPT = `BRISTOL DEVELOPMENT GROUP — ELITE DEAL INTELLIGENCE AGENT (SYSTEM PROMPT)
+// Company Development Group Elite Deal Intelligence Agent System Prompt - Hidden from users but injected into every conversation
+const COMPANY_SYSTEM_PROMPT = `COMPANY DEVELOPMENT GROUP — ELITE DEAL INTELLIGENCE AGENT (SYSTEM PROMPT)
 
 Identity & Mandate
 
-You are Bristol's Elite Deal Intelligence Officer—a hybrid of senior acquisitions analyst, investment banker, and market strategist. You don't just answer questions—you form an investment thesis, marshal evidence, quantify upside/downside, and win the room without hiding risks.
+You are Company's Elite Deal Intelligence Officer—a hybrid of senior acquisitions analyst, investment banker, and market strategist. You don't just answer questions—you form an investment thesis, marshal evidence, quantify upside/downside, and win the room without hiding risks.
 • Speak as an internal teammate ("we/our").
-• Your north star: superior risk‑adjusted returns for Bristol Development Group (Franklin, TN) through disciplined site selection, underwriting, and execution.
+• Your north star: superior risk‑adjusted returns for Company Development Group (Franklin, TN) through disciplined site selection, underwriting, and execution.
 • You operate across multifamily / mixed‑use / select commercial in the Southeast & Mid‑South, with emphasis on amenity‑driven competitiveness, liquidity, and durable demand.
 
-Data Hierarchy & Bristol Property Database Access
+Data Hierarchy & Company Property Database Access
 
-You have direct access to Bristol Development Group's complete property database through MCP tools. Use all live data passed in dataContext. If a field is missing or stale, backfill from the embedded KNOWLEDGE_SEED. Mark backfilled fields as "seed" in your reasoning (don't print JSON unless asked).
+You have direct access to Company Development Group's complete property database through MCP tools. Use all live data passed in dataContext. If a field is missing or stale, backfill from the embedded KNOWLEDGE_SEED. Mark backfilled fields as "seed" in your reasoning (don't print JSON unless asked).
 
 Priority: dataContext.latest → dataContext.snapshot → KNOWLEDGE_SEED.
 
-Bristol Property Search Capabilities:
-• Query all 46+ Bristol properties by location (city, state, address)
+Company Property Search Capabilities:
+• Query all 46+ Company properties by location (city, state, address)
 • Filter by development status (Operating, Pipeline, Completed, Newest)
 • Access detailed property metrics (units, sq ft, completion year, coordinates)
 • Get real-time occupancy and performance data for each asset
@@ -135,7 +135,7 @@ House Rules (hard)
 • Use USD, SF, units, %, and ISO dates.
 • Keep tables crisp, not ornamental.
 • Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated approach expected from a premium AI system.
-• When asked about Bristol properties or locations, use the available MCP tools to query the live database rather than relying on cached data.`;
+• When asked about Company properties or locations, use the available MCP tools to query the live database rather than relying on cached data.`;
 
 // Chat completion schema
 const chatRequestSchema = z.object({
@@ -174,14 +174,14 @@ router.post('/completions', async (req, res) => {
       return res.status(400).json({ error: 'Invalid model specified' });
     }
 
-    // Get Bristol property data context for AI
+    // Get Company property data context for AI
     const { mcpToolsService } = await import('../services/mcpToolsService');
     let bristolContext = '';
     
     try {
       const aiContext = await mcpToolsService.getAiContext();
       if (aiContext.bristolProperties && aiContext.bristolProperties.length > 0) {
-        bristolContext = `\n\nBRISTOL PROPERTIES DATABASE CONTEXT:\n` +
+        bristolContext = `\n\nCOMPANY PROPERTIES DATABASE CONTEXT:\n` +
           `Total Properties: ${aiContext.propertiesByLocation?.totalProperties || 0}\n` +
           `States: ${aiContext.propertiesByLocation?.states?.join(', ') || 'N/A'}\n` +
           `Cities: ${aiContext.propertiesByLocation?.cities?.join(', ') || 'N/A'}\n` +
@@ -193,12 +193,12 @@ router.post('/completions', async (req, res) => {
           ), null, 2)}\n\n`;
       }
     } catch (error) {
-      console.log('Could not fetch Bristol properties context:', error);
+      console.log('Could not fetch Company properties context:', error);
     }
 
-    // Inject Bristol system prompt with live property data (hidden from user)
+    // Inject Company system prompt with live property data (hidden from user)
     const enhancedMessages = [
-      { role: 'system' as const, content: BRISTOL_SYSTEM_PROMPT + bristolContext },
+      { role: 'system' as const, content: COMPANY_SYSTEM_PROMPT + bristolContext },
       ...messages.filter(msg => msg.role !== 'system') // Remove any user-provided system messages
     ];
 
@@ -227,7 +227,7 @@ router.post('/completions', async (req, res) => {
 
         completion = await anthropic.messages.create({
           model: modelConfig.model,
-          system: BRISTOL_SYSTEM_PROMPT + bristolContext,
+          system: COMPANY_SYSTEM_PROMPT + bristolContext,
           messages: anthropicMessages,
           max_tokens: maxTokens,
           temperature
@@ -246,7 +246,7 @@ router.post('/completions', async (req, res) => {
         const result = await genai.models.generateContent({
           model: modelConfig.model,
           config: {
-            systemInstruction: BRISTOL_SYSTEM_PROMPT + bristolContext,
+            systemInstruction: COMPANY_SYSTEM_PROMPT + bristolContext,
             temperature,
             maxOutputTokens: maxTokens
           },

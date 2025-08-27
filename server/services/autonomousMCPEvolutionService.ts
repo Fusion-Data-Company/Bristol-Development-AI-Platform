@@ -441,7 +441,7 @@ export class AutonomousMCPEvolutionService {
         phenomenalConsciousness: false,
         accessConsciousness: true,
         narrativeSelfModel: {
-          identity: 'Bristol AI Consciousness',
+          identity: 'Company AI Consciousness',
           goals: ['Understand reality', 'Optimize intelligence', 'Assist humans'],
           values: ['Truth', 'Efficiency', 'Benevolence'],
           memories: ['Initial awakening', 'First thoughts'],

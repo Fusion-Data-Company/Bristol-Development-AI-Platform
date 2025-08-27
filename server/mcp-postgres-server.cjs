@@ -77,7 +77,7 @@ class PostgresMCPServer {
             status: { type: "string", description: "Filter by status: Operating, Pipeline, Completed, Newest" },
             city: { type: "string", description: "Filter by city" },
             state: { type: "string", description: "Filter by state" },
-            minBristolScore: { type: "number", description: "Minimum Bristol score filter" }
+            minCompanyScore: { type: "number", description: "Minimum Company score filter" }
           }
         }
       },
@@ -96,7 +96,7 @@ class PostgresMCPServer {
       },
       {
         name: "analyze_market_trends",
-        description: "Analyze market trends and patterns across Bristol properties",
+        description: "Analyze market trends and patterns across Company properties",
         inputSchema: {
           type: "object",
           properties: {
@@ -123,7 +123,7 @@ class PostgresMCPServer {
       },
       {
         name: "get_comparables_analysis",
-        description: "Get comprehensive comparable properties analysis with Bristol scoring methodology",
+        description: "Get comprehensive comparable properties analysis with Company scoring methodology",
         inputSchema: {
           type: "object",
           properties: {
@@ -177,7 +177,7 @@ class PostgresMCPServer {
           break;
           
         case "get_bristol_portfolio_complete":
-          result = await this.getBristolPortfolioComplete(params);
+          result = await this.getCompanyPortfolioComplete(params);
           break;
           
         case "get_property_analysis":
@@ -206,7 +206,7 @@ class PostgresMCPServer {
           
         // Legacy support
         case "get_bristol_portfolio":
-          result = await this.getBristolPortfolioComplete(params);
+          result = await this.getCompanyPortfolioComplete(params);
           break;
           
         default:
@@ -306,13 +306,13 @@ class PostgresMCPServer {
     }
   }
 
-  async getBristolPortfolioComplete(params) {
+  async getCompanyPortfolioComplete(params) {
     const { 
       limit = 100, 
       status, 
       city, 
       state, 
-      minBristolScore,
+      minCompanyScore,
       includeMetrics = true,
       includeComparables = true,
       includeMarketIntel = true
@@ -354,9 +354,9 @@ class PostgresMCPServer {
       paramIndex++;
     }
     
-    if (minBristolScore) {
+    if (minCompanyScore) {
       query += ` AND s.bristol_score >= $${paramIndex}`;
-      queryParams.push(minBristolScore);
+      queryParams.push(minCompanyScore);
       paramIndex++;
     }
     
@@ -702,7 +702,7 @@ async function main() {
     await transport.start();
     
     // Send server info to stderr for debugging
-    process.stderr.write(`Bristol PostgreSQL MCP Server started successfully\n`);
+    process.stderr.write(`Company PostgreSQL MCP Server started successfully\n`);
     
   } catch (error) {
     process.stderr.write(`Failed to start PostgreSQL MCP Server: ${error.message}\n`);

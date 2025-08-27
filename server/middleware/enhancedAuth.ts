@@ -114,7 +114,7 @@ async function validateAuthentication(req: any): Promise<AuthResult> {
 
     // Check for API key auth (for programmatic access)
     const apiKey = req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '');
-    if (apiKey && process.env.BRISTOL_API_KEY && apiKey === process.env.BRISTOL_API_KEY) {
+    if (apiKey && process.env.COMPANY_API_KEY && apiKey === process.env.COMPANY_API_KEY) {
       return { success: true, user: { id: 'api-user', email: 'api@bristol.dev' } };
     }
 
@@ -188,7 +188,7 @@ async function applyAuthFallbacks(req: any, res: Response): Promise<AuthResult> 
 function isChatEndpoint(path: string): boolean {
   const chatPaths = [
     '/api/enhanced-chat-v2',
-    '/api/bristol-brain-elite',
+    '/api/brand-brain-elite',
     '/api/conversation',
     '/api/chat',
     '/api/openrouter',

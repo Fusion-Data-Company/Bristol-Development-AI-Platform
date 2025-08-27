@@ -1,14 +1,14 @@
 /**
- * Bristol Scoring Service
+ * Company Scoring Service
  * Proprietary 100-point scoring methodology for multifamily development opportunities
- * Aligned with Bristol Development Group's institutional investment criteria
+ * Aligned with Company Development Group's institutional investment criteria
  */
 
 import { db } from '../db';
 import { sites } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
-export interface BristolScoreComponents {
+export interface CompanyScoreComponents {
   demographics: number;      // 30 points - Population, income, education
   marketDynamics: number;    // 25 points - Supply/demand, rent growth, occupancy
   location: number;          // 20 points - Transit, amenities, employment centers
@@ -16,21 +16,21 @@ export interface BristolScoreComponents {
   riskAdjustment: number;    // 10 points - Regulatory, market timing, competition
 }
 
-export interface BristolScoreResult {
+export interface CompanyScoreResult {
   totalScore: number;
-  components: BristolScoreComponents;
+  components: CompanyScoreComponents;
   grade: 'A+' | 'A' | 'A-' | 'B+' | 'B' | 'B-' | 'C+' | 'C' | 'C-' | 'D';
   recommendation: 'STRONG_BUY' | 'BUY' | 'HOLD' | 'AVOID';
   rationale: string;
   lastCalculated: Date;
 }
 
-export class BristolScoringService {
+export class CompanyScoringService {
   
   /**
-   * Calculate comprehensive Bristol score for a property
+   * Calculate comprehensive Company score for a property
    */
-  async calculateBristolScore(siteId: string): Promise<BristolScoreResult> {
+  async calculateCompanyScore(siteId: string): Promise<CompanyScoreResult> {
     // Get site data
     const site = await db.select().from(sites).where(eq(sites.id, siteId)).limit(1);
     if (!site.length) {
@@ -41,7 +41,7 @@ export class BristolScoringService {
     const acsProfile = siteData.acsProfile as any;
 
     // Calculate component scores
-    const components: BristolScoreComponents = {
+    const components: CompanyScoreComponents = {
       demographics: this.calculateDemographicsScore(acsProfile, siteData),
       marketDynamics: this.calculateMarketDynamicsScore(siteData),
       location: this.calculateLocationScore(siteData),
@@ -267,7 +267,7 @@ export class BristolScoringService {
   /**
    * Convert numerical score to letter grade
    */
-  private getGrade(score: number): BristolScoreResult['grade'] {
+  private getGrade(score: number): CompanyScoreResult['grade'] {
     if (score >= 90) return 'A+';
     if (score >= 85) return 'A';
     if (score >= 80) return 'A-';
@@ -283,7 +283,7 @@ export class BristolScoringService {
   /**
    * Convert numerical score to investment recommendation
    */
-  private getRecommendation(score: number): BristolScoreResult['recommendation'] {
+  private getRecommendation(score: number): CompanyScoreResult['recommendation'] {
     if (score >= 80) return 'STRONG_BUY';
     if (score >= 70) return 'BUY';
     if (score >= 60) return 'HOLD';
@@ -293,7 +293,7 @@ export class BristolScoringService {
   /**
    * Generate detailed rationale for the score
    */
-  private generateRationale(components: BristolScoreComponents, totalScore: number, siteData: any): string {
+  private generateRationale(components: CompanyScoreComponents, totalScore: number, siteData: any): string {
     const strongPoints = [];
     const weakPoints = [];
 
@@ -313,7 +313,7 @@ export class BristolScoringService {
     if (components.riskAdjustment >= 8) strongPoints.push('low regulatory risk');
     else if (components.riskAdjustment <= 6) weakPoints.push('elevated risk profile');
 
-    let rationale = `${siteData.name} scores ${totalScore}/100 in Bristol's proprietary analysis. `;
+    let rationale = `${siteData.name} scores ${totalScore}/100 in Company's proprietary analysis. `;
 
     if (strongPoints.length > 0) {
       rationale += `Key strengths include ${strongPoints.join(', ')}. `;
@@ -325,27 +325,27 @@ export class BristolScoringService {
 
     // Add investment thesis
     if (totalScore >= 80) {
-      rationale += 'This asset meets Bristol institutional investment criteria with strong fundamentals and attractive risk-adjusted returns.';
+      rationale += 'This asset meets Company institutional investment criteria with strong fundamentals and attractive risk-adjusted returns.';
     } else if (totalScore >= 70) {
       rationale += 'Solid investment opportunity with good fundamentals, suitable for value-add strategy.';
     } else if (totalScore >= 60) {
       rationale += 'Marginal investment case requiring careful due diligence and conservative underwriting.';
     } else {
-      rationale += 'Below Bristol investment thresholds. Significant operational or market improvements needed.';
+      rationale += 'Below Company investment thresholds. Significant operational or market improvements needed.';
     }
 
     return rationale;
   }
 
   /**
-   * Calculate and update Bristol scores for all properties
+   * Calculate and update Company scores for all properties
    */
-  async updateAllBristolScores(): Promise<void> {
+  async updateAllCompanyScores(): Promise<void> {
     const allSites = await db.select().from(sites);
     
     for (const site of allSites) {
       try {
-        const scoreResult = await this.calculateBristolScore(site.id);
+        const scoreResult = await this.calculateCompanyScore(site.id);
         
         // Update the database with the calculated score
         await db.update(sites)
@@ -355,19 +355,19 @@ export class BristolScoringService {
           })
           .where(eq(sites.id, site.id));
           
-        console.log(`✅ Updated Bristol score for ${site.name}: ${scoreResult.totalScore}/100`);
+        console.log(`✅ Updated Company score for ${site.name}: ${scoreResult.totalScore}/100`);
       } catch (error) {
-        console.error(`❌ Failed to calculate Bristol score for ${site.name}:`, error);
+        console.error(`❌ Failed to calculate Company score for ${site.name}:`, error);
       }
     }
   }
 
   /**
-   * Get Bristol score with detailed breakdown
+   * Get Company score with detailed breakdown
    */
-  async getBristolScoreDetailed(siteId: string): Promise<BristolScoreResult> {
-    return this.calculateBristolScore(siteId);
+  async getCompanyScoreDetailed(siteId: string): Promise<CompanyScoreResult> {
+    return this.calculateCompanyScore(siteId);
   }
 }
 
-export const bristolScoringService = new BristolScoringService();
+export const bristolScoringService = new CompanyScoringService();

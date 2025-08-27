@@ -88,13 +88,13 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
   return (
     <div className={`space-y-8 p-6 ${className}`}>
       {/* Elite Header Controls */}
-      <div className="flex items-center justify-between border-b border-bristol-maroon/20 pb-4">
+      <div className="flex items-center justify-between border-b border-brand-maroon/20 pb-4">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-bristol-maroon/10 to-amber-500/10 flex items-center justify-center border border-bristol-maroon/20">
-            <BarChart3 className="h-6 w-6 text-bristol-maroon" />
+          <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-brand-maroon/10 to-amber-500/10 flex items-center justify-center border border-brand-maroon/20">
+            <BarChart3 className="h-6 w-6 text-brand-maroon" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-bristol-maroon to-amber-600 bg-clip-text text-transparent">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-brand-maroon to-amber-600 bg-clip-text text-transparent">
               Elite Analytics Engine
             </h2>
             <p className="text-sm text-gray-600">Real-time intelligence & performance monitoring</p>
@@ -118,7 +118,7 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
             variant="outline" 
             size="sm" 
             onClick={handleRefreshAll}
-            className="chrome-metallic-button border-bristol-maroon/30 hover:border-bristol-maroon"
+            className="chrome-metallic-button border-brand-maroon/30 hover:border-brand-maroon"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh Data
@@ -127,31 +127,31 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
       </div>
 
       <Tabs value={activeView} onValueChange={setActiveView} className="space-y-8">
-        <TabsList className="grid grid-cols-4 w-full max-w-2xl chrome-metallic-panel border-bristol-maroon/20 p-1">
+        <TabsList className="grid grid-cols-4 w-full max-w-2xl chrome-metallic-panel border-brand-maroon/20 p-1">
           <TabsTrigger 
             value="overview" 
-            className="chrome-metallic-button text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-bristol-maroon data-[state=active]:to-red-800 data-[state=active]:text-white"
+            className="chrome-metallic-button text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-maroon data-[state=active]:to-red-800 data-[state=active]:text-white"
           >
             <BarChart3 className="h-4 w-4 mr-2" />
             Overview
           </TabsTrigger>
           <TabsTrigger 
             value="portfolio"
-            className="chrome-metallic-button text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-bristol-maroon data-[state=active]:to-red-800 data-[state=active]:text-white"
+            className="chrome-metallic-button text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-maroon data-[state=active]:to-red-800 data-[state=active]:text-white"
           >
             <Building2 className="h-4 w-4 mr-2" />
             Portfolio
           </TabsTrigger>
           <TabsTrigger 
             value="performance"
-            className="chrome-metallic-button text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-bristol-maroon data-[state=active]:to-red-800 data-[state=active]:text-white"
+            className="chrome-metallic-button text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-maroon data-[state=active]:to-red-800 data-[state=active]:text-white"
           >
             <Zap className="h-4 w-4 mr-2" />
             Performance
           </TabsTrigger>
           <TabsTrigger 
             value="insights"
-            className="chrome-metallic-button text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-bristol-maroon data-[state=active]:to-red-800 data-[state=active]:text-white"
+            className="chrome-metallic-button text-sm font-semibold data-[state=active]:bg-gradient-to-r data-[state=active]:from-brand-maroon data-[state=active]:to-red-800 data-[state=active]:text-white"
           >
             <Globe className="h-4 w-4 mr-2" />
             Insights
@@ -163,17 +163,17 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
           {/* Elite Key Metrics Cards */}
           {enterpriseMetrics && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="chrome-metallic-panel border-bristol-maroon/30 hover:border-bristol-maroon/50 transition-all duration-300 group">
+              <Card className="chrome-metallic-panel border-brand-maroon/30 hover:border-brand-maroon/50 transition-all duration-300 group">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-semibold flex items-center gap-2 text-bristol-maroon">
-                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-bristol-maroon/10 to-bristol-maroon/20 flex items-center justify-center">
-                      <Building2 className="h-4 w-4 text-bristol-maroon" />
+                  <CardTitle className="text-sm font-semibold flex items-center gap-2 text-brand-maroon">
+                    <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-brand-maroon/10 to-brand-maroon/20 flex items-center justify-center">
+                      <Building2 className="h-4 w-4 text-brand-maroon" />
                     </div>
                     Total Sites
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold bg-gradient-to-r from-bristol-maroon to-red-700 bg-clip-text text-transparent group-hover:from-red-700 group-hover:to-bristol-maroon transition-all duration-300">
+                  <div className="text-3xl font-bold bg-gradient-to-r from-brand-maroon to-red-700 bg-clip-text text-transparent group-hover:from-red-700 group-hover:to-brand-maroon transition-all duration-300">
                     {enterpriseMetrics.totalSites || 0}
                   </div>
                   <div className="text-xs text-gray-600 mt-1 font-medium">
@@ -181,7 +181,7 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
                   </div>
                   <div className="mt-2 flex items-center gap-1">
                     <div className="h-1 w-full bg-gray-200 rounded">
-                      <div className="h-1 bg-gradient-to-r from-bristol-maroon to-red-700 rounded" style={{width: '76%'}} />
+                      <div className="h-1 bg-gradient-to-r from-brand-maroon to-red-700 rounded" style={{width: '76%'}} />
                     </div>
                   </div>
                 </CardContent>
@@ -201,7 +201,7 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
                     {formatCurrency(enterpriseMetrics.portfolioValue || 847000000)}
                   </div>
                   <div className="text-xs text-gray-600 mt-1 font-medium">
-                    Bristol Score: {enterpriseMetrics.avgBristolScore || 87.3}
+                    Company Score: {enterpriseMetrics.avgCompanyScore || 87.3}
                   </div>
                   <div className="mt-2 flex items-center gap-1">
                     <div className="h-1 w-full bg-gray-200 rounded">
@@ -336,9 +336,9 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
               <CardContent>
                 <div className="space-y-4">
                   {marketInsights && Array.isArray(marketInsights) && marketInsights.slice(0, 3).map((insight: any, index: number) => (
-                    <div key={index} className="data-card-elite p-4 hover:border-bristol-maroon/30 transition-all duration-300">
+                    <div key={index} className="data-card-elite p-4 hover:border-brand-maroon/30 transition-all duration-300">
                       <div className="flex items-start gap-3">
-                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-bristol-maroon/10 to-amber-500/20 flex items-center justify-center flex-shrink-0">
+                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-brand-maroon/10 to-amber-500/20 flex items-center justify-center flex-shrink-0">
                           {insight.impact === 'high' ? <AlertTriangle className="h-4 w-4 text-red-600" /> : 
                            insight.impact === 'medium' ? <Target className="h-4 w-4 text-amber-600" /> : 
                            <CheckCircle className="h-4 w-4 text-green-600" />}
@@ -370,31 +370,31 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
 
           {/* Elite Active Projects Grid */}
           {activeProjects && Array.isArray(activeProjects) && activeProjects.length > 0 && (
-            <Card className="chrome-metallic-panel border-bristol-maroon/20 hover:border-bristol-maroon/40 transition-all duration-300">
+            <Card className="chrome-metallic-panel border-brand-maroon/20 hover:border-brand-maroon/40 transition-all duration-300">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-bristol-maroon">
-                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-bristol-maroon/10 to-amber-500/20 flex items-center justify-center">
-                    <Target className="h-5 w-5 text-bristol-maroon" />
+                <CardTitle className="flex items-center gap-3 text-brand-maroon">
+                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-brand-maroon/10 to-amber-500/20 flex items-center justify-center">
+                    <Target className="h-5 w-5 text-brand-maroon" />
                   </div>
                   Active Development Pipeline
                   <div className="ml-auto flex items-center gap-2">
-                    <Badge className="bg-gradient-to-r from-bristol-maroon to-red-800 text-white animate-float">
+                    <Badge className="bg-gradient-to-r from-brand-maroon to-red-800 text-white animate-float">
                       {activeProjects.length} Projects
                     </Badge>
-                    <div className="h-3 w-3 bg-bristol-maroon rounded-full animate-pulse"></div>
+                    <div className="h-3 w-3 bg-brand-maroon rounded-full animate-pulse"></div>
                   </div>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {activeProjects.slice(0, 6).map((project: any, index: number) => (
-                    <div key={index} className="data-card-elite p-5 hover:border-bristol-maroon/40 group transition-all duration-300">
+                    <div key={index} className="data-card-elite p-5 hover:border-brand-maroon/40 group transition-all duration-300">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-2">
-                          <div className="h-6 w-6 rounded bg-gradient-to-br from-bristol-maroon/20 to-amber-500/20 flex items-center justify-center">
-                            <Building2 className="h-3 w-3 text-bristol-maroon" />
+                          <div className="h-6 w-6 rounded bg-gradient-to-br from-brand-maroon/20 to-amber-500/20 flex items-center justify-center">
+                            <Building2 className="h-3 w-3 text-brand-maroon" />
                           </div>
-                          <h4 className="font-bold text-sm text-gray-900 group-hover:text-bristol-maroon transition-colors truncate">
+                          <h4 className="font-bold text-sm text-gray-900 group-hover:text-brand-maroon transition-colors truncate">
                             {project.name}
                           </h4>
                         </div>
@@ -424,12 +424,12 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
                         {/* Elite Performance Metrics */}
                         <div className="pt-2 border-t border-gray-200 space-y-2">
                           <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Bristol Score:</span>
+                            <span className="text-gray-600">Company Score:</span>
                             <div className="flex items-center gap-1">
-                              <span className="font-bold text-bristol-maroon">{project.bristolScore}</span>
+                              <span className="font-bold text-brand-maroon">{project.bristolScore}</span>
                               <div className="h-1 w-8 bg-gray-200 rounded">
                                 <div 
-                                  className="h-1 bg-gradient-to-r from-bristol-maroon to-amber-500 rounded" 
+                                  className="h-1 bg-gradient-to-r from-brand-maroon to-amber-500 rounded" 
                                   style={{width: `${project.bristolScore}%`}}
                                 />
                               </div>
@@ -467,7 +467,7 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
                           </div>
                           <div className="h-1.5 bg-gray-200 rounded-full">
                             <div 
-                              className="h-1.5 bg-gradient-to-r from-bristol-maroon to-amber-500 rounded-full transition-all duration-500" 
+                              className="h-1.5 bg-gradient-to-r from-brand-maroon to-amber-500 rounded-full transition-all duration-500" 
                               style={{width: `${project.progress || Math.floor(Math.random() * 100)}%`}}
                             />
                           </div>
@@ -486,11 +486,11 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
           {sitesMetrics && (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
               {/* Elite Portfolio Distribution */}
-              <Card className="chrome-metallic-panel border-bristol-maroon/30 hover:border-bristol-maroon/50 transition-all duration-300">
+              <Card className="chrome-metallic-panel border-brand-maroon/30 hover:border-brand-maroon/50 transition-all duration-300">
                 <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-3 text-bristol-maroon">
-                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-bristol-maroon/10 to-amber-500/20 flex items-center justify-center">
-                      <Building2 className="h-5 w-5 text-bristol-maroon" />
+                  <CardTitle className="flex items-center gap-3 text-brand-maroon">
+                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-brand-maroon/10 to-amber-500/20 flex items-center justify-center">
+                      <Building2 className="h-5 w-5 text-brand-maroon" />
                     </div>
                     Portfolio Distribution
                   </CardTitle>
@@ -517,11 +517,11 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
                         </div>
                       </div>
                     </div>
-                    <div className="text-center p-4 rounded-lg bg-gradient-to-br from-bristol-maroon/5 to-bristol-maroon/10 border border-bristol-maroon/20">
-                      <div className="text-2xl font-bold bg-gradient-to-r from-bristol-maroon to-red-700 bg-clip-text text-transparent">
+                    <div className="text-center p-4 rounded-lg bg-gradient-to-br from-brand-maroon/5 to-brand-maroon/10 border border-brand-maroon/20">
+                      <div className="text-2xl font-bold bg-gradient-to-r from-brand-maroon to-red-700 bg-clip-text text-transparent">
                         {sitesMetrics.avgUnitsPerSite || 187}
                       </div>
-                      <div className="text-sm text-bristol-maroon font-medium">Avg Units/Site</div>
+                      <div className="text-sm text-brand-maroon font-medium">Avg Units/Site</div>
                     </div>
                   </div>
                 </CardContent>
@@ -634,10 +634,10 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
                   <div className="data-card-elite p-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm font-medium text-gray-600">Occupancy Rate</span>
-                      <span className="text-lg font-bold text-bristol-maroon">94.2%</span>
+                      <span className="text-lg font-bold text-brand-maroon">94.2%</span>
                     </div>
                     <div className="h-2 bg-gray-200 rounded-full">
-                      <div className="h-2 bg-gradient-to-r from-bristol-maroon to-red-700 rounded-full" style={{width: '94%'}} />
+                      <div className="h-2 bg-gradient-to-r from-brand-maroon to-red-700 rounded-full" style={{width: '94%'}} />
                     </div>
                   </div>
                 </CardContent>
@@ -773,11 +773,11 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* API Endpoint Performance */}
-            <Card className="chrome-metallic-panel border-bristol-maroon/30 hover:border-bristol-maroon/50 transition-all duration-300">
+            <Card className="chrome-metallic-panel border-brand-maroon/30 hover:border-brand-maroon/50 transition-all duration-300">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-3 text-bristol-maroon">
-                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-bristol-maroon/10 to-amber-500/20 flex items-center justify-center">
-                    <Cpu className="h-5 w-5 text-bristol-maroon" />
+                <CardTitle className="flex items-center gap-3 text-brand-maroon">
+                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-brand-maroon/10 to-amber-500/20 flex items-center justify-center">
+                    <Cpu className="h-5 w-5 text-brand-maroon" />
                   </div>
                   API Endpoint Performance
                 </CardTitle>
@@ -789,7 +789,7 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
                   { endpoint: '/api/scraping', avgTime: '2.1s', status: 'warning', requests: '847' },
                   { endpoint: '/api/auth', avgTime: '45ms', status: 'healthy', requests: '634' }
                 ].map((api, index) => (
-                  <div key={index} className="data-card-elite p-4 hover:border-bristol-maroon/30 transition-all duration-300">
+                  <div key={index} className="data-card-elite p-4 hover:border-brand-maroon/30 transition-all duration-300">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-mono text-gray-800">{api.endpoint}</span>
                       <Badge className={`text-xs ${
@@ -843,16 +843,16 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
                 <div className="data-card-elite p-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm font-medium text-gray-600">Data Quality Score</span>
-                    <span className="text-lg font-bold text-bristol-maroon">89.7%</span>
+                    <span className="text-lg font-bold text-brand-maroon">89.7%</span>
                   </div>
                   <div className="h-2 bg-gray-200 rounded-full">
-                    <div className="h-2 bg-gradient-to-r from-bristol-maroon to-red-700 rounded-full" style={{width: '90%'}} />
+                    <div className="h-2 bg-gradient-to-r from-brand-maroon to-red-700 rounded-full" style={{width: '90%'}} />
                   </div>
                 </div>
                 
                 <div className="data-card-elite p-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm font-medium text-gray-600">Bristol Score Accuracy</span>
+                    <span className="text-sm font-medium text-gray-600">Company Score Accuracy</span>
                     <span className="text-lg font-bold text-purple-600">95.8%</span>
                   </div>
                   <div className="h-2 bg-gray-200 rounded-full">
@@ -870,7 +870,7 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-bristol-maroon" />
+                <Globe className="h-5 w-5 text-brand-maroon" />
                 Market Intelligence
               </CardTitle>
             </CardHeader>

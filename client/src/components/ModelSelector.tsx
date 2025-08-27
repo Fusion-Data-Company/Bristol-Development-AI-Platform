@@ -206,7 +206,7 @@ export function ModelSelector({
           ref={buttonRef}
           onClick={handleButtonClick}
           disabled={loading || modelList.length === 0}
-          className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-bristol-cyan hover:text-white focus:text-white focus:outline-none focus:border-bristol-electric focus:ring-2 focus:ring-bristol-electric/40 disabled:opacity-50 text-left"
+          className="relative w-full text-sm font-bold transition-all duration-300 backdrop-blur-sm rounded-2xl px-5 py-3 border text-brand-cyan hover:text-white focus:text-white focus:outline-none focus:border-brand-electric focus:ring-2 focus:ring-brand-electric/40 disabled:opacity-50 text-left"
           style={{
             background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(69, 214, 202, 0.1) 30%, rgba(30, 41, 59, 0.9) 100%)',
             borderColor: pendingModel ? 'rgba(249, 115, 22, 0.6)' : 'rgba(69, 214, 202, 0.6)',
@@ -238,7 +238,7 @@ export function ModelSelector({
         {/* Dropdown Portal */}
         {isOpen && createPortal(
           <div 
-            className="fixed bg-slate-900 border border-bristol-cyan/30 rounded-xl shadow-2xl backdrop-blur-sm z-[99999] max-h-80 overflow-y-auto"
+            className="fixed bg-slate-900 border border-brand-cyan/30 rounded-xl shadow-2xl backdrop-blur-sm z-[99999] max-h-80 overflow-y-auto"
             style={{
               top: dropdownPosition.top,
               left: dropdownPosition.left,
@@ -247,12 +247,12 @@ export function ModelSelector({
             }}
           >
             <div className="p-2">
-              <div className="text-xs text-bristol-cyan/70 px-3 py-2 border-b border-bristol-cyan/20 mb-2 flex items-center justify-between">
+              <div className="text-xs text-brand-cyan/70 px-3 py-2 border-b border-brand-cyan/20 mb-2 flex items-center justify-between">
                 <span>OpenRouter Models ({modelList.length})</span>
                 {onRefresh && (
                   <button
                     onClick={onRefresh}
-                    className="p-1 hover:bg-bristol-cyan/10 rounded"
+                    className="p-1 hover:bg-brand-cyan/10 rounded"
                     title="Refresh models from OpenRouter"
                   >
                     <RefreshCw className="h-3 w-3" />
@@ -268,8 +268,8 @@ export function ModelSelector({
                   className={cn(
                     "w-full text-left px-3 py-2 rounded-lg transition-colors text-sm flex items-center gap-3",
                     model.id === value 
-                      ? "bg-bristol-cyan/20 text-white border border-bristol-cyan/30" 
-                      : "hover:bg-bristol-cyan/10 text-slate-300 hover:text-white",
+                      ? "bg-brand-cyan/20 text-white border border-brand-cyan/30" 
+                      : "hover:bg-brand-cyan/10 text-slate-300 hover:text-white",
                     model.available === false && "opacity-50 cursor-not-allowed"
                   )}
                 >
@@ -289,7 +289,7 @@ export function ModelSelector({
                     )}
                   </div>
                   {model.id === value && (
-                    <Check className="h-4 w-4 text-bristol-cyan" />
+                    <Check className="h-4 w-4 text-brand-cyan" />
                   )}
                   {model.tier === 'premium' && (
                     <Zap className="h-3 w-3 text-yellow-400" />
@@ -305,10 +305,10 @@ export function ModelSelector({
       {/* Model Change Confirmation Dialog */}
       {pendingModel && showConfirmation && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-900 border border-bristol-cyan/30 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+          <div className="bg-slate-900 border border-brand-cyan/30 rounded-2xl p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-10 w-10 bg-bristol-cyan/20 rounded-full flex items-center justify-center">
-                <RefreshCw className="h-5 w-5 text-bristol-cyan" />
+              <div className="h-10 w-10 bg-brand-cyan/20 rounded-full flex items-center justify-center">
+                <RefreshCw className="h-5 w-5 text-brand-cyan" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">Confirm Model Change</h3>
@@ -326,14 +326,14 @@ export function ModelSelector({
               </div>
               
               <div className="flex justify-center mb-3">
-                <ChevronDown className="h-5 w-5 text-bristol-cyan" />
+                <ChevronDown className="h-5 w-5 text-brand-cyan" />
               </div>
               
               <div className="flex items-center gap-3">
                 <span className="text-lg">{getProviderEmoji(pendingModel)}</span>
                 <div className="flex-1">
                   <div className="text-sm text-slate-300">New Model</div>
-                  <div className="font-medium text-bristol-cyan">{pendingModelData?.label || pendingModel}</div>
+                  <div className="font-medium text-brand-cyan">{pendingModelData?.label || pendingModel}</div>
                 </div>
               </div>
             </div>
@@ -349,7 +349,7 @@ export function ModelSelector({
               <button
                 onClick={confirmModelChange}
                 disabled={confirming}
-                className="flex-1 px-4 py-2 bg-bristol-cyan hover:bg-bristol-cyan/80 text-bristol-ink rounded-xl transition-colors font-bold flex items-center justify-center gap-2"
+                className="flex-1 px-4 py-2 bg-brand-cyan hover:bg-brand-cyan/80 text-brand-ink rounded-xl transition-colors font-bold flex items-center justify-center gap-2"
               >
                 {confirming ? (
                   <>

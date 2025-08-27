@@ -249,7 +249,7 @@ export class MemorySyncService {
   async initializeSharedSession(userId: string, title?: string): Promise<ChatSession> {
     const session = await storage.createChatSession({
       userId,
-      title: title || `Bristol A.I. Elite Session - ${new Date().toLocaleDateString()}`
+      title: title || `Company A.I. Elite Session - ${new Date().toLocaleDateString()}`
     });
 
     // Create initial context memory

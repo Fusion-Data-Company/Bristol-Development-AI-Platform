@@ -454,39 +454,39 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
         return (
           <HoverCard>
             <HoverCardTrigger asChild>
-              <div className="cursor-pointer hover:bg-bristol-gold/10 p-2 rounded-lg transition-colors text-center">
+              <div className="cursor-pointer hover:bg-brand-gold/10 p-2 rounded-lg transition-colors text-center">
                 <div className="flex items-center justify-center gap-2">
                   {/* Simple amenity count badge */}
-                  <Badge variant="secondary" className="bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
+                  <Badge variant="secondary" className="bg-brand-gold/20 text-brand-maroon border-brand-gold/30">
                     {amenities.length}
                   </Badge>
-                  <span className="text-sm text-bristol-stone font-medium">
+                  <span className="text-sm text-brand-stone font-medium">
                     Amenities
                   </span>
                 </div>
-                <div className="text-xs text-bristol-stone/60 mt-1">
+                <div className="text-xs text-brand-stone/60 mt-1">
                   Hover for details
                 </div>
               </div>
             </HoverCardTrigger>
-            <HoverCardContent className="w-96 bg-white/95 backdrop-blur border-bristol-gold/30 shadow-xl z-[9999]">
+            <HoverCardContent className="w-96 bg-white/95 backdrop-blur border-brand-gold/30 shadow-xl z-[9999]">
               <div className="space-y-4">
-                <div className="border-b border-bristol-gold/20 pb-2">
-                  <h4 className="font-semibold text-bristol-maroon flex items-center gap-2">
+                <div className="border-b border-brand-gold/20 pb-2">
+                  <h4 className="font-semibold text-brand-maroon flex items-center gap-2">
                     <Building2 className="h-4 w-4" />
                     Property Amenities
                   </h4>
-                  <p className="text-sm text-bristol-stone">
+                  <p className="text-sm text-brand-stone">
                     {amenities.length} premium amenities available
                   </p>
                 </div>
                 
                 {/* Premium Amenities */}
                 <div>
-                  <h5 className="text-sm font-medium text-bristol-maroon mb-2">Premium Features</h5>
+                  <h5 className="text-sm font-medium text-brand-maroon mb-2">Premium Features</h5>
                   <div className="flex flex-wrap gap-1.5">
                     {amenities.slice(0, 8).map((tag, i) => (
-                      <Badge key={i} variant="secondary" className="text-xs bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
+                      <Badge key={i} variant="secondary" className="text-xs bg-brand-gold/20 text-brand-maroon border-brand-gold/30">
                         {tag}
                       </Badge>
                     ))}
@@ -496,10 +496,10 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
                 {/* Additional Amenities */}
                 {amenities.length > 8 && (
                   <div>
-                    <h5 className="text-sm font-medium text-bristol-stone mb-2">Additional Amenities</h5>
+                    <h5 className="text-sm font-medium text-brand-stone mb-2">Additional Amenities</h5>
                     <div className="flex flex-wrap gap-1.5">
                       {amenities.slice(8).map((tag, i) => (
-                        <Badge key={i + 8} variant="outline" className="text-xs text-bristol-stone border-bristol-stone/30">
+                        <Badge key={i + 8} variant="outline" className="text-xs text-brand-stone border-brand-stone/30">
                           {tag}
                         </Badge>
                       ))}
@@ -508,8 +508,8 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
                 )}
                 
                 {/* Summary */}
-                <div className="border-t border-bristol-gold/20 pt-2">
-                  <div className="text-xs text-bristol-stone/80">
+                <div className="border-t border-brand-gold/20 pt-2">
+                  <div className="text-xs text-brand-stone/80">
                     This property offers a comprehensive amenity package designed for luxury multifamily living.
                   </div>
                 </div>
@@ -578,36 +578,36 @@ export function TanStackCompsTable({ data, isLoading }: TanStackCompsTableProps)
   return (
     <div className="space-y-4">
       {/* Global Search */}
-      <div className="flex items-center justify-between gap-4 p-4 bg-gradient-to-r from-bristol-cream/20 to-white border-b border-bristol-gold/20">
+      <div className="flex items-center justify-between gap-4 p-4 bg-gradient-to-r from-brand-cream/20 to-white border-b border-brand-gold/20">
         <div className="flex items-center gap-3">
           <div className="relative">
             <Input
               placeholder="Search all columns..."
               value={globalFilter ?? ''}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="max-w-sm pl-8 border-bristol-gold/30"
+              className="max-w-sm pl-8 border-brand-gold/30"
             />
             <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
-              <Building2 className="h-4 w-4 text-bristol-maroon/50" />
+              <Building2 className="h-4 w-4 text-brand-maroon/50" />
             </div>
           </div>
-          <Badge variant="secondary" className="px-3 py-1 bg-bristol-gold/20 text-bristol-maroon border-bristol-gold/30">
+          <Badge variant="secondary" className="px-3 py-1 bg-brand-gold/20 text-brand-maroon border-brand-gold/30">
             {table.getFilteredRowModel().rows.length} of {table.getCoreRowModel().rows.length} records
           </Badge>
         </div>
-        <div className="text-sm text-bristol-maroon/60 font-medium">
-          Bristol Comparables Database
+        <div className="text-sm text-brand-maroon/60 font-medium">
+          Company Comparables Database
         </div>
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-bristol-gold/30 overflow-hidden">
+      <div className="rounded-lg border border-brand-gold/30 overflow-hidden">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 border-b border-bristol-gold/30">
+              <TableRow key={headerGroup.id} className="bg-gradient-to-r from-brand-maroon/5 to-brand-gold/5 border-b border-brand-gold/30">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="font-semibold text-bristol-maroon">
+                  <TableHead key={header.id} className="font-semibold text-brand-maroon">
                     {header.isPlaceholder
                       ? null
                       : flexRender(

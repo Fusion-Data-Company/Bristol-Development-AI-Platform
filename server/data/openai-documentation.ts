@@ -1,4 +1,4 @@
-// OpenAI API Documentation for Bristol A.I. Elite
+// OpenAI API Documentation for Company A.I. Elite
 // This documentation is referenced by the AI to understand OpenAI capabilities
 
 export const OPENAI_DOCUMENTATION = {
@@ -105,7 +105,7 @@ export const OPENAI_DOCUMENTATION = {
   },
 
   integrationNotes: {
-    bristolBrain: "GPT-5 serves as the flagship model for Bristol Development Group's AI analysis platform",
+    bristolBrain: "GPT-5 serves as the flagship model for Company Development Group's AI analysis platform",
     authentication: "Uses OPENAI_API_KEY2 environment variable for BYOK setup",
     defaultModel: "Always defaults to GPT-5 unless user specifically selects alternative",
     capabilities: "Supports all advanced features including reasoning, tool use, and multimodal input"

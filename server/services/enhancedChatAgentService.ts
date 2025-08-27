@@ -80,7 +80,7 @@ export class EnhancedChatAgentService {
     this.chatCapabilities.set('workflow-automation', {
       id: 'workflow-automation',
       name: 'Workflow Automation',
-      description: 'Intelligent automation of complex Bristol workflows',
+      description: 'Intelligent automation of complex Company workflows',
       category: 'automation',
       complexity: 8,
       toolsRequired: ['task-orchestration', 'agent-coordination', 'memory-optimization'],
@@ -91,7 +91,7 @@ export class EnhancedChatAgentService {
     this.chatCapabilities.set('elite-reporting', {
       id: 'elite-reporting',
       name: 'Elite Reporting',
-      description: 'Institutional-grade report generation with Bristol branding',
+      description: 'Institutional-grade report generation with Company branding',
       category: 'reporting',
       complexity: 7,
       toolsRequired: ['data-synthesis', 'template-generation', 'formatting'],
@@ -390,8 +390,8 @@ export class EnhancedChatAgentService {
         query
       );
       
-      // Add Bristol-specific insights
-      const bristolEnhancedResponse = await this.addBristolInsights(
+      // Add Company-specific insights
+      const bristolEnhancedResponse = await this.addCompanyInsights(
         synthesizedResponse,
         chatContext
       );
@@ -601,8 +601,8 @@ export class EnhancedChatAgentService {
       chatContext.userPreferences
     );
     
-    // Add Bristol-specific tone and insights
-    const bristolResponse = await this.addBristolTone(personalizedResponse, chatContext);
+    // Add Company-specific tone and insights
+    const bristolResponse = await this.addCompanyTone(personalizedResponse, chatContext);
     
     return bristolResponse;
   }
@@ -640,7 +640,7 @@ export class EnhancedChatAgentService {
     message: string
   ): any {
     return {
-      response: "I'm experiencing some technical difficulties, but I'm here to help with your Bristol Development needs. Could you please rephrase your question?",
+      response: "I'm experiencing some technical difficulties, but I'm here to help with your Company Development needs. Could you please rephrase your question?",
       fallback: true,
       suggestions: [
         'Try asking about property analysis',
@@ -804,12 +804,12 @@ export class EnhancedChatAgentService {
     return response;
   }
 
-  private async addBristolTone(
+  private async addCompanyTone(
     response: string,
     chatContext: ChatContext
   ): Promise<string> {
-    // Add Bristol Development Group professional tone and expertise
-    const bristolPrefix = "Based on Bristol Development Group's institutional expertise, ";
+    // Add Company Development Group professional tone and expertise
+    const bristolPrefix = "Based on Company Development Group's institutional expertise, ";
     
     if (!response.toLowerCase().includes('bristol')) {
       return bristolPrefix + response.charAt(0).toLowerCase() + response.slice(1);
@@ -1123,7 +1123,7 @@ export class EnhancedChatAgentService {
   }
 
   private async generateStrategicPerspective(query: string, results: any): Promise<string> {
-    return "Strategically, this aligns with Bristol's focus on high-growth Sunbelt markets.";
+    return "Strategically, this aligns with Company's focus on high-growth Sunbelt markets.";
   }
 
   private async generateOperationalPerspective(query: string, results: any): Promise<string> {
@@ -1147,11 +1147,11 @@ export class EnhancedChatAgentService {
     return perspectiveTexts.join(' ');
   }
 
-  private async addBristolInsights(
+  private async addCompanyInsights(
     response: string,
     chatContext: ChatContext
   ): Promise<string> {
-    return `${response} This analysis reflects Bristol Development Group's institutional-grade approach to multifamily investment evaluation.`;
+    return `${response} This analysis reflects Company Development Group's institutional-grade approach to multifamily investment evaluation.`;
   }
 
   private calculateResponseConfidence(perspectives: any): number {

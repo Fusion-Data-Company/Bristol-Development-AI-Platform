@@ -159,8 +159,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-          "HTTP-Referer": "https://bristol-site-intelligence.replit.app",
-          "X-Title": "Bristol Site Intelligence Platform"
+          "HTTP-Referer": "https://brand-site-intelligence.replit.app",
+          "X-Title": "Company Site Intelligence Platform"
         },
         body: JSON.stringify({
           model: model || "openai/gpt-5-chat", // Default to GPT-5 Chat

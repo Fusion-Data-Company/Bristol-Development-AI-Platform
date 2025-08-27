@@ -316,28 +316,28 @@ export default function ComparablesAnnex() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-6">
               <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 shadow-2xl">
-                <Building2 className="h-10 w-10 text-bristol-gold" />
+                <Building2 className="h-10 w-10 text-brand-gold" />
               </div>
               <div>
                 <h1 className="text-5xl font-cinzel font-bold text-white drop-shadow-2xl">
                   Comparables Annex
                 </h1>
                 <p className="text-white/90 text-xl font-medium mt-2 drop-shadow-lg">
-                  Bristol Development Group's Elite Intelligence Platform
+                  Company Development Group's Elite Intelligence Platform
                 </p>
               </div>
             </div>
             
             <div className="text-right">
               <div className="bg-white/15 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-2xl hover:bg-white/20 transition-all duration-300">
-                <div className="text-4xl font-bold text-bristol-gold drop-shadow-lg mb-2">
+                <div className="text-4xl font-bold text-brand-gold drop-shadow-lg mb-2">
                   {total.toLocaleString()}
                 </div>
                 <div className="text-white/90 text-sm font-medium uppercase tracking-wider">
                   Total Properties
                 </div>
-                <div className="w-full h-1 bg-bristol-gold/30 rounded-full mt-3">
-                  <div className="w-3/4 h-full bg-bristol-gold rounded-full shadow-lg" />
+                <div className="w-full h-1 bg-brand-gold/30 rounded-full mt-3">
+                  <div className="w-3/4 h-full bg-brand-gold rounded-full shadow-lg" />
                 </div>
               </div>
             </div>
@@ -377,28 +377,28 @@ export default function ComparablesAnnex() {
           <div className="mb-6">
 
             {/* Search and Actions Bar */}
-            <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-xl border border-bristol-gold/20">
+            <div className="bg-white/80 backdrop-blur rounded-2xl p-6 shadow-xl border border-brand-gold/20">
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-bristol-maroon/60 h-5 w-5" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-brand-maroon/60 h-5 w-5" />
                   <Input
                     placeholder="Search by address..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-11 h-12 border-bristol-gold/30 focus:border-bristol-maroon focus:ring-bristol-maroon/20 text-lg"
+                    className="pl-11 h-12 border-brand-gold/30 focus:border-brand-maroon focus:ring-brand-maroon/20 text-lg"
                   />
                 </div>
             
                 {/* Enhanced Scraping Agent */}
                 <Dialog open={agentDialogOpen} onOpenChange={setAgentDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-gradient-to-r from-bristol-maroon to-bristol-gold hover:from-bristol-maroon/90 hover:to-bristol-gold/90 text-white h-12 px-6 rounded-xl shadow-xl border border-bristol-gold/50">
+                    <Button className="bg-gradient-to-r from-brand-maroon to-brand-gold hover:from-brand-maroon/90 hover:to-brand-gold/90 text-white h-12 px-6 rounded-xl shadow-xl border border-brand-gold/50">
                       🤖 Enterprise Agent
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
-                      <DialogTitle className="text-bristol-maroon font-cinzel text-xl">
+                      <DialogTitle className="text-brand-maroon font-cinzel text-xl">
                         🤖 Enhanced Scraping Agent
                       </DialogTitle>
                       <DialogDescription>
@@ -469,7 +469,7 @@ export default function ComparablesAnnex() {
                       <Button 
                         onClick={() => agentScrapeMutation.mutate(agentQuery)}
                         disabled={agentScrapeMutation.isPending || !agentQuery.address}
-                        className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+                        className="bg-brand-maroon hover:bg-brand-maroon/90"
                       >
                         {agentScrapeMutation.isPending ? 'Starting...' : '🚀 Run Enhanced Agent'}
                       </Button>
@@ -479,7 +479,7 @@ export default function ComparablesAnnex() {
                 
                 <Dialog open={scrapeDialogOpen} onOpenChange={setScrapeDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button className="bg-gradient-to-r from-bristol-maroon to-bristol-maroon/80 hover:from-bristol-maroon/90 hover:to-bristol-maroon/70 text-white h-12 px-6 rounded-xl shadow-lg border border-bristol-gold/30">
+                    <Button className="bg-gradient-to-r from-brand-maroon to-brand-maroon/80 hover:from-brand-maroon/90 hover:to-brand-maroon/70 text-white h-12 px-6 rounded-xl shadow-lg border border-brand-gold/30">
                       <Play className="h-5 w-5 mr-2" />
                       Legacy Scraper
                     </Button>
@@ -543,15 +543,15 @@ export default function ComparablesAnnex() {
           {/* Quick Analytics Cards */}
           {comps.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-lg">
+              <Card className="bg-gradient-to-br from-white to-brand-cream/30 border-brand-gold/30 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-bristol-maroon/10 rounded-xl">
-                      <TrendingUp className="h-6 w-6 text-bristol-maroon" />
+                    <div className="p-3 bg-brand-maroon/10 rounded-xl">
+                      <TrendingUp className="h-6 w-6 text-brand-maroon" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-bristol-maroon/70">Avg Rent/SF</p>
-                      <p className="text-2xl font-bold text-bristol-maroon">
+                      <p className="text-sm font-medium text-brand-maroon/70">Avg Rent/SF</p>
+                      <p className="text-2xl font-bold text-brand-maroon">
                         ${(comps.filter(c => c.rentPsf).reduce((sum, c) => sum + (c.rentPsf || 0), 0) / comps.filter(c => c.rentPsf).length || 0).toFixed(2)}
                       </p>
                     </div>
@@ -559,15 +559,15 @@ export default function ComparablesAnnex() {
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-lg">
+              <Card className="bg-gradient-to-br from-white to-brand-cream/30 border-brand-gold/30 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-bristol-maroon/10 rounded-xl">
-                      <Building2 className="h-6 w-6 text-bristol-maroon" />
+                    <div className="p-3 bg-brand-maroon/10 rounded-xl">
+                      <Building2 className="h-6 w-6 text-brand-maroon" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-bristol-maroon/70">Total Units</p>
-                      <p className="text-2xl font-bold text-bristol-maroon">
+                      <p className="text-sm font-medium text-brand-maroon/70">Total Units</p>
+                      <p className="text-2xl font-bold text-brand-maroon">
                         {comps.filter(c => c.units).reduce((sum, c) => sum + (c.units || 0), 0).toLocaleString()}
                       </p>
                     </div>
@@ -575,15 +575,15 @@ export default function ComparablesAnnex() {
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-lg">
+              <Card className="bg-gradient-to-br from-white to-brand-cream/30 border-brand-gold/30 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-bristol-maroon/10 rounded-xl">
-                      <BarChart3 className="h-6 w-6 text-bristol-maroon" />
+                    <div className="p-3 bg-brand-maroon/10 rounded-xl">
+                      <BarChart3 className="h-6 w-6 text-brand-maroon" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-bristol-maroon/70">Avg Occupancy</p>
-                      <p className="text-2xl font-bold text-bristol-maroon">
+                      <p className="text-sm font-medium text-brand-maroon/70">Avg Occupancy</p>
+                      <p className="text-2xl font-bold text-brand-maroon">
                         {(comps.filter(c => c.occupancyPct).reduce((sum, c) => sum + (c.occupancyPct || 0), 0) / comps.filter(c => c.occupancyPct).length || 0).toFixed(1)}%
                       </p>
                     </div>
@@ -591,15 +591,15 @@ export default function ComparablesAnnex() {
                 </CardContent>
               </Card>
               
-              <Card className="bg-gradient-to-br from-white to-bristol-cream/30 border-bristol-gold/30 shadow-lg">
+              <Card className="bg-gradient-to-br from-white to-brand-cream/30 border-brand-gold/30 shadow-lg">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-bristol-maroon/10 rounded-xl">
-                      <TrendingUp className="h-6 w-6 text-bristol-maroon" />
+                    <div className="p-3 bg-brand-maroon/10 rounded-xl">
+                      <TrendingUp className="h-6 w-6 text-brand-maroon" />
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-bristol-maroon/70">Avg Year Built</p>
-                      <p className="text-2xl font-bold text-bristol-maroon">
+                      <p className="text-sm font-medium text-brand-maroon/70">Avg Year Built</p>
+                      <p className="text-2xl font-bold text-brand-maroon">
                         {Math.round(comps.filter(c => c.yearBuilt).reduce((sum, c) => sum + (c.yearBuilt || 0), 0) / comps.filter(c => c.yearBuilt).length || 0)}
                       </p>
                     </div>
@@ -610,14 +610,14 @@ export default function ComparablesAnnex() {
           )}
 
           {/* Main Data Table - Moved to Top Priority */}
-          <Card className="bg-white/90 backdrop-blur border-bristol-gold/30 shadow-2xl mb-8">
-            <CardHeader className="bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 border-b border-bristol-gold/20">
+          <Card className="bg-white/90 backdrop-blur border-brand-gold/30 shadow-2xl mb-8">
+            <CardHeader className="bg-gradient-to-r from-brand-maroon/5 to-brand-gold/5 border-b border-brand-gold/20">
               <CardTitle className="flex items-center gap-3 text-xl">
-                <div className="p-2 bg-bristol-maroon/10 rounded-lg">
-                  <Building2 className="h-6 w-6 text-bristol-maroon" />
+                <div className="p-2 bg-brand-maroon/10 rounded-lg">
+                  <Building2 className="h-6 w-6 text-brand-maroon" />
                 </div>
-                <span className="text-bristol-maroon font-cinzel">Comparable Properties</span>
-                <Badge variant="secondary" className="ml-auto text-bristol-maroon bg-bristol-gold/20">
+                <span className="text-brand-maroon font-cinzel">Comparable Properties</span>
+                <Badge variant="secondary" className="ml-auto text-brand-maroon bg-brand-gold/20">
                   {comps.length} filtered
                 </Badge>
               </CardTitle>
@@ -625,7 +625,7 @@ export default function ComparablesAnnex() {
             <CardContent className="p-0">
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="text-bristol-maroon/60 text-lg">Loading comparables...</div>
+                  <div className="text-brand-maroon/60 text-lg">Loading comparables...</div>
                 </div>
               ) : (
                 <TanStackCompsTable data={comps} isLoading={isLoading} />

@@ -34,7 +34,7 @@ router.post('/test-database-access', httpErrorEnhancement.wrapApiEndpointWithRec
   const validOperations = [
     'getAllSites',
     'getPortfolioAnalytics', 
-    'getBristolScoring',
+    'getCompanyScoring',
     'getTableCounts',
     'getSystemHealth'
   ];

@@ -126,20 +126,20 @@ export function AIBrainElite({
 
   // Fetch prompts
   const { data: prompts = [], isLoading: promptsLoading } = useQuery({
-    queryKey: ["/api/bristol-brain-elite/prompts"],
+    queryKey: ["/api/brand-brain-elite/prompts"],
   });
 
   // Fetch attachments
   const { data: attachments = [] } = useQuery({
-    queryKey: ["/api/bristol-brain-elite/attachments", sessionId],
+    queryKey: ["/api/brand-brain-elite/attachments", sessionId],
     enabled: !!sessionId,
   });
 
   // Fetch decisions
   const { data: decisions = [] } = useQuery({
-    queryKey: ["/api/bristol-brain-elite/decisions"],
+    queryKey: ["/api/brand-brain-elite/decisions"],
     queryFn: async () => {
-      const response = await apiRequest("GET", "/api/bristol-brain-elite/decisions?limit=10");
+      const response = await apiRequest("GET", "/api/brand-brain-elite/decisions?limit=10");
       return response.json();
     },
   });
@@ -147,7 +147,7 @@ export function AIBrainElite({
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
-      const response = await apiRequest("POST", "/api/bristol-brain-elite/chat", {
+      const response = await apiRequest("POST", "/api/brand-brain-elite/chat", {
         sessionId,
         message: content,
         enableAdvancedReasoning: true,
@@ -160,7 +160,7 @@ export function AIBrainElite({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/chat/sessions", sessionId, "messages"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/bristol-brain-elite/decisions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/brand-brain-elite/decisions"] });
       setMessage("");
       setIsThinking(false);
     },
@@ -179,15 +179,15 @@ export function AIBrainElite({
   const savePromptMutation = useMutation({
     mutationFn: async (prompt: Partial<AgentPrompt> & { id?: string }) => {
       if (prompt.id) {
-        const response = await apiRequest("PUT", `/api/bristol-brain-elite/prompts/${prompt.id}`, prompt);
+        const response = await apiRequest("PUT", `/api/brand-brain-elite/prompts/${prompt.id}`, prompt);
         return response.json();
       } else {
-        const response = await apiRequest("POST", "/api/bristol-brain-elite/prompts", prompt);
+        const response = await apiRequest("POST", "/api/brand-brain-elite/prompts", prompt);
         return response.json();
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/bristol-brain-elite/prompts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/brand-brain-elite/prompts"] });
       toast({
         title: "Success",
         description: "Prompt saved successfully",
@@ -207,11 +207,11 @@ export function AIBrainElite({
   // Delete prompt mutation
   const deletePromptMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await apiRequest("DELETE", `/api/bristol-brain-elite/prompts/${id}`);
+      const response = await apiRequest("DELETE", `/api/brand-brain-elite/prompts/${id}`);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/bristol-brain-elite/prompts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/brand-brain-elite/prompts"] });
       toast({
         title: "Success",
         description: "Prompt deleted successfully",
@@ -225,7 +225,7 @@ export function AIBrainElite({
       const formData = new FormData();
       formData.append("file", file);
       
-      const response = await fetch(`/api/bristol-brain-elite/attachments/${sessionId}`, {
+      const response = await fetch(`/api/brand-brain-elite/attachments/${sessionId}`, {
         method: "POST",
         body: formData,
       });
@@ -237,7 +237,7 @@ export function AIBrainElite({
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/bristol-brain-elite/attachments", sessionId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/brand-brain-elite/attachments", sessionId] });
       toast({
         title: "Success",
         description: "File uploaded successfully",
@@ -255,11 +255,11 @@ export function AIBrainElite({
   // Delete attachment mutation
   const deleteAttachmentMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await apiRequest("DELETE", `/api/bristol-brain-elite/attachments/${id}`);
+      const response = await apiRequest("DELETE", `/api/brand-brain-elite/attachments/${id}`);
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/bristol-brain-elite/attachments", sessionId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/brand-brain-elite/attachments", sessionId] });
       toast({
         title: "Success",
         description: "Attachment removed",
@@ -307,13 +307,13 @@ export function AIBrainElite({
   };
 
   return (
-    <Card className="w-full h-full flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border-bristol-maroon/20">
-      <CardHeader className="pb-3 bg-gradient-to-r from-bristol-maroon to-bristol-gold text-white">
+    <Card className="w-full h-full flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 border-brand-maroon/20">
+      <CardHeader className="pb-3 bg-gradient-to-r from-brand-maroon to-brand-gold text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Brain className="w-8 h-8 animate-pulse" />
             <div>
-              <CardTitle className="text-xl font-bold">Bristol A.I. Elite</CardTitle>
+              <CardTitle className="text-xl font-bold">Company A.I. Elite</CardTitle>
               <p className="text-sm opacity-90">$200M+ Deal Intelligence System</p>
             </div>
           </div>
@@ -365,13 +365,13 @@ export function AIBrainElite({
                       <div
                         className={`max-w-[80%] rounded-lg p-4 ${
                           msg.role === 'user'
-                            ? 'bg-bristol-maroon text-white'
+                            ? 'bg-brand-maroon text-white'
                             : 'bg-white dark:bg-slate-700 shadow-md'
                         }`}
                       >
                         <div className="flex items-start gap-2">
                           {msg.role === 'assistant' && (
-                            <Brain className="w-5 h-5 mt-1 text-bristol-gold" />
+                            <Brain className="w-5 h-5 mt-1 text-brand-gold" />
                           )}
                           <div className="flex-1">
                             <p className="whitespace-pre-wrap">{msg.content}</p>
@@ -401,7 +401,7 @@ export function AIBrainElite({
                     >
                       <div className="bg-white dark:bg-slate-700 rounded-lg p-4 shadow-md">
                         <div className="flex items-center gap-3">
-                          <Loader2 className="w-5 h-5 animate-spin text-bristol-maroon" />
+                          <Loader2 className="w-5 h-5 animate-spin text-brand-maroon" />
                           <span className="text-sm text-gray-600 dark:text-gray-300">
                             Analyzing with elite financial models...
                           </span>
@@ -447,7 +447,7 @@ export function AIBrainElite({
                   <Button
                     onClick={handleSendMessage}
                     disabled={!message.trim() || isThinking}
-                    className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+                    className="bg-brand-maroon hover:bg-brand-maroon/90"
                   >
                     {isThinking ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -466,7 +466,7 @@ export function AIBrainElite({
                 <h3 className="text-lg font-semibold">System & Project Prompts</h3>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button size="sm" className="bg-bristol-maroon hover:bg-bristol-maroon/90">
+                    <Button size="sm" className="bg-brand-maroon hover:bg-brand-maroon/90">
                       <Plus className="w-4 h-4 mr-2" />
                       Add Prompt
                     </Button>
@@ -511,7 +511,7 @@ export function AIBrainElite({
                         <Button
                           onClick={() => savePromptMutation.mutate(newPrompt)}
                           disabled={!newPrompt.name || !newPrompt.content}
-                          className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+                          className="bg-brand-maroon hover:bg-brand-maroon/90"
                         >
                           Create Prompt
                         </Button>
@@ -528,7 +528,7 @@ export function AIBrainElite({
               ) : (
                 <div className="space-y-3">
                   {prompts.map((prompt: AgentPrompt) => (
-                    <Card key={prompt.id} className="border-bristol-maroon/10">
+                    <Card key={prompt.id} className="border-brand-maroon/10">
                       <CardHeader className="pb-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -601,7 +601,7 @@ export function AIBrainElite({
                                 </Button>
                                 <Button
                                   size="sm"
-                                  className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+                                  className="bg-brand-maroon hover:bg-brand-maroon/90"
                                   onClick={(e) => {
                                     const textarea = e.currentTarget.parentElement?.parentElement?.querySelector('textarea');
                                     if (textarea) {
@@ -637,7 +637,7 @@ export function AIBrainElite({
                 <Button
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
-                  className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+                  className="bg-brand-maroon hover:bg-brand-maroon/90"
                 >
                   <Upload className="w-4 h-4 mr-2" />
                   Upload File
@@ -653,11 +653,11 @@ export function AIBrainElite({
               ) : (
                 <div className="grid gap-3">
                   {attachments.map((attachment: AgentAttachment) => (
-                    <Card key={attachment.id} className="border-bristol-maroon/10">
+                    <Card key={attachment.id} className="border-brand-maroon/10">
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <FileText className="w-8 h-8 text-bristol-maroon" />
+                            <FileText className="w-8 h-8 text-brand-maroon" />
                             <div>
                               <p className="font-medium">{attachment.fileName}</p>
                               <p className="text-sm text-gray-500">
@@ -702,7 +702,7 @@ export function AIBrainElite({
               ) : (
                 <div className="space-y-3">
                   {decisions.map((decision: AgentDecision) => (
-                    <Card key={decision.id} className="border-bristol-maroon/10">
+                    <Card key={decision.id} className="border-brand-maroon/10">
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-2">
@@ -717,7 +717,7 @@ export function AIBrainElite({
                           {decision.impactValue && (
                             <div className="text-right">
                               <p className="text-sm text-gray-500">Impact Value</p>
-                              <p className="font-semibold text-bristol-maroon">
+                              <p className="font-semibold text-brand-maroon">
                                 ${(decision.impactValue / 1000000).toFixed(1)}M
                               </p>
                             </div>

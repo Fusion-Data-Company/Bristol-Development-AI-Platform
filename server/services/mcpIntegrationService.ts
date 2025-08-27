@@ -1307,9 +1307,9 @@ export class MCPIntegrationService {
   ): Promise<any> {
     const enhanced = { ...result };
 
-    // Add Bristol-specific insights for analysis tools
+    // Add Company-specific insights for analysis tools
     if (tool.category === 'analysis') {
-      enhanced.bristolInsights = this.generateBristolInsights(result, tool);
+      enhanced.bristolInsights = this.generateCompanyInsights(result, tool);
     }
 
     // Add follow-up suggestions
@@ -1451,11 +1451,11 @@ export class MCPIntegrationService {
     ];
   }
 
-  private generateBristolInsights(result: any, tool: MCPTool): string[] {
+  private generateCompanyInsights(result: any, tool: MCPTool): string[] {
     return [
-      'Bristol Development Group perspective: Focus on institutional-quality analysis',
+      'Company Development Group perspective: Focus on institutional-quality analysis',
       'Consider multifamily market dynamics in Sunbelt regions',
-      'Evaluate against Bristol investment criteria'
+      'Evaluate against Company investment criteria'
     ];
   }
 

@@ -162,8 +162,8 @@ export function MarketAnalytics({ siteId, metrics, className }: MarketAnalyticsP
       {metricsList.map((metric) => (
         <Card key={metric.title} className="p-4 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-lg bg-bristol-maroon/10 flex items-center justify-center">
-              <metric.icon className="w-5 h-5 text-bristol-maroon" />
+            <div className="w-10 h-10 rounded-lg bg-brand-maroon/10 flex items-center justify-center">
+              <metric.icon className="w-5 h-5 text-brand-maroon" />
             </div>
             <Badge 
               variant="outline" 
@@ -181,11 +181,11 @@ export function MarketAnalytics({ siteId, metrics, className }: MarketAnalyticsP
           </div>
           
           <div className="space-y-1">
-            <h4 className="font-semibold text-bristol-ink text-sm">{metric.title}</h4>
+            <h4 className="font-semibold text-brand-ink text-sm">{metric.title}</h4>
             <div className={cn("text-2xl font-bold", metric.color)}>
               {metric.value}
             </div>
-            <p className="text-xs text-bristol-stone leading-tight">
+            <p className="text-xs text-brand-stone leading-tight">
               {metric.description}
             </p>
           </div>
@@ -198,8 +198,8 @@ export function MarketAnalytics({ siteId, metrics, className }: MarketAnalyticsP
     <div className={cn("space-y-6", className)}>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-bristol-ink">
-            <BarChart3 className="w-6 h-6 text-bristol-maroon" />
+          <CardTitle className="flex items-center gap-2 text-brand-ink">
+            <BarChart3 className="w-6 h-6 text-brand-maroon" />
             Market Analytics Dashboard
           </CardTitle>
         </CardHeader>
@@ -215,30 +215,30 @@ export function MarketAnalytics({ siteId, metrics, className }: MarketAnalyticsP
 
         <TabsContent value="overview" className="space-y-6">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold text-bristol-ink mb-4">Market Summary</h3>
+            <h3 className="text-lg font-semibold text-brand-ink mb-4">Market Summary</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-2">
                   <TrendingUp className="w-8 h-8 text-green-600" />
                 </div>
-                <h4 className="font-semibold text-bristol-ink">Strong Growth</h4>
-                <p className="text-sm text-bristol-stone">Population and income trending upward</p>
+                <h4 className="font-semibold text-brand-ink">Strong Growth</h4>
+                <p className="text-sm text-brand-stone">Population and income trending upward</p>
               </div>
               
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-2">
                   <Target className="w-8 h-8 text-blue-600" />
                 </div>
-                <h4 className="font-semibold text-bristol-ink">Target Demographics</h4>
-                <p className="text-sm text-bristol-stone">High concentration of 25-44 age group</p>
+                <h4 className="font-semibold text-brand-ink">Target Demographics</h4>
+                <p className="text-sm text-brand-stone">High concentration of 25-44 age group</p>
               </div>
               
               <div className="text-center">
-                <div className="w-16 h-16 rounded-full bg-bristol-maroon/10 flex items-center justify-center mx-auto mb-2">
-                  <DollarSign className="w-8 h-8 text-bristol-maroon" />
+                <div className="w-16 h-16 rounded-full bg-brand-maroon/10 flex items-center justify-center mx-auto mb-2">
+                  <DollarSign className="w-8 h-8 text-brand-maroon" />
                 </div>
-                <h4 className="font-semibold text-bristol-ink">Financial Viability</h4>
-                <p className="text-sm text-bristol-stone">Projected IRR exceeds requirements</p>
+                <h4 className="font-semibold text-brand-ink">Financial Viability</h4>
+                <p className="text-sm text-brand-stone">Projected IRR exceeds requirements</p>
               </div>
             </div>
           </Card>
@@ -247,19 +247,19 @@ export function MarketAnalytics({ siteId, metrics, className }: MarketAnalyticsP
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="p-4 text-center">
               <div className="text-2xl font-bold text-green-600">96.8%</div>
-              <div className="text-sm text-bristol-stone">Occupancy Rate</div>
+              <div className="text-sm text-brand-stone">Occupancy Rate</div>
             </Card>
             <Card className="p-4 text-center">
               <div className="text-2xl font-bold text-blue-600">$1,485</div>
-              <div className="text-sm text-bristol-stone">Avg. Rent</div>
+              <div className="text-sm text-brand-stone">Avg. Rent</div>
             </Card>
             <Card className="p-4 text-center">
-              <div className="text-2xl font-bold text-bristol-maroon">18.2%</div>
-              <div className="text-sm text-bristol-stone">Projected IRR</div>
+              <div className="text-2xl font-bold text-brand-maroon">18.2%</div>
+              <div className="text-sm text-brand-stone">Projected IRR</div>
             </Card>
             <Card className="p-4 text-center">
               <div className="text-2xl font-bold text-orange-600">2.3</div>
-              <div className="text-sm text-bristol-stone">Absorption (mo)</div>
+              <div className="text-sm text-brand-stone">Absorption (mo)</div>
             </Card>
           </div>
         </TabsContent>
@@ -268,7 +268,7 @@ export function MarketAnalytics({ siteId, metrics, className }: MarketAnalyticsP
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-bristol-maroon" />
+                <Users className="w-5 h-5 text-brand-maroon" />
                 Demographic Analysis
               </CardTitle>
             </CardHeader>
@@ -282,7 +282,7 @@ export function MarketAnalytics({ siteId, metrics, className }: MarketAnalyticsP
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <PieChart className="w-5 h-5 text-bristol-maroon" />
+                <PieChart className="w-5 h-5 text-brand-maroon" />
                 Market Conditions
               </CardTitle>
             </CardHeader>
@@ -296,7 +296,7 @@ export function MarketAnalytics({ siteId, metrics, className }: MarketAnalyticsP
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <DollarSign className="w-5 h-5 text-bristol-maroon" />
+                <DollarSign className="w-5 h-5 text-brand-maroon" />
                 Financial Analysis
               </CardTitle>
             </CardHeader>

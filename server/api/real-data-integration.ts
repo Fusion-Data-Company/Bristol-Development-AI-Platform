@@ -82,26 +82,26 @@ router.get('/crime/:state', async (req, res) => {
   }
 });
 
-// Replace placeholder Bristol scoring with real calculation
-router.post('/bristol-score/:siteId', async (req, res) => {
+// Replace placeholder Company scoring with real calculation
+router.post('/brand-score/:siteId', async (req, res) => {
   try {
     const { siteId } = req.params;
     
-    const bristolScore = await realDataService.calculateBristolScore(siteId);
+    const bristolScore = await realDataService.calculateCompanyScore(siteId);
     
     // Update database
-    await realDataService.updateSiteBristolScore(siteId);
+    await realDataService.updateSiteCompanyScore(siteId);
     
     res.json({
       success: true,
       data: bristolScore,
-      source: 'Bristol Proprietary Algorithm',
+      source: 'Company Proprietary Algorithm',
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Bristol scoring error:', error);
+    console.error('Company scoring error:', error);
     res.status(500).json({ 
-      error: 'Failed to calculate real Bristol score',
+      error: 'Failed to calculate real Company score',
       details: error.message 
     });
   }
@@ -134,22 +134,22 @@ router.get('/market-data/:latitude/:longitude/:state/:county', async (req, res) 
   }
 });
 
-// Batch update all sites with real Bristol scores
-router.post('/batch-update-bristol-scores', async (req, res) => {
+// Batch update all sites with real Company scores
+router.post('/batch-update-brand-scores', async (req, res) => {
   try {
-    console.log('🚀 Starting batch Bristol score update...');
+    console.log('🚀 Starting batch Company score update...');
     
     await realDataService.updateAllSitesWithRealScores();
     
     res.json({
       success: true,
-      message: 'All sites updated with real Bristol scores',
+      message: 'All sites updated with real Company scores',
       timestamp: new Date().toISOString()
     });
   } catch (error) {
     console.error('Batch update error:', error);
     res.status(500).json({ 
-      error: 'Failed to update Bristol scores',
+      error: 'Failed to update Company scores',
       details: error.message 
     });
   }

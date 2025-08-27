@@ -33,7 +33,7 @@ export function SystemHealthIndicator() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-bristol-maroon"></div>
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-maroon"></div>
           </div>
         </CardContent>
       </Card>
@@ -87,19 +87,19 @@ export function SystemHealthIndicator() {
         {/* Overall Metrics */}
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-bristol-maroon">
+            <div className="text-2xl font-bold text-brand-maroon">
               {Math.round(health.uptime)}%
             </div>
             <div className="text-sm text-gray-600">Uptime</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-bristol-maroon">
+            <div className="text-2xl font-bold text-brand-maroon">
               {health.apiCalls.toLocaleString()}
             </div>
             <div className="text-sm text-gray-600">API Calls</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-bristol-maroon">
+            <div className="text-2xl font-bold text-brand-maroon">
               {health.errors}
             </div>
             <div className="text-sm text-gray-600">Errors</div>

@@ -31,7 +31,7 @@ const initializeStreamingClients = () => {
       baseURL: 'https://openrouter.ai/api/v1',
       defaultHeaders: {
         'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://bristol.dev',
-        'X-Title': 'Bristol Elite AI Chat'
+        'X-Title': 'Company Elite AI Chat'
       }
     });
   }

@@ -24,7 +24,7 @@ const initializeClients = () => {
       baseURL: 'https://openrouter.ai/api/v1',
       defaultHeaders: {
         'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://bristol.dev',
-        'X-Title': 'Bristol Elite AI Chat'
+        'X-Title': 'Company Elite AI Chat'
       }
     });
   }
@@ -254,7 +254,7 @@ router.post('/completions', async (req, res) => {
     if (realTimeData) {
       const contextMessage = {
         role: 'system' as const,
-        content: `Current context: You are Bristol AI, an elite real estate analysis agent. Current timestamp: ${new Date().toISOString()}. You have access to real-time market data and MCP tools.`
+        content: `Current context: You are Company AI, an elite real estate analysis agent. Current timestamp: ${new Date().toISOString()}. You have access to real-time market data and MCP tools.`
       };
       finalMessages.unshift(contextMessage);
     }

@@ -190,7 +190,7 @@ export function AddSiteForm({ onSuccess, onCancel }: AddSiteFormProps) {
 
         {/* Property Details */}
         <div className="space-y-4">
-          <h3 className="font-cinzel font-semibold text-bristol-ink">Property Details</h3>
+          <h3 className="font-cinzel font-semibold text-brand-ink">Property Details</h3>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -319,7 +319,7 @@ export function AddSiteForm({ onSuccess, onCancel }: AddSiteFormProps) {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+          className="bg-brand-maroon hover:bg-brand-maroon/90"
         >
           {isSubmitting ? (
             <>

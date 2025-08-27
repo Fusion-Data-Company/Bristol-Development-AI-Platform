@@ -50,16 +50,16 @@ export default function ProductionMetrics({
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
       {/* Total Records */}
-      <Card className="bg-gradient-to-br from-bristol-maroon/5 to-bristol-gold/5 border-bristol-maroon/20">
+      <Card className="bg-gradient-to-br from-brand-maroon/5 to-brand-gold/5 border-brand-maroon/20">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-bristol-stone">Total Records</p>
-              <p className="text-2xl font-bold text-bristol-maroon">
+              <p className="text-sm font-medium text-brand-stone">Total Records</p>
+              <p className="text-2xl font-bold text-brand-maroon">
                 {totalRecords.toLocaleString()}
               </p>
             </div>
-            <Database className="h-8 w-8 text-bristol-maroon/60" />
+            <Database className="h-8 w-8 text-brand-maroon/60" />
           </div>
         </CardContent>
       </Card>

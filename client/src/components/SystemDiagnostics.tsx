@@ -193,7 +193,7 @@ export function SystemDiagnostics() {
               {agentStatus?.status?.activeAgents || 0}/{agentStatus?.status?.totalAgents || 6}
             </div>
             <p className="text-xs text-gray-600 mt-1">
-              Bristol AI agents online
+              Company AI agents online
             </p>
           </CardContent>
         </Card>

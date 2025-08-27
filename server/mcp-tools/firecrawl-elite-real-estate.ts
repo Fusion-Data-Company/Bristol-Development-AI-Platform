@@ -1,5 +1,5 @@
 /**
- * Bristol AI Elite Real Estate MCP Tools
+ * Company AI Elite Real Estate MCP Tools
  * Advanced Firecrawl integration for comprehensive property data extraction
  */
 
@@ -170,8 +170,8 @@ export const ELITE_EXTRACT_CONFIG = {
   includeSubdomains: true
 };
 
-// Bristol AI MCP Tool Definitions
-export const BRISTOL_ELITE_TOOLS = [
+// Company AI MCP Tool Definitions
+export const COMPANY_ELITE_TOOLS = [
   {
     name: "bristol_property_search",
     description: "Elite real estate search using Firecrawl with advanced property data extraction",

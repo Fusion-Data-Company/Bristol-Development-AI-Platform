@@ -145,14 +145,14 @@ export function NOAATool() {
   return (
     <div className="space-y-8">
       {/* MEGA HEADER */}
-      <div className="text-center space-y-6 bristol-enterprise-card p-8 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-cyan-50/50 to-teal-50/50 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-teal-500/5 to-bristol-gold/10 animate-pulse"></div>
+      <div className="text-center space-y-6 brand-enterprise-card p-8 rounded-3xl border-4 border-brand-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-cyan-50/50 to-teal-50/50 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-teal-500/5 to-brand-gold/10 animate-pulse"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="p-4 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-teal-500/20 shadow-xl animate-bounce">
               <Cloud className="h-16 w-16 text-cyan-600 drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-cyan-800 via-bristol-gold to-teal-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+            <h1 className="text-5xl font-black bg-gradient-to-r from-cyan-800 via-brand-gold to-teal-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
               🌤️ NOAA Climate Data
             </h1>
           </div>
@@ -161,7 +161,7 @@ export function NOAATool() {
               ✨ Real-Time Climate Intelligence Platform
             </h2>
             <div className="flex items-center justify-center gap-8 text-lg font-bold text-cyan-700/90">
-              <span>🌡️ Live Climate Data • 🌧️ Weather Patterns • 📊 Environmental Intelligence • 🎯 Bristol-Powered Analytics</span>
+              <span>🌡️ Live Climate Data • 🌧️ Weather Patterns • 📊 Environmental Intelligence • 🎯 Company-Powered Analytics</span>
             </div>
           </div>
         </div>
@@ -177,7 +177,7 @@ export function NOAATool() {
               value={lat}
               onChange={(e) => setLat(e.target.value)}
               placeholder="35.2271"
-              className="bristol-form-enhanced"
+              className="brand-form-enhanced"
             />
           </div>
 
@@ -188,14 +188,14 @@ export function NOAATool() {
               value={lng}
               onChange={(e) => setLng(e.target.value)}
               placeholder="-80.8431"
-              className="bristol-form-enhanced"
+              className="brand-form-enhanced"
             />
           </div>
 
           <div>
             <Label htmlFor="dataset" className="text-slate-700 font-medium">Dataset</Label>
             <Select value={dataset} onValueChange={setDataset}>
-              <SelectTrigger className="bristol-form-enhanced">
+              <SelectTrigger className="brand-form-enhanced">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white/95 backdrop-blur-sm border-cyan-200/60">
@@ -213,7 +213,7 @@ export function NOAATool() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="bristol-form-enhanced"
+              className="brand-form-enhanced"
             />
           </div>
 
@@ -224,7 +224,7 @@ export function NOAATool() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="bristol-form-enhanced"
+              className="brand-form-enhanced"
             />
           </div>
         </div>
@@ -235,7 +235,7 @@ export function NOAATool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading}
-          className="bristol-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
+          className="brand-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
         >
           <div className="flex items-center gap-3">
             {isLoading ? (
@@ -253,7 +253,7 @@ export function NOAATool() {
                 RUN ANALYSIS
               </div>
               <div className="text-xs text-amber-300 font-medium -mt-1">
-                Bristol Intelligence
+                Company Intelligence
               </div>
             </div>
             <Cpu className="h-4 w-4 text-amber-300/70" />
@@ -266,7 +266,7 @@ export function NOAATool() {
               onClick={handleSaveSnapshot}
               disabled={isSubmitting}
               variant="outline"
-              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-brand-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               <Save className="mr-2 h-4 w-4" />
@@ -276,7 +276,7 @@ export function NOAATool() {
             <Button
               onClick={handleExportCSV}
               variant="outline"
-              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-bristol-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
+              className="border-slate-300 text-slate-700 bg-white/80 hover:bg-slate-50 hover:border-brand-gold/50 rounded-xl px-6 py-3 shadow-md transition-all duration-200"
             >
               <Download className="mr-2 h-4 w-4" />
               Export CSV

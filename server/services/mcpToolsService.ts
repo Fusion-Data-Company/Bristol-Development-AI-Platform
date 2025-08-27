@@ -248,10 +248,10 @@ export class McpToolsService {
       category: 'external'
     });
 
-    // Bristol Properties Location-Based Search Tools
+    // Company Properties Location-Based Search Tools
     this.registerTool({
       name: 'search_bristol_properties',
-      description: 'Search Bristol Development properties by location, city, state, or criteria',
+      description: 'Search Company Development properties by location, city, state, or criteria',
       endpoint: '/api/sites',
       method: 'GET',
       category: 'data',
@@ -265,7 +265,7 @@ export class McpToolsService {
 
     this.registerTool({
       name: 'get_bristol_property_details',
-      description: 'Get detailed information about a specific Bristol property including location, units, and metrics',
+      description: 'Get detailed information about a specific Company property including location, units, and metrics',
       endpoint: '/api/sites/{id}',
       method: 'GET',
       category: 'data',
@@ -274,7 +274,7 @@ export class McpToolsService {
 
     this.registerTool({
       name: 'find_bristol_properties_near',
-      description: 'Find all Bristol properties in a specific city, state, or location area',
+      description: 'Find all Company properties in a specific city, state, or location area',
       endpoint: '/api/sites',
       method: 'GET', 
       category: 'data',
@@ -287,7 +287,7 @@ export class McpToolsService {
 
     this.registerTool({
       name: 'get_bristol_properties_by_status',
-      description: 'Get Bristol properties filtered by development status (Operating, Pipeline, Completed, Newest)',
+      description: 'Get Company properties filtered by development status (Operating, Pipeline, Completed, Newest)',
       endpoint: '/api/sites',
       method: 'GET',
       category: 'data',
@@ -399,7 +399,7 @@ export class McpToolsService {
         pipeline: pipeline.data || pipeline,
         market: market.data || market,
         bristolProperties: bristolProperties || [],
-        propertiesByLocation: this.organizeBristolPropertiesByLocation(bristolProperties || []),
+        propertiesByLocation: this.organizeCompanyPropertiesByLocation(bristolProperties || []),
         timestamp: new Date().toISOString(),
         toolsAvailable: this.tools.size
       };
@@ -413,8 +413,8 @@ export class McpToolsService {
     }
   }
 
-  // Organize Bristol properties by location for easy AI queries
-  private organizeBristolPropertiesByLocation(properties: any[]): any {
+  // Organize Company properties by location for easy AI queries
+  private organizeCompanyPropertiesByLocation(properties: any[]): any {
     const byState: any = {};
     const byCity: any = {};
     const byStatus: any = {};

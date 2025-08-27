@@ -144,7 +144,7 @@ export function ElitePropertyAnalyticsDashboard({
               <div className="p-2 bg-blue-100 rounded-lg">
                 <Building2 className="h-6 w-6 text-blue-600" />
               </div>
-              Bristol Property Analytics
+              Company Property Analytics
             </h1>
             <p className="text-gray-600 mt-1">Comprehensive portfolio analysis and property insights</p>
           </div>
@@ -402,7 +402,7 @@ export function ElitePropertyAnalyticsDashboard({
       {/* Footer */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="text-center text-sm text-gray-500">
-          Bristol Development Group • Property Analytics Dashboard
+          Company Development Group • Property Analytics Dashboard
         </div>
       </div>
     </div>

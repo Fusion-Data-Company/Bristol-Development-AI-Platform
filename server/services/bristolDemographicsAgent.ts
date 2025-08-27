@@ -1,5 +1,5 @@
 /**
- * Bristol Demographics Intelligence Agent - Elite Population and Economic Analysis
+ * Company Demographics Intelligence Agent - Elite Population and Economic Analysis
  * Specialized OpenRouter agent for Sunbelt demographic and economic intelligence
  */
 
@@ -78,7 +78,7 @@ export interface DemographicAnalysisRequest {
   targetSegment?: 'luxury' | 'mid-market' | 'workforce' | 'all';
 }
 
-export class BristolDemographicsAgent {
+export class CompanyDemographicsAgent {
   private openRouter: OpenAI;
   private models = {
     primary: 'perplexity/sonar-deep-research',
@@ -90,15 +90,15 @@ export class BristolDemographicsAgent {
   constructor() {
     const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY2;
     if (!apiKey) {
-      throw new Error('OpenRouter API key required for Bristol Demographics Agent');
+      throw new Error('OpenRouter API key required for Company Demographics Agent');
     }
 
     this.openRouter = new OpenAI({
       baseURL: 'https://openrouter.ai/api/v1',
       apiKey: apiKey,
       defaultHeaders: {
-        'HTTP-Referer': process.env.SITE_URL || 'https://bristol-intelligence.replit.app',
-        'X-Title': 'Bristol Demographics Intelligence Agent'
+        'HTTP-Referer': process.env.SITE_URL || 'https://brand-intelligence.replit.app',
+        'X-Title': 'Company Demographics Intelligence Agent'
       }
     });
   }
@@ -108,7 +108,7 @@ export class BristolDemographicsAgent {
    */
   async analyzeDemographics(request: DemographicAnalysisRequest): Promise<DemographicProfile> {
     try {
-      console.log(`👥 Bristol Demographics Agent analyzing: ${request.location}`);
+      console.log(`👥 Company Demographics Agent analyzing: ${request.location}`);
 
       // Phase 1: Population Research with Perplexity
       const populationData = await this.researchPopulationData(request);
@@ -144,7 +144,7 @@ export class BristolDemographicsAgent {
 
       return demographicProfile;
     } catch (error) {
-      console.error('Bristol Demographics Agent analysis failed:', error);
+      console.error('Company Demographics Agent analysis failed:', error);
       throw new Error(`Demographic analysis failed: ${(error as Error).message}`);
     }
   }
@@ -176,7 +176,7 @@ Provide detailed population metrics, growth projections, and demographic trends 
       messages: [
         {
           role: 'system',
-          content: 'You are a demographic researcher specializing in Sunbelt population analysis for Bristol Development Group real estate investments. Focus on rental housing demand indicators.'
+          content: 'You are a demographic researcher specializing in Sunbelt population analysis for Company Development Group real estate investments. Focus on rental housing demand indicators.'
         },
         { role: 'user', content: prompt }
       ],
@@ -434,7 +434,7 @@ Provide market sizing, segment characteristics, and demand projections.`;
       await db.insert(intelligenceEntries).values({
         title: `Demographic Analysis: ${request.location}`,
         content: `Population ${profile.population.total.toLocaleString()}, Income $${profile.economics.medianHouseholdIncome.toLocaleString()}`,
-        source: 'Bristol Demographics Agent',
+        source: 'Company Demographics Agent',
         category: 'demographic_analysis',
         confidence: 0.88,
         metadata: {
@@ -455,7 +455,7 @@ Provide market sizing, segment characteristics, and demand projections.`;
   }
 
   /**
-   * Health check for Bristol Demographics Agent
+   * Health check for Company Demographics Agent
    */
   async healthCheck(): Promise<{ status: string; details: any }> {
     try {
@@ -486,4 +486,4 @@ Provide market sizing, segment characteristics, and demand projections.`;
 }
 
 // Export singleton instance
-export const bristolDemographicsAgent = new BristolDemographicsAgent();
+export const bristolDemographicsAgent = new CompanyDemographicsAgent();

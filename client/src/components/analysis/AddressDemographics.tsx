@@ -159,13 +159,13 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
   return (
     <div className={cn("space-y-6", className)}>
       {/* Address Input */}
-      <Card className="bg-white border-bristol-stone/20">
+      <Card className="bg-white border-brand-stone/20">
         <CardHeader>
-          <CardTitle className="text-bristol-ink font-serif flex items-center gap-2">
+          <CardTitle className="text-brand-ink font-serif flex items-center gap-2">
             <Target className="h-5 w-5" />
             Address Demographics Lookup
           </CardTitle>
-          <p className="text-bristol-stone text-sm">
+          <p className="text-brand-stone text-sm">
             Enter any US address or click on the map to get comprehensive demographic data
           </p>
         </CardHeader>
@@ -181,7 +181,7 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
             <Button 
               onClick={handleAddressSearch}
               disabled={analyzeMutation.isPending || !address.trim()}
-              className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+              className="bg-brand-maroon hover:bg-brand-maroon/90"
             >
               {analyzeMutation.isPending ? (
                 <>
@@ -216,10 +216,10 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
             <CardHeader className="relative z-10">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-bristol-ink font-serif group-hover:text-cyan-800 transition-colors duration-300">
+                  <CardTitle className="text-brand-ink font-serif group-hover:text-cyan-800 transition-colors duration-300">
                     {locationData.location.address}
                   </CardTitle>
-                  <p className="text-bristol-stone text-sm mt-1 group-hover:text-cyan-700 transition-colors duration-300">
+                  <p className="text-brand-stone text-sm mt-1 group-hover:text-cyan-700 transition-colors duration-300">
                     Census Tract {locationData.location.census_tract.geoid} • {locationData.metadata.acs_year} ACS Data
                   </p>
                 </div>
@@ -272,18 +272,18 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <Home className="h-4 w-4" />
                   Housing
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {formatValue(locationData.demographics.median_home_value, 'currency')}
                 </div>
-                <div className="text-xs text-bristol-stone mt-1">
+                <div className="text-xs text-brand-stone mt-1">
                   Rent: {formatValue(locationData.demographics.median_gross_rent, 'currency')}
                 </div>
               </CardContent>
@@ -324,9 +324,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
             <TabsContent value="population" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Basic Demographics */}
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader>
-                    <CardTitle className="text-bristol-ink font-serif">Basic Demographics</CardTitle>
+                    <CardTitle className="text-brand-ink font-serif">Basic Demographics</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="space-y-2 text-sm">
@@ -351,9 +351,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                 </Card>
 
                 {/* Age Distribution */}
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader>
-                    <CardTitle className="text-bristol-ink font-serif">Age Groups</CardTitle>
+                    <CardTitle className="text-brand-ink font-serif">Age Groups</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="space-y-2 text-sm">
@@ -374,9 +374,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                 </Card>
 
                 {/* Race & Ethnicity */}
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader>
-                    <CardTitle className="text-bristol-ink font-serif">Race & Ethnicity</CardTitle>
+                    <CardTitle className="text-brand-ink font-serif">Race & Ethnicity</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="space-y-2 text-sm">
@@ -406,9 +406,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </div>
 
               {/* Detailed Age Breakdown */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Detailed Age Breakdown</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Detailed Age Breakdown</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -456,15 +456,15 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
             <TabsContent value="economics" className="space-y-4">
               {/* Income Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Median Household Income</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Median Household Income</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.median_household_income, 'currency')}
                     </div>
-                    <div className="text-xs text-bristol-stone mt-1">
+                    <div className="text-xs text-brand-stone mt-1">
                       Per capita: {formatValue(locationData.demographics.per_capita_income, 'currency')}
                     </div>
                   </CardContent>
@@ -523,9 +523,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </div>
 
               {/* Income Distribution */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Household Income Distribution</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Household Income Distribution</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -562,9 +562,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </Card>
 
               {/* Detailed Income Brackets */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Detailed Income Brackets</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Detailed Income Brackets</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -646,40 +646,40 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
 
               {/* Additional Economic Metrics */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Mean Income</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Mean Income</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.mean_household_income, 'currency')}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Gini Index</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Gini Index</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.gini_index)}
                     </div>
-                    <div className="text-xs text-bristol-stone mt-1">
+                    <div className="text-xs text-brand-stone mt-1">
                       Income inequality measure
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Labor Force Participation</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Labor Force Participation</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.labor_force_participation, 'percent')}
                     </div>
-                    <div className="text-xs text-bristol-stone mt-1">
+                    <div className="text-xs text-brand-stone mt-1">
                       Labor force: {formatValue(locationData.demographics.labor_force)}
                     </div>
                   </CardContent>
@@ -690,45 +690,45 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
             <TabsContent value="education" className="space-y-4">
               {/* Education Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Less than High School</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Less than High School</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.percent_less_than_high_school, 'percent')}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">High School Graduate</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">High School Graduate</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.percent_high_school, 'percent')}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Some College/Associates</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Some College/Associates</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.percent_some_college, 'percent')}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Bachelor's or Higher</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Bachelor's or Higher</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.percent_bachelors_plus, 'percent')}
                     </div>
                   </CardContent>
@@ -736,9 +736,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </div>
 
               {/* Detailed Education Breakdown */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Detailed Educational Attainment</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Detailed Educational Attainment</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
@@ -789,9 +789,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </Card>
 
               {/* Graduate Education Focus */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Advanced Education</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Advanced Education</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -817,45 +817,45 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
             <TabsContent value="housing" className="space-y-4">
               {/* Housing Overview */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Median Home Value</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Median Home Value</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.median_home_value, 'currency')}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Median Gross Rent</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Median Gross Rent</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.median_gross_rent, 'currency')}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Homeownership Rate</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Homeownership Rate</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.homeownership_rate, 'percent')}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Vacancy Rate</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Vacancy Rate</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.vacancy_rate, 'percent')}
                     </div>
                   </CardContent>
@@ -863,9 +863,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </div>
 
               {/* Housing Stock */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Housing Stock & Occupancy</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Housing Stock & Occupancy</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -910,9 +910,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </Card>
 
               {/* Rent Distribution */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Rent Distribution</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Rent Distribution</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
@@ -951,9 +951,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </Card>
 
               {/* Housing Cost Burden */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Housing Cost Burden</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Housing Cost Burden</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -977,29 +977,29 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
 
               {/* Household Size */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Average Household Size</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Average Household Size</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.average_household_size)}
                     </div>
-                    <div className="text-xs text-bristol-stone mt-1">
+                    <div className="text-xs text-brand-stone mt-1">
                       People per household
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium text-bristol-stone">Average Family Size</CardTitle>
+                    <CardTitle className="text-sm font-medium text-brand-stone">Average Family Size</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-bristol-ink">
+                    <div className="text-2xl font-bold text-brand-ink">
                       {formatValue(locationData.demographics.average_family_size)}
                     </div>
-                    <div className="text-xs text-bristol-stone mt-1">
+                    <div className="text-xs text-brand-stone mt-1">
                       People per family
                     </div>
                   </CardContent>
@@ -1054,9 +1054,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </div>
 
               {/* Commute Methods */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif flex items-center gap-2">
+                  <CardTitle className="text-brand-ink font-serif flex items-center gap-2">
                     <Car className="h-4 w-4" />
                     Transportation Methods
                   </CardTitle>
@@ -1108,9 +1108,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </Card>
 
               {/* Vehicle Access */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Vehicle Access</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Vehicle Access</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -1136,9 +1136,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </Card>
 
               {/* Detailed Commute Numbers */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Detailed Commute Numbers</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Detailed Commute Numbers</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -1185,9 +1185,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
 
             <TabsContent value="social" className="space-y-4">
               {/* Household & Family Structure */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Household & Family Structure</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Household & Family Structure</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
@@ -1226,9 +1226,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
               </Card>
 
               {/* Technology & Internet */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif">Technology & Internet Access</CardTitle>
+                  <CardTitle className="text-brand-ink font-serif">Technology & Internet Access</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1262,9 +1262,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
 
               {/* Veterans & Disability */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader>
-                    <CardTitle className="text-bristol-ink font-serif">Veterans</CardTitle>
+                    <CardTitle className="text-brand-ink font-serif">Veterans</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
@@ -1280,9 +1280,9 @@ export function AddressDemographics({ className, onLocationSelect }: AddressDemo
                   </CardContent>
                 </Card>
 
-                <Card className="bg-white border-bristol-stone/20">
+                <Card className="bg-white border-brand-stone/20">
                   <CardHeader>
-                    <CardTitle className="text-bristol-ink font-serif">Disability Status</CardTitle>
+                    <CardTitle className="text-brand-ink font-serif">Disability Status</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">

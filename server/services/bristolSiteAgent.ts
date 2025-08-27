@@ -1,6 +1,6 @@
 /**
- * Bristol Site Analytics Agent - Elite Property Analysis and Bristol Scoring
- * Specialized OpenRouter agent for GIS analysis and proprietary 100-point Bristol methodology
+ * Company Site Analytics Agent - Elite Property Analysis and Company Scoring
+ * Specialized OpenRouter agent for GIS analysis and proprietary 100-point Company methodology
  */
 
 import OpenAI from 'openai';
@@ -8,7 +8,7 @@ import { db } from '../db';
 import { sites, intelligenceEntries } from '../../shared/schema';
 import { eq } from 'drizzle-orm';
 
-export interface BristolSiteScore {
+export interface CompanySiteScore {
   overallScore: number;
   categoryScores: {
     location: number;
@@ -81,7 +81,7 @@ export interface POIAnalysis {
   };
 }
 
-export class BristolSiteAgent {
+export class CompanySiteAgent {
   private openRouter: OpenAI;
   private models = {
     primary: 'openai/gpt-5-chat',
@@ -93,25 +93,25 @@ export class BristolSiteAgent {
   constructor() {
     const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY2;
     if (!apiKey) {
-      throw new Error('OpenRouter API key required for Bristol Site Agent');
+      throw new Error('OpenRouter API key required for Company Site Agent');
     }
 
     this.openRouter = new OpenAI({
       baseURL: 'https://openrouter.ai/api/v1',
       apiKey: apiKey,
       defaultHeaders: {
-        'HTTP-Referer': process.env.SITE_URL || 'https://bristol-intelligence.replit.app',
-        'X-Title': 'Bristol Site Analytics Agent'
+        'HTTP-Referer': process.env.SITE_URL || 'https://brand-intelligence.replit.app',
+        'X-Title': 'Company Site Analytics Agent'
       }
     });
   }
 
   /**
-   * Comprehensive site analysis with Bristol 100-point scoring
+   * Comprehensive site analysis with Company 100-point scoring
    */
-  async analyzeSite(request: SiteAnalysisRequest): Promise<BristolSiteScore> {
+  async analyzeSite(request: SiteAnalysisRequest): Promise<CompanySiteScore> {
     try {
-      console.log(`🏗️ Bristol Site Agent analyzing: ${request.address}`);
+      console.log(`🏗️ Company Site Agent analyzing: ${request.address}`);
 
       // Phase 1: POI and Accessibility Analysis
       const poiAnalysis = await this.analyzePOIandAccessibility(request);
@@ -125,8 +125,8 @@ export class BristolSiteAgent {
       // Phase 4: Risk Assessment
       const riskAssessment = await this.assessSiteRisks(request);
       
-      // Phase 5: Bristol Scoring Calculation
-      const bristolScore = await this.calculateBristolScore({
+      // Phase 5: Company Scoring Calculation
+      const bristolScore = await this.calculateCompanyScore({
         poiAnalysis,
         gisAnalysis,
         marketAnalysis,
@@ -139,7 +139,7 @@ export class BristolSiteAgent {
 
       return bristolScore;
     } catch (error) {
-      console.error('Bristol Site Agent analysis failed:', error);
+      console.error('Company Site Agent analysis failed:', error);
       throw new Error(`Site analysis failed: ${(error as Error).message}`);
     }
   }
@@ -174,7 +174,7 @@ SCORING CRITERIA:
 - Pedestrian safety and infrastructure
 - Employment accessibility
 
-Provide detailed accessibility metrics and POI inventory for Bristol scoring methodology.`;
+Provide detailed accessibility metrics and POI inventory for Company scoring methodology.`;
 
     const response = await this.openRouter.chat.completions.create({
       model: this.models.research,
@@ -331,10 +331,10 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
   }
 
   /**
-   * Calculate Bristol 100-point scoring methodology
+   * Calculate Company 100-point scoring methodology
    */
-  private async calculateBristolScore(analysisData: any): Promise<BristolSiteScore> {
-    // Bristol proprietary 100-point scoring methodology
+  private async calculateCompanyScore(analysisData: any): Promise<CompanySiteScore> {
+    // Company proprietary 100-point scoring methodology
     const weights = {
       location: 25,      // 25 points - Location and accessibility
       demographics: 20,  // 20 points - Target demographic alignment
@@ -383,7 +383,7 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
         marketRanking: 12, // Out of comparable sites
         peerComparison: [
           { siteName: 'Meridian Heights', score: 82.4, distance: 1.2 },
-          { siteName: 'Bristol Commons', score: 79.8, distance: 2.1 },
+          { siteName: 'Company Commons', score: 79.8, distance: 2.1 },
           { siteName: 'Sunbelt Towers', score: 77.3, distance: 1.8 }
         ],
         benchmarkAnalysis: 'Above average for market area. Strong location and demographics offset moderate development challenges.'
@@ -477,9 +477,9 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
   /**
    * Store site analysis in database
    */
-  private async storeSiteAnalysis(request: SiteAnalysisRequest, score: BristolSiteScore) {
+  private async storeSiteAnalysis(request: SiteAnalysisRequest, score: CompanySiteScore) {
     try {
-      // Update site record with Bristol score
+      // Update site record with Company score
       await db
         .update(sites)
         .set({ 
@@ -490,9 +490,9 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
 
       // Store detailed analysis
       await db.insert(intelligenceEntries).values({
-        title: `Bristol Site Analysis: ${request.address}`,
-        content: `Bristol Score: ${score.overallScore}/100 - ${score.comparativeAnalysis.benchmarkAnalysis}`,
-        source: 'Bristol Site Agent',
+        title: `Company Site Analysis: ${request.address}`,
+        content: `Company Score: ${score.overallScore}/100 - ${score.comparativeAnalysis.benchmarkAnalysis}`,
+        source: 'Company Site Agent',
         category: 'site_analysis',
         confidence: 0.92,
         metadata: {
@@ -513,7 +513,7 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
   }
 
   /**
-   * Health check for Bristol Site Agent
+   * Health check for Company Site Agent
    */
   async healthCheck(): Promise<{ status: string; details: any }> {
     try {
@@ -528,7 +528,7 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
         details: {
           models: this.models,
           connectivity: 'operational',
-          capabilities: ['Bristol 100-Point Scoring', 'POI Analysis', 'GIS Analysis', 'Risk Assessment', 'Market Positioning']
+          capabilities: ['Company 100-Point Scoring', 'POI Analysis', 'GIS Analysis', 'Risk Assessment', 'Market Positioning']
         }
       };
     } catch (error) {
@@ -544,4 +544,4 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
 }
 
 // Export singleton instance
-export const bristolSiteAgent = new BristolSiteAgent();
+export const bristolSiteAgent = new CompanySiteAgent();

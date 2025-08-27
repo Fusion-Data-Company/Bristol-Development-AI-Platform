@@ -76,7 +76,7 @@ router.post('/api/mcp/stream', async (req, res) => {
               logging: {}
             },
             serverInfo: {
-              name: 'Bristol Elite MCP Server',
+              name: 'Company Elite MCP Server',
               version: '2.0.0'
             }
           }

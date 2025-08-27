@@ -184,13 +184,13 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
         }}
       >
         {/* Enhanced Header with Controls */}
-        <div className="flex items-center justify-between p-4 border-b border-bristol-cyan/30 bg-black/20">
+        <div className="flex items-center justify-between p-4 border-b border-brand-cyan/30 bg-black/20">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <BarChart3 className="h-6 w-6 text-bristol-cyan animate-pulse" />
+              <BarChart3 className="h-6 w-6 text-brand-cyan animate-pulse" />
               <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-ping"></div>
             </div>
-            <h3 className="font-bold text-bristol-cyan text-lg">Live Data Context</h3>
+            <h3 className="font-bold text-brand-cyan text-lg">Live Data Context</h3>
             <div className="flex items-center gap-2 text-xs">
               <div className={`px-2 py-1 rounded-full text-xs font-medium ${
                 systemMetrics.systemHealth === 'optimal' 
@@ -199,7 +199,7 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
               }`}>
                 {systemMetrics.systemHealth.toUpperCase()}
               </div>
-              <span className="text-bristol-cyan/60">
+              <span className="text-brand-cyan/60">
                 {systemMetrics.activeSources}/{dataSources.length} Sources Active
               </span>
             </div>
@@ -214,13 +214,13 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
                   if (checked && isPaused) setIsPaused(false);
                   setAutoRefresh(checked);
                 }}
-                className="data-[state=checked]:bg-bristol-cyan"
+                className="data-[state=checked]:bg-brand-cyan"
               />
-              <Label className="text-xs text-bristol-cyan">Auto-refresh</Label>
+              <Label className="text-xs text-brand-cyan">Auto-refresh</Label>
             </div>
             
             <Select value={refreshInterval.toString()} onValueChange={(value) => setRefreshInterval(parseInt(value))}>
-              <SelectTrigger className="w-16 h-7 text-xs border-bristol-cyan/30">
+              <SelectTrigger className="w-16 h-7 text-xs border-brand-cyan/30">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -236,7 +236,7 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
               size="sm"
               variant="ghost"
               onClick={() => setIsPaused(!isPaused)}
-              className="h-7 px-2 text-bristol-cyan hover:bg-bristol-cyan/10"
+              className="h-7 px-2 text-brand-cyan hover:bg-brand-cyan/10"
             >
               {isPaused ? <Play className="h-3 w-3" /> : <Pause className="h-3 w-3" />}
             </Button>
@@ -245,20 +245,20 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
               placeholder="Global filter..."
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="w-32 h-7 text-xs border-bristol-cyan/30 bg-black/20"
+              className="w-32 h-7 text-xs border-brand-cyan/30 bg-black/20"
             />
             
             <button 
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-bristol-cyan/10 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-brand-cyan/10 transition-colors"
             >
-              <X className="h-4 w-4 text-bristol-cyan/70" />
+              <X className="h-4 w-4 text-brand-cyan/70" />
             </button>
           </div>
         </div>
 
         {/* Enhanced Tab Navigation */}
-        <div className="flex border-b border-bristol-cyan/20 bg-black/10">
+        <div className="flex border-b border-brand-cyan/20 bg-black/10">
           {[
             { id: 'overview', label: 'Overview', icon: <Activity className="h-3 w-3" /> },
             { id: 'sources', label: 'Data Sources', icon: <Database className="h-3 w-3" /> },
@@ -271,8 +271,8 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex items-center gap-2 px-4 py-2 text-xs font-medium transition-all ${
                 activeTab === tab.id
-                  ? 'bg-bristol-cyan/20 text-bristol-cyan border-b-2 border-bristol-cyan'
-                  : 'text-bristol-cyan/60 hover:text-bristol-cyan hover:bg-bristol-cyan/5'
+                  ? 'bg-brand-cyan/20 text-brand-cyan border-b-2 border-brand-cyan'
+                  : 'text-brand-cyan/60 hover:text-brand-cyan hover:bg-brand-cyan/5'
               }`}
             >
               {tab.icon}
@@ -287,9 +287,9 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
             <div className="space-y-4">
               {/* Real-time Metrics Grid */}
               <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                <div className="bg-bristol-cyan/10 rounded-xl p-3 border border-bristol-cyan/20">
-                  <div className="text-xl font-bold text-bristol-cyan">{systemMetrics.totalDataPoints.toLocaleString()}</div>
-                  <div className="text-xs text-bristol-cyan/80">Data Points</div>
+                <div className="bg-brand-cyan/10 rounded-xl p-3 border border-brand-cyan/20">
+                  <div className="text-xl font-bold text-brand-cyan">{systemMetrics.totalDataPoints.toLocaleString()}</div>
+                  <div className="text-xs text-brand-cyan/80">Data Points</div>
                 </div>
                 <div className="bg-green-400/10 rounded-xl p-3 border border-green-400/20">
                   <div className="text-xl font-bold text-green-400">{systemMetrics.avgResponseTime}ms</div>
@@ -310,8 +310,8 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
               </div>
 
               {/* Live Activity Feed */}
-              <div className="bg-black/40 rounded-xl p-4 border border-bristol-cyan/20">
-                <h4 className="text-bristol-cyan font-semibold mb-3 flex items-center gap-2">
+              <div className="bg-black/40 rounded-xl p-4 border border-brand-cyan/20">
+                <h4 className="text-brand-cyan font-semibold mb-3 flex items-center gap-2">
                   <Eye className="h-4 w-4 animate-pulse" />
                   Live Activity Feed
                 </h4>
@@ -323,7 +323,7 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
                         <span className="text-white">{source.name}</span>
                         <span className="text-green-400">• {source.metrics?.dataPoints} points</span>
                       </div>
-                      <div className="text-bristol-cyan/60">
+                      <div className="text-brand-cyan/60">
                         {format(source.lastUpdate || new Date(), 'HH:mm:ss')}
                       </div>
                     </div>
@@ -336,13 +336,13 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
           {activeTab === 'sources' && (
             <div className="space-y-3">
               {dataSources.map((source) => (
-                <div key={source.id} className="bg-black/30 rounded-xl p-4 border border-bristol-cyan/20">
+                <div key={source.id} className="bg-black/30 rounded-xl p-4 border border-brand-cyan/20">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       {source.icon}
                       <div>
                         <h4 className="text-white font-medium">{source.name}</h4>
-                        <p className="text-xs text-bristol-cyan/60">{source.endpoint}</p>
+                        <p className="text-xs text-brand-cyan/60">{source.endpoint}</p>
                       </div>
                     </div>
                     <div className={`px-2 py-1 rounded-full text-xs font-bold ${
@@ -357,15 +357,15 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
                   {source.metrics && (
                     <div className="grid grid-cols-3 gap-4 text-xs">
                       <div>
-                        <span className="text-bristol-cyan/60">Response: </span>
+                        <span className="text-brand-cyan/60">Response: </span>
                         <span className="text-white">{source.metrics.responseTime}</span>
                       </div>
                       <div>
-                        <span className="text-bristol-cyan/60">Success: </span>
+                        <span className="text-brand-cyan/60">Success: </span>
                         <span className="text-green-400">{source.metrics.successRate}</span>
                       </div>
                       <div>
-                        <span className="text-bristol-cyan/60">Points: </span>
+                        <span className="text-brand-cyan/60">Points: </span>
                         <span className="text-white">{source.metrics.dataPoints.toLocaleString()}</span>
                       </div>
                     </div>
@@ -378,14 +378,14 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
           {activeTab === 'injections' && (
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <h4 className="text-bristol-cyan font-semibold">Data Injection Rules</h4>
-                <Button size="sm" className="bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan">
+                <h4 className="text-brand-cyan font-semibold">Data Injection Rules</h4>
+                <Button size="sm" className="bg-brand-cyan/20 hover:bg-brand-cyan/30 text-brand-cyan">
                   + Add Rule
                 </Button>
               </div>
               
               {injectionRules.map((rule) => (
-                <div key={rule.id} className="bg-black/30 rounded-xl p-4 border border-bristol-cyan/20">
+                <div key={rule.id} className="bg-black/30 rounded-xl p-4 border border-brand-cyan/20">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <Switch
@@ -395,21 +395,21 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
                             prev.map(r => r.id === rule.id ? {...r, enabled: checked} : r)
                           );
                         }}
-                        className="data-[state=checked]:bg-bristol-cyan"
+                        className="data-[state=checked]:bg-brand-cyan"
                       />
                       <div>
                         <h4 className="text-white font-medium">{rule.name}</h4>
-                        <p className="text-xs text-bristol-cyan/60">{rule.source} → {rule.target}</p>
+                        <p className="text-xs text-brand-cyan/60">{rule.source} → {rule.target}</p>
                       </div>
                     </div>
-                    <div className="text-xs text-bristol-cyan/60">
+                    <div className="text-xs text-brand-cyan/60">
                       {rule.frequency}
                     </div>
                   </div>
                   
                   {rule.transform && (
                     <div className="mt-2 p-2 bg-black/40 rounded-lg">
-                      <span className="text-xs text-bristol-cyan/60">Transform: </span>
+                      <span className="text-xs text-brand-cyan/60">Transform: </span>
                       <code className="text-xs text-yellow-400">{rule.transform}</code>
                     </div>
                   )}
@@ -421,32 +421,32 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
           {activeTab === 'analytics' && (
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-black/30 rounded-xl p-4 border border-bristol-cyan/20">
-                  <h4 className="text-bristol-cyan font-semibold mb-3">Portfolio Distribution</h4>
+                <div className="bg-black/30 rounded-xl p-4 border border-brand-cyan/20">
+                  <h4 className="text-brand-cyan font-semibold mb-3">Portfolio Distribution</h4>
                   <div className="space-y-2">
                     {Object.entries(appData?.analytics?.stateDistribution || {}).slice(0, 5).map(([state, count]) => (
                       <div key={state} className="flex justify-between text-sm">
                         <span className="text-white">{state}</span>
-                        <span className="text-bristol-cyan font-medium">{count as number}</span>
+                        <span className="text-brand-cyan font-medium">{count as number}</span>
                       </div>
                     ))}
                   </div>
                 </div>
                 
-                <div className="bg-black/30 rounded-xl p-4 border border-bristol-cyan/20">
-                  <h4 className="text-bristol-cyan font-semibold mb-3">Performance Metrics</h4>
+                <div className="bg-black/30 rounded-xl p-4 border border-brand-cyan/20">
+                  <h4 className="text-brand-cyan font-semibold mb-3">Performance Metrics</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-white">Total Properties</span>
-                      <span className="text-bristol-cyan">{appData?.sites?.length || 0}</span>
+                      <span className="text-brand-cyan">{appData?.sites?.length || 0}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-white">Total Units</span>
-                      <span className="text-bristol-cyan">{appData?.analytics?.totalUnits || 0}</span>
+                      <span className="text-brand-cyan">{appData?.analytics?.totalUnits || 0}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-white">Avg Bristol Score</span>
-                      <span className="text-green-400">{appData?.analytics?.avgBristolScore || 0}</span>
+                      <span className="text-white">Avg Company Score</span>
+                      <span className="text-green-400">{appData?.analytics?.avgCompanyScore || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -456,15 +456,15 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
 
           {activeTab === 'console' && (
             <div className="space-y-4">
-              <div className="bg-black/50 rounded-xl p-4 border border-bristol-cyan/20 min-h-[200px]">
+              <div className="bg-black/50 rounded-xl p-4 border border-brand-cyan/20 min-h-[200px]">
                 <div className="flex items-center gap-2 mb-3">
-                  <Terminal className="h-4 w-4 text-bristol-cyan" />
-                  <h4 className="text-bristol-cyan font-semibold">Data Console</h4>
+                  <Terminal className="h-4 w-4 text-brand-cyan" />
+                  <h4 className="text-brand-cyan font-semibold">Data Console</h4>
                 </div>
                 
                 <div className="bg-black/70 rounded-lg p-3 min-h-32 max-h-32 overflow-y-auto mb-3 font-mono text-xs">
                   {consoleOutput.length === 0 ? (
-                    <div className="text-bristol-cyan/60">Console ready. Type "help" for commands.</div>
+                    <div className="text-brand-cyan/60">Console ready. Type "help" for commands.</div>
                   ) : (
                     consoleOutput.map((line, i) => (
                       <div key={i} className="text-green-400">{line}</div>
@@ -482,12 +482,12 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
                         executeConsoleCommand(consoleInput.trim());
                       }
                     }}
-                    className="flex-1 h-8 text-xs border-bristol-cyan/30 bg-black/20 font-mono"
+                    className="flex-1 h-8 text-xs border-brand-cyan/30 bg-black/20 font-mono"
                   />
                   <Button
                     size="sm"
                     onClick={() => consoleInput.trim() && executeConsoleCommand(consoleInput.trim())}
-                    className="h-8 px-3 bg-bristol-cyan/20 hover:bg-bristol-cyan/30 text-bristol-cyan"
+                    className="h-8 px-3 bg-brand-cyan/20 hover:bg-brand-cyan/30 text-brand-cyan"
                   >
                     Execute
                   </Button>
@@ -498,29 +498,29 @@ export function EnhancedLiveDataContext({ appData, isOpen, onClose, className }:
         </div>
 
         {/* Enhanced Status Bar */}
-        <div className="p-3 border-t border-bristol-cyan/20 bg-black/20">
+        <div className="p-3 border-t border-brand-cyan/20 bg-black/20">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                <span className="text-bristol-cyan font-medium">System Online</span>
+                <span className="text-brand-cyan font-medium">System Online</span>
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="h-3 w-3 text-bristol-cyan/60" />
-                <span className="text-bristol-cyan/60">
+                <Clock className="h-3 w-3 text-brand-cyan/60" />
+                <span className="text-brand-cyan/60">
                   Last Update: {format(new Date(), 'HH:mm:ss')}
                 </span>
               </div>
-              <div className="text-bristol-cyan/60">
+              <div className="text-brand-cyan/60">
                 {isPaused ? 'PAUSED' : `Refreshing every ${refreshInterval}s`}
               </div>
             </div>
             
             <div className="flex items-center gap-3">
-              <div className="text-bristol-cyan/60">
+              <div className="text-brand-cyan/60">
                 Memory: {Math.round(Math.random() * 30 + 40)}%
               </div>
-              <div className="text-bristol-cyan/60">
+              <div className="text-brand-cyan/60">
                 CPU: {Math.round(Math.random() * 20 + 10)}%
               </div>
               <div className="text-green-400">

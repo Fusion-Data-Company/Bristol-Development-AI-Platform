@@ -8,7 +8,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-// Enhanced image generation endpoint for Bristol AI Elite
+// Enhanced image generation endpoint for Company AI Elite
 router.post('/generate', async (req, res) => {
   try {
     const { prompt, size = '1024x1024', quality = 'standard', style = 'vivid' } = req.body;
@@ -80,12 +80,12 @@ router.post('/generate', async (req, res) => {
   }
 });
 
-// Background generation specifically for Bristol Elite pages
+// Background generation specifically for Company Elite pages
 router.post('/generate-background', async (req, res) => {
   try {
     const { 
       theme = 'corporate', 
-      colors = 'bristol-gold-cyan', 
+      colors = 'brand-gold-cyan', 
       style = 'abstract',
       purpose = 'dashboard'
     } = req.body;

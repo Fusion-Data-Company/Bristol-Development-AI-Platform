@@ -9,7 +9,7 @@ const openRouter = new OpenAI({
   baseURL: 'https://openrouter.ai/api/v1',
   defaultHeaders: {
     'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://bristol.dev',
-    'X-Title': 'Bristol Elite AI Chat'
+    'X-Title': 'Company Elite AI Chat'
   }
 });
 
@@ -187,15 +187,15 @@ router.post('/chat', async (req, res) => {
     if (systemPrompt && !enhancedMessages.find(m => m.role === 'system')) {
       enhancedMessages.unshift({
         role: 'system',
-        content: `${systemPrompt}\n\nYou are Bristol A.I. Elite, the proprietary AI intelligence system engineered exclusively for Bristol Development Group. You have access to real-time market data${mcpEnabled ? ' and MCP tools' : ''}${realTimeData ? ' with live data feeds' : ''}. Current timestamp: ${new Date().toISOString()}.`
+        content: `${systemPrompt}\n\nYou are Company A.I. Elite, the proprietary AI intelligence system engineered exclusively for Company Development Group. You have access to real-time market data${mcpEnabled ? ' and MCP tools' : ''}${realTimeData ? ' with live data feeds' : ''}. Current timestamp: ${new Date().toISOString()}.`
       });
     }
 
-    // Add Bristol context for premium models
+    // Add Company context for premium models
     if (modelConfig.tier === 'premium') {
       const bristolContext = {
         role: 'system' as const,
-        content: `BRISTOL ELITE MODE ACTIVATED: You are operating in premium mode with enhanced capabilities. Provide institutional-grade analysis with precise financial modeling, risk assessment, and strategic recommendations. Focus on IRR, NPV, cap rates, and comprehensive market intelligence.`
+        content: `COMPANY ELITE MODE ACTIVATED: You are operating in premium mode with enhanced capabilities. Provide institutional-grade analysis with precise financial modeling, risk assessment, and strategic recommendations. Focus on IRR, NPV, cap rates, and comprehensive market intelligence.`
       };
       enhancedMessages.splice(1, 0, bristolContext);
     }

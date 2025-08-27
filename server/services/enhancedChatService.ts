@@ -123,7 +123,7 @@ class EnhancedChatService {
         baseURL: 'https://openrouter.ai/api/v1',
         defaultHeaders: {
           'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://your-domain.com',
-          'X-Title': 'Bristol Elite AI Chat'
+          'X-Title': 'Company Elite AI Chat'
         }
       });
     }
@@ -142,7 +142,7 @@ class EnhancedChatService {
 
   // Enhanced system prompt generator
   private generateSystemPrompt(request: EnhancedChatRequest): string {
-    const basePrompt = request.systemPrompt || `You are the Bristol Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.`;
+    const basePrompt = request.systemPrompt || `You are the Company Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Company Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Company Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.`;
 
     const enhancedPrompt = `${basePrompt}
 
@@ -154,11 +154,11 @@ class EnhancedChatService {
 - Source: ${request.sourceInstance} interface
 
 ## Available Capabilities
-${request.mcpEnabled ? '- Execute real-time data queries via MCP tools\n- Access live market analytics and demographics\n- Perform automated web scraping for property data\n- Use Bristol-specific investment analysis tools' : '- Provide expert analysis based on training data'}
+${request.mcpEnabled ? '- Execute real-time data queries via MCP tools\n- Access live market analytics and demographics\n- Perform automated web scraping for property data\n- Use Company-specific investment analysis tools' : '- Provide expert analysis based on training data'}
 ${request.realTimeData ? '- Stream real-time responses with live data integration' : '- Provide comprehensive responses based on available context'}
 
 ## Available MCP Tools (USE THESE TOOLS ACTIVELY)
-${request.mcpEnabled ? `IMPORTANT: You have access to the following Bristol-specific tools. Use them whenever appropriate to provide accurate, real-time data instead of general guidance:
+${request.mcpEnabled ? `IMPORTANT: You have access to the following Company-specific tools. Use them whenever appropriate to provide accurate, real-time data instead of general guidance:
 
 ${this.generateToolsList()}
 
@@ -168,7 +168,7 @@ When a user asks for property searches, market data, financial calculations, or 
 ${request.toolResults ? 'Previous tool executions:\n' + JSON.stringify(request.toolResults, null, 2) : 'No previous tool results in this session'}
 
 ## Data Context Available
-${request.dataContext ? JSON.stringify(request.dataContext, null, 2) : 'Standard Bristol knowledge base and training data'}
+${request.dataContext ? JSON.stringify(request.dataContext, null, 2) : 'Standard Company knowledge base and training data'}
 
 Please provide expert-level analysis and recommendations suited to institutional real estate investment decision-making.`;
 
@@ -200,7 +200,7 @@ Please provide expert-level analysis and recommendations suited to institutional
       await storage.createChatSession({
         id: newSessionId,
         userId,
-        title: 'Bristol A.I. Elite Session'
+        title: 'Company A.I. Elite Session'
       });
     } catch (error) {
       console.error('Error creating session:', error);

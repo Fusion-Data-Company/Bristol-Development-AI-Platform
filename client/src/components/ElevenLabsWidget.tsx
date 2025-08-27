@@ -12,7 +12,7 @@ export const ElevenLabsWidget: React.FC<ElevenLabsWidgetProps> = ({
   // Simple informational display that references the HTML embed
   return (
     <div className="text-center p-4">
-      <div className="text-lg font-semibold mb-2">Bristol A.I. Elite Voice Chat</div>
+      <div className="text-lg font-semibold mb-2">Company A.I. Elite Voice Chat</div>
       <div className="text-sm text-zinc-600 mb-4">
         ElevenLabs ConvAI widget is embedded in the page HTML.
         <br />

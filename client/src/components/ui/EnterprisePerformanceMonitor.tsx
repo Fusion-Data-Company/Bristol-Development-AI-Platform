@@ -90,7 +90,7 @@ export function EnterprisePerformanceMonitor() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `bristol-performance-metrics.${format}`;
+      a.download = `brand-performance-metrics.${format}`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
@@ -139,7 +139,7 @@ export function EnterprisePerformanceMonitor() {
       {/* Header Controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Activity className="h-5 w-5 text-bristol-maroon" />
+          <Activity className="h-5 w-5 text-brand-maroon" />
           <h2 className="text-2xl font-bold text-gray-900">Performance Monitor</h2>
           {systemHealth && (
             <Badge className={`${getStatusColor(systemHealth.status)} border-current`} variant="outline">
@@ -207,7 +207,7 @@ export function EnterprisePerformanceMonitor() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-bristol-maroon">
+                  <div className="text-2xl font-bold text-brand-maroon">
                     {systemHealth.uptime.toFixed(1)}h
                   </div>
                   <div className="text-xs text-gray-600">
@@ -224,7 +224,7 @@ export function EnterprisePerformanceMonitor() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-bristol-maroon">
+                  <div className="text-2xl font-bold text-brand-maroon">
                     {systemHealth.apiCalls.toLocaleString()}
                   </div>
                   <div className="text-xs text-gray-600">
@@ -241,7 +241,7 @@ export function EnterprisePerformanceMonitor() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-bristol-maroon">
+                  <div className="text-2xl font-bold text-brand-maroon">
                     {systemHealth.performance.avgResponseTime}ms
                   </div>
                   <div className="text-xs text-gray-600">
@@ -258,7 +258,7 @@ export function EnterprisePerformanceMonitor() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-bristol-maroon">
+                  <div className="text-2xl font-bold text-brand-maroon">
                     {systemHealth.memory.percentage}%
                   </div>
                   <div className="text-xs text-gray-600">
@@ -367,7 +367,7 @@ export function EnterprisePerformanceMonitor() {
                     <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-bristol-maroon">
+                    <div className="text-3xl font-bold text-brand-maroon">
                       {performanceData.summary.totalRequests.toLocaleString()}
                     </div>
                   </CardContent>
@@ -377,7 +377,7 @@ export function EnterprisePerformanceMonitor() {
                     <CardTitle className="text-sm font-medium">Avg Response Time</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-bristol-maroon">
+                    <div className="text-3xl font-bold text-brand-maroon">
                       {performanceData.summary.averageResponseTime}ms
                     </div>
                   </CardContent>
@@ -387,7 +387,7 @@ export function EnterprisePerformanceMonitor() {
                     <CardTitle className="text-sm font-medium">Error Rate</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-bristol-maroon">
+                    <div className="text-3xl font-bold text-brand-maroon">
                       {performanceData.summary.errorRate.toFixed(2)}%
                     </div>
                   </CardContent>

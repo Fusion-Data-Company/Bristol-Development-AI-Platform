@@ -96,7 +96,7 @@ async function scrapeUrlWithCheerio(url: string, query: ScrapeQuery): Promise<an
     // Fetch with proper headers
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; Bristol Property Scraper/1.0)',
+        'User-Agent': 'Mozilla/5.0 (compatible; Company Property Scraper/1.0)',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.5',
         'Accept-Encoding': 'gzip, deflate',

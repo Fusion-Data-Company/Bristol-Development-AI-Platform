@@ -132,22 +132,22 @@ export default function ProductionValidation() {
   const healthScore = Math.round((passingTests / totalTests) * 100);
 
   return (
-    <Card className="bg-gradient-to-br from-white to-bristol-cream/20 border-bristol-gold/30">
+    <Card className="bg-gradient-to-br from-white to-brand-cream/20 border-brand-gold/30">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-bristol-maroon font-cinzel flex items-center gap-2">
+          <CardTitle className="text-brand-maroon font-cinzel flex items-center gap-2">
             <Shield className="h-5 w-5" />
             Production Validation
           </CardTitle>
           <div className="flex items-center gap-2">
-            <Badge className="bg-bristol-maroon/10 text-bristol-maroon border-bristol-maroon/20">
+            <Badge className="bg-brand-maroon/10 text-brand-maroon border-brand-maroon/20">
               {passingTests}/{totalTests} Tests Passing
             </Badge>
             <Button 
               size="sm" 
               onClick={runValidation}
               disabled={isRunning}
-              className="bg-bristol-maroon hover:bg-bristol-maroon/90"
+              className="bg-brand-maroon hover:bg-brand-maroon/90"
             >
               {isRunning ? (
                 <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
@@ -162,12 +162,12 @@ export default function ProductionValidation() {
       <CardContent>
         <div className="space-y-3">
           {/* Health Score */}
-          <div className="flex items-center justify-between p-3 bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 rounded-lg border border-bristol-gold/20">
+          <div className="flex items-center justify-between p-3 bg-gradient-to-r from-brand-maroon/5 to-brand-gold/5 rounded-lg border border-brand-gold/20">
             <div className="flex items-center gap-2">
-              <Database className="h-5 w-5 text-bristol-maroon" />
-              <span className="font-medium text-bristol-maroon">System Health Score</span>
+              <Database className="h-5 w-5 text-brand-maroon" />
+              <span className="font-medium text-brand-maroon">System Health Score</span>
             </div>
-            <span className="text-2xl font-bold text-bristol-maroon">{healthScore}%</span>
+            <span className="text-2xl font-bold text-brand-maroon">{healthScore}%</span>
           </div>
 
           {/* Test Results */}

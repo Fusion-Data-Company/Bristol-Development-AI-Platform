@@ -212,11 +212,11 @@ router.post('/sessions', async (req: any, res) => {
     const userId = req.user?.id || 'demo-user';
     
     // This would create a new session - for now return a generated ID
-    const sessionId = `bristol-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const sessionId = `brand-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     res.json({
       sessionId,
-      title: title || 'Bristol A.I. Elite Session',
+      title: title || 'Company A.I. Elite Session',
       userId,
       createdAt: new Date().toISOString()
     });
@@ -252,7 +252,7 @@ router.post('/message', async (req: any, res) => {
 
     // Return in multiple formats for compatibility
     res.json({
-      // Bristol format
+      // Company format
       text: result.content,
       message: result.content,
       content: result.content,

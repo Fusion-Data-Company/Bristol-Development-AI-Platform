@@ -36,7 +36,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.setHeader('Content-Type', 'application/json');
     res.json({
       id: "demo-user",
-      email: "demo@bristol.dev", 
+      email: "demo@company.com", 
       firstName: "Demo",
       lastName: "User"
     });
@@ -47,7 +47,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.setHeader('Content-Type', 'application/json');
     res.json({
       id: "demo-user",
-      email: "demo@bristol.dev", 
+      email: "demo@company.com", 
       firstName: "Demo",
       lastName: "User",
       isAuthenticated: true
@@ -58,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const sitesRouter = (await import('./api/sites')).default;
   app.use('/api/sites', sitesRouter);
 
-  // Bristol Scoring API for live rating calculations
+  // Company Scoring API for live rating calculations
   const bristolScoringRouter = (await import('./api/sites/bristol-scoring')).default;
   app.use('/api/sites', bristolScoringRouter);
 
@@ -163,9 +163,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const openRouterPremiumRouter = (await import('./api/openrouter-premium')).default;
   app.use('/api/openrouter-premium', openRouterPremiumRouter);
 
-  // Bristol Portfolio Analysis Agent API
+  // Company Portfolio Analysis Agent API
   const bristolAgentRouter = (await import('./api/bristol-agent')).default;
-  app.use('/api/bristol-agent', bristolAgentRouter);
+  app.use('/api/brand-agent', bristolAgentRouter);
   
   // Multi-Agent System API - bypass auth for testing
   const { registerAgentsRoutes } = await import('./api/agents');
@@ -195,11 +195,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const placeholderReplacementRouter = (await import('./api/placeholder-replacement')).default;
   app.use('/api/placeholder-replacement', placeholderReplacementRouter);
 
-  // Bristol A.I. Enhanced API with MCP integration
+  // Company A.I. Enhanced API with MCP integration
   const bristolBrainRouter = (await import('./api/bristol-brain-enhanced')).default;
   app.use('/api/bristol-brain', bristolBrainRouter);
   
-  // Bristol A.I. Elite API with advanced memory and attachments
+  // Company A.I. Elite API with advanced memory and attachments
   const bristolBrainEliteRouter = (await import('./api/bristol-brain-elite')).default;
   app.use('/api/bristol-brain-elite', bristolBrainEliteRouter);
 
@@ -223,11 +223,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const testUnifiedChatRouter = (await import('./api/test-unified-chat')).default;
   app.use('/api/test-unified-chat', testUnifiedChatRouter);
 
-  // Optimized tools for Bristol workflow
+  // Optimized tools for Company workflow
   const optimizedToolsRouter = (await import('./api/optimized-tools')).default;
   app.use('/api/optimized-tools', optimizedToolsRouter);
 
-  // Elite production features for maximum Bristol workflow efficiency
+  // Elite production features for maximum Company workflow efficiency
   const eliteProductionFeaturesRouter = (await import('./api/elite-production-features')).default;
   app.use('/api/elite', eliteProductionFeaturesRouter);
 
@@ -308,21 +308,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Premium Models API for Bristol A.I. Elite
+  // Premium Models API for Company A.I. Elite
   const premiumModelsRouter = (await import('./routes/premium-models')).default;
   app.use('/api/premium-models', premiumModelsRouter);
 
-  // Bristol Comparables Annex routes
+  // Company Comparables Annex routes
   const { registerCompsAnnexRoutes } = await import('./routes/comps-annex');
   registerCompsAnnexRoutes(app);
   
-  // AI Scraping routes for Bristol AI agent integration
+  // AI Scraping routes for Company AI agent integration
   const aiScrapingRouter = (await import('./routes/ai-scraping')).default;
   app.use('/api/ai-scraping', aiScrapingRouter);
 
-  // Register Bristol Agent routes for elite analytics
-  const { registerBristolAgentRoutes } = await import("./routes/bristolAgents.js");
-  registerBristolAgentRoutes(app);
+  // Register Company Agent routes for elite analytics
+  const { registerCompanyAgentRoutes } = await import("./routes/bristolAgents.js");
+  registerCompanyAgentRoutes(app);
 
   // Register Real Data Integration routes to replace all placeholders
   const { registerRealDataRoutes } = await import("./routes/realDataIntegration");
@@ -336,9 +336,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const { registerPlaceholderVerificationRoutes } = await import("./routes/placeholderVerification");
   registerPlaceholderVerificationRoutes(app);
   
-  // Bristol Elite Scraping routes with advanced Firecrawl capabilities
+  // Company Elite Scraping routes with advanced Firecrawl capabilities
   const bristolEliteScrapingRouter = (await import('./routes/bristol-elite-scraping')).default;
-  app.use('/api/bristol-elite', bristolEliteScrapingRouter);
+  app.use('/api/brand-elite', bristolEliteScrapingRouter);
 
   // System Health and Stability Monitoring
   app.get('/api/health', async (req, res) => {
@@ -546,7 +546,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/address/demographics', getAddressDemographics);
   app.get('/api/map/demographics', getMapDemographics);
 
-  // OpenRouter proxy for Bristol Floating Widget - TEMPORARY: Remove auth
+  // OpenRouter proxy for Company Floating Widget - TEMPORARY: Remove auth
   app.post('/api/openrouter', async (req: any, res) => {
     try {
       const { model, messages, dataContext, temperature = 0.2, maxTokens = 1200 } = req.body || {};
@@ -608,7 +608,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
           "HTTP-Referer": process.env.SITE_URL || "http://localhost:5000",
-          "X-Title": "Bristol Development AI Analyst",
+          "X-Title": "Company Development AI Analyst",
         },
         body: JSON.stringify({
           model,
@@ -852,7 +852,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const systemPrompt = bristolMode 
-        ? "You are the Bristol Development Group AI Assistant. Provide professional real estate development insights and analysis."
+        ? "You are the Company Development Group AI Assistant. Provide professional real estate development insights and analysis."
         : "You are a helpful AI assistant.";
 
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -861,7 +861,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
           "Content-Type": "application/json",
           "HTTP-Referer": process.env.REPLIT_DOMAINS?.split(",")[0] || "http://localhost:5000",
-          "X-Title": "Bristol Site Intelligence Platform"
+          "X-Title": "Company Site Intelligence Platform"
         },
         body: JSON.stringify({
           model: model || "anthropic/claude-3.5-sonnet",
@@ -904,14 +904,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const totalSites = sites.length;
       const activeSites = sites.filter(site => site.status === 'active').length;
       
-      // Calculate average Bristol score - placeholder for when scoring is implemented
-      const avgBristolScore = 75; // Placeholder score
+      // Calculate average Company score - placeholder for when scoring is implemented
+      const avgCompanyScore = 75; // Placeholder score
 
       const dashboardData = {
         summary: {
           totalSites,
           activeSites,
-          avgBristolScore: Math.round(avgBristolScore),
+          avgCompanyScore: Math.round(avgCompanyScore),
           lastUpdated: new Date().toISOString()
         },
         recentSites: sites.slice(0, 5),

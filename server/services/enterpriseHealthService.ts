@@ -60,7 +60,7 @@ class EnterpriseHealthService {
       'WebSocket',
       'Data Aggregation',
       'Real-time Sync',
-      'Bristol Brain',
+      'Company Brain',
       'Scraping Service',
       'Integration Service',
       'Analytics Agent'

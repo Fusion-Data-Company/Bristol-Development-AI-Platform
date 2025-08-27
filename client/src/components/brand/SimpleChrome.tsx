@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Building, Map, BarChart3, MessageSquare, Settings, Wrench, Users, Building2, Brain } from "lucide-react";
-import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
+import bristolLogoPath from "@assets/brand-logo_1754934306711.gif";
 
 interface ChromeProps {
   children: ReactNode;
@@ -25,8 +25,8 @@ export default function SimpleChrome({ children }: ChromeProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-bristol-ink">
-      {/* Premium Bristol Header with Real Stucco Texture */}
+    <div className="min-h-screen bg-brand-ink">
+      {/* Premium Company Header with Real Stucco Texture */}
       <header className="relative overflow-hidden shadow-2xl border-b-2 border-cyan-400/50 bg-slate-800" style={{
         backgroundImage: `
           radial-gradient(circle at 12% 34%, #374151 0%, transparent 20%),
@@ -78,7 +78,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
         
         <div className="pl-0 pr-6 lg:pr-8 py-4 lg:py-6 relative">
           <div className="flex items-center justify-start w-full space-x-6 lg:space-x-8">
-            {/* Bristol Logo & Brand - Aligned to left edge */}
+            {/* Company Logo & Brand - Aligned to left edge */}
             <div className="flex items-center space-x-4 lg:space-x-6 pl-6">
               <div className="relative flex-shrink-0 group">
                 <div className="absolute inset-0 rounded-lg blur-sm transition-all duration-300" style={{
@@ -88,7 +88,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(157, 23, 77, 0.2)'}></div>
                 <img 
                   src={bristolLogoPath} 
-                  alt="Bristol Development Group" 
+                  alt="Company Development Group" 
                   className="relative h-10 lg:h-12 w-auto max-w-none object-contain drop-shadow-xl hover:drop-shadow-2xl transition-all duration-300 filter brightness-110 hover:brightness-125"
                   style={{ 
                     imageRendering: 'crisp-edges',
@@ -115,15 +115,15 @@ export default function SimpleChrome({ children }: ChromeProps) {
                     className={`
                       group flex items-center space-x-2 px-3 lg:px-4 py-2 lg:py-3 rounded-xl font-medium transition-all duration-300 relative overflow-hidden
                       ${location === path 
-                        ? 'bg-gradient-to-r from-cyan-400 to-cyan-500 text-bristol-ink shadow-xl shadow-cyan-400/40 font-bold border border-cyan-400/50' 
-                        : 'text-bristol-fog hover:text-white hover:bg-gradient-to-r hover:from-cyan-400/10 hover:to-cyan-500/10 border border-transparent hover:border-cyan-400/30 hover:shadow-lg hover:shadow-cyan-400/20'
+                        ? 'bg-gradient-to-r from-cyan-400 to-cyan-500 text-brand-ink shadow-xl shadow-cyan-400/40 font-bold border border-cyan-400/50' 
+                        : 'text-brand-fog hover:text-white hover:bg-gradient-to-r hover:from-cyan-400/10 hover:to-cyan-500/10 border border-transparent hover:border-cyan-400/30 hover:shadow-lg hover:shadow-cyan-400/20'
                       }
                     `}
                   >
                     {location === path && (
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/95 via-cyan-500 to-cyan-400/95"></div>
                     )}
-                    <Icon className={`h-3.5 lg:h-4 w-3.5 lg:w-4 relative z-10 ${location === path ? 'text-bristol-ink drop-shadow-sm' : 'group-hover:text-cyan-400 group-hover:scale-110'} transition-all duration-300`} />
+                    <Icon className={`h-3.5 lg:h-4 w-3.5 lg:w-4 relative z-10 ${location === path ? 'text-brand-ink drop-shadow-sm' : 'group-hover:text-cyan-400 group-hover:scale-110'} transition-all duration-300`} />
                     <span className="text-xs lg:text-sm tracking-wide relative z-10 hidden sm:inline">{label}</span>
                     {location !== path && (
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/5 to-cyan-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -201,11 +201,11 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 <div className="flex items-center space-x-2">
                   <img 
                     src={bristolLogoPath} 
-                    alt="Bristol Development Group" 
+                    alt="Company Development Group" 
                     className="h-8 w-auto object-contain drop-shadow-xl filter brightness-110"
                   />
                   <h3 className="text-lg font-bold text-cyan-400 tracking-wide">
-                    Bristol Elite
+                    Company Elite
                   </h3>
                 </div>
                 <p className="text-slate-300 text-sm leading-relaxed">
@@ -226,7 +226,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 <ul className="space-y-2 text-sm text-slate-300">
                   <li className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                    <span>Bristol A.I. Elite v5.0</span>
+                    <span>Company A.I. Elite v5.0</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
@@ -312,9 +312,9 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 
                 {/* Copyright & Platform Info */}
                 <div className="text-sm text-slate-400">
-                  <p>© 2025 Bristol Development Group. All rights reserved.</p>
+                  <p>© 2025 Company Development Group. All rights reserved.</p>
                   <p className="text-xs mt-1 text-cyan-400">
-                    Powered by Bristol A.I. Elite v5.0 • Institutional Real Estate Intelligence Platform
+                    Powered by Company A.I. Elite v5.0 • Institutional Real Estate Intelligence Platform
                   </p>
                 </div>
 

@@ -77,12 +77,12 @@ export function MapWidget({
       case "archived":
         return "bg-gray-500";
       default:
-        return "bg-bristol-maroon";
+        return "bg-brand-maroon";
     }
   };
 
-  const getBristolScoreColor = (score?: number) => {
-    if (!score) return "text-bristol-stone";
+  const getCompanyScoreColor = (score?: number) => {
+    if (!score) return "text-brand-stone";
     if (score >= 80) return "text-green-600";
     if (score >= 60) return "text-yellow-600";
     return "text-red-600";
@@ -112,20 +112,20 @@ export function MapWidget({
 
   return (
     <Card className={cn(
-      "bg-white border-bristol-sky shadow-lg overflow-hidden",
+      "bg-white border-brand-sky shadow-lg overflow-hidden",
       isFullscreen && "fixed inset-4 z-50",
       className
     )}>
-      <CardHeader className="p-4 border-b border-bristol-sky">
+      <CardHeader className="p-4 border-b border-brand-sky">
         <div className="flex items-center justify-between">
-          <CardTitle className="font-serif text-lg font-semibold text-bristol-ink flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-bristol-maroon" />
+          <CardTitle className="font-serif text-lg font-semibold text-brand-ink flex items-center gap-2">
+            <MapPin className="w-5 h-5 text-brand-maroon" />
             Interactive Site Maps
           </CardTitle>
           
           <div className="flex items-center gap-2">
             {/* Map Provider Toggle */}
-            <div className="flex items-center gap-2 bg-bristol-fog rounded-lg p-1">
+            <div className="flex items-center gap-2 bg-brand-fog rounded-lg p-1">
               <Button
                 variant={mapProvider === "maplibre" ? "default" : "ghost"}
                 size="sm"
@@ -133,8 +133,8 @@ export function MapWidget({
                 className={cn(
                   "text-xs px-3 py-1",
                   mapProvider === "maplibre" 
-                    ? "bg-bristol-maroon text-white" 
-                    : "text-bristol-stone hover:text-bristol-maroon"
+                    ? "bg-brand-maroon text-white" 
+                    : "text-brand-stone hover:text-brand-maroon"
                 )}
               >
                 MapLibre
@@ -146,8 +146,8 @@ export function MapWidget({
                 className={cn(
                   "text-xs px-3 py-1",
                   mapProvider === "arcgis" 
-                    ? "bg-bristol-maroon text-white" 
-                    : "text-bristol-stone hover:text-bristol-maroon"
+                    ? "bg-brand-maroon text-white" 
+                    : "text-brand-stone hover:text-brand-maroon"
                 )}
               >
                 ArcGIS
@@ -158,7 +158,7 @@ export function MapWidget({
               variant="ghost"
               size="icon"
               onClick={() => setIsFullscreen(!isFullscreen)}
-              className="text-bristol-stone hover:text-bristol-maroon"
+              className="text-brand-stone hover:text-brand-maroon"
             >
               <Maximize2 className="w-4 h-4" />
             </Button>
@@ -171,7 +171,7 @@ export function MapWidget({
         <div 
           ref={mapContainerRef}
           className={cn(
-            "relative bg-gradient-to-br from-bristol-sky to-bristol-fog",
+            "relative bg-gradient-to-br from-brand-sky to-brand-fog",
             isFullscreen ? "h-[calc(100vh-120px)]" : "h-64"
           )}
           style={{
@@ -218,7 +218,7 @@ export function MapWidget({
           {/* Map Center Indicator */}
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <div className="w-20 h-20 bg-black/50 text-white rounded-lg flex flex-col items-center justify-center">
-              <MapPin className="w-6 h-6 text-bristol-gold mb-1" />
+              <MapPin className="w-6 h-6 text-brand-gold mb-1" />
               <p className="text-xs font-semibold">Franklin, TN</p>
               <p className="text-xs">{displaySites.length} Sites</p>
             </div>
@@ -226,7 +226,7 @@ export function MapWidget({
 
           {/* Map Provider Indicator */}
           <div className="absolute bottom-4 left-4">
-            <Badge variant="secondary" className="bg-white/90 text-bristol-ink">
+            <Badge variant="secondary" className="bg-white/90 text-brand-ink">
               {mapProvider === "maplibre" ? "MapLibre GL" : "ArcGIS Maps SDK"}
             </Badge>
           </div>
@@ -234,15 +234,15 @@ export function MapWidget({
 
         {/* Site Info Panel */}
         {selectedSite && (
-          <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-bristol-sky max-w-xs">
+          <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-brand-sky max-w-xs">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <h4 className="font-serif font-semibold text-bristol-ink">{selectedSite.name}</h4>
-                <p className="text-sm text-bristol-stone">{selectedSite.address}</p>
+                <h4 className="font-serif font-semibold text-brand-ink">{selectedSite.name}</h4>
+                <p className="text-sm text-brand-stone">{selectedSite.address}</p>
               </div>
               <button 
                 onClick={() => setSelectedSite(null)}
-                className="text-bristol-stone hover:text-bristol-maroon"
+                className="text-brand-stone hover:text-brand-maroon"
               >
                 ×
               </button>
@@ -259,9 +259,9 @@ export function MapWidget({
               {selectedSite.bristolScore && (
                 <Badge 
                   variant="outline"
-                  className={cn("text-xs font-bold", getBristolScoreColor(selectedSite.bristolScore))}
+                  className={cn("text-xs font-bold", getCompanyScoreColor(selectedSite.bristolScore))}
                 >
-                  Bristol Score: {selectedSite.bristolScore}
+                  Company Score: {selectedSite.bristolScore}
                 </Badge>
               )}
             </div>

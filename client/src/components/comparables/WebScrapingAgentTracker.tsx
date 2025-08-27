@@ -71,10 +71,10 @@ export default function WebScrapingAgentTracker({
 
   return (
     <div className="mb-8">
-      <Card className="bg-gradient-to-r from-bristol-maroon/5 to-bristol-gold/5 border-bristol-maroon/20 shadow-xl">
+      <Card className="bg-gradient-to-r from-brand-maroon/5 to-brand-gold/5 border-brand-maroon/20 shadow-xl">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-bristol-maroon font-cinzel text-xl flex items-center gap-3">
+            <CardTitle className="text-brand-maroon font-cinzel text-xl flex items-center gap-3">
               <div className="relative">
                 <Bot className="h-6 w-6" />
                 {status.active && (
@@ -95,7 +95,7 @@ export default function WebScrapingAgentTracker({
             
             <button
               onClick={() => setExpanded(!expanded)}
-              className="text-bristol-maroon hover:text-bristol-gold transition-colors"
+              className="text-brand-maroon hover:text-brand-gold transition-colors"
             >
               <Activity className="h-5 w-5" />
             </button>
@@ -104,13 +104,13 @@ export default function WebScrapingAgentTracker({
         
         <CardContent className="space-y-4">
           {/* Current Task Display */}
-          <div className="bg-white/60 rounded-lg p-4 border border-bristol-gold/20">
+          <div className="bg-white/60 rounded-lg p-4 border border-brand-gold/20">
             <div className="flex items-center gap-2 mb-2">
-              <Search className="h-4 w-4 text-bristol-maroon" />
-              <span className="font-semibold text-bristol-maroon text-sm">Current Task</span>
+              <Search className="h-4 w-4 text-brand-maroon" />
+              <span className="font-semibold text-brand-maroon text-sm">Current Task</span>
             </div>
             <div className="flex items-center gap-3">
-              {status.active && <Loader2 className="h-4 w-4 animate-spin text-bristol-maroon" />}
+              {status.active && <Loader2 className="h-4 w-4 animate-spin text-brand-maroon" />}
               <span className="text-sm text-gray-700">
                 {status.currentTask || 'Waiting for next task...'}
               </span>
@@ -145,10 +145,10 @@ export default function WebScrapingAgentTracker({
 
           {/* Expanded Details */}
           {expanded && (
-            <div className="border-t border-bristol-gold/20 pt-4 space-y-4">
+            <div className="border-t border-brand-gold/20 pt-4 space-y-4">
               {/* Recent Activity */}
               <div>
-                <h4 className="text-bristol-maroon font-semibold mb-2 flex items-center gap-2">
+                <h4 className="text-brand-maroon font-semibold mb-2 flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   Recent Activity
                 </h4>
@@ -183,8 +183,8 @@ export default function WebScrapingAgentTracker({
               </div>
 
               {/* Performance Metrics */}
-              <div className="bg-bristol-maroon/5 border border-bristol-maroon/20 rounded-lg p-3">
-                <h5 className="text-bristol-maroon font-medium mb-2 flex items-center gap-2">
+              <div className="bg-brand-maroon/5 border border-brand-maroon/20 rounded-lg p-3">
+                <h5 className="text-brand-maroon font-medium mb-2 flex items-center gap-2">
                   <TrendingUp className="h-4 w-4" />
                   Performance Metrics
                 </h5>

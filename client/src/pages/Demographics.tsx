@@ -85,31 +85,31 @@ export default function Demographics() {
 
   return (
     <Chrome>
-      <div className="min-h-screen bg-gradient-to-br from-white via-bristol-fog to-bristol-fog/50 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-br from-white via-brand-fog to-brand-fog/50 relative overflow-hidden">
         {/* Light background effects */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(212,165,116,0.02),transparent_50%)]" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-bristol-gold/3 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-bristol-maroon/3 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-0 w-64 h-64 bg-bristol-sky/3 rounded-full blur-2xl animate-pulse delay-500" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-brand-gold/3 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-brand-maroon/3 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-0 w-64 h-64 bg-brand-sky/3 rounded-full blur-2xl animate-pulse delay-500" />
         
         <div className="relative z-10">
           {/* Light Header */}
-          <div className="border-b border-bristol-stone/20 bg-white/95 backdrop-blur-xl shadow-lg">
+          <div className="border-b border-brand-stone/20 bg-white/95 backdrop-blur-xl shadow-lg">
             <div className="container mx-auto max-w-7xl px-6 py-8">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-6">
                   <div className="relative">
-                    <div className="absolute -inset-4 bg-gradient-to-r from-bristol-gold/20 to-bristol-maroon/20 rounded-2xl blur-xl" />
-                    <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-bristol-maroon via-bristol-gold to-bristol-maroon flex items-center justify-center border border-bristol-gold/40 shadow-lg">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-brand-gold/20 to-brand-maroon/20 rounded-2xl blur-xl" />
+                    <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-brand-maroon via-brand-gold to-brand-maroon flex items-center justify-center border border-brand-gold/40 shadow-lg">
                       <Users className="h-8 w-8 text-white drop-shadow-lg" />
                     </div>
                   </div>
                   <div>
-                    <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-bristol-maroon via-bristol-ink to-bristol-maroon bg-clip-text text-transparent">
+                    <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-brand-maroon via-brand-ink to-brand-maroon bg-clip-text text-transparent">
                       DEMOGRAPHICS INTELLIGENCE
                     </h1>
-                    <p className="text-bristol-stone font-medium text-lg mt-1">
-                      Census ACS demographic analysis for Bristol Development sites
+                    <p className="text-brand-stone font-medium text-lg mt-1">
+                      Census ACS demographic analysis for Company Development sites
                     </p>
                   </div>
                 </div>
@@ -119,9 +119,9 @@ export default function Demographics() {
                     <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                     <span className="text-green-700 text-sm font-medium">ACS 2023 Live</span>
                   </div>
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-bristol-gold/10 border border-bristol-gold/30">
-                    <BarChart3 className="w-4 h-4 text-bristol-maroon" />
-                    <span className="text-bristol-maroon text-sm font-medium">Real-time API</span>
+                  <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-gold/10 border border-brand-gold/30">
+                    <BarChart3 className="w-4 h-4 text-brand-maroon" />
+                    <span className="text-brand-maroon text-sm font-medium">Real-time API</span>
                   </div>
                 </div>
               </div>
@@ -131,70 +131,70 @@ export default function Demographics() {
           {/* Elite Stats Dashboard */}
           <div className="container mx-auto max-w-7xl px-6 py-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-              <Card className="bg-white/95 border-bristol-gold/30 backdrop-blur-xl shadow-lg">
+              <Card className="bg-white/95 border-brand-gold/30 backdrop-blur-xl shadow-lg">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-bristol-maroon font-medium">Total Sites</CardTitle>
-                    <MapPin className="h-5 w-5 text-bristol-gold" />
+                    <CardTitle className="text-brand-maroon font-medium">Total Sites</CardTitle>
+                    <MapPin className="h-5 w-5 text-brand-gold" />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-bristol-ink">{stats?.totalSites || 0}</div>
+                  <div className="text-3xl font-bold text-brand-ink">{stats?.totalSites || 0}</div>
                 </CardContent>
             </Card>
 
-              <Card className="bg-white/95 border-bristol-gold/30 backdrop-blur-xl shadow-lg">
+              <Card className="bg-white/95 border-brand-gold/30 backdrop-blur-xl shadow-lg">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-bristol-maroon font-medium">With Demographics</CardTitle>
-                    <BarChart3 className="h-5 w-5 text-bristol-gold" />
+                    <CardTitle className="text-brand-maroon font-medium">With Demographics</CardTitle>
+                    <BarChart3 className="h-5 w-5 text-brand-gold" />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-bristol-ink">{stats?.sitesWithData || 0}</div>
-                  <p className="text-bristol-stone text-sm mt-1">
+                  <div className="text-3xl font-bold text-brand-ink">{stats?.sitesWithData || 0}</div>
+                  <p className="text-brand-stone text-sm mt-1">
                     {stats?.totalSites ? Math.round((stats.sitesWithData / stats.totalSites) * 100) : 0}% coverage
                   </p>
                 </CardContent>
             </Card>
 
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <Users className="h-4 w-4" />
                   Avg Population
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {stats?.avgPopulation?.toLocaleString() || '—'}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Avg Income
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {stats?.avgIncome ? `$${stats.avgIncome.toLocaleString()}` : '—'}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-bristol-stone/20">
+            <Card className="bg-white border-brand-stone/20">
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-medium text-bristol-stone flex items-center gap-2">
+                <CardTitle className="text-sm font-medium text-brand-stone flex items-center gap-2">
                   <TrendingUp className="h-4 w-4" />
                   Avg Rent
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-bristol-ink">
+                <div className="text-2xl font-bold text-brand-ink">
                   {stats?.avgRent ? `$${stats.avgRent.toLocaleString()}` : '—'}
                 </div>
               </CardContent>
@@ -213,9 +213,9 @@ export default function Demographics() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
               {/* Map */}
               <div className="lg:col-span-3">
-                <Card className="bg-white border-bristol-stone/20 h-[600px]">
+                <Card className="bg-white border-brand-stone/20 h-[600px]">
                   <CardHeader>
-                    <CardTitle className="text-bristol-ink font-serif">
+                    <CardTitle className="text-brand-ink font-serif">
                       Portfolio Demographic Map
                     </CardTitle>
                   </CardHeader>
@@ -231,32 +231,32 @@ export default function Demographics() {
 
             {/* Info Panel */}
             <div className="space-y-4">
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-bristol-ink flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-brand-ink flex items-center gap-2">
                     <Info className="h-4 w-4" />
                     Data Sources
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
                   <div>
-                    <div className="font-medium text-bristol-ink">Census ACS</div>
-                    <div className="text-bristol-stone">American Community Survey 5-year estimates</div>
+                    <div className="font-medium text-brand-ink">Census ACS</div>
+                    <div className="text-brand-stone">American Community Survey 5-year estimates</div>
                   </div>
                   <div>
-                    <div className="font-medium text-bristol-ink">FCC Block API</div>
-                    <div className="text-bristol-stone">Geographic coordinate resolution</div>
+                    <div className="font-medium text-brand-ink">FCC Block API</div>
+                    <div className="text-brand-stone">Geographic coordinate resolution</div>
                   </div>
                   <div>
-                    <div className="font-medium text-bristol-ink">GEOID Tracts</div>
-                    <div className="text-bristol-stone">Census tract boundary mapping</div>
+                    <div className="font-medium text-brand-ink">GEOID Tracts</div>
+                    <div className="text-brand-stone">Census tract boundary mapping</div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-bristol-ink">
+                  <CardTitle className="text-sm font-medium text-brand-ink">
                     Available Metrics
                   </CardTitle>
                 </CardHeader>
@@ -276,14 +276,14 @@ export default function Demographics() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium text-bristol-ink">
+                  <CardTitle className="text-sm font-medium text-brand-ink">
                     Color Scale
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2 text-sm">
-                  <div className="text-bristol-stone">
+                  <div className="text-brand-stone">
                     Site markers are colored using quantile-based ranges:
                   </div>
                   <div className="space-y-1">
@@ -321,13 +321,13 @@ export default function Demographics() {
           <TabsContent value="analysis">
             <div className="space-y-6">
               {/* Site Selection */}
-              <Card className="bg-white border-bristol-stone/20">
+              <Card className="bg-white border-brand-stone/20">
                 <CardHeader>
-                  <CardTitle className="text-bristol-ink font-serif flex items-center gap-2">
+                  <CardTitle className="text-brand-ink font-serif flex items-center gap-2">
                     <Target className="h-5 w-5" />
                     Focused Site Analysis
                   </CardTitle>
-                  <p className="text-bristol-stone text-sm mt-1">
+                  <p className="text-brand-stone text-sm mt-1">
                     Select a site for in-depth demographic analysis including surrounding area comparison
                   </p>
                 </CardHeader>
@@ -347,7 +347,7 @@ export default function Demographics() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Badge variant="outline" className="border-bristol-gold text-bristol-gold">
+                    <Badge variant="outline" className="border-brand-gold text-brand-gold">
                       25+ Variables
                     </Badge>
                   </div>

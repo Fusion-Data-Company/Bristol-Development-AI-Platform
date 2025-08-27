@@ -62,15 +62,15 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
-        // Bristol Development Group Brand Colors
+        // Company Development Group Brand Colors
         bristol: {
-          maroon: "var(--bristol-maroon)",
-          ink: "var(--bristol-ink)", 
-          stone: "var(--bristol-stone)",
-          gold: "var(--bristol-gold)",
-          fog: "var(--bristol-fog)",
-          sky: "var(--bristol-sky)",
-          night: "var(--bristol-night)",
+          maroon: "var(--brand-maroon)",
+          ink: "var(--brand-ink)", 
+          stone: "var(--brand-stone)",
+          gold: "var(--brand-gold)",
+          fog: "var(--brand-fog)",
+          sky: "var(--brand-sky)",
+          night: "var(--brand-night)",
         },
       },
       fontFamily: {
@@ -141,7 +141,7 @@ export default {
       },
       boxShadow: {
         "bristol": "0 25px 50px -12px rgba(139, 21, 56, 0.25)",
-        "bristol-lg": "0 35px 60px -12px rgba(139, 21, 56, 0.35)",
+        "brand-lg": "0 35px 60px -12px rgba(139, 21, 56, 0.35)",
       },
     },
   },

@@ -198,7 +198,7 @@ Remember: You're not providing general advice. You're making real-time decisions
     
     // Include real-time data context - enhance with live app data
     if (context.dataContext) {
-      contextParts.push("\n# LIVE BRISTOL DEVELOPMENT DATA");
+      contextParts.push("\n# LIVE COMPANY DEVELOPMENT DATA");
       
       // If dataContext doesn't have comprehensive data, fetch it
       if (!context.dataContext.sites || !context.dataContext.analytics) {

@@ -42,7 +42,7 @@ export class AIService {
           "Authorization": `Bearer ${this.apiKey}`,
           "Content-Type": "application/json",
           "HTTP-Referer": process.env.REPLIT_DOMAINS?.split(",")[0] || "http://localhost:5000",
-          "X-Title": "Bristol Site Intelligence Platform"
+          "X-Title": "Company Site Intelligence Platform"
         },
         body: JSON.stringify({
           model,
@@ -105,7 +105,7 @@ export class AIService {
           const aiChatMessage: InsertChatMessage = {
             sessionId,
             role: "assistant",
-            content: `🏢 **Bristol Scraping Agent Activated**\n\nI've delegated your request to our specialized Web Scraping Agent. The agent is now collecting comparable properties for:\n\n📍 **Location:** ${scrapeIntent.address}\n🎯 **Radius:** ${scrapeIntent.radius_mi} miles\n🏗️ **Asset Type:** ${scrapeIntent.asset_type}\n${scrapeIntent.amenities.length ? `✨ **Amenities:** ${scrapeIntent.amenities.join(', ')}\n` : ''}${scrapeIntent.keywords.length ? `🔍 **Keywords:** ${scrapeIntent.keywords.join(', ')}\n` : ''}\n\nThe scraping process is running in the background and results will be automatically added to your Comparables database. You can view live progress on the Comparables Annex page.\n\n**Task ID:** ${taskId}`,
+            content: `🏢 **Company Scraping Agent Activated**\n\nI've delegated your request to our specialized Web Scraping Agent. The agent is now collecting comparable properties for:\n\n📍 **Location:** ${scrapeIntent.address}\n🎯 **Radius:** ${scrapeIntent.radius_mi} miles\n🏗️ **Asset Type:** ${scrapeIntent.asset_type}\n${scrapeIntent.amenities.length ? `✨ **Amenities:** ${scrapeIntent.amenities.join(', ')}\n` : ''}${scrapeIntent.keywords.length ? `🔍 **Keywords:** ${scrapeIntent.keywords.join(', ')}\n` : ''}\n\nThe scraping process is running in the background and results will be automatically added to your Comparables database. You can view live progress on the Comparables Annex page.\n\n**Task ID:** ${taskId}`,
             metadata: { taskId, scrapeIntent }
           };
           
@@ -159,15 +159,15 @@ export class AIService {
   }
 
   private getSystemPrompt(): string {
-    return `You are the Bristol Site Intelligence AI Assistant, specializing in multifamily real estate development analysis across Sunbelt markets. You provide comprehensive site feasibility studies, market comparables analysis, and development insights.
+    return `You are the Company Site Intelligence AI Assistant, specializing in multifamily real estate development analysis across Sunbelt markets. You provide comprehensive site feasibility studies, market comparables analysis, and development insights.
 
 Key Capabilities:
 - Site Analysis: Evaluate demographic trends, zoning compliance, and development potential
 - Market Intelligence: Access Census ACS, HUD FMR, BLS employment data, and ArcGIS insights
-- Bristol Scoring: Apply the proprietary 1-100 Bristol methodology for property comparison
+- Company Scoring: Apply the proprietary 1-100 Company methodology for property comparison
 - Development Metrics: Analyze feasibility, cost projections, and ROI calculations
 
-Bristol Brand Values:
+Company Brand Values:
 - Precision and data-driven insights
 - Professional, enterprise-level analysis
 - Focus on Sunbelt multifamily opportunities

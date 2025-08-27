@@ -35,30 +35,30 @@ export const EnterpriseBackground: React.FC<BackgroundProps> = ({
   const getFloatingOrbs = () => {
     const orbConfigs = {
       primary: [
-        { size: "w-32 h-32", color: "bg-bristol-gold/5", position: "top-20 left-10", blur: "blur-3xl" },
-        { size: "w-24 h-24", color: "bg-bristol-cyan/5", position: "bottom-20 right-10", blur: "blur-2xl", delay: "delay-1000" },
-        { size: "w-40 h-40", color: "bg-bristol-maroon/3", position: "top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2", blur: "blur-3xl", delay: "delay-2000" }
+        { size: "w-32 h-32", color: "bg-brand-gold/5", position: "top-20 left-10", blur: "blur-3xl" },
+        { size: "w-24 h-24", color: "bg-brand-cyan/5", position: "bottom-20 right-10", blur: "blur-2xl", delay: "delay-1000" },
+        { size: "w-40 h-40", color: "bg-brand-maroon/3", position: "top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2", blur: "blur-3xl", delay: "delay-2000" }
       ],
       secondary: [
         { size: "w-28 h-28", color: "bg-blue-500/5", position: "top-32 right-20", blur: "blur-3xl" },
         { size: "w-36 h-36", color: "bg-cyan-500/4", position: "bottom-32 left-20", blur: "blur-2xl", delay: "delay-1500" }
       ],
       accent: [
-        { size: "w-44 h-44", color: "bg-bristol-maroon/6", position: "top-40 left-1/4", blur: "blur-3xl" },
-        { size: "w-32 h-32", color: "bg-bristol-gold/8", position: "bottom-40 right-1/4", blur: "blur-2xl", delay: "delay-2000" }
+        { size: "w-44 h-44", color: "bg-brand-maroon/6", position: "top-40 left-1/4", blur: "blur-3xl" },
+        { size: "w-32 h-32", color: "bg-brand-gold/8", position: "bottom-40 right-1/4", blur: "blur-2xl", delay: "delay-2000" }
       ],
       dashboard: [
         { size: "w-48 h-48", color: "bg-blue-500/4", position: "top-20 left-20", blur: "blur-3xl" },
-        { size: "w-36 h-36", color: "bg-bristol-gold/5", position: "bottom-20 right-20", blur: "blur-2xl", delay: "delay-1000" },
+        { size: "w-36 h-36", color: "bg-brand-gold/5", position: "bottom-20 right-20", blur: "blur-2xl", delay: "delay-1000" },
         { size: "w-28 h-28", color: "bg-cyan-500/4", position: "top-1/3 right-1/3", blur: "blur-xl", delay: "delay-2500" }
       ],
       data: [
         { size: "w-40 h-40", color: "bg-emerald-500/5", position: "top-24 right-24", blur: "blur-3xl" },
-        { size: "w-32 h-32", color: "bg-bristol-cyan/5", position: "bottom-24 left-24", blur: "blur-2xl", delay: "delay-1500" }
+        { size: "w-32 h-32", color: "bg-brand-cyan/5", position: "bottom-24 left-24", blur: "blur-2xl", delay: "delay-1500" }
       ],
       tools: [
         { size: "w-44 h-44", color: "bg-purple-500/5", position: "top-16 left-16", blur: "blur-3xl" },
-        { size: "w-36 h-36", color: "bg-bristol-gold/5", position: "bottom-16 right-16", blur: "blur-2xl", delay: "delay-1000" },
+        { size: "w-36 h-36", color: "bg-brand-gold/5", position: "bottom-16 right-16", blur: "blur-2xl", delay: "delay-1000" },
         { size: "w-28 h-28", color: "bg-pink-500/4", position: "top-2/3 left-2/3", blur: "blur-xl", delay: "delay-2000" }
       ]
     };

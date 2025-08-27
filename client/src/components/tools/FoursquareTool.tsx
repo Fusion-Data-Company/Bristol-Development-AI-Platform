@@ -87,7 +87,7 @@ export function FoursquareTool() {
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressStr)}&limit=1`,
         {
           headers: {
-            'User-Agent': 'Bristol-Site-Intelligence/1.0'
+            'User-Agent': 'Company-Site-Intelligence/1.0'
           }
         }
       );
@@ -209,7 +209,7 @@ export function FoursquareTool() {
       {
         label: 'Places Count',
         data: data.meta.byCategory.slice(0, 8).map(cat => cat.count),
-        backgroundColor: '#D4A574', // Bristol gold
+        backgroundColor: '#D4A574', // Company gold
         borderColor: '#D4A574',
         borderWidth: 1
       }
@@ -245,14 +245,14 @@ export function FoursquareTool() {
   return (
     <div className="space-y-8">
       {/* MEGA HEADER */}
-      <div className="text-center space-y-6 bristol-enterprise-card p-8 rounded-3xl border-4 border-bristol-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-slate-50/50 backdrop-blur-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-slate-500/5 to-bristol-gold/10 animate-pulse"></div>
+      <div className="text-center space-y-6 brand-enterprise-card p-8 rounded-3xl border-4 border-brand-gold/40 shadow-2xl bg-gradient-to-br from-white/95 via-blue-50/50 to-slate-50/50 backdrop-blur-xl relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-slate-500/5 to-brand-gold/10 animate-pulse"></div>
         <div className="relative z-10">
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-500/20 to-slate-500/20 shadow-xl animate-bounce">
               <MapPin className="h-16 w-16 text-rose-600 drop-shadow-lg" />
             </div>
-            <h1 className="text-5xl font-black bg-gradient-to-r from-blue-800 via-bristol-gold to-slate-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
+            <h1 className="text-5xl font-black bg-gradient-to-r from-blue-800 via-brand-gold to-slate-600 bg-clip-text text-transparent drop-shadow-lg tracking-tight">
               📍 Foursquare Places
             </h1>
           </div>
@@ -261,7 +261,7 @@ export function FoursquareTool() {
               ✨ Real-Time Amenity Intelligence Platform
             </h2>
             <div className="flex items-center justify-center gap-8 text-lg font-bold text-rose-700/90">
-              <span>🏪 Live Places Data • 🚶 Walkability Score • 🎯 Amenity Analysis • 🎯 Bristol-Powered Analytics</span>
+              <span>🏪 Live Places Data • 🚶 Walkability Score • 🎯 Amenity Analysis • 🎯 Company-Powered Analytics</span>
             </div>
           </div>
         </div>
@@ -273,7 +273,7 @@ export function FoursquareTool() {
         <div>
           <Label className="text-gray-900">Location Input</Label>
           <Select value={inputMode} onValueChange={(value: 'coordinates' | 'address') => setInputMode(value)}>
-            <SelectTrigger className="bristol-form-enhanced w-48">
+            <SelectTrigger className="brand-form-enhanced w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-300">
@@ -294,7 +294,7 @@ export function FoursquareTool() {
                   value={lat}
                   onChange={(e) => setLat(e.target.value)}
                   placeholder="35.2271"
-                  className="bristol-form-enhanced"
+                  className="brand-form-enhanced"
                 />
               </div>
 
@@ -305,7 +305,7 @@ export function FoursquareTool() {
                   value={lng}
                   onChange={(e) => setLng(e.target.value)}
                   placeholder="-80.8431"
-                  className="bristol-form-enhanced"
+                  className="brand-form-enhanced"
                 />
               </div>
             </>
@@ -317,7 +317,7 @@ export function FoursquareTool() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="100 N Tryon St, Charlotte, NC"
-                className="bristol-form-enhanced"
+                className="brand-form-enhanced"
               />
             </div>
           )}
@@ -329,7 +329,7 @@ export function FoursquareTool() {
               value={radius}
               onChange={(e) => setRadius(e.target.value)}
               placeholder="1600"
-              className="bristol-form-enhanced"
+              className="brand-form-enhanced"
             />
           </div>
         </div>
@@ -340,7 +340,7 @@ export function FoursquareTool() {
         <Button 
           onClick={handleRun} 
           disabled={isLoading || isGeocoding}
-          className="bristol-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
+          className="brand-elite-button relative text-white font-black text-lg px-12 py-6 rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden shadow-2xl min-h-[80px]"
         >
           <div className="flex items-center gap-3">
             {(isLoading || isGeocoding) ? (
@@ -358,7 +358,7 @@ export function FoursquareTool() {
                 RUN ANALYSIS
               </div>
               <div className="text-xs text-amber-300 font-medium -mt-1">
-                Bristol Intelligence
+                Company Intelligence
               </div>
             </div>
             <Cpu className="h-4 w-4 text-amber-300/70" />
@@ -398,7 +398,7 @@ export function FoursquareTool() {
             <Card className="bg-gradient-to-br from-yellow-50/90 to-amber-100/60 border-2 border-yellow-200/50 shadow-2xl rounded-xl backdrop-blur-sm">
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-yellow-700 font-semibold flex items-center gap-2">
-                  <Star className="h-4 w-4 text-bristol-gold" />
+                  <Star className="h-4 w-4 text-brand-gold" />
                   Location Intelligence Score
                 </CardTitle>
               </CardHeader>
@@ -521,7 +521,7 @@ export function FoursquareTool() {
                           </td>
                           <td className="py-4 px-3 text-right">
                             <div className="bg-gradient-to-r from-purple-100 to-yellow-100 px-4 py-2 rounded-lg border border-purple-200/50 inline-block">
-                              <div className="text-lg font-bold text-bristol-gold">
+                              <div className="text-lg font-bold text-brand-gold">
                                 {place.distance_m ? formatDistance(place.distance_m) : 'N/A'}
                               </div>
                             </div>

@@ -40,7 +40,7 @@ router.get('/:geo/:state/:offense/:from/:to', async (req, res) => {
     const apiUrl = `https://api.usa.gov/crime/fbi/cde/summarized/state/${stateUpper}/${offense}?from=${fromFormatted}&to=${toFormatted}&API_KEY=${process.env.FBI_CRIME_API_KEY}`;
     const headers = {
       'Accept': 'application/json',
-      'User-Agent': 'Bristol-Site-Intelligence/1.0'
+      'User-Agent': 'Company-Site-Intelligence/1.0'
     };
 
     console.log('[FBI] Making request to:', apiUrl);

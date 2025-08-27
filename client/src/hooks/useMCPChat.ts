@@ -1,6 +1,6 @@
 /**
  * Unified MCP Chat Hook
- * Provides consistent MCP integration for all Bristol AI agents
+ * Provides consistent MCP integration for all Company AI agents
  * Handles model selection, tool execution, and conversation persistence
  */
 

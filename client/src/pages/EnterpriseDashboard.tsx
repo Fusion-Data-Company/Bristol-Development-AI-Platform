@@ -71,7 +71,7 @@ export default function EnterpriseDashboard() {
         backgroundRepeat: 'no-repeat',
         filter: 'brightness(1.0) contrast(1.2) saturate(1.0)'
       }}>
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bristol-maroon via-amber-500 to-bristol-maroon" />
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-maroon via-amber-500 to-brand-maroon" />
         
         <div className="relative px-6 py-8">
           <div className="container mx-auto max-w-7xl space-y-8">
@@ -94,22 +94,22 @@ export default function EnterpriseDashboard() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-6">
                   <div className="relative">
-                    <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-bristol-maroon via-red-700 to-amber-600 flex items-center justify-center shadow-2xl ring-6 ring-white/70 hover:scale-105 transition-transform duration-300">
+                    <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-brand-maroon via-red-700 to-amber-600 flex items-center justify-center shadow-2xl ring-6 ring-white/70 hover:scale-105 transition-transform duration-300">
                       <Crown className="h-10 w-10 text-amber-100 drop-shadow-2xl" />
                     </div>
                     <div className="absolute -top-2 -right-2 h-6 w-6 bg-emerald-500 rounded-full border-4 border-white animate-pulse shadow-xl ring-2 ring-emerald-200" />
                   </div>
                   <div>
                     <div className="flex items-center gap-6 mb-3">
-                      <h1 className="text-6xl font-bold bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 bg-clip-text text-transparent drop-shadow-lg">
+                      <h1 className="text-6xl font-bold bg-gradient-to-r from-brand-maroon via-red-700 to-amber-600 bg-clip-text text-transparent drop-shadow-lg">
                         Project Dashboard
                       </h1>
-                      <Badge className="bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 text-white px-6 py-3 text-lg font-bold shadow-2xl ring-4 ring-white/30 hover:scale-105 transition-transform duration-300">
+                      <Badge className="bg-gradient-to-r from-brand-maroon via-red-700 to-amber-600 text-white px-6 py-3 text-lg font-bold shadow-2xl ring-4 ring-white/30 hover:scale-105 transition-transform duration-300">
                         <Sparkles className="h-5 w-5 mr-3" />
                         ELITE
                       </Badge>
                     </div>
-                    <p className="text-slate-800 font-bold text-xl">Bristol Development Group Intelligence Platform</p>
+                    <p className="text-slate-800 font-bold text-xl">Company Development Group Intelligence Platform</p>
                     <div className="flex items-center gap-4 mt-3">
                       <div className="h-4 w-4 bg-emerald-500 rounded-full animate-pulse shadow-lg ring-2 ring-emerald-200" />
                       <span className="text-base text-slate-700 font-semibold">Last updated {formatTimeAgo(lastUpdated)}</span>
@@ -121,7 +121,7 @@ export default function EnterpriseDashboard() {
                   <Button 
                     variant="outline" 
                     size="lg" 
-                    className="bg-white/70 backdrop-blur-sm border-2 border-slate-300 hover:border-bristol-maroon hover:bg-white/90 shadow-lg transition-all duration-300 font-semibold"
+                    className="bg-white/70 backdrop-blur-sm border-2 border-slate-300 hover:border-brand-maroon hover:bg-white/90 shadow-lg transition-all duration-300 font-semibold"
                     onClick={() => setIsMaximized(!isMaximized)}
                   >
                     <Maximize2 className="h-5 w-5 mr-2" />
@@ -137,7 +137,7 @@ export default function EnterpriseDashboard() {
                   </Button>
                   <Button 
                     size="lg"
-                    className="bg-gradient-to-r from-bristol-maroon via-red-700 to-amber-600 hover:from-red-800 hover:via-bristol-maroon hover:to-amber-700 text-white shadow-xl ring-2 ring-white/30 font-bold transition-all duration-300"
+                    className="bg-gradient-to-r from-brand-maroon via-red-700 to-amber-600 hover:from-red-800 hover:via-brand-maroon hover:to-amber-700 text-white shadow-xl ring-2 ring-white/30 font-bold transition-all duration-300"
                   >
                     <Eye className="h-5 w-5 mr-2" />
                     Live Analytics
@@ -278,8 +278,8 @@ export default function EnterpriseDashboard() {
                 backgroundSize: '14px 18px, 11px 15px, 17px 13px, 9px 12px, 13px 17px, 100% 100%, 2.5px 2.5px, 2.5px 2.5px'
               }}>
                 <CardHeader className="pb-4 border-b border-gray-100">
-                  <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
-                    <div className="p-2 bg-gradient-to-r from-bristol-maroon to-amber-600 rounded-lg shadow-md">
+                  <CardTitle className="flex items-center gap-3 text-brand-maroon text-xl font-bold">
+                    <div className="p-2 bg-gradient-to-r from-brand-maroon to-amber-600 rounded-lg shadow-md">
                       <Trophy className="h-6 w-6 text-white" />
                     </div>
                     Performance Metrics
@@ -295,7 +295,7 @@ export default function EnterpriseDashboard() {
                     
                     <div className="flex justify-between items-center">
                       <span className="text-base font-semibold text-gray-700">Data Accuracy</span>
-                      <span className="text-base font-bold text-bristol-maroon bg-red-50 px-3 py-1 rounded-full">99.7%</span>
+                      <span className="text-base font-bold text-brand-maroon bg-red-50 px-3 py-1 rounded-full">99.7%</span>
                     </div>
                     <Progress value={97} className="h-3 bg-gray-200" />
                     
@@ -323,7 +323,7 @@ export default function EnterpriseDashboard() {
                 backgroundSize: '15px 19px, 12px 16px, 18px 14px, 10px 13px, 14px 18px, 100% 100%, 3px 3px, 3px 3px'
               }}>
                 <CardHeader className="pb-4 border-b border-gray-100">
-                  <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
+                  <CardTitle className="flex items-center gap-3 text-brand-maroon text-xl font-bold">
                     <div className="p-2 bg-gradient-to-r from-emerald-500 to-green-600 rounded-lg shadow-md">
                       <Shield className="h-6 w-6 text-white" />
                     </div>
@@ -340,8 +340,8 @@ export default function EnterpriseDashboard() {
                     </Alert>
                     
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="text-center p-4 rounded-xl bg-gradient-to-br from-red-50 to-bristol-maroon/10 border-2 border-red-100 shadow-md">
-                        <div className="font-bold text-bristol-maroon text-2xl">47</div>
+                      <div className="text-center p-4 rounded-xl bg-gradient-to-br from-red-50 to-brand-maroon/10 border-2 border-red-100 shadow-md">
+                        <div className="font-bold text-brand-maroon text-2xl">47</div>
                         <div className="text-gray-700 font-medium">Active Scrapes</div>
                       </div>
                       <div className="text-center p-4 rounded-xl bg-gradient-to-br from-amber-50 to-yellow-100 border-2 border-amber-100 shadow-md">
@@ -368,7 +368,7 @@ export default function EnterpriseDashboard() {
                 backgroundSize: '16px 20px, 13px 17px, 19px 15px, 11px 14px, 15px 19px, 100% 100%, 3.5px 3.5px, 3.5px 3.5px'
               }}>
                 <CardHeader className="pb-4 border-b border-gray-100">
-                  <CardTitle className="flex items-center gap-3 text-bristol-maroon text-xl font-bold">
+                  <CardTitle className="flex items-center gap-3 text-brand-maroon text-xl font-bold">
                     <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg shadow-md">
                       <Settings className="h-6 w-6 text-white" />
                     </div>

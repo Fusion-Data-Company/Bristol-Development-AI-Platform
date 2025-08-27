@@ -1,5 +1,5 @@
 /**
- * Bristol Market Intelligence Agent - Elite Real Estate Market Analysis
+ * Company Market Intelligence Agent - Elite Real Estate Market Analysis
  * Specialized OpenRouter agent for Sunbelt market intelligence and analysis
  */
 
@@ -50,7 +50,7 @@ export interface MarketAnalysisRequest {
   analysisDepth?: 'basic' | 'comprehensive' | 'institutional';
 }
 
-export class BristolMarketAgent {
+export class CompanyMarketAgent {
   private openRouter: OpenAI;
   private models = {
     primary: 'openai/gpt-5-chat',
@@ -62,15 +62,15 @@ export class BristolMarketAgent {
   constructor() {
     const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY2;
     if (!apiKey) {
-      throw new Error('OpenRouter API key required for Bristol Market Agent');
+      throw new Error('OpenRouter API key required for Company Market Agent');
     }
 
     this.openRouter = new OpenAI({
       baseURL: 'https://openrouter.ai/api/v1',
       apiKey: apiKey,
       defaultHeaders: {
-        'HTTP-Referer': process.env.SITE_URL || 'https://bristol-intelligence.replit.app',
-        'X-Title': 'Bristol Market Intelligence Agent'
+        'HTTP-Referer': process.env.SITE_URL || 'https://brand-intelligence.replit.app',
+        'X-Title': 'Company Market Intelligence Agent'
       }
     });
   }
@@ -80,7 +80,7 @@ export class BristolMarketAgent {
    */
   async analyzeMarket(request: MarketAnalysisRequest): Promise<MarketIntelligence> {
     try {
-      console.log(`🏢 Bristol Market Agent analyzing: ${request.market}`);
+      console.log(`🏢 Company Market Agent analyzing: ${request.market}`);
 
       // Phase 1: Market Research with Perplexity
       const marketResearch = await this.conductMarketResearch(request);
@@ -99,7 +99,7 @@ export class BristolMarketAgent {
 
       return validatedIntelligence;
     } catch (error) {
-      console.error('Bristol Market Agent analysis failed:', error);
+      console.error('Company Market Agent analysis failed:', error);
       throw new Error(`Market analysis failed: ${(error as Error).message}`);
     }
   }
@@ -124,14 +124,14 @@ SOURCES TO ANALYZE:
 - Construction permitting and completion data
 - Institutional investment transaction records
 
-Provide detailed findings with specific data points, sources, and market insights for Bristol Development Group investment analysis.`;
+Provide detailed findings with specific data points, sources, and market insights for Company Development Group investment analysis.`;
 
     const response = await this.openRouter.chat.completions.create({
       model: this.models.research,
       messages: [
         {
           role: 'system',
-          content: 'You are a specialized real estate market researcher for Bristol Development Group, focusing on Sunbelt multifamily markets. Provide comprehensive, data-driven market intelligence.'
+          content: 'You are a specialized real estate market researcher for Company Development Group, focusing on Sunbelt multifamily markets. Provide comprehensive, data-driven market intelligence.'
         },
         { role: 'user', content: prompt }
       ],
@@ -222,14 +222,14 @@ REQUIRED OUTPUT FORMAT (JSON):
   }
 }
 
-Extract quantitative data and structure into this exact JSON format for Bristol Development Group analysis.`;
+Extract quantitative data and structure into this exact JSON format for Company Development Group analysis.`;
 
     const response = await this.openRouter.chat.completions.create({
       model: this.models.primary,
       messages: [
         {
           role: 'system',
-          content: 'You are the Bristol Development Group market intelligence system. Synthesize market data into structured JSON format for institutional analysis.'
+          content: 'You are the Company Development Group market intelligence system. Synthesize market data into structured JSON format for institutional analysis.'
         },
         { role: 'user', content: prompt }
       ],
@@ -273,7 +273,7 @@ Extract quantitative data and structure into this exact JSON format for Bristol 
       await db.insert(intelligenceEntries).values({
         title: `Market Intelligence: ${market}`,
         content: `Comprehensive market analysis for ${market} multifamily properties`,
-        source: 'Bristol Market Agent',
+        source: 'Company Market Agent',
         category: 'market_analysis',
         confidence: 0.85,
         metadata: {
@@ -333,7 +333,7 @@ Extract quantitative data and structure into this exact JSON format for Bristol 
   }
 
   /**
-   * Health check for Bristol Market Agent
+   * Health check for Company Market Agent
    */
   async healthCheck(): Promise<{ status: string; details: any }> {
     try {
@@ -366,4 +366,4 @@ Extract quantitative data and structure into this exact JSON format for Bristol 
 }
 
 // Export singleton instance
-export const bristolMarketAgent = new BristolMarketAgent();
+export const bristolMarketAgent = new CompanyMarketAgent();

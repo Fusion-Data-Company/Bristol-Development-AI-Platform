@@ -243,7 +243,7 @@ export default function Maps2() {
   return (
     <SimpleChrome>
       <div className="relative w-full h-screen">
-        {/* Bristol Background Image - Super HD Clear */}
+        {/* Company Background Image - Super HD Clear */}
         <div 
           className="absolute inset-0 bg-center bg-cover bg-no-repeat"
           style={{
@@ -256,9 +256,9 @@ export default function Maps2() {
         {/* Map Container */}
         <div ref={mapContainer} className="w-full h-full relative z-10" />
         
-        {/* Bristol Intelligence Overlay */}
+        {/* Company Intelligence Overlay */}
         <div className="absolute top-4 left-4 bg-black/90 backdrop-blur rounded-lg px-4 py-3 border border-gray-700">
-          <div className="text-white font-bold text-lg">Bristol Maps Intelligence</div>
+          <div className="text-white font-bold text-lg">Company Maps Intelligence</div>
           <div className="text-cyan-400 text-sm">{sites.length} Properties Mapped</div>
           <div className={`text-xs mt-1 ${mapLoaded ? 'text-green-400' : 'text-yellow-400'}`}>
             {mapLoaded ? '✅ Map Intelligence Ready' : '⏳ Loading Intelligence...'}
@@ -324,7 +324,7 @@ export default function Maps2() {
           <div className="absolute inset-0 bg-gray-900/90 flex items-center justify-center">
             <div className="text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-cyan-500 mx-auto mb-4"></div>
-              <h2 className="text-white text-2xl font-bold">Bristol Maps Intelligence</h2>
+              <h2 className="text-white text-2xl font-bold">Company Maps Intelligence</h2>
               <p className="text-gray-400 mt-2">Loading premium mapping experience...</p>
             </div>
           </div>

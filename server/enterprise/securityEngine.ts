@@ -1,4 +1,4 @@
-// Enterprise Security Engine for Bristol Development Group
+// Enterprise Security Engine for Company Development Group
 // Provides comprehensive security monitoring, threat detection, and incident response
 
 import { db } from "../db";

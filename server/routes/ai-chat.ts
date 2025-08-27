@@ -1,10 +1,10 @@
 // server/routes/ai-chat.ts
 import type { Request, Response } from "express";
-import { BRISTOL_SYSTEM_PROMPT } from "../agent/bristol_system_prompt";
-import { BRISTOL_TOOLS } from "../agent/tools";
+import { COMPANY_SYSTEM_PROMPT } from "../agent/bristol_system_prompt";
+import { COMPANY_TOOLS } from "../agent/tools";
 
 export function registerAIAgentRoute(app: import("express").Express) {
-  app.post("/api/ai/bristol-chat", async (req: Request, res: Response) => {
+  app.post("/api/ai/brand-chat", async (req: Request, res: Response) => {
     try {
       const key = process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY;
       const { model = "openai/gpt-5", messages, stream = false } = req.body || {};
@@ -13,16 +13,16 @@ export function registerAIAgentRoute(app: import("express").Express) {
         return res.status(500).json({ error: "missing_openrouter_key" });
       }
 
-      // Prepend Bristol system prompt
+      // Prepend Company system prompt
       const fullMessages = [
-        { role: "system", content: BRISTOL_SYSTEM_PROMPT },
+        { role: "system", content: COMPANY_SYSTEM_PROMPT },
         ...(Array.isArray(messages) ? messages : [])
       ];
 
       const body: any = {
         model,
         messages: fullMessages,
-        tools: BRISTOL_TOOLS,
+        tools: COMPANY_TOOLS,
         tool_choice: "auto",
         temperature: 0.2,
         max_tokens: 4000
@@ -34,7 +34,7 @@ export function registerAIAgentRoute(app: import("express").Express) {
           Authorization: `Bearer ${key}`,
           "Content-Type": "application/json",
           "HTTP-Referer": process.env.REPLIT_DOMAINS?.split(",")[0] || "http://localhost:5000",
-          "X-Title": "Bristol Elite Agent"
+          "X-Title": "Company Elite Agent"
         },
         body: JSON.stringify(body)
       });
@@ -84,7 +84,7 @@ export function registerAIAgentRoute(app: import("express").Express) {
               Authorization: `Bearer ${key}`,
               "Content-Type": "application/json",
               "HTTP-Referer": process.env.REPLIT_DOMAINS?.split(",")[0] || "http://localhost:5000",
-              "X-Title": "Bristol Elite Agent"
+              "X-Title": "Company Elite Agent"
             },
             body: JSON.stringify({
               ...body,
@@ -103,7 +103,7 @@ export function registerAIAgentRoute(app: import("express").Express) {
 
       res.json(data);
     } catch (e: any) {
-      console.error("Bristol chat error:", e);
+      console.error("Company chat error:", e);
       res.status(500).json({ error: String(e?.message || e) });
     }
   });

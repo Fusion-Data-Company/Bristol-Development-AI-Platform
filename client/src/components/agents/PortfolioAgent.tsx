@@ -28,11 +28,11 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
   const [currentAnalysis, setCurrentAnalysis] = useState<string | null>(null);
 
-  // Fetch Bristol Development market analysis
+  // Fetch Company Development market analysis
   const { data: marketAnalysis, isLoading: isLoadingMarket } = useQuery({
-    queryKey: ['/api/bristol-agent/market-analysis'],
+    queryKey: ['/api/brand-agent/market-analysis'],
     queryFn: async () => {
-      const response = await fetch('/api/bristol-agent/market-analysis');
+      const response = await fetch('/api/brand-agent/market-analysis');
       if (!response.ok) throw new Error('Failed to fetch market analysis');
       return response.json();
     },
@@ -41,7 +41,7 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
 
   const runPortfolioAnalysis = async () => {
     setIsAnalyzing(true);
-    setCurrentAnalysis('Initializing Bristol Development Portfolio Analysis...');
+    setCurrentAnalysis('Initializing Company Development Portfolio Analysis...');
     
     const analyses = [
       {
@@ -95,7 +95,7 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
         ...analyses[i],
         status: 'completed' as const,
         confidence: 85 + Math.floor(Math.random() * 15),
-        insights: generateBristolInsights(analyses[i].category)
+        insights: generateCompanyInsights(analyses[i].category)
       };
 
       setAnalysisResults(prev => 
@@ -107,13 +107,13 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
     setIsAnalyzing(false);
   };
 
-  const generateBristolInsights = (category: string): string[] => {
+  const generateCompanyInsights = (category: string): string[] => {
     const insights = {
       market: [
         'Sunbelt markets showing 12% YoY multifamily rent growth',
         'Nashville & Austin submarkets demonstrate strongest institutional demand',
         'Class A multifamily occupancy rates averaging 94.2% across portfolio',
-        'Bristol development strategy aligns with demographic migration patterns'
+        'Company development strategy aligns with demographic migration patterns'
       ],
       property: [
         'Current portfolio weighted towards high-growth Sunbelt MSAs',
@@ -122,7 +122,7 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
         'Site selection criteria prioritizing transit-oriented locations'
       ],
       amenity: [
-        'Premium amenity packages driving 15% rent premiums in Bristol markets',
+        'Premium amenity packages driving 15% rent premiums in Company markets',
         'Co-working spaces, fitness centers, and rooftop lounges most impactful',
         'Smart home technology adoption accelerating resident retention',
         'Pet-friendly amenities correlating with longer lease terms'
@@ -159,20 +159,20 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
   };
 
   return (
-    <Card className="h-full flex flex-col bg-gradient-to-br from-white via-bristol-cream/20 to-white border-2 border-bristol-maroon/20 shadow-2xl">
-      <CardHeader className="bg-gradient-to-r from-bristol-ink via-slate-800 to-bristol-ink text-white">
+    <Card className="h-full flex flex-col bg-gradient-to-br from-white via-brand-cream/20 to-white border-2 border-brand-maroon/20 shadow-2xl">
+      <CardHeader className="bg-gradient-to-r from-brand-ink via-slate-800 to-brand-ink text-white">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative group">
-              <Brain className="h-6 w-6 text-bristol-gold group-hover:scale-110 transition-transform duration-300" />
-              <div className="absolute -inset-2 bg-bristol-gold/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
+              <Brain className="h-6 w-6 text-brand-gold group-hover:scale-110 transition-transform duration-300" />
+              <div className="absolute -inset-2 bg-brand-gold/20 rounded-full blur-lg group-hover:blur-xl transition-all duration-300"></div>
             </div>
             <div>
-              <CardTitle className="font-cinzel text-lg tracking-wide">Bristol Portfolio Intelligence</CardTitle>
-              <p className="text-bristol-cream/80 text-sm">AI-Powered Development Analysis</p>
+              <CardTitle className="font-cinzel text-lg tracking-wide">Company Portfolio Intelligence</CardTitle>
+              <p className="text-brand-cream/80 text-sm">AI-Powered Development Analysis</p>
             </div>
           </div>
-          <Badge className="bg-bristol-gold/20 text-bristol-cream border-bristol-gold/40 font-bold">
+          <Badge className="bg-brand-gold/20 text-brand-cream border-brand-gold/40 font-bold">
             <Cpu className="h-3 w-3 mr-1" />
             Elite v5.0
           </Badge>
@@ -185,7 +185,7 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
           <Button
             onClick={runPortfolioAnalysis}
             disabled={isAnalyzing}
-            className="w-full bg-gradient-to-r from-bristol-maroon to-bristol-maroon/80 hover:from-bristol-maroon/90 hover:to-bristol-maroon text-white font-bold py-3 rounded-lg shadow-lg transition-all duration-300"
+            className="w-full bg-gradient-to-r from-brand-maroon to-brand-maroon/80 hover:from-brand-maroon/90 hover:to-brand-maroon text-white font-bold py-3 rounded-lg shadow-lg transition-all duration-300"
           >
             {isAnalyzing ? (
               <>
@@ -195,17 +195,17 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
             ) : (
               <>
                 <Zap className="h-4 w-4 mr-2" />
-                Run Bristol Development Analysis
+                Run Company Development Analysis
               </>
             )}
           </Button>
 
           {/* Current Analysis Status */}
           {currentAnalysis && (
-            <div className="bg-bristol-gold/10 border border-bristol-gold/30 rounded-lg p-3">
+            <div className="bg-brand-gold/10 border border-brand-gold/30 rounded-lg p-3">
               <div className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 text-bristol-maroon animate-spin" />
-                <span className="text-sm font-medium text-bristol-ink">{currentAnalysis}</span>
+                <Loader2 className="h-4 w-4 text-brand-maroon animate-spin" />
+                <span className="text-sm font-medium text-brand-ink">{currentAnalysis}</span>
               </div>
             </div>
           )}
@@ -254,9 +254,9 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
               ))}
               
               {analysisResults.length === 0 && !isAnalyzing && (
-                <div className="text-center py-8 text-bristol-stone">
+                <div className="text-center py-8 text-brand-stone">
                   <Brain className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                  <p className="text-sm">Click above to start Bristol portfolio analysis</p>
+                  <p className="text-sm">Click above to start Company portfolio analysis</p>
                 </div>
               )}
             </div>

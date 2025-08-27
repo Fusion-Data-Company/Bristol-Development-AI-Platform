@@ -239,26 +239,26 @@ export default function AnalyticsEnterprise() {
         <div className="absolute inset-0 bg-black/30 backdrop-blur-[1px]" />
         
         {/* Subtle brand accent overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-bristol-maroon/[0.05] via-transparent to-bristol-gold/[0.05]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-maroon/[0.05] via-transparent to-brand-gold/[0.05]" />
         
         <div className="relative z-10 container mx-auto max-w-7xl space-y-8 px-6 py-8">
           
           {/* Elite Hero Header Card */}
-          <Card className="bg-white/95 backdrop-blur-md border-bristol-maroon/20 shadow-2xl shadow-bristol-maroon/10 hover:shadow-bristol-maroon/20 transition-all duration-500 mb-8">
+          <Card className="bg-white/95 backdrop-blur-md border-brand-maroon/20 shadow-2xl shadow-brand-maroon/10 hover:shadow-brand-maroon/20 transition-all duration-500 mb-8">
             <CardContent className="p-8">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-6">
                   <div className="relative">
-                    <div className="absolute -inset-4 bg-gradient-to-r from-bristol-cyan/20 to-bristol-gold/20 rounded-2xl blur-xl" />
-                    <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-bristol-maroon via-bristol-cyan to-bristol-gold flex items-center justify-center border border-bristol-cyan/30">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-brand-cyan/20 to-brand-gold/20 rounded-2xl blur-xl" />
+                    <div className="relative h-16 w-16 rounded-2xl bg-gradient-to-br from-brand-maroon via-brand-cyan to-brand-gold flex items-center justify-center border border-brand-cyan/30">
                       <BarChart4 className="h-8 w-8 text-white drop-shadow-lg" />
                     </div>
                   </div>
                   <div>
-                    <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-bristol-maroon via-bristol-cyan to-bristol-gold bg-clip-text text-transparent">
-                      BRISTOL ANALYTICS
+                    <h1 className="text-4xl font-serif font-bold bg-gradient-to-r from-brand-maroon via-brand-cyan to-brand-gold bg-clip-text text-transparent">
+                      COMPANY ANALYTICS
                     </h1>
-                    <p className="text-bristol-maroon font-medium text-lg mt-1">
+                    <p className="text-brand-maroon font-medium text-lg mt-1">
                       Enterprise Real Estate Intelligence Platform
                     </p>
                   </div>
@@ -267,13 +267,13 @@ export default function AnalyticsEnterprise() {
                 <div className="flex items-center gap-4">
                   {/* Live Status Indicators */}
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-bristol-cyan/30 shadow-sm">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-brand-cyan/30 shadow-sm">
                       <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-                      <span className="text-bristol-cyan text-sm font-medium">MCP Live</span>
+                      <span className="text-brand-cyan text-sm font-medium">MCP Live</span>
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-bristol-gold/30 shadow-sm">
-                      <Zap className="w-4 h-4 text-bristol-gold" />
-                      <span className="text-bristol-gold text-sm font-medium">AI Active</span>
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-brand-gold/30 shadow-sm">
+                      <Zap className="w-4 h-4 text-brand-gold" />
+                      <span className="text-brand-gold text-sm font-medium">AI Active</span>
                     </div>
                   </div>
                   
@@ -281,7 +281,7 @@ export default function AnalyticsEnterprise() {
                     variant="ghost"
                     size="sm"
                     onClick={() => window.location.reload()}
-                    className="text-bristol-cyan hover:text-bristol-maroon hover:bg-bristol-cyan/10 border border-bristol-cyan/30 bg-white"
+                    className="text-brand-cyan hover:text-brand-maroon hover:bg-brand-cyan/10 border border-brand-cyan/30 bg-white"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Refresh
@@ -293,45 +293,45 @@ export default function AnalyticsEnterprise() {
 
           {/* Enterprise Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="grid grid-cols-6 w-full bg-white border border-bristol-cyan/20 shadow-lg">
+            <TabsList className="grid grid-cols-6 w-full bg-white border border-brand-cyan/20 shadow-lg">
               <TabsTrigger 
                 value="portfolio" 
-                className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-gray-600"
+                className="data-[state=active]:bg-brand-cyan/20 data-[state=active]:text-brand-cyan text-gray-600"
               >
                 <Building2 className="w-4 h-4 mr-2" />
                 Portfolio
               </TabsTrigger>
               <TabsTrigger 
                 value="insights" 
-                className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-gray-600"
+                className="data-[state=active]:bg-brand-cyan/20 data-[state=active]:text-brand-cyan text-gray-600"
               >
                 <Brain className="w-4 h-4 mr-2" />
                 Elite Insights
               </TabsTrigger>
               <TabsTrigger 
                 value="financial" 
-                className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-gray-600"
+                className="data-[state=active]:bg-brand-cyan/20 data-[state=active]:text-brand-cyan text-gray-600"
               >
                 <Calculator className="w-4 h-4 mr-2" />
                 Financial Models
               </TabsTrigger>
               <TabsTrigger 
                 value="markets" 
-                className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-gray-600"
+                className="data-[state=active]:bg-brand-cyan/20 data-[state=active]:text-brand-cyan text-gray-600"
               >
                 <Globe className="w-4 h-4 mr-2" />
                 Markets
               </TabsTrigger>
               <TabsTrigger 
                 value="intelligence" 
-                className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-gray-600"
+                className="data-[state=active]:bg-brand-cyan/20 data-[state=active]:text-brand-cyan text-gray-600"
               >
                 <Radar className="w-4 h-4 mr-2" />
                 Intelligence
               </TabsTrigger>
               <TabsTrigger 
                 value="predictions" 
-                className="data-[state=active]:bg-bristol-cyan/20 data-[state=active]:text-bristol-cyan text-gray-600"
+                className="data-[state=active]:bg-brand-cyan/20 data-[state=active]:text-brand-cyan text-gray-600"
               >
                 <Activity className="w-4 h-4 mr-2" />
                 Predictions
@@ -342,7 +342,7 @@ export default function AnalyticsEnterprise() {
             <TabsContent value="portfolio" className="space-y-6">
               {portfolioLoading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bristol-cyan"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-cyan"></div>
                 </div>
               ) : portfolioData ? (
                 <>
@@ -388,10 +388,10 @@ export default function AnalyticsEnterprise() {
                   </div>
 
                   {/* Performance Metrics */}
-                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                  <Card className="bg-white border-brand-cyan/30 shadow-lg">
                     <CardHeader>
-                      <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
-                        <TrendingUp className="h-6 w-6 text-bristol-gold" />
+                      <CardTitle className="text-brand-cyan text-xl flex items-center gap-3">
+                        <TrendingUp className="h-6 w-6 text-brand-gold" />
                         Performance Metrics
                       </CardTitle>
                     </CardHeader>
@@ -401,25 +401,25 @@ export default function AnalyticsEnterprise() {
                           <div className="text-2xl font-bold text-gray-800">
                             {formatCurrency(portfolioData.performanceMetrics.noi)}
                           </div>
-                          <div className="text-bristol-stone text-sm">Net Operating Income</div>
+                          <div className="text-brand-stone text-sm">Net Operating Income</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-bristol-gold">
+                          <div className="text-2xl font-bold text-brand-gold">
                             {formatPercentage(portfolioData.performanceMetrics.irr)}
                           </div>
-                          <div className="text-bristol-stone text-sm">IRR</div>
+                          <div className="text-brand-stone text-sm">IRR</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-bristol-cyan">
+                          <div className="text-2xl font-bold text-brand-cyan">
                             {formatPercentage(portfolioData.performanceMetrics.cocReturn)}
                           </div>
-                          <div className="text-bristol-stone text-sm">Cash-on-Cash Return</div>
+                          <div className="text-brand-stone text-sm">Cash-on-Cash Return</div>
                         </div>
                         <div className="text-center">
                           <div className="text-2xl font-bold text-green-400">
                             {portfolioData.performanceMetrics.dscr.toFixed(2)}x
                           </div>
-                          <div className="text-bristol-stone text-sm">DSCR</div>
+                          <div className="text-brand-stone text-sm">DSCR</div>
                         </div>
                       </div>
                     </CardContent>
@@ -428,10 +428,10 @@ export default function AnalyticsEnterprise() {
                   {/* Enhanced Portfolio Analysis */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Geographic Distribution */}
-                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                    <Card className="bg-white border-brand-cyan/30 shadow-lg">
                       <CardHeader>
-                        <CardTitle className="text-bristol-cyan flex items-center gap-3">
-                          <MapPin className="h-5 w-5 text-bristol-gold" />
+                        <CardTitle className="text-brand-cyan flex items-center gap-3">
+                          <MapPin className="h-5 w-5 text-brand-gold" />
                           Geographic Distribution
                         </CardTitle>
                       </CardHeader>
@@ -443,11 +443,11 @@ export default function AnalyticsEnterprise() {
                               <div className="flex items-center gap-3">
                                 <div className="w-24 bg-gray-100 rounded-full h-2">
                                   <div 
-                                    className="h-2 bg-gradient-to-r from-bristol-cyan to-bristol-gold rounded-full transition-all duration-500"
+                                    className="h-2 bg-gradient-to-r from-brand-cyan to-brand-gold rounded-full transition-all duration-500"
                                     style={{ width: `${(count / portfolioData.totalProperties) * 100}%` }}
                                   />
                                 </div>
-                                <span className="text-bristol-gold font-bold w-8">{count}</span>
+                                <span className="text-brand-gold font-bold w-8">{count}</span>
                               </div>
                             </div>
                           ))}
@@ -456,10 +456,10 @@ export default function AnalyticsEnterprise() {
                     </Card>
 
                     {/* Asset Class Performance */}
-                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                    <Card className="bg-white border-brand-cyan/30 shadow-lg">
                       <CardHeader>
-                        <CardTitle className="text-bristol-cyan flex items-center gap-3">
-                          <BarChart3 className="h-5 w-5 text-bristol-gold" />
+                        <CardTitle className="text-brand-cyan flex items-center gap-3">
+                          <BarChart3 className="h-5 w-5 text-brand-gold" />
                           Asset Class Breakdown
                         </CardTitle>
                       </CardHeader>
@@ -469,11 +469,11 @@ export default function AnalyticsEnterprise() {
                             <div key={assetClass} className="space-y-2">
                               <div className="flex items-center justify-between">
                                 <span className="text-gray-800 font-medium">{assetClass}</span>
-                                <span className="text-bristol-gold font-bold">{count}</span>
+                                <span className="text-brand-gold font-bold">{count}</span>
                               </div>
                               <div className="w-full bg-gray-100 rounded-full h-3">
                                 <div 
-                                  className="h-3 bg-gradient-to-r from-bristol-maroon via-bristol-cyan to-bristol-gold rounded-full transition-all duration-500"
+                                  className="h-3 bg-gradient-to-r from-brand-maroon via-brand-cyan to-brand-gold rounded-full transition-all duration-500"
                                   style={{ width: `${(count / portfolioData.totalProperties) * 100}%` }}
                                 />
                               </div>
@@ -508,48 +508,48 @@ export default function AnalyticsEnterprise() {
                   {/* Enhanced Performance Analytics */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Performance Metrics Grid */}
-                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                    <Card className="bg-white border-brand-cyan/30 shadow-lg">
                       <CardHeader>
-                        <CardTitle className="text-bristol-cyan flex items-center gap-3">
-                          <TrendingUp className="h-5 w-5 text-bristol-gold" />
+                        <CardTitle className="text-brand-cyan flex items-center gap-3">
+                          <TrendingUp className="h-5 w-5 text-brand-gold" />
                           Performance Matrix
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
-                            <div className="text-2xl font-bold text-bristol-cyan mb-1">
+                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-brand-cyan/20">
+                            <div className="text-2xl font-bold text-brand-cyan mb-1">
                               {formatPercentage(94.2)}
                             </div>
-                            <div className="text-xs text-bristol-stone">Avg Occupancy</div>
+                            <div className="text-xs text-brand-stone">Avg Occupancy</div>
                           </div>
-                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
-                            <div className="text-2xl font-bold text-bristol-gold mb-1">
+                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-brand-cyan/20">
+                            <div className="text-2xl font-bold text-brand-gold mb-1">
                               {formatPercentage(7.8)}
                             </div>
-                            <div className="text-xs text-bristol-stone">Rent Growth</div>
+                            <div className="text-xs text-brand-stone">Rent Growth</div>
                           </div>
-                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
+                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-brand-cyan/20">
                             <div className="text-2xl font-bold text-green-400 mb-1">
                               {formatCurrency(1875)}
                             </div>
-                            <div className="text-xs text-bristol-stone">Avg Rent PSF</div>
+                            <div className="text-xs text-brand-stone">Avg Rent PSF</div>
                           </div>
-                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-bristol-cyan/20">
-                            <div className="text-2xl font-bold text-bristol-maroon mb-1">
+                          <div className="text-center p-4 bg-gray-100 rounded-xl border border-brand-cyan/20">
+                            <div className="text-2xl font-bold text-brand-maroon mb-1">
                               {formatPercentage(12.4)}
                             </div>
-                            <div className="text-xs text-bristol-stone">NOI Growth</div>
+                            <div className="text-xs text-brand-stone">NOI Growth</div>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
 
                     {/* Real-time Performance Indicators */}
-                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                    <Card className="bg-white border-brand-cyan/30 shadow-lg">
                       <CardHeader>
-                        <CardTitle className="text-bristol-cyan flex items-center gap-3">
-                          <Activity className="h-5 w-5 text-bristol-gold" />
+                        <CardTitle className="text-brand-cyan flex items-center gap-3">
+                          <Activity className="h-5 w-5 text-brand-gold" />
                           Live Performance Feed
                         </CardTitle>
                       </CardHeader>
@@ -558,23 +558,23 @@ export default function AnalyticsEnterprise() {
                           <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg border-l-4 border-green-400">
                             <div>
                               <div className="text-gray-800 font-medium">Tampa Properties</div>
-                              <div className="text-xs text-bristol-stone">Occupancy trending up 2.1%</div>
+                              <div className="text-xs text-brand-stone">Occupancy trending up 2.1%</div>
                             </div>
                             <div className="text-green-400 text-lg font-bold">97.2%</div>
                           </div>
-                          <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg border-l-4 border-bristol-cyan">
+                          <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg border-l-4 border-brand-cyan">
                             <div>
                               <div className="text-gray-800 font-medium">Nashville Portfolio</div>
-                              <div className="text-xs text-bristol-stone">Rent growth accelerating</div>
+                              <div className="text-xs text-brand-stone">Rent growth accelerating</div>
                             </div>
-                            <div className="text-bristol-cyan text-lg font-bold">+8.7%</div>
+                            <div className="text-brand-cyan text-lg font-bold">+8.7%</div>
                           </div>
-                          <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg border-l-4 border-bristol-gold">
+                          <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg border-l-4 border-brand-gold">
                             <div>
                               <div className="text-gray-800 font-medium">Miami Market</div>
-                              <div className="text-xs text-bristol-stone">Premium pricing achieved</div>
+                              <div className="text-xs text-brand-stone">Premium pricing achieved</div>
                             </div>
-                            <div className="text-bristol-gold text-lg font-bold">$2,150</div>
+                            <div className="text-brand-gold text-lg font-bold">$2,150</div>
                           </div>
                         </div>
                       </CardContent>
@@ -582,10 +582,10 @@ export default function AnalyticsEnterprise() {
                   </div>
                 </>
               ) : (
-                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                <Card className="bg-white border-brand-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
-                    <AlertTriangle className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
-                    <p className="text-bristol-stone">Unable to load portfolio data</p>
+                    <AlertTriangle className="h-12 w-12 text-brand-gold mx-auto mb-4" />
+                    <p className="text-brand-stone">Unable to load portfolio data</p>
                   </CardContent>
                 </Card>
               )}
@@ -595,7 +595,7 @@ export default function AnalyticsEnterprise() {
             <TabsContent value="markets" className="space-y-6">
               {marketLoading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bristol-cyan"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-cyan"></div>
                 </div>
               ) : marketIntelligence ? (
                 <>
@@ -612,11 +612,11 @@ export default function AnalyticsEnterprise() {
                   {/* Detailed Market Cards */}
                   <div className="grid grid-cols-1 gap-6">
                     {marketIntelligence.map((market, index) => (
-                      <Card key={index} className="bg-white border-bristol-cyan/30 shadow-lg relative overflow-hidden">
-                      <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-bristol-cyan to-bristol-gold"></div>
+                      <Card key={index} className="bg-white border-brand-cyan/30 shadow-lg relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-brand-cyan to-brand-gold"></div>
                       <CardHeader>
                         <div className="flex items-center justify-between">
-                          <CardTitle className="text-2xl text-bristol-maroon">{market.market}</CardTitle>
+                          <CardTitle className="text-2xl text-brand-maroon">{market.market}</CardTitle>
                           <Badge className={cn(
                             "font-medium",
                             market.economicHealth === 'Very Strong' ? 'bg-green-100 text-green-800 border-green-600' :
@@ -630,44 +630,44 @@ export default function AnalyticsEnterprise() {
                       <CardContent>
                         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                           <div className="text-center">
-                            <div className="text-sm text-bristol-stone mb-1">Rent Growth</div>
+                            <div className="text-sm text-brand-stone mb-1">Rent Growth</div>
                             <div className={cn(
                               "text-2xl font-bold flex items-center justify-center gap-1",
                               market.rentGrowth > 8 ? 'text-green-400' : 
-                              market.rentGrowth > 5 ? 'text-bristol-cyan' : 'text-yellow-400'
+                              market.rentGrowth > 5 ? 'text-brand-cyan' : 'text-yellow-400'
                             )}>
                               {market.rentGrowth > 5 ? <ArrowUpRight className="h-4 w-4" /> : <ArrowDownRight className="h-4 w-4" />}
                               {formatPercentage(market.rentGrowth)}
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm text-bristol-stone mb-1">Supply Pipeline</div>
+                            <div className="text-sm text-brand-stone mb-1">Supply Pipeline</div>
                             <div className="text-2xl font-bold text-gray-800">
                               {market.supplyPipeline.toLocaleString()}
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm text-bristol-stone mb-1">Demo Score</div>
-                            <div className="text-2xl font-bold text-bristol-gold">
+                            <div className="text-sm text-brand-stone mb-1">Demo Score</div>
+                            <div className="text-2xl font-bold text-brand-gold">
                               {market.demographicScore}
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm text-bristol-stone mb-1">Bristol Exposure</div>
-                            <div className="text-2xl font-bold text-bristol-maroon">
+                            <div className="text-sm text-brand-stone mb-1">Company Exposure</div>
+                            <div className="text-2xl font-bold text-brand-maroon">
                               {market.bristolExposure}
                             </div>
                           </div>
                           <div className="text-center">
-                            <div className="text-sm text-bristol-stone mb-1">Unemployment</div>
-                            <div className="text-2xl font-bold text-bristol-cyan">
+                            <div className="text-sm text-brand-stone mb-1">Unemployment</div>
+                            <div className="text-2xl font-bold text-brand-cyan">
                               {formatPercentage(market.unemploymentRate)}
                             </div>
                           </div>
                         </div>
-                        <div className="bg-gray-100 p-4 rounded-xl border border-bristol-cyan/20">
-                          <div className="text-sm font-medium text-bristol-cyan mb-2">Investment Recommendation:</div>
-                          <div className="text-sm text-bristol-stone">{market.recommendation}</div>
+                        <div className="bg-gray-100 p-4 rounded-xl border border-brand-cyan/20">
+                          <div className="text-sm font-medium text-brand-cyan mb-2">Investment Recommendation:</div>
+                          <div className="text-sm text-brand-stone">{market.recommendation}</div>
                         </div>
                       </CardContent>
                     </Card>
@@ -675,10 +675,10 @@ export default function AnalyticsEnterprise() {
                   </div>
                 </>
               ) : (
-                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                <Card className="bg-white border-brand-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
-                    <AlertTriangle className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
-                    <p className="text-bristol-stone">Market intelligence unavailable</p>
+                    <AlertTriangle className="h-12 w-12 text-brand-gold mx-auto mb-4" />
+                    <p className="text-brand-stone">Market intelligence unavailable</p>
                   </CardContent>
                 </Card>
               )}
@@ -687,11 +687,11 @@ export default function AnalyticsEnterprise() {
             {/* Live Intelligence */}
             <TabsContent value="intelligence" className="space-y-6">
               {/* Live Market Intelligence from Perplexity Agent - MOVED TO TOP */}
-              <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+              <Card className="bg-white border-brand-cyan/30 shadow-lg">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
-                      <Activity className="h-6 w-6 text-bristol-gold" />
+                    <CardTitle className="text-brand-cyan text-xl flex items-center gap-3">
+                      <Activity className="h-6 w-6 text-brand-gold" />
                       Live Market Intelligence
                       <Badge className="ml-3 bg-green-100 text-green-800">Perplexity AI</Badge>
                     </CardTitle>
@@ -699,23 +699,23 @@ export default function AnalyticsEnterprise() {
                       onClick={() => refetchMarketIntelligence()}
                       variant="outline" 
                       size="sm"
-                      className="border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10"
+                      className="border-brand-cyan/30 text-brand-cyan hover:bg-brand-cyan/10"
                     >
                       <RefreshCw className="h-4 w-4" />
                     </Button>
                   </div>
-                  <p className="text-bristol-stone text-sm">
+                  <p className="text-brand-stone text-sm">
                     Real-time market intelligence from Perplexity Sonar Deep Research • Updates every 2 hours
                   </p>
                 </CardHeader>
                 <CardContent>
                   {marketIntelligenceLoading ? (
                     <div className="flex items-center justify-center h-64">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-bristol-cyan"></div>
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-brand-cyan"></div>
                     </div>
                   ) : (marketIntelligenceData as any)?.entries?.length > 0 ? (
                     <div className="space-y-2">
-                      <div className="grid grid-cols-12 gap-4 text-xs font-medium text-bristol-stone border-b pb-2">
+                      <div className="grid grid-cols-12 gap-4 text-xs font-medium text-brand-stone border-b pb-2">
                         <div className="col-span-5">SUBJECT</div>
                         <div className="col-span-2">CATEGORY</div>
                         <div className="col-span-2">IMPACT</div>
@@ -727,11 +727,11 @@ export default function AnalyticsEnterprise() {
                           {(marketIntelligenceData as any).entries.slice(0, 15).map((entry: any) => (
                             <div 
                               key={entry.id} 
-                              className="group grid grid-cols-12 gap-4 items-center p-3 hover:bg-bristol-cyan/5 rounded-lg cursor-pointer transition-all duration-200 relative"
+                              className="group grid grid-cols-12 gap-4 items-center p-3 hover:bg-brand-cyan/5 rounded-lg cursor-pointer transition-all duration-200 relative"
                               title={`Click to view details: ${entry.title}`}
                             >
                               {/* Hover Tooltip */}
-                              <div className="absolute left-0 top-full mt-2 w-96 bg-white border border-bristol-cyan/30 rounded-lg shadow-xl p-4 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                              <div className="absolute left-0 top-full mt-2 w-96 bg-white border border-brand-cyan/30 rounded-lg shadow-xl p-4 z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                                 <div className="space-y-3">
                                   <div>
                                     <h4 className="font-semibold text-gray-800 mb-2">{entry.title}</h4>
@@ -742,11 +742,11 @@ export default function AnalyticsEnterprise() {
                                       }
                                     </p>
                                   </div>
-                                  <div className="bg-bristol-cyan/5 p-3 rounded-lg border border-bristol-cyan/20">
-                                    <div className="text-xs font-medium text-bristol-cyan mb-1">Bristol Implication:</div>
+                                  <div className="bg-brand-cyan/5 p-3 rounded-lg border border-brand-cyan/20">
+                                    <div className="text-xs font-medium text-brand-cyan mb-1">Company Implication:</div>
                                     <div className="text-sm text-gray-800">{entry.bristolImplication}</div>
                                   </div>
-                                  <div className="flex items-center justify-between text-xs text-bristol-stone">
+                                  <div className="flex items-center justify-between text-xs text-brand-stone">
                                     <span>Source: {entry.source}</span>
                                     <span>{entry.timeAgo}</span>
                                   </div>
@@ -788,12 +788,12 @@ export default function AnalyticsEnterprise() {
                                 </Badge>
                               </div>
                               <div className="col-span-2">
-                                <span className="text-sm font-medium text-bristol-cyan">
+                                <span className="text-sm font-medium text-brand-cyan">
                                   {entry.priority}/10
                                 </span>
                               </div>
                               <div className="col-span-1">
-                                <span className="text-xs text-bristol-stone">
+                                <span className="text-xs text-brand-stone">
                                   {entry.timeAgo.replace(' ago', '')}
                                 </span>
                               </div>
@@ -801,15 +801,15 @@ export default function AnalyticsEnterprise() {
                           ))}
                         </div>
                       </ScrollArea>
-                      <div className="pt-2 border-t text-xs text-bristol-stone">
+                      <div className="pt-2 border-t text-xs text-brand-stone">
                         Showing {Math.min(15, (marketIntelligenceData as any).entries.length)} of {(marketIntelligenceData as any).total} entries
                       </div>
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <Activity className="h-12 w-12 text-bristol-stone mx-auto mb-4 opacity-50" />
-                      <p className="text-bristol-stone">Loading market intelligence...</p>
-                      <p className="text-sm text-bristol-stone mt-2">
+                      <Activity className="h-12 w-12 text-brand-stone mx-auto mb-4 opacity-50" />
+                      <p className="text-brand-stone">Loading market intelligence...</p>
+                      <p className="text-sm text-brand-stone mt-2">
                         Perplexity AI agent gathering real-time market data
                       </p>
                     </div>
@@ -819,25 +819,25 @@ export default function AnalyticsEnterprise() {
 
               {liveLoading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bristol-cyan"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-cyan"></div>
                 </div>
               ) : liveIntelligence ? (
                 <>
                   {/* Market Sentiment */}
-                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                  <Card className="bg-white border-brand-cyan/30 shadow-lg">
                     <CardHeader>
-                      <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
-                        <Activity className="h-6 w-6 text-bristol-gold" />
+                      <CardTitle className="text-brand-cyan text-xl flex items-center gap-3">
+                        <Activity className="h-6 w-6 text-brand-gold" />
                         Real-Time Market Sentiment
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="text-center">
-                          <div className="text-3xl font-bold text-bristol-gold mb-2">
+                          <div className="text-3xl font-bold text-brand-gold mb-2">
                             {(liveIntelligence.market_sentiment.score * 100).toFixed(0)}
                           </div>
-                          <div className="text-bristol-stone">Sentiment Score</div>
+                          <div className="text-brand-stone">Sentiment Score</div>
                           <Badge className={cn(
                             "mt-2",
                             liveIntelligence.market_sentiment.trend === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
@@ -846,16 +846,16 @@ export default function AnalyticsEnterprise() {
                           </Badge>
                         </div>
                         <div className="text-center">
-                          <div className="text-3xl font-bold text-bristol-cyan mb-2">
+                          <div className="text-3xl font-bold text-brand-cyan mb-2">
                             {(liveIntelligence.market_sentiment.confidence * 100).toFixed(0)}%
                           </div>
-                          <div className="text-bristol-stone">Confidence Level</div>
+                          <div className="text-brand-stone">Confidence Level</div>
                         </div>
                         <div className="text-center">
                           <div className="text-lg font-medium text-gray-800 mb-2">Key Drivers</div>
                           <div className="space-y-1">
                             {liveIntelligence.market_sentiment.key_drivers.map((driver, index) => (
-                              <Badge key={index} variant="outline" className="text-xs border-bristol-cyan/30 text-bristol-cyan">
+                              <Badge key={index} variant="outline" className="text-xs border-brand-cyan/30 text-brand-cyan">
                                 {driver.replace('_', ' ')}
                               </Badge>
                             ))}
@@ -866,10 +866,10 @@ export default function AnalyticsEnterprise() {
                   </Card>
 
                   {/* Interest Rates */}
-                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                  <Card className="bg-white border-brand-cyan/30 shadow-lg">
                     <CardHeader>
-                      <CardTitle className="text-bristol-cyan text-xl flex items-center gap-3">
-                        <TrendingUp className="h-6 w-6 text-bristol-gold" />
+                      <CardTitle className="text-brand-cyan text-xl flex items-center gap-3">
+                        <TrendingUp className="h-6 w-6 text-brand-gold" />
                         Interest Rate Environment
                       </CardTitle>
                     </CardHeader>
@@ -879,19 +879,19 @@ export default function AnalyticsEnterprise() {
                           <div className="text-2xl font-bold text-gray-800 mb-1">
                             {formatPercentage(liveIntelligence.interest_rates.ten_year_treasury, 2)}
                           </div>
-                          <div className="text-bristol-stone text-sm">10-Year Treasury</div>
+                          <div className="text-brand-stone text-sm">10-Year Treasury</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-bristol-gold mb-1">
+                          <div className="text-2xl font-bold text-brand-gold mb-1">
                             {formatPercentage(liveIntelligence.interest_rates.fed_funds_rate, 2)}
                           </div>
-                          <div className="text-bristol-stone text-sm">Fed Funds Rate</div>
+                          <div className="text-brand-stone text-sm">Fed Funds Rate</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-bristol-cyan mb-1">
+                          <div className="text-2xl font-bold text-brand-cyan mb-1">
                             {formatPercentage(liveIntelligence.interest_rates.mortgage_rates, 2)}
                           </div>
-                          <div className="text-bristol-stone text-sm">Mortgage Rates</div>
+                          <div className="text-brand-stone text-sm">Mortgage Rates</div>
                         </div>
                         <div className="text-center">
                           <Badge className={cn(
@@ -902,7 +902,7 @@ export default function AnalyticsEnterprise() {
                           )}>
                             {liveIntelligence.interest_rates.rate_direction}
                           </Badge>
-                          <div className="text-bristol-stone text-sm mt-2">Direction</div>
+                          <div className="text-brand-stone text-sm mt-2">Direction</div>
                         </div>
                       </div>
                     </CardContent>
@@ -912,10 +912,10 @@ export default function AnalyticsEnterprise() {
 
                   {/* Economic Calendar & Alerts */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                    <Card className="bg-white border-brand-cyan/30 shadow-lg">
                       <CardHeader>
-                        <CardTitle className="text-bristol-cyan flex items-center gap-3">
-                          <Calendar className="h-5 w-5 text-bristol-gold" />
+                        <CardTitle className="text-brand-cyan flex items-center gap-3">
+                          <Calendar className="h-5 w-5 text-brand-gold" />
                           Upcoming Events
                         </CardTitle>
                       </CardHeader>
@@ -926,7 +926,7 @@ export default function AnalyticsEnterprise() {
                               <div key={index} className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
                                 <div>
                                   <div className="text-gray-800 font-medium">{event.event}</div>
-                                  <div className="text-bristol-stone text-sm">{event.date}</div>
+                                  <div className="text-brand-stone text-sm">{event.date}</div>
                                 </div>
                                 <Badge className={cn(
                                   event.importance === 'very_high' ? 'bg-red-100 text-red-800' :
@@ -970,10 +970,10 @@ export default function AnalyticsEnterprise() {
                   </div>
                 </>
               ) : (
-                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                <Card className="bg-white border-brand-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
-                    <AlertTriangle className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
-                    <p className="text-bristol-stone">Live intelligence unavailable</p>
+                    <AlertTriangle className="h-12 w-12 text-brand-gold mx-auto mb-4" />
+                    <p className="text-brand-stone">Live intelligence unavailable</p>
                   </CardContent>
                 </Card>
               )}
@@ -983,7 +983,7 @@ export default function AnalyticsEnterprise() {
             <TabsContent value="predictions" className="space-y-6">
               {predictiveLoading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bristol-cyan"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-cyan"></div>
                 </div>
               ) : predictiveData ? (
                 <>
@@ -1067,61 +1067,61 @@ export default function AnalyticsEnterprise() {
 
                   {/* Predictive Forecasts */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                    <Card className="bg-white border-brand-cyan/30 shadow-lg">
                       <CardHeader>
-                        <CardTitle className="text-bristol-cyan text-center">Rent Growth Forecast</CardTitle>
+                        <CardTitle className="text-brand-cyan text-center">Rent Growth Forecast</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="text-center space-y-4">
-                          <div className="text-4xl font-bold text-bristol-gold">
+                          <div className="text-4xl font-bold text-brand-gold">
                             {formatPercentage(5.2)}
                           </div>
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
-                              <span className="text-bristol-stone">Bull Case:</span>
+                              <span className="text-brand-stone">Bull Case:</span>
                               <span className="text-green-400">{formatPercentage(7.8)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-bristol-stone">Bear Case:</span>
+                              <span className="text-brand-stone">Bear Case:</span>
                               <span className="text-red-400">{formatPercentage(2.1)}</span>
                             </div>
                           </div>
                           <div className="w-full bg-gray-100 rounded-full h-2">
-                            <div className="h-2 bg-gradient-to-r from-red-400 via-bristol-gold to-green-400 rounded-full w-full" />
+                            <div className="h-2 bg-gradient-to-r from-red-400 via-brand-gold to-green-400 rounded-full w-full" />
                           </div>
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                    <Card className="bg-white border-brand-cyan/30 shadow-lg">
                       <CardHeader>
-                        <CardTitle className="text-bristol-cyan text-center">Occupancy Forecast</CardTitle>
+                        <CardTitle className="text-brand-cyan text-center">Occupancy Forecast</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="text-center space-y-4">
-                          <div className="text-4xl font-bold text-bristol-cyan">
+                          <div className="text-4xl font-bold text-brand-cyan">
                             {formatPercentage(93.5)}
                           </div>
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
-                              <span className="text-bristol-stone">Bull Case:</span>
+                              <span className="text-brand-stone">Bull Case:</span>
                               <span className="text-green-400">{formatPercentage(96.2)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-bristol-stone">Bear Case:</span>
+                              <span className="text-brand-stone">Bear Case:</span>
                               <span className="text-red-400">{formatPercentage(89.1)}</span>
                             </div>
                           </div>
                           <div className="w-full bg-gray-100 rounded-full h-2">
-                            <div className="h-2 bg-gradient-to-r from-red-400 via-bristol-cyan to-green-400 rounded-full" style={{ width: '94%' }} />
+                            <div className="h-2 bg-gradient-to-r from-red-400 via-brand-cyan to-green-400 rounded-full" style={{ width: '94%' }} />
                           </div>
                         </div>
                       </CardContent>
                     </Card>
 
-                    <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                    <Card className="bg-white border-brand-cyan/30 shadow-lg">
                       <CardHeader>
-                        <CardTitle className="text-bristol-cyan text-center">Portfolio Impact</CardTitle>
+                        <CardTitle className="text-brand-cyan text-center">Portfolio Impact</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="text-center space-y-4">
@@ -1130,15 +1130,15 @@ export default function AnalyticsEnterprise() {
                           </div>
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
-                              <span className="text-bristol-stone">Value Appreciation:</span>
-                              <span className="text-bristol-gold">{formatPercentage(12.1)}</span>
+                              <span className="text-brand-stone">Value Appreciation:</span>
+                              <span className="text-brand-gold">{formatPercentage(12.1)}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                              <span className="text-bristol-stone">Refi Opportunities:</span>
-                              <span className="text-bristol-cyan">7</span>
+                              <span className="text-brand-stone">Refi Opportunities:</span>
+                              <span className="text-brand-cyan">7</span>
                             </div>
                           </div>
-                          <div className="text-xs text-bristol-stone">
+                          <div className="text-xs text-brand-stone">
                             NOI Growth Projection
                           </div>
                         </div>
@@ -1147,10 +1147,10 @@ export default function AnalyticsEnterprise() {
                   </div>
 
                   {/* Enhanced Risk Assessment */}
-                  <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                  <Card className="bg-white border-brand-cyan/30 shadow-lg">
                     <CardHeader>
-                      <CardTitle className="text-bristol-cyan flex items-center gap-3">
-                        <Shield className="h-5 w-5 text-bristol-gold" />
+                      <CardTitle className="text-brand-cyan flex items-center gap-3">
+                        <Shield className="h-5 w-5 text-brand-gold" />
                         Risk Assessment Matrix
                       </CardTitle>
                     </CardHeader>
@@ -1158,7 +1158,7 @@ export default function AnalyticsEnterprise() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {Object.entries({ 'market_risk': 'low', 'interest_rate_risk': 'moderate', 'liquidity_risk': 'low', 'regulatory_risk': 'low' }).map(([risk, level]) => (
                           <div key={risk} className="relative group">
-                            <div className="text-center p-6 bg-gray-100 rounded-xl border border-bristol-cyan/20 hover:border-bristol-gold/40 transition-all duration-300">
+                            <div className="text-center p-6 bg-gray-100 rounded-xl border border-brand-cyan/20 hover:border-brand-gold/40 transition-all duration-300">
                               <div className="text-gray-800 font-medium mb-3 capitalize">
                                 {risk.replace('_', ' ')}
                               </div>
@@ -1173,7 +1173,7 @@ export default function AnalyticsEnterprise() {
                             </div>
                             
                             {/* Hover effect glow */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-bristol-cyan/10 to-bristol-gold/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-brand-cyan/10 to-brand-gold/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
                           </div>
                         ))}
                       </div>
@@ -1181,10 +1181,10 @@ export default function AnalyticsEnterprise() {
                   </Card>
                 </>
               ) : (
-                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                <Card className="bg-white border-brand-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
-                    <Brain className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
-                    <p className="text-bristol-stone">Predictive analytics loading...</p>
+                    <Brain className="h-12 w-12 text-brand-gold mx-auto mb-4" />
+                    <p className="text-brand-stone">Predictive analytics loading...</p>
                   </CardContent>
                 </Card>
               )}
@@ -1193,18 +1193,18 @@ export default function AnalyticsEnterprise() {
             {/* AI Agent */}
             <TabsContent value="agent" className="space-y-6">
               {/* Agent Status */}
-              <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+              <Card className="bg-white border-brand-cyan/30 shadow-lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-4">
                     <div className="relative">
-                      <div className="absolute -inset-2 bg-gradient-to-r from-bristol-cyan/30 to-bristol-gold/30 rounded-full blur-sm" />
-                      <div className="relative h-12 w-12 rounded-full bg-gradient-to-r from-bristol-cyan to-bristol-gold flex items-center justify-center">
+                      <div className="absolute -inset-2 bg-gradient-to-r from-brand-cyan/30 to-brand-gold/30 rounded-full blur-sm" />
+                      <div className="relative h-12 w-12 rounded-full bg-gradient-to-r from-brand-cyan to-brand-gold flex items-center justify-center">
                         <CircuitBoard className="h-6 w-6 text-white" />
                       </div>
                     </div>
                     <div>
-                      <div className="text-2xl font-bold text-bristol-maroon">Bristol Analytics AI Elite</div>
-                      <div className="text-bristol-cyan">Enterprise Real Estate Intelligence Agent</div>
+                      <div className="text-2xl font-bold text-brand-maroon">Company Analytics AI Elite</div>
+                      <div className="text-brand-cyan">Enterprise Real Estate Intelligence Agent</div>
                     </div>
                     <Badge className="bg-green-100 text-green-800 border-green-600 ml-auto">
                       <div className="h-2 w-2 bg-green-400 rounded-full animate-pulse mr-2"></div>
@@ -1215,46 +1215,46 @@ export default function AnalyticsEnterprise() {
                 <CardContent>
                   <div className="grid grid-cols-3 gap-6">
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-bristol-cyan">1,247</div>
-                      <div className="text-bristol-stone text-sm">Queries Processed</div>
+                      <div className="text-3xl font-bold text-brand-cyan">1,247</div>
+                      <div className="text-brand-stone text-sm">Queries Processed</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-bristol-gold">97.3%</div>
-                      <div className="text-bristol-stone text-sm">Accuracy Rate</div>
+                      <div className="text-3xl font-bold text-brand-gold">97.3%</div>
+                      <div className="text-brand-stone text-sm">Accuracy Rate</div>
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-green-400">Live</div>
-                      <div className="text-bristol-stone text-sm">Status</div>
+                      <div className="text-brand-stone text-sm">Status</div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Query Interface */}
-              <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+              <Card className="bg-white border-brand-cyan/30 shadow-lg">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-3 text-bristol-cyan">
-                    <Lightbulb className="h-6 w-6 text-bristol-gold" />
-                    Ask the Bristol Analytics Expert
+                  <CardTitle className="flex items-center gap-3 text-brand-cyan">
+                    <Lightbulb className="h-6 w-6 text-brand-gold" />
+                    Ask the Company Analytics Expert
                   </CardTitle>
-                  <p className="text-bristol-stone">
+                  <p className="text-brand-stone">
                     Get institutional-grade analysis powered by real-time MCP data integration across BLS, HUD, FBI, and economic indicators.
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-3">
-                    <label className="text-sm font-medium text-bristol-cyan">Query or Market Factor</label>
+                    <label className="text-sm font-medium text-brand-cyan">Query or Market Factor</label>
                     <Textarea
-                      placeholder="Example: How does the Federal Reserve's recent rate decision impact Bristol's acquisition strategy in secondary Sunbelt markets? Or: Analyze the correlation between Nashville's employment growth and multifamily rental demand using current BLS data..."
+                      placeholder="Example: How does the Federal Reserve's recent rate decision impact Company's acquisition strategy in secondary Sunbelt markets? Or: Analyze the correlation between Nashville's employment growth and multifamily rental demand using current BLS data..."
                       value={agentQuery}
                       onChange={(e) => setAgentQuery(e.target.value)}
-                      className="min-h-[120px] bg-white border-bristol-cyan/30 text-gray-800 placeholder:text-gray-500 focus:border-bristol-cyan"
+                      className="min-h-[120px] bg-white border-brand-cyan/30 text-gray-800 placeholder:text-gray-500 focus:border-brand-cyan"
                     />
                   </div>
                   <Button 
                     onClick={handleAgentQuery}
                     disabled={isProcessing || !agentQuery.trim()}
-                    className="bg-gradient-to-r from-bristol-maroon to-bristol-cyan hover:from-bristol-cyan hover:to-bristol-gold"
+                    className="bg-gradient-to-r from-brand-maroon to-brand-cyan hover:from-brand-cyan hover:to-brand-gold"
                   >
                     {isProcessing ? (
                       <>
@@ -1273,15 +1273,15 @@ export default function AnalyticsEnterprise() {
 
               {/* Agent Response */}
               {agentResponse && (
-                <Card className="bg-white border-bristol-gold/30">
+                <Card className="bg-white border-brand-gold/30">
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-3 text-bristol-gold">
+                    <CardTitle className="flex items-center gap-3 text-brand-gold">
                       <Sparkles className="h-6 w-6" />
                       Analysis Result
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="bg-gray-100 p-6 rounded-xl border border-bristol-cyan/20">
+                    <div className="bg-gray-100 p-6 rounded-xl border border-brand-cyan/20">
                       <div className="text-gray-800 whitespace-pre-wrap leading-relaxed">
                         {agentResponse}
                       </div>
@@ -1295,7 +1295,7 @@ export default function AnalyticsEnterprise() {
             <TabsContent value="insights" className="space-y-6">
               {insightsLoading ? (
                 <div className="flex items-center justify-center h-64">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-bristol-cyan"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-cyan"></div>
                 </div>
               ) : eliteInsights ? (
                 <EliteInsightsDashboard
@@ -1305,10 +1305,10 @@ export default function AnalyticsEnterprise() {
                   confidenceScore={0.87}
                 />
               ) : (
-                <Card className="bg-white border-bristol-cyan/30 shadow-lg">
+                <Card className="bg-white border-brand-cyan/30 shadow-lg">
                   <CardContent className="text-center py-12">
-                    <Brain className="h-12 w-12 text-bristol-gold mx-auto mb-4" />
-                    <p className="text-bristol-stone">Elite insights unavailable</p>
+                    <Brain className="h-12 w-12 text-brand-gold mx-auto mb-4" />
+                    <p className="text-brand-stone">Elite insights unavailable</p>
                   </CardContent>
                 </Card>
               )}

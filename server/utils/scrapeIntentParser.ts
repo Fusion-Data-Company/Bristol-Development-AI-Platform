@@ -109,7 +109,7 @@ export function parseScrapeIntent(message: string): ScrapeIntent | null {
 export function formatScrapeResults(data: any): string {
   const { inserted, source, records = [], caveats = [] } = data;
 
-  let response = `🏢 **Bristol Scraping Complete**\n\n`;
+  let response = `🏢 **Company Scraping Complete**\n\n`;
   response += `📊 **Summary:** Found ${inserted} properties using ${source} scraper\n\n`;
 
   if (records.length > 0) {

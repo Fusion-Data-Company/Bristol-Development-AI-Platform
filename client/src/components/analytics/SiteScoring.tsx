@@ -27,8 +27,8 @@ interface SiteScoringProps {
   className?: string;
 }
 
-// Bristol Scoring Categories and Weights
-const BRISTOL_SCORING_CATEGORIES = {
+// Company Scoring Categories and Weights
+const COMPANY_SCORING_CATEGORIES = {
   demographics: { 
     weight: 25, 
     name: 'Demographics', 
@@ -119,15 +119,15 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
   };
 
   const categoryScores = Object.fromEntries(
-    Object.keys(BRISTOL_SCORING_CATEGORIES).map(key => [
+    Object.keys(COMPANY_SCORING_CATEGORIES).map(key => [
       key, 
       calculateCategoryScore(key)
     ])
   );
 
-  // Calculate overall Bristol Score
+  // Calculate overall Company Score
   const bristolScore = site.bristolScore || Math.round(
-    Object.entries(BRISTOL_SCORING_CATEGORIES).reduce((total, [key, config]) => {
+    Object.entries(COMPANY_SCORING_CATEGORIES).reduce((total, [key, config]) => {
       return total + (categoryScores[key] * config.weight / 100);
     }, 0)
   );
@@ -162,11 +162,11 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
   return (
     <div className={cn("space-y-6", className)}>
       {/* Overall Score Header */}
-      <Card className="border-bristol-maroon/20">
+      <Card className="border-brand-maroon/20">
         <CardHeader className="text-center pb-6">
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="relative">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-bristol-maroon to-bristol-maroon/80 flex items-center justify-center shadow-lg">
+              <div className="w-24 h-24 rounded-full bg-gradient-to-br from-brand-maroon to-brand-maroon/80 flex items-center justify-center shadow-lg">
                 <span className="text-2xl font-bold text-white">{bristolScore}</span>
               </div>
               <Badge className={cn("absolute -bottom-2 left-1/2 transform -translate-x-1/2", getScoreBadgeColor(bristolScore))}>
@@ -174,14 +174,14 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
               </Badge>
             </div>
             <div className="text-left">
-              <CardTitle className="text-2xl font-serif text-bristol-ink">
-                Bristol Development Score
+              <CardTitle className="text-2xl font-serif text-brand-ink">
+                Company Development Score
               </CardTitle>
-              <p className="text-bristol-stone mt-1">
+              <p className="text-brand-stone mt-1">
                 Comprehensive site feasibility analysis
               </p>
               <div className="flex items-center gap-2 mt-2">
-                <Star className="w-4 h-4 text-bristol-gold fill-current" />
+                <Star className="w-4 h-4 text-brand-gold fill-current" />
                 <span className={cn("font-semibold", getScoreColor(bristolScore))}>
                   {bristolScore >= 85 ? 'Exceptional Opportunity' :
                    bristolScore >= 70 ? 'Strong Development Potential' :
@@ -195,7 +195,7 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
           <Button 
             onClick={onRecalculateScore}
             variant="outline" 
-            className="border-bristol-maroon text-bristol-maroon hover:bg-bristol-maroon hover:text-white"
+            className="border-brand-maroon text-brand-maroon hover:bg-brand-maroon hover:text-white"
           >
             <Calculator className="w-4 h-4 mr-2" />
             Recalculate Score
@@ -213,7 +213,7 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
 
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4">
-            {Object.entries(BRISTOL_SCORING_CATEGORIES).map(([key, config]) => {
+            {Object.entries(COMPANY_SCORING_CATEGORIES).map(([key, config]) => {
               const score = categoryScores[key];
               const IconComponent = config.icon;
               
@@ -221,12 +221,12 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
                 <Card key={key} className="p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-bristol-maroon/10 flex items-center justify-center">
-                        <IconComponent className="w-5 h-5 text-bristol-maroon" />
+                      <div className="w-10 h-10 rounded-lg bg-brand-maroon/10 flex items-center justify-center">
+                        <IconComponent className="w-5 h-5 text-brand-maroon" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-bristol-ink">{config.name}</h4>
-                        <p className="text-sm text-bristol-stone">Weight: {config.weight}%</p>
+                        <h4 className="font-semibold text-brand-ink">{config.name}</h4>
+                        <p className="text-sm text-brand-stone">Weight: {config.weight}%</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -249,7 +249,7 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
                     }}
                   />
                   
-                  <div className="text-xs text-bristol-stone mt-2">
+                  <div className="text-xs text-brand-stone mt-2">
                     Contributes {Math.round(score * config.weight / 100)} points to overall score
                   </div>
                 </Card>
@@ -260,11 +260,11 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
 
         <TabsContent value="factors" className="space-y-4">
           <div className="grid gap-6">
-            {Object.entries(BRISTOL_SCORING_CATEGORIES).map(([key, config]) => (
+            {Object.entries(COMPANY_SCORING_CATEGORIES).map(([key, config]) => (
               <Card key={key} className="p-4">
                 <div className="flex items-center gap-3 mb-4">
-                  <config.icon className="w-6 h-6 text-bristol-maroon" />
-                  <h4 className="font-semibold text-bristol-ink text-lg">{config.name}</h4>
+                  <config.icon className="w-6 h-6 text-brand-maroon" />
+                  <h4 className="font-semibold text-brand-ink text-lg">{config.name}</h4>
                   <Badge className={getScoreBadgeColor(categoryScores[key])}>
                     {categoryScores[key]}/100
                   </Badge>
@@ -272,9 +272,9 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
                 
                 <div className="grid grid-cols-2 gap-3">
                   {config.factors.map((factor) => (
-                    <div key={factor} className="flex items-center gap-2 p-2 bg-bristol-fog rounded-lg">
-                      <BarChart3 className="w-4 h-4 text-bristol-stone" />
-                      <span className="text-sm text-bristol-ink">{factor}</span>
+                    <div key={factor} className="flex items-center gap-2 p-2 bg-brand-fog rounded-lg">
+                      <BarChart3 className="w-4 h-4 text-brand-stone" />
+                      <span className="text-sm text-brand-ink">{factor}</span>
                     </div>
                   ))}
                 </div>
@@ -286,14 +286,14 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
         <TabsContent value="recommendations" className="space-y-4">
           {recommendations.map((section) => (
             <Card key={section.category} className="p-4">
-              <h4 className="font-semibold text-bristol-ink mb-3 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-bristol-maroon" />
+              <h4 className="font-semibold text-brand-ink mb-3 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-brand-maroon" />
                 {section.category}
               </h4>
               <ul className="space-y-2">
                 {section.items.map((item, index) => (
-                  <li key={index} className="flex items-start gap-2 text-sm text-bristol-stone">
-                    <div className="w-1.5 h-1.5 rounded-full bg-bristol-maroon mt-2 flex-shrink-0" />
+                  <li key={index} className="flex items-start gap-2 text-sm text-brand-stone">
+                    <div className="w-1.5 h-1.5 rounded-full bg-brand-maroon mt-2 flex-shrink-0" />
                     {item}
                   </li>
                 ))}

@@ -370,13 +370,13 @@ router.post('/sync', async (req: any, res) => {
 router.use('*', (req: any, res) => {
   res.json({
     success: true,
-    content: "I'm your unified Bristol A.I. with perfect memory and cross-session continuity. Send your message to /chat for the full experience!",
-    message: "I'm your unified Bristol A.I. with perfect memory and cross-session continuity. Send your message to /chat for the full experience!",
+    content: "I'm your unified Company A.I. with perfect memory and cross-session continuity. Send your message to /chat for the full experience!",
+    message: "I'm your unified Company A.I. with perfect memory and cross-session continuity. Send your message to /chat for the full experience!",
     features: ['perfect-memory', 'cross-session-sharing', 'tool-integration'],
     sessionId: `unified-${Date.now()}`,
-    model: 'bristol-unified',
+    model: 'brand-unified',
     metadata: {
-      provider: 'bristol-unified',
+      provider: 'brand-unified',
       memoryEnabled: true
     }
   });

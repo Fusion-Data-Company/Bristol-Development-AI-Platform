@@ -36,7 +36,7 @@ export function ThinkingIndicator({ isThinking, size = "md", className }: Thinki
       
       {/* Inner Logo/Icon */}
       <div className={cn(
-        "absolute inset-1 bg-gradient-to-br from-bristol-maroon to-bristol-maroon rounded-full flex items-center justify-center shadow-lg transition-transform duration-300",
+        "absolute inset-1 bg-gradient-to-br from-brand-maroon to-brand-maroon rounded-full flex items-center justify-center shadow-lg transition-transform duration-300",
         innerSizeClasses[size],
         "scale-100"
       )}>

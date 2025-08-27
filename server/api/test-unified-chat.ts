@@ -72,7 +72,7 @@ router.post('/test-memory', async (req, res) => {
     await advancedMemoryService.storeMemory(
       userId,
       sessionId1,
-      "User is working on a Bristol Development project in Charlotte, NC",
+      "User is working on a Company Development project in Charlotte, NC",
       'fact',
       { importance: 8, confidence: 0.9 },
       'main'

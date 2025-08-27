@@ -342,7 +342,7 @@ class UnifiedChatService {
       // Ensure session exists in database
       await storage.createChatSession({
         userId: request.userId,
-        title: `Bristol A.I. Elite Session (${request.sourceInstance})`
+        title: `Company A.I. Elite Session (${request.sourceInstance})`
       });
     } catch (error) {
       console.log('Session creation note:', error);
@@ -403,7 +403,7 @@ ${memoryContext.relevantMemories.slice(0, 5).map((memory: any) =>
 ### Current Session Context
 - Interface: ${request.sourceInstance} (main chat or floating widget)
 - Cross-Session Memory: ${request.crossSessionMemory ? 'ENABLED' : 'DISABLED'}
-- Tools Available: ${request.mcpEnabled ? 'ALL BRISTOL TOOLS ACTIVE' : 'LIMITED'}
+- Tools Available: ${request.mcpEnabled ? 'ALL COMPANY TOOLS ACTIVE' : 'LIMITED'}
 - Real-time Data: ${request.realTimeData ? 'CONNECTED' : 'CACHED'}
 
 ### Conversation Summary
@@ -421,7 +421,7 @@ I now have:
 4. **Intelligent Routing**: I automatically use the best tools for your specific needs
 5. **Adaptive Communication**: My responses adapt to your preferred style and technical level
 
-Use my enhanced memory and context to provide the most relevant, personalized, and effective assistance for your Bristol Development projects.`;
+Use my enhanced memory and context to provide the most relevant, personalized, and effective assistance for your Company Development projects.`;
 
     return enhancedPrompt;
   }

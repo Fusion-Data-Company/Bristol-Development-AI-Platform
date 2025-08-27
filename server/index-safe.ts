@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
-    console.log("🚀 Starting Bristol Site Intelligence Platform...");
+    console.log("🚀 Starting Company Site Intelligence Platform...");
     
     // Step 1: Create basic HTTP server
     console.log("📡 Creating HTTP server...");
@@ -149,8 +149,8 @@ app.use((req, res, next) => {
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-            "HTTP-Referer": "https://bristol-site-intelligence.replit.app",
-            "X-Title": "Bristol Site Intelligence Platform"
+            "HTTP-Referer": "https://brand-site-intelligence.replit.app",
+            "X-Title": "Company Site Intelligence Platform"
           },
           body: JSON.stringify({
             model: model || "openai/gpt-5-chat",
@@ -231,7 +231,7 @@ app.use((req, res, next) => {
         reusePort: true,
       }, () => {
         clearTimeout(serverTimeout);
-        console.log(`✅ Bristol Site Intelligence Platform running on http://0.0.0.0:${port}`);
+        console.log(`✅ Company Site Intelligence Platform running on http://0.0.0.0:${port}`);
         log(`serving on port ${port}`);
         resolve();
       });

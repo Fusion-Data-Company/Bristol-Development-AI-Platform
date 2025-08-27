@@ -32,15 +32,15 @@ export class PerplexitySonarService {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://bristol-development.com',
-          'X-Title': 'Bristol Competitor Watch'
+          'HTTP-Referer': 'https://brand-development.com',
+          'X-Title': 'Company Competitor Watch'
         },
         body: JSON.stringify({
           model: 'perplexity/sonar-deep-research',
           messages: [
             {
               role: 'system',
-              content: 'You are a real estate market intelligence analyst for Bristol Development Group. Analyze competitor activities and provide strategic insights.'
+              content: 'You are a real estate market intelligence analyst for Company Development Group. Analyze competitor activities and provide strategic insights.'
             },
             {
               role: 'user',
@@ -100,8 +100,8 @@ export class PerplexitySonarService {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://bristol-development.com',
-          'X-Title': 'Bristol Competitor Research'
+          'HTTP-Referer': 'https://brand-development.com',
+          'X-Title': 'Company Competitor Research'
         },
         body: JSON.stringify({
           model: 'perplexity/sonar-deep-research',
@@ -156,8 +156,8 @@ export class PerplexitySonarService {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
           'Content-Type': 'application/json',
-          'HTTP-Referer': 'https://bristol-development.com',
-          'X-Title': 'Bristol Market Insights'
+          'HTTP-Referer': 'https://brand-development.com',
+          'X-Title': 'Company Market Insights'
         },
         body: JSON.stringify({
           model: 'perplexity/sonar-deep-research',
@@ -188,7 +188,7 @@ export class PerplexitySonarService {
   private buildAnalysisPrompt(signal: CompetitorSignal): string {
     const signalData = signal.rawData as any || {};
     
-    let prompt = `Analyze this ${signal.type} signal for Bristol Development Group:
+    let prompt = `Analyze this ${signal.type} signal for Company Development Group:
 
 Competitor: ${signal.competitorMatch}
 Type: ${signal.type}
@@ -232,9 +232,9 @@ Link: ${signal.link || 'N/A'}
 
     prompt += `
 Provide:
-1. Strategic analysis of what this means for Bristol Development
-2. Potential impact on Bristol's market position
-3. Recommended actions Bristol should take
+1. Strategic analysis of what this means for Company Development
+2. Potential impact on Company's market position
+3. Recommended actions Company should take
 4. Confidence level in this assessment (0-1)
 
 Format as JSON with fields: analysis, impact (low/medium/high/critical), confidence, recommendations (array)`;

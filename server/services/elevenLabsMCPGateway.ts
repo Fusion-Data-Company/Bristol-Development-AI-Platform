@@ -131,23 +131,23 @@ class CircuitBreaker {
 export class ElevenLabsMCPGateway {
   private tools: Map<string, MCPTool> = new Map();
   private circuitBreakers: Map<string, CircuitBreaker> = new Map();
-  private bristolTeamCache: Map<string, TeamUser> = new Map();
+  private teamCache: Map<string, TeamUser> = new Map();
   
   constructor() {
     this.initializeTools();
-    this.loadBristolTeam();
+    this.loadCompanyTeam();
   }
 
-  private async loadBristolTeam() {
+  private async loadCompanyTeam() {
     try {
-      // Load Bristol team members from database
+      // Load Company team members from database
       const team = await db.select().from(teamUsers).where(eq(teamUsers.isActive, true));
       team.forEach(member => {
-        this.bristolTeamCache.set(member.name.toLowerCase(), member);
+        this.teamCache.set(member.name.toLowerCase(), member);
       });
-      console.log(`✅ Loaded ${team.length} Bristol team members into cache`);
+      console.log(`✅ Loaded ${team.length} Company team members into cache`);
     } catch (error) {
-      console.error('Failed to load Bristol team:', error);
+      console.error('Failed to load Company team:', error);
     }
   }
 
@@ -155,15 +155,15 @@ export class ElevenLabsMCPGateway {
     // Tool 1: Verify User
     this.tools.set('verify_user', {
       name: 'verify_user',
-      description: 'Verify user against Bristol team roster',
+      description: 'Verify user against Company team roster',
       parameters: { name: { type: 'string', required: true } },
       handler: async (params) => {
         const { name } = params;
         const normalizedName = name.toLowerCase().trim();
         
         // Check cache first
-        if (this.bristolTeamCache.has(normalizedName)) {
-          const user = this.bristolTeamCache.get(normalizedName);
+        if (this.teamCache.has(normalizedName)) {
+          const user = this.teamCache.get(normalizedName);
           return {
             verified: true,
             user: {
@@ -187,7 +187,7 @@ export class ElevenLabsMCPGateway {
           .limit(1);
 
         if (dbUser.length > 0) {
-          this.bristolTeamCache.set(normalizedName, dbUser[0]);
+          this.teamCache.set(normalizedName, dbUser[0]);
           return {
             verified: true,
             user: {
@@ -201,7 +201,7 @@ export class ElevenLabsMCPGateway {
 
         return {
           verified: false,
-          message: 'User not found in Bristol team roster'
+          message: 'User not found in Company team roster'
         };
       },
       timeout: config.timeout.simple
@@ -307,7 +307,7 @@ export class ElevenLabsMCPGateway {
     // Tool 4: Query Analytics
     this.tools.set('query_analytics', {
       name: 'query_analytics',
-      description: 'Fetch Bristol portfolio analytics',
+      description: 'Fetch Company portfolio analytics',
       parameters: {
         query: { type: 'string', required: true },
         type: { type: 'string', enum: ['project', 'portfolio', 'metric_set'] }
@@ -464,14 +464,14 @@ export class ElevenLabsMCPGateway {
               'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
               'Content-Type': 'application/json',
               'HTTP-Referer': 'https://bristol.replit.app',
-              'X-Title': 'Bristol Cap AI'
+              'X-Title': 'Company Cap AI'
             },
             body: JSON.stringify({
               model: config.specializedModels.analysis,
               messages: [
                 {
                   role: 'system',
-                  content: 'You are a real estate market research analyst for Bristol Development Group. Provide accurate, current market data and insights.'
+                  content: 'You are a real estate market research analyst for Company Development Group. Provide accurate, current market data and insights.'
                 },
                 {
                   role: 'user',

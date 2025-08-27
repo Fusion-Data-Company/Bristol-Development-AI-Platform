@@ -69,7 +69,7 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({ onImageGenerat
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `bristol-ai-generated-${Date.now()}.png`;
+      a.download = `brand-ai-generated-${Date.now()}.png`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -89,9 +89,9 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({ onImageGenerat
   };
 
   return (
-    <Card className="w-full bg-gradient-to-br from-white/10 to-white/5 border-bristol-gold/20 backdrop-blur-sm">
+    <Card className="w-full bg-gradient-to-br from-white/10 to-white/5 border-brand-gold/20 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-bristol-gold">
+        <CardTitle className="flex items-center gap-2 text-brand-gold">
           <Sparkles className="h-5 w-5" />
           DALL-E 3 Image Generation
           <div className="px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded-full text-xs font-bold">
@@ -106,7 +106,7 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({ onImageGenerat
             placeholder="Describe the image you want to generate..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="bg-black/20 border-bristol-cyan/30 text-white placeholder:text-white/50"
+            className="bg-black/20 border-brand-cyan/30 text-white placeholder:text-white/50"
           />
         </div>
 
@@ -114,7 +114,7 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({ onImageGenerat
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/90">Size</label>
             <Select value={size} onValueChange={setSize}>
-              <SelectTrigger className="bg-black/20 border-bristol-cyan/30">
+              <SelectTrigger className="bg-black/20 border-brand-cyan/30">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -128,7 +128,7 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({ onImageGenerat
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/90">Quality</label>
             <Select value={quality} onValueChange={setQuality}>
-              <SelectTrigger className="bg-black/20 border-bristol-cyan/30">
+              <SelectTrigger className="bg-black/20 border-brand-cyan/30">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -141,7 +141,7 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({ onImageGenerat
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/90">Style</label>
             <Select value={style} onValueChange={setStyle}>
-              <SelectTrigger className="bg-black/20 border-bristol-cyan/30">
+              <SelectTrigger className="bg-black/20 border-brand-cyan/30">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -155,7 +155,7 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({ onImageGenerat
         <Button 
           onClick={handleGenerate} 
           disabled={loading || !prompt.trim()}
-          className="w-full bg-gradient-to-r from-bristol-gold to-bristol-cyan hover:from-bristol-gold/80 hover:to-bristol-cyan/80 text-black font-bold"
+          className="w-full bg-gradient-to-r from-brand-gold to-brand-cyan hover:from-brand-gold/80 hover:to-brand-cyan/80 text-black font-bold"
         >
           {loading ? (
             <>
@@ -172,7 +172,7 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({ onImageGenerat
 
         {generatedImage && (
           <div className="space-y-4">
-            <div className="relative rounded-lg overflow-hidden border border-bristol-gold/30">
+            <div className="relative rounded-lg overflow-hidden border border-brand-gold/30">
               <img 
                 src={generatedImage} 
                 alt="Generated image" 
@@ -183,7 +183,7 @@ export const ImageGeneration: React.FC<ImageGenerationProps> = ({ onImageGenerat
             <Button 
               onClick={handleDownload}
               variant="outline"
-              className="w-full border-bristol-cyan/30 text-bristol-cyan hover:bg-bristol-cyan/10"
+              className="w-full border-brand-cyan/30 text-brand-cyan hover:bg-brand-cyan/10"
             >
               <Download className="h-4 w-4 mr-2" />
               Download Image

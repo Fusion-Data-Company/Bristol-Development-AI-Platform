@@ -1,5 +1,5 @@
 /**
- * Bristol Financial Modeling Agent - Elite DCF, IRR, and NPV Analysis
+ * Company Financial Modeling Agent - Elite DCF, IRR, and NPV Analysis
  * Specialized OpenRouter agent for institutional-grade financial modeling
  */
 
@@ -59,7 +59,7 @@ export interface FinancialModelResults {
   };
 }
 
-export class BristolFinancialAgent {
+export class CompanyFinancialAgent {
   private openRouter: OpenAI;
   private models = {
     primary: 'openai/gpt-5-chat',
@@ -71,15 +71,15 @@ export class BristolFinancialAgent {
   constructor() {
     const apiKey = process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY2;
     if (!apiKey) {
-      throw new Error('OpenRouter API key required for Bristol Financial Agent');
+      throw new Error('OpenRouter API key required for Company Financial Agent');
     }
 
     this.openRouter = new OpenAI({
       baseURL: 'https://openrouter.ai/api/v1',
       apiKey: apiKey,
       defaultHeaders: {
-        'HTTP-Referer': process.env.SITE_URL || 'https://bristol-intelligence.replit.app',
-        'X-Title': 'Bristol Financial Modeling Agent'
+        'HTTP-Referer': process.env.SITE_URL || 'https://brand-intelligence.replit.app',
+        'X-Title': 'Company Financial Modeling Agent'
       }
     });
   }
@@ -89,7 +89,7 @@ export class BristolFinancialAgent {
    */
   async analyzeInvestment(inputs: FinancialModelInputs): Promise<FinancialModelResults> {
     try {
-      console.log(`💰 Bristol Financial Agent analyzing investment of $${inputs.acquisitionPrice.toLocaleString()}`);
+      console.log(`💰 Company Financial Agent analyzing investment of $${inputs.acquisitionPrice.toLocaleString()}`);
 
       // Phase 1: DCF Analysis with GPT-5
       const dcfAnalysis = await this.performDCFAnalysis(inputs);
@@ -119,7 +119,7 @@ export class BristolFinancialAgent {
 
       return results;
     } catch (error) {
-      console.error('Bristol Financial Agent analysis failed:', error);
+      console.error('Company Financial Agent analysis failed:', error);
       throw new Error(`Financial analysis failed: ${(error as Error).message}`);
     }
   }
@@ -158,7 +158,7 @@ Provide detailed year-by-year projections with supporting calculations.`;
       messages: [
         {
           role: 'system',
-          content: 'You are an institutional real estate financial analyst specializing in DCF modeling for Bristol Development Group. Provide precise calculations with supporting methodology.'
+          content: 'You are an institutional real estate financial analyst specializing in DCF modeling for Company Development Group. Provide precise calculations with supporting methodology.'
         },
         { role: 'user', content: prompt }
       ],
@@ -387,7 +387,7 @@ Provide detailed waterfall calculations with dollar amounts.`;
       await db.insert(intelligenceEntries).values({
         title: `Financial Analysis: $${inputs.acquisitionPrice.toLocaleString()} Investment`,
         content: `DCF analysis with ${results.dcfAnalysis.internalRateOfReturn.toFixed(1)}% IRR`,
-        source: 'Bristol Financial Agent',
+        source: 'Company Financial Agent',
         category: 'financial_analysis',
         confidence: 0.90,
         metadata: {
@@ -408,7 +408,7 @@ Provide detailed waterfall calculations with dollar amounts.`;
   }
 
   /**
-   * Health check for Bristol Financial Agent
+   * Health check for Company Financial Agent
    */
   async healthCheck(): Promise<{ status: string; details: any }> {
     try {
@@ -439,4 +439,4 @@ Provide detailed waterfall calculations with dollar amounts.`;
 }
 
 // Export singleton instance
-export const bristolFinancialAgent = new BristolFinancialAgent();
+export const bristolFinancialAgent = new CompanyFinancialAgent();

@@ -61,7 +61,7 @@ router.post('/chat', async (req: any, res) => {
     
     // Return in multiple compatible formats
     res.json({
-      // Bristol format
+      // Company format
       success: result.success,
       content: result.content,
       message: result.content,
@@ -78,7 +78,7 @@ router.post('/chat', async (req: any, res) => {
       }],
       
       // Extended metadata
-      id: `bristol-${Date.now()}`,
+      id: `brand-${Date.now()}`,
       object: 'chat.completion',
       created: Math.floor(Date.now() / 1000),
       sessionId: result.sessionId,
@@ -112,7 +112,7 @@ router.post('/chat', async (req: any, res) => {
         },
         finish_reason: 'stop'
       }],
-      id: `bristol-error-${Date.now()}`,
+      id: `brand-error-${Date.now()}`,
       object: 'chat.completion',
       created: Math.floor(Date.now() / 1000),
       sessionId: req.body.sessionId || `error-${Date.now()}`,
@@ -297,7 +297,7 @@ router.use('*', (req: any, res) => {
     message: "I'm here and ready to help! Please send your message to the /chat endpoint.",
     text: "I'm here and ready to help! Please send your message to the /chat endpoint.",
     sessionId: `fallback-${Date.now()}`,
-    model: 'bristol-fallback',
+    model: 'brand-fallback',
     metadata: {
       provider: 'bristol',
       fallback: true

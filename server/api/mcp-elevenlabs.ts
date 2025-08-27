@@ -67,7 +67,7 @@ router.get('/api/mcp/tools', async (req, res) => {
     const health = await eliteMCPSuperserver.healthCheck();
     
     res.json({
-      name: 'Bristol Elite MCP Superserver',
+      name: 'Company Elite MCP Superserver',
       version: '2.0.0',
       tools: allTools,
       totalTools: allTools.length,
