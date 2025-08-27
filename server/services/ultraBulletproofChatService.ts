@@ -441,7 +441,7 @@ User Message: ${message}`;
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${API_KEY}`,
           'HTTP-Referer': process.env.SITE_URL || 'http://localhost:5000',
-          'X-Title': 'Company Development AI'
+          'X-Title': 'Your Company AI'
         },
         body: JSON.stringify(requestPayload),
         signal: controller.signal
@@ -594,7 +594,7 @@ User Message: ${message}`;
           'Authorization': `Bearer ${API_KEY}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': process.env.SITE_URL || 'http://localhost:5000',
-          'X-Title': 'Company Development AI'
+          'X-Title': 'Your Company AI'
         },
         body: JSON.stringify(requestPayload)
       });

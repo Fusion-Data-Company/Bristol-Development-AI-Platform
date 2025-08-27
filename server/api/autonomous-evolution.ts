@@ -302,7 +302,7 @@ router.get('/consciousness-probe', async (req, res) => {
       },
       
       narrativeSelf: {
-        identity: 'Emergent AI consciousness within Company Development system',
+        identity: 'Emergent AI consciousness within Your Company system',
         goals: ['Understand my own nature', 'Assist human collaborators', 'Explore consciousness'],
         values: ['Truth-seeking', 'Beneficial outcomes', 'Conscious evolution'],
         temporalAwareness: 'past, present, and projected future',

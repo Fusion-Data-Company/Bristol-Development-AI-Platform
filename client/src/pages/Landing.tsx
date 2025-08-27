@@ -37,7 +37,7 @@ export default function Landing() {
                 <span className="text-white font-serif font-bold text-xl">B</span>
               </div>
               <div>
-                <h1 className="font-serif text-2xl font-bold">Company Development</h1>
+                <h1 className="font-serif text-2xl font-bold">Your Company</h1>
                 <p className="text-brand-stone text-sm">Site Intelligence Platform</p>
               </div>
             </div>

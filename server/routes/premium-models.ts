@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router();
 
-// Premium AI Models Configuration for Company A.I. Elite
+// Premium AI Models Configuration for Your Company A.I. Elite
 const PREMIUM_MODELS = [
   {
     id: "gpt-5",

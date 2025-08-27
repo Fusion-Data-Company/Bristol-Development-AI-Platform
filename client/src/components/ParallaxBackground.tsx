@@ -62,7 +62,7 @@ export function ParallaxBackground({
         <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-brand-gold/10 rounded-lg rotate-45 animate-float" style={{ animationDelay: '2s' }} />
         <div className="absolute top-1/2 left-3/4 w-20 h-20 bg-brand-sky/8 rounded-full animate-float" style={{ animationDelay: '4s' }} />
         
-        {/* Company Development Pattern */}
+        {/* Your Company Pattern */}
         <div className="absolute top-0 left-0 w-full h-full">
           <svg className="w-full h-full opacity-5" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>

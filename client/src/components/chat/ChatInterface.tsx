@@ -89,7 +89,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
     }
   });
 
-  // State for messages - using local state since Company A.I. Elite handles persistence 
+  // State for messages - using local state since Your Company A.I. Elite handles persistence 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [currentSessionId] = useState(() => 
     sessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
@@ -185,7 +185,7 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
       });
     },
     onError: (error) => {
-      console.error('Company A.I. Error:', error);
+      console.error('Your Company A.I. Error:', error);
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
         role: 'assistant',

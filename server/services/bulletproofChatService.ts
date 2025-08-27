@@ -185,7 +185,7 @@ class BulletproofChatService {
       try {
         await storage.createChatSession({
           userId: normalizedUserId,
-          title: 'Company A.I. Elite Session'
+          title: 'Your Company A.I. Elite Session'
         });
       } catch (error) {
         // Session might already exist, that's okay

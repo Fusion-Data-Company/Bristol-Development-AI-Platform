@@ -200,7 +200,7 @@ Please provide expert-level analysis and recommendations suited to institutional
       await storage.createChatSession({
         id: newSessionId,
         userId,
-        title: 'Company A.I. Elite Session'
+        title: 'Your Company A.I. Elite Session'
       });
     } catch (error) {
       console.error('Error creating session:', error);

@@ -195,11 +195,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const placeholderReplacementRouter = (await import('./api/placeholder-replacement')).default;
   app.use('/api/placeholder-replacement', placeholderReplacementRouter);
 
-  // Company A.I. Enhanced API with MCP integration
+  // Your Company A.I. Enhanced API with MCP integration
   const companyBrainRouter = (await import('./api/company-brain-enhanced')).default;
   app.use('/api/company-brain', companyBrainRouter);
   
-  // Company A.I. Elite API with advanced memory and attachments
+  // Your Company A.I. Elite API with advanced memory and attachments
   const companyBrainEliteRouter = (await import('./api/company-brain-elite')).default;
   app.use('/api/company-brain-elite', companyBrainEliteRouter);
 
@@ -308,7 +308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Premium Models API for Company A.I. Elite
+  // Premium Models API for Your Company A.I. Elite
   const premiumModelsRouter = (await import('./routes/premium-models')).default;
   app.use('/api/premium-models', premiumModelsRouter);
 
@@ -608,7 +608,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
           "HTTP-Referer": process.env.SITE_URL || "http://localhost:5000",
-          "X-Title": "Company Development AI Analyst",
+          "X-Title": "Your Company AI Analyst",
         },
         body: JSON.stringify({
           model,

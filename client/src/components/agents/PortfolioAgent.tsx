@@ -28,7 +28,7 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
   const [currentAnalysis, setCurrentAnalysis] = useState<string | null>(null);
 
-  // Fetch Company Development market analysis
+  // Fetch Your Company market analysis
   const { data: marketAnalysis, isLoading: isLoadingMarket } = useQuery({
     queryKey: ['/api/brand-agent/market-analysis'],
     queryFn: async () => {
@@ -41,7 +41,7 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
 
   const runPortfolioAnalysis = async () => {
     setIsAnalyzing(true);
-    setCurrentAnalysis('Initializing Company Development Portfolio Analysis...');
+    setCurrentAnalysis('Initializing Your Company Portfolio Analysis...');
     
     const analyses = [
       {
@@ -195,7 +195,7 @@ export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }
             ) : (
               <>
                 <Zap className="h-4 w-4 mr-2" />
-                Run Company Development Analysis
+                Run Your Company Analysis
               </>
             )}
           </Button>

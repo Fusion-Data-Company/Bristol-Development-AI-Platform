@@ -151,7 +151,7 @@ export default function WorkingMap() {
       
       {/* Company branding overlay */}
       <div className="absolute top-4 left-4 bg-black/80 backdrop-blur rounded-lg px-4 py-2">
-        <div className="text-white font-bold">Company Development</div>
+        <div className="text-white font-bold">Your Company</div>
         <div className="text-cyan-400 text-sm">{Array.isArray(sites) ? sites.length : 0} Properties</div>
       </div>
     </div>

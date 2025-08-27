@@ -53,7 +53,7 @@ export function CompanyFooter({ className = '', variant = 'thick' }: CompanyFoot
             <ul className="space-y-2 text-sm text-gray-300">
               <li className="flex items-center space-x-2">
                 <Cpu className="h-3 w-3 text-brand-gold" />
-                <span>Company A.I. Elite v5.0</span>
+                <span>Your Company A.I. Elite v5.0</span>
               </li>
               <li className="flex items-center space-x-2">
                 <BarChart3 className="h-3 w-3 text-brand-gold" />
@@ -114,7 +114,7 @@ export function CompanyFooter({ className = '', variant = 'thick' }: CompanyFoot
             <div className="text-sm text-gray-400">
               <p>© {currentYear} Real Estate Intelligence Group. All rights reserved.</p>
               <p className="text-xs mt-1">
-                Powered by Company A.I. Elite v5.0 • Enterprise Intelligence Platform
+                Powered by Your Company A.I. Elite v5.0 • Enterprise Intelligence Platform
               </p>
             </div>
 

@@ -52,7 +52,7 @@ import { isUnauthorizedError } from "@/lib/authUtils";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { Site, SiteMetric, ChatSession } from '@shared/schema';
-// Removed Bristol logo for white-label conversion
+// Logo removed for white-label conversion
 import propertyImage1 from '@assets/Screenshot 2025-08-11 at 10.44.53_1754934296368.png';
 import Chrome from "@/components/brand/SimpleChrome";
 import propertyImage2 from '@assets/Screenshot 2025-08-11 at 10.45.12_1754934314469.png';
@@ -425,7 +425,7 @@ export default function Dashboard() {
                       {/* Primary Company Indicators */}
                       <div className="space-y-3">
                         <div className="flex items-center justify-between hover:bg-brand-maroon/5 p-2 rounded-lg transition-all duration-300 hover:scale-[1.01]">
-                          <span className="text-brand-stone font-medium">Company Development Score</span>
+                          <span className="text-brand-stone font-medium">Your Company Score</span>
                           <Badge className="bg-brand-maroon text-white font-bold hover:shadow-lg hover:shadow-brand-maroon/40 transition-all duration-300 hover:scale-110">
                             84.2 / 100
                           </Badge>

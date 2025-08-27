@@ -226,7 +226,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 <ul className="space-y-2 text-sm text-slate-300">
                   <li className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
-                    <span>Company A.I. Elite v5.0</span>
+                    <span>Your Company A.I. Elite v5.0</span>
                   </li>
                   <li className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
@@ -314,7 +314,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 <div className="text-sm text-slate-400">
                   <p>© 2025 Your Company Name. All rights reserved.</p>
                   <p className="text-xs mt-1 text-cyan-400">
-                    Powered by Company A.I. Elite v5.0 • Institutional Real Estate Intelligence Platform
+                    Powered by Your Company A.I. Elite v5.0 • Institutional Real Estate Intelligence Platform
                   </p>
                 </div>
 

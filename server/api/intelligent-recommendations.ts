@@ -395,7 +395,7 @@ async function identifyMarketOpportunities(marketData: any, context: any) {
 }
 
 async function generateOpportunityInsight(opportunity: any, marketData: any) {
-  const prompt = `Provide strategic insights for this Company Development opportunity:
+  const prompt = `Provide strategic insights for this Your Company opportunity:
 
 Opportunity: ${opportunity.title}
 Description: ${opportunity.description}

@@ -421,7 +421,7 @@ I now have:
 4. **Intelligent Routing**: I automatically use the best tools for your specific needs
 5. **Adaptive Communication**: My responses adapt to your preferred style and technical level
 
-Use my enhanced memory and context to provide the most relevant, personalized, and effective assistance for your Company Development projects.`;
+Use my enhanced memory and context to provide the most relevant, personalized, and effective assistance for your Your Company projects.`;
 
     return enhancedPrompt;
   }

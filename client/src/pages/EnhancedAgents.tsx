@@ -54,7 +54,7 @@ export default function EnhancedAgents() {
               <CardContent>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   Advanced agent coordination with real-time task delegation, result synthesis, 
-                  and intelligent workflow optimization for Company Development operations.
+                  and intelligent workflow optimization for Your Company operations.
                 </p>
               </CardContent>
             </Card>

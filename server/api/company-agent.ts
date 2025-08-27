@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 const router = express.Router();
 
-// Mock market analysis data for Company Development
+// Mock market analysis data for Your Company
 const marketAnalysisData = {
   sunbeltMarkets: {
     growth: 12.5, // YoY rent growth

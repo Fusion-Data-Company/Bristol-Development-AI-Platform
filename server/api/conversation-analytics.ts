@@ -206,7 +206,7 @@ router.post('/optimization-suggestions', async (req, res) => {
   try {
     const { conversationHistory } = conversationAnalyticsSchema.parse(req.body);
     
-    const optimizationPrompt = `Analyze this Company Development conversation and suggest optimizations:
+    const optimizationPrompt = `Analyze this Your Company conversation and suggest optimizations:
 
 ${conversationHistory.slice(-10).map(msg => `${msg.role}: ${msg.content}`).join('\n')}
 

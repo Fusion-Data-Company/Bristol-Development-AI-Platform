@@ -232,9 +232,9 @@ Link: ${signal.link || 'N/A'}
 
     prompt += `
 Provide:
-1. Strategic analysis of what this means for Company Development
-2. Potential impact on Company's market position
-3. Recommended actions Company should take
+1. Strategic analysis of what this means for Your Company
+2. Potential impact on Your Company's market position
+3. Recommended actions Your Company should take
 4. Confidence level in this assessment (0-1)
 
 Format as JSON with fields: analysis, impact (low/medium/high/critical), confidence, recommendations (array)`;

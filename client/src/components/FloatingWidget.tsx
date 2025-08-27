@@ -74,7 +74,7 @@ export type ChatPayload = {
   maxTokens?: number;
 };
 
-// ---------- Default Company A.I. System Prompt ----------
+// ---------- Default Your Company A.I. System Prompt ----------
 const DEFAULT_MEGA_PROMPT = `I'm the Real Estate Intelligence AI – the proprietary AI intelligence system engineered for real estate development analysis. Drawing on decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
 
 ## CORE CAPABILITIES
@@ -292,7 +292,7 @@ export default function FloatingWidget({
       
       wsRef.current.onopen = () => {
         setWsConnected(true);
-        console.log("Company A.I. WebSocket connected");
+        console.log("Your Company A.I. WebSocket connected");
         
         // Send periodic ping to keep connection alive
         const pingInterval = setInterval(() => {
@@ -318,7 +318,7 @@ export default function FloatingWidget({
       
       wsRef.current.onclose = (event) => {
         setWsConnected(false);
-        console.log("Company A.I. WebSocket disconnected");
+        console.log("Your Company A.I. WebSocket disconnected");
         
         // URGENT: Disable auto-reconnect to prevent performance issues
         // Widget functionality continues without WebSocket
@@ -772,7 +772,7 @@ export default function FloatingWidget({
         // Add system message about multi-agent analysis
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: `🚀 **Multi-Agent Analysis Initiated**\n\nI've activated the Company A.I. Elite multi-agent system for comprehensive property analysis:\n\n${result.agents.map((agent: string) => `• **${agent}**: Processing specialized analysis`).join('\n')}\n\nAll agents are now processing the property data in parallel. You'll see real-time updates as each agent completes their specialized analysis.`,
+          content: `🚀 **Multi-Agent Analysis Initiated**\n\nI've activated the Your Company A.I. Elite multi-agent system for comprehensive property analysis:\n\n${result.agents.map((agent: string) => `• **${agent}**: Processing specialized analysis`).join('\n')}\n\nAll agents are now processing the property data in parallel. You'll see real-time updates as each agent completes their specialized analysis.`,
           createdAt: nowISO()
         }]);
       }
@@ -799,12 +799,12 @@ export default function FloatingWidget({
 
   return (
     <>
-      {/* Elite Company A.I. Launcher - Enterprise Style */}
+      {/* Elite Your Company A.I. Launcher - Enterprise Style */}
       {!open && (
         <button
           onClick={() => setOpen(true)}
           className="fixed bottom-6 left-6 z-[9997] group"
-          aria-label="Launch Company A.I. Elite Intelligence System"
+          aria-label="Launch Your Company A.I. Elite Intelligence System"
         >
           {/* Dramatic glow effects - always visible */}
           <div className="absolute -inset-4 bg-gradient-to-r from-brand-cyan/80 via-brand-electric/60 to-brand-gold/70 rounded-3xl blur-2xl opacity-80 group-hover:opacity-100 transition-all duration-500 animate-pulse" />
@@ -1053,7 +1053,7 @@ export default function FloatingWidget({
                       "hover:shadow-lg hover:shadow-brand-cyan/20"
                     )}
                     aria-label="Open AI Guide"
-                    title="Learn How to Use Company A.I."
+                    title="Learn How to Use Your Company A.I."
                   >
                     <HelpCircle className="h-4 w-4 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
                   </button>
@@ -1458,7 +1458,7 @@ export default function FloatingWidget({
                       value={input}
                       onChange={(e) => handleInputChange(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && !e.shiftKey ? handleSend() : null}
-                      placeholder={loading ? "Company A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
+                      placeholder={loading ? "Your Company A.I. is analyzing..." : "Ask about properties, market trends, demographics, investment opportunities..."}
                       disabled={loading}
                       className="chrome-metallic-input w-full text-sm font-medium rounded-3xl px-6 py-4 pr-12 text-white placeholder-brand-cyan/60 disabled:opacity-60 relative z-10"
                       style={{
@@ -1533,7 +1533,7 @@ export default function FloatingWidget({
   );
 }
 
-// Enhanced UI Components for Company A.I. Boss Agent
+// Enhanced UI Components for Your Company A.I. Boss Agent
 
 function DataPane({ data }: { data: any }) {
   const [selectedTool, setSelectedTool] = useState<string>("overview");
@@ -3665,14 +3665,14 @@ function AdminPane({
         
         <div>
           <label className="block text-brand-cyan font-semibold mb-3">
-            COMPANY A.I. SYSTEM PROMPT
+            YOUR COMPANY A.I. SYSTEM PROMPT
           </label>
           <textarea
             value={systemPrompt}
             onChange={(e) => setSystemPrompt(e.target.value)}
             rows={12}
             className="cyberpunk-input w-full text-sm font-mono resize-none"
-            placeholder="Enter the Company A.I. system prompt..."
+            placeholder="Enter the Your Company A.I. system prompt..."
           />
           
           <div className="flex gap-2 mt-3">
@@ -4072,7 +4072,7 @@ function AdminPane({
   );
 }
 
-// Enhanced UI Components for Company A.I. Boss Agent
+// Enhanced UI Components for Your Company A.I. Boss Agent
 function TabButton({ icon, label, active, onClick }: { icon: React.ReactNode; label: string; active?: boolean; onClick: () => void }) {
   return (
     <button
@@ -4175,14 +4175,14 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">Company A.I. Elite v5.0</h3>
+                <h3 className="text-lg font-bold text-white">Your Company A.I. Elite v5.0</h3>
                 <p className="text-xs text-brand-cyan/80">Enterprise-Grade AI Intelligence Platform</p>
               </div>
             </div>
             
             <div className="space-y-3 text-sm text-white/90">
               <p className="leading-relaxed">
-                <strong>COMPANY A.I. ELITE v5.0 ACTIVATED</strong> - Enterprise-grade AI system operational with comprehensive property intelligence capabilities.
+                <strong>YOUR COMPANY A.I. ELITE v5.0 ACTIVATED</strong> - Enterprise-grade AI system operational with comprehensive property intelligence capabilities.
               </p>
               
               <div className="grid grid-cols-2 gap-2 mt-4">
@@ -4252,7 +4252,7 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
                   : "bg-brand-maroon/20 text-brand-gold border border-brand-maroon/30"
                 }
               `}>
-                {m.role === "assistant" ? "🤖 Company A.I." : "👤 You"}
+                {m.role === "assistant" ? "🤖 Your Company A.I." : "👤 You"}
               </span>
             </div>
             {m.createdAt && (
@@ -4325,7 +4325,7 @@ function ChatPane({ messages, loading, appData }: { messages: ChatMessage[]; loa
               <div className="w-2 h-2 bg-brand-cyan rounded-full animate-bounce" />
             </div>
             <span className="text-sm text-brand-cyan/80">
-              Company A.I. Boss Agent is analyzing your request...
+              Your Company A.I. Boss Agent is analyzing your request...
             </span>
           </div>
         </div>

@@ -14,12 +14,12 @@ export function OnboardingGuide({ isOpen, onClose, appData }: OnboardingGuidePro
 
   const steps = [
     {
-      title: "Welcome to Company A.I. Elite",
+      title: "Welcome to Your Company A.I. Elite",
       icon: <Brain className="h-8 w-8 text-brand-cyan animate-pulse" />,
       content: (
         <div className="space-y-4">
           <p className="text-brand-cyan/90 leading-relaxed">
-            You're now connected to Company A.I. Elite v5.0 - the most advanced AI system for real estate development analysis. 
+            You're now connected to Your Company A.I. Elite v5.0 - the most advanced AI system for real estate development analysis. 
             I'm engineered exclusively for Your Company with over three decades of institutional expertise.
           </p>
           <div className="bg-brand-cyan/10 rounded-xl p-4 border border-brand-cyan/20">
@@ -135,7 +135,7 @@ export function OnboardingGuide({ isOpen, onClose, appData }: OnboardingGuidePro
       content: (
         <div className="space-y-4">
           <p className="text-brand-cyan/90 leading-relaxed">
-            Company A.I. Elite is now fully operational and ready to assist with institutional-grade real estate analysis.
+            Your Company A.I. Elite is now fully operational and ready to assist with institutional-grade real estate analysis.
           </p>
           <div className="bg-green-400/10 rounded-xl p-4 border border-green-400/20">
             <h4 className="text-green-400 font-semibold mb-3 flex items-center gap-2">

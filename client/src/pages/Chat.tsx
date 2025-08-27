@@ -105,7 +105,7 @@ interface PremiumModel {
   status: 'active' | 'byok-required';
 }
 
-// Enhanced types for the unified Company A.I. Elite system
+// Enhanced types for the unified Your Company A.I. Elite system
 type ModelOption = { id: string; label: string; context?: number };
 
 export type MCPTool = {
@@ -138,7 +138,7 @@ export type AgentTask = {
   completedAt?: Date;
 };
 
-// Company A.I. Elite System Prompt - Professional identity from the popout
+// Your Company A.I. Elite System Prompt - Professional identity from the popout
 const DEFAULT_COMPANY_PROMPT = `I'm the Your Company Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Your Company. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Your Company projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
 
 ## CORE CAPABILITIES
@@ -168,7 +168,7 @@ const DEFAULT_COMPANY_PROMPT = `I'm the Your Company Site Intelligence AI – th
 
 Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated, results-oriented approach expected from a Fortune 500-grade AI system.`;
 
-// Utility functions for the Company A.I. Elite system
+// Utility functions for the Your Company A.I. Elite system
 const nowISO = () => new Date().toISOString();
 const cx = (...classes: (string | undefined | false)[]) => classes.filter(Boolean).join(" ");
 
@@ -212,7 +212,7 @@ export default function Chat() {
   const [isThinking, setIsThinking] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Company A.I. Elite unified state - from CompanyFloatingWidget
+  // Your Company A.I. Elite unified state - from CompanyFloatingWidget
   const [activeTab, setActiveTab] = useState("chat");
   const [showDataViz, setShowDataViz] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -612,7 +612,7 @@ export default function Chat() {
       
       wsRef.current.onopen = () => {
         setWsConnected(true);
-        console.log("Company A.I. Elite WebSocket connected");
+        console.log("Your Company A.I. Elite WebSocket connected");
         
         // Send periodic ping to keep connection alive
         const pingInterval = setInterval(() => {
@@ -637,7 +637,7 @@ export default function Chat() {
       
       wsRef.current.onclose = (event) => {
         setWsConnected(false);
-        console.log("Company A.I. Elite WebSocket disconnected");
+        console.log("Your Company A.I. Elite WebSocket disconnected");
         
         // URGENT: Disable auto-reconnect to prevent spam
         // Only reconnect on user action or manual retry
@@ -934,7 +934,7 @@ export default function Chat() {
             
             const welcomeMessage = {
               role: "assistant" as const,
-              content: `🚀 **Company A.I. Elite v5.0** - *Enterprise Intelligence Platform*
+              content: `🚀 **Your Company A.I. Elite v5.0** - *Enterprise Intelligence Platform*
 
 **🏢 Current Configuration:**
 • **AI Engine:** ${currentModel?.label || 'Loading...'}${isPremium ? ' 💎 **PREMIUM TIER**' : ' 🔧 **STANDARD**'}
@@ -1035,7 +1035,7 @@ What property or investment can I analyze for you today?`,
     setShowArtifacts(!showArtifacts);
   };
 
-  // Company A.I. Elite chat functionality - the advanced chat handler with STREAMING
+  // Your Company A.I. Elite chat functionality - the advanced chat handler with STREAMING
   const handleEliteSend = async () => {
     if (!eliteInput.trim() || eliteLoading) return;
 
@@ -1219,7 +1219,7 @@ What property or investment can I analyze for you today?`,
     } catch (error) {
       console.error("Ultra-bulletproof chat error:", error);
       // Emergency response if even the bulletproof endpoint fails
-      const emergencyResponse = `I received your message: "${userMessage}". While experiencing a technical issue, I can still provide Company Development expertise. For real estate analysis, I focus on: location assessment, market trends, financial modeling (IRR/NPV), cap rates, and risk evaluation. What specific aspect interests you most?`;
+      const emergencyResponse = `I received your message: "${userMessage}". While experiencing a technical issue, I can still provide Your Company expertise. For real estate analysis, I focus on: location assessment, market trends, financial modeling (IRR/NPV), cap rates, and risk evaluation. What specific aspect interests you most?`;
       setEliteMessages(prev => [...prev, {
         role: "assistant",
         content: emergencyResponse,
@@ -1585,7 +1585,7 @@ What property or investment can I analyze for you today?`,
                   "hover:shadow-lg hover:shadow-brand-cyan/20"
                 )}
                 aria-label="Open AI Guide"
-                title="Learn How to Use Company A.I."
+                title="Learn How to Use Your Company A.I."
               >
                 <HelpCircle className="h-4 w-4 text-brand-cyan/70 group-hover:text-brand-cyan transition-colors" />
               </button>

@@ -109,7 +109,7 @@ export default function Demographics() {
                       DEMOGRAPHICS INTELLIGENCE
                     </h1>
                     <p className="text-brand-stone font-medium text-lg mt-1">
-                      Census ACS demographic analysis for Company Development sites
+                      Census ACS demographic analysis for Your Company sites
                     </p>
                   </div>
                 </div>

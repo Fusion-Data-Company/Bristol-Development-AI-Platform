@@ -175,7 +175,7 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
             </div>
             <div className="text-left">
               <CardTitle className="text-2xl font-serif text-brand-ink">
-                Company Development Score
+                Your Company Score
               </CardTitle>
               <p className="text-brand-stone mt-1">
                 Comprehensive site feasibility analysis

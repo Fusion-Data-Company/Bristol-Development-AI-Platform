@@ -206,7 +206,7 @@ export default function Sites() {
                     Database
                   </h1>
                   <p className="text-brand-maroon mt-1 font-medium tracking-wider text-lg">
-                    Company Development Portfolio Management
+                    Your Company Portfolio Management
                   </p>
                 </div>
               </div>

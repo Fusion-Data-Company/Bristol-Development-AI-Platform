@@ -640,7 +640,7 @@ export class EnhancedChatAgentService {
     message: string
   ): any {
     return {
-      response: "I'm experiencing some technical difficulties, but I'm here to help with your Company Development needs. Could you please rephrase your question?",
+      response: "I'm experiencing some technical difficulties, but I'm here to help with your Your Company needs. Could you please rephrase your question?",
       fallback: true,
       suggestions: [
         'Try asking about property analysis',

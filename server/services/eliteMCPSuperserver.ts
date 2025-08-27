@@ -611,7 +611,7 @@ export class EliteMCPSuperserver {
             summary: 'No previous conversation found',
             user_id: userId,
             conversation_found: false,
-            message: 'This appears to be your first conversation with Company A.I.'
+            message: 'This appears to be your first conversation with Your Company A.I.'
           };
           
         } catch (error) {
@@ -862,7 +862,7 @@ export class EliteMCPSuperserver {
     this.registerTool({
       name: 'query_company_database',
       category: 'company',
-      description: 'Execute SQL queries against the Company Development database for comprehensive property and team analysis',
+      description: 'Execute SQL queries against the Your Company database for comprehensive property and team analysis',
       parameters: {
         query: { type: 'string', required: true },
         params: { type: 'array', default: [] }
@@ -892,7 +892,7 @@ export class EliteMCPSuperserver {
     this.registerTool({
       name: 'get_company_team',
       category: 'company',
-      description: 'Get all Company Development team members with full details',
+      description: 'Get all Your Company team members with full details',
       parameters: {
         searchName: { type: 'string', required: false }
       },

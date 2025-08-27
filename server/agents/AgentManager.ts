@@ -212,7 +212,7 @@ export class AgentManager extends EventEmitter {
     return taskAgentMap[taskType] || 'brand-master';
   }
 
-  // Agent Execution Engine with Company Development Industry Prompts
+  // Agent Execution Engine with Your Company Industry Prompts
   private async executeAgentTask(agentId: string, task: AgentTask) {
     const agent = this.agents.get(agentId);
     if (!agent) return;

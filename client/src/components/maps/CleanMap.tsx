@@ -200,7 +200,7 @@ export default function CleanMap() {
       
       {/* Status indicator */}
       <div className="absolute top-4 left-4 bg-black/80 backdrop-blur rounded-lg px-4 py-2">
-        <div className="text-white font-bold">Company Development</div>
+        <div className="text-white font-bold">Your Company</div>
         <div className="text-cyan-400 text-sm">{sites.length} Properties</div>
         <div className={`text-xs mt-1 ${mapLoaded ? 'text-green-400' : 'text-yellow-400'}`}>
           {mapLoaded ? '✅ Map Ready' : '⏳ Loading...'}

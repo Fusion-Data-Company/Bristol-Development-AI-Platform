@@ -75,7 +75,7 @@ export default function SimpleMap() {
         borderRadius: '8px',
         zIndex: 1000
       }}>
-        <div style={{ fontWeight: 'bold' }}>Company Development</div>
+        <div style={{ fontWeight: 'bold' }}>Your Company</div>
         <div style={{ color: '#22d3ee', fontSize: '14px' }}>
           {Array.isArray(sites) ? sites.length : 0} Properties
         </div>

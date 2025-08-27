@@ -43,7 +43,7 @@ const chatRequestSchema = z.object({
   sourceInstance: z.enum(['main', 'floating']).optional(), // Track which instance sent the message
 });
 
-// Elite chat endpoint with full Company A.I. capabilities
+// Elite chat endpoint with full Your Company A.I. capabilities
 router.post("/chat", async (req, res) => {
   const agentTracker = performanceMonitor.trackAgentExecution('brand-elite', 'chat_response');
   
@@ -95,7 +95,7 @@ router.post("/chat", async (req, res) => {
       syncedInstances: ['main', 'floating']
     };
     
-    // Process message with Company A.I.
+    // Process message with Your Company A.I.
     const response = await realEstateAIService.processMessage({
       sessionId,
       userId,
@@ -350,7 +350,7 @@ router.get("/memory", async (req, res) => {
   }
 });
 
-// Analyze a deal with Company A.I.
+// Analyze a deal with Your Company A.I.
 router.post("/analyze-deal", async (req, res) => {
   try {
     const { sessionId, dealData } = req.body;
@@ -405,7 +405,7 @@ router.post("/memory/session", async (req, res) => {
     
     const session = await memorySyncService.initializeSharedSession(
       userId, 
-      title || `Company A.I. Elite - ${new Date().toLocaleDateString()}`
+      title || `Your Company A.I. Elite - ${new Date().toLocaleDateString()}`
     );
     
     res.json({

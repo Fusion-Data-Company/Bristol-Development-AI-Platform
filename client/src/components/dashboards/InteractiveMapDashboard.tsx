@@ -139,7 +139,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
       `${rawDemographicsData.percent_income_100k_plus.toFixed(1)}% high income` : null,
     landCostPerUnit: rawDemographicsData.median_home_value ? 
       `$${(rawDemographicsData.median_home_value / 1000).toFixed(0)}k avg home` : null,
-    // Additional Company Development metrics
+    // Additional Your Company metrics
     povertyRate: rawDemographicsData.poverty_rate ? 
       `${rawDemographicsData.poverty_rate.toFixed(1)}%` : null,
     collegeEducated: rawDemographicsData.percent_bachelors_plus ? 
@@ -285,7 +285,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
               </div>
             )}
             <div className="space-y-2">
-              {/* Company Development Score */}
+              {/* Your Company Score */}
               <Card className="bg-gradient-to-br from-brand-maroon/30 via-cyan-400/10 to-white border-brand-maroon border-2 hover:border-brand-maroon/90 hover:shadow-2xl hover:shadow-brand-maroon/60 transition-all duration-600 hover:scale-[1.03] group backdrop-blur-sm relative overflow-hidden shadow-xl shadow-brand-maroon/30">
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-maroon/20 via-cyan-400/15 to-transparent opacity-50 group-hover:opacity-80 transition-all duration-600"></div>
                 <div className="absolute -inset-2 bg-gradient-to-r from-brand-maroon/40 via-cyan-400/40 to-brand-maroon/40 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-600 -z-10"></div>
@@ -543,7 +543,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
                 </CardContent>
               </Card>
 
-              {/* Additional Company Development Metrics */}
+              {/* Additional Your Company Metrics */}
               <Card className="bg-gradient-to-br from-red-200/90 via-red-50 to-white border-red-400 border-2 hover:border-red-500 hover:shadow-2xl hover:shadow-red-400/60 transition-all duration-500 hover:scale-[1.02] group backdrop-blur-sm relative overflow-hidden shadow-lg shadow-red-300/40">
                 <div className="absolute inset-0 bg-gradient-to-br from-red-300/30 via-transparent to-red-200/20 opacity-60 group-hover:opacity-90 transition-all duration-500"></div>
                 <div className="absolute -inset-2 bg-gradient-to-r from-red-400/50 via-red-500/50 to-red-400/50 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-all duration-500 -z-10"></div>

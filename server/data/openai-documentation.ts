@@ -1,4 +1,4 @@
-// OpenAI API Documentation for Company A.I. Elite
+// OpenAI API Documentation for Your Company A.I. Elite
 // This documentation is referenced by the AI to understand OpenAI capabilities
 
 export const OPENAI_DOCUMENTATION = {

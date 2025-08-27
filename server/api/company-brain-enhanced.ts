@@ -3,7 +3,7 @@ import OpenAI from "openai";
 
 const router = Router();
 
-// Enhanced Company A.I. Boss Agent endpoint with MCP server integration
+// Enhanced Your Company A.I. Boss Agent endpoint with MCP server integration
 router.post("/enhanced-chat", async (req, res) => {
   try {
     const {
@@ -27,7 +27,7 @@ router.post("/enhanced-chat", async (req, res) => {
     }
 
     // Enhanced system prompt for Boss Agent
-    const bossAgentPrompt = `You are the Company A.I. Boss Agent - the ultimate AI controller for Your Company Name's real estate intelligence platform.
+    const bossAgentPrompt = `You are the Your Company A.I. Boss Agent - the ultimate AI controller for Your Company Name's real estate intelligence platform.
 
 BOSS AGENT CAPABILITIES:
 - Access to live real estate data, demographics, market analytics
@@ -72,7 +72,7 @@ INSTRUCTIONS:
       stream: false
     });
 
-    const response = completion.choices[0]?.message?.content || "Company A.I. Boss Agent response unavailable";
+    const response = completion.choices[0]?.message?.content || "Your Company A.I. Boss Agent response unavailable";
 
     // Simulate MCP tool execution results if enabled
     const mcpResults = enableMCPExecution && bossModeActive ? [
@@ -97,13 +97,13 @@ INSTRUCTIONS:
     });
 
   } catch (error: any) {
-    console.error("Company A.I. Boss Agent error:", error);
+    console.error("Your Company A.I. Boss Agent error:", error);
     
     res.status(500).json({
-      error: "Company A.I. Boss Agent encountered an error",
+      error: "Your Company A.I. Boss Agent encountered an error",
       details: error.message,
       fallback: true,
-      content: "Company A.I. Boss Agent is temporarily unavailable. Please try again or contact support."
+      content: "Your Company A.I. Boss Agent is temporarily unavailable. Please try again or contact support."
     });
   }
 });
