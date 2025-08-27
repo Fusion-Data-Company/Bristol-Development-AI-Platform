@@ -1,6 +1,6 @@
 import { db } from '../db';
 import { 
-  bristolUsers,
+  teamUsers,
   conversationSessions,
   mcpToolExecutions,
   analyticsCache,
@@ -287,7 +287,7 @@ export class EliteMCPSuperserver {
 
   private async loadBristolTeam() {
     try {
-      const users = await db.select().from(bristolUsers);
+      const users = await db.select().from(teamUsers);
       users.forEach(user => {
         this.bristolTeamCache.set(user.name.toLowerCase(), user);
       });
@@ -896,12 +896,12 @@ export class EliteMCPSuperserver {
         searchName: { type: 'string', required: false }
       },
       handler: async (params) => {
-        let query = db.select().from(bristolUsers);
+        let query = db.select().from(teamUsers);
         
         if (params.searchName) {
           const searchTerm = `%${params.searchName.toLowerCase()}%`;
           query = query.where(
-            sql`LOWER(${bristolUsers.name}) LIKE ${searchTerm} OR LOWER(${bristolUsers.email}) LIKE ${searchTerm}`
+            sql`LOWER(${teamUsers.name}) LIKE ${searchTerm} OR LOWER(${teamUsers.email}) LIKE ${searchTerm}`
           );
         }
         

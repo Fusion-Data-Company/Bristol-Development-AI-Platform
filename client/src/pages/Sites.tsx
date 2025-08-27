@@ -14,7 +14,7 @@ import { SitesTable } from "../widgets/tables/SitesTableBasic";
 import { AddSiteForm } from "../widgets/forms/AddSiteForm";
 import { SiteDetails } from "../widgets/details/SiteDetails";
 import { SiteMapPreview } from "../widgets/maps/SiteMapPreview";
-import { BristolPortfolioAgent } from "@/components/agents/BristolPortfolioAgent";
+import { PortfolioAgent } from "@/components/agents/PortfolioAgent";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
 import type { Site } from "@shared/schema";
@@ -442,7 +442,7 @@ export default function Sites() {
 
               {/* Bristol Portfolio Analysis Agent */}
               <div>
-                <BristolPortfolioAgent 
+                <PortfolioAgent 
                   selectedSite={selectedSite}
                   portfolioData={sites || []}
                 />

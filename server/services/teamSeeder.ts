@@ -1,9 +1,9 @@
 import { db } from '../db';
-import { bristolUsers, type InsertBristolUser } from '@shared/schema';
+import { teamUsers, type InsertTeamUser } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
 // Bristol team members from https://www.bristoldevelopment.com/bristol-team
-const bristolTeamData: InsertBristolUser[] = [
+const teamData: InsertTeamUser[] = [
   // Leadership
   {
     name: 'Scott Koontz',
@@ -199,19 +199,19 @@ export async function seedBristolTeam() {
   try {
     console.log('🌱 Starting Bristol team seeding...');
     
-    for (const member of bristolTeamData) {
+    for (const member of teamData) {
       // Check if member already exists
       const existing = await db.select()
-        .from(bristolUsers)
-        .where(eq(bristolUsers.email, member.email!))
+        .from(teamUsers)
+        .where(eq(teamUsers.email, member.email!))
         .limit(1);
       
       if (existing.length === 0) {
-        await db.insert(bristolUsers).values(member);
+        await db.insert(teamUsers).values(member);
         console.log(`✅ Added: ${member.name} (${member.role})`);
       } else {
         // Update existing member
-        await db.update(bristolUsers)
+        await db.update(teamUsers)
           .set({
             name: member.name,
             role: member.role,
@@ -220,12 +220,12 @@ export async function seedBristolTeam() {
             isActive: member.isActive,
             updatedAt: new Date()
           })
-          .where(eq(bristolUsers.email, member.email!));
+          .where(eq(teamUsers.email, member.email!));
         console.log(`📝 Updated: ${member.name}`);
       }
     }
     
-    console.log(`✅ Bristol team seeding completed! Total members: ${bristolTeamData.length}`);
+    console.log(`✅ Bristol team seeding completed! Total members: ${teamData.length}`);
     return true;
   } catch (error) {
     console.error('❌ Failed to seed Bristol team:', error);

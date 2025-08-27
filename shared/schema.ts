@@ -126,7 +126,7 @@ export const mcpTools = pgTable("mcp_tools", {
 });
 
 // Team members for verification
-export const bristolUsers = pgTable("bristol_users", {
+export const teamUsers = pgTable("team_users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: varchar("name").notNull(),
   email: varchar("email").unique(),
@@ -137,14 +137,14 @@ export const bristolUsers = pgTable("bristol_users", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
-  index("idx_bristol_users_name").on(table.name),
-  index("idx_bristol_users_email").on(table.email),
+  index("idx_team_users_name").on(table.name),
+  index("idx_team_users_email").on(table.email),
 ]);
 
 // Conversation sessions for Cap's state management
 export const conversationSessions = pgTable("conversation_sessions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").references(() => bristolUsers.id),
+  userId: varchar("user_id").references(() => teamUsers.id),
   conversationId: varchar("conversation_id").notNull().unique(),
   summary: text("summary"),
   tags: text("tags").array(), // Array of tags
@@ -188,7 +188,7 @@ export const analyticsCache = pgTable("analytics_cache", {
 // Document artifacts storage for Cap
 export const artifacts = pgTable("artifacts", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  userId: varchar("user_id").references(() => bristolUsers.id),
+  userId: varchar("user_id").references(() => teamUsers.id),
   conversationId: varchar("conversation_id"),
   type: varchar("type").notNull(), // memo, report, email_draft, etc.
   content: text("content").notNull(),
@@ -202,7 +202,7 @@ export const artifacts = pgTable("artifacts", {
 export const tasks = pgTable("tasks", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   conversationId: varchar("conversation_id"),
-  userId: varchar("user_id").references(() => bristolUsers.id),
+  userId: varchar("user_id").references(() => teamUsers.id),
   title: varchar("title").notNull(),
   description: text("description"),
   priority: varchar("priority"), // P0, P1, P2, P3
@@ -308,8 +308,8 @@ export type InsertIntelligenceEntry = typeof intelligenceEntries.$inferInsert;
 // Property score field now included in main sites table
 
 // Type exports for Cap-specific tables
-export type BristolUser = typeof bristolUsers.$inferSelect;
-export type InsertBristolUser = typeof bristolUsers.$inferInsert;
+export type TeamUser = typeof teamUsers.$inferSelect;
+export type InsertTeamUser = typeof teamUsers.$inferInsert;
 export type ConversationSession = typeof conversationSessions.$inferSelect;
 export type InsertConversationSession = typeof conversationSessions.$inferInsert;
 export type MCPToolExecution = typeof mcpToolExecutions.$inferSelect;
@@ -337,7 +337,7 @@ export const comps = pgTable("comps", {
   occupancyRate: real("occupancy_rate"), // percentage
   amenities: jsonb("amenities"), // array of amenity features
   concessions: jsonb("concessions"), // current concession offers
-  score: integer("score"), // 1-100 Bristol methodology score
+  score: integer("score"), // 1-100 proprietary methodology score
   scoreBreakdown: jsonb("score_breakdown"), // detailed scoring by category
   source: varchar("source"), // apartments.com, apify, manual
   dataDate: timestamp("data_date"),
@@ -433,7 +433,7 @@ export const agents = pgTable("agents", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: varchar("user_id").references(() => users.id),
   name: varchar("name").notNull(),
-  role: varchar("role").notNull(), // bristol-master, data-processing, financial-analysis, market-intelligence, lead-management, web-scraping, risk-assessment, compliance, reporting
+  role: varchar("role").notNull(), // master, data-processing, financial-analysis, market-intelligence, lead-management, web-scraping, risk-assessment, compliance, reporting
   status: varchar("status").notNull().default("active"), // active, inactive, busy, error
   model: varchar("model").default("gpt-4o"), // OpenRouter model to use
   systemPrompt: text("system_prompt").notNull(),
@@ -553,7 +553,7 @@ export const tools = pgTable("tools", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Bristol Comparables Annex tables
+// Comparables Annex tables
 export const compsAnnex = pgTable('comps_annex', {
   id: varchar('id', { length: 64 }).primaryKey().default(sql`gen_random_uuid()`),
   source: varchar('source', { length: 64 }).notNull(),
@@ -670,7 +670,7 @@ export const insertSiteSchema = createInsertSchema(sites).omit({
   geoidTract: z.string().nullable().optional(),
   acsYear: z.string().nullable().optional(),
   acsProfile: z.any().nullable().optional(),
-  bristolScore: z.number().nullable().optional(),
+  propertyScore: z.number().nullable().optional(),
 });
 
 export const updateSiteSchema = insertSiteSchema.partial();
@@ -812,7 +812,7 @@ export type InsertTool = z.infer<typeof insertToolSchema>;
 export type Snapshot = typeof snapshots.$inferSelect;
 export type InsertSnapshot = z.infer<typeof insertSnapshotSchema>;
 
-// Bristol AI MCP Execution Logs
+// AI MCP Execution Logs
 export const mcpExecutions = pgTable("mcp_executions", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   toolName: varchar("tool_name").notNull(),

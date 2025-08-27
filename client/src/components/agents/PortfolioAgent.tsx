@@ -17,13 +17,13 @@ interface AnalysisResult {
   timestamp: string;
 }
 
-interface BristolPortfolioAgentProps {
+interface PortfolioAgentProps {
   selectedSite?: any;
   portfolioData?: any;
   onAnalysisUpdate?: (results: AnalysisResult[]) => void;
 }
 
-export function BristolPortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }: BristolPortfolioAgentProps) {
+export function PortfolioAgent({ selectedSite, portfolioData, onAnalysisUpdate }: PortfolioAgentProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<AnalysisResult[]>([]);
   const [currentAnalysis, setCurrentAnalysis] = useState<string | null>(null);

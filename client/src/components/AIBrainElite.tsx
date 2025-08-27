@@ -58,7 +58,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-interface BristolBrainEliteProps {
+interface AIBrainEliteProps {
   sessionId: string;
   dataContext?: Record<string, any>;
   onClose?: () => void;
@@ -103,11 +103,11 @@ interface AgentDecision {
   createdAt: string;
 }
 
-export function BristolBrainElite({ 
+export function AIBrainElite({ 
   sessionId, 
   dataContext,
   onClose 
-}: BristolBrainEliteProps) {
+}: AIBrainEliteProps) {
   const [message, setMessage] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const [expandedPrompts, setExpandedPrompts] = useState<Set<string>>(new Set());

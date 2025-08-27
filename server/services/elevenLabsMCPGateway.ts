@@ -1,6 +1,6 @@
 import { db } from '../db';
 import { 
-  bristolUsers, 
+  teamUsers, 
   conversationSessions, 
   mcpToolExecutions,
   analyticsCache,
@@ -8,7 +8,7 @@ import {
   tasks,
   sites,
   marketIntelligence,
-  type BristolUser,
+  type TeamUser,
   type ConversationSession,
   type InsertConversationSession,
   type InsertMCPToolExecution,
@@ -131,7 +131,7 @@ class CircuitBreaker {
 export class ElevenLabsMCPGateway {
   private tools: Map<string, MCPTool> = new Map();
   private circuitBreakers: Map<string, CircuitBreaker> = new Map();
-  private bristolTeamCache: Map<string, BristolUser> = new Map();
+  private bristolTeamCache: Map<string, TeamUser> = new Map();
   
   constructor() {
     this.initializeTools();
@@ -141,7 +141,7 @@ export class ElevenLabsMCPGateway {
   private async loadBristolTeam() {
     try {
       // Load Bristol team members from database
-      const team = await db.select().from(bristolUsers).where(eq(bristolUsers.isActive, true));
+      const team = await db.select().from(teamUsers).where(eq(teamUsers.isActive, true));
       team.forEach(member => {
         this.bristolTeamCache.set(member.name.toLowerCase(), member);
       });
@@ -177,11 +177,11 @@ export class ElevenLabsMCPGateway {
 
         // Check database for variations
         const dbUser = await db.select()
-          .from(bristolUsers)
+          .from(teamUsers)
           .where(
             and(
-              sql`LOWER(${bristolUsers.name}) LIKE ${`%${normalizedName}%`}`,
-              eq(bristolUsers.isActive, true)
+              sql`LOWER(${teamUsers.name}) LIKE ${`%${normalizedName}%`}`,
+              eq(teamUsers.isActive, true)
             )
           )
           .limit(1);

@@ -98,7 +98,7 @@ export const competitorAnalysis = pgTable('competitor_analysis', {
   title: text('title').notNull(),
   summary: text('summary').notNull(),
   insights: jsonb('insights').notNull(), // Structured insights
-  bristolImplications: text('bristol_implications'),
+  marketImplications: text('market_implications'),
   recommendedActions: jsonb('recommended_actions'),
   confidence: decimal('confidence', { precision: 3, scale: 2 }),
   aiModel: text('ai_model'),

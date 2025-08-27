@@ -17,7 +17,7 @@ import {
   agentDecisions,
   marketIntelligence,
   agentExecutions,
-  bristolUsers,
+  teamUsers,
   comps,
   concessions,
   properties,

@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertCircle, Building2, MapPin, Calendar, TrendingUp, Users, Activity, Play, RefreshCw, Brain, Shield } from 'lucide-react';
-import { BristolFooter } from '@/components/ui/BristolFooter';
+import { CompanyFooter } from '@/components/ui/CompanyFooter';
 import { format } from 'date-fns';
 import Chrome from "../components/brand/SimpleChrome";
 import bristolBackgroundImage from "@assets/Screenshot 2025-08-18 at 00.30.48_1755502256595.png";
