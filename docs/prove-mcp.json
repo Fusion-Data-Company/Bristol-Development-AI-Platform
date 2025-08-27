@@ -9,7 +9,7 @@
       "ms": 23
     },
     {
-      "tool": "get_bristol_team",
+      "tool": "get_company_team",
       "check": "invoke",
       "ok": true,
       "note": "Success",

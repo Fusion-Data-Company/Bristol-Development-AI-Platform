@@ -350,7 +350,7 @@ export class CompanyScoringService {
         // Update the database with the calculated score
         await db.update(sites)
           .set({ 
-            bristolScore: scoreResult.totalScore,
+            companyScore: scoreResult.totalScore,
             updatedAt: new Date()
           })
           .where(eq(sites.id, site.id));
@@ -370,4 +370,4 @@ export class CompanyScoringService {
   }
 }
 
-export const bristolScoringService = new CompanyScoringService();
+export const companyScoringService = new CompanyScoringService();

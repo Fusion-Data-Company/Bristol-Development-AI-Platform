@@ -59,8 +59,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/sites', sitesRouter);
 
   // Company Scoring API for live rating calculations
-  const bristolScoringRouter = (await import('./api/sites/bristol-scoring')).default;
-  app.use('/api/sites', bristolScoringRouter);
+  const companyScoringRouter = (await import('./api/sites/company-scoring')).default;
+  app.use('/api/sites', companyScoringRouter);
 
   // Import comps API for comparable properties functionality  
   const compsRouter = (await import('./api/comps')).default;
@@ -164,8 +164,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/openrouter-premium', openRouterPremiumRouter);
 
   // Company Portfolio Analysis Agent API
-  const bristolAgentRouter = (await import('./api/bristol-agent')).default;
-  app.use('/api/brand-agent', bristolAgentRouter);
+  const companyAgentRouter = (await import('./api/company-agent')).default;
+  app.use('/api/company-agent', companyAgentRouter);
   
   // Multi-Agent System API - bypass auth for testing
   const { registerAgentsRoutes } = await import('./api/agents');
@@ -196,12 +196,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/placeholder-replacement', placeholderReplacementRouter);
 
   // Company A.I. Enhanced API with MCP integration
-  const bristolBrainRouter = (await import('./api/bristol-brain-enhanced')).default;
-  app.use('/api/bristol-brain', bristolBrainRouter);
+  const companyBrainRouter = (await import('./api/company-brain-enhanced')).default;
+  app.use('/api/company-brain', companyBrainRouter);
   
   // Company A.I. Elite API with advanced memory and attachments
-  const bristolBrainEliteRouter = (await import('./api/bristol-brain-elite')).default;
-  app.use('/api/bristol-brain-elite', bristolBrainEliteRouter);
+  const companyBrainEliteRouter = (await import('./api/company-brain-elite')).default;
+  app.use('/api/company-brain-elite', companyBrainEliteRouter);
 
   // Enhanced Chat API V2 with comprehensive model support and error handling
   const enhancedChatV2Router = (await import('./api/enhanced-chat-v2')).default;
@@ -321,7 +321,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/ai-scraping', aiScrapingRouter);
 
   // Register Company Agent routes for elite analytics
-  const { registerCompanyAgentRoutes } = await import("./routes/bristolAgents.js");
+  const { registerCompanyAgentRoutes } = await import("./routes/companyAgents.js");
   registerCompanyAgentRoutes(app);
 
   // Register Real Data Integration routes to replace all placeholders
@@ -337,8 +337,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   registerPlaceholderVerificationRoutes(app);
   
   // Company Elite Scraping routes with advanced Firecrawl capabilities
-  const bristolEliteScrapingRouter = (await import('./routes/bristol-elite-scraping')).default;
-  app.use('/api/brand-elite', bristolEliteScrapingRouter);
+  const companyEliteScrapingRouter = (await import('./routes/company-elite-scraping')).default;
+  app.use('/api/company-elite', companyEliteScrapingRouter);
 
   // System Health and Stability Monitoring
   app.get('/api/health', async (req, res) => {
@@ -836,7 +836,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Agent chat route for simple dock widget
   app.post('/api/agent/chat', isAuthenticated, async (req: any, res) => {
     try {
-      const { message, model, bristolMode } = req.body;
+      const { message, model, companyMode } = req.body;
       
       if (!message) {
         return res.status(400).json({ message: "Message is required" });
@@ -851,7 +851,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const systemPrompt = bristolMode 
+      const systemPrompt = companyMode 
         ? "You are the Company Development Group AI Assistant. Provide professional real estate development insights and analysis."
         : "You are a helpful AI assistant.";
 

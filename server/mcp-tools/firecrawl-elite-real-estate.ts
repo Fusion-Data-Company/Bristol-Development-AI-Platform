@@ -173,7 +173,7 @@ export const ELITE_EXTRACT_CONFIG = {
 // Company AI MCP Tool Definitions
 export const COMPANY_ELITE_TOOLS = [
   {
-    name: "bristol_property_search",
+    name: "company_property_search",
     description: "Elite real estate search using Firecrawl with advanced property data extraction",
     inputSchema: {
       type: "object",
@@ -209,7 +209,7 @@ export const COMPANY_ELITE_TOOLS = [
     }
   },
   {
-    name: "bristol_property_crawl",
+    name: "company_property_crawl",
     description: "Deep crawl of property websites for comprehensive data extraction",
     inputSchema: {
       type: "object",
@@ -240,7 +240,7 @@ export const COMPANY_ELITE_TOOLS = [
     }
   },
   {
-    name: "bristol_property_extract",
+    name: "company_property_extract",
     description: "Advanced property data extraction from specific URLs with elite schema",
     inputSchema: {
       type: "object",
@@ -267,7 +267,7 @@ export const COMPANY_ELITE_TOOLS = [
     }
   },
   {
-    name: "bristol_market_research",
+    name: "company_market_research",
     description: "Deep market research using Firecrawl's research capabilities",
     inputSchema: {
       type: "object",

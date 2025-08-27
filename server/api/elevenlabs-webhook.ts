@@ -28,7 +28,7 @@ router.post('/webhook/elevenlabs', async (req, res) => {
         args || {},
         {
           userId: context?.user_id || 'elevenlabs-webhook',
-          source: 'elevenlabs-webhook',
+          source: 'elevenlabs',
           timestamp: new Date().toISOString()
         }
       );
@@ -46,8 +46,8 @@ router.post('/webhook/elevenlabs', async (req, res) => {
         req.body.tool,
         req.body.args || {},
         {
-          userId: req.body.user_id || 'elevenlabs-webhook',
-          source: 'elevenlabs-webhook',
+          userId: req.body.user_id || 'elevenlabs-user',
+          source: 'elevenlabs',
           timestamp: new Date().toISOString()
         }
       );

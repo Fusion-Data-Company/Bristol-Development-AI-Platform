@@ -64,7 +64,7 @@ export class AgentManager extends EventEmitter {
         'decision_making',
         'client_communication'
       ],
-      mcpTools: ['query_bristol_data', 'store_memory', 'search_memory']
+      mcpTools: ['query_company_data', 'store_memory', 'search_memory']
     });
 
     // Agent 2: Data Processing Agent (Background Worker)
@@ -113,7 +113,7 @@ export class AgentManager extends EventEmitter {
         'comparable_analysis',
         'market_trend_analysis',
         'competitive_intelligence',
-        'bristol_scoring',
+        'company_scoring',
         'risk_evaluation'
       ],
       mcpTools: ['get_crime_statistics', 'get_foursquare_poi', 'fetch_property_value']
@@ -553,7 +553,7 @@ Provide a comprehensive JSON response with the following structure:
     "nextSteps": ["Action 1", "Action 2", "Action 3"]
   },
   "metrics": {
-    "bristolScore": 78,
+    "companyScore": 78,
     "riskRating": "MODERATE",
     "timeToMarket": "6-12 months"
   }

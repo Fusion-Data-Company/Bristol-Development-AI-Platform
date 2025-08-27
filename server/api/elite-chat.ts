@@ -23,7 +23,7 @@ const initializeClients = () => {
       apiKey: process.env.OPENROUTER_API_KEY,
       baseURL: 'https://openrouter.ai/api/v1',
       defaultHeaders: {
-        'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://bristol.dev',
+        'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://yourcompany.com',
         'X-Title': 'Company Elite AI Chat'
       }
     });

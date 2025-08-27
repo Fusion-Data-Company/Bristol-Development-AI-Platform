@@ -25,8 +25,8 @@ router.get('/overview', async (req, res) => {
     }, {} as Record<string, number>);
 
     // Company scoring analytics
-    const bristolScores = sites.map(site => Math.floor(Math.random() * 25) + 75); // 75-100 range
-    const avgCompanyScore = bristolScores.reduce((sum, score) => sum + score, 0) / bristolScores.length || 0;
+    const companyScores = sites.map(site => Math.floor(Math.random() * 25) + 75); // 75-100 range
+    const avgCompanyScore = companyScores.reduce((sum, score) => sum + score, 0) / companyScores.length || 0;
 
     const overview = {
       portfolio: {
@@ -134,7 +134,7 @@ router.get('/market-analysis', async (req, res) => {
         supplyPipeline: 4200,
         demographicScore: 87,
         economicHealth: 'Strong',
-        bristolExposure: 12,
+        companyExposure: 12,
         recommendation: 'Increase allocation - favorable demographics and job growth driving multifamily demand. Population growth of 3.1% annually with strong employment in healthcare and technology sectors.'
       },
       {
@@ -144,7 +144,7 @@ router.get('/market-analysis', async (req, res) => {
         supplyPipeline: 6800,
         demographicScore: 82,
         economicHealth: 'Strong',
-        bristolExposure: 8,
+        companyExposure: 8,
         recommendation: 'Maintain exposure - banking sector concentration provides stable employment base. Monitor supply pipeline which may pressure rents in outer submarkets.'
       },
       {
@@ -154,7 +154,7 @@ router.get('/market-analysis', async (req, res) => {
         supplyPipeline: 3400,
         demographicScore: 91,
         economicHealth: 'Very Strong',
-        bristolExposure: 6,
+        companyExposure: 6,
         recommendation: 'Target for expansion - limited supply relative to demand, strong in-migration from high-cost markets. Consider value-add opportunities in established submarkets.'
       },
       {

@@ -313,7 +313,7 @@
     }
   },
   "agentBridgeConfigurations": {
-    "bristol-master-agent": {
+    "company-master-agent": {
       "dataChannels": ["memory", "context", "analysis", "insights", "commands"],
       "accessLevel": "system",
       "bridgeType": "quantum",

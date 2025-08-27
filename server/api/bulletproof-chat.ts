@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { bulletproofChatService } from '../services/bulletproofChatService';
-import { bristolChatAuthStack } from '../middleware/enhancedAuth';
+import { companyChatAuthStack } from '../middleware/enhancedAuth';
 import { z } from 'zod';
 
 const router = Router();
 
 // Apply bulletproof authentication stack to all chat endpoints
-router.use(bristolChatAuthStack);
+router.use(companyChatAuthStack);
 
 // Comprehensive chat request schema
 const chatRequestSchema = z.object({

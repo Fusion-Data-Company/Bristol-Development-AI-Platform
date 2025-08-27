@@ -1,6 +1,6 @@
 // server/routes/ai-chat.ts
 import type { Request, Response } from "express";
-import { COMPANY_SYSTEM_PROMPT } from "../agent/bristol_system_prompt";
+import { COMPANY_SYSTEM_PROMPT } from "../agent/company_system_prompt";
 import { COMPANY_TOOLS } from "../agent/tools";
 
 export function registerAIAgentRoute(app: import("express").Express) {

@@ -1,8 +1,8 @@
 import type { Express, Request, Response } from "express";
-import { CompanyMarketAgent } from "../services/bristolMarketAgent";
-import { CompanyFinancialAgent } from "../services/bristolFinancialAgent";
-import { CompanyDemographicsAgent } from "../services/bristolDemographicsAgent";
-import { CompanySiteAgent } from "../services/bristolSiteAgent";
+import { CompanyMarketAgent } from "../services/companyMarketAgent";
+import { CompanyFinancialAgent } from "../services/companyFinancialAgent";
+import { CompanyDemographicsAgent } from "../services/companyDemographicsAgent";
+import { CompanySiteAgent } from "../services/companySiteAgent";
 
 // Initialize Company Agents
 const marketAgent = new CompanyMarketAgent();

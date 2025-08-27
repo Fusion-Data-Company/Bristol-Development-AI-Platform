@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { bristolScoringService } from '../../services/bristolScoringService';
+import { companyScoringService } from '../../services/companyScoringService';
 import { db } from '../../db';
 import { sites } from '@shared/schema';
 import { eq } from 'drizzle-orm';
@@ -16,7 +16,7 @@ router.get('/:siteId/brand-score', async (req, res) => {
   try {
     const { siteId } = req.params;
     
-    const scoreResult = await bristolScoringService.getCompanyScoreDetailed(siteId);
+    const scoreResult = await companyScoringService.getCompanyScoreDetailed(siteId);
     
     res.json({
       success: true,
@@ -37,7 +37,7 @@ router.post('/update-all-scores', async (req, res) => {
   try {
     console.log('🎯 Starting comprehensive Company score update...');
     
-    await bristolScoringService.updateAllCompanyScores();
+    await companyScoringService.updateAllCompanyScores();
     
     // Get updated statistics
     const allSites = await db.select().from(sites);
@@ -167,7 +167,7 @@ router.post('/:siteId/update-score', async (req, res) => {
   try {
     const { siteId } = req.params;
     
-    const scoreResult = await bristolScoringService.calculateCompanyScore(siteId);
+    const scoreResult = await companyScoringService.calculateCompanyScore(siteId);
     
     // Update the database
     await db.update(sites)

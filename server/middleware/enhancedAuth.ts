@@ -48,7 +48,7 @@ export const enhancedAuth: RequestHandler = async (req: any, res: Response, next
 
     // If all fallbacks fail, but this is a chat request, use demo user
     if (isChatEndpoint(req.path)) {
-      req.user = { id: 'demo-user', email: 'demo@bristol.dev' };
+      req.user = { id: 'demo-user', email: 'demo@yourcompany.com' };
       console.warn(`🔧 Using demo user for chat endpoint: ${req.path}`);
       return next();
     }
@@ -65,7 +65,7 @@ export const enhancedAuth: RequestHandler = async (req: any, res: Response, next
     
     // Emergency fallback for chat endpoints
     if (isChatEndpoint(req.path)) {
-      req.user = { id: 'demo-user', email: 'demo@bristol.dev' };
+      req.user = { id: 'demo-user', email: 'demo@yourcompany.com' };
       console.warn(`🚨 Emergency fallback user for chat endpoint: ${req.path}`);
       return next();
     }
@@ -115,7 +115,7 @@ async function validateAuthentication(req: any): Promise<AuthResult> {
     // Check for API key auth (for programmatic access)
     const apiKey = req.headers['x-api-key'] || req.headers['authorization']?.replace('Bearer ', '');
     if (apiKey && process.env.COMPANY_API_KEY && apiKey === process.env.COMPANY_API_KEY) {
-      return { success: true, user: { id: 'api-user', email: 'api@bristol.dev' } };
+      return { success: true, user: { id: 'api-user', email: 'api@yourcompany.com' } };
     }
 
     return { success: false, error: 'No valid authentication found' };
@@ -155,7 +155,7 @@ async function applyAuthFallbacks(req: any, res: Response): Promise<AuthResult> 
       return { 
         success: true, 
         fallbackUserId: 'demo-user',
-        user: { id: 'demo-user', email: 'demo@bristol.dev' }
+        user: { id: 'demo-user', email: 'demo@yourcompany.com' }
       };
     }
 
@@ -170,7 +170,7 @@ async function applyAuthFallbacks(req: any, res: Response): Promise<AuthResult> 
       return { 
         success: true, 
         fallbackUserId: anonymousId,
-        user: { id: anonymousId, email: `${anonymousId}@bristol.dev` }
+        user: { id: anonymousId, email: `${anonymousId}@yourcompany.com` }
       };
     }
 
@@ -249,7 +249,7 @@ export const chatAuthMiddleware: RequestHandler = async (req: any, res: Response
   try {
     // Always ensure a user exists for chat endpoints
     if (!req.user) {
-      req.user = { id: 'demo-user', email: 'demo@bristol.dev' };
+      req.user = { id: 'demo-user', email: 'demo@yourcompany.com' };
     }
 
     // Ensure user ID is valid
@@ -273,7 +273,7 @@ export const chatAuthMiddleware: RequestHandler = async (req: any, res: Response
     // Absolutely never fail a chat request due to auth
     req.user = { 
       id: 'emergency-user', 
-      email: 'emergency@bristol.dev',
+      email: 'emergency@yourcompany.com',
       errorRecovery: true 
     };
     next();
@@ -312,7 +312,7 @@ export const bristolAuthStack = [
   dbResilienceMiddleware
 ];
 
-export const bristolChatAuthStack = [
+export const companyChatAuthStack = [
   enhancedSession,
   chatAuthMiddleware,
   dbResilienceMiddleware

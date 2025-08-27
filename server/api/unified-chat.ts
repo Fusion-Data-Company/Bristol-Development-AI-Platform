@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { unifiedChatService } from '../services/unifiedChatService';
-import { bristolChatAuthStack } from '../middleware/enhancedAuth';
+import { companyChatAuthStack } from '../middleware/enhancedAuth';
 import { getPerformanceRecommendations } from '../services/memoryOptimizer';
 import { z } from 'zod';
 
@@ -13,7 +13,7 @@ declare global {
 const router = Router();
 
 // Apply enhanced authentication for all unified chat endpoints
-router.use(bristolChatAuthStack);
+router.use(companyChatAuthStack);
 
 // Comprehensive unified chat schema
 const unifiedChatSchema = z.object({

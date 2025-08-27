@@ -4,12 +4,12 @@
  */
 
 import { Router } from 'express';
-import { bristolChatAuthStack } from '../middleware/enhancedAuth';
+import { companyChatAuthStack } from '../middleware/enhancedAuth';
 
 const router = Router();
 
 // Apply enhanced authentication
-router.use(bristolChatAuthStack);
+router.use(companyChatAuthStack);
 
 // Test agent communication system status
 router.get('/status', async (req, res) => {

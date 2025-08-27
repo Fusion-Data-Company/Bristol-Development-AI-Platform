@@ -5,7 +5,7 @@
  */
 
 import { Router } from 'express';
-import { bristolChatAuthStack } from '../middleware/enhancedAuth';
+import { companyChatAuthStack } from '../middleware/enhancedAuth';
 import { eliteMCPSuperserver } from '../services/eliteMCPSuperserver';
 import { modelManagementMCPServer } from '../services/modelManagementMCPServer';
 import { unifiedChatService } from '../services/unifiedChatService';
@@ -15,7 +15,7 @@ import { z } from 'zod';
 const router = Router();
 
 // Apply enhanced authentication
-router.use(bristolChatAuthStack);
+router.use(companyChatAuthStack);
 
 // GET /models - Fetch available models with health status
 router.get('/models', async (req, res) => {
