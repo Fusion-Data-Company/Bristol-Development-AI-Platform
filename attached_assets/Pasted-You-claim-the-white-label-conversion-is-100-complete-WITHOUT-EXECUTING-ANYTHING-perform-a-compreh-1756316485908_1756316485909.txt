@@ -1,0 +1,73 @@
+You claim the white-label conversion is 100% complete. WITHOUT EXECUTING ANYTHING, perform a comprehensive verification audit against the original prompt instructions and prove every requirement was met.
+VERIFICATION AUDIT CHECKLIST
+1. TEXT REPLACEMENT VERIFICATION
+Show me grep results proving ZERO instances of:
+
+ "Bristol Development Group"
+ "Bristol Development"
+ "Bristol Dev Group"
+ "BristolDev"
+ "Bristol" (standalone)
+ "BDG" (as acronym)
+ "bristol" (lowercase)
+ "@bristoldevelopment.com"
+ "@bristol.dev"
+ "bristoldevelopment.com"
+
+2. FILE RENAMING VERIFICATION
+List all files that were renamed showing:
+
+ OLD filename → NEW filename for each
+ Confirm NO files contain "bristol" in filename
+ Show updated import statements for renamed files
+
+3. ASSET VERIFICATION
+Prove these specific assets were handled:
+
+ bristol-logo-social.svg → company-logo-social.svg
+ bristol-social-preview.png → company-social-preview.png
+ bristol-analytics-background.jpg → company-analytics-background.jpg
+ bristol-logo_1754934306711.gif → company-logo.gif
+ Chat.tsx import statement updated
+
+4. API ENDPOINT VERIFICATION
+Show me the updated routes:
+
+ /api/bristol-brain → /api/company-brain
+ /api/bristol-brain-elite → /api/company-brain-elite
+ /api/bristol-agent → /api/company-agent
+ All frontend references to these endpoints updated
+
+5. DATABASE FIELD VERIFICATION
+Confirm these changes in all relevant files:
+
+ bristol_score → company_score
+ bristol_rating → company_rating
+ Show affected migration/model files
+
+6. CRITICAL FILE VERIFICATION
+Show me the specific changes in:
+
+ teamSeeder.ts (22 email addresses changed)
+ bristol-seed.csv (all URLs updated)
+ .env.example (Bristol branding removed)
+ All files in server/services/bristol/ (renamed and updated)
+
+7. FINAL PROOF COMMANDS
+Run these and show results:
+bashgrep -r -i "bristol" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=backup_*
+grep -r "BDG" . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=backup_*
+find . -name "*bristol*" -type f
+find . -name "*Bristol*" -type f
+COMPREHENSIVE REPORT FORMAT:
+ORIGINAL REQUIREMENT → VERIFICATION
+================================
+3,247+ Bristol references → Current count: [?]
+78 critical files → Files modified: [list count]
+50+ service files → Renamed files: [show proof]
+22 team emails → Updated emails: [show new format]
+Bristol assets → Renamed assets: [list all]
+API endpoints → Updated routes: [show grep proof]
+Database fields → Updated schemas: [show proof]
+If ANY Bristol references remain, list them with file path and line number.
+PROVE the conversion is actually 100% complete as you claim.
