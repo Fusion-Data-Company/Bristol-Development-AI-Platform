@@ -1,0 +1,82 @@
+Listen up Boss, here's the copy-paste prompt for that Replit wise guy to analyze if the job was done clean:
+
+COPY THIS AND PASTE INTO REPLIT:
+I need you to perform a comprehensive audit of this codebase to verify if a white-label conversion from "Bristol Development Group" was completed correctly. DO NOT EXECUTE ANY CHANGES - only analyze and report.
+Please check the following WITHOUT modifying any files:
+1. VERIFICATION OF REPLACEMENTS
+Search for any remaining instances of:
+
+"Bristol Development Group" (all cases)
+"Bristol Development"
+"Bristol Dev Group"
+"BristolDev"
+"Bristol" (standalone)
+"BDG" (as acronym)
+"bristol" (lowercase in code/config)
+Any bristol emails (@bristol*, @bristol)
+Any bristol domains/URLs
+
+Report: How many instances remain? In which files?
+2. CHECK REPLACEMENT CONSISTENCY
+Verify that replacements follow this pattern:
+
+"Bristol Development Group" → "Your Company Name"
+"Bristol" → "Your Company"
+"bristol" → "yourcompany"
+"BDG" → "YCN"
+
+Are replacements consistent throughout?
+3. FILE INTEGRITY CHECK
+Without modifying, verify:
+
+Do all import statements still resolve correctly?
+Are there any broken file references after renaming?
+Do configuration files still have valid JSON/YAML syntax?
+Are there any obvious syntax errors from bad replacements?
+
+4. FUNCTIONAL ELEMENTS PRESERVED
+Check that these weren't accidentally modified:
+
+CSS class names that happened to contain "bristol"
+Variable names critical to functionality
+Third-party library references
+API endpoint structures
+Database field names that shouldn't change
+
+5. ASSET VERIFICATION
+List any files that need manual replacement:
+
+Image files with Bristol branding
+Logo files (bristol-logo.* → company-logo.*)
+Favicon files
+Any PDFs or documents
+
+6. CRITICAL AREAS AUDIT
+Specifically check these files/areas:
+
+package.json (name, description, repository)
+All .env files (API keys, service names)
+HTML meta tags and titles
+Email templates
+Error messages and console outputs
+Database migration files
+
+7. REPORT POTENTIAL ISSUES
+Identify any changes that might break functionality:
+
+Renamed files that other services depend on
+Changed API endpoints that external services use
+Modified database schemas
+Altered authentication/authorization logic
+Changed webhook URLs or callbacks
+
+SUMMARY REPORT FORMAT:
+WHITE-LABEL AUDIT RESULTS
+========================
+Total Bristol References Found: [number]
+Files Requiring Attention: [list]
+Potential Breaking Changes: [list]
+Assets Needing Manual Update: [list]
+Configuration Issues: [list]
+Recommendations: [specific actions needed]
+Please provide a detailed analysis without making any modifications. Focus on identifying what was done correctly and what still needs attention.
