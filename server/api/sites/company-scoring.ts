@@ -41,14 +41,14 @@ router.post('/update-all-scores', async (req, res) => {
     
     // Get updated statistics
     const allSites = await db.select().from(sites);
-    const sitesWithScores = allSites.filter(site => site.bristolScore !== null);
-    const avgScore = sitesWithScores.reduce((sum, site) => sum + (site.bristolScore || 0), 0) / sitesWithScores.length;
+    const sitesWithScores = allSites.filter(site => site.companyScore !== null);
+    const avgScore = sitesWithScores.reduce((sum, site) => sum + (site.companyScore || 0), 0) / sitesWithScores.length;
     
     const scoreDistribution = {
-      excellent: sitesWithScores.filter(s => (s.bristolScore || 0) >= 80).length,
-      good: sitesWithScores.filter(s => (s.bristolScore || 0) >= 70 && (s.bristolScore || 0) < 80).length,
-      fair: sitesWithScores.filter(s => (s.bristolScore || 0) >= 60 && (s.bristolScore || 0) < 70).length,
-      poor: sitesWithScores.filter(s => (s.bristolScore || 0) < 60).length
+      excellent: sitesWithScores.filter(s => (s.companyScore || 0) >= 80).length,
+      good: sitesWithScores.filter(s => (s.companyScore || 0) >= 70 && (s.companyScore || 0) < 80).length,
+      fair: sitesWithScores.filter(s => (s.companyScore || 0) >= 60 && (s.companyScore || 0) < 70).length,
+      poor: sitesWithScores.filter(s => (s.companyScore || 0) < 60).length
     };
     
     res.json({
@@ -75,7 +75,7 @@ router.post('/update-all-scores', async (req, res) => {
 router.get('/portfolio-summary', async (req, res) => {
   try {
     const allSites = await db.select().from(sites);
-    const sitesWithScores = allSites.filter(site => site.bristolScore !== null);
+    const sitesWithScores = allSites.filter(site => site.companyScore !== null);
     
     if (sitesWithScores.length === 0) {
       return res.json({
@@ -88,24 +88,24 @@ router.get('/portfolio-summary', async (req, res) => {
       });
     }
     
-    const avgScore = sitesWithScores.reduce((sum, site) => sum + (site.bristolScore || 0), 0) / sitesWithScores.length;
+    const avgScore = sitesWithScores.reduce((sum, site) => sum + (site.companyScore || 0), 0) / sitesWithScores.length;
     
     // Score distribution
     const scoreDistribution = {
-      excellent: sitesWithScores.filter(s => (s.bristolScore || 0) >= 80).length,
-      good: sitesWithScores.filter(s => (s.bristolScore || 0) >= 70 && (s.bristolScore || 0) < 80).length,
-      fair: sitesWithScores.filter(s => (s.bristolScore || 0) >= 60 && (s.bristolScore || 0) < 70).length,
-      poor: sitesWithScores.filter(s => (s.bristolScore || 0) < 60).length
+      excellent: sitesWithScores.filter(s => (s.companyScore || 0) >= 80).length,
+      good: sitesWithScores.filter(s => (s.companyScore || 0) >= 70 && (s.companyScore || 0) < 80).length,
+      fair: sitesWithScores.filter(s => (s.companyScore || 0) >= 60 && (s.companyScore || 0) < 70).length,
+      poor: sitesWithScores.filter(s => (s.companyScore || 0) < 60).length
     };
     
     // Top and bottom performers
-    const sortedSites = sitesWithScores.sort((a, b) => (b.bristolScore || 0) - (a.bristolScore || 0));
+    const sortedSites = sitesWithScores.sort((a, b) => (b.companyScore || 0) - (a.companyScore || 0));
     const topPerformers = sortedSites.slice(0, 5).map(site => ({
       id: site.id,
       name: site.name,
       city: site.city,
       state: site.state,
-      bristolScore: site.bristolScore
+      companyScore: site.companyScore
     }));
     
     const bottomPerformers = sortedSites.slice(-5).reverse().map(site => ({
@@ -113,7 +113,7 @@ router.get('/portfolio-summary', async (req, res) => {
       name: site.name,
       city: site.city,
       state: site.state,
-      bristolScore: site.bristolScore
+      companyScore: site.companyScore
     }));
     
     // Market breakdown
@@ -127,7 +127,7 @@ router.get('/portfolio-summary', async (req, res) => {
         };
       }
       acc[market].properties += 1;
-      acc[market].totalScore += site.bristolScore || 0;
+      acc[market].totalScore += site.companyScore || 0;
       acc[market].avgScore = acc[market].totalScore / acc[market].properties;
       return acc;
     }, {} as Record<string, any>);
@@ -172,7 +172,7 @@ router.post('/:siteId/update-score', async (req, res) => {
     // Update the database
     await db.update(sites)
       .set({ 
-        bristolScore: scoreResult.totalScore,
+        companyScore: scoreResult.totalScore,
         updatedAt: new Date()
       })
       .where(eq(sites.id, siteId));

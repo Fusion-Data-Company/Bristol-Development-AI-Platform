@@ -74,7 +74,7 @@ router.get('/portfolio-performance', async (req, res) => {
         city: sites.city,
         state: sites.state,
         unitsTotal: sites.unitsTotal,
-        bristolScore: sites.bristolScore,
+        companyScore: sites.companyScore,
         metricType: siteMetrics.metricType,
         metricValue: siteMetrics.value,
         metricDate: siteMetrics.createdAt
@@ -91,7 +91,7 @@ router.get('/portfolio-performance', async (req, res) => {
           name: row.siteName,
           location: `${row.city}, ${row.state}`,
           totalUnits: row.unitsTotal || 0,
-          bristolScore: row.bristolScore || 0,
+          companyScore: row.companyScore || 0,
           metrics: {}
         };
       }
@@ -107,7 +107,7 @@ router.get('/portfolio-performance', async (req, res) => {
     // Calculate portfolio-level KPIs
     const allSites = Object.values(sitePerformance);
     const totalUnits = allSites.reduce((sum, site: any) => sum + site.totalUnits, 0);
-    const avgCompanyScore = allSites.reduce((sum, site: any) => sum + site.bristolScore, 0) / allSites.length || 0;
+    const avgCompanyScore = allSites.reduce((sum, site: any) => sum + site.companyScore, 0) / allSites.length || 0;
     
     // Calculate estimated portfolio value and NOI
     const estimatedValue = totalUnits * 200000; // Conservative $200k per unit
@@ -115,12 +115,12 @@ router.get('/portfolio-performance', async (req, res) => {
     
     // Performance rankings
     const topPerformers = allSites
-      .sort((a: any, b: any) => b.bristolScore - a.bristolScore)
+      .sort((a: any, b: any) => b.companyScore - a.companyScore)
       .slice(0, 5);
 
     const underPerformers = allSites
-      .filter((site: any) => site.bristolScore < 70)
-      .sort((a: any, b: any) => a.bristolScore - b.bristolScore)
+      .filter((site: any) => site.companyScore < 70)
+      .sort((a: any, b: any) => a.companyScore - b.companyScore)
       .slice(0, 5);
 
     res.json({
@@ -155,7 +155,7 @@ router.get('/market-comparison', async (req, res) => {
         state: sites.state,
         siteCount: count(sites.id),
         totalUnits: sum(sites.unitsTotal),
-        avgCompanyScore: avg(sites.bristolScore)
+        avgCompanyScore: avg(sites.companyScore)
       })
       .from(sites)
       .where(and(

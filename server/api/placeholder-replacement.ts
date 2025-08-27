@@ -246,7 +246,7 @@ router.post('/replace-brand-scores', async (req, res) => {
     
     // Get updated scores
     const updatedSites = await db.select().from(sites);
-    const scoredSites = updatedSites.filter(s => s.bristolScore !== null);
+    const scoredSites = updatedSites.filter(s => s.companyScore !== null);
     
     res.json({
       success: true,
@@ -255,12 +255,12 @@ router.post('/replace-brand-scores', async (req, res) => {
         total: updatedSites.length,
         scored: scoredSites.length,
         averageScore: scoredSites.length > 0 ? 
-          Math.round(scoredSites.reduce((sum, s) => sum + (s.bristolScore || 0), 0) / scoredSites.length) : 0
+          Math.round(scoredSites.reduce((sum, s) => sum + (s.companyScore || 0), 0) / scoredSites.length) : 0
       },
       scoredSites: scoredSites.map(s => ({
         id: s.id,
         name: s.name,
-        score: s.bristolScore
+        score: s.companyScore
       })),
       timestamp: new Date().toISOString()
     });
@@ -355,7 +355,7 @@ router.post('/replace-all-placeholders', async (req, res) => {
     const startTime = Date.now();
     const results = {
       demographics: null as any,
-      bristolScores: null as any,
+      companyScores: null as any,
       marketData: null as any,
       errors: [] as string[]
     };
@@ -377,7 +377,7 @@ router.post('/replace-all-placeholders', async (req, res) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
-      results.bristolScores = await scoresResponse.json();
+      results.companyScores = await scoresResponse.json();
     } catch (error: any) {
       results.errors.push(`Company scores replacement failed: ${error.message}`);
     }
@@ -398,7 +398,7 @@ router.post('/replace-all-placeholders', async (req, res) => {
     
     const totalSites = results.demographics?.summary?.total || 0;
     const successfulDemographics = results.demographics?.summary?.successful || 0;
-    const successfulScores = results.bristolScores?.summary?.scored || 0;
+    const successfulScores = results.companyScores?.summary?.scored || 0;
     const successfulMarket = results.marketData?.summary?.successful || 0;
     
     res.json({
@@ -409,7 +409,7 @@ router.post('/replace-all-placeholders', async (req, res) => {
         totalSites,
         placeholdersSectionsReplaced: {
           demographics: successfulDemographics,
-          bristolScores: successfulScores,
+          companyScores: successfulScores,
           marketData: successfulMarket
         },
         overallProgress: `${Math.round(((successfulDemographics + successfulScores + successfulMarket) / (totalSites * 3)) * 100)}% of all placeholders replaced`

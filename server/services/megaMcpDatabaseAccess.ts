@@ -281,37 +281,37 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
           name: sites.name,
           city: sites.city,
           state: sites.state,
-          bristolScore: sites.bristolScore,
+          companyScore: sites.companyScore,
           unitsTotal: sites.unitsTotal,
           completionYear: sites.completionYear,
           status: sites.status
-        }).from(sites).where(sql`bristol_score IS NOT NULL`);
+        }).from(sites).where(sql`company_score IS NOT NULL`);
 
         if (siteId) {
           query = query.where(eq(sites.id, siteId));
         }
 
-        const results = await query.orderBy(desc(sites.bristolScore));
+        const results = await query.orderBy(desc(sites.companyScore));
         
         if (!siteId) {
           // Add scoring distribution analytics
           const distribution = await db.select({
             scoreRange: sql<string>`CASE 
-              WHEN bristol_score >= 90 THEN '90-100'
-              WHEN bristol_score >= 80 THEN '80-89'
-              WHEN bristol_score >= 70 THEN '70-79'
-              WHEN bristol_score >= 60 THEN '60-69'
+              WHEN company_score >= 90 THEN '90-100'
+              WHEN company_score >= 80 THEN '80-89'
+              WHEN company_score >= 70 THEN '70-79'
+              WHEN company_score >= 60 THEN '60-69'
               ELSE 'Below 60'
             END`,
             count: sql<number>`count(*)`
           })
           .from(sites)
-          .where(sql`bristol_score IS NOT NULL`)
+          .where(sql`company_score IS NOT NULL`)
           .groupBy(sql`CASE 
-            WHEN bristol_score >= 90 THEN '90-100'
-            WHEN bristol_score >= 80 THEN '80-89'
-            WHEN bristol_score >= 70 THEN '70-79'
-            WHEN bristol_score >= 60 THEN '60-69'
+            WHEN company_score >= 90 THEN '90-100'
+            WHEN company_score >= 80 THEN '80-89'
+            WHEN company_score >= 70 THEN '70-79'
+            WHEN company_score >= 60 THEN '60-69'
             ELSE 'Below 60'
           END`);
 
@@ -419,7 +419,7 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
         }
         
         if (criteria.minCompanyScore) {
-          conditions.push(sql`bristol_score >= ${criteria.minCompanyScore}`);
+          conditions.push(sql`company_score >= ${criteria.minCompanyScore}`);
         }
 
         let query = db.select().from(sites);
@@ -428,7 +428,7 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
           query = query.where(and(...conditions));
         }
 
-        return await query.orderBy(desc(sites.bristolScore), desc(sites.createdAt)).limit(100);
+        return await query.orderBy(desc(sites.companyScore), desc(sites.createdAt)).limit(100);
       },
       { operation: 'searchProperties', table: 'sites', criteria }
     );
@@ -451,7 +451,7 @@ export class MegaMcpDatabaseAccess implements MegaMcpDatabaseInterface {
           state: sites.state,
           count: sql<number>`count(*)`,
           totalUnits: sql<number>`sum(units_total)`,
-          avgCompanyScore: sql<number>`avg(bristol_score)`
+          avgCompanyScore: sql<number>`avg(company_score)`
         })
         .from(sites)
         .where(

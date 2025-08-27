@@ -87,14 +87,14 @@ router.post('/brand-score/:siteId', async (req, res) => {
   try {
     const { siteId } = req.params;
     
-    const bristolScore = await realDataService.calculateCompanyScore(siteId);
+    const companyScore = await realDataService.calculateCompanyScore(siteId);
     
     // Update database
     await realDataService.updateSiteCompanyScore(siteId);
     
     res.json({
       success: true,
-      data: bristolScore,
+      data: companyScore,
       source: 'Company Proprietary Algorithm',
       timestamp: new Date().toISOString()
     });
@@ -178,7 +178,7 @@ router.get('/site-analytics/:siteId', async (req, res) => {
         name: site.name,
         location: `${site.city}, ${site.state}`,
         coordinates: [site.latitude, site.longitude],
-        bristolScore: site.bristolScore
+        companyScore: site.companyScore
       },
       demographics: {
         medianIncome: censusData.medianIncome,

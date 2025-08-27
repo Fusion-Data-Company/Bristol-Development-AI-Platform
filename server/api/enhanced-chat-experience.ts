@@ -258,7 +258,7 @@ async function buildPropertyContext(request: any) {
         sitesCount: sites.length,
         recentSites: sites.slice(0, 5),
         totalUnits: sites.reduce((sum: number, site: any) => sum + (site.totalUnits || 0), 0),
-        avgCompanyScore: sites.reduce((sum: number, site: any) => sum + (site.bristolScore || 0), 0) / sites.length
+        avgCompanyScore: sites.reduce((sum: number, site: any) => sum + (site.companyScore || 0), 0) / sites.length
       };
     }
   } catch (error) {

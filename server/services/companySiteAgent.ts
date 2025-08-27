@@ -126,7 +126,7 @@ export class CompanySiteAgent {
       const riskAssessment = await this.assessSiteRisks(request);
       
       // Phase 5: Company Scoring Calculation
-      const bristolScore = await this.calculateCompanyScore({
+      const companyScore = await this.calculateCompanyScore({
         poiAnalysis,
         gisAnalysis,
         marketAnalysis,
@@ -135,9 +135,9 @@ export class CompanySiteAgent {
       });
 
       // Store analysis in database
-      await this.storeSiteAnalysis(request, bristolScore);
+      await this.storeSiteAnalysis(request, companyScore);
 
-      return bristolScore;
+      return companyScore;
     } catch (error) {
       console.error('Company Site Agent analysis failed:', error);
       throw new Error(`Site analysis failed: ${(error as Error).message}`);
@@ -483,7 +483,7 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
       await db
         .update(sites)
         .set({ 
-          bristolScore: score.overallScore,
+          companyScore: score.overallScore,
           updatedAt: new Date()
         })
         .where(eq(sites.id, request.siteId));
@@ -498,7 +498,7 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
         metadata: {
           siteId: request.siteId,
           address: request.address,
-          bristolScore: score.overallScore,
+          companyScore: score.overallScore,
           analysisScope: request.analysisScope,
           coordinates: request.coordinates
         },

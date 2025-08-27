@@ -47,7 +47,7 @@ export default function ProductionStatus() {
         setActiveReplacement(null);
       },
     }),
-    bristolScores: useMutation({
+    companyScores: useMutation({
       mutationFn: () => apiRequest('/api/placeholder-replacement/replace-brand-scores', { method: 'POST' }),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['/api/placeholder-replacement/health'] });
@@ -235,19 +235,19 @@ export default function ProductionStatus() {
               </CardHeader>
               <CardContent>
                 <Button
-                  onClick={() => handleReplacement('bristolScores')}
-                  disabled={activeReplacement === 'bristolScores' || replacementMutations.bristolScores.isPending}
+                  onClick={() => handleReplacement('companyScores')}
+                  disabled={activeReplacement === 'companyScores' || replacementMutations.companyScores.isPending}
                   className="w-full"
                 >
-                  {(activeReplacement === 'bristolScores' || replacementMutations.bristolScores.isPending) && (
+                  {(activeReplacement === 'companyScores' || replacementMutations.companyScores.isPending) && (
                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                   )}
                   Calculate Company Scores
                 </Button>
-                {replacementMutations.bristolScores.data && (
+                {replacementMutations.companyScores.data && (
                   <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
                     <div className="text-sm text-green-800">
-                      ✅ {(replacementMutations.bristolScores.data as any).message}
+                      ✅ {(replacementMutations.companyScores.data as any).message}
                     </div>
                   </div>
                 )}
