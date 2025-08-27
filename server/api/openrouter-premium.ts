@@ -187,7 +187,7 @@ router.post('/chat', async (req, res) => {
     if (systemPrompt && !enhancedMessages.find(m => m.role === 'system')) {
       enhancedMessages.unshift({
         role: 'system',
-        content: `${systemPrompt}\n\nYou are Company A.I. Elite, the proprietary AI intelligence system engineered exclusively for Company Development Group. You have access to real-time market data${mcpEnabled ? ' and MCP tools' : ''}${realTimeData ? ' with live data feeds' : ''}. Current timestamp: ${new Date().toISOString()}.`
+        content: `${systemPrompt}\n\nYou are Company A.I. Elite, the proprietary AI intelligence system engineered exclusively for Your Company Name. You have access to real-time market data${mcpEnabled ? ' and MCP tools' : ''}${realTimeData ? ' with live data feeds' : ''}. Current timestamp: ${new Date().toISOString()}.`
       });
     }
 

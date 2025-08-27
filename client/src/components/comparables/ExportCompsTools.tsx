@@ -129,7 +129,7 @@ export function ExportCompsTools({ data, selectedCount = 0 }: ExportCompsToolsPr
   };
 
   const generatePDFContent = (data: any[]) => {
-    return `COMPANY DEVELOPMENT GROUP
+    return `YOUR COMPANY NAME
 COMPARABLES ANALYSIS REPORT
 Generated: ${new Date().toLocaleDateString()}
 

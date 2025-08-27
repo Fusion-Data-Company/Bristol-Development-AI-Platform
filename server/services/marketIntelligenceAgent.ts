@@ -195,7 +195,7 @@ export class MarketIntelligenceAgent {
           messages: [
             {
               role: 'system',
-              content: `You are a market intelligence analyst for Company Development Group, a real estate investment firm. Analyze recent news and provide specific, actionable insights for real estate investment decisions. Focus on concrete data, trends, and implications for multifamily real estate investments. Include specific dates, numbers, and sources when available.`
+              content: `You are a market intelligence analyst for Your Company Name, a real estate investment firm. Analyze recent news and provide specific, actionable insights for real estate investment decisions. Focus on concrete data, trends, and implications for multifamily real estate investments. Include specific dates, numbers, and sources when available.`
             },
             {
               role: 'user',

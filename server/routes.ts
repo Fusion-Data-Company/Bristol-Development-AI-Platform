@@ -852,7 +852,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const systemPrompt = companyMode 
-        ? "You are the Company Development Group AI Assistant. Provide professional real estate development insights and analysis."
+        ? "You are the Your Company Name AI Assistant. Provide professional real estate development insights and analysis."
         : "You are a helpful AI assistant.";
 
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {

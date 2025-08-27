@@ -158,7 +158,7 @@ Provide detailed year-by-year projections with supporting calculations.`;
       messages: [
         {
           role: 'system',
-          content: 'You are an institutional real estate financial analyst specializing in DCF modeling for Company Development Group. Provide precise calculations with supporting methodology.'
+          content: 'You are an institutional real estate financial analyst specializing in DCF modeling for Your Company Name. Provide precise calculations with supporting methodology.'
         },
         { role: 'user', content: prompt }
       ],

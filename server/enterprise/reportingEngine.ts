@@ -1,4 +1,4 @@
-// Enterprise Reporting Engine for Company Development Group
+// Enterprise Reporting Engine for Your Company Name
 // Provides comprehensive reporting, dashboards, and business intelligence
 
 import { db } from "../db";

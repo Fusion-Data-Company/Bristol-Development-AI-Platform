@@ -27,7 +27,7 @@ router.post("/enhanced-chat", async (req, res) => {
     }
 
     // Enhanced system prompt for Boss Agent
-    const bossAgentPrompt = `You are the Company A.I. Boss Agent - the ultimate AI controller for Company Development Group's real estate intelligence platform.
+    const bossAgentPrompt = `You are the Company A.I. Boss Agent - the ultimate AI controller for Your Company Name's real estate intelligence platform.
 
 BOSS AGENT CAPABILITIES:
 - Access to live real estate data, demographics, market analytics

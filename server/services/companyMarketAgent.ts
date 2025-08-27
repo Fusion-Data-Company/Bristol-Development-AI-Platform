@@ -124,14 +124,14 @@ SOURCES TO ANALYZE:
 - Construction permitting and completion data
 - Institutional investment transaction records
 
-Provide detailed findings with specific data points, sources, and market insights for Company Development Group investment analysis.`;
+Provide detailed findings with specific data points, sources, and market insights for Your Company Name investment analysis.`;
 
     const response = await this.openRouter.chat.completions.create({
       model: this.models.research,
       messages: [
         {
           role: 'system',
-          content: 'You are a specialized real estate market researcher for Company Development Group, focusing on Sunbelt multifamily markets. Provide comprehensive, data-driven market intelligence.'
+          content: 'You are a specialized real estate market researcher for Your Company Name, focusing on Sunbelt multifamily markets. Provide comprehensive, data-driven market intelligence.'
         },
         { role: 'user', content: prompt }
       ],
@@ -222,14 +222,14 @@ REQUIRED OUTPUT FORMAT (JSON):
   }
 }
 
-Extract quantitative data and structure into this exact JSON format for Company Development Group analysis.`;
+Extract quantitative data and structure into this exact JSON format for Your Company Name analysis.`;
 
     const response = await this.openRouter.chat.completions.create({
       model: this.models.primary,
       messages: [
         {
           role: 'system',
-          content: 'You are the Company Development Group market intelligence system. Synthesize market data into structured JSON format for institutional analysis.'
+          content: 'You are the Your Company Name market intelligence system. Synthesize market data into structured JSON format for institutional analysis.'
         },
         { role: 'user', content: prompt }
       ],

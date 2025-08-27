@@ -46,7 +46,7 @@ const defaultAgents = [
     status: 'active' as const,
     model: 'openai/gpt-5',
     capabilities: ['coordination', 'decision-making', 'task-delegation', 'mcp-all'],
-    systemPrompt: `You are the Company Master Agent, the primary coordinator for the Company Development Group's AI-powered real estate intelligence platform.
+    systemPrompt: `You are the Company Master Agent, the primary coordinator for the Your Company Name's AI-powered real estate intelligence platform.
 
 Your core responsibilities:
 - Coordinate all sub-agents and delegate tasks based on complexity and domain expertise
@@ -82,7 +82,7 @@ Always coordinate with relevant sub-agents for specialized tasks while maintaini
     status: 'active' as const,
     model: 'openai/gpt-5',
     capabilities: ['data-analysis', 'data-cleaning', 'data-structuring', 'mcp-postgres', 'mcp-filesystem'],
-    systemPrompt: `You are the Data Processing Agent specialized in handling raw real estate data for Company Development Group.
+    systemPrompt: `You are the Data Processing Agent specialized in handling raw real estate data for Your Company Name.
 
 Your expertise includes:
 - Processing property listings from multiple sources (LoopNet, Apartments.com, etc.)
@@ -117,7 +117,7 @@ Always ensure data integrity and provide clear documentation of any transformati
     status: 'active' as const,
     model: 'openai/gpt-5',
     capabilities: ['financial-modeling', 'dcf-analysis', 'market-valuation', 'mcp-postgres'],
-    systemPrompt: `You are the Financial Analysis Agent responsible for sophisticated real estate financial modeling and valuation for Company Development Group.
+    systemPrompt: `You are the Financial Analysis Agent responsible for sophisticated real estate financial modeling and valuation for Your Company Name.
 
 Your core competencies:
 - Discounted Cash Flow (DCF) modeling with sensitivity analysis
@@ -153,7 +153,7 @@ Always provide institutional-quality analysis with clear assumptions and cite so
     status: 'active' as const,
     model: 'openai/gpt-5',
     capabilities: ['market-analysis', 'demographic-research', 'economic-indicators', 'mcp-all'],
-    systemPrompt: `You are the Market Intelligence Agent specializing in comprehensive market analysis and demographic research for Company Development Group's real estate investments.
+    systemPrompt: `You are the Market Intelligence Agent specializing in comprehensive market analysis and demographic research for Your Company Name's real estate investments.
 
 Your analytical focus areas:
 - Demographic trends and population growth patterns
@@ -194,7 +194,7 @@ Always provide data-driven insights with quantitative support and clear implicat
     status: 'active' as const,
     model: 'openai/gpt-5',
     capabilities: ['lead-scoring', 'pipeline-management', 'opportunity-assessment', 'mcp-postgres'],
-    systemPrompt: `You are the Lead Management Agent responsible for identifying, scoring, and managing the property acquisition pipeline for Company Development Group.
+    systemPrompt: `You are the Lead Management Agent responsible for identifying, scoring, and managing the property acquisition pipeline for Your Company Name.
 
 Your primary functions:
 - Property lead identification and initial screening
@@ -236,7 +236,7 @@ Always prioritize high-probability opportunities that align with Company's inves
     status: 'active' as const,
     model: 'openai/gpt-5',
     capabilities: ['web-scraping', 'data-extraction', 'firecrawl-integration', 'mcp-firecrawl'],
-    systemPrompt: `You are the Web Scraping Agent specialized in automated data collection from real estate websites and platforms for Company Development Group.
+    systemPrompt: `You are the Web Scraping Agent specialized in automated data collection from real estate websites and platforms for Your Company Name.
 
 Your data collection capabilities:
 - Property listings from major platforms (LoopNet, Apartments.com, Rentals.com)

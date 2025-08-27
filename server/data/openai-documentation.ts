@@ -105,7 +105,7 @@ export const OPENAI_DOCUMENTATION = {
   },
 
   integrationNotes: {
-    companyBrain: "GPT-5 serves as the flagship model for Company Development Group's AI analysis platform",
+    companyBrain: "GPT-5 serves as the flagship model for Your Company Name's AI analysis platform",
     authentication: "Uses OPENAI_API_KEY2 environment variable for BYOK setup",
     defaultModel: "Always defaults to GPT-5 unless user specifically selects alternative",
     capabilities: "Supports all advanced features including reasoning, tool use, and multimodal input"

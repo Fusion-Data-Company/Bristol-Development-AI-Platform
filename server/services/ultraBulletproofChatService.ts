@@ -247,7 +247,7 @@ class UltraBulletproofChatService {
     const needsData = this.analyzeDataNeeds(message);
     
     // Enhanced system prompt with MCP tool access
-    let enhancedSystemPrompt = `You are Company A.I. Elite, the proprietary AI intelligence system for Company Development Group. You have access to real-time data through integrated tools.
+    let enhancedSystemPrompt = `You are Your Company A.I. Elite, the proprietary AI intelligence system for Your Company Name. You have access to real-time data through integrated tools.
 
 AVAILABLE TOOLS:
 - Property database queries (Company portfolio, metrics, comparables)
@@ -381,7 +381,7 @@ User Message: ${message}`;
     const messages: any[] = [
       {
         role: 'system',
-        content: 'You are Company A.I. Elite, Company Development Group\'s institutional real estate AI. Provide concise, professional responses focused on multifamily development analysis, market insights, and financial modeling.'
+        content: 'You are Your Company A.I. Elite, Your Company Name\'s institutional real estate AI. Provide concise, professional responses focused on multifamily development analysis, market insights, and financial modeling.'
       },
       {
         role: 'user',
@@ -538,7 +538,7 @@ User Message: ${message}`;
     const messages: any[] = [
       {
         role: 'system',
-        content: 'You are Company A.I. Elite, Company Development Group\'s institutional real estate AI. Provide concise, professional responses focused on multifamily development analysis, market insights, and financial modeling.'
+        content: 'You are Your Company A.I. Elite, Your Company Name\'s institutional real estate AI. Provide concise, professional responses focused on multifamily development analysis, market insights, and financial modeling.'
       },
       {
         role: 'user',
@@ -638,18 +638,18 @@ User Message: ${message}`;
     const lowerMessage = message.toLowerCase();
     
     if (lowerMessage.includes('property') || lowerMessage.includes('real estate')) {
-      return `I understand you're asking about property analysis regarding: "${message.substring(0, 80)}...". As Company A.I. Elite, I analyze multifamily properties using our institutional-grade methodology. Key factors include location scoring, demographic trends, cap rates (targeting 5-7%), cash flow projections, and market comparables. What specific property metrics would you like me to evaluate?`;
+      return `I understand you're asking about property analysis regarding: "${message.substring(0, 80)}...". As Your Company A.I. Elite, I analyze multifamily properties using our institutional-grade methodology. Key factors include location scoring, demographic trends, cap rates (targeting 5-7%), cash flow projections, and market comparables. What specific property metrics would you like me to evaluate?`;
     }
     
     if (lowerMessage.includes('market') || lowerMessage.includes('analysis')) {
-      return `You're inquiring about market analysis for: "${message.substring(0, 80)}...". Company Development Group specializes in Sunbelt market intelligence. I evaluate population growth rates, employment trends, housing supply/demand, and demographic shifts. Our target markets show 2%+ annual population growth. Which market metrics are most important for your analysis?`;
+      return `You're inquiring about market analysis for: "${message.substring(0, 80)}...". Your Company Name specializes in Sunbelt market intelligence. I evaluate population growth rates, employment trends, housing supply/demand, and demographic shifts. Our target markets show 2%+ annual population growth. Which market metrics are most important for your analysis?`;
     }
     
     if (lowerMessage.includes('irr') || lowerMessage.includes('npv') || lowerMessage.includes('financial')) {
       return `I see you're interested in financial modeling related to: "${message.substring(0, 80)}...". For multifamily value-add projects, we target IRRs of 15-20% and stress-test scenarios at 80% occupancy. NPV calculations include acquisition costs, renovation expenses, and exit strategies. What financial assumptions should I model for your analysis?`;
     }
     
-    return `I received your message: "${message.substring(0, 100)}${message.length > 100 ? '...' : ''}". As Company A.I. Elite, I'm your institutional-grade real estate AI assistant. I specialize in multifamily development analysis, market intelligence, and financial modeling with 30+ years of Company expertise. How can I assist with your real estate investment needs today?`;
+    return `I received your message: "${message.substring(0, 100)}${message.length > 100 ? '...' : ''}". As Your Company A.I. Elite, I'm your institutional-grade real estate AI assistant. I specialize in multifamily development analysis, market intelligence, and financial modeling with 30+ years of Your Company expertise. How can I assist with your real estate investment needs today?`;
   }
 
   // Clear cache for admin use

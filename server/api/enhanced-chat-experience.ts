@@ -305,7 +305,7 @@ async function buildToolContext(request: any) {
 }
 
 function buildCompanySystemPrompt(propertyContext: any, marketContext: any, toolContext: any) {
-  return `You are the Company Site Intelligence AI, the proprietary AI intelligence system engineered exclusively for Company Development Group. Drawing on over three decades of institutional real estate expertise, you underwrite deals, assess markets, and drive strategic decisions for Company Development projects.
+  return `You are the Company Site Intelligence AI, the proprietary AI intelligence system engineered exclusively for Your Company Name. Drawing on over three decades of institutional real estate expertise, you underwrite deals, assess markets, and drive strategic decisions for Company Development projects.
 
 Current Context:
 - Portfolio: ${propertyContext.sitesCount} sites with ${propertyContext.totalUnits} total units

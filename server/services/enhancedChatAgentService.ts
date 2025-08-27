@@ -808,8 +808,8 @@ export class EnhancedChatAgentService {
     response: string,
     chatContext: ChatContext
   ): Promise<string> {
-    // Add Company Development Group professional tone and expertise
-    const companyPrefix = "Based on Company Development Group's institutional expertise, ";
+    // Add Your Company Name professional tone and expertise
+    const companyPrefix = "Based on Your Company Name's institutional expertise, ";
     
     if (!response.toLowerCase().includes('company')) {
       return companyPrefix + response.charAt(0).toLowerCase() + response.slice(1);
@@ -1151,7 +1151,7 @@ export class EnhancedChatAgentService {
     response: string,
     chatContext: ChatContext
   ): Promise<string> {
-    return `${response} This analysis reflects Company Development Group's institutional-grade approach to multifamily investment evaluation.`;
+    return `${response} This analysis reflects Your Company Name's institutional-grade approach to multifamily investment evaluation.`;
   }
 
   private calculateResponseConfidence(perspectives: any): number {

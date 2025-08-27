@@ -1,4 +1,4 @@
-// Enterprise API Endpoints for Company Development Group
+// Enterprise API Endpoints for Your Company Name
 // Provides comprehensive enterprise-grade endpoints for all business functions
 
 import { Router } from "express";

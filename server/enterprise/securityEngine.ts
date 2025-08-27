@@ -1,4 +1,4 @@
-// Enterprise Security Engine for Company Development Group
+// Enterprise Security Engine for Your Company Name
 // Provides comprehensive security monitoring, threat detection, and incident response
 
 import { db } from "../db";

@@ -1,7 +1,7 @@
 /**
  * Company Scoring Service
  * Proprietary 100-point scoring methodology for multifamily development opportunities
- * Aligned with Company Development Group's institutional investment criteria
+ * Aligned with Your Company Name's institutional investment criteria
  */
 
 import { db } from '../db';

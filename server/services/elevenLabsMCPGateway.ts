@@ -471,7 +471,7 @@ export class ElevenLabsMCPGateway {
               messages: [
                 {
                   role: 'system',
-                  content: 'You are a real estate market research analyst for Company Development Group. Provide accurate, current market data and insights.'
+                  content: 'You are a real estate market research analyst for Your Company Name. Provide accurate, current market data and insights.'
                 },
                 {
                   role: 'user',

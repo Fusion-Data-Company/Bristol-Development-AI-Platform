@@ -40,7 +40,7 @@ export class PerplexitySonarService {
           messages: [
             {
               role: 'system',
-              content: 'You are a real estate market intelligence analyst for Company Development Group. Analyze competitor activities and provide strategic insights.'
+              content: 'You are a real estate market intelligence analyst for Your Company Name. Analyze competitor activities and provide strategic insights.'
             },
             {
               role: 'user',
@@ -188,7 +188,7 @@ export class PerplexitySonarService {
   private buildAnalysisPrompt(signal: CompetitorSignal): string {
     const signalData = signal.rawData as any || {};
     
-    let prompt = `Analyze this ${signal.type} signal for Company Development Group:
+    let prompt = `Analyze this ${signal.type} signal for Your Company Name:
 
 Competitor: ${signal.competitorMatch}
 Type: ${signal.type}

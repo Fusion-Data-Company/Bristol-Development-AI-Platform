@@ -202,7 +202,7 @@ router.post('/agent-query', async (req, res) => {
 
     const response = {
       query,
-      analysis: synthesis?.summary || `Based on my analysis of "${query}" in the context of Company Development Group's portfolio:
+      analysis: synthesis?.summary || `Based on my analysis of "${query}" in the context of Your Company Name's portfolio:
 
 The inquiry you've posed requires examination across multiple dimensions of our real estate investment thesis. From a macro-economic perspective, current market conditions suggest continued strength in Sunbelt multifamily fundamentals, driven by demographic migration patterns and employment growth in our target metros.
 

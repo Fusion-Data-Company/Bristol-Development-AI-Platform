@@ -312,7 +312,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 
                 {/* Copyright & Platform Info */}
                 <div className="text-sm text-slate-400">
-                  <p>© 2025 Company Development Group. All rights reserved.</p>
+                  <p>© 2025 Your Company Name. All rights reserved.</p>
                   <p className="text-xs mt-1 text-cyan-400">
                     Powered by Company A.I. Elite v5.0 • Institutional Real Estate Intelligence Platform
                   </p>

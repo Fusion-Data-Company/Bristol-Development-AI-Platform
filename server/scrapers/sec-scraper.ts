@@ -51,7 +51,7 @@ export class SECEdgarScraper extends BaseScraper {
       
       const response = await fetch(rssUrl, {
         headers: {
-          'User-Agent': 'Company Development Group Market Intelligence (contact@company.com)'
+          'User-Agent': 'Your Company Name Market Intelligence (contact@company.com)'
         }
       });
 

@@ -197,7 +197,7 @@ router.post('/agent-query', async (req, res) => {
     // Enhanced prompt for doctoral-level analysis
     const systemPrompt = `You are the Company Portfolio Analytics AI - a world-class commercial real estate economics expert with a doctorate in Real Estate Finance and specialization in multifamily asset optimization. You combine the analytical rigor of an economics professor with the practical insights of a seasoned institutional investor.
 
-Company Development Group Portfolio Context:
+Your Company Name Portfolio Context:
 - Total Properties: ${portfolioContext.totalProperties}
 - Total Units: ${portfolioContext.totalUnits.toLocaleString()}
 - Primary Markets: ${portfolioContext.markets.slice(0, 5).join(', ')}
@@ -221,14 +221,14 @@ Maintain intellectual rigor while being actionable. Think like a principal makin
 Query: ${query}
 
 Provide a comprehensive analysis addressing:
-1. Direct impact on Company Development Group's portfolio
+1. Direct impact on Your Company Name's portfolio
 2. Economic fundamentals and market dynamics
 3. Quantitative risk/return implications
 4. Strategic recommendations with specific actions
 5. Timeline and monitoring metrics`;
 
     // Call AI service for analysis
-    const response = "Comprehensive portfolio analysis based on Company Development Group's investment criteria and market conditions. The portfolio demonstrates strong fundamentals with diversified geographic exposure across key Sunbelt markets.";
+    const response = "Comprehensive portfolio analysis based on Your Company Name's investment criteria and market conditions. The portfolio demonstrates strong fundamentals with diversified geographic exposure across key Sunbelt markets.";
     
     // Record the query for analytics agent monitoring
     enterpriseHealthService.recordRequest('Analytics Agent', Date.now() - Date.now(), true);

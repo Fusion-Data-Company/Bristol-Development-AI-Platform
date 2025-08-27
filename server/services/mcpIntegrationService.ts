@@ -1463,7 +1463,7 @@ export class MCPIntegrationService {
 
   private generateCompanyInsights(result: any, tool: MCPTool): string[] {
     return [
-      'Company Development Group perspective: Focus on institutional-quality analysis',
+      'Your Company Name perspective: Focus on institutional-quality analysis',
       'Consider multifamily market dynamics in Sunbelt regions',
       'Evaluate against Company investment criteria'
     ];

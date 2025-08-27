@@ -1,4 +1,4 @@
-// Enterprise Data Analytics Engine for Company Development Group
+// Enterprise Data Analytics Engine for Your Company Name
 // Provides advanced analytics, reporting, and business intelligence capabilities
 
 import { db } from "../db";

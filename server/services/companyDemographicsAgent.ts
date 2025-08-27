@@ -176,7 +176,7 @@ Provide detailed population metrics, growth projections, and demographic trends 
       messages: [
         {
           role: 'system',
-          content: 'You are a demographic researcher specializing in Sunbelt population analysis for Company Development Group real estate investments. Focus on rental housing demand indicators.'
+          content: 'You are a demographic researcher specializing in Sunbelt population analysis for Your Company Name real estate investments. Focus on rental housing demand indicators.'
         },
         { role: 'user', content: prompt }
       ],
