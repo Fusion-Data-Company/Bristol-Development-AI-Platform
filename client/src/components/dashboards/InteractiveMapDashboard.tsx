@@ -183,7 +183,7 @@ export function InteractiveMapDashboard({ selectedSite, onSiteSelect }: Interact
       fipsCounty: null,
       geoidTract: null,
       acsYear: null,
-      bristolScore: null
+      propertyScore: null
     };
     
     setClickedLocation({ lng, lat });

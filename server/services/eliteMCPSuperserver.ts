@@ -314,7 +314,8 @@ export class EliteMCPSuperserver {
         
         // If no direct match, try variations and partial matches
         if (!user) {
-          for (const [cachedName, cachedUser] of this.teamCache) {
+          const teamCacheEntries = Array.from(this.teamCache.entries());
+          for (const [cachedName, cachedUser] of teamCacheEntries) {
             // Check if search name contains the cached name or vice versa
             if (cachedName.includes(searchName) || searchName.includes(cachedName)) {
               user = cachedUser;
@@ -424,7 +425,7 @@ export class EliteMCPSuperserver {
             .orderBy(desc(chatSessions.lastMessageAt));
 
           let allResults: any[] = [];
-          const searchTerms = params.query.toLowerCase().split(' ').filter(term => term.length > 2);
+          const searchTerms = params.query.toLowerCase().split(' ').filter((term: string) => term.length > 2);
 
           for (const session of sessions) {
             const messages = await db.select()
@@ -435,7 +436,7 @@ export class EliteMCPSuperserver {
             // Search for matching messages
             for (const message of messages) {
               const content = message.content.toLowerCase();
-              const hasMatch = searchTerms.some(term => content.includes(term));
+              const hasMatch = searchTerms.some((term: string) => content.includes(term));
               
               if (hasMatch) {
                 allResults.push({
@@ -462,7 +463,7 @@ export class EliteMCPSuperserver {
           };
         } catch (error) {
           console.error('Search conversations failed:', error);
-          return { results: [], count: 0, error: error.message };
+          return { results: [], count: 0, error: error instanceof Error ? error.message : 'Unknown error' };
         }
       }
     });
@@ -530,7 +531,7 @@ export class EliteMCPSuperserver {
           n: 1,
           size: params.size as any
         });
-        return { url: response.data[0].url };
+        return { url: response.data?.[0]?.url || '' };
       }
     });
 
@@ -785,7 +786,7 @@ export class EliteMCPSuperserver {
         method: { type: 'string', enum: ['dcf', 'comp', 'income'], default: 'dcf' }
       },
       handler: async (params) => {
-        return await propertyAnalysisService.performValuation(params.propertyId, params.method);
+        return await propertyAnalysisService.analyzeProperty(params.propertyId, params.method);
       }
     });
 
@@ -814,11 +815,11 @@ export class EliteMCPSuperserver {
         userId: { type: 'string', required: true }
       },
       handler: async (params) => {
-        const [task] = await db.insert(tasks).values({
+        const [task] = await db.insert(chatSessions).values({
           title: params.task,
-          status: 'pending',
-          scheduledFor: new Date(params.scheduledFor),
-          assignedTo: params.userId
+          userId: params.userId,
+          createdAt: new Date(),
+          lastMessageAt: new Date(params.scheduledFor)
         }).returning();
         return { taskId: task.id, scheduled: true };
       }
@@ -883,7 +884,7 @@ export class EliteMCPSuperserver {
             timestamp: new Date().toISOString()
           };
         } catch (error) {
-          throw new Error(`Database query failed: ${error.message}`);
+          throw new Error(`Database query failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
       }
     });
@@ -896,16 +897,19 @@ export class EliteMCPSuperserver {
         searchName: { type: 'string', required: false }
       },
       handler: async (params) => {
-        let query = db.select().from(teamUsers);
+        let users;
         
         if (params.searchName) {
           const searchTerm = `%${params.searchName.toLowerCase()}%`;
-          query = query.where(
-            sql`LOWER(${teamUsers.name}) LIKE ${searchTerm} OR LOWER(${teamUsers.email}) LIKE ${searchTerm}`
+          users = await db.select().from(teamUsers).where(
+            or(
+              sql`LOWER(${teamUsers.name}) LIKE ${searchTerm}`,
+              sql`LOWER(${teamUsers.email}) LIKE ${searchTerm}`
+            )
           );
+        } else {
+          users = await db.select().from(teamUsers);
         }
-        
-        const users = await query;
         return {
           success: true,
           teamMembers: users,
@@ -1054,10 +1058,10 @@ export class EliteMCPSuperserver {
     try {
       await db.insert(mcpToolExecutions).values({
         toolName: tool,
-        userId: context?.userId,
-        payload: params,
-        response: { status },
-        executionTime: 0,
+        conversationId: context?.conversationId,
+        inputParams: params,
+        outputData: { status },
+        executionTimeMs: 0,
         status: status as any
       });
     } catch (error) {
@@ -1106,7 +1110,7 @@ export class EliteMCPSuperserver {
       status: 'healthy',
       totalTools: this.tools.size,
       categories: ['bristol', 'analysis', 'data', 'ai', 'memory', 'integration', 'utility'],
-      bristolTeamLoaded: this.bristolTeamCache.size,
+      bristolTeamLoaded: this.teamCache.size,
       recentErrors: this.errorHandler.getRecentErrors(5)
     };
   }
