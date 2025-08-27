@@ -1319,7 +1319,7 @@ export class MCPIntegrationService {
 
     // Add Company-specific insights for analysis tools
     if (tool.category === 'analysis') {
-      enhanced.bristolInsights = this.generateCompanyInsights(result, tool);
+      enhanced.companyInsights = this.generateCompanyInsights(result, tool);
     }
 
     // Add follow-up suggestions

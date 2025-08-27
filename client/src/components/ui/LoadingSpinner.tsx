@@ -6,7 +6,7 @@ interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   text?: string;
   className?: string;
-  variant?: 'default' | 'bristol' | 'minimal';
+  variant?: 'default' | 'branded' | 'minimal';
 }
 
 export function LoadingSpinner({ 
@@ -29,7 +29,7 @@ export function LoadingSpinner({
     xl: 'text-xl'
   };
 
-  if (variant === 'bristol') {
+  if (variant === 'branded') {
     return (
       <div className={cn("flex flex-col items-center justify-center p-8 space-y-4", className)}>
         <div className="relative">
@@ -73,14 +73,14 @@ interface LoadingOverlayProps {
   isLoading: boolean;
   text?: string;
   className?: string;
-  variant?: 'default' | 'bristol' | 'minimal';
+  variant?: 'default' | 'branded' | 'minimal';
 }
 
 export function LoadingOverlay({ 
   isLoading, 
   text = "Loading...", 
   className,
-  variant = 'bristol'
+  variant = 'branded'
 }: LoadingOverlayProps) {
   if (!isLoading) return null;
 

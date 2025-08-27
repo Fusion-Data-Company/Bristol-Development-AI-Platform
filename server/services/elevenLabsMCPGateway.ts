@@ -384,7 +384,7 @@ export class ElevenLabsMCPGateway {
               marketUpdates: intelligence.map(item => ({
                 title: item.title,
                 impact: item.impact,
-                bristolImplication: item.bristolImplication
+                companyImplication: item.companyImplication
               }))
             };
             break;

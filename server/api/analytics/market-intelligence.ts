@@ -31,7 +31,7 @@ router.get('/entries', async (req, res) => {
       category: entry.category,
       impact: entry.impact,
       priority: entry.priority,
-      bristolImplication: entry.bristolImplication,
+      companyImplication: entry.companyImplication,
       actionRequired: entry.actionRequired,
       processed: entry.processed,
       agentSource: entry.agentSource,

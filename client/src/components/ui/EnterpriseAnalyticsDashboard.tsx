@@ -426,11 +426,11 @@ export function EnterpriseAnalyticsDashboard({ className }: AnalyticsDashboardPr
                           <div className="flex justify-between items-center">
                             <span className="text-gray-600">Company Score:</span>
                             <div className="flex items-center gap-1">
-                              <span className="font-bold text-brand-maroon">{project.bristolScore}</span>
+                              <span className="font-bold text-brand-maroon">{project.companyScore}</span>
                               <div className="h-1 w-8 bg-gray-200 rounded">
                                 <div 
                                   className="h-1 bg-gradient-to-r from-brand-maroon to-amber-500 rounded" 
-                                  style={{width: `${project.bristolScore}%`}}
+                                  style={{width: `${project.companyScore}%`}}
                                 />
                               </div>
                             </div>

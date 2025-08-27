@@ -744,7 +744,7 @@ export default function AnalyticsEnterprise() {
                                   </div>
                                   <div className="bg-brand-cyan/5 p-3 rounded-lg border border-brand-cyan/20">
                                     <div className="text-xs font-medium text-brand-cyan mb-1">Company Implication:</div>
-                                    <div className="text-sm text-gray-800">{entry.bristolImplication}</div>
+                                    <div className="text-sm text-gray-800">{entry.companyImplication}</div>
                                   </div>
                                   <div className="flex items-center justify-between text-xs text-brand-stone">
                                     <span>Source: {entry.source}</span>

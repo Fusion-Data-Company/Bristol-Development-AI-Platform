@@ -18,7 +18,7 @@ interface PortfolioInsight {
 
 interface MarketComparative {
   market: string;
-  bristol_performance: number;
+  portfolio_performance: number;
   market_average: number;
   competitive_advantage: number;
   risk_factors: string[];

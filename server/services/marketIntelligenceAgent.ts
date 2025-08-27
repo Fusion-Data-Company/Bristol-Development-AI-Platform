@@ -287,7 +287,7 @@ export class MarketIntelligenceAgent {
     description: string;
     impact: 'high' | 'medium' | 'low';
     priority: number;
-    bristolImplication: string;
+    companyImplication: string;
     actionRequired: boolean;
   }> {
     // Split content into meaningful segments
@@ -330,14 +330,14 @@ export class MarketIntelligenceAgent {
       // Only create insights for medium/high impact items
       if (impact !== 'low' && paragraph.length > 50) {
         const title = this.extractTitle(paragraph, category);
-        const bristolImplication = this.generateCompanyImplication(paragraph, category);
+        const companyImplication = this.generateCompanyImplication(paragraph, category);
         
         insights.push({
           title,
           description: paragraph.trim(),
           impact,
           priority,
-          bristolImplication,
+          companyImplication,
           actionRequired: impact === 'high' || paragraph.toLowerCase().includes('action') || paragraph.toLowerCase().includes('decision')
         });
 
@@ -352,7 +352,7 @@ export class MarketIntelligenceAgent {
         description: content.substring(0, 500) + (content.length > 500 ? '...' : ''),
         impact: 'medium' as const,
         priority: 5,
-        bristolImplication: `Monitor ${category.replace('_', ' ')} trends for potential portfolio impact`,
+        companyImplication: `Monitor ${category.replace('_', ' ')} trends for potential portfolio impact`,
         actionRequired: false
       });
     }
@@ -529,7 +529,7 @@ export class MarketIntelligenceAgent {
         category: 'monetary_policy',
         impact: 'high' as const,
         priority: 8,
-        bristolImplication: 'Stable rates provide predictable financing costs for current pipeline deals and refinancing opportunities',
+        companyImplication: 'Stable rates provide predictable financing costs for current pipeline deals and refinancing opportunities',
         actionRequired: false,
         agentSource: this.agentName,
         metadata: {
@@ -546,7 +546,7 @@ export class MarketIntelligenceAgent {
         category: 'demographics',
         impact: 'medium' as const,
         priority: 6,
-        bristolImplication: 'Strong demographic tailwinds support rental demand and rent growth in core Company markets',
+        companyImplication: 'Strong demographic tailwinds support rental demand and rent growth in core Company markets',
         actionRequired: false,
         agentSource: this.agentName,
         metadata: {
@@ -563,7 +563,7 @@ export class MarketIntelligenceAgent {
         category: 'development',
         impact: 'medium' as const,
         priority: 5,
-        bristolImplication: 'Improved construction cost predictability may accelerate development project timelines',
+        companyImplication: 'Improved construction cost predictability may accelerate development project timelines',
         actionRequired: false,
         agentSource: this.agentName,
         metadata: {

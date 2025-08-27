@@ -63,7 +63,7 @@ router.get('/market-intelligence', async (req, res) => {
       },
       risk_factors: generateRiskFactors(marketData),
       opportunities: generateOpportunities(marketData),
-      bristol_impact: await calculateCompanyImpact(marketData)
+      company_impact: await calculateCompanyImpact(marketData)
     };
 
     res.json(intelligence);
