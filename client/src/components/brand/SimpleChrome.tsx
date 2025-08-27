@@ -88,7 +88,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(157, 23, 77, 0.2)'}></div>
                 <img 
                   src={companyLogoPath} 
-                  alt="Company Development Group" 
+                  alt="Your Company Name" 
                   className="relative h-10 lg:h-12 w-auto max-w-none object-contain drop-shadow-xl hover:drop-shadow-2xl transition-all duration-300 filter brightness-110 hover:brightness-125"
                   style={{ 
                     imageRendering: 'crisp-edges',
@@ -201,7 +201,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 <div className="flex items-center space-x-2">
                   <img 
                     src={companyLogoPath} 
-                    alt="Company Development Group" 
+                    alt="Your Company Name" 
                     className="h-8 w-auto object-contain drop-shadow-xl filter brightness-110"
                   />
                   <h3 className="text-lg font-bold text-cyan-400 tracking-wide">

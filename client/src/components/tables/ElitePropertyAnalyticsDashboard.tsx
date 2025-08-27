@@ -402,7 +402,7 @@ export function ElitePropertyAnalyticsDashboard({
       {/* Footer */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div className="text-center text-sm text-gray-500">
-          Company Development Group • Property Analytics Dashboard
+          Your Company Name • Property Analytics Dashboard
         </div>
       </div>
     </div>

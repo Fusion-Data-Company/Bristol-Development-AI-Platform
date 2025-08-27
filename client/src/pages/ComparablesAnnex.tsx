@@ -21,7 +21,7 @@ import { ExportCompsTools } from '@/components/comparables/ExportCompsTools';
 import { CompsFilters } from '@/components/comparables/CompsFilters';
 import ProductionMetrics from '@/components/comparables/ProductionMetrics';
 import ProductionValidation from '@/components/comparables/ProductionValidation';
-import backgroundImage from '@assets/bristol+southside+3_1755274717370.webp';
+import backgroundImage from '@assets/company+southside+3_1755274717370.webp';
 import { 
   Search, 
   Download, 
@@ -323,7 +323,7 @@ export default function ComparablesAnnex() {
                   Comparables Annex
                 </h1>
                 <p className="text-white/90 text-xl font-medium mt-2 drop-shadow-lg">
-                  Company Development Group's Elite Intelligence Platform
+                  Your Company's Elite Intelligence Platform
                 </p>
               </div>
             </div>

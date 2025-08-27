@@ -493,7 +493,7 @@ export function AnalyticsOld() {
                     Ask the Company Analytics Expert
                   </CardTitle>
                   <p className="text-sm text-gray-600">
-                    Get doctoral-level analysis on how any market factor, economic trend, or data point affects Company Development Group's portfolio and investment strategy.
+                    Get doctoral-level analysis on how any market factor, economic trend, or data point affects Your Company's portfolio and investment strategy.
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-4">

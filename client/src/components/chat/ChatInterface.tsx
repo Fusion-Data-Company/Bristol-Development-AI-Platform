@@ -304,9 +304,9 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
                 <Brain className="h-16 w-16 text-brand-maroon mx-auto" />
                 <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-gold rounded-full animate-pulse" />
               </div>
-              <h4 className="font-bold text-brand-ink mb-2">Company Site Intelligence AI</h4>
+              <h4 className="font-bold text-brand-ink mb-2">Your Company Site Intelligence AI</h4>
               <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
-                I'm the proprietary AI intelligence system engineered exclusively for Company Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Company Development projects.
+                I'm the proprietary AI intelligence system engineered exclusively for Your Company. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Your Company projects.
               </p>
               <p className="text-xs text-muted-foreground leading-relaxed">
                 Think of me as your elite senior partner: I model complex financial scenarios (DCF, IRR waterfalls, stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor. What's the opportunity on the table?

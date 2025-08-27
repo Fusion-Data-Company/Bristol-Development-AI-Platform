@@ -109,7 +109,7 @@ export default function EnterpriseDashboard() {
                         ELITE
                       </Badge>
                     </div>
-                    <p className="text-slate-800 font-bold text-xl">Company Development Group Intelligence Platform</p>
+                    <p className="text-slate-800 font-bold text-xl">Your Company Intelligence Platform</p>
                     <div className="flex items-center gap-4 mt-3">
                       <div className="h-4 w-4 bg-emerald-500 rounded-full animate-pulse shadow-lg ring-2 ring-emerald-200" />
                       <span className="text-base text-slate-700 font-semibold">Last updated {formatTimeAgo(lastUpdated)}</span>

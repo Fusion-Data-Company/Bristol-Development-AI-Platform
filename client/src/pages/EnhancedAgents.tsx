@@ -17,7 +17,7 @@ export default function EnhancedAgents() {
               <div>
                 <h1 className="text-3xl font-serif font-bold mb-2">Enhanced Agent Management</h1>
                 <p className="text-brand-stone text-lg">
-                  Company Development Group Multi-Agent Intelligence System
+                  Your Company Multi-Agent Intelligence System
                 </p>
               </div>
             </div>
@@ -99,13 +99,13 @@ export default function EnhancedAgents() {
       <div className="bg-gradient-to-r from-brand-maroon via-brand-ink to-brand-maroon text-white py-16">
         <div className="container mx-auto px-6 text-center">
           <div className="space-y-4">
-            <h3 className="text-xl font-serif font-semibold">Company Development Group</h3>
+            <h3 className="text-xl font-serif font-semibold">Your Company Name</h3>
             <p className="text-brand-stone max-w-2xl mx-auto leading-relaxed">
               Elite real estate intelligence powered by advanced multi-agent AI systems. 
               Delivering institutional-grade analysis for strategic investment decisions.
             </p>
             <div className="flex justify-center gap-8 text-sm">
-              <div>© 2024 Company Development Group</div>
+              <div>© 2024 Your Company Name</div>
               <div>•</div>
               <div>Enterprise AI Intelligence</div>
               <div>•</div>

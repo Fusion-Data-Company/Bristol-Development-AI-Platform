@@ -20,7 +20,7 @@ export function OnboardingGuide({ isOpen, onClose, appData }: OnboardingGuidePro
         <div className="space-y-4">
           <p className="text-brand-cyan/90 leading-relaxed">
             You're now connected to Company A.I. Elite v5.0 - the most advanced AI system for real estate development analysis. 
-            I'm engineered exclusively for Company Development Group with over three decades of institutional expertise.
+            I'm engineered exclusively for Your Company with over three decades of institutional expertise.
           </p>
           <div className="bg-brand-cyan/10 rounded-xl p-4 border border-brand-cyan/20">
             <h4 className="text-brand-cyan font-semibold mb-2 flex items-center gap-2">
