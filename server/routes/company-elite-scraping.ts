@@ -328,7 +328,7 @@ async function processExtractResults(extractResult: any, jobId: string): Promise
             const normalized = normalizeRecord({
               ...property,
               sourceUrl: item.url,
-              source: 'bristol_elite_extract',
+              source: 'company_elite_extract',
               jobId
             });
             
@@ -340,7 +340,7 @@ async function processExtractResults(extractResult: any, jobId: string): Promise
               createdAt: new Date(),
               updatedAt: new Date(),
               jobId,
-              source: 'bristol_elite_extract'
+              source: 'company_elite_extract'
             });
             
             properties.push(normalized);

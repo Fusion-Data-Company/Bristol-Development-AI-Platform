@@ -19,7 +19,7 @@ class PostgresMCPServer {
     this.version = "1.0.0";
     this.tools = [
       {
-        name: "query_bristol_data",
+        name: "query_company_data",
         description: "Query Company database for sites, metrics, and analytics",
         inputSchema: {
           type: "object",
@@ -38,7 +38,7 @@ class PostgresMCPServer {
         }
       },
       {
-        name: "get_bristol_sites",
+        name: "get_company_sites",
         description: "Get all property sites in Company database",
         inputSchema: {
           type: "object",
@@ -77,10 +77,10 @@ class PostgresMCPServer {
   async handleToolCall(toolName, params) {
     try {
       switch (toolName) {
-        case "query_bristol_data":
+        case "query_company_data":
           return await this.queryDatabase(params.query, params.params || []);
           
-        case "get_bristol_sites":
+        case "get_company_sites":
           return await this.getCompanySites(params.limit || 50);
           
         case "get_site_metrics":
@@ -117,9 +117,9 @@ class PostgresMCPServer {
     const query = `
       SELECT 
         id, name, address, latitude, longitude, 
-        bristol_score, status, created_at
+        company_score, status, created_at
       FROM sites 
-      ORDER BY bristol_score DESC 
+      ORDER BY company_score DESC 
       LIMIT $1
     `;
     return await this.queryDatabase(query, [limit]);

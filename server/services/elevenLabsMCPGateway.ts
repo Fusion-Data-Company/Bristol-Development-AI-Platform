@@ -463,7 +463,7 @@ export class ElevenLabsMCPGateway {
             headers: {
               'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
               'Content-Type': 'application/json',
-              'HTTP-Referer': 'https://bristol.replit.app',
+              'HTTP-Referer': 'https://company.replit.app',
               'X-Title': 'Company Cap AI'
             },
             body: JSON.stringify({

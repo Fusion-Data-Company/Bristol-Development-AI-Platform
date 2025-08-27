@@ -486,4 +486,4 @@ Provide market sizing, segment characteristics, and demand projections.`;
 }
 
 // Export singleton instance
-export const bristolDemographicsAgent = new CompanyDemographicsAgent();
+export const companyDemographicsAgent = new CompanyDemographicsAgent();

@@ -555,7 +555,7 @@ class PostgresMCPServer {
     for (const [metricName, value] of Object.entries(metrics)) {
       const upsertQuery = `
         INSERT INTO site_metrics (site_id, metric_type, metric_name, value, source, created_at)
-        VALUES ($1, 'financial', $2, $3, 'bristol_ai_agent', NOW())
+        VALUES ($1, 'financial', $2, $3, 'company_ai_agent', NOW())
         ON CONFLICT (site_id, metric_name) 
         DO UPDATE SET value = $3, created_at = NOW()
         RETURNING *

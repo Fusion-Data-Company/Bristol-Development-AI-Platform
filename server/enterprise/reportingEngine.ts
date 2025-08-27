@@ -99,7 +99,7 @@ export class ReportingEngine {
         description: 'High-level summary of key metrics and portfolio performance',
         category: 'executive',
         frequency: 'weekly',
-        recipients: ['executives@bristol.com'],
+        recipients: ['executives@company.com'],
         parameters: {
           includePortfolioPerformance: true,
           includeMarketTrends: true,
@@ -116,7 +116,7 @@ export class ReportingEngine {
         description: 'Detailed portfolio analysis with property-level metrics',
         category: 'operational',
         frequency: 'monthly',
-        recipients: ['portfolio@bristol.com', 'analysts@bristol.com'],
+        recipients: ['portfolio@company.com', 'analysts@company.com'],
         parameters: {
           includePropertyMetrics: true,
           includeComparableAnalysis: true,
@@ -133,7 +133,7 @@ export class ReportingEngine {
         description: 'Comprehensive compliance status and regulatory updates',
         category: 'compliance',
         frequency: 'quarterly',
-        recipients: ['compliance@bristol.com', 'legal@bristol.com'],
+        recipients: ['compliance@company.com', 'legal@company.com'],
         parameters: {
           includeViolations: true,
           includeRiskAssessment: true,
@@ -150,7 +150,7 @@ export class ReportingEngine {
         description: 'Market trends, competitive analysis, and investment opportunities',
         category: 'financial',
         frequency: 'weekly',
-        recipients: ['acquisitions@bristol.com', 'analysts@bristol.com'],
+        recipients: ['acquisitions@company.com', 'analysts@company.com'],
         parameters: {
           includeMarketTrends: true,
           includeCompetitorActivity: true,
@@ -167,7 +167,7 @@ export class ReportingEngine {
         description: 'System performance, security events, and operational metrics',
         category: 'technical',
         frequency: 'daily',
-        recipients: ['it@bristol.com', 'security@bristol.com'],
+        recipients: ['it@company.com', 'security@company.com'],
         parameters: {
           includeSystemMetrics: true,
           includeSecurityEvents: true,

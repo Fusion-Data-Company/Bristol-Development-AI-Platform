@@ -253,7 +253,7 @@ export class MarketIntelligenceAgent {
           category: queryInfo.category,
           impact: insight.impact,
           priority: insight.priority,
-          bristolImplication: insight.bristolImplication,
+          companyImplication: insight.companyImplication,
           actionRequired: insight.actionRequired,
           agentSource: this.agentName,
           metadata: {

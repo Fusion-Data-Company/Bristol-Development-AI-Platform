@@ -439,4 +439,4 @@ Provide detailed waterfall calculations with dollar amounts.`;
 }
 
 // Export singleton instance
-export const bristolFinancialAgent = new CompanyFinancialAgent();
+export const companyFinancialAgent = new CompanyFinancialAgent();

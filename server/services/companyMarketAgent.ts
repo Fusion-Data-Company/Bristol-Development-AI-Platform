@@ -366,4 +366,4 @@ Extract quantitative data and structure into this exact JSON format for Company 
 }
 
 // Export singleton instance
-export const bristolMarketAgent = new CompanyMarketAgent();
+export const companyMarketAgent = new CompanyMarketAgent();

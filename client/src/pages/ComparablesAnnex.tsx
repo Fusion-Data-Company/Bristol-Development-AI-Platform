@@ -21,7 +21,7 @@ import { ExportCompsTools } from '@/components/comparables/ExportCompsTools';
 import { CompsFilters } from '@/components/comparables/CompsFilters';
 import ProductionMetrics from '@/components/comparables/ProductionMetrics';
 import ProductionValidation from '@/components/comparables/ProductionValidation';
-import backgroundImage from '@assets/bristol+southside+3_1755274717370.webp';
+import backgroundImage from '@assets/company+southside+3_1755274717370.webp';
 import { 
   Search, 
   Download, 

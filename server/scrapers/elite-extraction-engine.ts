@@ -247,7 +247,7 @@ export class EliteExtractionEngine {
       extractionFocus: focus as any,
       propertyClass: 'A',
       sessionId: `extraction_${Date.now()}`,
-      userId: 'bristol_ai'
+      userId: 'company_ai'
     };
 
     const result = await this.extractPropertiesFromUrls(request);

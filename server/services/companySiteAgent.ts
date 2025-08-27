@@ -544,4 +544,4 @@ Provide risk scoring and mitigation recommendations for investment decision-maki
 }
 
 // Export singleton instance
-export const bristolSiteAgent = new CompanySiteAgent();
+export const companySiteAgent = new CompanySiteAgent();
