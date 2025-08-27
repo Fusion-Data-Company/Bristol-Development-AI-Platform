@@ -345,11 +345,21 @@ export class MCPIntegrationService {
     });
   }
 
+  private networkOptimizationInterval: NodeJS.Timeout | null = null;
+  
   // Start advanced network optimization engine
   private startNetworkOptimization() {
-    setInterval(async () => {
+    if (this.networkOptimizationInterval) clearInterval(this.networkOptimizationInterval);
+    this.networkOptimizationInterval = setInterval(async () => {
       await this.optimizeNetworkPerformance();
-    }, 10000); // Optimize every 10 seconds
+    }, 30000); // Optimize every 30 seconds (reduced frequency)
+  }
+  
+  cleanup() {
+    if (this.networkOptimizationInterval) {
+      clearInterval(this.networkOptimizationInterval);
+      this.networkOptimizationInterval = null;
+    }
   }
 
   // Enhanced Network Performance Optimization

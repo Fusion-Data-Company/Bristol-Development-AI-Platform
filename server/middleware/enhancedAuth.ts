@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { storage } from '../storage';
 
 // Extended request interface with auth properties
-export interface AuthenticatedRequest extends Express.Request {
+export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email?: string;
@@ -15,8 +15,7 @@ export interface AuthenticatedRequest extends Express.Request {
     requestMetadata?: any;
     errorRecovery?: boolean;
   };
-  session?: Express.Session & Partial<Express.SessionData>;
-  isAuthenticated(): this is AuthenticatedRequest;
+  session: any;
   dbUnavailable?: boolean;
 }
 

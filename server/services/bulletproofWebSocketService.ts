@@ -691,12 +691,22 @@ export class BulletproofWebSocketService extends EventEmitter {
     };
   }
 
+  private heartbeatInterval: NodeJS.Timeout | null = null;
+  
   private startHeartbeat() {
-    setInterval(() => {
+    if (this.heartbeatInterval) clearInterval(this.heartbeatInterval);
+    this.heartbeatInterval = setInterval(() => {
       this.performHeartbeatCheck();
       this.processMessageQueues();
       this.cleanupStaleConnections();
     }, this.config.heartbeatInterval);
+  }
+  
+  cleanup() {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
   }
 
   private performHeartbeatCheck() {
