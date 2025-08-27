@@ -50,7 +50,7 @@ export default function ToolsConsole(){
 
   return (
     <div className="p-4 max-w-[1600px] mx-auto">
-      <div className="bg-bristol-ink text-white px-4 py-3 rounded-xl2 mb-4 flex items-center justify-between">
+      <div className="bg-company-ink text-white px-4 py-3 rounded-xl2 mb-4 flex items-center justify-between">
         <div className="font-serif text-2xl">MCP Tools Console</div>
         <div className="text-sm opacity-90">Run any registered tool · Stream status live</div>
       </div>
@@ -63,7 +63,7 @@ export default function ToolsConsole(){
             {tools.map(t=>(
               <li key={t.name}>
                 <button
-                  className={`w-full text-left border rounded p-2 hover:bg-bristol-sky ${selected===t.name?'bg-bristol-sky':''}`}
+                  className={`w-full text-left border rounded p-2 hover:bg-company-sky ${selected===t.name?'bg-company-sky':''}`}
                   onClick={()=>setSelected(t.name)}
                   title={t.desc || ""}
                 >
@@ -91,7 +91,7 @@ export default function ToolsConsole(){
             <button
               onClick={runTool}
               disabled={!selected || running}
-              className={`px-4 py-2 rounded ${running?'bg-gray-400':'bg-bristol-ink text-white'}`}
+              className={`px-4 py-2 rounded ${running?'bg-gray-400':'bg-company-ink text-white'}`}
             >
               {running ? "Running…" : "Run Tool"}
             </button>
@@ -108,14 +108,14 @@ export default function ToolsConsole(){
         <div className="col-span-4">
           <div className="bg-white rounded-xl2 shadow p-3 mb-4">
             <div className="font-serif text-xl mb-2">Result</div>
-            <pre className="text-xs bg-bristol-sky/50 rounded p-2 overflow-auto max-h-[180px]">
+            <pre className="text-xs bg-company-sky/50 rounded p-2 overflow-auto max-h-[180px]">
 {result ? JSON.stringify(result, null, 2) : "// run a tool to see output"}
             </pre>
           </div>
 
           <div className="bg-white rounded-xl2 shadow p-3">
             <div className="font-serif text-xl mb-2">Live Events</div>
-            <div ref={ref} className="text-xs bg-bristol-sky/50 rounded p-2 overflow-auto h-[200px]">
+            <div ref={ref} className="text-xs bg-company-sky/50 rounded p-2 overflow-auto h-[200px]">
               {events.length===0 ? "// waiting for events…" : events.map((e,i)=>(
                 <div key={i} className="mb-1">
                   <code>{JSON.stringify(e)}</code>
@@ -157,7 +157,7 @@ export default function ToolsConsole(){
 }
 
 function Preset({ label, onPick }){
-  return <button onClick={onPick} className="px-3 py-1 rounded border hover:bg-bristol-sky">{label}</button>;
+  return <button onClick={onPick} className="px-3 py-1 rounded border hover:bg-company-sky">{label}</button>;
 }
 
 
@@ -205,10 +205,10 @@ Update your header (in App.jsx or shared Header) to add a link:
 4) Server already ready
 
 You already have:
-	•	/api/mcp/tools and /api/mcp/run (REST),
-	•	/api/mcp/webhook (HMAC optional),
-	•	/api/mcp/ws (WebSocket events),
-	•	Registered tools: n8n.trigger, http.fetch, db.query, metrics.write, apify.scrape.
+        •       /api/mcp/tools and /api/mcp/run (REST),
+        •       /api/mcp/webhook (HMAC optional),
+        •       /api/mcp/ws (WebSocket events),
+        •       Registered tools: n8n.trigger, http.fetch, db.query, metrics.write, apify.scrape.
 
 Nothing else to add on the API side—this console just uses those endpoints.
 
@@ -217,9 +217,9 @@ Nothing else to add on the API side—this console just uses those endpoints.
 5) Optional env (frontend)
 
 If you want the console to require an API key:
-	•	In API: set MCP_API_KEY=some_long_random.
-	•	In web: set VITE_MCP_KEY=the_same_key (Replit Secrets).
-	•	The console will attach x-mcp-key automatically.
+        •       In API: set MCP_API_KEY=some_long_random.
+        •       In web: set VITE_MCP_KEY=the_same_key (Replit Secrets).
+        •       The console will attach x-mcp-key automatically.
 
 ⸻
 

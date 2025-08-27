@@ -1,4 +1,4 @@
-You are the Builder. We rolled back. PAUSE the PARLAY/ReportAll work and COMPLETE the core Bristol AI build exactly as specified. Do not delete working code. Do not add marketing pages. 
+You are the Builder. We rolled back. PAUSE the PARLAY/ReportAll work and COMPLETE the core Your Company AI build exactly as specified. Do not delete working code. Do not add marketing pages. 
 
 ## 0) Guardrails
 - Add a feature flag: read FEATURE_PARLAY from env. If not "on", hide all PARLAY UI and do not call any PARLAY routes. Do not remove any PARLAY files—just disable.
@@ -11,7 +11,7 @@ ROOT
 apps/api (Node/Express, ESM "type":"module")
 - package.json deps: express, cors, cookie-parser, pg, axios, playwright, msal-node, @microsoft/microsoft-graph-client, zod, ws, uuid, apify-client, dayjs
 - .env.example with: DATABASE_URL, ALLOWED_ORIGIN, OPENROUTER_API_KEY, N8N_WEBHOOK_URL, APIFY_TOKEN, APIFY_ACTOR_ID, MS_CLIENT_ID, MS_CLIENT_SECRET, MS_TENANT_ID=common, MS_REDIRECT_URI, MCP_API_KEY, MCP_WEBHOOK_SECRET, FEATURE_PARLAY
-- public/bristol-logo.gif (placeholder ok)
+- public/company-logo.gif (placeholder ok)
 - src/db.js → create tables: users, oauth_tokens, sites, properties, metrics, concessions, comps, runs, files, memory_short, memory_long(JSON), tools
 - src/index.js → express app + http server + attachWs(server); CORS uses ALLOWED_ORIGIN; serve /public
 - routes:
@@ -28,22 +28,22 @@ apps/api (Node/Express, ESM "type":"module")
 
 apps/web (React+Vite+Tailwind+Cinzel)
 - package.json deps: react, react-dom, axios, @tanstack/react-table, maplibre-gl, @arcgis/core, jszip, @tmcw/togeojson, zustand
-- tailwind.config.js → Bristol palette + font
-- index.html → Cinzel + favicon /public/bristol-logo.gif
+- tailwind.config.js → Your Company palette + font
+- index.html → Cinzel + favicon /public/company-logo.gif
 - src/index.css → include `@import "maplibre-gl/dist/maplibre-gl.css";`
 - src/main.jsx → routes "/", "/integrations", "/tools"
 - pages/App.jsx → Tabs: Map, Tables, 3D Sandbox (Cesium lazy load stub ok)
 - pages/Integrations.jsx → Microsoft connect buttons; Tools registry (list/add key); hide actions if no keys
 - pages/ToolsConsole.jsx → list MCP tools, JSON payload editor, Run Tool, live WebSocket events
 - widgets/Map.jsx → MapLibre + ArcGIS base toggle; KML/KMZ upload (local parse) + fitBounds; NO PARLAY references when FEATURE_PARLAY != "on"
-- widgets/ChatDock.jsx → docked Chat with model dropdown (OpenRouter), “Bristol Mode” toggle; the Head‑of‑Data system prompt
+- widgets/ChatDock.jsx → docked Chat with model dropdown (OpenRouter), “Your Company Mode” toggle; the Head‑of‑Data system prompt
 - widgets/forms/AddSiteForm.jsx; tables/{SitesTable,MetricsTable (inline edit),CompsTable (score+Explain)}.jsx
 - brand/Chrome.jsx; widgets/HeroStrip.jsx
 - lib/mcpClient.js → API_BASE points to :3000 in dev; WS uses ws(s)://<API_HOST>/api/mcp/ws
 
-## 2) Bristol Brand + Memory
-- Ingest public bristoldevelopment.com pages into memory_long via /api/ingest/bristol endpoint.
-- System prompt in ChatDock includes Bristol tone and policies (numbers-first, concise; verbal-judo; Sandler; comps scoring; flags proxies; finance sensitivity).
+## 2) Your Company Brand + Memory
+- Ingest public companydevelopment.com pages into memory_long via /api/ingest/company endpoint.
+- System prompt in ChatDock includes Your Company tone and policies (numbers-first, concise; verbal-judo; Sandler; comps scoring; flags proxies; finance sensitivity).
 - Seed amenities list and default comps weights.
 
 ## 3) Hide and defer PARLAY

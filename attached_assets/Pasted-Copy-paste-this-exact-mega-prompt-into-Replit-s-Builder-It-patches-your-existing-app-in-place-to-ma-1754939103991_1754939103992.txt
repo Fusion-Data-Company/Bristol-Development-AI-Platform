@@ -151,9 +151,9 @@ function addGeoJSON(gj){
 (Keep your existing bounds() helper and MapLibre init; just ensure axios is imported at the top.)
 
 5) Security/operational notes
-	•	This resolver runs server‑side, so it bypasses browser CORS (the reason your KML wasn’t loading).
-	•	If the linked service requires a rotating token (user_key), store it in your Tools Registry and modify the resolver later to append headers/query params from there. For now we just fetch the URL as provided by the KML.
-	•	This is for internal Bristol use; honor the source’s license.
+        •       This resolver runs server‑side, so it bypasses browser CORS (the reason your KML wasn’t loading).
+        •       If the linked service requires a rotating token (user_key), store it in your Tools Registry and modify the resolver later to append headers/query params from there. For now we just fetch the URL as provided by the KML.
+        •       This is for internal Your Company use; honor the source’s license.
 
 6) Post‑patch commands (Builder: run automatically)
 
