@@ -13,7 +13,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/auth/user', (req, res) => {
     res.json({ 
       id: "demo-user", 
-      email: "demo@bristol.dev",
+      email: "demo@yourcompany.com",
       firstName: "Demo",
       lastName: "User"
     });

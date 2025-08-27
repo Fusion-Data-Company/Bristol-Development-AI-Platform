@@ -62,8 +62,8 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
-        // Company Development Group Brand Colors
-        bristol: {
+        // Company Brand Colors
+        brand: {
           maroon: "var(--brand-maroon)",
           ink: "var(--brand-ink)", 
           stone: "var(--brand-stone)",
@@ -140,7 +140,7 @@ export default {
         xs: "2px",
       },
       boxShadow: {
-        "bristol": "0 25px 50px -12px rgba(139, 21, 56, 0.25)",
+        "company": "0 25px 50px -12px rgba(139, 21, 56, 0.25)",
         "brand-lg": "0 35px 60px -12px rgba(139, 21, 56, 0.35)",
       },
     },

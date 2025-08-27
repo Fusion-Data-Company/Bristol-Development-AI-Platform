@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { eliteMCPSuperserver } from '../services/eliteMCPSuperserver';
 import { db } from '../db';
-import { bristolUsers } from '@shared/schema';
+import { teamUsers } from '@shared/schema';
 
 const router = Router();
 

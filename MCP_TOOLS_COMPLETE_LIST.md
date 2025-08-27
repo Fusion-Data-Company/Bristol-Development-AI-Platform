@@ -2,21 +2,21 @@
 
 **Total Tools Available: 22** ✅ *All tools verified working with enhanced error handling*
 
-## BRISTOL TOOLS (3 tools)
+## COMPANY TOOLS (3 tools)
 
 ### verify_user
-**Description:** Verify Bristol team member with role-based access
-**Use For:** Check if someone is a Bristol team member and get their access level
+**Description:** Verify company team member with role-based access
+**Use For:** Check if someone is a company team member and get their access level
 **Parameters:** name (string, required)
 
-### query_bristol_database
-**Description:** Execute SQL queries against the Bristol Development database for comprehensive property and team analysis
+### query_company_database
+**Description:** Execute SQL queries against the Your Company database for comprehensive property and team analysis
 **Use For:** Run custom database queries for property data, metrics, and team information
 **Parameters:** query (string, required), params (array, required)
 
-### get_bristol_team
-**Description:** Get all Bristol Development team members with full details
-**Use For:** List all Bristol team members or search for specific members
+### get_company_team
+**Description:** Get all Your Company team members with full details
+**Use For:** List all company team members or search for specific members
 **Parameters:** searchName (string, optional)
 
 ## MEMORY TOOLS (5 tools)
@@ -60,18 +60,18 @@
 
 ### generate_report
 **Description:** Generate professional reports
-**Use For:** Create comprehensive Bristol-formatted reports and summaries
+**Use For:** Create comprehensive company-formatted reports and summaries
 **Parameters:** type (string, required), format (string, required), data (object, required)
 
 ## GENERAL BUSINESS TOOLS (6 tools)
 
 ### portfolio_analytics
-**Description:** Get comprehensive Bristol portfolio analytics
+**Description:** Get comprehensive company portfolio analytics
 **Use For:** Access portfolio performance metrics and analytics
 **Parameters:** type (string, required), timeframe (string, required)
 
 ### query_analytics
-**Description:** Query Bristol portfolio analytics - KPIs, financials, metrics
+**Description:** Query company portfolio analytics - KPIs, financials, metrics
 **Use For:** Get specific analytics data and performance indicators
 **Parameters:** query (string, optional), project (string, optional), portfolio (string, optional), metric_set (string, optional)
 
@@ -86,7 +86,7 @@
 **Parameters:** indicators (array, required), region (string, required)
 
 ### property_search
-**Description:** Search Bristol properties with natural language
+**Description:** Search company properties with natural language
 **Use For:** Find properties using conversational queries
 **Parameters:** query (string, required), filters (object, required)
 
@@ -138,8 +138,8 @@
 3. **search_conversations** - Find specific topics or conversations
 4. **fetch_last_conversation** - Get most recent conversation
 
-**Bristol Business Functions:**
-5. **verify_user** - Check Bristol team membership
+**Company Business Functions:**
+5. **verify_user** - Check company team membership
 6. **property_search** - Find properties with natural language
 7. **property_valuation** - Get AI property valuations
 8. **portfolio_analytics** - Access portfolio metrics

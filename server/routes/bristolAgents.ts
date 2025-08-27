@@ -13,7 +13,7 @@ const siteAgent = new CompanySiteAgent();
 export function registerCompanyAgentRoutes(app: Express) {
   
   // Market Intelligence Agent
-  app.post('/api/bristol/market-analysis', async (req: Request, res: Response) => {
+  app.post('/api/company/market-analysis', async (req: Request, res: Response) => {
     try {
       const { market, analysisType = 'comprehensive' } = req.body;
       
@@ -45,7 +45,7 @@ export function registerCompanyAgentRoutes(app: Express) {
   });
 
   // Financial Modeling Agent
-  app.post('/api/bristol/financial-analysis', async (req: Request, res: Response) => {
+  app.post('/api/company/financial-analysis', async (req: Request, res: Response) => {
     try {
       const {
         purchasePrice,
@@ -87,7 +87,7 @@ export function registerCompanyAgentRoutes(app: Express) {
   });
 
   // Demographics Intelligence Agent
-  app.post('/api/bristol/demographics-analysis', async (req: Request, res: Response) => {
+  app.post('/api/company/demographics-analysis', async (req: Request, res: Response) => {
     try {
       const { location, radius = 5, analysisDepth = 'comprehensive' } = req.body;
       
@@ -119,7 +119,7 @@ export function registerCompanyAgentRoutes(app: Express) {
   });
 
   // Site Analytics Agent
-  app.post('/api/bristol/site-analysis', async (req: Request, res: Response) => {
+  app.post('/api/company/site-analysis', async (req: Request, res: Response) => {
     try {
       const { siteId, location, acreage, targetUnits } = req.body;
       
@@ -152,7 +152,7 @@ export function registerCompanyAgentRoutes(app: Express) {
   });
 
   // Comprehensive Analysis - All Agents
-  app.post('/api/bristol/comprehensive-analysis', async (req: Request, res: Response) => {
+  app.post('/api/company/comprehensive-analysis', async (req: Request, res: Response) => {
     try {
       const {
         market,
@@ -221,7 +221,7 @@ export function registerCompanyAgentRoutes(app: Express) {
   });
 
   // Company Agent Health Status
-  app.get('/api/bristol/agent-status', async (req: Request, res: Response) => {
+  app.get('/api/company/agent-status', async (req: Request, res: Response) => {
     try {
       const marketStatus = { status: 'healthy', details: { models: 'operational' } };
       const financialStatus = { status: 'healthy', details: { models: 'operational' } };

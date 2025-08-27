@@ -2,28 +2,28 @@ import { db } from '../db';
 import { teamUsers, type InsertTeamUser } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
-// Company team members from https://www.bristoldevelopment.com/brand-team
+// Generic company team members for white-label platform
 const teamData: InsertTeamUser[] = [
   // Leadership
   {
-    name: 'Scott Koontz',
-    email: 'scott@bristoldevelopment.com',
+    name: 'John Smith',
+    email: 'john.smith@yourcompany.com',
     role: 'CEO',
     department: 'Executive',
     accessLevel: 'admin',
     isActive: true
   },
   {
-    name: 'Greg Grissom',
-    email: 'greg@bristoldevelopment.com',
+    name: 'Sarah Johnson',
+    email: 'sarah.johnson@yourcompany.com',
     role: 'President',
     department: 'Executive',
     accessLevel: 'admin',
     isActive: true
   },
   {
-    name: 'Charlie Tinsley',
-    email: 'charlie@bristoldevelopment.com',
+    name: 'Michael Davis',
+    email: 'michael.davis@yourcompany.com',
     role: 'Executive Vice President',
     department: 'Executive',
     accessLevel: 'admin',
@@ -32,40 +32,40 @@ const teamData: InsertTeamUser[] = [
   
   // Development Team
   {
-    name: 'Nathan Whittacre',
-    email: 'nathan@bristoldevelopment.com',
+    name: 'Jennifer Wilson',
+    email: 'jennifer.wilson@yourcompany.com',
     role: 'Chief Development Officer',
     department: 'Development',
     accessLevel: 'full',
     isActive: true
   },
   {
-    name: 'Russell Groves',
-    email: 'russell@bristoldevelopment.com',
+    name: 'David Brown',
+    email: 'david.brown@yourcompany.com',
     role: 'Vice President of Development',
     department: 'Development',
     accessLevel: 'full',
     isActive: true
   },
   {
-    name: 'Reece Parker',
-    email: 'reece@bristoldevelopment.com',
+    name: 'Robert Taylor',
+    email: 'robert.taylor@yourcompany.com',
     role: 'Vice President of Development',
     department: 'Development',
     accessLevel: 'full',
     isActive: true
   },
   {
-    name: 'Mike Lassiter',
-    email: 'mike@bristoldevelopment.com',
+    name: 'Lisa Anderson',
+    email: 'lisa.anderson@yourcompany.com',
     role: 'Vice President of Development',
     department: 'Development',
     accessLevel: 'full',
     isActive: true
   },
   {
-    name: 'David Ross',
-    email: 'david@bristoldevelopment.com',
+    name: 'Thomas Martinez',
+    email: 'thomas.martinez@yourcompany.com',
     role: 'Vice President of Development',
     department: 'Development',
     accessLevel: 'full',
@@ -74,32 +74,32 @@ const teamData: InsertTeamUser[] = [
   
   // Operations Team
   {
-    name: 'Bill Boyd',
-    email: 'bill@bristoldevelopment.com',
+    name: 'Emily White',
+    email: 'emily.white@yourcompany.com',
     role: 'Chief Operating Officer',
     department: 'Operations',
     accessLevel: 'admin',
     isActive: true
   },
   {
-    name: 'Lance London',
-    email: 'lance@bristoldevelopment.com',
+    name: 'Mark Thompson',
+    email: 'mark.thompson@yourcompany.com',
     role: 'Executive Vice President of Operations',
     department: 'Operations',
     accessLevel: 'full',
     isActive: true
   },
   {
-    name: 'Amy Leach',
-    email: 'amy@bristoldevelopment.com',
+    name: 'Jessica Garcia',
+    email: 'jessica.garcia@yourcompany.com',
     role: 'Executive Vice President of Property Management',
     department: 'Operations',
     accessLevel: 'full',
     isActive: true
   },
   {
-    name: 'Tim Dowdy',
-    email: 'tim@bristoldevelopment.com',
+    name: 'Christopher Lee',
+    email: 'christopher.lee@yourcompany.com',
     role: 'Executive Vice President of Construction',
     department: 'Construction',
     accessLevel: 'full',
@@ -108,24 +108,24 @@ const teamData: InsertTeamUser[] = [
   
   // Finance Team
   {
-    name: 'James Currie',
-    email: 'james@bristoldevelopment.com',
+    name: 'Amanda Clark',
+    email: 'amanda.clark@yourcompany.com',
     role: 'Chief Financial Officer',
     department: 'Finance',
     accessLevel: 'admin',
     isActive: true
   },
   {
-    name: 'Eric Farmer',
-    email: 'eric@bristoldevelopment.com',
+    name: 'Kevin Moore',
+    email: 'kevin.moore@yourcompany.com',
     role: 'Vice President, Controller',
     department: 'Finance',
     accessLevel: 'full',
     isActive: true
   },
   {
-    name: 'Christine Taylor',
-    email: 'christine@bristoldevelopment.com',
+    name: 'Rachel Adams',
+    email: 'rachel.adams@yourcompany.com',
     role: 'Vice President of Finance',
     department: 'Finance',
     accessLevel: 'full',
@@ -134,16 +134,16 @@ const teamData: InsertTeamUser[] = [
   
   // Investment Team
   {
-    name: 'Nick Davis',
-    email: 'nick@bristoldevelopment.com',
+    name: 'Daniel Rodriguez',
+    email: 'daniel.rodriguez@yourcompany.com',
     role: 'Chief Investment Officer',
     department: 'Investment',
     accessLevel: 'admin',
     isActive: true
   },
   {
-    name: 'Margo Weathers',
-    email: 'margo@bristoldevelopment.com',
+    name: 'Nicole Turner',
+    email: 'nicole.turner@yourcompany.com',
     role: 'Vice President of Investor Relations',
     department: 'Investment',
     accessLevel: 'full',
@@ -152,24 +152,24 @@ const teamData: InsertTeamUser[] = [
   
   // Additional Team Members
   {
-    name: 'Kim Nichols',
-    email: 'kim@bristoldevelopment.com',
+    name: 'Andrew Phillips',
+    email: 'andrew.phillips@yourcompany.com',
     role: 'Senior Vice President',
     department: 'Executive',
     accessLevel: 'full',
     isActive: true
   },
   {
-    name: 'Tanya Hamilton',
-    email: 'tanya@bristoldevelopment.com',
+    name: 'Stephanie Evans',
+    email: 'stephanie.evans@yourcompany.com',
     role: 'Vice President of Human Resources',
     department: 'Human Resources',
     accessLevel: 'full',
     isActive: true
   },
   {
-    name: 'Amanda Durett',
-    email: 'amanda@bristoldevelopment.com',
+    name: 'Laura Mitchell',
+    email: 'laura.mitchell@yourcompany.com',
     role: 'Marketing Manager',
     department: 'Marketing',
     accessLevel: 'standard',

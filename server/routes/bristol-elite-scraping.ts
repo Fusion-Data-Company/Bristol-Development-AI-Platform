@@ -107,7 +107,7 @@ router.post('/elite-search', async (req, res) => {
       propertiesFound: properties.length,
       properties,
       metadata: {
-        source: 'bristol_elite_search',
+        source: 'company_elite_search',
         query: enhancedQuery,
         location,
         propertyType,
@@ -155,7 +155,7 @@ router.post('/elite-crawl', async (req, res) => {
       results: result.results,
       metadata: {
         ...result.metadata,
-        source: 'bristol_elite_crawl_real',
+        source: 'company_elite_crawl_real',
         engineType: 'deep_crawl_analyzer'
       }
     });
@@ -199,7 +199,7 @@ router.post('/elite-extract', async (req, res) => {
       properties: result.properties,
       metadata: {
         ...result.metadata,
-        source: 'bristol_elite_extract_real',
+        source: 'company_elite_extract_real',
         urlsProcessed: urls.slice(0, 15).length,
         engineType: 'elite_extraction_engine'
       }
@@ -259,7 +259,7 @@ router.post('/elite-research', async (req, res) => {
       analysis: result.data?.finalAnalysis || result.data,
       sources: result.data?.sources || [],
       metadata: {
-        source: 'bristol_elite_research',
+        source: 'company_elite_research',
         query,
         maxDepth,
         timeLimit,
@@ -290,7 +290,7 @@ async function processSearchResults(searchResult: any, jobId: string): Promise<a
             const normalized = normalizeRecord({
               ...property,
               sourceUrl: item.url,
-              source: 'bristol_elite_search',
+              source: 'company_elite_search',
               jobId
             });
             
@@ -302,7 +302,7 @@ async function processSearchResults(searchResult: any, jobId: string): Promise<a
               createdAt: new Date(),
               updatedAt: new Date(),
               jobId,
-              source: 'bristol_elite_search'
+              source: 'company_elite_search'
             });
             
             properties.push(normalized);

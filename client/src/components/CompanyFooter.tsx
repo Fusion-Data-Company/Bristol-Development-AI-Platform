@@ -92,7 +92,7 @@ export function CompanyFooter({ className = '', variant = 'thick' }: CompanyFoot
             <div className="space-y-3 text-sm text-gray-300">
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4 text-brand-gold" />
-                <span>elite@bristol.dev</span>
+                <span>elite@yourcompany.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Phone className="h-4 w-4 text-brand-gold" />

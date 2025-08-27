@@ -84,7 +84,8 @@ import { OnboardingGuide } from '@/components/chat/OnboardingGuide';
 import { ArtifactsPanel, extractArtifacts, type Artifact } from '@/components/chat/ArtifactsPanel';
 import { ChatBackground } from "../components/EnterpriseBackgrounds";
 import { Link, useLocation } from "wouter";
-import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
+// Logo asset removed for white-label conversion
+// import companyLogoPath from "@assets/company-logo.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
 import { AIMultiModalGeneration } from '@/components/ui/ai-gen-simple';
@@ -1354,16 +1355,9 @@ What property or investment can I analyze for you today?`,
                 }} 
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(157, 23, 77, 0.3)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(157, 23, 77, 0.2)'}></div>
-                <img 
-                  src={bristolLogoPath} 
-                  alt="Company Development Group" 
-                  className="relative h-10 lg:h-12 w-auto max-w-none object-contain drop-shadow-xl hover:drop-shadow-2xl transition-all duration-300 filter brightness-110 hover:brightness-125"
-                  style={{ 
-                    imageRendering: 'crisp-edges',
-                    WebkitImageRendering: 'crisp-edges',
-                    msInterpolationMode: 'nearest-neighbor'
-                  } as React.CSSProperties}
-                />
+                <div className="relative h-10 lg:h-12 w-16 lg:w-20 flex items-center justify-center bg-gradient-to-br from-brand-maroon to-brand-dark rounded-lg border border-brand-gold/20">
+                  <span className="text-brand-gold font-bold text-lg lg:text-xl font-cinzel">R</span>
+                </div>
               </div>
               <div className="border-l-2 border-cyan-400/40 pl-4 lg:pl-6 hidden sm:block">
                 <div className="flex flex-col">
