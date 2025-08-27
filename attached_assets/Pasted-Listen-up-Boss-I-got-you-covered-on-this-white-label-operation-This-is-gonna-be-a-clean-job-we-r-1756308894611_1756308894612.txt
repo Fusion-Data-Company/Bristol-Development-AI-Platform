@@ -1,0 +1,160 @@
+Listen up Boss, I got you covered on this white-label operation. This is gonna be a clean job - we're gonna strip every last trace of Bristol from this thing like they never fuckin' existed. Here's your comprehensive mega prompt that'll handle this situation properly:
+
+
+COMPREHENSIVE WHITE-LABEL CONVERSION PROMPT
+CRITICAL MISSION DIRECTIVE
+You are tasked with completely removing ALL references to "Bristol Development Group" and related Bristol branding from this codebase/product and replacing them with generic white-label placeholders. This is a complete identity wipe - treat it like we're putting this product in witness protection.
+
+PRIMARY SEARCH & DESTROY TARGETS
+Text Variations to Eliminate (case-insensitive):
+Bristol Development Group
+Bristol Development
+Bristol Dev Group
+BristolDev
+Bristol
+BDG (when referring to Bristol)
+bristol-dev
+bristol_development
+bristoldevelopment
+Any email addresses containing "bristol" (replace with: info@yourcompany.com)
+Any domains containing bristol (replace with: yourcompany.com)
+
+Replacement Strategy:
+"Bristol Development Group" → "Your Company Name"
+"Bristol Development" → "Your Company"
+"Bristol" → "Your Company"
+"BDG" → "YCN" (Your Company Name acronym)
+"bristol" (lowercase) → "yourcompany"
+"BRISTOL" (uppercase) → "YOURCOMPANY"
+
+COMPREHENSIVE SCAN LOCATIONS
+1. Source Code Files:
+All .js, .jsx, .ts, .tsx, .py, .php, .html, .css, .scss files
+Configuration files (.json, .yml, .yaml, .env, .config)
+Build scripts and deployment files
+API endpoints and route definitions
+Database seeds and migrations
+Test files and fixtures
+
+2. Asset Modifications:
+Replace logos: bristol-logo.* → company-logo.*
+Replace favicons and app icons
+Update image alt texts and titles
+Replace any Bristol-branded images in /assets, /public, /static directories
+
+3. Database Content:
+sql
+-- Example cleanup queries
+UPDATE companies SET name = 'Your Company Name' WHERE name LIKE '%Bristol%';
+UPDATE settings SET value = 'Your Company Name' WHERE value LIKE '%Bristol%';
+UPDATE email_templates SET body = REPLACE(body, 'Bristol', 'Your Company');
+UPDATE content SET text = REPLACE(text, 'Bristol Development Group', 'Your Company Name');
+
+4. Configuration Files:
+package.json (name, description, author, repository)
+manifest.json (name, short_name, description)
+.env files (any Bristol-specific API keys or identifiers)
+Docker configurations
+CI/CD pipeline files
+
+5. Documentation:
+README.md files
+API documentation
+User guides
+License files
+CONTRIBUTING.md
+Code comments (especially file headers)
+
+SPECIFIC WHITE-LABEL REPLACEMENTS
+Contact Information:
+support@bristoldev.com → support@yourcompany.com
+sales@bristol-development.com → sales@yourcompany.com
+Phone: [Bristol number] → Phone: (555) 123-4567
+Address: [Bristol address] → Address: [Your Address]
+
+Legal & Copyright:
+© 2024 Bristol Development Group → © 2024 Your Company Name
+"Bristol Development Group, LLC" → "Your Company Name, LLC"
+Bristol Terms of Service → Your Company Terms of Service
+Bristol Privacy Policy → Your Company Privacy Policy
+
+Social Media & External Links:
+linkedin.com/company/bristol-dev → linkedin.com/company/yourcompany
+twitter.com/bristoldev → twitter.com/yourcompany
+github.com/bristol-development → github.com/yourcompany
+
+VERIFICATION CHECKLIST
+After conversion, verify these critical areas:
+
+Browser Elements:
+ Page titles in <title> tags
+ Meta descriptions
+ Open Graph tags
+ Twitter Card tags
+ Favicon references
+
+Application Functionality:
+ Email sending still works with new addresses
+ API integrations using company name still function
+ Webhooks and callbacks updated
+ Push notifications display correct company name
+
+Hidden References:
+ Error messages and logs
+ Console.log statements
+ Debug output
+ Commented-out code
+ Git history (consider squashing if needed)
+
+Third-Party Integrations:
+ Payment processor merchant names
+ Analytics tracking codes
+ CRM integration labels
+ OAuth app names
+
+
+AUTOMATION SCRIPT TEMPLATE
+bash
+#!/bin/bash
+# White-label conversion script
+
+# Define replacements
+declare -A replacements=(
+    ["Bristol Development Group"]="Your Company Name"
+    ["Bristol Development"]="Your Company"
+    ["Bristol"]="Your Company"
+    ["bristol"]="yourcompany"
+    ["BRISTOL"]="YOURCOMPANY"
+    ["BDG"]="YCN"
+)
+
+# Find and replace in all text files
+for old in "${!replacements[@]}"; do
+    new="${replacements[$old]}"
+    find . -type f \( -name "*.js" -o -name "*.jsx" -o -name "*.ts" -o -name "*.tsx" -o -name "*.html" -o -name "*.css" -o -name "*.json" -o -name "*.md" \) -exec sed -i "s/$old/$new/g" {} +
+done
+
+# Rename files containing 'bristol'
+find . -name "*bristol*" -type f -exec rename 's/bristol/yourcompany/g' {} \;
+find . -name "*Bristol*" -type f -exec rename 's/Bristol/YourCompany/g' {} \;
+
+echo "White-label conversion complete. Manual review required."
+
+POST-CONVERSION TESTING
+Run these commands to verify no Bristol references remain:
+bash
+# Search for any remaining Bristol references
+grep -r -i "bristol" . --exclude-dir=node_modules --exclude-dir=.git
+grep -r "BDG" . --exclude-dir=node_modules --exclude-dir=.git
+
+# Check specific file types
+find . -name "*.json" -exec grep -l -i "bristol" {} \;
+find . -name "*.env*" -exec grep -l -i "bristol" {} \;
+
+FINAL VERIFICATION
+Deploy to staging environment
+Click through entire application
+Test all email templates
+Verify all API responses
+Check mobile app versions if applicable
+Review all customer-facing content
