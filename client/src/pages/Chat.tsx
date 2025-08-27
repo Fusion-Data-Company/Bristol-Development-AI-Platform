@@ -84,7 +84,7 @@ import { OnboardingGuide } from '@/components/chat/OnboardingGuide';
 import { ArtifactsPanel, extractArtifacts, type Artifact } from '@/components/chat/ArtifactsPanel';
 import { ChatBackground } from "../components/EnterpriseBackgrounds";
 import { Link, useLocation } from "wouter";
-import bristolLogoPath from "@assets/brand-logo_1754934306711.gif";
+import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
 import chatBackgroundImg from "@assets/Screenshot 2025-08-15 at 09.54.40_1755276882073.png";
 import WebScrapingAgentTracker from '@/components/comparables/WebScrapingAgentTracker';
 import { AIMultiModalGeneration } from '@/components/ui/ai-gen-simple';
