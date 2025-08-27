@@ -9,7 +9,7 @@ export function useAuth() {
   });
 
   return {
-    user: { id: 'internal-user', email: 'internal@bristol.dev' }, // Mock user for internal app
+    user: { id: 'internal-user', email: 'internal@company.dev' }, // Mock user for internal app
     isLoading: false, // Never loading
     isAuthenticated: true, // Always authenticated for internal app
   };

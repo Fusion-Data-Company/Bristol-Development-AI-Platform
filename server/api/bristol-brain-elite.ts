@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { storage } from "../storage";
-import { bristolBrainService } from "../services/bristolBrainService";
+import { realEstateAIService } from "../services/realEstateAIService";
 import { memorySyncService } from "../services/memorySyncService";
 import { performanceMonitor } from "../services/performanceMonitor";
 import multer from "multer";
@@ -64,7 +64,7 @@ router.post("/chat", async (req, res) => {
     if (!sessionId) {
       // Create new shared session between main and floating instances
       const session = await memorySyncService.initializeSharedSession(userId, 
-        `Bristol A.I. Elite - ${new Date().toLocaleDateString()}`);
+        `Real Estate AI - ${new Date().toLocaleDateString()}`);
       sessionId = session.id;
     }
     
@@ -96,7 +96,7 @@ router.post("/chat", async (req, res) => {
     };
     
     // Process message with Bristol A.I.
-    const response = await bristolBrainService.processMessage({
+    const response = await realEstateAIService.processMessage({
       sessionId,
       userId,
       userMessage: message,
@@ -132,7 +132,7 @@ router.post("/chat", async (req, res) => {
     res.json(result);
   } catch (error) {
     agentTracker.end();
-    console.error("Bristol A.I. Elite Error:", error);
+    console.error("Real Estate AI Error:", error);
     res.status(500).json({
       error: "Failed to process message",
       details: error instanceof Error ? error.message : "Unknown error",
@@ -360,7 +360,7 @@ router.post("/analyze-deal", async (req, res) => {
       return res.status(400).json({ error: "SessionId and dealData are required" });
     }
     
-    const analysis = await bristolBrainService.analyzeDeal(
+    const analysis = await realEstateAIService.analyzeDeal(
       sessionId,
       userId,
       dealData

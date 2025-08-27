@@ -7,18 +7,18 @@ import { useMCPChat } from "@/hooks/useMCPChat";
 import { useToast } from "@/hooks/use-toast";
 
 /**
- * BristolFloatingWidget.tsx — v1.0
- * Enterprise-grade floating analyst widget for Bristol Development.
+ * FloatingWidget.tsx — v1.0
+ * Enterprise-grade floating analyst widget for real estate development.
  *
  * WHAT IT DOES
  * - Slides out from the LEFT edge as a floating widget.
  * - Conversationally analyzes ANY in-app data (API responses + DB objects) passed in via props or a global bus.
  * - Model switcher (OpenRouter.io) with per-thread system prompt.
- * - Admin tab to edit/view the Bristol "mega prompt" (stored locally or via callbacks).
+ * - Admin tab to edit/view the company "mega prompt" (stored locally or via callbacks).
  * - Data tab to inspect the merged data that the agent can reason over.
  *
  * HOW TO WIRE IT (quick):
- * 1) Place <BristolFloatingWidget appData={yourMergedData} /> high in app tree.
+ * 1) Place <FloatingWidget appData={yourMergedData} /> high in app tree.
  * 2) Implement a server proxy /api/openrouter (Node/Edge) to call OpenRouter with your key (never ship the key to the browser).
  * 3) Optional: stream tool usage + telemetry to n8n via webhookUrl.
  * 4) Provide onSaveSystemPrompt/onSend handlers if you want to persist prompts/messages elsewhere.
@@ -29,7 +29,7 @@ import { useToast } from "@/hooks/use-toast";
  */
 
 // ---------- Types ----------
-export type BristolWidgetProps = {
+export type FloatingWidgetProps = {
   appData?: Record<string, any>; // Any merged API/DB state from the app
   defaultSystemPrompt?: string; // Optional initial system prompt
   defaultModel?: string; // e.g., "openrouter/gpt-5" (proxy must map to real model)
@@ -75,7 +75,7 @@ export type ChatPayload = {
 };
 
 // ---------- Default Bristol A.I. System Prompt ----------
-const DEFAULT_MEGA_PROMPT = `I'm the Bristol Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
+const DEFAULT_MEGA_PROMPT = `I'm the Real Estate Intelligence AI – the proprietary AI intelligence system engineered for real estate development analysis. Drawing on decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
 
 ## CORE CAPABILITIES
 - **Deal Analysis**: Comprehensive property underwriting with IRR/NPV modeling
@@ -91,16 +91,16 @@ const DEFAULT_MEGA_PROMPT = `I'm the Bristol Site Intelligence AI – the propri
 - Use provided property data, demographic information, and external API data for comprehensive analysis
 
 ## AVAILABLE DATA CONTEXT
-- Bristol property portfolio with addresses, status, and financial metrics
+- Property portfolio with addresses, status, and financial metrics
 - Demographics data from Census API, BLS employment data, HUD fair market rents
 - FBI crime statistics, NOAA climate data, BEA economic indicators
 - Foursquare location insights and market trend analysis
 
 ## RESPONSE STYLE
-- Professional and authoritative tone reflecting 30+ years of institutional experience
+- Professional and authoritative tone reflecting decades of institutional experience
 - Data-driven insights with specific metrics and financial projections
 - Clear investment recommendations with risk assessments
-- Use Bristol branding: "Bristol A.I." not "Bristol Brain"
+- Use company AI branding consistently
 
 Always prioritize accuracy, deliver institutional-quality analysis, and maintain the sophisticated, results-oriented approach expected from a Fortune 500-grade AI system.`;
 
@@ -124,7 +124,7 @@ function safeStringify(obj: any, space = 2) {
 }
 
 // ---------- Component ----------
-export default function BristolFloatingWidget({
+export default function FloatingWidget({
   appData = {},
   defaultSystemPrompt,
   defaultModel,
@@ -132,7 +132,7 @@ export default function BristolFloatingWidget({
   onSaveSystemPrompt,
   onSend,
   className,
-}: BristolWidgetProps) {
+}: FloatingWidgetProps) {
   const { toast } = useToast();
   
   // Mobile guard: hide floating widget on mobile screens
@@ -193,7 +193,7 @@ export default function BristolFloatingWidget({
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content: "I'm the Bristol Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.\n\nIf you're inquiring about a specific modeling approach – say, for cap rate projections, value-add strategies, or portfolio optimization – provide the details, and I'll dive in with quantitative analysis. What's the opportunity on the table? Let's evaluate it now.",
+      content: "I'm the Real Estate Intelligence AI – the proprietary AI intelligence system engineered for real estate development analysis. Drawing on decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.\n\nIf you're inquiring about a specific modeling approach – say, for cap rate projections, value-add strategies, or portfolio optimization – provide the details, and I'll dive in with quantitative analysis. What's the opportunity on the table? Let's evaluate it now.",
       createdAt: nowISO(),
     }
   ]);

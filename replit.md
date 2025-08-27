@@ -1,7 +1,7 @@
-# Bristol Site Intelligence Platform
+# Real Estate Intelligence Platform
 
 ## Overview
-The Bristol Site Intelligence Platform is an enterprise-grade, AI-powered real estate development analysis tool for multifamily opportunities in Sunbelt markets. It provides comprehensive site analytics, interactive mapping, a proprietary 100-point Bristol scoring methodology, and real-time market intelligence. The platform integrates Bristol A.I. Elite v5.0, an AI assistant for advanced deal analysis. Its purpose is to deliver institutional-quality real estate analysis capabilities, supporting decisions related to IRR, NPV, cap rates, and LP/GP structures, with a vision to provide a Fortune 500-grade "boss agent" for developers.
+The Real Estate Intelligence Platform is an enterprise-grade, AI-powered real estate development analysis tool for multifamily opportunities in Sunbelt markets. It provides comprehensive site analytics, interactive mapping, a proprietary 100-point scoring methodology, and real-time market intelligence. The platform integrates advanced AI Elite v5.0, an AI assistant for advanced deal analysis. Its purpose is to deliver institutional-quality real estate analysis capabilities, supporting decisions related to IRR, NPV, cap rates, and LP/GP structures, with a vision to provide a Fortune 500-grade "boss agent" for developers.
 
 ### Competitor Watch System (Added 2025-01-20)
 Production-ready competitor monitoring system tracking real estate development activities across multiple jurisdictions:
@@ -14,21 +14,21 @@ Production-ready competitor monitoring system tracking real estate development a
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
-CRITICAL BRANDING PREFERENCE: Dark Bristol header/nav with gold logo in top right corner must NEVER be changed - user has requested this multiple times and styling should remain consistent.
-THEME PREFERENCE: All pages created should use light theme by default, not dark themes. Only the header/navigation should remain dark with Bristol branding. The chat interface specifically should use light backgrounds with chrome metallic styling but in light colors - no dark backgrounds anywhere except the Bristol header/nav.
-AI AGENT IDENTITY: I'm the Bristol Site Intelligence AI – the proprietary AI intelligence system engineered exclusively for Bristol Development Group. Drawing on over three decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for Bristol Development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
-FOOTER REQUIREMENT: All pages must include thick Bristol footers to provide scroll room for the floating Bristol AI button - user has specifically requested this for optimal UX with the floating widget.
+CRITICAL BRANDING PREFERENCE: Dark header/nav with company logo in top right corner must maintain consistent styling.
+THEME PREFERENCE: All pages created should use light theme by default, not dark themes. Only the header/navigation should remain dark with company branding. The chat interface specifically should use light backgrounds with chrome metallic styling but in light colors - no dark backgrounds anywhere except the company header/nav.
+AI AGENT IDENTITY: I'm the Real Estate Intelligence AI – the proprietary AI intelligence system engineered for real estate development analysis. Drawing on decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
+FOOTER REQUIREMENT: All pages must include thick company footers to provide scroll room for the floating AI button - for optimal UX with the floating widget.
 
 ## System Architecture
 
 ### Frontend Architecture
 - **Framework**: React 18 with TypeScript and Vite.
-- **Styling**: Tailwind CSS with a custom Bristol brand design system (Cinzel serif font, branded color palette), featuring professional cyberpunk glassomorphic styling with neon cyan/gold glows and animated gradients for the AI interface.
+- **Styling**: Tailwind CSS with a custom brand design system (Cinzel serif font, branded color palette), featuring professional cyberpunk glassomorphic styling with neon cyan/gold glows and animated gradients for the AI interface.
 - **UI Components**: Shadcn/ui leveraging Radix UI primitives.
 - **State Management**: TanStack Query.
 - **Routing**: Wouter.
 - **Real-time Communication**: WebSocket integration.
-- **UI/UX Decisions**: All API tools feature consistent premium Bristol enterprise styling with Bristol-maroon gradients, gold borders, and Cpu icons. A high-resolution glowing digital globe background is used without overlays. Mega headers feature Bristol branding and gradient backgrounds. The platform supports a dual map architecture with a Portfolio Map and an Interactive Map with a sophisticated right sidebar for analytics.
+- **UI/UX Decisions**: All API tools feature consistent premium enterprise styling with maroon gradients, gold borders, and Cpu icons. A high-resolution glowing digital globe background is used without overlays. Mega headers feature company branding and gradient backgrounds. The platform supports a dual map architecture with a Portfolio Map and an Interactive Map with a sophisticated right sidebar for analytics.
 
 ### Backend Architecture
 - **Runtime**: Node.js with Express.
@@ -37,7 +37,7 @@ FOOTER REQUIREMENT: All pages must include thick Bristol footers to provide scro
 - **AI Integration**: BULLETPROOF UNIFIED MCP ORCHESTRATOR with three-agent communication system (floating widget, main chat, ElevenLabs) enabling real-time inter-agent messaging via MCP protocol. Features advanced MCP orchestration with bulletproof error handling, circuit breakers, auto-recovery mechanisms, and health monitoring across 22+ tools. Includes enhanced chat experience API with intelligent interactions, smart follow-up question generation, and comprehensive error recovery.
 - **File Storage**: Google Cloud Storage.
 - **Real-time Features**: WebSocket server for live updates, chat, and tool execution status.
-- **System Design Choices**: The Bristol A.I. acts as a bulletproof AI orchestrator. An advanced memory system with PostgreSQL tables is used for long-term conversation context, user preferences, and tool integration results, ensuring perfect memory retention and cross-session context sharing. The database schema includes user management, site intelligence, unified chat system, advanced memory tables, and integration tracking. Authentication utilizes Replit Auth with OpenID Connect, supported by Express-session with PostgreSQL backing and secure HTTP-only cookies with CSRF protection.
+- **System Design Choices**: The AI system acts as a bulletproof AI orchestrator. An advanced memory system with PostgreSQL tables is used for long-term conversation context, user preferences, and tool integration results, ensuring perfect memory retention and cross-session context sharing. The database schema includes user management, site intelligence, unified chat system, advanced memory tables, and integration tracking. Authentication utilizes Replit Auth with OpenID Connect, supported by Express-session with PostgreSQL backing and secure HTTP-only cookies with CSRF protection.
 
 ## External Dependencies
 

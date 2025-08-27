@@ -8,7 +8,7 @@ import { GlobalHeader } from "@/components/GlobalHeader";
 import { ErrorBoundary, setupGlobalErrorHandling } from "@/components/ErrorBoundary";
 import { useEffect } from "react";
 
-import BristolFloatingWidget from "@/components/BristolFloatingWidget";
+import FloatingWidget from "@/components/FloatingWidget";
 import ElevenLabsWidget from "@/components/ElevenLabsWidget";
 
 import NotFound from "@/pages/not-found";
@@ -103,9 +103,9 @@ function AppContent() {
         <Router />
       </div>
       
-      {/* Hide Bristol Floating Widget on chat page */}
+      {/* Hide Floating Widget on chat page */}
       {isAuthenticated && location !== '/chat' && (
-        <BristolFloatingWidget 
+        <FloatingWidget 
             appData={appData}
             webhookUrl={import.meta.env.VITE_N8N_WEBHOOK_URL}
             onSaveSystemPrompt={async (prompt) => {

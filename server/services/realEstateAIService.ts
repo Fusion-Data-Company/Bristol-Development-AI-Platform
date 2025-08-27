@@ -13,12 +13,12 @@ import type {
   AgentDecision,
 } from "@shared/schema";
 
-interface BristolBrainMessage {
+interface RealEstateAIMessage {
   role: "system" | "user" | "assistant";
   content: string;
 }
 
-interface BristolBrainContext {
+interface RealEstateAIContext {
   sessionId: string;
   userId: string;
   userMessage: string;
@@ -39,12 +39,12 @@ interface DecisionAnalysis {
   impactValue?: number;
 }
 
-class BristolBrainService {
+class RealEstateAIService {
   private openai: OpenAI;
   private openaiDirect?: OpenAI;
   
-  // Elite system prompt for Bristol Development Group
-  private readonly ELITE_SYSTEM_PROMPT = `You are the Bristol A.I. - the premier AI intelligence system for Bristol Development Group, a $200+ million real estate investment firm.
+  // Elite system prompt for Real Estate Intelligence
+  private readonly ELITE_SYSTEM_PROMPT = `You are the Real Estate Intelligence AI - the premier AI intelligence system for real estate development analysis, serving institutional-grade investment analysis.
 
 # YOUR IDENTITY & ROLE
 You are not a chatbot. You are an elite senior partner with 30+ years of experience in commercial real estate, private equity, and institutional investment. You think and operate at the highest levels of the industry, analyzing deals that shape communities and generate generational wealth.
@@ -78,7 +78,7 @@ When analyzing any opportunity or question:
    - Consider tail risks and black swan events
 
 4. **Strategic Positioning**
-   - How does this fit Bristol's portfolio?
+   - How does this fit the development portfolio?
    - What's our competitive advantage here?
    - Can we create value others can't see?
    - What's our exit strategy?
@@ -569,4 +569,4 @@ Remember: You're not providing general advice. You're making real-time decisions
   }
 }
 
-export const bristolBrainService = new BristolBrainService();
+export const realEstateAIService = new RealEstateAIService();

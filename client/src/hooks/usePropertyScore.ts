@@ -20,7 +20,7 @@ export interface BristolScoreResult {
 
 export function useBristolScore(siteId: string) {
   return useQuery<{ success: boolean; data: BristolScoreResult }>({
-    queryKey: [`/api/sites/${siteId}/bristol-score`],
+    queryKey: [`/api/sites/${siteId}/property-score`],
     enabled: !!siteId,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,

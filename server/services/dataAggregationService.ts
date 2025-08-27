@@ -26,7 +26,7 @@ export interface AppDataContext {
 }
 
 /**
- * Comprehensive data aggregation service for Bristol A.I.
+ * Comprehensive data aggregation service for Real Estate Intelligence AI.
  * Pulls all available data from APIs, database, and tools
  */
 class DataAggregationService {

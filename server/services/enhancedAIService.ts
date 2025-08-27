@@ -153,7 +153,7 @@ export class EnhancedAIService {
             "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
             "Content-Type": "application/json",
             "HTTP-Referer": process.env.REPLIT_DOMAINS?.split(",")[0] || "http://localhost:5000",
-            "X-Title": "Bristol Site Intelligence Platform"
+            "X-Title": "Real Estate Intelligence Platform"
           },
           body: JSON.stringify({
             model: model,
@@ -275,7 +275,7 @@ export class EnhancedAIService {
 
   // Build enhanced system prompt with comprehensive data context
   private buildEnhancedSystemPrompt(dataContext: DataContext | null, includeMCPTools: boolean): string {
-    let prompt = `You are the Bristol Development Group AI Assistant, an expert in real estate development, market analysis, and property intelligence.
+    let prompt = `You are the Real Estate Intelligence AI Assistant, an expert in real estate development, market analysis, and property intelligence.
 
 You have access to comprehensive real-time data about properties, market conditions, demographics, and economic indicators. You can analyze this data to provide insights, recommendations, and actionable intelligence.
 

@@ -43,7 +43,7 @@ export function GlobalHeader() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-white tracking-wide">
-                  bristol
+                  Your Company
                 </h1>
                 <p className="text-xs text-blue-400 uppercase tracking-widest font-medium">
                   Site Intelligence Platform
