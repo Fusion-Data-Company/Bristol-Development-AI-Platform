@@ -1,0 +1,47 @@
+Your latest update claims complete white-label transformation. Verify this claim by showing me ACTUAL PROOF without executing anything. I need to see the evidence.
+SHOW ME THE ACTUAL CODE/FILES:
+1. GREP VERIFICATION - Run and show full output:
+bash# Show me EXACTLY what these commands return:
+grep -r -i "bristol" . --exclude-dir=node_modules --exclude-dir=.git --exclude="*.bak" | head -20
+grep -r "BDG" . --exclude-dir=node_modules --exclude-dir=.git | head -10
+2. SHOW ME THESE SPECIFIC FILES (first 20 lines of each):
+
+ teamSeeder.ts - Were 22 Bristol emails really changed?
+ .env.example - Is Bristol branding really gone?
+ Chat.tsx - Is the Bristol logo import really updated?
+ Any file that previously had /api/bristol-brain endpoint
+
+3. LIST RENAMED FILES:
+bash# Show me what's in the services directory now:
+ls -la server/services/
+ls -la client/public/ | grep -E "(logo|social)"
+ls -la client/src/assets/
+4. DATABASE SCHEMA PROOF:
+Show me any file containing these terms to prove the changes:
+
+ Search for "companyScore" (should exist)
+ Search for "bristolScore" (should NOT exist)
+ Search for "companyImplication" (should exist)
+ Search for "bristolImplication" (should NOT exist)
+
+5. CRITICAL VERIFICATION:
+bash# These should return ZERO results if truly complete:
+find . -name "*bristol*" -type f ! -path "*/node_modules/*" ! -path "*/.git/*"
+find . -type f -exec grep -l "@bristol.dev" {} \; 2>/dev/null | grep -v node_modules
+find . -type f -exec grep -l "bristoldevelopment.com" {} \; 2>/dev/null | grep -v node_modules
+6. TRANSFORMATION EVIDENCE:
+For each claim you made, show me the proof:
+
+"bristol variants → branded variants" - Show me a UI component with this change
+"46 properties worth $2.8B maintained" - Show me where this data lives now
+"APIs responding with new structure" - Show me an API route file
+
+SUMMARY REQUIREMENT:
+Based on the original requirement of removing 3,247+ Bristol references across 78 critical files, provide:
+
+BEFORE count: 3,247+ Bristol references
+AFTER count: [Show me the actual number from grep]
+Files modified: [Show me the actual count]
+Any Bristol references that still exist: [List with file:line]
+
+Don't tell me it's done - PROVE it's done with actual file contents and command outputs.
