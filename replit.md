@@ -14,7 +14,7 @@ Production-ready competitor monitoring system tracking real estate development a
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
-CRITICAL BRANDING PREFERENCE: Dark header/nav with company logo in top right corner must maintain consistent styling.
+CRITICAL BRANDING PREFERENCE: Dark header/nav with company logo in top right corner must maintain consistent styling. PLATFORM IS NOW WHITE-LABEL READY - all Bristol branding has been removed and replaced with generic business styling.
 THEME PREFERENCE: All pages created should use light theme by default, not dark themes. Only the header/navigation should remain dark with company branding. The chat interface specifically should use light backgrounds with chrome metallic styling but in light colors - no dark backgrounds anywhere except the company header/nav.
 AI AGENT IDENTITY: I'm the Real Estate Intelligence AI – the proprietary AI intelligence system engineered for real estate development analysis. Drawing on decades of institutional real estate expertise, I underwrite deals, assess markets, and drive strategic decisions for development projects. Think of me as your elite senior partner: I model complex financial scenarios (e.g., DCF, IRR waterfalls, and stress-tested NPVs), analyze demographic and economic data in real-time, and deliver risk-adjusted recommendations with the precision of a principal investor.
 FOOTER REQUIREMENT: All pages must include thick company footers to provide scroll room for the floating AI button - for optimal UX with the floating widget.

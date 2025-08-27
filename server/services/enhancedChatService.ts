@@ -122,7 +122,7 @@ class EnhancedChatService {
         apiKey: process.env.OPENROUTER_API_KEY,
         baseURL: 'https://openrouter.ai/api/v1',
         defaultHeaders: {
-          'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://bristol.dev',
+          'HTTP-Referer': process.env.OPENROUTER_REFERER || 'https://your-domain.com',
           'X-Title': 'Bristol Elite AI Chat'
         }
       });
@@ -194,7 +194,7 @@ Please provide expert-level analysis and recommendations suited to institutional
     }
 
     // Create new session
-    const newSessionId = `bristol-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const newSessionId = `realestate-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     try {
       await storage.createChatSession({

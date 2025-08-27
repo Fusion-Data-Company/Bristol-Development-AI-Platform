@@ -13,7 +13,7 @@ const brandButtonVariants = cva(
         outline: "border border-brand-maroon text-brand-maroon hover:bg-brand-maroon hover:text-white",
         ghost: "hover:bg-brand-sky hover:text-brand-maroon",
         gold: "bg-brand-gold text-brand-ink hover:bg-brand-gold/90 shadow-lg",
-        ink: "bg-bristol-ink text-white hover:bg-bristol-stone shadow-lg"
+        ink: "bg-brand-ink text-white hover:bg-brand-stone shadow-lg"
       },
       size: {
         default: "h-12 px-6 py-3",

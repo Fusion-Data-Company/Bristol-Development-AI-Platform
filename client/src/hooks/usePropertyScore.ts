@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 
-export interface BristolScoreComponents {
+export interface PropertyScoreComponents {
   demographics: number;
   marketDynamics: number;
   location: number;
@@ -9,17 +9,17 @@ export interface BristolScoreComponents {
   riskAdjustment: number;
 }
 
-export interface BristolScoreResult {
+export interface PropertyScoreResult {
   totalScore: number;
-  components: BristolScoreComponents;
+  components: PropertyScoreComponents;
   grade: 'A+' | 'A' | 'A-' | 'B+' | 'B' | 'B-' | 'C+' | 'C' | 'C-' | 'D';
   recommendation: 'STRONG_BUY' | 'BUY' | 'HOLD' | 'AVOID';
   rationale: string;
   lastCalculated: string;
 }
 
-export function useBristolScore(siteId: string) {
-  return useQuery<{ success: boolean; data: BristolScoreResult }>({
+export function usePropertyScore(siteId: string) {
+  return useQuery<{ success: boolean; data: PropertyScoreResult }>({
     queryKey: [`/api/sites/${siteId}/property-score`],
     enabled: !!siteId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -27,7 +27,7 @@ export function useBristolScore(siteId: string) {
   });
 }
 
-export function useUpdateBristolScore() {
+export function useUpdatePropertyScore() {
   const queryClient = useQueryClient();
   
   return useMutation({
@@ -39,7 +39,7 @@ export function useUpdateBristolScore() {
     onSuccess: (data, siteId) => {
       // Invalidate the specific site score
       queryClient.invalidateQueries({ 
-        queryKey: [`/api/sites/${siteId}/bristol-score`] 
+        queryKey: [`/api/sites/${siteId}/property-score`] 
       });
       
       // Invalidate portfolio summary
@@ -50,7 +50,7 @@ export function useUpdateBristolScore() {
   });
 }
 
-export function useUpdateAllBristolScores() {
+export function useUpdateAllPropertyScores() {
   const queryClient = useQueryClient();
   
   return useMutation({
@@ -60,17 +60,17 @@ export function useUpdateAllBristolScores() {
       });
     },
     onSuccess: () => {
-      // Invalidate all Bristol score queries
+      // Invalidate all property score queries
       queryClient.invalidateQueries({ 
         predicate: (query) => 
-          query.queryKey[0]?.toString().includes('bristol-score') ||
+          query.queryKey[0]?.toString().includes('property-score') ||
           query.queryKey[0]?.toString().includes('portfolio-summary')
       });
     },
   });
 }
 
-export function useBristolPortfolioSummary() {
+export function usePortfolioSummary() {
   return useQuery({
     queryKey: ['/api/sites/portfolio-summary'],
     staleTime: 10 * 60 * 1000, // 10 minutes

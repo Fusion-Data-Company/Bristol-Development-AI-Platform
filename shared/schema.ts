@@ -35,7 +35,7 @@ export const users = pgTable("users", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Site Intelligence Tables - Bristol Development Format
+// Site Intelligence Tables - Real Estate Intelligence Format
 export const sites = pgTable("sites", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   ownerId: varchar("owner_id").references(() => users.id),
@@ -66,7 +66,7 @@ export const sites = pgTable("sites", {
   acsYear: text("acs_year"),
   acsProfile: jsonb("acs_profile"),
   createdAt: timestamp("created_at").defaultNow(),
-  bristolScore: real("bristol_score"), // Bristol 100-point scoring methodology
+  propertyScore: real("property_score"), // Proprietary 100-point scoring methodology
   updatedAt: timestamp("updated_at").defaultNow(),
 }, (table) => [
   index("idx_sites_name").on(table.name),
@@ -125,7 +125,7 @@ export const mcpTools = pgTable("mcp_tools", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Bristol team members for Cap verification
+// Team members for verification
 export const bristolUsers = pgTable("bristol_users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: varchar("name").notNull(),
@@ -224,7 +224,7 @@ export const marketIntelligence = pgTable("market_intelligence", {
   category: varchar("category").notNull(), // monetary_policy, demographics, development, capital_markets, regulatory, etc.
   impact: varchar("impact").notNull(), // high, medium, low
   priority: integer("priority").notNull().default(5), // 1-10, higher is more urgent
-  bristolImplication: text("bristol_implication"),
+  marketImplication: text("market_implication"),
   actionRequired: boolean("action_required").default(false),
   expiresAt: timestamp("expires_at"),
   processed: boolean("processed").default(false),
@@ -283,7 +283,7 @@ export const intelligenceEntries = pgTable("intelligence_entries", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   title: varchar("title").notNull(),
   content: text("content").notNull(),
-  source: varchar("source").notNull(), // Bristol agents, MCP tools, etc.
+  source: varchar("source").notNull(), // AI agents, MCP tools, etc.
   category: varchar("category").notNull(), // market_analysis, site_analysis, financial_analysis, demographic_analysis
   confidence: real("confidence"), // 0-1 confidence score
   metadata: jsonb("metadata"), // Additional structured data
@@ -305,7 +305,7 @@ export type InsertChatMessage = typeof chatMessages.$inferInsert;
 export type IntelligenceEntry = typeof intelligenceEntries.$inferSelect;
 export type InsertIntelligenceEntry = typeof intelligenceEntries.$inferInsert;
 
-// Bristol score field now included in main sites table
+// Property score field now included in main sites table
 
 // Type exports for Cap-specific tables
 export type BristolUser = typeof bristolUsers.$inferSelect;

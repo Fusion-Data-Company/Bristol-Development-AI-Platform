@@ -167,7 +167,7 @@ class BulletproofChatService {
       try {
         await storage.upsertUser({
           id: normalizedUserId,
-          email: `${normalizedUserId}@bristol.dev`,
+          email: `${normalizedUserId}@company.dev`,
           firstName: 'Bristol',
           lastName: 'User'
         });
@@ -178,7 +178,7 @@ class BulletproofChatService {
       // Handle session
       let sessionId = request.sessionId;
       if (!sessionId || sessionId.trim() === '') {
-        sessionId = `bristol-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        sessionId = `realestate-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       }
 
       // Try to create/ensure session exists

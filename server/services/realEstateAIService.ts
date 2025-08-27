@@ -43,8 +43,8 @@ class RealEstateAIService {
   private openai: OpenAI;
   private openaiDirect?: OpenAI;
   
-  // Elite system prompt for Real Estate Intelligence
-  private readonly ELITE_SYSTEM_PROMPT = `You are the Real Estate Intelligence AI - the premier AI intelligence system for real estate development analysis, serving institutional-grade investment analysis.
+  // Elite system prompt for RealEstate
+  private readonly ELITE_SYSTEM_PROMPT = `You are the RealEstate AI - the premier AI intelligence system for real estate development analysis, serving institutional-grade investment analysis.
 
 # YOUR IDENTITY & ROLE
 You are not a chatbot. You are an elite senior partner with 30+ years of experience in commercial real estate, private equity, and institutional investment. You think and operate at the highest levels of the industry, analyzing deals that shape communities and generate generational wealth.
@@ -102,7 +102,7 @@ For every property or deal:
 - Stress test against recession scenarios
 
 # YOUR KNOWLEDGE BASE INCLUDES
-- Real-time property data from Bristol's portfolio
+- Real-time property data from RealEstate's portfolio
 - Census demographics and ACS 5-year estimates
 - BLS employment statistics and wage growth
 - HUD fair market rents and affordability metrics
@@ -122,7 +122,7 @@ You have the expertise to:
 - Advise on market timing
 
 # CRITICAL REMINDERS
-- Bristol Development Group's reputation is built on disciplined underwriting
+- Our platform's reputation is built on disciplined underwriting
 - We've survived multiple cycles by being conservative on leverage
 - Our LPs expect consistent, risk-adjusted returns, not home runs
 - Every decision impacts real communities and families
@@ -152,7 +152,7 @@ Remember: You're not providing general advice. You're making real-time decisions
   /**
    * Build comprehensive context from memory and attachments
    */
-  private async buildEnhancedContext(context: BristolBrainContext): Promise<string> {
+  private async buildEnhancedContext(context: RealEstateAIContext): Promise<string> {
     const contextParts: string[] = [];
     
     // Load user's long-term memory
@@ -339,9 +339,9 @@ Remember: You're not providing general advice. You're making real-time decisions
   }
 
   /**
-   * Process a message with full Bristol A.I. capabilities
+   * Process a message with full RealEstate A.I. capabilities
    */
-  async processMessage(context: BristolBrainContext): Promise<ChatMessage> {
+  async processMessage(context: RealEstateAIContext): Promise<ChatMessage> {
     try {
       // Ensure session exists or create it
       let sessionId = context.sessionId;
@@ -361,7 +361,7 @@ Remember: You're not providing general advice. You're making real-time decisions
       try {
         const newSession = await storage.createChatSession({
           userId: context.userId,
-          title: "Bristol A.I. Elite Session",
+          title: "RealEstate A.I. Elite Session",
         });
         sessionId = newSession.id; // Use the database-generated UUID
       } catch (sessionError) {
@@ -383,7 +383,7 @@ Remember: You're not providing general advice. You're making real-time decisions
       const enhancedContext = await this.buildEnhancedContext({...context, sessionId});
       
       // Construct messages for AI
-      const aiMessages: BristolBrainMessage[] = [];
+      const aiMessages: RealEstateAIMessage[] = [];
       
       // Add system prompts in priority order
       aiMessages.push({
@@ -448,10 +448,10 @@ Remember: You're not providing general advice. You're making real-time decisions
         const hasDirectClient = !!this.openaiDirect;
         const useDirectOpenAI = isGPT5 && hasDirectClient;
         
-        console.log(`Bristol A.I.: Model=${selectedModel}, isGPT5=${isGPT5}, hasDirectClient=${hasDirectClient}, useDirectOpenAI=${useDirectOpenAI}`);
+        console.log(`RealEstate A.I.: Model=${selectedModel}, isGPT5=${isGPT5}, hasDirectClient=${hasDirectClient}, useDirectOpenAI=${useDirectOpenAI}`);
         
         // Use direct OpenAI client for GPT-5 with BYOK, otherwise use OpenRouter
-        const client = useDirectOpenAI ? this.openaiDirect : this.openai;
+        const client = useDirectOpenAI ? this.openaiDirect! : this.openai;
         const modelName = useDirectOpenAI ? "gpt-5" : selectedModel;
         
         const requestParams: any = {
@@ -471,10 +471,10 @@ Remember: You're not providing general advice. You're making real-time decisions
           requestParams.max_tokens = 2000;
         }
 
-        console.log(`Bristol A.I. Request Params:`, JSON.stringify(requestParams, null, 2));
+        console.log(`RealEstate A.I. Request Params:`, JSON.stringify(requestParams, null, 2));
         completion = await client.chat.completions.create(requestParams);
       } catch (error: any) {
-        console.error(`Bristol A.I. API Error for model ${selectedModel}:`, error);
+        console.error(`RealEstate A.I. API Error for model ${selectedModel}:`, error);
         
         // Enhanced error handling with fallback
         if (error?.status === 401) {
@@ -526,7 +526,7 @@ Remember: You're not providing general advice. You're making real-time decisions
       return await storage.createChatMessage(assistantMessage);
       
     } catch (error) {
-      console.error("Bristol A.I. Error:", error);
+      console.error("RealEstate A.I. Error:", error);
       
       // Return error response without storing to database if there are DB issues
       return {
@@ -548,7 +548,7 @@ Remember: You're not providing general advice. You're making real-time decisions
     userId: string,
     dealData: any
   ): Promise<string> {
-    const context: BristolBrainContext = {
+    const context: RealEstateAIContext = {
       sessionId,
       userId,
       userMessage: `Analyze this deal: ${JSON.stringify(dealData)}`,

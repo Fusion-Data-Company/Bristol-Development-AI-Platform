@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// PostgreSQL MCP Server for Bristol Development Group
+// PostgreSQL MCP Server for Real Estate Intelligence Platform
 // Provides database access tools for the AI agent through Claude Desktop MCP integration
 
 const { Pool } = require('pg');
@@ -46,8 +46,8 @@ class PostgresMCPServer {
     this.version = "2.0.0";
     this.tools = [
       {
-        name: "query_bristol_database",
-        description: "Execute secure SQL queries against Bristol Development database - comprehensive property analysis with all schema access",
+        name: "query_property_database",
+        description: "Execute secure SQL queries against Real Estate Intelligence database - comprehensive property analysis with all schema access",
         inputSchema: {
           type: "object",
           properties: {
@@ -65,8 +65,8 @@ class PostgresMCPServer {
         }
       },
       {
-        name: "get_bristol_portfolio_complete",
-        description: "Get comprehensive Bristol Development Group property portfolio with full analytics, metrics, comparables, and market intelligence",
+        name: "get_property_portfolio_complete",
+        description: "Get comprehensive Real Estate Intelligence property portfolio with full analytics, metrics, comparables, and market intelligence",
         inputSchema: {
           type: "object",
           properties: {
