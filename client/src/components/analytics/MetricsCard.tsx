@@ -105,7 +105,7 @@ export function MetricsCard({ title, metrics, className }: MetricsCardProps) {
 }
 
 // Preset metric configurations for common Company use cases
-export const bristolMetrics = {
+export const companyMetrics = {
   demographics: (data: any) => [
     {
       label: "Median Household Income",

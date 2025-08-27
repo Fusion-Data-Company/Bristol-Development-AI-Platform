@@ -11,7 +11,7 @@ interface MapSite {
   latitude: number;
   longitude: number;
   status: "active" | "under_review" | "archived";
-  bristolScore?: number;
+  companyScore?: number;
   address: string;
 }
 
@@ -43,7 +43,7 @@ export function MapWidget({
       latitude: 36.0618,
       longitude: -86.7816,
       status: "active",
-      bristolScore: 87,
+      companyScore: 87,
       address: "123 Main Street, Franklin, TN"
     },
     {
@@ -52,7 +52,7 @@ export function MapWidget({
       latitude: 36.0331,
       longitude: -86.7828,
       status: "under_review",
-      bristolScore: 72,
+      companyScore: 72,
       address: "456 Commons Blvd, Brentwood, TN"
     },
     {
@@ -61,7 +61,7 @@ export function MapWidget({
       latitude: 36.0256,
       longitude: -86.8208,
       status: "active", 
-      bristolScore: 91,
+      companyScore: 91,
       address: "789 Cool Springs Blvd, Franklin, TN"
     }
   ];
@@ -203,12 +203,12 @@ export function MapWidget({
                   getStatusColor(site.status)
                 )} />
                 
-                {site.bristolScore && (
+                {site.companyScore && (
                   <Badge 
                     variant="secondary"
                     className="absolute -top-8 -left-4 bg-white/90 text-xs font-bold shadow-md"
                   >
-                    {site.bristolScore}
+                    {site.companyScore}
                   </Badge>
                 )}
               </div>
@@ -256,12 +256,12 @@ export function MapWidget({
                 {selectedSite.status.replace("_", " ")}
               </Badge>
               
-              {selectedSite.bristolScore && (
+              {selectedSite.companyScore && (
                 <Badge 
                   variant="outline"
-                  className={cn("text-xs font-bold", getCompanyScoreColor(selectedSite.bristolScore))}
+                  className={cn("text-xs font-bold", getCompanyScoreColor(selectedSite.companyScore))}
                 >
-                  Company Score: {selectedSite.bristolScore}
+                  Company Score: {selectedSite.companyScore}
                 </Badge>
               )}
             </div>

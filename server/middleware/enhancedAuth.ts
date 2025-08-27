@@ -306,7 +306,7 @@ export const dbResilienceMiddleware: RequestHandler = async (req: any, res: Resp
 };
 
 // Export all middleware as a combined stack for easy use
-export const bristolAuthStack = [
+export const companyAuthStack = [
   enhancedSession,
   enhancedAuth,
   dbResilienceMiddleware

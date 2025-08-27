@@ -515,7 +515,7 @@ export default function Chat() {
   // SSR-safe localStorage loading for system prompt
   useEffect(() => {
     try {
-      const saved = typeof window !== "undefined" ? localStorage.getItem("bristol.systemPrompt") : null;
+      const saved = typeof window !== "undefined" ? localStorage.getItem("company.systemPrompt") : null;
       if (saved) setSystemPrompt(saved);
     } catch (error) {
       console.warn("Failed to load saved system prompt:", error);
@@ -1244,7 +1244,7 @@ What property or investment can I analyze for you today?`,
   const saveSystemPrompt = (prompt: string) => {
     try {
       if (typeof window !== "undefined") {
-        localStorage.setItem("bristol.systemPrompt", prompt);
+        localStorage.setItem("company.systemPrompt", prompt);
       }
       setSystemPrompt(prompt);
       console.log("System prompt saved successfully");
@@ -1809,7 +1809,7 @@ What property or investment can I analyze for you today?`,
                   onClick={() => {
                     const newStreaming = !realTimeData;
                     setRealTimeData(newStreaming);
-                    localStorage.setItem("bristol.streamingEnabled", String(newStreaming));
+                    localStorage.setItem("company.streamingEnabled", String(newStreaming));
                   }}
                   className={cx(
                     "px-2 py-1 rounded-full text-xs font-bold transition-all duration-300",
@@ -2076,7 +2076,7 @@ What property or investment can I analyze for you today?`,
             setSystemPrompt={setSystemPrompt}
             onSave={async () => {
               try {
-                localStorage.setItem("bristol.systemPrompt", systemPrompt);
+                localStorage.setItem("company.systemPrompt", systemPrompt);
                 console.log("System prompt saved successfully");
               } catch (error) {
                 console.error("Failed to save system prompt:", error);

@@ -194,8 +194,8 @@ export function InteractiveMap({
       type: 'Feature' as const,
       id: `site-${index}`,
       properties: {
-        score: (site as any).bristolScore || 75,
-        density: Math.max(50, ((site as any).bristolScore || 75) * 1.2),
+        score: (site as any).companyScore || 75,
+        density: Math.max(50, ((site as any).companyScore || 75) * 1.2),
         name: site.name
       },
       geometry: {

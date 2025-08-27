@@ -401,9 +401,9 @@ function calculateEngagement(history: any[]): 'low' | 'medium' | 'high' {
 function calculateContextualRelevance(messages: any[], userContext: any): number {
   if (!userContext) return 0.5;
   
-  const bristolTerms = ['bristol', 'development', 'portfolio', 'site', 'irr', 'npv'];
+  const companyTerms = ['company', 'development', 'portfolio', 'site', 'irr', 'npv'];
   const relevantMessages = messages.filter(msg => 
-    bristolTerms.some(term => msg.content.toLowerCase().includes(term))
+    companyTerms.some(term => msg.content.toLowerCase().includes(term))
   );
   
   return Math.min(relevantMessages.length / messages.length, 1.0);

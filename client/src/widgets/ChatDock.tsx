@@ -22,10 +22,10 @@ export default function ChatDock() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [selectedModel, setSelectedModel] = useState("claude-3-5-sonnet");
-  const [bristolMode, setCompanyMode] = useState(false);
+  const [companyMode, setCompanyMode] = useState(false);
 
   const chatMutation = useMutation({
-    mutationFn: async (data: { message: string; model: string; bristolMode: boolean }) => {
+    mutationFn: async (data: { message: string; model: string; companyMode: boolean }) => {
       return apiRequest("/api/agent/chat", "POST", data);
     },
     onSuccess: (response) => {
@@ -67,7 +67,7 @@ export default function ChatDock() {
     chatMutation.mutate({
       message: inputValue,
       model: selectedModel,
-      bristolMode
+      companyMode
     });
   };
 
@@ -138,7 +138,7 @@ export default function ChatDock() {
               <div className="flex items-center gap-2">
                 <Switch 
                   id="brand-mode" 
-                  checked={bristolMode} 
+                  checked={companyMode} 
                   onCheckedChange={setCompanyMode}
                 />
                 <Label htmlFor="brand-mode" className="text-xs">Company Mode</Label>

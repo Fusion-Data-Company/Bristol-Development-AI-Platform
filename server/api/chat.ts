@@ -176,12 +176,12 @@ router.post('/completions', async (req, res) => {
 
     // Get Company property data context for AI
     const { mcpToolsService } = await import('../services/mcpToolsService');
-    let bristolContext = '';
+    let companyContext = '';
     
     try {
       const aiContext = await mcpToolsService.getAiContext();
-      if (aiContext.bristolProperties && aiContext.bristolProperties.length > 0) {
-        bristolContext = `\n\nCOMPANY PROPERTIES DATABASE CONTEXT:\n` +
+      if (aiContext.companyProperties && aiContext.companyProperties.length > 0) {
+        companyContext = `\n\nCOMPANY PROPERTIES DATABASE CONTEXT:\n` +
           `Total Properties: ${aiContext.propertiesByLocation?.totalProperties || 0}\n` +
           `States: ${aiContext.propertiesByLocation?.states?.join(', ') || 'N/A'}\n` +
           `Cities: ${aiContext.propertiesByLocation?.cities?.join(', ') || 'N/A'}\n` +
@@ -198,7 +198,7 @@ router.post('/completions', async (req, res) => {
 
     // Inject Company system prompt with live property data (hidden from user)
     const enhancedMessages = [
-      { role: 'system' as const, content: COMPANY_SYSTEM_PROMPT + bristolContext },
+      { role: 'system' as const, content: COMPANY_SYSTEM_PROMPT + companyContext },
       ...messages.filter(msg => msg.role !== 'system') // Remove any user-provided system messages
     ];
 
@@ -227,7 +227,7 @@ router.post('/completions', async (req, res) => {
 
         completion = await anthropic.messages.create({
           model: modelConfig.model,
-          system: COMPANY_SYSTEM_PROMPT + bristolContext,
+          system: COMPANY_SYSTEM_PROMPT + companyContext,
           messages: anthropicMessages,
           max_tokens: maxTokens,
           temperature
@@ -246,7 +246,7 @@ router.post('/completions', async (req, res) => {
         const result = await genai.models.generateContent({
           model: modelConfig.model,
           config: {
-            systemInstruction: COMPANY_SYSTEM_PROMPT + bristolContext,
+            systemInstruction: COMPANY_SYSTEM_PROMPT + companyContext,
             temperature,
             maxOutputTokens: maxTokens
           },

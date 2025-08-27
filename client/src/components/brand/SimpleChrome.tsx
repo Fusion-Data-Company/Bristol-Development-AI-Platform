@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Building, Map, BarChart3, MessageSquare, Settings, Wrench, Users, Building2, Brain } from "lucide-react";
-import bristolLogoPath from "@assets/bristol-logo_1754934306711.gif";
+import companyLogoPath from "@assets/company-logo.gif";
 
 interface ChromeProps {
   children: ReactNode;
@@ -87,7 +87,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(157, 23, 77, 0.3)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(157, 23, 77, 0.2)'}></div>
                 <img 
-                  src={bristolLogoPath} 
+                  src={companyLogoPath} 
                   alt="Company Development Group" 
                   className="relative h-10 lg:h-12 w-auto max-w-none object-contain drop-shadow-xl hover:drop-shadow-2xl transition-all duration-300 filter brightness-110 hover:brightness-125"
                   style={{ 
@@ -200,7 +200,7 @@ export default function SimpleChrome({ children }: ChromeProps) {
               <div className="space-y-4">
                 <div className="flex items-center space-x-2">
                   <img 
-                    src={bristolLogoPath} 
+                    src={companyLogoPath} 
                     alt="Company Development Group" 
                     className="h-8 w-auto object-contain drop-shadow-xl filter brightness-110"
                   />

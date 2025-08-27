@@ -322,28 +322,28 @@ export class RealDataService {
    */
   async updateSiteCompanyScore(siteId: string): Promise<void> {
     try {
-      const bristolScore = await this.calculateCompanyScore(siteId);
+      const companyScore = await this.calculateCompanyScore(siteId);
       
       await db.update(sites)
         .set({
-          bristolScore: bristolScore.total,
+          companyScore: companyScore.total,
           updatedAt: new Date()
         })
         .where(eq(sites.id, siteId));
 
       // Store detailed scoring in market intelligence  
       await db.insert(marketIntelligence).values({
-        source: 'bristol_scoring',
+        source: 'company_scoring',
         title: `Company Score Analysis - ${site.name}`,
-        description: `Automated Company scoring: ${bristolScore.total}/100`,
+        description: `Automated Company scoring: ${companyScore.total}/100`,
         category: 'scoring',
-        analysisData: bristolScore.details,
+        analysisData: companyScore.details,
         location: `${site.city}, ${site.state}`,
         dataQuality: 'high',
         createdAt: new Date()
       });
 
-      console.log(`✅ Updated Company score for site ${siteId}: ${bristolScore.total}/100`);
+      console.log(`✅ Updated Company score for site ${siteId}: ${companyScore.total}/100`);
     } catch (error) {
       console.error(`❌ Failed to update Company score for site ${siteId}:`, error);
       throw error;

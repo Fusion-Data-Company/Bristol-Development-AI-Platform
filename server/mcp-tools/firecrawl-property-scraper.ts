@@ -7,7 +7,7 @@
 import { randomUUID } from 'crypto';
 
 interface PropertyScrapeTool {
-  name: 'bristol_property_scraper';
+  name: 'company_property_scraper';
   description: string;
   inputSchema: {
     type: 'object';
@@ -34,8 +34,8 @@ interface ScrapeResult {
 }
 
 // MCP Tool Definition for Company AI Agent
-export const bristolPropertyScraperTool: PropertyScrapeTool = {
-  name: 'bristol_property_scraper',
+export const companyPropertyScraperTool: PropertyScrapeTool = {
+  name: 'company_property_scraper',
   description: `Professional property data scraper using Firecrawl for comprehensive real estate analysis. 
 
 This tool extracts detailed property information from websites and automatically stores results in the Company Comparables Annex database for analysis. Perfect for comp analysis, market research, and property intelligence.

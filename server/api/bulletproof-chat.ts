@@ -299,7 +299,7 @@ router.use('*', (req: any, res) => {
     sessionId: `fallback-${Date.now()}`,
     model: 'brand-fallback',
     metadata: {
-      provider: 'bristol',
+      provider: 'company',
       fallback: true
     }
   });

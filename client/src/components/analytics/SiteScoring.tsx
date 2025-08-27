@@ -126,7 +126,7 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
   );
 
   // Calculate overall Company Score
-  const bristolScore = site.bristolScore || Math.round(
+  const companyScore = site.companyScore || Math.round(
     Object.entries(COMPANY_SCORING_CATEGORIES).reduce((total, [key, config]) => {
       return total + (categoryScores[key] * config.weight / 100);
     }, 0)
@@ -167,10 +167,10 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="relative">
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-brand-maroon to-brand-maroon/80 flex items-center justify-center shadow-lg">
-                <span className="text-2xl font-bold text-white">{bristolScore}</span>
+                <span className="text-2xl font-bold text-white">{companyScore}</span>
               </div>
-              <Badge className={cn("absolute -bottom-2 left-1/2 transform -translate-x-1/2", getScoreBadgeColor(bristolScore))}>
-                Grade {getScoreGrade(bristolScore)}
+              <Badge className={cn("absolute -bottom-2 left-1/2 transform -translate-x-1/2", getScoreBadgeColor(companyScore))}>
+                Grade {getScoreGrade(companyScore)}
               </Badge>
             </div>
             <div className="text-left">
@@ -182,11 +182,11 @@ export function SiteScoring({ site, metrics, onRecalculateScore, className }: Si
               </p>
               <div className="flex items-center gap-2 mt-2">
                 <Star className="w-4 h-4 text-brand-gold fill-current" />
-                <span className={cn("font-semibold", getScoreColor(bristolScore))}>
-                  {bristolScore >= 85 ? 'Exceptional Opportunity' :
-                   bristolScore >= 70 ? 'Strong Development Potential' :
-                   bristolScore >= 55 ? 'Moderate Opportunity' :
-                   bristolScore >= 40 ? 'Challenges Present' : 'High Risk Development'}
+                <span className={cn("font-semibold", getScoreColor(companyScore))}>
+                  {companyScore >= 85 ? 'Exceptional Opportunity' :
+                   companyScore >= 70 ? 'Strong Development Potential' :
+                   companyScore >= 55 ? 'Moderate Opportunity' :
+                   companyScore >= 40 ? 'Challenges Present' : 'High Risk Development'}
                 </span>
               </div>
             </div>

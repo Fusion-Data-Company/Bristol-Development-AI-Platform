@@ -241,7 +241,7 @@ export default function FloatingWidget({
   // SSR-safe localStorage loading and WebSocket connection
   useEffect(() => {
     try {
-      const saved = typeof window !== "undefined" ? localStorage.getItem("bristol.systemPrompt") : null;
+      const saved = typeof window !== "undefined" ? localStorage.getItem("company.systemPrompt") : null;
       if (saved) setSystemPrompt(saved);
     } catch (error) {
       console.warn("Failed to load saved system prompt:", error);
@@ -725,7 +725,7 @@ export default function FloatingWidget({
 
   const saveSystemPrompt = async () => {
     try {
-      localStorage.setItem("bristol.systemPrompt", systemPrompt);
+      localStorage.setItem("company.systemPrompt", systemPrompt);
       await onSaveSystemPrompt?.(systemPrompt);
       await sendTelemetry("system_prompt_saved", { size: systemPrompt.length });
     } catch (error) {
@@ -1408,16 +1408,16 @@ export default function FloatingWidget({
                   await new Promise(resolve => setTimeout(resolve, 800));
                   
                   // Save system prompt
-                  localStorage.setItem("bristol.systemPrompt", systemPrompt);
+                  localStorage.setItem("company.systemPrompt", systemPrompt);
                   
                   // Save real-time data setting
-                  localStorage.setItem("bristol.realTimeData", realTimeData.toString());
+                  localStorage.setItem("company.realTimeData", realTimeData.toString());
                   
                   // Save MCP enabled setting
-                  localStorage.setItem("bristol.mcpEnabled", mcpEnabled.toString());
+                  localStorage.setItem("company.mcpEnabled", mcpEnabled.toString());
                   
                   // Save selected model
-                  localStorage.setItem("bristol.selectedModel", model);
+                  localStorage.setItem("company.selectedModel", model);
                   
                   console.log("All admin settings saved to localStorage");
                   
@@ -3679,7 +3679,7 @@ function AdminPane({
             <button
               onClick={() => {
                 try {
-                  localStorage.setItem("bristol.systemPrompt", systemPrompt);
+                  localStorage.setItem("company.systemPrompt", systemPrompt);
                   // Also call the onSave function to ensure parent component is notified
                   onSave();
                   console.log("System prompt saved successfully to localStorage");

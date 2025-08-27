@@ -164,7 +164,7 @@ router.get('/market-analysis', async (req, res) => {
         supplyPipeline: 8900,
         demographicScore: 89,
         economicHealth: 'Moderate',
-        bristolExposure: 4,
+        companyExposure: 4,
         recommendation: 'Hold current exposure - tech sector volatility and oversupply concerns. Wait for market stabilization before additional investment.'
       }
     ];
@@ -281,7 +281,7 @@ router.get('/market-insights', async (req, res) => {
         category: 'monetary_policy',
         timestamp: '2 hours ago',
         actionRequired: true,
-        bristolImplication: 'Accelerate acquisition pipeline - financing costs may decrease 50-75 bps by mid-2024'
+        companyImplication: 'Accelerate acquisition pipeline - financing costs may decrease 50-75 bps by mid-2024'
       },
       {
         id: '2',
@@ -291,7 +291,7 @@ router.get('/market-insights', async (req, res) => {
         category: 'demographics',
         timestamp: '4 hours ago',
         actionRequired: false,
-        bristolImplication: 'Sustains rent growth momentum across portfolio - expect 4-6% organic growth'
+        companyImplication: 'Sustains rent growth momentum across portfolio - expect 4-6% organic growth'
       },
       {
         id: '3',
@@ -301,7 +301,7 @@ router.get('/market-insights', async (req, res) => {
         category: 'development',
         timestamp: '6 hours ago',
         actionRequired: true,
-        bristolImplication: 'Restart mothballed development projects - IRR improvement of 150-200 bps projected'
+        companyImplication: 'Restart mothballed development projects - IRR improvement of 150-200 bps projected'
       },
       {
         id: '4',
@@ -311,7 +311,7 @@ router.get('/market-insights', async (req, res) => {
         category: 'capital_markets',
         timestamp: '8 hours ago',
         actionRequired: true,
-        bristolImplication: 'Focus on secondary/tertiary markets and value-add opportunities to maintain target returns'
+        companyImplication: 'Focus on secondary/tertiary markets and value-add opportunities to maintain target returns'
       }
     ];
     
@@ -333,7 +333,7 @@ router.get('/active-projects', async (req, res) => {
       name: site.name || 'Unnamed Property',
       location: `${site.city || 'Unknown'}, ${site.state || 'Unknown'}`,
       status: site.status === 'Operating' ? 'stabilized' : 'value-add',
-      bristolScore: Math.floor(Math.random() * 25) + 75, // 75-100 range for Company quality
+      companyScore: Math.floor(Math.random() * 25) + 75, // 75-100 range for Company quality
       units: site.unitsTotal || 0,
       irr: Math.round((Math.random() * 8 + 12) * 100) / 100, // 12-20% range
       cocReturn: Math.round((Math.random() * 4 + 6) * 100) / 100, // 6-10% range

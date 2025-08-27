@@ -250,8 +250,8 @@ export class McpToolsService {
 
     // Company Properties Location-Based Search Tools
     this.registerTool({
-      name: 'search_bristol_properties',
-      description: 'Search Company Development properties by location, city, state, or criteria',
+      name: 'search_company_properties',
+      description: 'Search company properties by location, city, state, or criteria',
       endpoint: '/api/sites',
       method: 'GET',
       category: 'data',
@@ -264,8 +264,8 @@ export class McpToolsService {
     });
 
     this.registerTool({
-      name: 'get_bristol_property_details',
-      description: 'Get detailed information about a specific Company property including location, units, and metrics',
+      name: 'get_company_property_details',
+      description: 'Get detailed information about a specific company property including location, units, and metrics',
       endpoint: '/api/sites/{id}',
       method: 'GET',
       category: 'data',
@@ -273,8 +273,8 @@ export class McpToolsService {
     });
 
     this.registerTool({
-      name: 'find_bristol_properties_near',
-      description: 'Find all Company properties in a specific city, state, or location area',
+      name: 'find_company_properties_near',
+      description: 'Find all company properties in a specific city, state, or location area',
       endpoint: '/api/sites',
       method: 'GET', 
       category: 'data',
@@ -286,7 +286,7 @@ export class McpToolsService {
     });
 
     this.registerTool({
-      name: 'get_bristol_properties_by_status',
+      name: 'get_company_properties_by_status',
       description: 'Get Company properties filtered by development status (Operating, Pipeline, Completed, Newest)',
       endpoint: '/api/sites',
       method: 'GET',
@@ -387,7 +387,7 @@ export class McpToolsService {
   // Real-time data aggregation for AI context
   async getAiContext(): Promise<any> {
     try {
-      const [portfolio, pipeline, market, bristolProperties] = await Promise.all([
+      const [portfolio, pipeline, market, companyProperties] = await Promise.all([
         this.executeTool('get_portfolio_overview'),
         this.executeTool('get_deal_pipeline'),
         this.executeTool('get_market_analytics'),
@@ -398,8 +398,8 @@ export class McpToolsService {
         portfolio: portfolio.data || portfolio,
         pipeline: pipeline.data || pipeline,
         market: market.data || market,
-        bristolProperties: bristolProperties || [],
-        propertiesByLocation: this.organizeCompanyPropertiesByLocation(bristolProperties || []),
+        companyProperties: companyProperties || [],
+        propertiesByLocation: this.organizeCompanyPropertiesByLocation(companyProperties || []),
         timestamp: new Date().toISOString(),
         toolsAvailable: this.tools.size
       };

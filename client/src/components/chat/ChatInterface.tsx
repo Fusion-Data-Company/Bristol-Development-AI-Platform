@@ -540,10 +540,10 @@ export function ChatInterface({ sessionId, onSessionCreate, className }: ChatInt
           </button>
           
           <button
-            onClick={() => toggleTool("bristol")}
+            onClick={() => toggleTool("company")}
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all",
-              activeTools.includes("bristol")
+              activeTools.includes("company")
                 ? "bg-brand-maroon text-white hover:bg-brand-maroon/90"
                 : "bg-brand-sky text-brand-stone hover:bg-brand-maroon hover:text-white"
             )}

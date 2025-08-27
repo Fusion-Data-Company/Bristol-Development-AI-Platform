@@ -172,11 +172,11 @@ class PostgresMCPServer {
       
       let result;
       switch (toolName) {
-        case "query_bristol_database":
+        case "query_company_database":
           result = await this.queryDatabaseSecure(params.query, params.params || []);
           break;
           
-        case "get_bristol_portfolio_complete":
+        case "get_company_portfolio_complete":
           result = await this.getCompanyPortfolioComplete(params);
           break;
           
@@ -205,7 +205,7 @@ class PostgresMCPServer {
           break;
           
         // Legacy support
-        case "get_bristol_portfolio":
+        case "get_company_portfolio":
           result = await this.getCompanyPortfolioComplete(params);
           break;
           
@@ -355,14 +355,14 @@ class PostgresMCPServer {
     }
     
     if (minCompanyScore) {
-      query += ` AND s.bristol_score >= $${paramIndex}`;
+      query += ` AND s.company_score >= $${paramIndex}`;
       queryParams.push(minCompanyScore);
       paramIndex++;
     }
     
     query += `
       GROUP BY s.id
-      ORDER BY s.bristol_score DESC NULLS LAST, s.created_at DESC
+      ORDER BY s.company_score DESC NULLS LAST, s.created_at DESC
       LIMIT $${paramIndex}
     `;
     queryParams.push(limit);

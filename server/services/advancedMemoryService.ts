@@ -348,8 +348,8 @@ class AdvancedMemoryService {
     const entities = content.match(/[A-Z][a-z]+|[\$\€\£][\d,]+|\d+\.?\d*%?/g) || [];
     
     // Extract topics based on Company context
-    const bristolTopics = ['development', 'real estate', 'investment', 'property', 'market', 'analysis', 'finance', 'demographics'];
-    const topics = bristolTopics.filter(topic => content.toLowerCase().includes(topic));
+    const companyTopics = ['development', 'real estate', 'investment', 'property', 'market', 'analysis', 'finance', 'demographics'];
+    const topics = companyTopics.filter(topic => content.toLowerCase().includes(topic));
 
     return { keywords, entities, topics };
   }
@@ -430,13 +430,13 @@ class AdvancedMemoryService {
     const topics = new Set<string>();
     
     // Company-specific topics
-    const bristolTopics = [
+    const companyTopics = [
       'development', 'real estate', 'investment', 'property', 'market', 
       'analysis', 'finance', 'demographics', 'IRR', 'NPV', 'cap rate',
       'multifamily', 'acquisition', 'underwriting', 'due diligence'
     ];
     
-    bristolTopics.forEach(topic => {
+    companyTopics.forEach(topic => {
       if (allContent.toLowerCase().includes(topic)) {
         topics.add(topic);
       }
