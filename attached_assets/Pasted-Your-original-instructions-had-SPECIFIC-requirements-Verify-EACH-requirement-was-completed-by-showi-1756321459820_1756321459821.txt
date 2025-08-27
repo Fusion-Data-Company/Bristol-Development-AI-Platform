@@ -1,0 +1,48 @@
+Your original instructions had SPECIFIC requirements. Verify EACH requirement was completed by showing proof:ORIGINAL INSTRUCTION VERIFICATION CHECKLIST:1. PRIMARY SEARCH & DESTROY TARGETS - Verify ALL were replaced:
+bash# Run each search individually and show count:
+grep -ri "Bristol Development Group" . --exclude-dir=node_modules --exclude-dir=.git | wc -l
+grep -ri "Bristol Development" . --exclude-dir=node_modules --exclude-dir=.git | wc -l
+grep -ri "Bristol Dev Group" . --exclude-dir=node_modules --exclude-dir=.git | wc -l
+grep -ri "BristolDev" . --exclude-dir=node_modules --exclude-dir=.git | wc -l
+grep -ri "\bBristol\b" . --exclude-dir=node_modules --exclude-dir=.git | wc -l
+grep -ri "\bBDG\b" . --exclude-dir=node_modules --exclude-dir=.git | wc -l
+grep -ri "@bristoldevelopment.com" . --exclude-dir=node_modules --exclude-dir=.git | wc -l
+grep -ri "bristoldevelopment.com" . --exclude-dir=node_modules --exclude-dir=.git | wc -l2. REPLACEMENT STRATEGY - Show these replacements happened:
+
+ Show files where "Bristol Development Group" → "Your Company Name"
+ Show files where "BDG" → "YCN"
+ Show files where "bristol" → "yourcompany" (lowercase)
+ Show files where "BRISTOL" → "YOURCOMPANY" (uppercase)
+3. ASSET MODIFICATIONS - Prove these were done:
+bash# List renamed files:
+ls -la client/public/*logo* client/public/*social*
+ls -la client/src/assets/*
+find . -name "*company-logo*" -o -name "*company-social*" | head -204. SPECIFIC REPLACEMENTS - Show proof of:
+
+ support@bristoldev.com → support@yourcompany.com (show file)
+ sales@bristol-development.com → sales@yourcompany.com (show file)
+ © 2024 Bristol Development Group → © 2024 Your Company Name (show file)
+ linkedin.com/company/bristol-dev → linkedin.com/company/yourcompany (show file)
+5. CONFIGURATION FILES - Show current content of:
+bash# Show key sections:
+head -20 package.json
+grep -i "bristol\|company" manifest.json
+cat .env.example | grep -i "bristol\|company"6. DOCUMENTATION - Check all docs:
+bashfind . -name "README.md" -exec grep -l -i "bristol" {} \;
+find . -name "*.md" -exec grep -l -i "bristol" {} \;7. TEAM DATA - Verify the 22 team member emails:
+bashgrep "@" server/seeders/teamSeeder.ts | head -108. SERVICE FILES - Prove 50+ files were renamed:
+bashls server/services/bristol* 2>/dev/null | wc -l  # Should be 0
+ls server/services/company* 2>/dev/null | wc -l  # Should be 50+9. API ENDPOINTS - Show these were ALL updated:
+bashgrep -r "api/bristol" . --exclude-dir=node_modules | wc -l  # Should be 0
+grep -r "api/company" . --exclude-dir=node_modules | wc -l  # Should show replacements10. FINAL PROOF - Run the EXACT verification from original instructions:
+bash# From original instructions:
+grep -r -i "bristol" . --exclude-dir=node_modules --exclude-dir=.git
+grep -r "BDG" . --exclude-dir=node_modules --exclude-dir=.git
+find . -name "*.json" -exec grep -l -i "bristol" {} \;
+find . -name "*.env*" -exec grep -l -i "bristol" {} \;SUMMARY REQUIREMENT:
+Original target: 3,247+ Bristol references across 78 files
+Show me:
+
+Total files modified: [count]
+Total replacements made: [count]
+Any requirements from original instructions NOT completed: [list]
